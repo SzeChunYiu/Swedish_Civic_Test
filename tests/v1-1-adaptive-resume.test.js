@@ -81,7 +81,7 @@ test('pickAdaptiveSession: empty progress → returns first `size` deterministic
   assert.deepEqual([...picked].sort(), ['q1', 'q2'].sort());
 });
 
-test('pickAdaptiveSession: normalizes malformed runtime session sizes', () => {
+test('pickAdaptiveSession: normalizes malformed adaptive size values including NaN, Infinity, and fraction', () => {
   const { explainAdaptivePick, pickAdaptiveSession } = loadTs('lib/learning/adaptivePractice.ts');
   const items = bank(
     Array.from({ length: 12 }, (_, index) => `q${String(index + 1).padStart(2, '0')}`),

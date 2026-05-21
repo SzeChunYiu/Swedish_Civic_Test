@@ -2,45 +2,12 @@
 const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
+const {
+  focusedValidationRequested,
+  rejectUnsupportedFocusedValidationFlags,
+} = require('./validate-content-focus-registry');
 
-function focusedValidationFlagsFromRegistrySource() {
-  const source = fs.readFileSync(__filename, 'utf8');
-  const declaration = '\nconst FOCUSED_VALIDATION_REGISTRY = Object.freeze(';
-  const registryStart = source.indexOf(declaration);
-  const registryEnd = source.indexOf(
-    '\n]);\n\nconst FOCUSED_VALIDATION_REGISTRY_BY_ID',
-    registryStart,
-  );
-  if (registryStart === -1 || registryEnd === -1) return new Set();
-
-  const registrySource = source.slice(registryStart, registryEnd);
-  const flags = new Set();
-  for (const match of registrySource.matchAll(/flags:\s*\[([^\]]+)\]/g)) {
-    for (const flagMatch of match[1].matchAll(/'(--focus-[^']+)'/g)) {
-      flags.add(flagMatch[1]);
-    }
-  }
-  return flags;
-}
-
-function rejectUnsupportedFocusedValidationFlagsFromRegistrySource() {
-  const requestedFlags = process.argv.slice(2).filter((arg) => arg.startsWith('--focus-'));
-  if (requestedFlags.length === 0) return;
-
-  const supportedFlags = focusedValidationFlagsFromRegistrySource();
-  const unsupportedFlags = requestedFlags.filter((flag) => !supportedFlags.has(flag));
-  if (unsupportedFlags.length === 0) return;
-
-  const plural = unsupportedFlags.length === 1 ? 'flag' : 'flags';
-  console.error(`Unsupported validate-content focus ${plural}: ${unsupportedFlags.join(', ')}`);
-  console.error('Supported focus modes:');
-  Array.from(supportedFlags)
-    .sort()
-    .forEach((flag) => console.error(`- ${flag}`));
-  process.exit(1);
-}
-
-rejectUnsupportedFocusedValidationFlagsFromRegistrySource();
+rejectUnsupportedFocusedValidationFlags();
 
 const ts = require('typescript');
 const vm = require('node:vm');
@@ -74,472 +41,6 @@ const {
 
 const repoRoot = path.resolve(__dirname, '..');
 const failures = [];
-const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
-  {
-    id: 'authoredSourceParity',
-    flags: ['--focus-authored-source-parity'],
-    summaryKeys: [
-      'authoredSourceQuestionsValidated',
-      'authoredSourcePartitionQuestionsValidated',
-      'sourcePublicationParityValidated',
-      'sourceQuestions',
-    ],
-  },
-  {
-    id: 'staticV11ReadinessCopy',
-    flags: ['--focus-static-v11-readiness-copy'],
-    summaryKeys: [
-      'staticV11ReadinessUnsupportedPatternsValidated',
-      'staticV11ReadinessRequiredCopyValidated',
-      'staticV11ReadinessCopyParityValidated',
-      'staticValidationSyntaxFilesValidated',
-      'staticValidationImportChecksValidated',
-      'staticValidationSyntaxGateValidated',
-    ],
-  },
-  {
-    id: 'rewardedExamSchema',
-    flags: ['--focus-rewarded-exam-schema'],
-    summaryKeys: [
-      'rewardedAdTypeUnionsValidated',
-      'rewardedAdTypeInterfacesValidated',
-      'rewardedAdTypeSchemaParityValidated',
-      'mockExamAccessTypeUnionsValidated',
-      'mockExamAccessTypeInterfacesValidated',
-      'mockExamAccessTypeSchemaParityValidated',
-    ],
-  },
-  {
-    id: 'nativeQuizCopy',
-    flags: ['--focus-native-quiz-copy'],
-    summaryKeys: [
-      'quizRouteHeadersValidated',
-      'quizRouteHeaderParityValidated',
-      'quizRouteCopyLabelsValidated',
-      'quizRouteCopyParityValidated',
-      'chapterRouteHeadersValidated',
-      'chapterRouteHeaderParityValidated',
-      'chapterRouteCopyLabelsValidated',
-      'chapterRouteCopyParityValidated',
-    ],
-  },
-  {
-    id: 'legalRouteParity',
-    flags: ['--focus-legal-route-parity'],
-    summaryKeys: [
-      'legalRouteHeadersValidated',
-      'legalRouteHeaderParityValidated',
-      'swedishPrivacyStreakCopyNaturalnessValidated',
-      'legalSwedishEnglishTokenGuardValidated',
-      'legalSwedishEnglishTokenGuardParityValidated',
-    ],
-  },
-  {
-    id: 'settingsRouteCopy',
-    flags: ['--focus-settings-route-copy'],
-    summaryKeys: ['settingsRouteCopyLabelsValidated', 'settingsRouteCopyParityValidated'],
-  },
-  {
-    id: 'staticHeadMetadata',
-    flags: ['--focus-static-head-metadata'],
-    summaryKeys: [
-      'staticHeadMetadataTitleValidated',
-      'staticHeadMetadataDescriptionValidated',
-      'staticHeadMetadataOutcomeClaimPatternsValidated',
-      'staticHeadMetadataParityValidated',
-      'staticValidationSyntaxFilesValidated',
-      'staticValidationImportChecksValidated',
-      'staticValidationSyntaxGateValidated',
-    ],
-  },
-  {
-    id: 'staticEbookProvenance',
-    flags: ['--focus-static-ebook-provenance'],
-    summaryKeys: [
-      'staticEbookExternalSourceUrlsValidated',
-      'staticEbookExternalSourceLinkRulesValidated',
-      'staticEbookExternalSourceLinkSafetyValidated',
-    ],
-  },
-  {
-    id: 'settingsStore',
-    flags: ['--focus-settings-store', '--focus-settings-parity'],
-    summaryKeys: [
-      'settingsRouteHeadersValidated',
-      'settingsRouteHeaderParityValidated',
-      'settingsRouteCopyLabelsValidated',
-      'settingsRouteCopyParityValidated',
-      'settingsRouteScrollRulesValidated',
-      'settingsRouteScrollParityValidated',
-      'settingsStoreFieldsValidated',
-      'settingsStoreSchemaParityValidated',
-      'settingsDailyGoalOptionsValidated',
-      'settingsDailyGoalParityValidated',
-      'settingsAudioLabelsValidated',
-      'settingsAudioParityValidated',
-    ],
-  },
-  {
-    id: 'homeRouteCopy',
-    flags: ['--focus-home-route-copy'],
-    summaryKeys: [
-      'staticValidationSyntaxFilesValidated',
-      'staticValidationImportChecksValidated',
-      'staticValidationSyntaxGateValidated',
-      'homeRouteHeadersValidated',
-      'homeRouteHeaderParityValidated',
-      'homeRouteCopyLabelsValidated',
-      'homeRouteCopyParityValidated',
-      'homeRouteInternalBenchmarkCopyValidated',
-      'homeRouteSwedishMistakeReviewCopyNaturalnessValidated',
-      'countdownBannerHomeMountRulesValidated',
-      'countdownBannerHomeMountParityValidated',
-    ],
-  },
-  {
-    id: 'answerOptionAccessibility',
-    flags: ['--focus-answer-option-accessibility'],
-    summaryKeys: [
-      'answerOptionAccessibilityRulesValidated',
-      'answerOptionAccessibilityParityValidated',
-    ],
-  },
-  {
-    id: 'audioButtonAccessibility',
-    flags: ['--focus-audio-button-accessibility'],
-    summaryKeys: [
-      'audioButtonAccessibilityRulesValidated',
-      'audioButtonAccessibilityParityValidated',
-    ],
-  },
-  {
-    id: 'homeSvMistakeReviewCopy',
-    flags: ['--focus-home-sv-mistake-review-copy'],
-    summaryKeys: [
-      'staticValidationSyntaxFilesValidated',
-      'staticValidationImportChecksValidated',
-      'staticValidationSyntaxGateValidated',
-      'homeRouteSwedishMistakeReviewCopyNaturalnessValidated',
-    ],
-  },
-  {
-    id: 'progressSchemaParity',
-    flags: ['--focus-progress-schema-parity'],
-    summaryKeys: [
-      'progressQuestionFieldsValidated',
-      'progressQuestionSchemaParityValidated',
-      'progressTypeUnionsValidated',
-      'progressTypeInterfacesValidated',
-      'progressTypeSchemaParityValidated',
-      'progressStoreFieldsValidated',
-      'progressStoreSchemaParityValidated',
-    ],
-  },
-  {
-    id: 'xpRules',
-    flags: ['--focus-xp-rules'],
-    summaryKeys: ['xpRulesValidated', 'xpRulesParityValidated'],
-  },
-  {
-    id: 'badgeXpRuntime',
-    flags: ['--focus-badge-xp-runtime'],
-    summaryKeys: [
-      'badgesValidated',
-      'badgeMilestoneParityValidated',
-      'badgeRuntimeInputCasesValidated',
-      'badgeRuntimeInputParityValidated',
-      'xpRulesValidated',
-      'xpRulesParityValidated',
-    ],
-  },
-  {
-    id: 'streakRules',
-    flags: ['--focus-streak-rules'],
-    summaryKeys: ['streakRulesValidated', 'streakRulesParityValidated'],
-  },
-  {
-    id: 'weeklyRecapRuntime',
-    flags: ['--focus-weekly-recap-runtime'],
-    summaryKeys: ['weeklyRecapRuntimeCasesValidated', 'weeklyRecapRuntimeParityValidated'],
-  },
-  {
-    id: 'readinessAdapterRules',
-    flags: ['--focus-readiness-adapter-rules'],
-    summaryKeys: ['readinessAdapterRulesValidated', 'readinessAdapterRuntimeParityValidated'],
-  },
-  {
-    id: 'questionReportLinkParity',
-    flags: ['--focus-question-report-link-parity'],
-    summaryKeys: ['questionReportLinkRulesValidated', 'questionReportLinkParityValidated'],
-  },
-  {
-    id: 'answerFeedbackParity',
-    flags: ['--focus-answer-feedback-parity'],
-    summaryKeys: [
-      'publishedQuestions',
-      'answerValidationTypeUnionsValidated',
-      'answerValidationTypeInterfacesValidated',
-      'answerValidationTypeSchemaParityValidated',
-      'answerFeedbackQuestionsValidated',
-      'answerFeedbackOptionsValidated',
-      'answerFeedbackRuntimeParityValidated',
-    ],
-  },
-  {
-    id: 'aboutTheTestRouteCopy',
-    flags: ['--focus-about-the-test-route-copy'],
-    summaryKeys: [
-      'aboutTheTestRouteCopyLabelsValidated',
-      'aboutTheTestRouteCopyParityValidated',
-      'aboutTheTestOfficialSourceUrlsValidated',
-      'aboutTheTestOfficialSourceRetrievedDateValidated',
-      'aboutTheTestSeenEffectRulesValidated',
-      'aboutTheTestSeenEffectParityValidated',
-      'citizenshipRequirementsLimitedSeatCopyValidated',
-    ],
-  },
-  {
-    id: 'onboardingRouteCopy',
-    flags: ['--focus-onboarding-route-copy'],
-    summaryKeys: [
-      'onboardingRouteHeadersValidated',
-      'onboardingRouteHeaderParityValidated',
-      'onboardingRouteCopyLabelsValidated',
-      'onboardingRouteCopyParityValidated',
-      'firstRunAboutModalSuppressedRoutesValidated',
-      'firstRunAboutModalSuppressionParityValidated',
-    ],
-  },
-  {
-    id: 'mockExamRuntimeParity',
-    flags: ['--focus-mock-exam-runtime-parity'],
-    summaryKeys: [
-      'mockExamConfigTypeFieldsValidated',
-      'mockExamConfigTypeSchemaParityValidated',
-      'mockExamConfigExactSchemaKeysValidated',
-      'mockExamConfigValidated',
-      'mockExamRuntimeParityValidated',
-      'mockExamChapterBalanceParityValidated',
-      'mockExamTimerParityValidated',
-      'examRouteHeadersValidated',
-      'examRouteHeaderParityValidated',
-      'examRouteCopyLabelsValidated',
-      'examRouteCopyParityValidated',
-    ],
-  },
-  {
-    id: 'searchRouteQueryHydration',
-    flags: ['--focus-search-route-query-hydration'],
-    summaryKeys: [
-      'searchRouteQueryHydrationRulesValidated',
-      'searchRouteQueryHydrationParityValidated',
-    ],
-  },
-  {
-    id: 'answerShuffleParity',
-    flags: ['--focus-answer-shuffle-parity'],
-    summaryKeys: [
-      'answerShuffleSingleChoiceQuestionsValidated',
-      'answerShuffleTrueFalseQuestionsValidated',
-      'answerShuffleSeedDistributionsValidated',
-      'answerShuffleSessionMovementQuestionsValidated',
-      'answerShuffleDistributionParityValidated',
-      'publishedQuestions',
-    ],
-  },
-  {
-    id: 'adPlacementRouteParity',
-    flags: ['--focus-ad-placement-route-parity'],
-    summaryKeys: [
-      'adPlacementRoutesValidated',
-      'noAdRoutesValidated',
-      'adPlacementRouteParityValidated',
-    ],
-  },
-  {
-    id: 'examSubmissionFinalityParity',
-    flags: ['--focus-exam-submission-finality-parity'],
-    summaryKeys: ['examSubmissionFinalityParityValidated'],
-  },
-  {
-    id: 'mockExamCopyParity',
-    flags: ['--focus-mock-exam-copy-parity'],
-    summaryKeys: [
-      'nativeMockExamComponentCopyLabelsValidated',
-      'nativeMockExamComponentLegalCopyValidated',
-      'nativeMockExamLibraryLabelsValidated',
-      'nativeMockExamScoreSourceCopyValidated',
-      'nativeMockExamSwedishCopyNaturalnessValidated',
-      'nativeMockExamTierCopyValidated',
-    ],
-  },
-  {
-    id: 'profileRouteCopy',
-    flags: ['--focus-profile-route-copy'],
-    summaryKeys: [
-      'profileRouteHeadersValidated',
-      'profileRouteHeaderParityValidated',
-      'profileRouteCopyLabelsValidated',
-      'profileRouteCopyParityValidated',
-      'badgesValidated',
-      'badgeMilestoneParityValidated',
-    ],
-  },
-  {
-    id: 'uhrReferenceCardAccessibility',
-    flags: ['--focus-uhr-reference-card-accessibility'],
-    summaryKeys: [
-      'uhrReferenceCardAccessibilityRulesValidated',
-      'uhrReferenceCardAccessibilityParityValidated',
-    ],
-  },
-  {
-    id: 'celebrationBurstAccessibility',
-    flags: ['--focus-celebration-burst-accessibility'],
-    summaryKeys: [
-      'celebrationBurstAccessibilityRulesValidated',
-      'celebrationBurstAccessibilityParityValidated',
-    ],
-  },
-  {
-    id: 'questionSpeechTextParity',
-    flags: ['--focus-question-speech-text-parity'],
-    summaryKeys: [
-      'publishedQuestions',
-      'questionSpeechTextQuestionsValidated',
-      'questionSpeechTextOptionsValidated',
-      'questionSpeechTextParityValidated',
-    ],
-  },
-  {
-    id: 'speechRuntimeParity',
-    flags: ['--focus-speech-runtime-parity'],
-    summaryKeys: ['speechRuntimeCasesValidated', 'speechRuntimeParityValidated'],
-  },
-  {
-    id: 'uhrSourceMetadata',
-    flags: ['--focus-uhr-source-metadata'],
-    summaryKeys: [
-      'uhrSourceMetadataValidated',
-      'uhrSourceRetrievedDateValidated',
-      'uhrMapSourceExactSchemaKeysValidated',
-      'uhrMapTextFieldsNormalizedValidated',
-    ],
-  },
-  {
-    id: 'questionBankCsv',
-    flags: ['--focus-question-bank-csv'],
-    summaryKeys: [
-      'questions',
-      'publishedQuestions',
-      'questionBankCsvHeaderColumnsValidated',
-      'questionBankCsvUniqueHeaderNamesValidated',
-      'questionBankCsvRowsValidated',
-      'questionBankCsvProvenanceCounts',
-      'questionBankCsvUhrSourcePublisherRowsValidated',
-      'questionBankCsvUhrSourcePublisherParityValidated',
-    ],
-  },
-  {
-    id: 'examGeneratorSchema',
-    flags: ['--focus-exam-generator-schema'],
-    summaryKeys: [
-      'examGeneratorTypeAliasesValidated',
-      'examGeneratorTypeInterfacesValidated',
-      'examGeneratorTypeSchemaParityValidated',
-    ],
-  },
-  {
-    id: 'removeAdsHookParity',
-    flags: ['--focus-remove-ads-hook-parity'],
-    summaryKeys: [
-      'removeAdsEntitlementHookCasesValidated',
-      'removeAdsEntitlementHookParityValidated',
-    ],
-  },
-  {
-    id: 'removeAdsPurchaseRuntimeParity',
-    flags: ['--focus-remove-ads-purchase-runtime-parity'],
-    summaryKeys: [
-      'purchaseTypeUnionsValidated',
-      'purchaseTypeInterfacesValidated',
-      'purchaseTypeSchemaParityValidated',
-      'removeAdsPurchaseRuntimeCasesValidated',
-      'removeAdsPurchaseRuntimeParityValidated',
-    ],
-  },
-  {
-    id: 'umeaDemonym',
-    flags: ['--focus-umea-demonym'],
-    summaryKeys: ['questionUmeaDemonymSwedishNaturalnessValidated'],
-  },
-  {
-    id: 'chapterLocalizedText',
-    flags: ['--focus-chapter-localized-text'],
-    summaryKeys: [
-      'chapters',
-      'chapterSchemasValidated',
-      'chapterTextFieldsNormalizedValidated',
-      'chapterExactSchemaKeysValidated',
-      'chapterLocalizedTextMapsValidated',
-    ],
-  },
-  {
-    id: 'practiceRouteCopyParity',
-    flags: ['--focus-practice-route-copy-parity'],
-    summaryKeys: [
-      'practiceRouteCopyLabelsValidated',
-      'practiceRouteCopyParityValidated',
-      'provenanceAuthorityCopyFilesValidated',
-      'provenanceAuthorityCopyParityValidated',
-    ],
-  },
-  {
-    id: 'practiceFlowParity',
-    flags: ['--focus-practice-flow-parity'],
-    summaryKeys: ['practiceFlowCasesValidated', 'practiceFlowParityValidated'],
-  },
-  {
-    id: 'contentExecCwd',
-    flags: ['--focus-content-exec-cwd'],
-    summaryKeys: [
-      'contentTestValidateContentExecCallsValidated',
-      'contentTestValidateContentExecCwdPinnedValidated',
-      'contentTestValidateContentExecCwdParityValidated',
-    ],
-  },
-]);
-
-const FOCUSED_VALIDATION_REGISTRY_BY_ID = new Map(
-  FOCUSED_VALIDATION_REGISTRY.map((entry) => [entry.id, entry]),
-);
-const SUPPORTED_FOCUSED_VALIDATION_FLAGS = new Set(
-  FOCUSED_VALIDATION_REGISTRY.flatMap((entry) => entry.flags),
-);
-
-function rejectUnsupportedFocusedValidationFlags() {
-  const requestedFlags = process.argv.slice(2).filter((arg) => arg.startsWith('--focus-'));
-  const unsupportedFlags = requestedFlags.filter(
-    (flag) => !SUPPORTED_FOCUSED_VALIDATION_FLAGS.has(flag),
-  );
-  if (unsupportedFlags.length === 0) return;
-
-  const plural = unsupportedFlags.length === 1 ? 'flag' : 'flags';
-  console.error(`Unsupported validate-content focus ${plural}: ${unsupportedFlags.join(', ')}`);
-  console.error('Supported focus modes:');
-  Array.from(SUPPORTED_FOCUSED_VALIDATION_FLAGS)
-    .sort()
-    .forEach((flag) => console.error(`- ${flag}`));
-  process.exit(1);
-}
-
-function focusedValidationRequested(id) {
-  const entry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get(id);
-  if (!entry) throw new Error(`Unknown focused validation registry id: ${id}`);
-  return entry.flags.some((flag) => process.argv.includes(flag));
-}
-
-rejectUnsupportedFocusedValidationFlags();
 const moduleCache = new Map();
 const speechEvents = [];
 const speechMock = {
@@ -8795,6 +8296,9 @@ const spacedRepetitionSchedule = spacedRepetitionModule.spacedRepetitionSchedule
 const getNextReviewAt = spacedRepetitionModule.getNextReviewAt;
 const dashboardStatsModule = loadTs('lib/learning/dashboardStats.ts');
 const perChapterProgress = dashboardStatsModule.perChapterProgress;
+const adaptivePracticeModule = loadTs('lib/learning/adaptivePractice.ts');
+const pickAdaptiveSession = adaptivePracticeModule.pickAdaptiveSession;
+const explainAdaptivePick = adaptivePracticeModule.explainAdaptivePick;
 const readinessModule = loadTs('lib/learning/readiness.ts');
 const computeReadinessFromQuestionProgress = readinessModule.computeReadinessFromQuestionProgress;
 const streakModule = loadTs('lib/learning/streaks.ts');
@@ -9106,6 +8610,10 @@ let dashboardPerChapterInputRulesValidated = 0;
 let dashboardPerChapterInputParityValidated = false;
 let readinessAdapterRulesValidated = 0;
 let readinessAdapterRuntimeParityValidated = false;
+let adaptivePracticeSizeRuntimeCasesValidated = 0;
+let adaptivePracticeSizeRuntimeParityValidated = false;
+let adaptivePracticeDifficultyRuntimeCasesValidated = 0;
+let adaptivePracticeDifficultyRuntimeParityValidated = false;
 let streakRulesValidated = 0;
 let streakRulesParityValidated = false;
 let xpRulesValidated = 0;
@@ -9606,6 +9114,26 @@ if (focusedValidationRequested('readinessAdapterRules')) {
   printValidationSummary({
     readinessAdapterRulesValidated,
     readinessAdapterRuntimeParityValidated,
+  });
+  process.exit(0);
+}
+
+if (focusedValidationRequested('adaptivePracticeSize')) {
+  validateAdaptivePracticeSizeRuntimeGuards();
+  exitWithValidationFailures();
+  printValidationSummary({
+    adaptivePracticeSizeRuntimeCasesValidated,
+    adaptivePracticeSizeRuntimeParityValidated,
+  });
+  process.exit(0);
+}
+
+if (focusedValidationRequested('adaptivePracticeDifficulty')) {
+  validateAdaptivePracticeDifficultyRuntimeGuards();
+  exitWithValidationFailures();
+  printValidationSummary({
+    adaptivePracticeDifficultyRuntimeCasesValidated,
+    adaptivePracticeDifficultyRuntimeParityValidated,
   });
   process.exit(0);
 }
@@ -18245,6 +17773,159 @@ function validateDashboardPerChapterInputRules() {
   }
 }
 
+function adaptivePracticeProgressFromAnswers(answers) {
+  return {
+    totalXp: 0,
+    level: 1,
+    currentStreak: 0,
+    dailyGoalAnswers: 10,
+    questionProgress: {},
+    sessions: [
+      {
+        id: 'adaptive-runtime-validation',
+        mode: 'study',
+        questionIds: [],
+        answers,
+        startedAt: '2026-05-19T00:00:00.000Z',
+      },
+    ],
+  };
+}
+
+function validateAdaptivePracticeSizeRuntimeGuards() {
+  if (typeof pickAdaptiveSession !== 'function' || typeof explainAdaptivePick !== 'function') {
+    return;
+  }
+
+  const bank = [
+    ...Array.from({ length: 12 }, (_, index) => ({
+      id: `adaptive-size-default-${String(index + 1).padStart(2, '0')}`,
+      difficulty: 'medium',
+      chapterId: 'ch01',
+    })),
+    ...Array.from({ length: 4 }, (_, index) => ({
+      id: `adaptive-size-filtered-${String(index + 1).padStart(2, '0')}`,
+      difficulty: 'medium',
+      chapterId: 'ch02',
+    })),
+  ];
+  const baseInput = {
+    progress: adaptivePracticeProgressFromAnswers([]),
+    bank,
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  };
+  const malformedSizeCases = [
+    { label: 'NaN', size: Number.NaN },
+    { label: 'Infinity', size: Number.POSITIVE_INFINITY },
+    { label: 'negative', size: -1 },
+    { label: 'fractional', size: 2.5 },
+    { label: 'numeric string', size: '2' },
+  ];
+  let rulesAreValid = true;
+
+  malformedSizeCases.forEach(({ label, size }) => {
+    const picked = pickAdaptiveSession({ ...baseInput, size });
+    const counts = explainAdaptivePick({ ...baseInput, size });
+    const explainedCount = Object.values(counts).reduce((sum, count) => sum + count, 0);
+
+    if (picked.length !== 10 || explainedCount !== picked.length) {
+      rulesAreValid = false;
+      fail(
+        `adaptive practice malformed size ${label} picked ${picked.length} with ${explainedCount} explained, expected default cap 10`,
+      );
+      return;
+    }
+
+    adaptivePracticeSizeRuntimeCasesValidated += 1;
+  });
+
+  const zeroPick = pickAdaptiveSession({ ...baseInput, size: 0 });
+  if (zeroPick.length !== 0) {
+    rulesAreValid = false;
+    fail(`adaptive practice explicit zero size picked ${zeroPick.length}, expected 0`);
+  }
+
+  const filteredPick = pickAdaptiveSession({
+    ...baseInput,
+    size: Number.NaN,
+    chapterId: 'ch02',
+  });
+  if (
+    filteredPick.length !== 4 ||
+    filteredPick.some((id) => !id.startsWith('adaptive-size-filtered-'))
+  ) {
+    rulesAreValid = false;
+    fail(
+      `adaptive practice malformed size with chapter filter picked ${JSON.stringify(filteredPick)}, expected the 4 eligible filtered questions`,
+    );
+  }
+
+  if (rulesAreValid && adaptivePracticeSizeRuntimeCasesValidated === malformedSizeCases.length) {
+    adaptivePracticeSizeRuntimeParityValidated = true;
+  }
+}
+
+function validateAdaptivePracticeDifficultyRuntimeGuards() {
+  if (typeof pickAdaptiveSession !== 'function' || typeof explainAdaptivePick !== 'function') {
+    return;
+  }
+
+  const now = new Date('2026-05-19T12:00:00.000Z');
+  const malformedDifficultyCases = [
+    { label: 'invalid string difficulty', difficulty: 'expert' },
+    { label: 'null difficulty', difficulty: null },
+    { label: 'object difficulty', difficulty: { level: 'expert' } },
+  ];
+  let rulesAreValid = true;
+
+  malformedDifficultyCases.forEach(({ label, difficulty }, index) => {
+    const input = {
+      progress: adaptivePracticeProgressFromAnswers([
+        {
+          questionId: `stale-invalid-${index + 1}`,
+          selectedOptionIds: [],
+          isCorrect: true,
+          answeredAt: '2026-04-14T12:00:00.000Z',
+          timeSpentSeconds: 5,
+        },
+      ]),
+      bank: [
+        {
+          id: `stale-invalid-${index + 1}`,
+          difficulty,
+          chapterId: 'ch01',
+        },
+        { id: 'z-unseen-medium', difficulty: 'medium', chapterId: 'ch01' },
+      ],
+      size: 1,
+      recentAccuracyOverride: 0.95,
+      now,
+    };
+    const picked = pickAdaptiveSession(input);
+    const counts = explainAdaptivePick(input);
+
+    if (
+      !jsonEqual(picked, ['z-unseen-medium']) ||
+      !jsonEqual(counts, { 'recently-wrong': 0, unseen: 1, mastered: 0, stale: 0 })
+    ) {
+      rulesAreValid = false;
+      fail(
+        `adaptive practice ${label} returned picked=${JSON.stringify(picked)} counts=${JSON.stringify(counts)}, expected neutral difficulty`,
+      );
+      return;
+    }
+
+    adaptivePracticeDifficultyRuntimeCasesValidated += 1;
+  });
+
+  if (
+    rulesAreValid &&
+    adaptivePracticeDifficultyRuntimeCasesValidated === malformedDifficultyCases.length
+  ) {
+    adaptivePracticeDifficultyRuntimeParityValidated = true;
+  }
+}
+
 function validateReadinessAdapterRules() {
   if (typeof computeReadinessFromQuestionProgress !== 'function') return;
 
@@ -20126,6 +19807,8 @@ validateSpeechRuntimeParity();
 validateChapterQuizSessionParity();
 validateSpacedRepetitionSchedule();
 validateDashboardPerChapterInputRules();
+validateAdaptivePracticeSizeRuntimeGuards();
+validateAdaptivePracticeDifficultyRuntimeGuards();
 validateReadinessAdapterRules();
 validateStreakRules();
 validateXpRules();
@@ -20415,6 +20098,10 @@ console.log(
       spacedRepetitionRuntimeParityValidated,
       dashboardPerChapterInputRulesValidated,
       dashboardPerChapterInputParityValidated,
+      adaptivePracticeSizeRuntimeCasesValidated,
+      adaptivePracticeSizeRuntimeParityValidated,
+      adaptivePracticeDifficultyRuntimeCasesValidated,
+      adaptivePracticeDifficultyRuntimeParityValidated,
       readinessAdapterRulesValidated,
       readinessAdapterRuntimeParityValidated,
       streakRulesValidated,
