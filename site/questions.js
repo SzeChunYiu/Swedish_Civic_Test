@@ -1234,8 +1234,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Which is a way to influence and participate in society?",
-      "sv": "Vilket är ett sätt att påverka och delta i samhället?",
+      "en": "How can people influence society and participate in democracy?",
+      "sv": "Hur kan människor påverka samhället och delta i demokratin?",
       "zh-Hant": "哪一種方式可以影響並參與社會？",
       "zh-Hans": "哪一种方式可以影响并参与社会？",
       "ar": "ما الطريقة التي يمكن بها التأثير والمشاركة في المجتمع؟",
@@ -2050,7 +2050,7 @@
     "answer": 0,
     "why": {
       "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna inte behöver följa resultatet.",
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet.",
       "zh-Hant": "公投可以就某個特定問題在全國、地區或市鎮舉行。它們是諮詢性的，所以政治人物不一定必須遵循結果。",
       "zh-Hans": "公投可以就某个特定问题在全国、地区或市镇举行。它们是咨询性的，所以政治人物不一定必须遵循结果。",
       "ar": "يمكن إجراء الاستفتاءات حول مسألة معينة على المستوى الوطني أو في إقليم أو بلدية. وهي استشارية، لذلك لا يجب على السياسيين بالضرورة اتباع النتيجة.",
@@ -17273,8 +17273,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Which answer describes voting rights in municipal and regional elections for people who are not Swedish citizens?",
-      "sv": "Vilket svar beskriver rösträtt i kommun- och regionval för personer som inte är svenska medborgare?",
+      "en": "What rules apply to voting rights in municipal and regional elections for people who are not Swedish citizens?",
+      "sv": "Vilka regler gäller för rösträtt i kommun- och regionval för personer som inte är svenska medborgare?",
       "zh-Hant": "對於非瑞典公民，哪項說法描述了他們在 kommun（市鎮）和 region（大區）選舉中的投票權？",
       "zh-Hans": "对于非瑞典公民，哪项说法描述了他们在 kommun（市镇）和 region（大区）选举中的投票权？",
       "ar": "أيُّ إجابةٍ تصف حقّ التصويت في انتخابات البلديات (kommun) والأقاليم (region) لمن ليسوا مواطنين سويديين؟",
@@ -17913,30 +17913,90 @@
     "type": "single_choice",
     "q": {
       "en": "What happens during a preliminary investigation in a criminal investigation?",
-      "sv": "Vad händer under en förundersökning i en brottsutredning?"
+      "sv": "Vad händer under en förundersökning i en brottsutredning?",
+      "zh-Hant": "在刑事調查的初步調查中會發生什麼？",
+      "zh-Hans": "在刑事调查的初步调查中会发生什么？",
+      "ar": "ماذا يحدث أثناء التحقيق التمهيدي في تحقيق جنائي؟",
+      "ckb": "لە کاتی لێکۆڵینەوەی سەرەتایی لە لێکۆڵینەوەی تاوانیدا چی ڕوودەدات؟",
+      "fa": "در مرحلهٔ تحقیقات مقدماتی یک تحقیق کیفری چه اتفاقی می‌افتد؟",
+      "pl": "Co dzieje się podczas postępowania przygotowawczego w dochodzeniu karnym?",
+      "so": "Maxaa dhaca inta lagu jiro baaritaanka hordhaca ah ee baaritaan dembi?",
+      "ti": "ኣብ ምርመራ ገበን፣ ኣብ ቅድመ-ምርመራ እንታይ ይኸውን?",
+      "tr": "Bir ceza soruşturmasında ön soruşturma sırasında ne olur?",
+      "uk": "Що відбувається під час попереднього розслідування у кримінальній справі?"
     },
     "opts": [
       {
         "en": "The police gather evidence and speak with witnesses",
-        "sv": "Polisen samlar bevis och pratar med vittnen"
+        "sv": "Polisen samlar bevis och pratar med vittnen",
+        "zh-Hant": "警方收集證據並與證人談話",
+        "zh-Hans": "警方收集证据并与证人谈话",
+        "ar": "تجمع الشرطة الأدلة وتتحدث مع الشهود",
+        "ckb": "پۆلیس بەڵگە کۆدەکاتەوە و لەگەڵ شایەتەکان قسە دەکات",
+        "fa": "پلیس مدارک را جمع‌آوری می‌کند و با شاهدان صحبت می‌کند",
+        "pl": "Policja zbiera dowody i rozmawia ze świadkami",
+        "so": "Boolisku wuxuu ururiyaa caddaymo wuxuuna la hadlaa markhaatiyaal",
+        "ti": "ፖሊስ መርትዖ ይእክብን ምስ ምስክራት ይዛረብን",
+        "tr": "Polis kanıt toplar ve tanıklarla konuşur",
+        "uk": "Поліція збирає докази та розмовляє зі свідками"
       },
       {
         "en": "The judge decides the sentence before the trial begins",
-        "sv": "Domaren bestämmer straffet innan rättegången börjar"
+        "sv": "Domaren bestämmer straffet innan rättegången börjar",
+        "zh-Hant": "法官在審判開始前決定刑罰",
+        "zh-Hans": "法官在审判开始前决定刑罚",
+        "ar": "يقرر القاضي العقوبة قبل بدء المحاكمة",
+        "ckb": "دادوەر پێش دەستپێکردنی دادگایی سزاکە دیاری دەکات",
+        "fa": "قاضی پیش از آغاز دادگاه مجازات را تعیین می‌کند",
+        "pl": "Sędzia ustala karę przed rozpoczęciem rozprawy",
+        "so": "Garsooruhu wuxuu go’aamiyaa ciqaabta ka hor inta maxkamaddu bilaaban",
+        "ti": "ፈራዲ ቅድሚ ፍርዲ ምጅማሩ መቕጻዕቲ ይውስን",
+        "tr": "Yargıç, dava başlamadan önce cezayı belirler",
+        "uk": "Суддя визначає покарання до початку судового розгляду"
       },
       {
         "en": "The crime victim alone chooses whether the suspect will be convicted",
-        "sv": "Brottsoffret väljer ensam om den misstänkte ska dömas"
+        "sv": "Brottsoffret väljer ensam om den misstänkte ska dömas",
+        "zh-Hant": "受害者單獨決定嫌疑人是否應被定罪",
+        "zh-Hans": "受害者单独决定嫌疑人是否应被定罪",
+        "ar": "يختار الضحية وحده ما إذا كان ينبغي إدانة المشتبه به",
+        "ckb": "قوربانی بە تەنها هەڵدەبژێرێت کە گومانلێکراوەکە سزا بدرێت یان نا",
+        "fa": "قربانی به‌تنهایی تصمیم می‌گیرد که مظنون محکوم شود یا نه",
+        "pl": "Ofiara przestępstwa sama decyduje, czy podejrzany zostanie skazany",
+        "so": "Dhibbanaha dembiga ayaa keligiis dooranaya in eedaysanaha la xukumo iyo in kale",
+        "ti": "ግዳይ ገበን በይኑ እቲ ተጠርጣሪ ክፍረድ ድዩ ኣይክፍረድን ይውስን",
+        "tr": "Suç mağduru, şüphelinin mahkûm edilip edilmeyeceğine tek başına karar verir",
+        "uk": "Потерпілий сам вирішує, чи має підозрюваного бути засуджено"
       },
       {
         "en": "The municipal council votes on whether the suspect is guilty",
-        "sv": "Kommunfullmäktige röstar om den misstänkte är skyldig"
+        "sv": "Kommunfullmäktige röstar om den misstänkte är skyldig",
+        "zh-Hant": "市議會投票決定嫌疑人是否有罪",
+        "zh-Hans": "市议会投票决定嫌疑人是否有罪",
+        "ar": "يصوّت المجلس البلدي على ما إذا كان المشتبه به مذنبًا",
+        "ckb": "ئەنجومەنی شارەوانی دەنگ دەدات کە گومانلێکراوەکە تاوانبارە یان نا",
+        "fa": "شورای کمون رأی می‌دهد که مظنون گناهکار است یا نه",
+        "pl": "Rada gminy głosuje nad tym, czy podejrzany jest winny",
+        "so": "Golaha degmada ayaa u codeeya in eedaysanuhu dambiile yahay iyo in kale",
+        "ti": "ቤት ምኽሪ kommun እቲ ተጠርጣሪ ገበነኛ ድዩ ኣይኮነን ድምጺ ይህብ",
+        "tr": "Belediye meclisi, şüphelinin suçlu olup olmadığına oy verir",
+        "uk": "Муніципальна рада голосує, чи є підозрюваний винним"
       }
     ],
     "answer": 0,
     "why": {
       "en": "A criminal investigation includes several steps. During the preliminary investigation, the police gather evidence and speak with witnesses to investigate what happened.",
-      "sv": "I en brottsutredning ingår flera steg. Under förundersökningen samlar polisen bevis och pratar med vittnen för att utreda vad som har hänt."
+      "sv": "I en brottsutredning ingår flera steg. Under förundersökningen samlar polisen bevis och pratar med vittnen för att utreda vad som har hänt.",
+      "zh-Hant": "刑事調查包括多個步驟。在初步調查中，警方收集證據並與證人談話，以查明發生了什麼。",
+      "zh-Hans": "刑事调查包括多个步骤。在初步调查中，警方收集证据并与证人谈话，以查明发生了什么。",
+      "ar": "يتضمن التحقيق الجنائي عدة خطوات. أثناء التحقيق التمهيدي تجمع الشرطة الأدلة وتتحدث مع الشهود للتحقق مما حدث.",
+      "ckb": "لێکۆڵینەوەی تاوانی چەند هەنگاوێک لەخۆ دەگرێت. لە کاتی لێکۆڵینەوەی سەرەتاییدا، پۆلیس بەڵگە کۆدەکاتەوە و لەگەڵ شایەتەکان قسە دەکات بۆ ئەوەی بزانێت چی ڕوویداوە.",
+      "fa": "یک تحقیق کیفری چند مرحله دارد. در تحقیقات مقدماتی، پلیس مدارک را جمع‌آوری می‌کند و با شاهدان صحبت می‌کند تا روشن کند چه اتفاقی افتاده است.",
+      "pl": "Dochodzenie karne obejmuje kilka etapów. Podczas postępowania przygotowawczego policja zbiera dowody i rozmawia ze świadkami, aby ustalić, co się wydarzyło.",
+      "so": "Baaritaanka dembigu wuxuu leeyahay dhowr tallaabo. Inta lagu jiro baaritaanka hordhaca ah, boolisku wuxuu ururiyaa caddaymo wuxuuna la hadlaa markhaatiyaal si loo baaro waxa dhacay.",
+      "ti": "ምርመራ ገበን ብዙሓት ደረጃታት የጠቓልል። ኣብ ቅድመ-ምርመራ፣ ፖሊስ መርትዖ ይእክብን ምስ ምስክራት ይዛረብን፣ እንታይ ከም ዝተፈጸመ ንምርመራ።",
+      "tr": "Bir ceza soruşturması birkaç aşamadan oluşur. Ön soruşturma sırasında polis, ne olduğunu araştırmak için kanıt toplar ve tanıklarla konuşur.",
+      "uk": "Кримінальне розслідування має кілька етапів. Під час попереднього розслідування поліція збирає докази та розмовляє зі свідками, щоб з’ясувати, що сталося."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -17960,30 +18020,90 @@
     "type": "single_choice",
     "q": {
       "en": "What right does the accused person have during a trial?",
-      "sv": "Vilken rätt har den åtalade under en rättegång?"
+      "sv": "Vilken rätt har den åtalade under en rättegång?",
+      "zh-Hant": "被告在審判中有什麼權利？",
+      "zh-Hans": "被告在审判中有什么权利？",
+      "ar": "ما الحق الذي يتمتع به المتهم أثناء المحاكمة؟",
+      "ckb": "تۆمەتبار لە کاتی دادگاییکردندا چی مافێکی هەیە؟",
+      "fa": "فرد متهم در طول دادگاه چه حقی دارد؟",
+      "pl": "Jakie prawo ma osoba oskarżona podczas rozprawy?",
+      "so": "Xuquuqdee ayuu qofka la eedeeyay leeyahay inta maxkamaddu socoto?",
+      "ti": "እቲ ተኸሳሲ ኣብ እዋን ፍርዲ እንታይ መሰል ኣለዎ?",
+      "tr": "Sanık duruşma sırasında hangi hakka sahiptir?",
+      "uk": "Яке право має обвинувачена особа під час судового розгляду?"
     },
     "opts": [
       {
         "en": "The right to a defence lawyer who can question the prosecutor’s evidence and present evidence of their own",
-        "sv": "Rätt till en försvarsadvokat som kan ifrågasätta åklagarens bevis och lägga fram egna bevis"
+        "sv": "Rätt till en försvarsadvokat som kan ifrågasätta åklagarens bevis och lägga fram egna bevis",
+        "zh-Hant": "有權獲得辯護律師，該律師可以質疑檢察官的證據並提出自己的證據",
+        "zh-Hans": "有权获得辩护律师，该律师可以质疑检察官的证据并提出自己的证据",
+        "ar": "الحق في محامي دفاع يستطيع التشكيك في أدلة المدعي العام وتقديم أدلة خاصة بالدفاع",
+        "ckb": "مافی پارێزەرێکی بەرگری کە بتوانێت بەڵگەکانی دادستان بخاتە ژێر پرسیار و بەڵگەی خۆی پێشکەش بکات",
+        "fa": "حق داشتن وکیل مدافعی که بتواند مدارک دادستان را به چالش بکشد و مدارک خود را ارائه کند",
+        "pl": "Prawo do obrońcy, który może kwestionować dowody prokuratora i przedstawiać własne dowody",
+        "so": "Xaqa qareen difaac oo su’aal gelin kara caddaymaha xeer-ilaaliyaha isla markaana keeni kara caddaymo u gaar ah",
+        "ti": "መሰል ናይ መከላኸሊ ጠበቓ፣ ንመርትዖታት ኣኽባር ሕጊ ክሓትትን ናይ ገዛእ ርእሱ መርትዖ ከቕርብን ዝኽእል",
+        "tr": "Savcının kanıtlarını sorgulayabilen ve kendi kanıtlarını sunabilen bir savunma avukatı hakkı",
+        "uk": "Право на захисника, який може ставити під сумнів докази прокурора та подавати власні докази"
       },
       {
         "en": "The right to choose the judge and lay judges alone",
-        "sv": "Rätt att ensam välja domare och nämndemän"
+        "sv": "Rätt att ensam välja domare och nämndemän",
+        "zh-Hant": "有權單獨選擇法官和陪審員",
+        "zh-Hans": "有权单独选择法官和陪审员",
+        "ar": "الحق في اختيار القاضي والقضاة المحلّفين وحده",
+        "ckb": "مافی ئەوەی بە تەنها دادوەر و دادوەرە هاوشانییەکان هەڵبژێرێت",
+        "fa": "حق اینکه به‌تنهایی قاضی و قاضیان غیرحرفه‌ای را انتخاب کند",
+        "pl": "Prawo do samodzielnego wyboru sędziego i ławników",
+        "so": "Xaqa inuu keligiis doorto garsooraha iyo garsoorayaasha dadweynaha",
+        "ti": "መሰል ፈራዲን ህዝባዊ ዳያኑን በይኑ ናይ ምምራጽ",
+        "tr": "Yargıcı ve halk yargıçlarını tek başına seçme hakkı",
+        "uk": "Право самостійно обирати суддю та народних засідателів"
       },
       {
         "en": "The right to forbid the prosecutor from speaking",
-        "sv": "Rätt att förbjuda åklagaren från att tala"
+        "sv": "Rätt att förbjuda åklagaren från att tala",
+        "zh-Hant": "有權禁止檢察官發言",
+        "zh-Hans": "有权禁止检察官发言",
+        "ar": "الحق في منع المدعي العام من الكلام",
+        "ckb": "مافی ئەوەی دادستان لە قسەکردن قەدەغە بکات",
+        "fa": "حق اینکه دادستان را از صحبت کردن منع کند",
+        "pl": "Prawo do zakazania prokuratorowi zabierania głosu",
+        "so": "Xaqa inuu ka mamnuuco xeer-ilaaliyaha inuu hadlo",
+        "ti": "ንኣኽባር ሕጊ ካብ ምዝራብ ናይ ምኽልካል መሰል",
+        "tr": "Savcının konuşmasını yasaklama hakkı",
+        "uk": "Право заборонити прокурору говорити"
       },
       {
         "en": "The right to avoid the court’s decision if there is a lot of evidence",
-        "sv": "Rätt att slippa domstolens beslut om bevisen är många"
+        "sv": "Rätt att slippa domstolens beslut om bevisen är många",
+        "zh-Hant": "如果證據很多，就有權不受法院裁決",
+        "zh-Hans": "如果证据很多，就有权不受法院裁决",
+        "ar": "الحق في تجنب قرار المحكمة إذا كانت الأدلة كثيرة",
+        "ckb": "مافی ئەوەی لە بڕیاری دادگا ڕزگار بێت ئەگەر بەڵگە زۆر بێت",
+        "fa": "حق اینکه اگر مدارک زیاد باشد از تصمیم دادگاه معاف شود",
+        "pl": "Prawo do uniknięcia decyzji sądu, jeśli dowodów jest dużo",
+        "so": "Xaqa inuu ka baxsado go’aanka maxkamadda haddii caddaymo badan jiraan",
+        "ti": "መርትዖ ብዙሕ እንተኾይኑ ካብ ውሳነ ቤት ፍርዲ ናይ ምምላጥ መሰል",
+        "tr": "Çok kanıt varsa mahkemenin kararından kaçınma hakkı",
+        "uk": "Право уникнути рішення суду, якщо доказів багато"
       }
     ],
     "answer": 0,
     "why": {
       "en": "During the trial, the prosecutor tries to prove that the accused person is guilty. The accused has the right to a defence lawyer who can question the prosecutor’s evidence and present evidence of their own.",
-      "sv": "Under rättegången försöker åklagaren bevisa att den åtalade är skyldig. Den åtalade har rätt till en försvarsadvokat som kan ifrågasätta åklagarens bevis och lägga fram egna bevis."
+      "sv": "Under rättegången försöker åklagaren bevisa att den åtalade är skyldig. Den åtalade har rätt till en försvarsadvokat som kan ifrågasätta åklagarens bevis och lägga fram egna bevis.",
+      "zh-Hant": "在審判中，檢察官試圖證明被告有罪。被告有權獲得辯護律師，該律師可以質疑檢察官的證據並提出自己的證據。",
+      "zh-Hans": "在审判中，检察官试图证明被告有罪。被告有权获得辩护律师，该律师可以质疑检察官的证据并提出自己的证据。",
+      "ar": "أثناء المحاكمة يحاول المدعي العام إثبات أن المتهم مذنب. وللمتهم الحق في محامي دفاع يستطيع التشكيك في أدلة المدعي العام وتقديم أدلة خاصة بالدفاع.",
+      "ckb": "لە کاتی دادگاییکردندا، دادستان هەوڵ دەدات بسەلمێنێت کە تۆمەتبار تاوانبارە. تۆمەتبار مافی پارێزەرێکی بەرگری هەیە کە بتوانێت بەڵگەکانی دادستان بخاتە ژێر پرسیار و بەڵگەی خۆی پێشکەش بکات.",
+      "fa": "در طول دادگاه، دادستان تلاش می‌کند ثابت کند که متهم گناهکار است. متهم حق دارد وکیل مدافعی داشته باشد که بتواند مدارک دادستان را به چالش بکشد و مدارک خود را ارائه کند.",
+      "pl": "Podczas rozprawy prokurator próbuje udowodnić, że osoba oskarżona jest winna. Oskarżony ma prawo do obrońcy, który może kwestionować dowody prokuratora i przedstawiać własne dowody.",
+      "so": "Inta maxkamaddu socoto, xeer-ilaaliyuhu wuxuu isku dayaa inuu caddeeyo in qofka la eedeeyay dembiile yahay. Eedaysanuhu wuxuu xaq u leeyahay qareen difaac oo su’aal gelin kara caddaymaha xeer-ilaaliyaha isla markaana keeni kara caddaymo u gaar ah.",
+      "ti": "ኣብ እዋን ፍርዲ፣ ኣኽባር ሕጊ እቲ ተኸሳሲ ገበነኛ ምዃኑ ከረጋግጽ ይፍትን። እቲ ተኸሳሲ ንመርትዖታት ኣኽባር ሕጊ ክሓትትን ናይ ገዛእ ርእሱ መርትዖ ከቕርብን ዝኽእል ናይ መከላኸሊ ጠበቓ መሰል ኣለዎ።",
+      "tr": "Duruşma sırasında savcı, sanığın suçlu olduğunu kanıtlamaya çalışır. Sanığın, savcının kanıtlarını sorgulayabilen ve kendi kanıtlarını sunabilen bir savunma avukatı hakkı vardır.",
+      "uk": "Під час судового розгляду прокурор намагається довести, що обвинувачена особа винна. Обвинувачений має право на захисника, який може ставити під сумнів докази прокурора та подавати власні докази."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -18007,30 +18127,90 @@
     "type": "single_choice",
     "q": {
       "en": "How are roles divided among the police, prosecutor, and courts?",
-      "sv": "Hur fördelas rollerna mellan polis, åklagare och domstolar?"
+      "sv": "Hur fördelas rollerna mellan polis, åklagare och domstolar?",
+      "zh-Hant": "警方、檢察官和法院之間的角色如何分工？",
+      "zh-Hans": "警方、检察官和法院之间的角色如何分工？",
+      "ar": "كيف تُقسَّم الأدوار بين الشرطة والمدعي العام والمحاكم؟",
+      "ckb": "ڕۆڵەکان لە نێوان پۆلیس، دادستان و دادگاکاندا چۆن دابەش دەکرێن؟",
+      "fa": "نقش‌ها میان پلیس، دادستان و دادگاه‌ها چگونه تقسیم می‌شود؟",
+      "pl": "Jak podzielone są role między policję, prokuratora i sądy?",
+      "so": "Sidee ayaa doorarka loogu kala qaybiyaa booliska, xeer-ilaaliyaha iyo maxkamadaha?",
+      "ti": "ሚናታት ኣብ መንጎ ፖሊስ፣ ኣኽባር ሕጊን ፍርድቤታትን ከመይ ይከፋፈሉ?",
+      "tr": "Polis, savcı ve mahkemeler arasında roller nasıl bölünür?",
+      "uk": "Як розподілені ролі між поліцією, прокурором і судами?"
     },
     "opts": [
       {
         "en": "The police prevent and investigate crimes, the prosecutor decides whether suspects should be brought before a court, and courts review evidence",
-        "sv": "Polisen förhindrar och utreder brott, åklagaren avgör om misstänkta ska ställas inför domstol, och domstolar granskar bevis"
+        "sv": "Polisen förhindrar och utreder brott, åklagaren avgör om misstänkta ska ställas inför domstol, och domstolar granskar bevis",
+        "zh-Hant": "警方預防並調查犯罪，檢察官決定嫌疑人是否應被送上法庭，法院審查證據",
+        "zh-Hans": "警方预防并调查犯罪，检察官决定嫌疑人是否应被送上法庭，法院审查证据",
+        "ar": "تمنع الشرطة الجرائم وتحقق فيها، ويقرر المدعي العام ما إذا كان المشتبه بهم سيُحالون إلى المحكمة، وتراجع المحاكم الأدلة",
+        "ckb": "پۆلیس تاوان ڕێگری و لێکۆڵینەوە دەکات، دادستان بڕیار دەدات گومانلێکراوان بخرێنە بەردەم دادگا یان نا، و دادگاکان بەڵگەکان پێداچوونەوە دەکەن",
+        "fa": "پلیس از جرم پیشگیری و آن را بررسی می‌کند، دادستان تصمیم می‌گیرد آیا مظنونان به دادگاه برده شوند، و دادگاه‌ها مدارک را بررسی می‌کنند",
+        "pl": "Policja zapobiega przestępstwom i je bada, prokurator decyduje, czy podejrzani mają stanąć przed sądem, a sądy oceniają dowody",
+        "so": "Boolisku wuxuu ka hortagaa oo baaraa dembiyada, xeer-ilaaliyuhu wuxuu go’aamiyaa in tuhmanayaasha maxkamad la geeyo, maxkamaduhuna waxay eegaan caddaymaha",
+        "ti": "ፖሊስ ገበናት ይከላኸልን ይምርምርን፣ ኣኽባር ሕጊ ተጠርጠርቲ ናብ ቤት ፍርዲ ክቐርቡ ድዮም ኣይክቐርቡን ይውስን፣ ፍርድቤታት ድማ መርትዖ ይግምግሙ",
+        "tr": "Polis suçları önler ve soruşturur, savcı şüphelilerin mahkemeye çıkarılıp çıkarılmayacağına karar verir, mahkemeler de kanıtları inceler",
+        "uk": "Поліція запобігає злочинам і розслідує їх, прокурор вирішує, чи передавати підозрюваних до суду, а суди розглядають докази"
       },
       {
         "en": "Courts investigate all crimes, municipalities prosecute cases, and the police decide sentences",
-        "sv": "Domstolar utreder alla brott, kommuner väcker åtal och polisen bestämmer straff"
+        "sv": "Domstolar utreder alla brott, kommuner väcker åtal och polisen bestämmer straff",
+        "zh-Hant": "法院調查所有犯罪，市鎮提起公訴，警方決定刑罰",
+        "zh-Hans": "法院调查所有犯罪，市镇提起公诉，警方决定刑罚",
+        "ar": "تحقق المحاكم في كل الجرائم، وتلاحق البلديات القضايا، وتقرر الشرطة العقوبات",
+        "ckb": "دادگاکان هەموو تاوانەکان لێکۆڵینەوە دەکەن، شارەوانییەکان داوا دەکەن، و پۆلیس سزا دیاری دەکات",
+        "fa": "دادگاه‌ها همهٔ جرم‌ها را بررسی می‌کنند، کمون‌ها پیگرد قانونی را انجام می‌دهند و پلیس مجازات را تعیین می‌کند",
+        "pl": "Sądy badają wszystkie przestępstwa, gminy wnoszą oskarżenia, a policja ustala kary",
+        "so": "Maxkamaduhu waxay baaraan dhammaan dembiyada, degmooyinku waxay oogaan dacwado, booliskuna wuxuu go’aamiyaa ciqaabaha",
+        "ti": "ፍርድቤታት ኩሎም ገበናት ይምርምሩ፣ kommun ክስታት የቕርቡ፣ ፖሊስ ድማ መቕጻዕቲ ይውስን",
+        "tr": "Mahkemeler tüm suçları soruşturur, belediyeler dava açar ve polis cezaları belirler",
+        "uk": "Суди розслідують усі злочини, муніципалітети висувають обвинувачення, а поліція визначає покарання"
       },
       {
         "en": "The Prosecution Authority runs prisons, the Crime Victim Authority makes laws, and the Prison and Probation Service holds elections",
-        "sv": "Åklagarmyndigheten driver fängelser, Brottsoffermyndigheten stiftar lagar och Kriminalvården håller val"
+        "sv": "Åklagarmyndigheten driver fängelser, Brottsoffermyndigheten stiftar lagar och Kriminalvården håller val",
+        "zh-Hant": "檢察機關管理監獄，犯罪受害者機關制定法律，監獄和緩刑署舉辦選舉",
+        "zh-Hans": "检察机关管理监狱，犯罪受害者机关制定法律，监狱和缓刑署举办选举",
+        "ar": "تدير هيئة الادعاء السجون، وتسن هيئة ضحايا الجريمة القوانين، وتُنظم مصلحة السجون والمراقبة الانتخابات",
+        "ckb": "دەزگای دادستانی زیندانەکان بەڕێوە دەبات، دەزگای قوربانیانی تاوان یاسا دادەنێت، و خزمەتگوزاری زیندان و چاودێری هەڵبژاردن ئەنجام دەدات",
+        "fa": "دادستانی زندان‌ها را اداره می‌کند، نهاد قربانیان جرم قانون وضع می‌کند و ادارهٔ زندان و مراقبت انتخابات برگزار می‌کند",
+        "pl": "Prokuratura prowadzi więzienia, urząd ds. ofiar przestępstw uchwala prawa, a służba więzienna i probacyjna organizuje wybory",
+        "so": "Hay’adda xeer-ilaalintu waxay maamushaa xabsiyada, hay’adda dhibbanayaasha dembigu waxay samaysaa sharciyo, adeegga xabsiyada iyo kormeerka ayaana qabta doorashooyin",
+        "ti": "ብዓል መዚ ኣኽባር ሕጊ ቤት ማእሰርቲ የካይድ፣ ብዓል መዚ ግዳያት ገበን ሕጊ ይወጽእ፣ ክሪሚናልቮርደን ድማ ምርጫታት የካይድ",
+        "tr": "Savcılık kurumu hapishaneleri işletir, Suç Mağduru Kurumu yasalar çıkarır, Cezaevi ve Denetimli Serbestlik Kurumu seçim yapar",
+        "uk": "Прокуратура керує в’язницями, орган у справах потерпілих ухвалює закони, а служба виконання покарань проводить вибори"
       },
       {
         "en": "The Riksdag judges criminal cases, the government questions witnesses, and regions decide acquittals",
-        "sv": "Riksdagen dömer brottmål, regeringen förhör vittnen och regionerna beslutar frikännande"
+        "sv": "Riksdagen dömer brottmål, regeringen förhör vittnen och regionerna beslutar frikännande",
+        "zh-Hant": "Riksdag 審理刑事案件，政府詢問證人，大區決定無罪釋放",
+        "zh-Hans": "Riksdag 审理刑事案件，政府询问证人，大区决定无罪释放",
+        "ar": "يحكم البرلمان السويدي (Riksdag) في القضايا الجنائية، وتستجوب الحكومة الشهود، وتقرر الأقاليم البراءة",
+        "ckb": "Riksdag دۆسیە تاوانییەکان دادوەری دەکات، حکومەت شایەتەکان دەپرسێت، و هەرێمەکان بڕیاری بێتاوانی دەدەن",
+        "fa": "Riksdag پرونده‌های کیفری را قضاوت می‌کند، دولت از شاهدان بازجویی می‌کند و مناطق حکم تبرئه می‌دهند",
+        "pl": "Riksdag sądzi sprawy karne, rząd przesłuchuje świadków, a regiony decydują o uniewinnieniu",
+        "so": "Riksdag-gu wuxuu xukuma dacwadaha dembiyada, dowladdu waxay su’aalo waydiisaa markhaatiyaal, gobolladuna waxay go’aamiyaan sii-dayn",
+        "ti": "Riksdag ጉዳያት ገበን ይፈርድ፣ መንግስቲ ምስክራት ይሓትት፣ region ድማ ናጻ ምውጻእ ይውስን",
+        "tr": "Riksdag ceza davalarını yargılar, hükümet tanıkları sorgular, bölgeler beraate karar verir",
+        "uk": "Riksdag розглядає кримінальні справи, уряд допитує свідків, а регіони вирішують питання виправдання"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Justice-system authorities have different roles. The police prevent and investigate crimes, the Swedish Prosecution Authority decides whether suspected people should be brought before a court, and courts review evidence and decide on a penalty or acquittal.",
-      "sv": "Rättsväsendets myndigheter har olika roller. Polisen förhindrar och utreder brott, Åklagarmyndigheten avgör om misstänkta personer ska ställas inför domstol, och domstolar granskar bevis och beslutar om påföljd eller frikännande."
+      "sv": "Rättsväsendets myndigheter har olika roller. Polisen förhindrar och utreder brott, Åklagarmyndigheten avgör om misstänkta personer ska ställas inför domstol, och domstolar granskar bevis och beslutar om påföljd eller frikännande.",
+      "zh-Hant": "司法系統的機關有不同角色。警方預防並調查犯罪，瑞典檢察機關決定嫌疑人是否應被送上法庭，法院審查證據並決定處罰或無罪釋放。 (Riksdag)",
+      "zh-Hans": "司法系统的机关有不同角色。警方预防并调查犯罪，瑞典检察机关决定嫌疑人是否应被送上法庭，法院审查证据并决定处罚或无罪释放。 (Riksdag)",
+      "ar": "لدى سلطات نظام العدالة أدوار مختلفة. فالشرطة تمنع الجرائم وتحقق فيها، وتقرر هيئة الادعاء السويدية ما إذا كان الأشخاص المشتبه بهم سيُحالون إلى المحكمة، وتراجع المحاكم الأدلة وتقرر العقوبة أو البراءة. (Riksdag)",
+      "ckb": "دەزگاکانی سیستەمی دادوەری ڕۆڵی جیاوازیان هەیە. پۆلیس تاوان ڕێگری و لێکۆڵینەوە دەکات، دەزگای دادستانی سوید بڕیار دەدات کە گومانلێکراوان بخرێنە بەردەم دادگا یان نا، و دادگاکان بەڵگەکان پێداچوونەوە دەکەن و بڕیار لەسەر سزا یان بێتاوانی دەدەن. (Riksdag)",
+      "fa": "نهادهای دستگاه قضایی نقش‌های متفاوتی دارند. پلیس از جرم پیشگیری و آن را بررسی می‌کند، دادستانی سوئد تصمیم می‌گیرد آیا افراد مظنون به دادگاه برده شوند، و دادگاه‌ها مدارک را بررسی می‌کنند و دربارهٔ مجازات یا تبرئه تصمیم می‌گیرند. (Riksdag)",
+      "pl": "Organy wymiaru sprawiedliwości mają różne role. Policja zapobiega przestępstwom i je bada, szwedzka prokuratura decyduje, czy osoby podejrzane mają stanąć przed sądem, a sądy oceniają dowody i decydują o karze albo uniewinnieniu. (Riksdag)",
+      "so": "Hay’adaha nidaamka caddaaladdu waxay leeyihiin doorar kala duwan. Boolisku wuxuu ka hortagaa oo baaraa dembiyada, hay’adda xeer-ilaalinta Iswiidhan waxay go’aamisaa in dadka la tuhunsan yahay maxkamad la geeyo, maxkamaduhuna waxay eegaan caddaymaha waxayna go’aamiyaan ciqaab ama sii-dayn. (Riksdag)",
+      "ti": "ብዓላት መዚ ስርዓት ፍትሒ ዝተፈላለዩ ሚናታት ኣለዎም። ፖሊስ ገበናት ይከላኸልን ይምርምርን፣ ናይ ሽወደን ኣኽባር ሕጊ ተጠርጠርቲ ናብ ቤት ፍርዲ ክቐርቡ ድዮም ኣይክቐርቡን ይውስን፣ ፍርድቤታት ድማ መርትዖ ይግምግሙን ብዛዕባ መቕጻዕቲ ወይ ናጻ ምውጻእ ይውስኑን። (Riksdag)",
+      "tr": "Adalet sistemi kurumlarının farklı rolleri vardır. Polis suçları önler ve soruşturur, İsveç Savcılık Kurumu şüpheli kişilerin mahkemeye çıkarılıp çıkarılmayacağına karar verir, mahkemeler de kanıtları inceleyip ceza veya beraat kararı verir. (Riksdag)",
+      "uk": "Органи системи правосуддя мають різні ролі. Поліція запобігає злочинам і розслідує їх, шведська прокуратура вирішує, чи передавати підозрюваних осіб до суду, а суди розглядають докази та ухвалюють рішення про покарання або виправдання. (Riksdag)"
     },
     "source": {
       "title": "Sverige i fokus",
@@ -18054,30 +18234,90 @@
     "type": "single_choice",
     "q": {
       "en": "What does it mean that human rights apply to everyone?",
-      "sv": "Vad betyder det att mänskliga rättigheter gäller alla?"
+      "sv": "Vad betyder det att mänskliga rättigheter gäller alla?",
+      "zh-Hant": "人權適用於所有人是什麼意思？",
+      "zh-Hans": "人权适用于所有人是什么意思？",
+      "ar": "ماذا يعني أن حقوق الإنسان تنطبق على الجميع؟",
+      "ckb": "مانای ئەوەی مافەکانی مرۆڤ بۆ هەمووانە چییە؟",
+      "fa": "اینکه حقوق بشر شامل همه می‌شود یعنی چه؟",
+      "pl": "Co oznacza, że prawa człowieka dotyczą wszystkich?",
+      "so": "Maxay ka dhigan tahay in xuquuqda aadanuhu qof walba khusayso?",
+      "ti": "ሰብኣዊ መሰላት ንኩሉ ሰብ ይምልከት ማለት እንታይ ማለት እዩ?",
+      "tr": "İnsan haklarının herkese uygulanması ne anlama gelir?",
+      "uk": "Що означає, що права людини стосуються кожного?"
     },
     "opts": [
       {
         "en": "Every person has rights regardless of background or life situation",
-        "sv": "Varje människa har rättigheter oavsett bakgrund eller livssituation"
+        "sv": "Varje människa har rättigheter oavsett bakgrund eller livssituation",
+        "zh-Hant": "每個人無論背景或生活處境如何都有權利",
+        "zh-Hans": "每个人无论背景或生活处境如何都有权利",
+        "ar": "كل إنسان له حقوق بغضّ النظر عن خلفيته أو وضعه في الحياة",
+        "ckb": "هەر مرۆڤێک مافی هەیە بەبێ گوێدان بە پاشخان یان دۆخی ژیانی",
+        "fa": "هر انسان فارغ از پیشینه یا وضعیت زندگی خود حقوقی دارد",
+        "pl": "Każdy człowiek ma prawa niezależnie od pochodzenia lub sytuacji życiowej",
+        "so": "Qof kasta wuxuu leeyahay xuquuq, iyada oo aan loo eegin asalkiisa ama xaaladdiisa nololeed",
+        "ti": "ኩሉ ሰብ ብዘይ ግድን መበቆሉ ወይ ኩነታት ህይወቱ መሰላት ኣለዎ",
+        "tr": "Her insanın geçmişi veya yaşam durumu ne olursa olsun hakları vardır",
+        "uk": "Кожна людина має права незалежно від походження чи життєвої ситуації"
       },
       {
         "en": "Only Swedish citizens have human rights",
-        "sv": "Bara svenska medborgare har mänskliga rättigheter"
+        "sv": "Bara svenska medborgare har mänskliga rättigheter",
+        "zh-Hant": "只有瑞典公民有人權",
+        "zh-Hans": "只有瑞典公民有人权",
+        "ar": "المواطنون السويديون فقط لديهم حقوق إنسان",
+        "ckb": "تەنها هاووڵاتیانی سوید مافی مرۆڤیان هەیە",
+        "fa": "فقط شهروندان سوئدی حقوق بشر دارند",
+        "pl": "Tylko obywatele Szwecji mają prawa człowieka",
+        "so": "Kaliya muwaadiniinta Iswiidhan ayaa leh xuquuqda aadanaha",
+        "ti": "ሰብኣዊ መሰላት ዘለዎም ዜጋታት ሽወደን ጥራይ እዮም",
+        "tr": "Yalnızca İsveç vatandaşlarının insan hakları vardır",
+        "uk": "Лише громадяни Швеції мають права людини"
       },
       {
         "en": "The rights apply only to people who work",
-        "sv": "Rättigheterna gäller bara personer som arbetar"
+        "sv": "Rättigheterna gäller bara personer som arbetar",
+        "zh-Hant": "這些權利只適用於工作的人",
+        "zh-Hans": "这些权利只适用于工作的人",
+        "ar": "تنطبق الحقوق فقط على الأشخاص الذين يعملون",
+        "ckb": "مافەکان تەنها بۆ ئەو کەسانەن کە کار دەکەن",
+        "fa": "این حقوق فقط شامل کسانی می‌شود که کار می‌کنند",
+        "pl": "Prawa dotyczą tylko osób, które pracują",
+        "so": "Xuquuqdu waxay khusaysaa oo keliya dadka shaqeeya",
+        "ti": "እቶም መሰላት ንዝሰርሑ ሰባት ጥራይ ይምልከቱ",
+        "tr": "Haklar yalnızca çalışan kişiler için geçerlidir",
+        "uk": "Права стосуються лише людей, які працюють"
       },
       {
         "en": "Each municipality chooses which people have rights",
-        "sv": "Varje kommun väljer själv vilka människor som har rättigheter"
+        "sv": "Varje kommun väljer själv vilka människor som har rättigheter",
+        "zh-Hant": "每個市鎮自行選擇哪些人有權利",
+        "zh-Hans": "每个市镇自行选择哪些人有权利",
+        "ar": "تختار كل بلدية بنفسها أي الناس لديهم حقوق",
+        "ckb": "هەر شارەوانییەک خۆی هەڵدەبژێرێت کام خەڵک مافیان هەیە",
+        "fa": "هر کمون خودش انتخاب می‌کند کدام افراد حقوق داشته باشند",
+        "pl": "Każda gmina sama wybiera, którzy ludzie mają prawa",
+        "so": "Degmo kasta ayaa iyadu doorata dadka xuquuqda leh",
+        "ti": "ነፍሲ ወከፍ kommun ኣየኖት ሰባት መሰላት ከም ዘለዎም ባዕሉ ይመርጽ",
+        "tr": "Her belediye hangi insanların haklara sahip olacağını kendisi seçer",
+        "uk": "Кожен муніципалітет сам обирає, які люди мають права"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Human rights are based on all people being born free and equal in value and rights. They apply regardless of factors such as sex, age, origin, religion, disability, or sexual orientation.",
-      "sv": "Mänskliga rättigheter utgår från att alla människor är födda fria och lika i värde och rättigheter. De gäller oavsett till exempel kön, ålder, ursprung, religion, funktionsnedsättning eller sexuell läggning."
+      "sv": "Mänskliga rättigheter utgår från att alla människor är födda fria och lika i värde och rättigheter. De gäller oavsett till exempel kön, ålder, ursprung, religion, funktionsnedsättning eller sexuell läggning.",
+      "zh-Hant": "人權基於所有人生而自由，在價值和權利上一律平等。它們適用於所有人，無論性別、年齡、出身、宗教、身心障礙或性取向等因素。",
+      "zh-Hans": "人权基于所有人生而自由，在价值和权利上一律平等。它们适用于所有人，无论性别、年龄、出身、宗教、残障或性取向等因素。",
+      "ar": "تستند حقوق الإنسان إلى أن جميع الناس يولدون أحرارًا ومتساوين في القيمة والحقوق. وهي تنطبق بغضّ النظر عن عوامل مثل الجنس، والعمر، والأصل، والدين، والإعاقة، أو التوجه الجنسي.",
+      "ckb": "مافەکانی مرۆڤ لەسەر ئەو بنەمایەن کە هەموو مرۆڤەکان بە ئازادی لەدایک دەبن و لە بەها و مافدا یەکسانن. ئەم مافانە بێ گوێدان بە ڕەگەز، تەمەن، ڕەچەڵەک، ئایین، کەمئەندامی یان ئاراستەی سێکسی کار دەکەن.",
+      "fa": "حقوق بشر بر این پایه است که همهٔ انسان‌ها آزاد و برابر در ارزش و حقوق به دنیا می‌آیند. این حقوق بدون توجه به عواملی مانند جنسیت، سن، خاستگاه، دین، معلولیت یا گرایش جنسی اعمال می‌شود.",
+      "pl": "Prawa człowieka opierają się na tym, że wszyscy ludzie rodzą się wolni i równi pod względem wartości oraz praw. Obowiązują niezależnie od takich czynników jak płeć, wiek, pochodzenie, religia, niepełnosprawność czy orientacja seksualna.",
+      "so": "Xuquuqda aadanuhu waxay ku salaysan tahay in dhammaan dadka ay ku dhashaan xor iyo siman qiime iyo xuquuq. Waxay khusaysaa iyadoo aan loo eegin arrimo sida jinsi, da’, asal, diin, naafonimo ama jihayn jinsi.",
+      "ti": "ሰብኣዊ መሰላት ኩሎም ሰባት ናጻን ብኽብርን መሰላትን ማዕረን ተወሊዶም እዮም ዝብል መሰረት ኣለዎም። ንኣብነት ጾታ፣ ዕድመ፣ መበቆል፣ ሃይማኖት፣ ስንክልና ወይ ፆታዊ ዝንባለ ብዘይ ግድን ይምልከቱ።",
+      "tr": "İnsan hakları, tüm insanların özgür ve değer ile haklar bakımından eşit doğduğu düşüncesine dayanır. Cinsiyet, yaş, köken, din, engellilik veya cinsel yönelim gibi etkenlerden bağımsız olarak geçerlidir.",
+      "uk": "Права людини ґрунтуються на тому, що всі люди народжуються вільними й рівними у своїй гідності та правах. Вони діють незалежно від таких чинників, як стать, вік, походження, релігія, інвалідність або сексуальна орієнтація."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -18099,31 +18339,91 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which example is part of work for gender equality?",
-      "sv": "Vilket exempel hör till arbetet för jämställdhet mellan könen?"
+      "en": "Which example is part of efforts to promote gender equality?",
+      "sv": "Vilket exempel hör till arbetet för jämställdhet mellan könen?",
+      "zh-Hant": "哪個例子屬於促進性別平等的工作？",
+      "zh-Hans": "哪个例子属于促进性别平等的工作？",
+      "ar": "أي مثال يُعد جزءًا من العمل من أجل المساواة بين الجنسين؟",
+      "ckb": "کام نموونە بەشێکە لە کارکردن بۆ یەکسانی نێوان ڕەگەزەکان؟",
+      "fa": "کدام نمونه بخشی از کار برای برابری جنسیتی است؟",
+      "pl": "Który przykład należy do działań na rzecz równości płci?",
+      "so": "Tusaalee kee ka mid ah shaqada loogu jiro sinnaanta jinsiga?",
+      "ti": "ኣየናይ ኣብነት ኣብ ስራሕ ንማዕርነት ጾታታት ይኣቱ?",
+      "tr": "Hangi örnek cinsiyet eşitliği çalışmasının bir parçasıdır?",
+      "uk": "Який приклад належить до роботи заради гендерної рівності?"
     },
     "opts": [
       {
         "en": "Women and men should have equal opportunities for education, work, and income",
-        "sv": "Att kvinnor och män ska ha lika möjligheter till utbildning, arbete och inkomst"
+        "sv": "Att kvinnor och män ska ha lika möjligheter till utbildning, arbete och inkomst",
+        "zh-Hant": "女性和男性應有平等的教育、工作和收入機會",
+        "zh-Hans": "女性和男性应有平等的教育、工作和收入机会",
+        "ar": "أن تكون للنساء والرجال فرص متساوية في التعليم والعمل والدخل",
+        "ckb": "ژنان و پیاوان دەبێت هەمان دەرفەتی خوێندن، کار و داهاتیان هەبێت",
+        "fa": "زنان و مردان باید فرصت‌های برابر برای آموزش، کار و درآمد داشته باشند",
+        "pl": "Kobiety i mężczyźni powinni mieć równe możliwości edukacji, pracy i dochodów",
+        "so": "Haweenka iyo raggu waa inay helaan fursado siman oo waxbarasho, shaqo iyo dakhli ah",
+        "ti": "ደቂ ኣንስትዮን ደቂ ተባዕትዮን ኣብ ትምህርቲ፣ ስራሕን እቶትን ማዕረ ዕድላት ክህልዎም ኣለዎ",
+        "tr": "Kadınlar ve erkekler eğitim, iş ve gelir için eşit fırsatlara sahip olmalıdır",
+        "uk": "Жінки й чоловіки мають мати рівні можливості для освіти, роботи та доходу"
       },
       {
         "en": "Only men should be able to influence political decisions",
-        "sv": "Att bara män ska kunna påverka politiska beslut"
+        "sv": "Att bara män ska kunna påverka politiska beslut",
+        "zh-Hant": "只有男性應能影響政治決策",
+        "zh-Hans": "只有男性应能影响政治决策",
+        "ar": "أن يكون الرجال فقط قادرين على التأثير في القرارات السياسية",
+        "ckb": "تەنها پیاوان بتوانن کاریگەری لەسەر بڕیارە سیاسییەکان بکەن",
+        "fa": "فقط مردان باید بتوانند بر تصمیم‌های سیاسی اثر بگذارند",
+        "pl": "Tylko mężczyźni powinni móc wpływać na decyzje polityczne",
+        "so": "Kaliya ragga ayaa awood u yeelan kara inay saameeyaan go’aamada siyaasadeed",
+        "ti": "ውሳነታት ፖለቲካ ክጸልዉ ዝኽእሉ ደቂ ተባዕትዮ ጥራይ ክኾኑ ኣለዎም",
+        "tr": "Yalnızca erkekler siyasi kararları etkileyebilmelidir",
+        "uk": "Лише чоловіки повинні мати змогу впливати на політичні рішення"
       },
       {
         "en": "Parental leave should always be taken by mothers",
-        "sv": "Att föräldraledighet alltid ska tas av mammor"
+        "sv": "Att föräldraledighet alltid ska tas av mammor",
+        "zh-Hant": "育兒假應永遠由母親休",
+        "zh-Hans": "育儿假应永远由母亲休",
+        "ar": "أن تُؤخذ إجازة الوالدين دائمًا من قبل الأمهات",
+        "ckb": "مۆڵەتی دایک و باوک هەمیشە دەبێت لەلایەن دایکانەوە وەربگیرێت",
+        "fa": "مرخصی والدین همیشه باید توسط مادران گرفته شود",
+        "pl": "Urlop rodzicielski powinien zawsze być brany przez matki",
+        "so": "Fasaxa waalidnimada waa in had iyo jeer ay qaataan hooyooyinku",
+        "ti": "ዕረፍቲ ወለዲ ኩሉ ግዜ ብኣዴታት ክውሰድ ኣለዎ",
+        "tr": "Ebeveyn izni her zaman anneler tarafından alınmalıdır",
+        "uk": "Батьківську відпустку завжди мають брати матері"
       },
       {
         "en": "Women and men should have different legal rights",
-        "sv": "Att kvinnor och män ska ha olika lagliga rättigheter"
+        "sv": "Att kvinnor och män ska ha olika lagliga rättigheter",
+        "zh-Hant": "女性和男性應有不同的法律權利",
+        "zh-Hans": "女性和男性应有不同的法律权利",
+        "ar": "أن تكون للنساء والرجال حقوق قانونية مختلفة",
+        "ckb": "ژنان و پیاوان دەبێت مافی یاسایی جیاوازیان هەبێت",
+        "fa": "زنان و مردان باید حقوق قانونی متفاوتی داشته باشند",
+        "pl": "Kobiety i mężczyźni powinni mieć różne prawa ustawowe",
+        "so": "Haweenka iyo raggu waa inay lahaadaan xuquuq sharci oo kala duwan",
+        "ti": "ደቂ ኣንስትዮን ደቂ ተባዕትዮን ዝተፈላለዩ ሕጋዊ መሰላት ክህልዎም ኣለዎ",
+        "tr": "Kadınlar ve erkekler farklı yasal haklara sahip olmalıdır",
+        "uk": "Жінки й чоловіки повинні мати різні законні права"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Gender equality means that women and men should have the same rights and duties and equal power to influence society and their own lives. Equal opportunities for education, work, and income are examples of this.",
-      "sv": "Jämställdhet innebär att kvinnor och män ska ha samma rättigheter och skyldigheter och lika mycket makt att påverka samhället och sina egna liv. Lika möjligheter till utbildning, arbete och inkomst är exempel på detta."
+      "sv": "Jämställdhet innebär att kvinnor och män ska ha samma rättigheter och skyldigheter och lika mycket makt att påverka samhället och sina egna liv. Lika möjligheter till utbildning, arbete och inkomst är exempel på detta.",
+      "zh-Hant": "性別平等意味著女性和男性應有相同的權利與義務，並有同等力量影響社會和自己的生活。平等的教育、工作和收入機會就是例子。",
+      "zh-Hans": "性别平等意味着女性和男性应有相同的权利与义务，并有同等力量影响社会和自己的生活。平等的教育、工作和收入机会就是例子。",
+      "ar": "تعني المساواة بين الجنسين أن تكون للنساء والرجال الحقوق والواجبات نفسها والقدرة المتساوية على التأثير في المجتمع وحياتهم الخاصة. وتُعد الفرص المتساوية في التعليم والعمل والدخل أمثلة على ذلك.",
+      "ckb": "یەکسانی ڕەگەزی واتە ژنان و پیاوان هەمان ماف و ئەرکیان هەبێت و هەمان هێزیان بۆ کاریگەری کردن لەسەر کۆمەڵگا و ژیانی خۆیان هەبێت. دەرفەتی یەکسان بۆ خوێندن، کار و داهات نموونەی ئەمەیە.",
+      "fa": "برابری جنسیتی یعنی زنان و مردان حقوق و وظایف یکسان داشته باشند و قدرت برابری برای تأثیرگذاری بر جامعه و زندگی خود داشته باشند. فرصت‌های برابر برای آموزش، کار و درآمد نمونه‌هایی از آن است.",
+      "pl": "Równość płci oznacza, że kobiety i mężczyźni powinni mieć te same prawa i obowiązki oraz równą moc wpływania na społeczeństwo i własne życie. Równe możliwości edukacji, pracy i dochodów są tego przykładami.",
+      "so": "Sinnaanta jinsigu waxay ka dhigan tahay in haweenka iyo raggu ay leeyihiin xuquuq iyo waajibaad isku mid ah iyo awood siman oo ay ku saameeyaan bulshada iyo noloshooda. Fursado siman oo waxbarasho, shaqo iyo dakhli ah waa tusaalooyin tan ka mid ah.",
+      "ti": "ማዕርነት ጾታታት ማለት ደቂ ኣንስትዮን ደቂ ተባዕትዮን ሓደ ዓይነት መሰላትን ግቡኣትን፣ ንሕብረተሰብን ናይ ገዛእ ርእሶም ህይወትን ንምጽላው ማዕረ ሓይሊ ክህልዎም ኣለዎ ማለት እዩ። ኣብ ትምህርቲ፣ ስራሕን እቶትን ማዕረ ዕድላት ናይዚ ኣብነት እዩ።",
+      "tr": "Cinsiyet eşitliği, kadınların ve erkeklerin aynı hak ve yükümlülüklere ve toplumu ile kendi yaşamlarını etkilemek için eşit güce sahip olması anlamına gelir. Eğitim, iş ve gelir için eşit fırsatlar bunun örnekleridir.",
+      "uk": "Гендерна рівність означає, що жінки й чоловіки мають мати однакові права та обов’язки і рівну силу впливати на суспільство та власне життя. Рівні можливості для освіти, роботи й доходу є прикладами цього."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -18147,30 +18447,90 @@
     "type": "single_choice",
     "q": {
       "en": "What do minority rights mean?",
-      "sv": "Vad innebär minoriteters rättigheter?"
+      "sv": "Vad innebär minoriteters rättigheter?",
+      "zh-Hant": "少數群體權利是什麼意思？",
+      "zh-Hans": "少数群体权利是什么意思？",
+      "ar": "ماذا تعني حقوق الأقليات؟",
+      "ckb": "مافەکانی کەمینەکان واتە چی؟",
+      "fa": "حقوق اقلیت‌ها یعنی چه؟",
+      "pl": "Co oznaczają prawa mniejszości?",
+      "so": "Maxay ka dhigan yihiin xuquuqda dadka laga tirada badan yahay?",
+      "ti": "መሰላት ንኡሳን ማሕበረሰባት እንታይ ማለት እዩ?",
+      "tr": "Azınlık hakları ne anlama gelir?",
+      "uk": "Що означають права меншин?"
     },
     "opts": [
       {
         "en": "That minorities should be able to preserve and develop their languages and cultures",
-        "sv": "Att minoriteter ska kunna bevara och utveckla sina språk och kulturer"
+        "sv": "Att minoriteter ska kunna bevara och utveckla sina språk och kulturer",
+        "zh-Hant": "少數群體應能保留並發展自己的語言和文化",
+        "zh-Hans": "少数群体应能保留并发展自己的语言和文化",
+        "ar": "أن تكون الأقليات قادرة على الحفاظ على لغاتها وثقافاتها وتطويرها",
+        "ckb": "کەمینەکان بتوانن زمان و کەلتووری خۆیان بپارێزن و پەرەیان پێ بدەن",
+        "fa": "اقلیت‌ها باید بتوانند زبان‌ها و فرهنگ‌های خود را حفظ و توسعه دهند",
+        "pl": "Mniejszości powinny móc zachowywać i rozwijać swoje języki oraz kultury",
+        "so": "Dadka laga tirada badan yahay waa inay awoodaan inay ilaashadaan oo horumariyaan luqadahooda iyo dhaqammadooda",
+        "ti": "ንኡሳን ማሕበረሰባት ቋንቋታቶምን ባህልታቶምን ክዕቅቡን ከማዕብሉን ክኽእሉ ኣለዎም",
+        "tr": "Azınlıklar dillerini ve kültürlerini koruyup geliştirebilmelidir",
+        "uk": "Меншини мають мати змогу зберігати й розвивати свої мови та культури"
       },
       {
         "en": "That minorities must stop using their languages",
-        "sv": "Att minoriteter måste sluta använda sina språk"
+        "sv": "Att minoriteter måste sluta använda sina språk",
+        "zh-Hant": "少數群體必須停止使用自己的語言",
+        "zh-Hans": "少数群体必须停止使用自己的语言",
+        "ar": "أن الأقليات يجب أن تتوقف عن استخدام لغاتها",
+        "ckb": "کەمینەکان دەبێت واز لە بەکارهێنانی زمانەکانیان بهێنن",
+        "fa": "اقلیت‌ها باید استفاده از زبان‌های خود را متوقف کنند",
+        "pl": "Mniejszości muszą przestać używać swoich języków",
+        "so": "Dadka laga tirada badan yahay waa inay joojiyaan isticmaalka luqadahooda",
+        "ti": "ንኡሳን ማሕበረሰባት ቋንቋታቶም ምጥቃም ከቋርጹ ኣለዎም",
+        "tr": "Azınlıklar dillerini kullanmayı bırakmak zorundadır",
+        "uk": "Меншини мусять припинити користуватися своїми мовами"
       },
       {
         "en": "That minorities are not allowed to contact public authorities",
-        "sv": "Att minoriteter inte får kontakta myndigheter"
+        "sv": "Att minoriteter inte får kontakta myndigheter",
+        "zh-Hant": "少數群體不得聯絡公共機關",
+        "zh-Hans": "少数群体不得联系公共机关",
+        "ar": "أن الأقليات لا يُسمح لها بالاتصال بالسلطات العامة",
+        "ckb": "کەمینەکان بۆیان نییە پەیوەندی بە دامەزراوە گشتییەکانەوە بکەن",
+        "fa": "اقلیت‌ها اجازه ندارند با نهادهای عمومی تماس بگیرند",
+        "pl": "Mniejszościom nie wolno kontaktować się z organami publicznymi",
+        "so": "Dadka laga tirada badan yahay looma oggola inay la xiriiraan hay’adaha dadweynaha",
+        "ti": "ንኡሳን ማሕበረሰባት ምስ ብዓላት መዚ ህዝባዊ ክራኸቡ ኣይፍቀደሎምን",
+        "tr": "Azınlıkların kamu kurumlarıyla iletişim kurmasına izin verilmez",
+        "uk": "Меншинам не дозволено звертатися до державних органів"
       },
       {
         "en": "That minorities always lack protection in law",
-        "sv": "Att minoriteter alltid saknar skydd i lag"
+        "sv": "Att minoriteter alltid saknar skydd i lag",
+        "zh-Hant": "少數群體在法律中總是沒有保護",
+        "zh-Hans": "少数群体在法律中总是没有保护",
+        "ar": "أن الأقليات تفتقر دائمًا إلى الحماية في القانون",
+        "ckb": "کەمینەکان هەمیشە لە یاسادا پاراستنیان نییە",
+        "fa": "اقلیت‌ها همیشه در قانون فاقد حمایت هستند",
+        "pl": "Mniejszości zawsze nie mają ochrony prawnej",
+        "so": "Dadka laga tirada badan yahay had iyo jeer ma laha ilaalin sharci",
+        "ti": "ንኡሳን ማሕበረሰባት ኩሉ ግዜ ኣብ ሕጊ ዕቝባ የብሎምን",
+        "tr": "Azınlıklar yasada her zaman korumadan yoksundur",
+        "uk": "Меншини завжди не мають захисту в законі"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Minority rights include protection for language, culture, and identity. A minority should not have to give up its language or culture in order to take part in society.",
-      "sv": "Minoriteters rättigheter handlar bland annat om skydd för språk, kultur och identitet. En minoritet ska inte behöva ge upp sitt språk eller sin kultur för att delta i samhället."
+      "sv": "Minoriteters rättigheter handlar bland annat om skydd för språk, kultur och identitet. En minoritet ska inte behöva ge upp sitt språk eller sin kultur för att delta i samhället.",
+      "zh-Hant": "少數群體權利包括對語言、文化和身份的保護。少數群體不應為了參與社會而被迫放棄自己的語言或文化。",
+      "zh-Hans": "少数群体权利包括对语言、文化和身份的保护。少数群体不应为了参与社会而被迫放弃自己的语言或文化。",
+      "ar": "تشمل حقوق الأقليات الحماية للغة والثقافة والهوية. ولا ينبغي أن تضطر أقلية إلى التخلي عن لغتها أو ثقافتها لكي تشارك في المجتمع.",
+      "ckb": "مافەکانی کەمینەکان لەوانەیە پاراستنی زمان، کەلتوور و ناسنامە لەخۆ بگرێت. کەمینەیەک نابێت ناچار بێت واز لە زمانی یان کەلتووری خۆی بهێنێت بۆ ئەوەی بەشداری لە کۆمەڵگادا بکات.",
+      "fa": "حقوق اقلیت‌ها شامل حمایت از زبان، فرهنگ و هویت است. یک اقلیت نباید برای مشارکت در جامعه مجبور شود زبان یا فرهنگ خود را کنار بگذارد.",
+      "pl": "Prawa mniejszości obejmują między innymi ochronę języka, kultury i tożsamości. Mniejszość nie powinna musieć rezygnować ze swojego języka lub kultury, aby uczestniczyć w społeczeństwie.",
+      "so": "Xuquuqda dadka laga tirada badan yahay waxaa ka mid ah ilaalinta luqadda, dhaqanka iyo aqoonsiga. Dad laga tiro badan yahay ma aha inay ka tanaasulaan luqaddooda ama dhaqankooda si ay uga qayb qaataan bulshada.",
+      "ti": "መሰላት ንኡሳን ማሕበረሰባት ንቋንቋ፣ ባህልን መንነትን ዕቝባ የጠቓልሉ። ንኡስ ማሕበረሰብ ኣብ ሕብረተሰብ ንምስታፍ ቋንቋኡ ወይ ባህሉ ክገድፍ ክግደድ የብሉን።",
+      "tr": "Azınlık hakları dil, kültür ve kimlik için korumayı da içerir. Bir azınlık, topluma katılmak için dilinden veya kültüründen vazgeçmek zorunda kalmamalıdır.",
+      "uk": "Права меншин включають захист мови, культури та ідентичності. Меншина не повинна відмовлятися від своєї мови чи культури, щоб брати участь у суспільстві."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -18193,31 +18553,91 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "What is one aim of work for people with disabilities?",
-      "sv": "Vad är ett mål med arbetet för personer med funktionsnedsättning?"
+      "en": "What is one aim of disability rights work?",
+      "sv": "Vad är ett mål med arbetet för personer med funktionsnedsättning?",
+      "zh-Hant": "為身心障礙者工作的其中一個目標是什麼？",
+      "zh-Hans": "为残障人士工作的其中一个目标是什么？",
+      "ar": "ما أحد أهداف العمل من أجل الأشخاص ذوي الإعاقة؟",
+      "ckb": "یەک ئامانجی کارکردن بۆ کەسانی خاوەن کەمئەندامی چییە؟",
+      "fa": "یکی از هدف‌های کار برای افراد دارای معلولیت چیست؟",
+      "pl": "Jaki jest jeden cel działań na rzecz osób z niepełnosprawnościami?",
+      "so": "Waa maxay hal ujeeddo oo ka mid ah shaqada loogu jiro dadka naafada ah?",
+      "ti": "ሓደ ዕላማ ናይ ስራሕ ንሰባት ስንክልና ዘለዎም እንታይ እዩ?",
+      "tr": "Engelli kişiler için yapılan çalışmaların amaçlarından biri nedir?",
+      "uk": "Яка одна з цілей роботи для людей з інвалідністю?"
     },
     "opts": [
       {
         "en": "Society should be accessible so people can participate on equal terms",
-        "sv": "Att samhället ska vara tillgängligt så att människor kan delta på jämlika villkor"
+        "sv": "Att samhället ska vara tillgängligt så att människor kan delta på jämlika villkor",
+        "zh-Hant": "社會應具可近性，讓人們能在平等條件下參與",
+        "zh-Hans": "社会应具备无障碍性，让人们能在平等条件下参与",
+        "ar": "أن يكون المجتمع متاحًا بحيث يستطيع الناس المشاركة على قدم المساواة",
+        "ckb": "کۆمەڵگا دەبێت دەستپێگەیشتوو بێت تاکو خەڵک بتوانن بە مەرجی یەکسان بەشداری بکەن",
+        "fa": "جامعه باید دسترس‌پذیر باشد تا مردم بتوانند با شرایط برابر مشارکت کنند",
+        "pl": "Społeczeństwo powinno być dostępne, aby ludzie mogli uczestniczyć na równych warunkach",
+        "so": "Bulshadu waa inay noqotaa mid la heli karo si dadku uga qayb qaataan shuruudo siman",
+        "ti": "ሕብረተሰብ ተበጻሒ ክኸውን ኣለዎ፣ ሰባት ብማዕረ ኩነታት ክሳተፉ ክኽእሉ",
+        "tr": "Toplum erişilebilir olmalıdır ki insanlar eşit koşullarda katılabilsin",
+        "uk": "Суспільство має бути доступним, щоб люди могли брати участь на рівних умовах"
       },
       {
         "en": "People with disabilities should not be able to study or work",
-        "sv": "Att personer med funktionsnedsättning inte ska kunna studera eller arbeta"
+        "sv": "Att personer med funktionsnedsättning inte ska kunna studera eller arbeta",
+        "zh-Hant": "身心障礙者不應能學習或工作",
+        "zh-Hans": "残障人士不应能够学习或工作",
+        "ar": "ألا يتمكن الأشخاص ذوو الإعاقة من الدراسة أو العمل",
+        "ckb": "کەسانی خاوەن کەمئەندامی نەبنەوە بتوانن بخوێنن یان کار بکەن",
+        "fa": "افراد دارای معلولیت نباید بتوانند تحصیل یا کار کنند",
+        "pl": "Osoby z niepełnosprawnościami nie powinny móc studiować ani pracować",
+        "so": "Dadka naafada ah waa inaysan awoodin inay wax bartaan ama shaqeeyaan",
+        "ti": "ሰባት ስንክልና ዘለዎም ክመሃሩ ወይ ክሰርሑ ክኽእሉ የብሎምን",
+        "tr": "Engelli kişiler okuyamamalı veya çalışamamalıdır",
+        "uk": "Люди з інвалідністю не повинні мати змоги навчатися чи працювати"
       },
       {
         "en": "Accessibility is only a private matter",
-        "sv": "Att tillgänglighet bara är en privat fråga"
+        "sv": "Att tillgänglighet bara är en privat fråga",
+        "zh-Hant": "可近性只是私人問題",
+        "zh-Hans": "无障碍性只是私人问题",
+        "ar": "أن الإتاحة مسألة خاصة فقط",
+        "ckb": "دەستپێگەیشتن تەنها بابەتێکی تایبەتییە",
+        "fa": "دسترس‌پذیری فقط یک مسئلهٔ خصوصی است",
+        "pl": "Dostępność jest wyłącznie sprawą prywatną",
+        "so": "Helitaanku waa arrin gaar ah oo keliya",
+        "ti": "ተበጻሕነት ብግሊ ጉዳይ ጥራይ እዩ",
+        "tr": "Erişilebilirlik yalnızca özel bir konudur",
+        "uk": "Доступність є лише приватною справою"
       },
       {
         "en": "Public authorities should ignore needs for support",
-        "sv": "Att myndigheter ska ignorera behov av stöd"
+        "sv": "Att myndigheter ska ignorera behov av stöd",
+        "zh-Hant": "公共機關應忽視支援需求",
+        "zh-Hans": "公共机关应忽视支持需求",
+        "ar": "أن تتجاهل السلطات العامة الحاجة إلى الدعم",
+        "ckb": "دامەزراوە گشتییەکان دەبێت پێویستی بە پشتگیری پشتگوێ بخەن",
+        "fa": "نهادهای عمومی باید نیاز به حمایت را نادیده بگیرند",
+        "pl": "Organy publiczne powinny ignorować potrzeby wsparcia",
+        "so": "Hay’adaha dadweynaha waa inay iska indhatiraan baahida taageero",
+        "ti": "ብዓላት መዚ ህዝባዊ ድሌታት ደገፍ ክገድፉ ኣለዎም",
+        "tr": "Kamu kurumları destek ihtiyaçlarını görmezden gelmelidir",
+        "uk": "Державні органи мають ігнорувати потреби в підтримці"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Work for people with disabilities is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.",
-      "sv": "Arbetet för personer med funktionsnedsättning handlar om lika rättigheter och möjligheter. Samhället behöver vara tillgängligt och kunna ge stöd så att människor kan delta på jämlika villkor."
+      "en": "Disability rights work is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.",
+      "sv": "Arbetet för personer med funktionsnedsättning handlar om lika rättigheter och möjligheter. Samhället behöver vara tillgängligt och kunna ge stöd så att människor kan delta på jämlika villkor.",
+      "zh-Hant": "為身心障礙者工作關乎平等權利和機會。社會需要具可近性並能提供支援，讓人們能在平等條件下參與。",
+      "zh-Hans": "为残障人士工作关乎平等权利和机会。社会需要具备无障碍性并能提供支持，让人们能在平等条件下参与。",
+      "ar": "العمل من أجل الأشخاص ذوي الإعاقة يتعلق بالمساواة في الحقوق والفرص. يحتاج المجتمع إلى أن يكون متاحًا وقادرًا على تقديم الدعم حتى يستطيع الناس المشاركة على قدم المساواة.",
+      "ckb": "کارکردن بۆ کەسانی خاوەن کەمئەندامی پەیوەندیدارە بە ماف و دەرفەتی یەکسان. کۆمەڵگا پێویستە دەستپێگەیشتوو بێت و بتوانێت پشتگیری پێشکەش بکات تاکو خەڵک بە مەرجی یەکسان بەشداری بکەن.",
+      "fa": "کار برای افراد دارای معلولیت دربارهٔ حقوق و فرصت‌های برابر است. جامعه باید دسترس‌پذیر باشد و بتواند حمایت فراهم کند تا مردم بتوانند با شرایط برابر مشارکت کنند.",
+      "pl": "Działania na rzecz osób z niepełnosprawnościami dotyczą równych praw i możliwości. Społeczeństwo musi być dostępne i umieć zapewnić wsparcie, aby ludzie mogli uczestniczyć na równych warunkach.",
+      "so": "Shaqada loogu jiro dadka naafada ah waxay ku saabsan tahay xuquuq iyo fursado siman. Bulshadu waxay u baahan tahay inay noqoto mid la heli karo oo taageero bixin karta si dadku uga qayb qaataan shuruudo siman.",
+      "ti": "ስራሕ ንሰባት ስንክልና ዘለዎም ብዛዕባ ማዕረ መሰላትን ዕድላትን እዩ። ሕብረተሰብ ተበጻሒ ክኸውንን ደገፍ ክህብ ክኽእልን የድሊ፣ ሰባት ብማዕረ ኩነታት ክሳተፉ ክኽእሉ።",
+      "tr": "Engelli kişiler için yapılan çalışmalar eşit haklar ve fırsatlarla ilgilidir. Toplumun erişilebilir olması ve destek sağlayabilmesi gerekir ki insanlar eşit koşullarda katılabilsin.",
+      "uk": "Робота для людей з інвалідністю стосується рівних прав і можливостей. Суспільство має бути доступним і здатним надавати підтримку, щоб люди могли брати участь на рівних умовах."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -18240,30 +18660,90 @@
     "type": "single_choice",
     "q": {
       "en": "Which statement describes protection against discrimination in Sweden?",
-      "sv": "Vilket påstående beskriver diskrimineringsskyddet i Sverige?"
+      "sv": "Vilket påstående beskriver diskrimineringsskyddet i Sverige?",
+      "zh-Hant": "哪項說法描述了瑞典的反歧視保護？",
+      "zh-Hans": "哪项说法描述了瑞典的反歧视保护？",
+      "ar": "أي عبارة تصف الحماية من التمييز في السويد؟",
+      "ckb": "کام لێدوان پاراستن لە دژی جیاکاری لە سویددا وەسف دەکات؟",
+      "fa": "کدام گزاره حمایت در برابر تبعیض در سوئد را توصیف می‌کند؟",
+      "pl": "Które stwierdzenie opisuje ochronę przed dyskryminacją w Szwecji?",
+      "so": "Hadalkee sharxaya ilaalinta ka dhanka ah takooridda ee Iswiidhan?",
+      "ti": "ኣየናይ ኣበሃህላ ንዕቝባ ካብ ኣድልዎ ኣብ ሽወደን ይገልጽ?",
+      "tr": "Hangi ifade İsveç’te ayrımcılığa karşı korumayı açıklar?",
+      "uk": "Яке твердження описує захист від дискримінації у Швеції?"
     },
     "opts": [
       {
         "en": "Discrimination connected to, for example, sex, religion, disability, sexual orientation, or age is prohibited",
-        "sv": "Diskriminering som har samband med till exempel kön, religion, funktionsnedsättning, sexuell läggning eller ålder är förbjuden"
+        "sv": "Diskriminering som har samband med till exempel kön, religion, funktionsnedsättning, sexuell läggning eller ålder är förbjuden",
+        "zh-Hant": "禁止與例如性別、宗教、身心障礙、性取向或年齡有關的歧視",
+        "zh-Hans": "禁止与例如性别、宗教、残障、性取向或年龄有关的歧视",
+        "ar": "التمييز المرتبط مثلًا بالجنس أو الدين أو الإعاقة أو التوجه الجنسي أو العمر محظور",
+        "ckb": "جیاکاری پەیوەندیدار بە بۆ نموونە ڕەگەز، ئایین، کەمئەندامی، ئاراستەی سێکسی یان تەمەن قەدەغەیە",
+        "fa": "تبعیض مرتبط با مواردی مانند جنسیت، دین، معلولیت، گرایش جنسی یا سن ممنوع است",
+        "pl": "Dyskryminacja związana na przykład z płcią, religią, niepełnosprawnością, orientacją seksualną lub wiekiem jest zakazana",
+        "so": "Takoor la xiriira tusaale ahaan jinsi, diin, naafonimo, jihayn jinsi ama da’ waa mamnuuc",
+        "ti": "ኣድልዎ ምስ ንኣብነት ጾታ፣ ሃይማኖት፣ ስንክልና፣ ፆታዊ ዝንባለ ወይ ዕድመ ዝተኣሳሰረ ክልኩል እዩ",
+        "tr": "Örneğin cinsiyet, din, engellilik, cinsel yönelim veya yaşla bağlantılı ayrımcılık yasaktır",
+        "uk": "Дискримінація, пов’язана, наприклад, зі статтю, релігією, інвалідністю, сексуальною орієнтацією або віком, заборонена"
       },
       {
         "en": "Employers may always treat people differently on these grounds",
-        "sv": "Arbetsgivare får alltid behandla personer olika på dessa grunder"
+        "sv": "Arbetsgivare får alltid behandla personer olika på dessa grunder",
+        "zh-Hant": "雇主在這些理由上永遠可以不同地對待人",
+        "zh-Hans": "雇主在这些理由上永远可以不同地对待人",
+        "ar": "يجوز لأصحاب العمل دائمًا معاملة الناس بصورة مختلفة على هذه الأسس",
+        "ckb": "خاوەنکاران هەمیشە دەتوانن لەسەر ئەم بنەمایانە خەڵک بە جیاوازی مامەڵە بکەن",
+        "fa": "کارفرمایان همیشه می‌توانند بر این پایه‌ها با افراد متفاوت رفتار کنند",
+        "pl": "Pracodawcy zawsze mogą traktować ludzi różnie z tych powodów",
+        "so": "Loo-shaqeeyayaashu mar walba way ku kala duwi karaan dadka sababahan awgood",
+        "ti": "ኣስራሕቲ ኩሉ ግዜ ብእዞም መሰረታት ሰባት ብዝተፈላለየ ክሕዙ ይኽእሉ",
+        "tr": "İşverenler bu gerekçelerle insanlara her zaman farklı davranabilir",
+        "uk": "Роботодавці завжди можуть по-різному ставитися до людей на цих підставах"
       },
       {
         "en": "The Discrimination Act applies only to people over age 65",
-        "sv": "Diskrimineringslagen gäller bara personer över 65 år"
+        "sv": "Diskrimineringslagen gäller bara personer över 65 år",
+        "zh-Hant": "《歧視法》只適用於 65 歲以上的人",
+        "zh-Hans": "《歧视法》只适用于 65 岁以上的人",
+        "ar": "ينطبق قانون التمييز فقط على الأشخاص الذين تزيد أعمارهم على 65 عامًا",
+        "ckb": "یاسای جیاکاری تەنها بۆ کەسانی سەرووی ٦٥ ساڵ کار دەکات",
+        "fa": "قانون تبعیض فقط برای افراد بالای ۶۵ سال اعمال می‌شود",
+        "pl": "Ustawa o dyskryminacji dotyczy tylko osób powyżej 65 roku życia",
+        "so": "Xeerka takooriddu wuxuu khuseeyaa oo keliya dadka ka weyn 65 sano",
+        "ti": "ሕጊ ኣድልዎ ንሰባት ልዕሊ 65 ዓመት ጥራይ ይምልከት",
+        "tr": "Ayrımcılık Yasası yalnızca 65 yaş üstü kişiler için geçerlidir",
+        "uk": "Закон про дискримінацію стосується лише людей старших за 65 років"
       },
       {
         "en": "The protection applies only if someone is already a Swedish citizen",
-        "sv": "Skyddet gäller bara om någon redan är svensk medborgare"
+        "sv": "Skyddet gäller bara om någon redan är svensk medborgare",
+        "zh-Hant": "保護只在某人已經是瑞典公民時才適用",
+        "zh-Hans": "保护只在某人已经是瑞典公民时才适用",
+        "ar": "تنطبق الحماية فقط إذا كان الشخص مواطنًا سويديًا بالفعل",
+        "ckb": "پاراستنەکە تەنها کاتێک کار دەکات کە کەسێک پێشتر هاووڵاتی سوید بێت",
+        "fa": "این حمایت فقط وقتی اعمال می‌شود که فرد از قبل شهروند سوئد باشد",
+        "pl": "Ochrona obowiązuje tylko wtedy, gdy ktoś jest już obywatelem Szwecji",
+        "so": "Ilaalintu waxay khusaysaa oo keliya haddii qofku hore u yahay muwaadin Iswiidhish ah",
+        "ti": "እቲ ዕቝባ ሓደ ሰብ ቀድሞም ዜጋ ሽወደን እንተኾይኑ ጥራይ ይምልከት",
+        "tr": "Koruma yalnızca kişi zaten İsveç vatandaşıysa geçerlidir",
+        "uk": "Захист діє лише тоді, коли людина вже є громадянином Швеції"
       }
     ],
     "answer": 0,
     "why": {
       "en": "The Discrimination Act prohibits discrimination connected to several protected grounds, such as sex, transgender identity or expression, ethnicity, religion, disability, sexual orientation, and age.",
-      "sv": "Diskrimineringslagen förbjuder diskriminering som har samband med flera diskrimineringsgrunder, till exempel kön, könsidentitet eller könsuttryck, etnisk tillhörighet, religion, funktionsnedsättning, sexuell läggning och ålder."
+      "sv": "Diskrimineringslagen förbjuder diskriminering som har samband med flera diskrimineringsgrunder, till exempel kön, könsidentitet eller könsuttryck, etnisk tillhörighet, religion, funktionsnedsättning, sexuell läggning och ålder.",
+      "zh-Hant": "《歧視法》禁止與多種歧視理由有關的歧視，例如性別、性別認同或性別表達、族裔歸屬、宗教、身心障礙、性取向和年齡。",
+      "zh-Hans": "《歧视法》禁止与多种歧视理由有关的歧视，例如性别、性别认同或性别表达、族裔归属、宗教、残障、性取向和年龄。",
+      "ar": "يحظر قانون التمييز التمييز المرتبط بعدة أسس محمية، مثل الجنس، والهوية الجندرية أو التعبير الجندري، والانتماء الإثني، والدين، والإعاقة، والتوجه الجنسي، والعمر.",
+      "ckb": "یاسای جیاکاری جیاکارییەکانی پەیوەندیدار بە چەند بنەمای جیاکاری قەدەغە دەکات، وەک ڕەگەز، ناسنامەی ڕەگەزی یان دەربڕینی ڕەگەزی، پەیوەندی ئێتنیکی، ئایین، کەمئەندامی، ئاراستەی سێکسی و تەمەن.",
+      "fa": "قانون تبعیض، تبعیض مرتبط با چند مبنای حمایت‌شده را ممنوع می‌کند؛ مانند جنسیت، هویت یا بیان جنسیتی، وابستگی قومی، دین، معلولیت، گرایش جنسی و سن.",
+      "pl": "Ustawa o dyskryminacji zakazuje dyskryminacji związanej z kilkoma chronionymi przesłankami, takimi jak płeć, tożsamość lub ekspresja płciowa, pochodzenie etniczne, religia, niepełnosprawność, orientacja seksualna i wiek.",
+      "so": "Xeerka takooriddu wuxuu mamnuucaa takoor la xiriira dhowr sababood oo la ilaaliyo, sida jinsi, aqoonsi jinsi ama muujin jinsi, asal qoomiyadeed, diin, naafonimo, jihayn jinsi iyo da’.",
+      "ti": "ሕጊ ኣድልዎ ምስ ብዙሓት ዝተዓቀቡ መሰረታት ኣድልዎ ዝተኣሳሰረ ኣድልዎ ይኽልክል፣ ንኣብነት ጾታ፣ መንነት ጾታ ወይ መግለጺ ጾታ፣ ብሄራዊ መበቆል፣ ሃይማኖት፣ ስንክልና፣ ፆታዊ ዝንባለን ዕድመን።",
+      "tr": "Ayrımcılık Yasası; cinsiyet, cinsiyet kimliği veya ifadesi, etnik köken, din, engellilik, cinsel yönelim ve yaş gibi birkaç korunan gerekçeyle bağlantılı ayrımcılığı yasaklar.",
+      "uk": "Закон про дискримінацію забороняє дискримінацію, пов’язану з кількома захищеними підставами, такими як стать, гендерна ідентичність або самовираження, етнічна належність, релігія, інвалідність, сексуальна орієнтація та вік."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -18286,7 +18766,17 @@
     "type": "single_choice",
     "q": {
       "en": "Which answer best matches? Where is Sweden located?",
-      "sv": "Vilket svar stämmer bäst? Var ligger Sverige?"
+      "sv": "Vilket svar stämmer bäst? Var ligger Sverige?",
+      "zh-Hant": "哪個答案最符合？瑞典位於哪裡？",
+      "zh-Hans": "哪个答案最符合？瑞典位于哪里？",
+      "ar": "أي إجابة هي الأنسب؟ أين تقع السويد؟",
+      "ckb": "کام وەڵام باشترین گونجاوە؟ سوید لە کوێیە؟",
+      "fa": "کدام پاسخ مناسب‌تر است؟ سوئد کجا قرار دارد؟",
+      "pl": "Która odpowiedź najlepiej pasuje? Gdzie leży Szwecja?",
+      "so": "Jawaabtee ayaa ugu habboon? Iswiidhan xaggee ku taallaa?",
+      "ti": "ኣየናይ መልሲ ዝበለጸ ይሰማማዕ? ሽወደን ኣበይ ትርከብ?",
+      "tr": "Hangi cevap en iyi uyar? İsveç nerede bulunur?",
+      "uk": "Яка відповідь найкраще підходить? Де розташована Швеція?"
     },
     "opts": [
       {
@@ -18349,7 +18839,17 @@
     "answer": 0,
     "why": {
       "en": "Sweden is in the Nordic region in northern Europe. The Nordic region includes Denmark, Finland, Iceland, Norway, and Sweden and is part of northern Europe.",
-      "sv": "Sverige ligger i Norden i norra Europa. Norden består av Danmark, Finland, Island, Norge och Sverige och är en del av norra Europa."
+      "sv": "Sverige ligger i Norden i norra Europa. Norden består av Danmark, Finland, Island, Norge och Sverige och är en del av norra Europa.",
+      "zh-Hant": "瑞典位於北歐的北歐地區。北歐地區包括丹麥、芬蘭、冰島、挪威和瑞典，屬於北歐的一部分。",
+      "zh-Hans": "瑞典位于北欧的北欧地区。北欧地区包括丹麦、芬兰、冰岛、挪威和瑞典，属于北欧的一部分。",
+      "ar": "تقع السويد في منطقة الشمال الأوروبي في شمال أوروبا. وتشمل هذه المنطقة الدنمارك وفنلندا وآيسلندا والنرويج والسويد، وهي جزء من شمال أوروبا.",
+      "ckb": "سوید لە ناوچەی نۆردیک لە باکووری ئەوروپا دەکەوێت. ناوچەی نۆردیک دانمارک، فینلاند، ئایسلاند، نەرویج و سوید دەگرێتەوە و بەشێکە لە باکووری ئەوروپا.",
+      "fa": "سوئد در منطقه نوردیک در شمال اروپا قرار دارد. منطقه نوردیک شامل دانمارک، فنلاند، ایسلند، نروژ و سوئد است و بخشی از شمال اروپا به شمار می‌آید.",
+      "pl": "Szwecja leży w regionie nordyckim w północnej Europie. Region nordycki obejmuje Danię, Finlandię, Islandię, Norwegię i Szwecję oraz jest częścią północnej Europy.",
+      "so": "Iswiidhan waxay ku taallaa gobolka Nordic ee Waqooyiga Yurub. Gobolka Nordic waxaa ka mid ah Denmark, Finland, Iceland, Norway iyo Iswiidhan, waana qayb ka mid ah Waqooyiga Yurub.",
+      "ti": "ሽወደን ኣብ ናይ ኖርዲክ ክልል ኣብ ሰሜን ኤውሮጳ ትርከብ። ናይ ኖርዲክ ክልል ዴንማርክ፣ ፊንላንድ፣ ኣይስላንድ፣ ኖርወይን ሽወደንን የጠቓልል፣ እዚ ድማ ክፋል ሰሜን ኤውሮጳ እዩ።",
+      "tr": "İsveç, Kuzey Avrupa’daki Nordik bölgede yer alır. Nordik bölge Danimarka, Finlandiya, İzlanda, Norveç ve İsveç’i kapsar ve Kuzey Avrupa’nın bir parçasıdır.",
+      "uk": "Швеція розташована в Північній Європі, у скандинавському регіоні. Скандинавський регіон охоплює Данію, Фінляндію, Ісландію, Норвегію та Швецію і є частиною Північної Європи."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -18374,22 +18874,62 @@
     "type": "true_false",
     "q": {
       "en": "Sweden is located in the Nordic region in northern Europe.",
-      "sv": "Sverige ligger i Norden i norra Europa."
+      "sv": "Sverige ligger i Norden i norra Europa.",
+      "zh-Hant": "瑞典位於北歐的北歐地區。",
+      "zh-Hans": "瑞典位于北欧的北欧地区。",
+      "ar": "تقع السويد في منطقة الشمال الأوروبي في شمال أوروبا.",
+      "ckb": "سوید لە ناوچەی نۆردیک لە باکووری ئەوروپا دەکەوێت.",
+      "fa": "سوئد در منطقه نوردیک در شمال اروپا قرار دارد.",
+      "pl": "Szwecja leży w regionie nordyckim w północnej Europie.",
+      "so": "Iswiidhan waxay ku taallaa gobolka Nordic ee Waqooyiga Yurub.",
+      "ti": "ሽወደን ኣብ ናይ ኖርዲክ ክልል ኣብ ሰሜን ኤውሮጳ ትርከብ።",
+      "tr": "İsveç, Kuzey Avrupa’daki Nordik bölgede yer alır.",
+      "uk": "Швеція розташована в Північній Європі, у скандинавському регіоні."
     },
     "opts": [
       {
         "en": "True",
-        "sv": "Sant"
+        "sv": "Sant",
+        "zh-Hant": "正確",
+        "zh-Hans": "正确",
+        "ar": "صحيح",
+        "ckb": "ڕاستە",
+        "fa": "درست",
+        "pl": "Prawda",
+        "so": "Sax",
+        "ti": "ትኽክል",
+        "tr": "Doğru",
+        "uk": "Правда"
       },
       {
         "en": "False",
-        "sv": "Falskt"
+        "sv": "Falskt",
+        "zh-Hant": "錯誤",
+        "zh-Hans": "错误",
+        "ar": "خطأ",
+        "ckb": "هەڵەیە",
+        "fa": "نادرست",
+        "pl": "Fałsz",
+        "so": "Khalad",
+        "ti": "ጌጋ",
+        "tr": "Yanlış",
+        "uk": "Неправда"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Sweden is in the Nordic region in northern Europe. The Nordic region includes Denmark, Finland, Iceland, Norway, and Sweden and is part of northern Europe.",
-      "sv": "Sverige ligger i Norden i norra Europa. Norden består av Danmark, Finland, Island, Norge och Sverige och är en del av norra Europa."
+      "sv": "Sverige ligger i Norden i norra Europa. Norden består av Danmark, Finland, Island, Norge och Sverige och är en del av norra Europa.",
+      "zh-Hant": "瑞典位於北歐的北歐地區。北歐地區包括丹麥、芬蘭、冰島、挪威和瑞典，屬於北歐的一部分。",
+      "zh-Hans": "瑞典位于北欧的北欧地区。北欧地区包括丹麦、芬兰、冰岛、挪威和瑞典，属于北欧的一部分。",
+      "ar": "تقع السويد في منطقة الشمال الأوروبي في شمال أوروبا. وتشمل هذه المنطقة الدنمارك وفنلندا وآيسلندا والنرويج والسويد، وهي جزء من شمال أوروبا.",
+      "ckb": "سوید لە ناوچەی نۆردیک لە باکووری ئەوروپا دەکەوێت. ناوچەی نۆردیک دانمارک، فینلاند، ئایسلاند، نەرویج و سوید دەگرێتەوە و بەشێکە لە باکووری ئەوروپا.",
+      "fa": "سوئد در منطقه نوردیک در شمال اروپا قرار دارد. منطقه نوردیک شامل دانمارک، فنلاند، ایسلند، نروژ و سوئد است و بخشی از شمال اروپا به شمار می‌آید.",
+      "pl": "Szwecja leży w regionie nordyckim w północnej Europie. Region nordycki obejmuje Danię, Finlandię, Islandię, Norwegię i Szwecję oraz jest częścią północnej Europy.",
+      "so": "Iswiidhan waxay ku taallaa gobolka Nordic ee Waqooyiga Yurub. Gobolka Nordic waxaa ka mid ah Denmark, Finland, Iceland, Norway iyo Iswiidhan, waana qayb ka mid ah Waqooyiga Yurub.",
+      "ti": "ሽወደን ኣብ ናይ ኖርዲክ ክልል ኣብ ሰሜን ኤውሮጳ ትርከብ። ናይ ኖርዲክ ክልል ዴንማርክ፣ ፊንላንድ፣ ኣይስላንድ፣ ኖርወይን ሽወደንን የጠቓልል፣ እዚ ድማ ክፋል ሰሜን ኤውሮጳ እዩ።",
+      "tr": "İsveç, Kuzey Avrupa’daki Nordik bölgede yer alır. Nordik bölge Danimarka, Finlandiya, İzlanda, Norveç ve İsveç’i kapsar ve Kuzey Avrupa’nın bir parçasıdır.",
+      "uk": "Швеція розташована в Північній Європі, у скандинавському регіоні. Скандинавський регіон охоплює Данію, Фінляндію, Ісландію, Норвегію та Швецію і є частиною Північної Європи."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -21215,8 +21755,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which is a way to influence and participate in society?",
-      "sv": "Vilket svar stämmer bäst? Vilket är ett sätt att påverka och delta i samhället?"
+      "en": "Which answer best matches? How can people influence society and participate in democracy?",
+      "sv": "Vilket svar stämmer bäst? Hur kan människor påverka samhället och delta i demokratin?"
     },
     "opts": [
       {
@@ -21303,8 +21843,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "One way to influence and participate in society is to contact politicians, demonstrate, or sign a petition.",
-      "sv": "Ett sätt att påverka och delta i samhället är att kontakta politiker, demonstrera eller skriva på en namninsamling."
+      "en": "People can influence society and participate in democracy by contacting politicians, demonstrating, or signing a petition.",
+      "sv": "Människor kan påverka samhället och delta i demokratin genom att kontakta politiker, demonstrera eller skriva på en namninsamling."
     },
     "opts": [
       {
@@ -21343,8 +21883,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "One way to influence and participate in society is to ban others from voting in political elections.",
-      "sv": "Ett sätt att påverka och delta i samhället är att förbjuda andra från att rösta i politiska val."
+      "en": "People can influence society and participate in democracy by banning others from voting in political elections.",
+      "sv": "Människor kan påverka samhället och delta i demokratin genom att förbjuda andra från att rösta i politiska val."
     },
     "opts": [
       {
@@ -21383,8 +21923,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which is a way to influence and participate in society?",
-      "sv": "Välj rätt alternativ: Vilket är ett sätt att påverka och delta i samhället?"
+      "en": "Choose the correct option: How can people influence society and participate in democracy?",
+      "sv": "Välj rätt alternativ: Hur kan människor påverka samhället och delta i demokratin?"
     },
     "opts": [
       {
@@ -23071,7 +23611,7 @@
     "answer": 0,
     "why": {
       "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna inte behöver följa resultatet."
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23111,7 +23651,7 @@
     "answer": 0,
     "why": {
       "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna inte behöver följa resultatet."
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23151,7 +23691,7 @@
     "answer": 1,
     "why": {
       "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna inte behöver följa resultatet."
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23239,7 +23779,7 @@
     "answer": 0,
     "why": {
       "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna inte behöver följa resultatet."
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -31663,8 +32203,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "It is illegal to buy sex, but the person who sells it is not punished.",
-      "sv": "Att köpa sex i Sverige är olagligt att köpa sex, men personen som säljer straffas inte."
+      "en": "Buying sex is illegal in Sweden, but the person who sells sex is not punished.",
+      "sv": "Att köpa sex är olagligt i Sverige, men personen som säljer sex straffas inte."
     },
     "opts": [
       {
@@ -31703,8 +32243,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "It is always legal to buy sex.",
-      "sv": "Att köpa sex i Sverige är alltid lagligt att köpa sex."
+      "en": "Buying sex is always legal in Sweden.",
+      "sv": "Att köpa sex är alltid lagligt i Sverige."
     },
     "opts": [
       {
@@ -32943,7 +33483,7 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "It is permitted to marry a person of the same sex.",
+      "en": "Marriage between people of the same sex is permitted in Sweden.",
       "sv": "Äktenskap mellan personer av samma kön är tillåtet i Sverige."
     },
     "opts": [
@@ -32983,7 +33523,7 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "It is prohibited to marry a person of the same sex.",
+      "en": "Marriage between people of the same sex is prohibited in Sweden.",
       "sv": "Äktenskap mellan personer av samma kön är förbjudet i Sverige."
     },
     "opts": [
@@ -54875,8 +55415,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "Try to persuade others of their political ideas.",
-      "sv": "Försöka övertyga andra om sina politiska idéer."
+      "en": "In a democracy, people, groups, and parties may try to persuade others of their political ideas.",
+      "sv": "I en demokrati får människor, grupper och partier försöka övertyga andra om sina politiska idéer."
     },
     "opts": [
       {
@@ -54915,8 +55455,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "Stop others from voting.",
-      "sv": "Hindra andra från att rösta."
+      "en": "In a democracy, people, groups, and parties may not stop others from voting.",
+      "sv": "I en demokrati får människor, grupper och partier inte hindra andra från att rösta."
     },
     "opts": [
       {
@@ -59955,8 +60495,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which answer describes voting rights in municipal and regional elections for people who are not Swedish citizens?",
-      "sv": "Vilket svar stämmer bäst? Vilket svar beskriver rösträtt i kommun- och regionval för personer som inte är svenska medborgare?"
+      "en": "Which answer best matches? What rules apply to voting rights in municipal and regional elections for people who are not Swedish citizens?",
+      "sv": "Vilket svar stämmer bäst? Vilka regler gäller för rösträtt i kommun- och regionval för personer som inte är svenska medborgare?"
     },
     "opts": [
       {
@@ -60126,8 +60666,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which answer describes voting rights in municipal and regional elections for people who are not Swedish citizens?",
-      "sv": "Välj rätt alternativ: Vilket svar beskriver rösträtt i kommun- och regionval för personer som inte är svenska medborgare?"
+      "en": "Choose the correct option: What rules apply to voting rights in municipal and regional elections for people who are not Swedish citizens?",
+      "sv": "Välj rätt alternativ: Vilka regler gäller för rösträtt i kommun- och regionval för personer som inte är svenska medborgare?"
     },
     "opts": [
       {
@@ -61509,19 +62049,59 @@
     "opts": [
       {
         "en": "The police gather evidence and speak with witnesses",
-        "sv": "Polisen samlar bevis och pratar med vittnen"
+        "sv": "Polisen samlar bevis och pratar med vittnen",
+        "zh-Hant": "警方收集證據並與證人談話",
+        "zh-Hans": "警方收集证据并与证人谈话",
+        "ar": "تجمع الشرطة الأدلة وتتحدث مع الشهود",
+        "ckb": "پۆلیس بەڵگە کۆدەکاتەوە و لەگەڵ شایەتەکان قسە دەکات",
+        "fa": "پلیس مدارک را جمع‌آوری می‌کند و با شاهدان صحبت می‌کند",
+        "pl": "Policja zbiera dowody i rozmawia ze świadkami",
+        "so": "Boolisku wuxuu ururiyaa caddaymo wuxuuna la hadlaa markhaatiyaal",
+        "ti": "ፖሊስ መርትዖ ይእክብን ምስ ምስክራት ይዛረብን",
+        "tr": "Polis kanıt toplar ve tanıklarla konuşur",
+        "uk": "Поліція збирає докази та розмовляє зі свідками"
       },
       {
         "en": "The judge decides the sentence before the trial begins",
-        "sv": "Domaren bestämmer straffet innan rättegången börjar"
+        "sv": "Domaren bestämmer straffet innan rättegången börjar",
+        "zh-Hant": "法官在審判開始前決定刑罰",
+        "zh-Hans": "法官在审判开始前决定刑罚",
+        "ar": "يقرر القاضي العقوبة قبل بدء المحاكمة",
+        "ckb": "دادوەر پێش دەستپێکردنی دادگایی سزاکە دیاری دەکات",
+        "fa": "قاضی پیش از آغاز دادگاه مجازات را تعیین می‌کند",
+        "pl": "Sędzia ustala karę przed rozpoczęciem rozprawy",
+        "so": "Garsooruhu wuxuu go’aamiyaa ciqaabta ka hor inta maxkamaddu bilaaban",
+        "ti": "ፈራዲ ቅድሚ ፍርዲ ምጅማሩ መቕጻዕቲ ይውስን",
+        "tr": "Yargıç, dava başlamadan önce cezayı belirler",
+        "uk": "Суддя визначає покарання до початку судового розгляду"
       },
       {
         "en": "The crime victim alone chooses whether the suspect will be convicted",
-        "sv": "Brottsoffret väljer ensam om den misstänkte ska dömas"
+        "sv": "Brottsoffret väljer ensam om den misstänkte ska dömas",
+        "zh-Hant": "受害者單獨決定嫌疑人是否應被定罪",
+        "zh-Hans": "受害者单独决定嫌疑人是否应被定罪",
+        "ar": "يختار الضحية وحده ما إذا كان ينبغي إدانة المشتبه به",
+        "ckb": "قوربانی بە تەنها هەڵدەبژێرێت کە گومانلێکراوەکە سزا بدرێت یان نا",
+        "fa": "قربانی به‌تنهایی تصمیم می‌گیرد که مظنون محکوم شود یا نه",
+        "pl": "Ofiara przestępstwa sama decyduje, czy podejrzany zostanie skazany",
+        "so": "Dhibbanaha dembiga ayaa keligiis dooranaya in eedaysanaha la xukumo iyo in kale",
+        "ti": "ግዳይ ገበን በይኑ እቲ ተጠርጣሪ ክፍረድ ድዩ ኣይክፍረድን ይውስን",
+        "tr": "Suç mağduru, şüphelinin mahkûm edilip edilmeyeceğine tek başına karar verir",
+        "uk": "Потерпілий сам вирішує, чи має підозрюваного бути засуджено"
       },
       {
         "en": "The municipal council votes on whether the suspect is guilty",
-        "sv": "Kommunfullmäktige röstar om den misstänkte är skyldig"
+        "sv": "Kommunfullmäktige röstar om den misstänkte är skyldig",
+        "zh-Hant": "市議會投票決定嫌疑人是否有罪",
+        "zh-Hans": "市议会投票决定嫌疑人是否有罪",
+        "ar": "يصوّت المجلس البلدي على ما إذا كان المشتبه به مذنبًا",
+        "ckb": "ئەنجومەنی شارەوانی دەنگ دەدات کە گومانلێکراوەکە تاوانبارە یان نا",
+        "fa": "شورای کمون رأی می‌دهد که مظنون گناهکار است یا نه",
+        "pl": "Rada gminy głosuje nad tym, czy podejrzany jest winny",
+        "so": "Golaha degmada ayaa u codeeya in eedaysanuhu dambiile yahay iyo in kale",
+        "ti": "ቤት ምኽሪ kommun እቲ ተጠርጣሪ ገበነኛ ድዩ ኣይኮነን ድምጺ ይህብ",
+        "tr": "Belediye meclisi, şüphelinin suçlu olup olmadığına oy verir",
+        "uk": "Муніципальна рада голосує, чи є підозрюваний винним"
       }
     ],
     "answer": 0,
@@ -61640,19 +62220,59 @@
     "opts": [
       {
         "en": "The police gather evidence and speak with witnesses",
-        "sv": "Polisen samlar bevis och pratar med vittnen"
+        "sv": "Polisen samlar bevis och pratar med vittnen",
+        "zh-Hant": "警方收集證據並與證人談話",
+        "zh-Hans": "警方收集证据并与证人谈话",
+        "ar": "تجمع الشرطة الأدلة وتتحدث مع الشهود",
+        "ckb": "پۆلیس بەڵگە کۆدەکاتەوە و لەگەڵ شایەتەکان قسە دەکات",
+        "fa": "پلیس مدارک را جمع‌آوری می‌کند و با شاهدان صحبت می‌کند",
+        "pl": "Policja zbiera dowody i rozmawia ze świadkami",
+        "so": "Boolisku wuxuu ururiyaa caddaymo wuxuuna la hadlaa markhaatiyaal",
+        "ti": "ፖሊስ መርትዖ ይእክብን ምስ ምስክራት ይዛረብን",
+        "tr": "Polis kanıt toplar ve tanıklarla konuşur",
+        "uk": "Поліція збирає докази та розмовляє зі свідками"
       },
       {
         "en": "The judge decides the sentence before the trial begins",
-        "sv": "Domaren bestämmer straffet innan rättegången börjar"
+        "sv": "Domaren bestämmer straffet innan rättegången börjar",
+        "zh-Hant": "法官在審判開始前決定刑罰",
+        "zh-Hans": "法官在审判开始前决定刑罚",
+        "ar": "يقرر القاضي العقوبة قبل بدء المحاكمة",
+        "ckb": "دادوەر پێش دەستپێکردنی دادگایی سزاکە دیاری دەکات",
+        "fa": "قاضی پیش از آغاز دادگاه مجازات را تعیین می‌کند",
+        "pl": "Sędzia ustala karę przed rozpoczęciem rozprawy",
+        "so": "Garsooruhu wuxuu go’aamiyaa ciqaabta ka hor inta maxkamaddu bilaaban",
+        "ti": "ፈራዲ ቅድሚ ፍርዲ ምጅማሩ መቕጻዕቲ ይውስን",
+        "tr": "Yargıç, dava başlamadan önce cezayı belirler",
+        "uk": "Суддя визначає покарання до початку судового розгляду"
       },
       {
         "en": "The crime victim alone chooses whether the suspect will be convicted",
-        "sv": "Brottsoffret väljer ensam om den misstänkte ska dömas"
+        "sv": "Brottsoffret väljer ensam om den misstänkte ska dömas",
+        "zh-Hant": "受害者單獨決定嫌疑人是否應被定罪",
+        "zh-Hans": "受害者单独决定嫌疑人是否应被定罪",
+        "ar": "يختار الضحية وحده ما إذا كان ينبغي إدانة المشتبه به",
+        "ckb": "قوربانی بە تەنها هەڵدەبژێرێت کە گومانلێکراوەکە سزا بدرێت یان نا",
+        "fa": "قربانی به‌تنهایی تصمیم می‌گیرد که مظنون محکوم شود یا نه",
+        "pl": "Ofiara przestępstwa sama decyduje, czy podejrzany zostanie skazany",
+        "so": "Dhibbanaha dembiga ayaa keligiis dooranaya in eedaysanaha la xukumo iyo in kale",
+        "ti": "ግዳይ ገበን በይኑ እቲ ተጠርጣሪ ክፍረድ ድዩ ኣይክፍረድን ይውስን",
+        "tr": "Suç mağduru, şüphelinin mahkûm edilip edilmeyeceğine tek başına karar verir",
+        "uk": "Потерпілий сам вирішує, чи має підозрюваного бути засуджено"
       },
       {
         "en": "The municipal council votes on whether the suspect is guilty",
-        "sv": "Kommunfullmäktige röstar om den misstänkte är skyldig"
+        "sv": "Kommunfullmäktige röstar om den misstänkte är skyldig",
+        "zh-Hant": "市議會投票決定嫌疑人是否有罪",
+        "zh-Hans": "市议会投票决定嫌疑人是否有罪",
+        "ar": "يصوّت المجلس البلدي على ما إذا كان المشتبه به مذنبًا",
+        "ckb": "ئەنجومەنی شارەوانی دەنگ دەدات کە گومانلێکراوەکە تاوانبارە یان نا",
+        "fa": "شورای کمون رأی می‌دهد که مظنون گناهکار است یا نه",
+        "pl": "Rada gminy głosuje nad tym, czy podejrzany jest winny",
+        "so": "Golaha degmada ayaa u codeeya in eedaysanuhu dambiile yahay iyo in kale",
+        "ti": "ቤት ምኽሪ kommun እቲ ተጠርጣሪ ገበነኛ ድዩ ኣይኮነን ድምጺ ይህብ",
+        "tr": "Belediye meclisi, şüphelinin suçlu olup olmadığına oy verir",
+        "uk": "Муніципальна рада голосує, чи є підозрюваний винним"
       }
     ],
     "answer": 0,
@@ -61689,19 +62309,59 @@
     "opts": [
       {
         "en": "The right to a defence lawyer who can question the prosecutor’s evidence and present evidence of their own",
-        "sv": "Rätt till en försvarsadvokat som kan ifrågasätta åklagarens bevis och lägga fram egna bevis"
+        "sv": "Rätt till en försvarsadvokat som kan ifrågasätta åklagarens bevis och lägga fram egna bevis",
+        "zh-Hant": "有權獲得辯護律師，該律師可以質疑檢察官的證據並提出自己的證據",
+        "zh-Hans": "有权获得辩护律师，该律师可以质疑检察官的证据并提出自己的证据",
+        "ar": "الحق في محامي دفاع يستطيع التشكيك في أدلة المدعي العام وتقديم أدلة خاصة بالدفاع",
+        "ckb": "مافی پارێزەرێکی بەرگری کە بتوانێت بەڵگەکانی دادستان بخاتە ژێر پرسیار و بەڵگەی خۆی پێشکەش بکات",
+        "fa": "حق داشتن وکیل مدافعی که بتواند مدارک دادستان را به چالش بکشد و مدارک خود را ارائه کند",
+        "pl": "Prawo do obrońcy, który może kwestionować dowody prokuratora i przedstawiać własne dowody",
+        "so": "Xaqa qareen difaac oo su’aal gelin kara caddaymaha xeer-ilaaliyaha isla markaana keeni kara caddaymo u gaar ah",
+        "ti": "መሰል ናይ መከላኸሊ ጠበቓ፣ ንመርትዖታት ኣኽባር ሕጊ ክሓትትን ናይ ገዛእ ርእሱ መርትዖ ከቕርብን ዝኽእል",
+        "tr": "Savcının kanıtlarını sorgulayabilen ve kendi kanıtlarını sunabilen bir savunma avukatı hakkı",
+        "uk": "Право на захисника, який може ставити під сумнів докази прокурора та подавати власні докази"
       },
       {
         "en": "The right to choose the judge and lay judges alone",
-        "sv": "Rätt att ensam välja domare och nämndemän"
+        "sv": "Rätt att ensam välja domare och nämndemän",
+        "zh-Hant": "有權單獨選擇法官和陪審員",
+        "zh-Hans": "有权单独选择法官和陪审员",
+        "ar": "الحق في اختيار القاضي والقضاة المحلّفين وحده",
+        "ckb": "مافی ئەوەی بە تەنها دادوەر و دادوەرە هاوشانییەکان هەڵبژێرێت",
+        "fa": "حق اینکه به‌تنهایی قاضی و قاضیان غیرحرفه‌ای را انتخاب کند",
+        "pl": "Prawo do samodzielnego wyboru sędziego i ławników",
+        "so": "Xaqa inuu keligiis doorto garsooraha iyo garsoorayaasha dadweynaha",
+        "ti": "መሰል ፈራዲን ህዝባዊ ዳያኑን በይኑ ናይ ምምራጽ",
+        "tr": "Yargıcı ve halk yargıçlarını tek başına seçme hakkı",
+        "uk": "Право самостійно обирати суддю та народних засідателів"
       },
       {
         "en": "The right to forbid the prosecutor from speaking",
-        "sv": "Rätt att förbjuda åklagaren från att tala"
+        "sv": "Rätt att förbjuda åklagaren från att tala",
+        "zh-Hant": "有權禁止檢察官發言",
+        "zh-Hans": "有权禁止检察官发言",
+        "ar": "الحق في منع المدعي العام من الكلام",
+        "ckb": "مافی ئەوەی دادستان لە قسەکردن قەدەغە بکات",
+        "fa": "حق اینکه دادستان را از صحبت کردن منع کند",
+        "pl": "Prawo do zakazania prokuratorowi zabierania głosu",
+        "so": "Xaqa inuu ka mamnuuco xeer-ilaaliyaha inuu hadlo",
+        "ti": "ንኣኽባር ሕጊ ካብ ምዝራብ ናይ ምኽልካል መሰል",
+        "tr": "Savcının konuşmasını yasaklama hakkı",
+        "uk": "Право заборонити прокурору говорити"
       },
       {
         "en": "The right to avoid the court’s decision if there is a lot of evidence",
-        "sv": "Rätt att slippa domstolens beslut om bevisen är många"
+        "sv": "Rätt att slippa domstolens beslut om bevisen är många",
+        "zh-Hant": "如果證據很多，就有權不受法院裁決",
+        "zh-Hans": "如果证据很多，就有权不受法院裁决",
+        "ar": "الحق في تجنب قرار المحكمة إذا كانت الأدلة كثيرة",
+        "ckb": "مافی ئەوەی لە بڕیاری دادگا ڕزگار بێت ئەگەر بەڵگە زۆر بێت",
+        "fa": "حق اینکه اگر مدارک زیاد باشد از تصمیم دادگاه معاف شود",
+        "pl": "Prawo do uniknięcia decyzji sądu, jeśli dowodów jest dużo",
+        "so": "Xaqa inuu ka baxsado go’aanka maxkamadda haddii caddaymo badan jiraan",
+        "ti": "መርትዖ ብዙሕ እንተኾይኑ ካብ ውሳነ ቤት ፍርዲ ናይ ምምላጥ መሰል",
+        "tr": "Çok kanıt varsa mahkemenin kararından kaçınma hakkı",
+        "uk": "Право уникнути рішення суду, якщо доказів багато"
       }
     ],
     "answer": 0,
@@ -61820,19 +62480,59 @@
     "opts": [
       {
         "en": "The right to a defence lawyer who can question the prosecutor’s evidence and present evidence of their own",
-        "sv": "Rätt till en försvarsadvokat som kan ifrågasätta åklagarens bevis och lägga fram egna bevis"
+        "sv": "Rätt till en försvarsadvokat som kan ifrågasätta åklagarens bevis och lägga fram egna bevis",
+        "zh-Hant": "有權獲得辯護律師，該律師可以質疑檢察官的證據並提出自己的證據",
+        "zh-Hans": "有权获得辩护律师，该律师可以质疑检察官的证据并提出自己的证据",
+        "ar": "الحق في محامي دفاع يستطيع التشكيك في أدلة المدعي العام وتقديم أدلة خاصة بالدفاع",
+        "ckb": "مافی پارێزەرێکی بەرگری کە بتوانێت بەڵگەکانی دادستان بخاتە ژێر پرسیار و بەڵگەی خۆی پێشکەش بکات",
+        "fa": "حق داشتن وکیل مدافعی که بتواند مدارک دادستان را به چالش بکشد و مدارک خود را ارائه کند",
+        "pl": "Prawo do obrońcy, który może kwestionować dowody prokuratora i przedstawiać własne dowody",
+        "so": "Xaqa qareen difaac oo su’aal gelin kara caddaymaha xeer-ilaaliyaha isla markaana keeni kara caddaymo u gaar ah",
+        "ti": "መሰል ናይ መከላኸሊ ጠበቓ፣ ንመርትዖታት ኣኽባር ሕጊ ክሓትትን ናይ ገዛእ ርእሱ መርትዖ ከቕርብን ዝኽእል",
+        "tr": "Savcının kanıtlarını sorgulayabilen ve kendi kanıtlarını sunabilen bir savunma avukatı hakkı",
+        "uk": "Право на захисника, який може ставити під сумнів докази прокурора та подавати власні докази"
       },
       {
         "en": "The right to choose the judge and lay judges alone",
-        "sv": "Rätt att ensam välja domare och nämndemän"
+        "sv": "Rätt att ensam välja domare och nämndemän",
+        "zh-Hant": "有權單獨選擇法官和陪審員",
+        "zh-Hans": "有权单独选择法官和陪审员",
+        "ar": "الحق في اختيار القاضي والقضاة المحلّفين وحده",
+        "ckb": "مافی ئەوەی بە تەنها دادوەر و دادوەرە هاوشانییەکان هەڵبژێرێت",
+        "fa": "حق اینکه به‌تنهایی قاضی و قاضیان غیرحرفه‌ای را انتخاب کند",
+        "pl": "Prawo do samodzielnego wyboru sędziego i ławników",
+        "so": "Xaqa inuu keligiis doorto garsooraha iyo garsoorayaasha dadweynaha",
+        "ti": "መሰል ፈራዲን ህዝባዊ ዳያኑን በይኑ ናይ ምምራጽ",
+        "tr": "Yargıcı ve halk yargıçlarını tek başına seçme hakkı",
+        "uk": "Право самостійно обирати суддю та народних засідателів"
       },
       {
         "en": "The right to forbid the prosecutor from speaking",
-        "sv": "Rätt att förbjuda åklagaren från att tala"
+        "sv": "Rätt att förbjuda åklagaren från att tala",
+        "zh-Hant": "有權禁止檢察官發言",
+        "zh-Hans": "有权禁止检察官发言",
+        "ar": "الحق في منع المدعي العام من الكلام",
+        "ckb": "مافی ئەوەی دادستان لە قسەکردن قەدەغە بکات",
+        "fa": "حق اینکه دادستان را از صحبت کردن منع کند",
+        "pl": "Prawo do zakazania prokuratorowi zabierania głosu",
+        "so": "Xaqa inuu ka mamnuuco xeer-ilaaliyaha inuu hadlo",
+        "ti": "ንኣኽባር ሕጊ ካብ ምዝራብ ናይ ምኽልካል መሰል",
+        "tr": "Savcının konuşmasını yasaklama hakkı",
+        "uk": "Право заборонити прокурору говорити"
       },
       {
         "en": "The right to avoid the court’s decision if there is a lot of evidence",
-        "sv": "Rätt att slippa domstolens beslut om bevisen är många"
+        "sv": "Rätt att slippa domstolens beslut om bevisen är många",
+        "zh-Hant": "如果證據很多，就有權不受法院裁決",
+        "zh-Hans": "如果证据很多，就有权不受法院裁决",
+        "ar": "الحق في تجنب قرار المحكمة إذا كانت الأدلة كثيرة",
+        "ckb": "مافی ئەوەی لە بڕیاری دادگا ڕزگار بێت ئەگەر بەڵگە زۆر بێت",
+        "fa": "حق اینکه اگر مدارک زیاد باشد از تصمیم دادگاه معاف شود",
+        "pl": "Prawo do uniknięcia decyzji sądu, jeśli dowodów jest dużo",
+        "so": "Xaqa inuu ka baxsado go’aanka maxkamadda haddii caddaymo badan jiraan",
+        "ti": "መርትዖ ብዙሕ እንተኾይኑ ካብ ውሳነ ቤት ፍርዲ ናይ ምምላጥ መሰል",
+        "tr": "Çok kanıt varsa mahkemenin kararından kaçınma hakkı",
+        "uk": "Право уникнути рішення суду, якщо доказів багато"
       }
     ],
     "answer": 0,
@@ -61869,19 +62569,59 @@
     "opts": [
       {
         "en": "The police prevent and investigate crimes, the prosecutor decides whether suspects should be brought before a court, and courts review evidence",
-        "sv": "Polisen förhindrar och utreder brott, åklagaren avgör om misstänkta ska ställas inför domstol, och domstolar granskar bevis"
+        "sv": "Polisen förhindrar och utreder brott, åklagaren avgör om misstänkta ska ställas inför domstol, och domstolar granskar bevis",
+        "zh-Hant": "警方預防並調查犯罪，檢察官決定嫌疑人是否應被送上法庭，法院審查證據",
+        "zh-Hans": "警方预防并调查犯罪，检察官决定嫌疑人是否应被送上法庭，法院审查证据",
+        "ar": "تمنع الشرطة الجرائم وتحقق فيها، ويقرر المدعي العام ما إذا كان المشتبه بهم سيُحالون إلى المحكمة، وتراجع المحاكم الأدلة",
+        "ckb": "پۆلیس تاوان ڕێگری و لێکۆڵینەوە دەکات، دادستان بڕیار دەدات گومانلێکراوان بخرێنە بەردەم دادگا یان نا، و دادگاکان بەڵگەکان پێداچوونەوە دەکەن",
+        "fa": "پلیس از جرم پیشگیری و آن را بررسی می‌کند، دادستان تصمیم می‌گیرد آیا مظنونان به دادگاه برده شوند، و دادگاه‌ها مدارک را بررسی می‌کنند",
+        "pl": "Policja zapobiega przestępstwom i je bada, prokurator decyduje, czy podejrzani mają stanąć przed sądem, a sądy oceniają dowody",
+        "so": "Boolisku wuxuu ka hortagaa oo baaraa dembiyada, xeer-ilaaliyuhu wuxuu go’aamiyaa in tuhmanayaasha maxkamad la geeyo, maxkamaduhuna waxay eegaan caddaymaha",
+        "ti": "ፖሊስ ገበናት ይከላኸልን ይምርምርን፣ ኣኽባር ሕጊ ተጠርጠርቲ ናብ ቤት ፍርዲ ክቐርቡ ድዮም ኣይክቐርቡን ይውስን፣ ፍርድቤታት ድማ መርትዖ ይግምግሙ",
+        "tr": "Polis suçları önler ve soruşturur, savcı şüphelilerin mahkemeye çıkarılıp çıkarılmayacağına karar verir, mahkemeler de kanıtları inceler",
+        "uk": "Поліція запобігає злочинам і розслідує їх, прокурор вирішує, чи передавати підозрюваних до суду, а суди розглядають докази"
       },
       {
         "en": "Courts investigate all crimes, municipalities prosecute cases, and the police decide sentences",
-        "sv": "Domstolar utreder alla brott, kommuner väcker åtal och polisen bestämmer straff"
+        "sv": "Domstolar utreder alla brott, kommuner väcker åtal och polisen bestämmer straff",
+        "zh-Hant": "法院調查所有犯罪，市鎮提起公訴，警方決定刑罰",
+        "zh-Hans": "法院调查所有犯罪，市镇提起公诉，警方决定刑罚",
+        "ar": "تحقق المحاكم في كل الجرائم، وتلاحق البلديات القضايا، وتقرر الشرطة العقوبات",
+        "ckb": "دادگاکان هەموو تاوانەکان لێکۆڵینەوە دەکەن، شارەوانییەکان داوا دەکەن، و پۆلیس سزا دیاری دەکات",
+        "fa": "دادگاه‌ها همهٔ جرم‌ها را بررسی می‌کنند، کمون‌ها پیگرد قانونی را انجام می‌دهند و پلیس مجازات را تعیین می‌کند",
+        "pl": "Sądy badają wszystkie przestępstwa, gminy wnoszą oskarżenia, a policja ustala kary",
+        "so": "Maxkamaduhu waxay baaraan dhammaan dembiyada, degmooyinku waxay oogaan dacwado, booliskuna wuxuu go’aamiyaa ciqaabaha",
+        "ti": "ፍርድቤታት ኩሎም ገበናት ይምርምሩ፣ kommun ክስታት የቕርቡ፣ ፖሊስ ድማ መቕጻዕቲ ይውስን",
+        "tr": "Mahkemeler tüm suçları soruşturur, belediyeler dava açar ve polis cezaları belirler",
+        "uk": "Суди розслідують усі злочини, муніципалітети висувають обвинувачення, а поліція визначає покарання"
       },
       {
         "en": "The Prosecution Authority runs prisons, the Crime Victim Authority makes laws, and the Prison and Probation Service holds elections",
-        "sv": "Åklagarmyndigheten driver fängelser, Brottsoffermyndigheten stiftar lagar och Kriminalvården håller val"
+        "sv": "Åklagarmyndigheten driver fängelser, Brottsoffermyndigheten stiftar lagar och Kriminalvården håller val",
+        "zh-Hant": "檢察機關管理監獄，犯罪受害者機關制定法律，監獄和緩刑署舉辦選舉",
+        "zh-Hans": "检察机关管理监狱，犯罪受害者机关制定法律，监狱和缓刑署举办选举",
+        "ar": "تدير هيئة الادعاء السجون، وتسن هيئة ضحايا الجريمة القوانين، وتُنظم مصلحة السجون والمراقبة الانتخابات",
+        "ckb": "دەزگای دادستانی زیندانەکان بەڕێوە دەبات، دەزگای قوربانیانی تاوان یاسا دادەنێت، و خزمەتگوزاری زیندان و چاودێری هەڵبژاردن ئەنجام دەدات",
+        "fa": "دادستانی زندان‌ها را اداره می‌کند، نهاد قربانیان جرم قانون وضع می‌کند و ادارهٔ زندان و مراقبت انتخابات برگزار می‌کند",
+        "pl": "Prokuratura prowadzi więzienia, urząd ds. ofiar przestępstw uchwala prawa, a służba więzienna i probacyjna organizuje wybory",
+        "so": "Hay’adda xeer-ilaalintu waxay maamushaa xabsiyada, hay’adda dhibbanayaasha dembigu waxay samaysaa sharciyo, adeegga xabsiyada iyo kormeerka ayaana qabta doorashooyin",
+        "ti": "ብዓል መዚ ኣኽባር ሕጊ ቤት ማእሰርቲ የካይድ፣ ብዓል መዚ ግዳያት ገበን ሕጊ ይወጽእ፣ ክሪሚናልቮርደን ድማ ምርጫታት የካይድ",
+        "tr": "Savcılık kurumu hapishaneleri işletir, Suç Mağduru Kurumu yasalar çıkarır, Cezaevi ve Denetimli Serbestlik Kurumu seçim yapar",
+        "uk": "Прокуратура керує в’язницями, орган у справах потерпілих ухвалює закони, а служба виконання покарань проводить вибори"
       },
       {
         "en": "The Riksdag judges criminal cases, the government questions witnesses, and regions decide acquittals",
-        "sv": "Riksdagen dömer brottmål, regeringen förhör vittnen och regionerna beslutar frikännande"
+        "sv": "Riksdagen dömer brottmål, regeringen förhör vittnen och regionerna beslutar frikännande",
+        "zh-Hant": "Riksdag 審理刑事案件，政府詢問證人，大區決定無罪釋放",
+        "zh-Hans": "Riksdag 审理刑事案件，政府询问证人，大区决定无罪释放",
+        "ar": "يحكم البرلمان السويدي (Riksdag) في القضايا الجنائية، وتستجوب الحكومة الشهود، وتقرر الأقاليم البراءة",
+        "ckb": "Riksdag دۆسیە تاوانییەکان دادوەری دەکات، حکومەت شایەتەکان دەپرسێت، و هەرێمەکان بڕیاری بێتاوانی دەدەن",
+        "fa": "Riksdag پرونده‌های کیفری را قضاوت می‌کند، دولت از شاهدان بازجویی می‌کند و مناطق حکم تبرئه می‌دهند",
+        "pl": "Riksdag sądzi sprawy karne, rząd przesłuchuje świadków, a regiony decydują o uniewinnieniu",
+        "so": "Riksdag-gu wuxuu xukuma dacwadaha dembiyada, dowladdu waxay su’aalo waydiisaa markhaatiyaal, gobolladuna waxay go’aamiyaan sii-dayn",
+        "ti": "Riksdag ጉዳያት ገበን ይፈርድ፣ መንግስቲ ምስክራት ይሓትት፣ region ድማ ናጻ ምውጻእ ይውስን",
+        "tr": "Riksdag ceza davalarını yargılar, hükümet tanıkları sorgular, bölgeler beraate karar verir",
+        "uk": "Riksdag розглядає кримінальні справи, уряд допитує свідків, а регіони вирішують питання виправдання"
       }
     ],
     "answer": 0,
@@ -62000,19 +62740,59 @@
     "opts": [
       {
         "en": "The police prevent and investigate crimes, the prosecutor decides whether suspects should be brought before a court, and courts review evidence",
-        "sv": "Polisen förhindrar och utreder brott, åklagaren avgör om misstänkta ska ställas inför domstol, och domstolar granskar bevis"
+        "sv": "Polisen förhindrar och utreder brott, åklagaren avgör om misstänkta ska ställas inför domstol, och domstolar granskar bevis",
+        "zh-Hant": "警方預防並調查犯罪，檢察官決定嫌疑人是否應被送上法庭，法院審查證據",
+        "zh-Hans": "警方预防并调查犯罪，检察官决定嫌疑人是否应被送上法庭，法院审查证据",
+        "ar": "تمنع الشرطة الجرائم وتحقق فيها، ويقرر المدعي العام ما إذا كان المشتبه بهم سيُحالون إلى المحكمة، وتراجع المحاكم الأدلة",
+        "ckb": "پۆلیس تاوان ڕێگری و لێکۆڵینەوە دەکات، دادستان بڕیار دەدات گومانلێکراوان بخرێنە بەردەم دادگا یان نا، و دادگاکان بەڵگەکان پێداچوونەوە دەکەن",
+        "fa": "پلیس از جرم پیشگیری و آن را بررسی می‌کند، دادستان تصمیم می‌گیرد آیا مظنونان به دادگاه برده شوند، و دادگاه‌ها مدارک را بررسی می‌کنند",
+        "pl": "Policja zapobiega przestępstwom i je bada, prokurator decyduje, czy podejrzani mają stanąć przed sądem, a sądy oceniają dowody",
+        "so": "Boolisku wuxuu ka hortagaa oo baaraa dembiyada, xeer-ilaaliyuhu wuxuu go’aamiyaa in tuhmanayaasha maxkamad la geeyo, maxkamaduhuna waxay eegaan caddaymaha",
+        "ti": "ፖሊስ ገበናት ይከላኸልን ይምርምርን፣ ኣኽባር ሕጊ ተጠርጠርቲ ናብ ቤት ፍርዲ ክቐርቡ ድዮም ኣይክቐርቡን ይውስን፣ ፍርድቤታት ድማ መርትዖ ይግምግሙ",
+        "tr": "Polis suçları önler ve soruşturur, savcı şüphelilerin mahkemeye çıkarılıp çıkarılmayacağına karar verir, mahkemeler de kanıtları inceler",
+        "uk": "Поліція запобігає злочинам і розслідує їх, прокурор вирішує, чи передавати підозрюваних до суду, а суди розглядають докази"
       },
       {
         "en": "Courts investigate all crimes, municipalities prosecute cases, and the police decide sentences",
-        "sv": "Domstolar utreder alla brott, kommuner väcker åtal och polisen bestämmer straff"
+        "sv": "Domstolar utreder alla brott, kommuner väcker åtal och polisen bestämmer straff",
+        "zh-Hant": "法院調查所有犯罪，市鎮提起公訴，警方決定刑罰",
+        "zh-Hans": "法院调查所有犯罪，市镇提起公诉，警方决定刑罚",
+        "ar": "تحقق المحاكم في كل الجرائم، وتلاحق البلديات القضايا، وتقرر الشرطة العقوبات",
+        "ckb": "دادگاکان هەموو تاوانەکان لێکۆڵینەوە دەکەن، شارەوانییەکان داوا دەکەن، و پۆلیس سزا دیاری دەکات",
+        "fa": "دادگاه‌ها همهٔ جرم‌ها را بررسی می‌کنند، کمون‌ها پیگرد قانونی را انجام می‌دهند و پلیس مجازات را تعیین می‌کند",
+        "pl": "Sądy badają wszystkie przestępstwa, gminy wnoszą oskarżenia, a policja ustala kary",
+        "so": "Maxkamaduhu waxay baaraan dhammaan dembiyada, degmooyinku waxay oogaan dacwado, booliskuna wuxuu go’aamiyaa ciqaabaha",
+        "ti": "ፍርድቤታት ኩሎም ገበናት ይምርምሩ፣ kommun ክስታት የቕርቡ፣ ፖሊስ ድማ መቕጻዕቲ ይውስን",
+        "tr": "Mahkemeler tüm suçları soruşturur, belediyeler dava açar ve polis cezaları belirler",
+        "uk": "Суди розслідують усі злочини, муніципалітети висувають обвинувачення, а поліція визначає покарання"
       },
       {
         "en": "The Prosecution Authority runs prisons, the Crime Victim Authority makes laws, and the Prison and Probation Service holds elections",
-        "sv": "Åklagarmyndigheten driver fängelser, Brottsoffermyndigheten stiftar lagar och Kriminalvården håller val"
+        "sv": "Åklagarmyndigheten driver fängelser, Brottsoffermyndigheten stiftar lagar och Kriminalvården håller val",
+        "zh-Hant": "檢察機關管理監獄，犯罪受害者機關制定法律，監獄和緩刑署舉辦選舉",
+        "zh-Hans": "检察机关管理监狱，犯罪受害者机关制定法律，监狱和缓刑署举办选举",
+        "ar": "تدير هيئة الادعاء السجون، وتسن هيئة ضحايا الجريمة القوانين، وتُنظم مصلحة السجون والمراقبة الانتخابات",
+        "ckb": "دەزگای دادستانی زیندانەکان بەڕێوە دەبات، دەزگای قوربانیانی تاوان یاسا دادەنێت، و خزمەتگوزاری زیندان و چاودێری هەڵبژاردن ئەنجام دەدات",
+        "fa": "دادستانی زندان‌ها را اداره می‌کند، نهاد قربانیان جرم قانون وضع می‌کند و ادارهٔ زندان و مراقبت انتخابات برگزار می‌کند",
+        "pl": "Prokuratura prowadzi więzienia, urząd ds. ofiar przestępstw uchwala prawa, a służba więzienna i probacyjna organizuje wybory",
+        "so": "Hay’adda xeer-ilaalintu waxay maamushaa xabsiyada, hay’adda dhibbanayaasha dembigu waxay samaysaa sharciyo, adeegga xabsiyada iyo kormeerka ayaana qabta doorashooyin",
+        "ti": "ብዓል መዚ ኣኽባር ሕጊ ቤት ማእሰርቲ የካይድ፣ ብዓል መዚ ግዳያት ገበን ሕጊ ይወጽእ፣ ክሪሚናልቮርደን ድማ ምርጫታት የካይድ",
+        "tr": "Savcılık kurumu hapishaneleri işletir, Suç Mağduru Kurumu yasalar çıkarır, Cezaevi ve Denetimli Serbestlik Kurumu seçim yapar",
+        "uk": "Прокуратура керує в’язницями, орган у справах потерпілих ухвалює закони, а служба виконання покарань проводить вибори"
       },
       {
         "en": "The Riksdag judges criminal cases, the government questions witnesses, and regions decide acquittals",
-        "sv": "Riksdagen dömer brottmål, regeringen förhör vittnen och regionerna beslutar frikännande"
+        "sv": "Riksdagen dömer brottmål, regeringen förhör vittnen och regionerna beslutar frikännande",
+        "zh-Hant": "Riksdag 審理刑事案件，政府詢問證人，大區決定無罪釋放",
+        "zh-Hans": "Riksdag 审理刑事案件，政府询问证人，大区决定无罪释放",
+        "ar": "يحكم البرلمان السويدي (Riksdag) في القضايا الجنائية، وتستجوب الحكومة الشهود، وتقرر الأقاليم البراءة",
+        "ckb": "Riksdag دۆسیە تاوانییەکان دادوەری دەکات، حکومەت شایەتەکان دەپرسێت، و هەرێمەکان بڕیاری بێتاوانی دەدەن",
+        "fa": "Riksdag پرونده‌های کیفری را قضاوت می‌کند، دولت از شاهدان بازجویی می‌کند و مناطق حکم تبرئه می‌دهند",
+        "pl": "Riksdag sądzi sprawy karne, rząd przesłuchuje świadków, a regiony decydują o uniewinnieniu",
+        "so": "Riksdag-gu wuxuu xukuma dacwadaha dembiyada, dowladdu waxay su’aalo waydiisaa markhaatiyaal, gobolladuna waxay go’aamiyaan sii-dayn",
+        "ti": "Riksdag ጉዳያት ገበን ይፈርድ፣ መንግስቲ ምስክራት ይሓትት፣ region ድማ ናጻ ምውጻእ ይውስን",
+        "tr": "Riksdag ceza davalarını yargılar, hükümet tanıkları sorgular, bölgeler beraate karar verir",
+        "uk": "Riksdag розглядає кримінальні справи, уряд допитує свідків, а регіони вирішують питання виправдання"
       }
     ],
     "answer": 0,
@@ -62049,19 +62829,59 @@
     "opts": [
       {
         "en": "Every person has rights regardless of background or life situation",
-        "sv": "Varje människa har rättigheter oavsett bakgrund eller livssituation"
+        "sv": "Varje människa har rättigheter oavsett bakgrund eller livssituation",
+        "zh-Hant": "每個人無論背景或生活處境如何都有權利",
+        "zh-Hans": "每个人无论背景或生活处境如何都有权利",
+        "ar": "كل إنسان له حقوق بغضّ النظر عن خلفيته أو وضعه في الحياة",
+        "ckb": "هەر مرۆڤێک مافی هەیە بەبێ گوێدان بە پاشخان یان دۆخی ژیانی",
+        "fa": "هر انسان فارغ از پیشینه یا وضعیت زندگی خود حقوقی دارد",
+        "pl": "Każdy człowiek ma prawa niezależnie od pochodzenia lub sytuacji życiowej",
+        "so": "Qof kasta wuxuu leeyahay xuquuq, iyada oo aan loo eegin asalkiisa ama xaaladdiisa nololeed",
+        "ti": "ኩሉ ሰብ ብዘይ ግድን መበቆሉ ወይ ኩነታት ህይወቱ መሰላት ኣለዎ",
+        "tr": "Her insanın geçmişi veya yaşam durumu ne olursa olsun hakları vardır",
+        "uk": "Кожна людина має права незалежно від походження чи життєвої ситуації"
       },
       {
         "en": "Only Swedish citizens have human rights",
-        "sv": "Bara svenska medborgare har mänskliga rättigheter"
+        "sv": "Bara svenska medborgare har mänskliga rättigheter",
+        "zh-Hant": "只有瑞典公民有人權",
+        "zh-Hans": "只有瑞典公民有人权",
+        "ar": "المواطنون السويديون فقط لديهم حقوق إنسان",
+        "ckb": "تەنها هاووڵاتیانی سوید مافی مرۆڤیان هەیە",
+        "fa": "فقط شهروندان سوئدی حقوق بشر دارند",
+        "pl": "Tylko obywatele Szwecji mają prawa człowieka",
+        "so": "Kaliya muwaadiniinta Iswiidhan ayaa leh xuquuqda aadanaha",
+        "ti": "ሰብኣዊ መሰላት ዘለዎም ዜጋታት ሽወደን ጥራይ እዮም",
+        "tr": "Yalnızca İsveç vatandaşlarının insan hakları vardır",
+        "uk": "Лише громадяни Швеції мають права людини"
       },
       {
         "en": "The rights apply only to people who work",
-        "sv": "Rättigheterna gäller bara personer som arbetar"
+        "sv": "Rättigheterna gäller bara personer som arbetar",
+        "zh-Hant": "這些權利只適用於工作的人",
+        "zh-Hans": "这些权利只适用于工作的人",
+        "ar": "تنطبق الحقوق فقط على الأشخاص الذين يعملون",
+        "ckb": "مافەکان تەنها بۆ ئەو کەسانەن کە کار دەکەن",
+        "fa": "این حقوق فقط شامل کسانی می‌شود که کار می‌کنند",
+        "pl": "Prawa dotyczą tylko osób, które pracują",
+        "so": "Xuquuqdu waxay khusaysaa oo keliya dadka shaqeeya",
+        "ti": "እቶም መሰላት ንዝሰርሑ ሰባት ጥራይ ይምልከቱ",
+        "tr": "Haklar yalnızca çalışan kişiler için geçerlidir",
+        "uk": "Права стосуються лише людей, які працюють"
       },
       {
         "en": "Each municipality chooses which people have rights",
-        "sv": "Varje kommun väljer själv vilka människor som har rättigheter"
+        "sv": "Varje kommun väljer själv vilka människor som har rättigheter",
+        "zh-Hant": "每個市鎮自行選擇哪些人有權利",
+        "zh-Hans": "每个市镇自行选择哪些人有权利",
+        "ar": "تختار كل بلدية بنفسها أي الناس لديهم حقوق",
+        "ckb": "هەر شارەوانییەک خۆی هەڵدەبژێرێت کام خەڵک مافیان هەیە",
+        "fa": "هر کمون خودش انتخاب می‌کند کدام افراد حقوق داشته باشند",
+        "pl": "Każda gmina sama wybiera, którzy ludzie mają prawa",
+        "so": "Degmo kasta ayaa iyadu doorata dadka xuquuqda leh",
+        "ti": "ነፍሲ ወከፍ kommun ኣየኖት ሰባት መሰላት ከም ዘለዎም ባዕሉ ይመርጽ",
+        "tr": "Her belediye hangi insanların haklara sahip olacağını kendisi seçer",
+        "uk": "Кожен муніципалітет сам обирає, які люди мають права"
       }
     ],
     "answer": 0,
@@ -62177,19 +62997,59 @@
     "opts": [
       {
         "en": "Every person has rights regardless of background or life situation",
-        "sv": "Varje människa har rättigheter oavsett bakgrund eller livssituation"
+        "sv": "Varje människa har rättigheter oavsett bakgrund eller livssituation",
+        "zh-Hant": "每個人無論背景或生活處境如何都有權利",
+        "zh-Hans": "每个人无论背景或生活处境如何都有权利",
+        "ar": "كل إنسان له حقوق بغضّ النظر عن خلفيته أو وضعه في الحياة",
+        "ckb": "هەر مرۆڤێک مافی هەیە بەبێ گوێدان بە پاشخان یان دۆخی ژیانی",
+        "fa": "هر انسان فارغ از پیشینه یا وضعیت زندگی خود حقوقی دارد",
+        "pl": "Każdy człowiek ma prawa niezależnie od pochodzenia lub sytuacji życiowej",
+        "so": "Qof kasta wuxuu leeyahay xuquuq, iyada oo aan loo eegin asalkiisa ama xaaladdiisa nololeed",
+        "ti": "ኩሉ ሰብ ብዘይ ግድን መበቆሉ ወይ ኩነታት ህይወቱ መሰላት ኣለዎ",
+        "tr": "Her insanın geçmişi veya yaşam durumu ne olursa olsun hakları vardır",
+        "uk": "Кожна людина має права незалежно від походження чи життєвої ситуації"
       },
       {
         "en": "Only Swedish citizens have human rights",
-        "sv": "Bara svenska medborgare har mänskliga rättigheter"
+        "sv": "Bara svenska medborgare har mänskliga rättigheter",
+        "zh-Hant": "只有瑞典公民有人權",
+        "zh-Hans": "只有瑞典公民有人权",
+        "ar": "المواطنون السويديون فقط لديهم حقوق إنسان",
+        "ckb": "تەنها هاووڵاتیانی سوید مافی مرۆڤیان هەیە",
+        "fa": "فقط شهروندان سوئدی حقوق بشر دارند",
+        "pl": "Tylko obywatele Szwecji mają prawa człowieka",
+        "so": "Kaliya muwaadiniinta Iswiidhan ayaa leh xuquuqda aadanaha",
+        "ti": "ሰብኣዊ መሰላት ዘለዎም ዜጋታት ሽወደን ጥራይ እዮም",
+        "tr": "Yalnızca İsveç vatandaşlarının insan hakları vardır",
+        "uk": "Лише громадяни Швеції мають права людини"
       },
       {
         "en": "The rights apply only to people who work",
-        "sv": "Rättigheterna gäller bara personer som arbetar"
+        "sv": "Rättigheterna gäller bara personer som arbetar",
+        "zh-Hant": "這些權利只適用於工作的人",
+        "zh-Hans": "这些权利只适用于工作的人",
+        "ar": "تنطبق الحقوق فقط على الأشخاص الذين يعملون",
+        "ckb": "مافەکان تەنها بۆ ئەو کەسانەن کە کار دەکەن",
+        "fa": "این حقوق فقط شامل کسانی می‌شود که کار می‌کنند",
+        "pl": "Prawa dotyczą tylko osób, które pracują",
+        "so": "Xuquuqdu waxay khusaysaa oo keliya dadka shaqeeya",
+        "ti": "እቶም መሰላት ንዝሰርሑ ሰባት ጥራይ ይምልከቱ",
+        "tr": "Haklar yalnızca çalışan kişiler için geçerlidir",
+        "uk": "Права стосуються лише людей, які працюють"
       },
       {
         "en": "Each municipality chooses which people have rights",
-        "sv": "Varje kommun väljer själv vilka människor som har rättigheter"
+        "sv": "Varje kommun väljer själv vilka människor som har rättigheter",
+        "zh-Hant": "每個市鎮自行選擇哪些人有權利",
+        "zh-Hans": "每个市镇自行选择哪些人有权利",
+        "ar": "تختار كل بلدية بنفسها أي الناس لديهم حقوق",
+        "ckb": "هەر شارەوانییەک خۆی هەڵدەبژێرێت کام خەڵک مافیان هەیە",
+        "fa": "هر کمون خودش انتخاب می‌کند کدام افراد حقوق داشته باشند",
+        "pl": "Każda gmina sama wybiera, którzy ludzie mają prawa",
+        "so": "Degmo kasta ayaa iyadu doorata dadka xuquuqda leh",
+        "ti": "ነፍሲ ወከፍ kommun ኣየኖት ሰባት መሰላት ከም ዘለዎም ባዕሉ ይመርጽ",
+        "tr": "Her belediye hangi insanların haklara sahip olacağını kendisi seçer",
+        "uk": "Кожен муніципалітет сам обирає, які люди мають права"
       }
     ],
     "answer": 0,
@@ -62219,25 +63079,65 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which example is part of work for gender equality?",
+      "en": "Which answer best matches? Which example is part of efforts to promote gender equality?",
       "sv": "Vilket svar stämmer bäst? Vilket exempel hör till arbetet för jämställdhet mellan könen?"
     },
     "opts": [
       {
         "en": "Women and men should have equal opportunities for education, work, and income",
-        "sv": "Att kvinnor och män ska ha lika möjligheter till utbildning, arbete och inkomst"
+        "sv": "Att kvinnor och män ska ha lika möjligheter till utbildning, arbete och inkomst",
+        "zh-Hant": "女性和男性應有平等的教育、工作和收入機會",
+        "zh-Hans": "女性和男性应有平等的教育、工作和收入机会",
+        "ar": "أن تكون للنساء والرجال فرص متساوية في التعليم والعمل والدخل",
+        "ckb": "ژنان و پیاوان دەبێت هەمان دەرفەتی خوێندن، کار و داهاتیان هەبێت",
+        "fa": "زنان و مردان باید فرصت‌های برابر برای آموزش، کار و درآمد داشته باشند",
+        "pl": "Kobiety i mężczyźni powinni mieć równe możliwości edukacji, pracy i dochodów",
+        "so": "Haweenka iyo raggu waa inay helaan fursado siman oo waxbarasho, shaqo iyo dakhli ah",
+        "ti": "ደቂ ኣንስትዮን ደቂ ተባዕትዮን ኣብ ትምህርቲ፣ ስራሕን እቶትን ማዕረ ዕድላት ክህልዎም ኣለዎ",
+        "tr": "Kadınlar ve erkekler eğitim, iş ve gelir için eşit fırsatlara sahip olmalıdır",
+        "uk": "Жінки й чоловіки мають мати рівні можливості для освіти, роботи та доходу"
       },
       {
         "en": "Only men should be able to influence political decisions",
-        "sv": "Att bara män ska kunna påverka politiska beslut"
+        "sv": "Att bara män ska kunna påverka politiska beslut",
+        "zh-Hant": "只有男性應能影響政治決策",
+        "zh-Hans": "只有男性应能影响政治决策",
+        "ar": "أن يكون الرجال فقط قادرين على التأثير في القرارات السياسية",
+        "ckb": "تەنها پیاوان بتوانن کاریگەری لەسەر بڕیارە سیاسییەکان بکەن",
+        "fa": "فقط مردان باید بتوانند بر تصمیم‌های سیاسی اثر بگذارند",
+        "pl": "Tylko mężczyźni powinni móc wpływać na decyzje polityczne",
+        "so": "Kaliya ragga ayaa awood u yeelan kara inay saameeyaan go’aamada siyaasadeed",
+        "ti": "ውሳነታት ፖለቲካ ክጸልዉ ዝኽእሉ ደቂ ተባዕትዮ ጥራይ ክኾኑ ኣለዎም",
+        "tr": "Yalnızca erkekler siyasi kararları etkileyebilmelidir",
+        "uk": "Лише чоловіки повинні мати змогу впливати на політичні рішення"
       },
       {
         "en": "Parental leave should always be taken by mothers",
-        "sv": "Att föräldraledighet alltid ska tas av mammor"
+        "sv": "Att föräldraledighet alltid ska tas av mammor",
+        "zh-Hant": "育兒假應永遠由母親休",
+        "zh-Hans": "育儿假应永远由母亲休",
+        "ar": "أن تُؤخذ إجازة الوالدين دائمًا من قبل الأمهات",
+        "ckb": "مۆڵەتی دایک و باوک هەمیشە دەبێت لەلایەن دایکانەوە وەربگیرێت",
+        "fa": "مرخصی والدین همیشه باید توسط مادران گرفته شود",
+        "pl": "Urlop rodzicielski powinien zawsze być brany przez matki",
+        "so": "Fasaxa waalidnimada waa in had iyo jeer ay qaataan hooyooyinku",
+        "ti": "ዕረፍቲ ወለዲ ኩሉ ግዜ ብኣዴታት ክውሰድ ኣለዎ",
+        "tr": "Ebeveyn izni her zaman anneler tarafından alınmalıdır",
+        "uk": "Батьківську відпустку завжди мають брати матері"
       },
       {
         "en": "Women and men should have different legal rights",
-        "sv": "Att kvinnor och män ska ha olika lagliga rättigheter"
+        "sv": "Att kvinnor och män ska ha olika lagliga rättigheter",
+        "zh-Hant": "女性和男性應有不同的法律權利",
+        "zh-Hans": "女性和男性应有不同的法律权利",
+        "ar": "أن تكون للنساء والرجال حقوق قانونية مختلفة",
+        "ckb": "ژنان و پیاوان دەبێت مافی یاسایی جیاوازیان هەبێت",
+        "fa": "زنان و مردان باید حقوق قانونی متفاوتی داشته باشند",
+        "pl": "Kobiety i mężczyźni powinni mieć różne prawa ustawowe",
+        "so": "Haweenka iyo raggu waa inay lahaadaan xuquuq sharci oo kala duwan",
+        "ti": "ደቂ ኣንስትዮን ደቂ ተባዕትዮን ዝተፈላለዩ ሕጋዊ መሰላት ክህልዎም ኣለዎ",
+        "tr": "Kadınlar ve erkekler farklı yasal haklara sahip olmalıdır",
+        "uk": "Жінки й чоловіки повинні мати різні законні права"
       }
     ],
     "answer": 0,
@@ -62350,25 +63250,65 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which example is part of work for gender equality?",
+      "en": "Choose the correct option: Which example is part of efforts to promote gender equality?",
       "sv": "Välj rätt alternativ: Vilket exempel hör till arbetet för jämställdhet mellan könen?"
     },
     "opts": [
       {
         "en": "Women and men should have equal opportunities for education, work, and income",
-        "sv": "Att kvinnor och män ska ha lika möjligheter till utbildning, arbete och inkomst"
+        "sv": "Att kvinnor och män ska ha lika möjligheter till utbildning, arbete och inkomst",
+        "zh-Hant": "女性和男性應有平等的教育、工作和收入機會",
+        "zh-Hans": "女性和男性应有平等的教育、工作和收入机会",
+        "ar": "أن تكون للنساء والرجال فرص متساوية في التعليم والعمل والدخل",
+        "ckb": "ژنان و پیاوان دەبێت هەمان دەرفەتی خوێندن، کار و داهاتیان هەبێت",
+        "fa": "زنان و مردان باید فرصت‌های برابر برای آموزش، کار و درآمد داشته باشند",
+        "pl": "Kobiety i mężczyźni powinni mieć równe możliwości edukacji, pracy i dochodów",
+        "so": "Haweenka iyo raggu waa inay helaan fursado siman oo waxbarasho, shaqo iyo dakhli ah",
+        "ti": "ደቂ ኣንስትዮን ደቂ ተባዕትዮን ኣብ ትምህርቲ፣ ስራሕን እቶትን ማዕረ ዕድላት ክህልዎም ኣለዎ",
+        "tr": "Kadınlar ve erkekler eğitim, iş ve gelir için eşit fırsatlara sahip olmalıdır",
+        "uk": "Жінки й чоловіки мають мати рівні можливості для освіти, роботи та доходу"
       },
       {
         "en": "Only men should be able to influence political decisions",
-        "sv": "Att bara män ska kunna påverka politiska beslut"
+        "sv": "Att bara män ska kunna påverka politiska beslut",
+        "zh-Hant": "只有男性應能影響政治決策",
+        "zh-Hans": "只有男性应能影响政治决策",
+        "ar": "أن يكون الرجال فقط قادرين على التأثير في القرارات السياسية",
+        "ckb": "تەنها پیاوان بتوانن کاریگەری لەسەر بڕیارە سیاسییەکان بکەن",
+        "fa": "فقط مردان باید بتوانند بر تصمیم‌های سیاسی اثر بگذارند",
+        "pl": "Tylko mężczyźni powinni móc wpływać na decyzje polityczne",
+        "so": "Kaliya ragga ayaa awood u yeelan kara inay saameeyaan go’aamada siyaasadeed",
+        "ti": "ውሳነታት ፖለቲካ ክጸልዉ ዝኽእሉ ደቂ ተባዕትዮ ጥራይ ክኾኑ ኣለዎም",
+        "tr": "Yalnızca erkekler siyasi kararları etkileyebilmelidir",
+        "uk": "Лише чоловіки повинні мати змогу впливати на політичні рішення"
       },
       {
         "en": "Parental leave should always be taken by mothers",
-        "sv": "Att föräldraledighet alltid ska tas av mammor"
+        "sv": "Att föräldraledighet alltid ska tas av mammor",
+        "zh-Hant": "育兒假應永遠由母親休",
+        "zh-Hans": "育儿假应永远由母亲休",
+        "ar": "أن تُؤخذ إجازة الوالدين دائمًا من قبل الأمهات",
+        "ckb": "مۆڵەتی دایک و باوک هەمیشە دەبێت لەلایەن دایکانەوە وەربگیرێت",
+        "fa": "مرخصی والدین همیشه باید توسط مادران گرفته شود",
+        "pl": "Urlop rodzicielski powinien zawsze być brany przez matki",
+        "so": "Fasaxa waalidnimada waa in had iyo jeer ay qaataan hooyooyinku",
+        "ti": "ዕረፍቲ ወለዲ ኩሉ ግዜ ብኣዴታት ክውሰድ ኣለዎ",
+        "tr": "Ebeveyn izni her zaman anneler tarafından alınmalıdır",
+        "uk": "Батьківську відпустку завжди мають брати матері"
       },
       {
         "en": "Women and men should have different legal rights",
-        "sv": "Att kvinnor och män ska ha olika lagliga rättigheter"
+        "sv": "Att kvinnor och män ska ha olika lagliga rättigheter",
+        "zh-Hant": "女性和男性應有不同的法律權利",
+        "zh-Hans": "女性和男性应有不同的法律权利",
+        "ar": "أن تكون للنساء والرجال حقوق قانونية مختلفة",
+        "ckb": "ژنان و پیاوان دەبێت مافی یاسایی جیاوازیان هەبێت",
+        "fa": "زنان و مردان باید حقوق قانونی متفاوتی داشته باشند",
+        "pl": "Kobiety i mężczyźni powinni mieć różne prawa ustawowe",
+        "so": "Haweenka iyo raggu waa inay lahaadaan xuquuq sharci oo kala duwan",
+        "ti": "ደቂ ኣንስትዮን ደቂ ተባዕትዮን ዝተፈላለዩ ሕጋዊ መሰላት ክህልዎም ኣለዎ",
+        "tr": "Kadınlar ve erkekler farklı yasal haklara sahip olmalıdır",
+        "uk": "Жінки й чоловіки повинні мати різні законні права"
       }
     ],
     "answer": 0,
@@ -62405,19 +63345,59 @@
     "opts": [
       {
         "en": "That minorities should be able to preserve and develop their languages and cultures",
-        "sv": "Att minoriteter ska kunna bevara och utveckla sina språk och kulturer"
+        "sv": "Att minoriteter ska kunna bevara och utveckla sina språk och kulturer",
+        "zh-Hant": "少數群體應能保留並發展自己的語言和文化",
+        "zh-Hans": "少数群体应能保留并发展自己的语言和文化",
+        "ar": "أن تكون الأقليات قادرة على الحفاظ على لغاتها وثقافاتها وتطويرها",
+        "ckb": "کەمینەکان بتوانن زمان و کەلتووری خۆیان بپارێزن و پەرەیان پێ بدەن",
+        "fa": "اقلیت‌ها باید بتوانند زبان‌ها و فرهنگ‌های خود را حفظ و توسعه دهند",
+        "pl": "Mniejszości powinny móc zachowywać i rozwijać swoje języki oraz kultury",
+        "so": "Dadka laga tirada badan yahay waa inay awoodaan inay ilaashadaan oo horumariyaan luqadahooda iyo dhaqammadooda",
+        "ti": "ንኡሳን ማሕበረሰባት ቋንቋታቶምን ባህልታቶምን ክዕቅቡን ከማዕብሉን ክኽእሉ ኣለዎም",
+        "tr": "Azınlıklar dillerini ve kültürlerini koruyup geliştirebilmelidir",
+        "uk": "Меншини мають мати змогу зберігати й розвивати свої мови та культури"
       },
       {
         "en": "That minorities must stop using their languages",
-        "sv": "Att minoriteter måste sluta använda sina språk"
+        "sv": "Att minoriteter måste sluta använda sina språk",
+        "zh-Hant": "少數群體必須停止使用自己的語言",
+        "zh-Hans": "少数群体必须停止使用自己的语言",
+        "ar": "أن الأقليات يجب أن تتوقف عن استخدام لغاتها",
+        "ckb": "کەمینەکان دەبێت واز لە بەکارهێنانی زمانەکانیان بهێنن",
+        "fa": "اقلیت‌ها باید استفاده از زبان‌های خود را متوقف کنند",
+        "pl": "Mniejszości muszą przestać używać swoich języków",
+        "so": "Dadka laga tirada badan yahay waa inay joojiyaan isticmaalka luqadahooda",
+        "ti": "ንኡሳን ማሕበረሰባት ቋንቋታቶም ምጥቃም ከቋርጹ ኣለዎም",
+        "tr": "Azınlıklar dillerini kullanmayı bırakmak zorundadır",
+        "uk": "Меншини мусять припинити користуватися своїми мовами"
       },
       {
         "en": "That minorities are not allowed to contact public authorities",
-        "sv": "Att minoriteter inte får kontakta myndigheter"
+        "sv": "Att minoriteter inte får kontakta myndigheter",
+        "zh-Hant": "少數群體不得聯絡公共機關",
+        "zh-Hans": "少数群体不得联系公共机关",
+        "ar": "أن الأقليات لا يُسمح لها بالاتصال بالسلطات العامة",
+        "ckb": "کەمینەکان بۆیان نییە پەیوەندی بە دامەزراوە گشتییەکانەوە بکەن",
+        "fa": "اقلیت‌ها اجازه ندارند با نهادهای عمومی تماس بگیرند",
+        "pl": "Mniejszościom nie wolno kontaktować się z organami publicznymi",
+        "so": "Dadka laga tirada badan yahay looma oggola inay la xiriiraan hay’adaha dadweynaha",
+        "ti": "ንኡሳን ማሕበረሰባት ምስ ብዓላት መዚ ህዝባዊ ክራኸቡ ኣይፍቀደሎምን",
+        "tr": "Azınlıkların kamu kurumlarıyla iletişim kurmasına izin verilmez",
+        "uk": "Меншинам не дозволено звертатися до державних органів"
       },
       {
         "en": "That minorities always lack protection in law",
-        "sv": "Att minoriteter alltid saknar skydd i lag"
+        "sv": "Att minoriteter alltid saknar skydd i lag",
+        "zh-Hant": "少數群體在法律中總是沒有保護",
+        "zh-Hans": "少数群体在法律中总是没有保护",
+        "ar": "أن الأقليات تفتقر دائمًا إلى الحماية في القانون",
+        "ckb": "کەمینەکان هەمیشە لە یاسادا پاراستنیان نییە",
+        "fa": "اقلیت‌ها همیشه در قانون فاقد حمایت هستند",
+        "pl": "Mniejszości zawsze nie mają ochrony prawnej",
+        "so": "Dadka laga tirada badan yahay had iyo jeer ma laha ilaalin sharci",
+        "ti": "ንኡሳን ማሕበረሰባት ኩሉ ግዜ ኣብ ሕጊ ዕቝባ የብሎምን",
+        "tr": "Azınlıklar yasada her zaman korumadan yoksundur",
+        "uk": "Меншини завжди не мають захисту в законі"
       }
     ],
     "answer": 0,
@@ -62536,19 +63516,59 @@
     "opts": [
       {
         "en": "That minorities should be able to preserve and develop their languages and cultures",
-        "sv": "Att minoriteter ska kunna bevara och utveckla sina språk och kulturer"
+        "sv": "Att minoriteter ska kunna bevara och utveckla sina språk och kulturer",
+        "zh-Hant": "少數群體應能保留並發展自己的語言和文化",
+        "zh-Hans": "少数群体应能保留并发展自己的语言和文化",
+        "ar": "أن تكون الأقليات قادرة على الحفاظ على لغاتها وثقافاتها وتطويرها",
+        "ckb": "کەمینەکان بتوانن زمان و کەلتووری خۆیان بپارێزن و پەرەیان پێ بدەن",
+        "fa": "اقلیت‌ها باید بتوانند زبان‌ها و فرهنگ‌های خود را حفظ و توسعه دهند",
+        "pl": "Mniejszości powinny móc zachowywać i rozwijać swoje języki oraz kultury",
+        "so": "Dadka laga tirada badan yahay waa inay awoodaan inay ilaashadaan oo horumariyaan luqadahooda iyo dhaqammadooda",
+        "ti": "ንኡሳን ማሕበረሰባት ቋንቋታቶምን ባህልታቶምን ክዕቅቡን ከማዕብሉን ክኽእሉ ኣለዎም",
+        "tr": "Azınlıklar dillerini ve kültürlerini koruyup geliştirebilmelidir",
+        "uk": "Меншини мають мати змогу зберігати й розвивати свої мови та культури"
       },
       {
         "en": "That minorities must stop using their languages",
-        "sv": "Att minoriteter måste sluta använda sina språk"
+        "sv": "Att minoriteter måste sluta använda sina språk",
+        "zh-Hant": "少數群體必須停止使用自己的語言",
+        "zh-Hans": "少数群体必须停止使用自己的语言",
+        "ar": "أن الأقليات يجب أن تتوقف عن استخدام لغاتها",
+        "ckb": "کەمینەکان دەبێت واز لە بەکارهێنانی زمانەکانیان بهێنن",
+        "fa": "اقلیت‌ها باید استفاده از زبان‌های خود را متوقف کنند",
+        "pl": "Mniejszości muszą przestać używać swoich języków",
+        "so": "Dadka laga tirada badan yahay waa inay joojiyaan isticmaalka luqadahooda",
+        "ti": "ንኡሳን ማሕበረሰባት ቋንቋታቶም ምጥቃም ከቋርጹ ኣለዎም",
+        "tr": "Azınlıklar dillerini kullanmayı bırakmak zorundadır",
+        "uk": "Меншини мусять припинити користуватися своїми мовами"
       },
       {
         "en": "That minorities are not allowed to contact public authorities",
-        "sv": "Att minoriteter inte får kontakta myndigheter"
+        "sv": "Att minoriteter inte får kontakta myndigheter",
+        "zh-Hant": "少數群體不得聯絡公共機關",
+        "zh-Hans": "少数群体不得联系公共机关",
+        "ar": "أن الأقليات لا يُسمح لها بالاتصال بالسلطات العامة",
+        "ckb": "کەمینەکان بۆیان نییە پەیوەندی بە دامەزراوە گشتییەکانەوە بکەن",
+        "fa": "اقلیت‌ها اجازه ندارند با نهادهای عمومی تماس بگیرند",
+        "pl": "Mniejszościom nie wolno kontaktować się z organami publicznymi",
+        "so": "Dadka laga tirada badan yahay looma oggola inay la xiriiraan hay’adaha dadweynaha",
+        "ti": "ንኡሳን ማሕበረሰባት ምስ ብዓላት መዚ ህዝባዊ ክራኸቡ ኣይፍቀደሎምን",
+        "tr": "Azınlıkların kamu kurumlarıyla iletişim kurmasına izin verilmez",
+        "uk": "Меншинам не дозволено звертатися до державних органів"
       },
       {
         "en": "That minorities always lack protection in law",
-        "sv": "Att minoriteter alltid saknar skydd i lag"
+        "sv": "Att minoriteter alltid saknar skydd i lag",
+        "zh-Hant": "少數群體在法律中總是沒有保護",
+        "zh-Hans": "少数群体在法律中总是没有保护",
+        "ar": "أن الأقليات تفتقر دائمًا إلى الحماية في القانون",
+        "ckb": "کەمینەکان هەمیشە لە یاسادا پاراستنیان نییە",
+        "fa": "اقلیت‌ها همیشه در قانون فاقد حمایت هستند",
+        "pl": "Mniejszości zawsze nie mają ochrony prawnej",
+        "so": "Dadka laga tirada badan yahay had iyo jeer ma laha ilaalin sharci",
+        "ti": "ንኡሳን ማሕበረሰባት ኩሉ ግዜ ኣብ ሕጊ ዕቝባ የብሎምን",
+        "tr": "Azınlıklar yasada her zaman korumadan yoksundur",
+        "uk": "Меншини завжди не мають захисту в законі"
       }
     ],
     "answer": 0,
@@ -62579,30 +63599,70 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is one aim of work for people with disabilities?",
+      "en": "Which answer best matches? What is one aim of disability rights work?",
       "sv": "Vilket svar stämmer bäst? Vad är ett mål med arbetet för personer med funktionsnedsättning?"
     },
     "opts": [
       {
         "en": "Society should be accessible so people can participate on equal terms",
-        "sv": "Att samhället ska vara tillgängligt så att människor kan delta på jämlika villkor"
+        "sv": "Att samhället ska vara tillgängligt så att människor kan delta på jämlika villkor",
+        "zh-Hant": "社會應具可近性，讓人們能在平等條件下參與",
+        "zh-Hans": "社会应具备无障碍性，让人们能在平等条件下参与",
+        "ar": "أن يكون المجتمع متاحًا بحيث يستطيع الناس المشاركة على قدم المساواة",
+        "ckb": "کۆمەڵگا دەبێت دەستپێگەیشتوو بێت تاکو خەڵک بتوانن بە مەرجی یەکسان بەشداری بکەن",
+        "fa": "جامعه باید دسترس‌پذیر باشد تا مردم بتوانند با شرایط برابر مشارکت کنند",
+        "pl": "Społeczeństwo powinno być dostępne, aby ludzie mogli uczestniczyć na równych warunkach",
+        "so": "Bulshadu waa inay noqotaa mid la heli karo si dadku uga qayb qaataan shuruudo siman",
+        "ti": "ሕብረተሰብ ተበጻሒ ክኸውን ኣለዎ፣ ሰባት ብማዕረ ኩነታት ክሳተፉ ክኽእሉ",
+        "tr": "Toplum erişilebilir olmalıdır ki insanlar eşit koşullarda katılabilsin",
+        "uk": "Суспільство має бути доступним, щоб люди могли брати участь на рівних умовах"
       },
       {
         "en": "People with disabilities should not be able to study or work",
-        "sv": "Att personer med funktionsnedsättning inte ska kunna studera eller arbeta"
+        "sv": "Att personer med funktionsnedsättning inte ska kunna studera eller arbeta",
+        "zh-Hant": "身心障礙者不應能學習或工作",
+        "zh-Hans": "残障人士不应能够学习或工作",
+        "ar": "ألا يتمكن الأشخاص ذوو الإعاقة من الدراسة أو العمل",
+        "ckb": "کەسانی خاوەن کەمئەندامی نەبنەوە بتوانن بخوێنن یان کار بکەن",
+        "fa": "افراد دارای معلولیت نباید بتوانند تحصیل یا کار کنند",
+        "pl": "Osoby z niepełnosprawnościami nie powinny móc studiować ani pracować",
+        "so": "Dadka naafada ah waa inaysan awoodin inay wax bartaan ama shaqeeyaan",
+        "ti": "ሰባት ስንክልና ዘለዎም ክመሃሩ ወይ ክሰርሑ ክኽእሉ የብሎምን",
+        "tr": "Engelli kişiler okuyamamalı veya çalışamamalıdır",
+        "uk": "Люди з інвалідністю не повинні мати змоги навчатися чи працювати"
       },
       {
         "en": "Accessibility is only a private matter",
-        "sv": "Att tillgänglighet bara är en privat fråga"
+        "sv": "Att tillgänglighet bara är en privat fråga",
+        "zh-Hant": "可近性只是私人問題",
+        "zh-Hans": "无障碍性只是私人问题",
+        "ar": "أن الإتاحة مسألة خاصة فقط",
+        "ckb": "دەستپێگەیشتن تەنها بابەتێکی تایبەتییە",
+        "fa": "دسترس‌پذیری فقط یک مسئلهٔ خصوصی است",
+        "pl": "Dostępność jest wyłącznie sprawą prywatną",
+        "so": "Helitaanku waa arrin gaar ah oo keliya",
+        "ti": "ተበጻሕነት ብግሊ ጉዳይ ጥራይ እዩ",
+        "tr": "Erişilebilirlik yalnızca özel bir konudur",
+        "uk": "Доступність є лише приватною справою"
       },
       {
         "en": "Public authorities should ignore needs for support",
-        "sv": "Att myndigheter ska ignorera behov av stöd"
+        "sv": "Att myndigheter ska ignorera behov av stöd",
+        "zh-Hant": "公共機關應忽視支援需求",
+        "zh-Hans": "公共机关应忽视支持需求",
+        "ar": "أن تتجاهل السلطات العامة الحاجة إلى الدعم",
+        "ckb": "دامەزراوە گشتییەکان دەبێت پێویستی بە پشتگیری پشتگوێ بخەن",
+        "fa": "نهادهای عمومی باید نیاز به حمایت را نادیده بگیرند",
+        "pl": "Organy publiczne powinny ignorować potrzeby wsparcia",
+        "so": "Hay’adaha dadweynaha waa inay iska indhatiraan baahida taageero",
+        "ti": "ብዓላት መዚ ህዝባዊ ድሌታት ደገፍ ክገድፉ ኣለዎም",
+        "tr": "Kamu kurumları destek ihtiyaçlarını görmezden gelmelidir",
+        "uk": "Державні органи мають ігнорувати потреби в підтримці"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Work for people with disabilities is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.",
+      "en": "Disability rights work is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.",
       "sv": "Arbetet för personer med funktionsnedsättning handlar om lika rättigheter och möjligheter. Samhället behöver vara tillgängligt och kunna ge stöd så att människor kan delta på jämlika villkor."
     },
     "source": {
@@ -62642,7 +63702,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Work for people with disabilities is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.",
+      "en": "Disability rights work is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.",
       "sv": "Arbetet för personer med funktionsnedsättning handlar om lika rättigheter och möjligheter. Samhället behöver vara tillgängligt och kunna ge stöd så att människor kan delta på jämlika villkor."
     },
     "source": {
@@ -62682,7 +63742,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Work for people with disabilities is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.",
+      "en": "Disability rights work is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.",
       "sv": "Arbetet för personer med funktionsnedsättning handlar om lika rättigheter och möjligheter. Samhället behöver vara tillgängligt och kunna ge stöd så att människor kan delta på jämlika villkor."
     },
     "source": {
@@ -62707,30 +63767,70 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What is one aim of work for people with disabilities?",
+      "en": "Choose the correct option: What is one aim of disability rights work?",
       "sv": "Välj rätt alternativ: Vad är ett mål med arbetet för personer med funktionsnedsättning?"
     },
     "opts": [
       {
         "en": "Society should be accessible so people can participate on equal terms",
-        "sv": "Att samhället ska vara tillgängligt så att människor kan delta på jämlika villkor"
+        "sv": "Att samhället ska vara tillgängligt så att människor kan delta på jämlika villkor",
+        "zh-Hant": "社會應具可近性，讓人們能在平等條件下參與",
+        "zh-Hans": "社会应具备无障碍性，让人们能在平等条件下参与",
+        "ar": "أن يكون المجتمع متاحًا بحيث يستطيع الناس المشاركة على قدم المساواة",
+        "ckb": "کۆمەڵگا دەبێت دەستپێگەیشتوو بێت تاکو خەڵک بتوانن بە مەرجی یەکسان بەشداری بکەن",
+        "fa": "جامعه باید دسترس‌پذیر باشد تا مردم بتوانند با شرایط برابر مشارکت کنند",
+        "pl": "Społeczeństwo powinno być dostępne, aby ludzie mogli uczestniczyć na równych warunkach",
+        "so": "Bulshadu waa inay noqotaa mid la heli karo si dadku uga qayb qaataan shuruudo siman",
+        "ti": "ሕብረተሰብ ተበጻሒ ክኸውን ኣለዎ፣ ሰባት ብማዕረ ኩነታት ክሳተፉ ክኽእሉ",
+        "tr": "Toplum erişilebilir olmalıdır ki insanlar eşit koşullarda katılabilsin",
+        "uk": "Суспільство має бути доступним, щоб люди могли брати участь на рівних умовах"
       },
       {
         "en": "People with disabilities should not be able to study or work",
-        "sv": "Att personer med funktionsnedsättning inte ska kunna studera eller arbeta"
+        "sv": "Att personer med funktionsnedsättning inte ska kunna studera eller arbeta",
+        "zh-Hant": "身心障礙者不應能學習或工作",
+        "zh-Hans": "残障人士不应能够学习或工作",
+        "ar": "ألا يتمكن الأشخاص ذوو الإعاقة من الدراسة أو العمل",
+        "ckb": "کەسانی خاوەن کەمئەندامی نەبنەوە بتوانن بخوێنن یان کار بکەن",
+        "fa": "افراد دارای معلولیت نباید بتوانند تحصیل یا کار کنند",
+        "pl": "Osoby z niepełnosprawnościami nie powinny móc studiować ani pracować",
+        "so": "Dadka naafada ah waa inaysan awoodin inay wax bartaan ama shaqeeyaan",
+        "ti": "ሰባት ስንክልና ዘለዎም ክመሃሩ ወይ ክሰርሑ ክኽእሉ የብሎምን",
+        "tr": "Engelli kişiler okuyamamalı veya çalışamamalıdır",
+        "uk": "Люди з інвалідністю не повинні мати змоги навчатися чи працювати"
       },
       {
         "en": "Accessibility is only a private matter",
-        "sv": "Att tillgänglighet bara är en privat fråga"
+        "sv": "Att tillgänglighet bara är en privat fråga",
+        "zh-Hant": "可近性只是私人問題",
+        "zh-Hans": "无障碍性只是私人问题",
+        "ar": "أن الإتاحة مسألة خاصة فقط",
+        "ckb": "دەستپێگەیشتن تەنها بابەتێکی تایبەتییە",
+        "fa": "دسترس‌پذیری فقط یک مسئلهٔ خصوصی است",
+        "pl": "Dostępność jest wyłącznie sprawą prywatną",
+        "so": "Helitaanku waa arrin gaar ah oo keliya",
+        "ti": "ተበጻሕነት ብግሊ ጉዳይ ጥራይ እዩ",
+        "tr": "Erişilebilirlik yalnızca özel bir konudur",
+        "uk": "Доступність є лише приватною справою"
       },
       {
         "en": "Public authorities should ignore needs for support",
-        "sv": "Att myndigheter ska ignorera behov av stöd"
+        "sv": "Att myndigheter ska ignorera behov av stöd",
+        "zh-Hant": "公共機關應忽視支援需求",
+        "zh-Hans": "公共机关应忽视支持需求",
+        "ar": "أن تتجاهل السلطات العامة الحاجة إلى الدعم",
+        "ckb": "دامەزراوە گشتییەکان دەبێت پێویستی بە پشتگیری پشتگوێ بخەن",
+        "fa": "نهادهای عمومی باید نیاز به حمایت را نادیده بگیرند",
+        "pl": "Organy publiczne powinny ignorować potrzeby wsparcia",
+        "so": "Hay’adaha dadweynaha waa inay iska indhatiraan baahida taageero",
+        "ti": "ብዓላት መዚ ህዝባዊ ድሌታት ደገፍ ክገድፉ ኣለዎም",
+        "tr": "Kamu kurumları destek ihtiyaçlarını görmezden gelmelidir",
+        "uk": "Державні органи мають ігнорувати потреби в підтримці"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Work for people with disabilities is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.",
+      "en": "Disability rights work is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.",
       "sv": "Arbetet för personer med funktionsnedsättning handlar om lika rättigheter och möjligheter. Samhället behöver vara tillgängligt och kunna ge stöd så att människor kan delta på jämlika villkor."
     },
     "source": {
@@ -62761,19 +63861,59 @@
     "opts": [
       {
         "en": "Discrimination connected to, for example, sex, religion, disability, sexual orientation, or age is prohibited",
-        "sv": "Diskriminering som har samband med till exempel kön, religion, funktionsnedsättning, sexuell läggning eller ålder är förbjuden"
+        "sv": "Diskriminering som har samband med till exempel kön, religion, funktionsnedsättning, sexuell läggning eller ålder är förbjuden",
+        "zh-Hant": "禁止與例如性別、宗教、身心障礙、性取向或年齡有關的歧視",
+        "zh-Hans": "禁止与例如性别、宗教、残障、性取向或年龄有关的歧视",
+        "ar": "التمييز المرتبط مثلًا بالجنس أو الدين أو الإعاقة أو التوجه الجنسي أو العمر محظور",
+        "ckb": "جیاکاری پەیوەندیدار بە بۆ نموونە ڕەگەز، ئایین، کەمئەندامی، ئاراستەی سێکسی یان تەمەن قەدەغەیە",
+        "fa": "تبعیض مرتبط با مواردی مانند جنسیت، دین، معلولیت، گرایش جنسی یا سن ممنوع است",
+        "pl": "Dyskryminacja związana na przykład z płcią, religią, niepełnosprawnością, orientacją seksualną lub wiekiem jest zakazana",
+        "so": "Takoor la xiriira tusaale ahaan jinsi, diin, naafonimo, jihayn jinsi ama da’ waa mamnuuc",
+        "ti": "ኣድልዎ ምስ ንኣብነት ጾታ፣ ሃይማኖት፣ ስንክልና፣ ፆታዊ ዝንባለ ወይ ዕድመ ዝተኣሳሰረ ክልኩል እዩ",
+        "tr": "Örneğin cinsiyet, din, engellilik, cinsel yönelim veya yaşla bağlantılı ayrımcılık yasaktır",
+        "uk": "Дискримінація, пов’язана, наприклад, зі статтю, релігією, інвалідністю, сексуальною орієнтацією або віком, заборонена"
       },
       {
         "en": "Employers may always treat people differently on these grounds",
-        "sv": "Arbetsgivare får alltid behandla personer olika på dessa grunder"
+        "sv": "Arbetsgivare får alltid behandla personer olika på dessa grunder",
+        "zh-Hant": "雇主在這些理由上永遠可以不同地對待人",
+        "zh-Hans": "雇主在这些理由上永远可以不同地对待人",
+        "ar": "يجوز لأصحاب العمل دائمًا معاملة الناس بصورة مختلفة على هذه الأسس",
+        "ckb": "خاوەنکاران هەمیشە دەتوانن لەسەر ئەم بنەمایانە خەڵک بە جیاوازی مامەڵە بکەن",
+        "fa": "کارفرمایان همیشه می‌توانند بر این پایه‌ها با افراد متفاوت رفتار کنند",
+        "pl": "Pracodawcy zawsze mogą traktować ludzi różnie z tych powodów",
+        "so": "Loo-shaqeeyayaashu mar walba way ku kala duwi karaan dadka sababahan awgood",
+        "ti": "ኣስራሕቲ ኩሉ ግዜ ብእዞም መሰረታት ሰባት ብዝተፈላለየ ክሕዙ ይኽእሉ",
+        "tr": "İşverenler bu gerekçelerle insanlara her zaman farklı davranabilir",
+        "uk": "Роботодавці завжди можуть по-різному ставитися до людей на цих підставах"
       },
       {
         "en": "The Discrimination Act applies only to people over age 65",
-        "sv": "Diskrimineringslagen gäller bara personer över 65 år"
+        "sv": "Diskrimineringslagen gäller bara personer över 65 år",
+        "zh-Hant": "《歧視法》只適用於 65 歲以上的人",
+        "zh-Hans": "《歧视法》只适用于 65 岁以上的人",
+        "ar": "ينطبق قانون التمييز فقط على الأشخاص الذين تزيد أعمارهم على 65 عامًا",
+        "ckb": "یاسای جیاکاری تەنها بۆ کەسانی سەرووی ٦٥ ساڵ کار دەکات",
+        "fa": "قانون تبعیض فقط برای افراد بالای ۶۵ سال اعمال می‌شود",
+        "pl": "Ustawa o dyskryminacji dotyczy tylko osób powyżej 65 roku życia",
+        "so": "Xeerka takooriddu wuxuu khuseeyaa oo keliya dadka ka weyn 65 sano",
+        "ti": "ሕጊ ኣድልዎ ንሰባት ልዕሊ 65 ዓመት ጥራይ ይምልከት",
+        "tr": "Ayrımcılık Yasası yalnızca 65 yaş üstü kişiler için geçerlidir",
+        "uk": "Закон про дискримінацію стосується лише людей старших за 65 років"
       },
       {
         "en": "The protection applies only if someone is already a Swedish citizen",
-        "sv": "Skyddet gäller bara om någon redan är svensk medborgare"
+        "sv": "Skyddet gäller bara om någon redan är svensk medborgare",
+        "zh-Hant": "保護只在某人已經是瑞典公民時才適用",
+        "zh-Hans": "保护只在某人已经是瑞典公民时才适用",
+        "ar": "تنطبق الحماية فقط إذا كان الشخص مواطنًا سويديًا بالفعل",
+        "ckb": "پاراستنەکە تەنها کاتێک کار دەکات کە کەسێک پێشتر هاووڵاتی سوید بێت",
+        "fa": "این حمایت فقط وقتی اعمال می‌شود که فرد از قبل شهروند سوئد باشد",
+        "pl": "Ochrona obowiązuje tylko wtedy, gdy ktoś jest już obywatelem Szwecji",
+        "so": "Ilaalintu waxay khusaysaa oo keliya haddii qofku hore u yahay muwaadin Iswiidhish ah",
+        "ti": "እቲ ዕቝባ ሓደ ሰብ ቀድሞም ዜጋ ሽወደን እንተኾይኑ ጥራይ ይምልከት",
+        "tr": "Koruma yalnızca kişi zaten İsveç vatandaşıysa geçerlidir",
+        "uk": "Захист діє лише тоді, коли людина вже є громадянином Швеції"
       }
     ],
     "answer": 0,
@@ -62889,19 +64029,59 @@
     "opts": [
       {
         "en": "Discrimination connected to, for example, sex, religion, disability, sexual orientation, or age is prohibited",
-        "sv": "Diskriminering som har samband med till exempel kön, religion, funktionsnedsättning, sexuell läggning eller ålder är förbjuden"
+        "sv": "Diskriminering som har samband med till exempel kön, religion, funktionsnedsättning, sexuell läggning eller ålder är förbjuden",
+        "zh-Hant": "禁止與例如性別、宗教、身心障礙、性取向或年齡有關的歧視",
+        "zh-Hans": "禁止与例如性别、宗教、残障、性取向或年龄有关的歧视",
+        "ar": "التمييز المرتبط مثلًا بالجنس أو الدين أو الإعاقة أو التوجه الجنسي أو العمر محظور",
+        "ckb": "جیاکاری پەیوەندیدار بە بۆ نموونە ڕەگەز، ئایین، کەمئەندامی، ئاراستەی سێکسی یان تەمەن قەدەغەیە",
+        "fa": "تبعیض مرتبط با مواردی مانند جنسیت، دین، معلولیت، گرایش جنسی یا سن ممنوع است",
+        "pl": "Dyskryminacja związana na przykład z płcią, religią, niepełnosprawnością, orientacją seksualną lub wiekiem jest zakazana",
+        "so": "Takoor la xiriira tusaale ahaan jinsi, diin, naafonimo, jihayn jinsi ama da’ waa mamnuuc",
+        "ti": "ኣድልዎ ምስ ንኣብነት ጾታ፣ ሃይማኖት፣ ስንክልና፣ ፆታዊ ዝንባለ ወይ ዕድመ ዝተኣሳሰረ ክልኩል እዩ",
+        "tr": "Örneğin cinsiyet, din, engellilik, cinsel yönelim veya yaşla bağlantılı ayrımcılık yasaktır",
+        "uk": "Дискримінація, пов’язана, наприклад, зі статтю, релігією, інвалідністю, сексуальною орієнтацією або віком, заборонена"
       },
       {
         "en": "Employers may always treat people differently on these grounds",
-        "sv": "Arbetsgivare får alltid behandla personer olika på dessa grunder"
+        "sv": "Arbetsgivare får alltid behandla personer olika på dessa grunder",
+        "zh-Hant": "雇主在這些理由上永遠可以不同地對待人",
+        "zh-Hans": "雇主在这些理由上永远可以不同地对待人",
+        "ar": "يجوز لأصحاب العمل دائمًا معاملة الناس بصورة مختلفة على هذه الأسس",
+        "ckb": "خاوەنکاران هەمیشە دەتوانن لەسەر ئەم بنەمایانە خەڵک بە جیاوازی مامەڵە بکەن",
+        "fa": "کارفرمایان همیشه می‌توانند بر این پایه‌ها با افراد متفاوت رفتار کنند",
+        "pl": "Pracodawcy zawsze mogą traktować ludzi różnie z tych powodów",
+        "so": "Loo-shaqeeyayaashu mar walba way ku kala duwi karaan dadka sababahan awgood",
+        "ti": "ኣስራሕቲ ኩሉ ግዜ ብእዞም መሰረታት ሰባት ብዝተፈላለየ ክሕዙ ይኽእሉ",
+        "tr": "İşverenler bu gerekçelerle insanlara her zaman farklı davranabilir",
+        "uk": "Роботодавці завжди можуть по-різному ставитися до людей на цих підставах"
       },
       {
         "en": "The Discrimination Act applies only to people over age 65",
-        "sv": "Diskrimineringslagen gäller bara personer över 65 år"
+        "sv": "Diskrimineringslagen gäller bara personer över 65 år",
+        "zh-Hant": "《歧視法》只適用於 65 歲以上的人",
+        "zh-Hans": "《歧视法》只适用于 65 岁以上的人",
+        "ar": "ينطبق قانون التمييز فقط على الأشخاص الذين تزيد أعمارهم على 65 عامًا",
+        "ckb": "یاسای جیاکاری تەنها بۆ کەسانی سەرووی ٦٥ ساڵ کار دەکات",
+        "fa": "قانون تبعیض فقط برای افراد بالای ۶۵ سال اعمال می‌شود",
+        "pl": "Ustawa o dyskryminacji dotyczy tylko osób powyżej 65 roku życia",
+        "so": "Xeerka takooriddu wuxuu khuseeyaa oo keliya dadka ka weyn 65 sano",
+        "ti": "ሕጊ ኣድልዎ ንሰባት ልዕሊ 65 ዓመት ጥራይ ይምልከት",
+        "tr": "Ayrımcılık Yasası yalnızca 65 yaş üstü kişiler için geçerlidir",
+        "uk": "Закон про дискримінацію стосується лише людей старших за 65 років"
       },
       {
         "en": "The protection applies only if someone is already a Swedish citizen",
-        "sv": "Skyddet gäller bara om någon redan är svensk medborgare"
+        "sv": "Skyddet gäller bara om någon redan är svensk medborgare",
+        "zh-Hant": "保護只在某人已經是瑞典公民時才適用",
+        "zh-Hans": "保护只在某人已经是瑞典公民时才适用",
+        "ar": "تنطبق الحماية فقط إذا كان الشخص مواطنًا سويديًا بالفعل",
+        "ckb": "پاراستنەکە تەنها کاتێک کار دەکات کە کەسێک پێشتر هاووڵاتی سوید بێت",
+        "fa": "این حمایت فقط وقتی اعمال می‌شود که فرد از قبل شهروند سوئد باشد",
+        "pl": "Ochrona obowiązuje tylko wtedy, gdy ktoś jest już obywatelem Szwecji",
+        "so": "Ilaalintu waxay khusaysaa oo keliya haddii qofku hore u yahay muwaadin Iswiidhish ah",
+        "ti": "እቲ ዕቝባ ሓደ ሰብ ቀድሞም ዜጋ ሽወደን እንተኾይኑ ጥራይ ይምልከት",
+        "tr": "Koruma yalnızca kişi zaten İsveç vatandaşıysa geçerlidir",
+        "uk": "Захист діє лише тоді, коли людина вже є громадянином Швеції"
       }
     ],
     "answer": 0,
@@ -63358,4 +64538,14 @@
     "questionCount": 145
   }
 ];
+
+  window.SMT_QUESTION_BANK_META = {
+  "questionCount": 895,
+  "chapterCount": 13,
+  "provenanceCounts": {
+    "uhr": 179,
+    "derived": 716,
+    "editorial": 0
+  }
+};
 })();

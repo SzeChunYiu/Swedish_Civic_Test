@@ -576,7 +576,9 @@
           uk: 'Підказка: прогрес зберігається на цьому пристрої. Обліковий запис не потрібен.',
         })}</p>
       </div>
+      ${window.smtAdSlotMarkup ? window.smtAdSlotMarkup('practice') : ''}
     `;
+    if (window.smtMountAds) window.smtMountAds();
   }
   window.smtRenderPracticeHub = renderPracticeHub;
 
@@ -626,6 +628,70 @@
     timerId: null,
     submitted: false,
   };
+
+  const mockDotStateCopy = {
+    current: {
+      sv: 'aktuell',
+      en: 'current',
+      'zh-Hans': '当前题',
+      'zh-Hant': '目前題',
+      ar: 'السؤال الحالي',
+      ckb: 'ئێستا',
+      fa: 'فعلی',
+      pl: 'bieżące',
+      so: 'hadda',
+      ti: 'ሕጂ ዘሎ',
+      tr: 'geçerli',
+      uk: 'поточне',
+    },
+    answered: {
+      sv: 'besvarad',
+      en: 'answered',
+      'zh-Hans': '已回答',
+      'zh-Hant': '已回答',
+      ar: 'تمت الإجابة',
+      ckb: 'وەڵامدراوە',
+      fa: 'پاسخ داده شده',
+      pl: 'z odpowiedzią',
+      so: 'waa laga jawaabay',
+      ti: 'ተመሊሱ',
+      tr: 'yanıtlandı',
+      uk: 'відповідь надано',
+    },
+    unanswered: {
+      sv: 'obesvarad',
+      en: 'unanswered',
+      'zh-Hans': '未回答',
+      'zh-Hant': '未回答',
+      ar: 'لم تتم الإجابة',
+      ckb: 'وەڵام نەدراوەتەوە',
+      fa: 'بی‌پاسخ',
+      pl: 'bez odpowiedzi',
+      so: 'lama jawaabin',
+      ti: 'ዘይተመለሰ',
+      tr: 'yanıtlanmadı',
+      uk: 'без відповіді',
+    },
+  };
+
+  function mockDotAccessibilityLabel(index, total, state) {
+    const questionNumber = index + 1;
+    const position = tr({
+      sv: `Fråga ${questionNumber} av ${total}`,
+      en: `Question ${questionNumber} of ${total}`,
+      'zh-Hans': `第 ${questionNumber} 题，共 ${total} 题`,
+      'zh-Hant': `第 ${questionNumber} 題，共 ${total} 題`,
+      ar: `السؤال ${questionNumber} من ${total}`,
+      ckb: `پرسیاری ${questionNumber} لە ${total}`,
+      fa: `سؤال ${questionNumber} از ${total}`,
+      pl: `Pytanie ${questionNumber} z ${total}`,
+      so: `Su'aasha ${questionNumber} ee ${total}`,
+      ti: `ሕቶ ${questionNumber} ካብ ${total}`,
+      tr: `Soru ${questionNumber} / ${total}`,
+      uk: `Питання ${questionNumber} з ${total}`,
+    });
+    return `${position}, ${tr(mockDotStateCopy[state] || mockDotStateCopy.unanswered)}`;
+  }
 
   function isOnMock() {
     const hash = (location.hash || '#/').replace(/^#/, '');
@@ -912,8 +978,11 @@
 
     const dots = MOCK.questions
       .map((_, k) => {
-        const cls = k === i ? 'is-on' : MOCK.answers[k] !== null ? 'is-done' : '';
-        return `<button class="mock-dot ${cls}" data-go="${k}" aria-label="Question ${k + 1}">${k + 1}</button>`;
+        const state = k === i ? 'current' : MOCK.answers[k] !== null ? 'answered' : 'unanswered';
+        const cls = state === 'current' ? 'is-on' : state === 'answered' ? 'is-done' : '';
+        const label = escapeHtml(mockDotAccessibilityLabel(k, n, state));
+        const current = state === 'current' ? ' aria-current="step"' : '';
+        return `<button class="mock-dot ${cls}" data-go="${k}" aria-label="${label}"${current}>${k + 1}</button>`;
       })
       .join('');
 
@@ -1111,6 +1180,7 @@
         <p class="mock-result__pct">${pct}% — ${correct}/${total} ${tr({ sv: 'rätt', en: 'correct', 'zh-Hans': '答对', 'zh-Hant': '答對', ar: 'صحيحة', ckb: 'ڕاست', fa: 'درست', pl: 'poprawnie', so: 'sax', ti: 'ቅኑዕ', tr: 'doğru', uk: 'правильно' })}</p>
 
         <ul class="result-chapters">${chapterRows}</ul>
+        ${window.smtAdSlotMarkup ? window.smtAdSlotMarkup('practice') : ''}
         <section class="mock-review" aria-label="${tr({ sv: 'Frågegenomgång', en: 'Question review', 'zh-Hans': '题目回顾', 'zh-Hant': '題目回顧', ar: 'مراجعة الأسئلة', ckb: 'پێداچوونەوەی پرسیارەکان', fa: 'مرور سؤال‌ها', pl: 'Przegląd pytań', so: "Dib u eegista su'aalaha", ti: 'ምርመራ ሕቶታት', tr: 'Soru incelemesi', uk: 'Огляд питань' })}">
           <h3>${tr({ sv: 'Frågegenomgång', en: 'Question review', 'zh-Hans': '题目回顾', 'zh-Hant': '題目回顧', ar: 'مراجعة الأسئلة', ckb: 'پێداچوونەوەی پرسیارەکان', fa: 'مرور سؤال‌ها', pl: 'Przegląd pytań', so: "Dib u eegista su'aalaha", ti: 'ምርመራ ሕቶታት', tr: 'Soru incelemesi', uk: 'Огляд питань' })}</h3>
           <p class="mock-review__disclaimer">${escapeHtml(questionReviewDisclaimer())}</p>
@@ -1123,6 +1193,8 @@
         </div>
       </div>
     `;
+
+    if (window.smtMountAds) window.smtMountAds();
 
     if (window.smtFx) {
       window.smtFx.countUp(document.getElementById('mock-score-num'), 0, correct, 1100);

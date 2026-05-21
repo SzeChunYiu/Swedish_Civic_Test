@@ -113,6 +113,6 @@ test('Somali preview does not enable runtime release', () => {
   assert.match(locales, /code: 'so',[\s\S]*available: false,[\s\S]*fallback: 'en'/);
   assert.equal(readiness.locales.so.appAvailable, false);
   assert.equal(readiness.locales.so.uiStrings, 'not_started');
-  assert.equal(readiness.locales.so.questionContent, 'pilot_q001_q171_machine_assisted');
+  assert.equal(readiness.locales.so.questionContent, 'pilot_q001_q181_machine_assisted');
   assert.equal(readiness.locales.so.releaseGate, 'blocked');
 });
