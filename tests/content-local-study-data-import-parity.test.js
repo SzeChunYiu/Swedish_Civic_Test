@@ -53,11 +53,21 @@ test('local study data import summary keeps Swedish copy learner-facing', () => 
   assert.match(swedishCopyMatch[0], /\$\{count\} repetitionsdagar/);
   assert.match(swedishCopyMatch[0], /\$\{count\} repetitionskort/);
   assert.match(swedishCopyMatch[0], /Studiesvit och svitskydd ingår/);
+  assert.match(swedishCopyMatch[0], /högst \$\{localStudyDataImportMaxLabel\}/);
+  assert.match(
+    swedishCopyMatch[0],
+    /JSON-exporten är större än \$\{localStudyDataImportMaxLabel\}/,
+  );
   assert.match(swedishCopyMatch[0], /fält för köp i appen eller kvitton/);
   assert.match(swedishCopyMatch[0], /data om köp i appen importeras inte/);
   assert.doesNotMatch(swedishCopyMatch[0], /\bFSRS\b|frysstatus|\bIAP\b/);
   assert.match(englishCopyMatch[0], /\$\{count\} FSRS review days/);
   assert.match(englishCopyMatch[0], /\$\{count\} FSRS review cards/);
+  assert.match(englishCopyMatch[0], /under \$\{localStudyDataImportMaxLabel\}/);
+  assert.match(
+    englishCopyMatch[0],
+    /The JSON export is larger than \$\{localStudyDataImportMaxLabel\}/,
+  );
   assert.match(englishCopyMatch[0], /\bIAP fields\b/);
   assert.match(englishCopyMatch[0], /\bIAP data\b/);
 });
@@ -192,6 +202,32 @@ test('local study data import rejects purchase fields before any snapshot writes
   assert.equal(storageById['mistake-review'].values.size, 0);
   assert.equal(storageById.reviews.values.size, 0);
   assert.equal(storageById.settings.values.size, 0);
+});
+
+test('local study data import rejects oversized payloads before parsing', () => {
+  const storageById = createStorageById();
+  const { LOCAL_STUDY_DATA_IMPORT_MAX_BYTES, previewLocalStudyDataImport } =
+    loadImportModule(storageById);
+  const originalParse = JSON.parse;
+  let parseCalls = 0;
+
+  JSON.parse = (...args) => {
+    parseCalls += 1;
+    return originalParse(...args);
+  };
+
+  try {
+    const result = previewLocalStudyDataImport('x'.repeat(LOCAL_STUDY_DATA_IMPORT_MAX_BYTES + 1));
+
+    assert.deepEqual(result, { ok: false, code: 'input_too_large' });
+    assert.equal(parseCalls, 0);
+    assert.equal(storageById.progress.values.size, 0);
+    assert.equal(storageById['mistake-review'].values.size, 0);
+    assert.equal(storageById.reviews.values.size, 0);
+    assert.equal(storageById.settings.values.size, 0);
+  } finally {
+    JSON.parse = originalParse;
+  }
 });
 
 test('local study data import ignores unsafe imported map keys with the shared guard', () => {

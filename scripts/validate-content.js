@@ -2776,6 +2776,7 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Bekräfta import',
     'Bekräfta lokal studiedataimport',
     'Klistra in JSON innan du förhandsgranskar.',
+    'JSON-exporten är större än ${localStudyDataImportMaxLabel}. Välj en mindre export och försök igen.',
     'JSON kunde inte läsas.',
     'Importen har fel format eller okända toppnivåfält.',
     'Importversionen stöds inte.',
@@ -2787,7 +2788,7 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Förhandsgranska lokal studiedataimport',
     'Köp, kvitton och data om köp i appen importeras inte. Använd appbutikens återställning för köp.',
     'Återställ importfält',
-    'Klistra in en lokal studiedataexport i JSON-format. Du får en sammanfattning innan något skrivs.',
+    'Klistra in en lokal studiedataexport i JSON-format (högst ${localStudyDataImportMaxLabel}). Du får en sammanfattning innan något skrivs.',
     'Importen är klar.',
     '${count} bokmärken',
     '${count} frågor med sparad progression',
@@ -2826,6 +2827,7 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Confirm import',
     'Confirm local study data import',
     'Paste JSON before previewing.',
+    'The JSON export is larger than ${localStudyDataImportMaxLabel}. Choose a smaller export and try again.',
     'JSON could not be read.',
     'The import has the wrong format or unknown top-level fields.',
     'This import version is not supported.',
@@ -2837,7 +2839,7 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Preview local study data import',
     'Purchases, receipts, and IAP data are not imported. Use the app store restore flow for purchases.',
     'Reset import field',
-    'Paste a local study data export in JSON format. You will see a summary before anything is written.',
+    'Paste a local study data export in JSON format (under ${localStudyDataImportMaxLabel}). You will see a summary before anything is written.',
     'Import complete.',
     '${count} bookmarks',
     '${count} questions with saved progress',
@@ -2865,6 +2867,10 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
   ],
 };
 const EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS = [
+  [
+    'LOCAL_STUDY_DATA_IMPORT_MAX_BYTES',
+    'settings route must reuse the shared local study data import size limit',
+  ],
   ['import type { AppLanguage }', 'settings route must import AppLanguage'],
   ['type SettingsCopy = {', 'settings route must define a typed copy contract'],
   [
@@ -2957,6 +2963,10 @@ const EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS = [
   [
     'onDismiss={clearAccessibilityPersistenceWarning}',
     'settings route must dismiss accessibility persistence warnings through the accessibility store',
+  ],
+  [
+    'maxLength={LOCAL_STUDY_DATA_IMPORT_MAX_BYTES}',
+    'settings import TextInput must expose the shared payload size limit',
   ],
 ];
 const EXPECTED_ONBOARDING_ROUTE_HEADERS = [

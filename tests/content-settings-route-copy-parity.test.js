@@ -24,7 +24,7 @@ test('settings route shell copy follows the persisted settings language', () => 
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
 
-  assert.equal(summary.settingsRouteCopyLabelsValidated, 96);
+  assert.equal(summary.settingsRouteCopyLabelsValidated, 98);
   assert.equal(summary.settingsRouteCopyParityValidated, true);
   assert.match(source, /type SettingsCopy =/);
   assert.match(source, /const settingsCopy: Record<AppLanguage, SettingsCopy> = \{/);
@@ -42,10 +42,16 @@ test('settings route shell copy follows the persisted settings language', () => 
   assert.match(source, /\$\{count\} repetitionsdagar/);
   assert.match(source, /\$\{count\} repetitionskort/);
   assert.match(source, /Studiesvit och svitskydd ingår/);
+  assert.match(source, /LOCAL_STUDY_DATA_IMPORT_MAX_BYTES/);
+  assert.match(source, /maxLength=\{LOCAL_STUDY_DATA_IMPORT_MAX_BYTES\}/);
+  assert.match(source, /högst \$\{localStudyDataImportMaxLabel\}/);
+  assert.match(source, /JSON-exporten är större än \$\{localStudyDataImportMaxLabel\}/);
   assert.match(source, /fält för köp i appen eller kvitton/);
   assert.match(source, /data om köp i appen importeras inte/);
   assert.match(source, /\$\{count\} FSRS review days/);
   assert.match(source, /\$\{count\} FSRS review cards/);
+  assert.match(source, /under \$\{localStudyDataImportMaxLabel\}/);
+  assert.match(source, /The JSON export is larger than \$\{localStudyDataImportMaxLabel\}/);
   assert.doesNotMatch(
     source,
     /dagar med FSRS-repetition|FSRS-repetitionskort|frysstatus|IAP-fält|IAP-data/,
