@@ -8,8 +8,8 @@
       "sha256": "fa08d5f935a0f425e591e8ddc00b027fc9737d6f8e11f765677aa3bfb1ee1959"
     },
     "app.js": {
-      "bytes": 83815,
-      "sha256": "bb07caca2aa5d7e2318230907379e662a36511ac4e79bb29740bde9f4eddb58b"
+      "bytes": 87404,
+      "sha256": "84509e9dbde1e839723e3f108a0ecbe4ab4887985c7d982ad6339d706a537731"
     },
     "buddies.js": {
       "bytes": 34479,
@@ -32,28 +32,28 @@
       "sha256": "5321407815aaaf2da99810721a156b3df655aa2722c956e0c3481b10e744cd98"
     },
     "i18n-extras.js": {
-      "bytes": 311461,
-      "sha256": "c3300b1d17ee45272b359848b9729d783eaf0cb68db6205eb8b0e514a15b5ba6"
+      "bytes": 315953,
+      "sha256": "2ad04d4317e2f5fb761082147535fff5935b7cd35a925e5f7f199e03a96f1da3"
     },
     "icon.png": {
       "bytes": 362794,
       "sha256": "401ff142bcdf5c40570f8eb7673fc979d7f2ba8d646d26d34b27feb4f4115054"
     },
     "index.html": {
-      "bytes": 63267,
-      "sha256": "534c36e0e58193b0cb46b1b60058e33413539e7b2d0d82b31dc5e735d3e8dbf3"
+      "bytes": 64303,
+      "sha256": "7d74c265f75c7cd548dbcbeadde5cea95015956a17a58f2128528ca2d5d01927"
     },
     "practice.js": {
-      "bytes": 54349,
-      "sha256": "b4431f03a81a8f1ac049c12940ae37038de42a4634584b294c4a39ed5c835bfa"
+      "bytes": 53929,
+      "sha256": "bc7cae723d532d947babf8aeaf08984513f9c8bcdd9c3056cea27ac3376aaf0b"
     },
     "questions.js": {
-      "bytes": 3507894,
-      "sha256": "862f53b48720177c0c32919172941b673dca4d45015695e11b3136eaf106ea46"
+      "bytes": 3592594,
+      "sha256": "e7ddb1363d0956e8db35ccb9bcd09dc576b8a332475e29997a07f6662f4a803a"
     },
     "settings.js": {
-      "bytes": 9160,
-      "sha256": "968b138f683fcedf0a8ab616ca4e15369641a7e95f9295ca52e2eefb1065db7c"
+      "bytes": 12779,
+      "sha256": "0b52dc512e7e5ddfc0197d813d498f3737391b7e0e3f82b4e0a69d9bda191129"
     },
     "site.js": {
       "bytes": 5221,
