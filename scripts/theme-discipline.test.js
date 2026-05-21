@@ -117,6 +117,14 @@ test('app and component styles use theme tokens instead of literal colors, spaci
   assert.deepEqual(offenders, []);
 });
 
+test('theme discipline rejects negative literal typography drift', () => {
+  assert.equal(TYPOGRAPHY_LITERAL.test('letterSpacing: -0.2,'), true);
+  assert.equal(
+    TYPOGRAPHY_LITERAL.test('letterSpacing: typography.cardTitle.letterSpacing,'),
+    false,
+  );
+});
+
 test('semantic text tokens meet WCAG AA contrast on app surfaces', () => {
   for (const { label, colors } of readThemeColorPalettes()) {
     for (const [foreground, background] of REQUIRED_CONTRAST_PAIRS) {
