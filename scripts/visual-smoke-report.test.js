@@ -118,13 +118,32 @@ test('visual smoke uses the shared route filename contract and blocking modal ov
   );
   assert.match(
     visualSmokeSource,
-    /import \{ blockingModalOverlayLocator, dismissBlockingModals \} from '\.\/browserLaunch';/,
+    /import \{[\s\S]*blockingModalOverlayLocator[\s\S]*dismissBlockingModals[\s\S]*\} from '\.\/browserLaunch';/,
   );
   assert.match(visualSmokeSource, /page\.locator\(blockingModalOverlayLocator\)/);
   assert.doesNotMatch(
     visualSmokeSource,
     /page\.locator\('\[role="dialog"\]\[aria-modal="true"\]'\)/,
   );
+});
+
+test('visual smoke includes a focused proof for first-run and language picker dismissal', () => {
+  const visualSmokeSource = readRepoFile('tests/e2e/visual-smoke.spec.ts');
+
+  assert.match(
+    visualSmokeSource,
+    /dismissBlockingModals clears forced first-run and language picker overlays/,
+  );
+  assert.match(visualSmokeSource, /seedFreshFirstRunSettingsLanguage\(page, 'en'\)/);
+  assert.match(
+    visualSmokeSource,
+    /getByRole\('dialog', \{ name: 'What is the Swedish civic test\?' \}\)/,
+  );
+  assert.match(visualSmokeSource, /firstRunDismissal\.firstRunAboutDismissed\)\.toBe\(true\)/);
+  assert.match(visualSmokeSource, /seedFreshSettingsLanguageAndAboutSeen\(languagePage, 'en'\)/);
+  assert.match(visualSmokeSource, /Current language EN\\\. Open language picker\\\./);
+  assert.match(visualSmokeSource, /languageDismissal\.languagePickerDismissed\)\.toBe\(true\)/);
+  assert.match(visualSmokeSource, /locator\(blockingModalOverlayLocator\)\)\.toHaveCount\(0\)/);
 });
 
 test('visual smoke duplicate helper requires exact groups and nonempty reasons', () => {
@@ -291,6 +310,7 @@ test('visual smoke manifest matches the shared route list and screenshot filenam
   const {
     findUnexplainedVisualSmokeDuplicateReports,
     hasValidVisualSmokeDuplicateExplanation,
+    validateVisualSmokeDuplicateExplanations,
     visualSmokeDuplicateExplanations,
   } = visualSmokeDuplicateContract();
   const { shouldSuppressLaunchPopupAdForPath } = loadLaunchAdSuppressionPolicy();
