@@ -15,6 +15,7 @@ type SearchNavigationScenario = {
   language: AppLanguage;
   mountedQuery: string;
   mountedUrl: string;
+  provenanceBadgeName: RegExp;
   questionLinkName: RegExp;
   questionTitlePrefix: RegExp;
   query: string;
@@ -42,6 +43,7 @@ const searchNavigationScenarios: SearchNavigationScenario[] = [
     language: 'sv',
     mountedQuery: 'kommun',
     mountedUrl: '/search?query=kommun',
+    provenanceBadgeName: /Källtyp: (UHR-källa|Tilläggsfråga|Redaktionell)/,
     questionLinkName: /Öppna övningsfrågan:/,
     questionTitlePrefix: /^Öppna övningsfrågan:\s*/,
     query: 'riksdag',
@@ -57,6 +59,7 @@ const searchNavigationScenarios: SearchNavigationScenario[] = [
     language: 'en',
     mountedQuery: 'riksdag',
     mountedUrl: '/search?q=riksdag',
+    provenanceBadgeName: /Provenance: (UHR source|Supplementary|Editorial)/,
     questionLinkName: /Open practice question:/,
     questionTitlePrefix: /^Open practice question:\s*/,
     query: 'kommun',
@@ -111,6 +114,9 @@ async function expectVisibleSearchResults(
     page.getByRole('link', { name: /Öppna kapitlet|Open the chapter/ }).first(),
   ).toBeVisible();
   await expect(page.getByRole('link', { name: scenario.questionLinkName }).first()).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: scenario.provenanceBadgeName }).first(),
+  ).toBeVisible();
 
   return input;
 }
