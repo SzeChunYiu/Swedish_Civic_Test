@@ -98,6 +98,29 @@ test('ChapterCard accessibility parity uses focused content validation routing',
   );
 });
 
+test('CelebrationBurst accessibility parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const celebrationBurstTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-celebration-burst-accessibility-parity.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-celebration-burst-accessibility/);
+  assert.match(
+    validatorSource,
+    /validateCelebrationBurstAccessibilityParity\(\);[\s\S]*celebrationBurstAccessibilityRulesValidated[\s\S]*celebrationBurstAccessibilityParityValidated/,
+  );
+  assert.match(celebrationBurstTestSource, /--focus-celebration-burst-accessibility/);
+  assert.doesNotMatch(
+    celebrationBurstTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'CelebrationBurst accessibility tests must not route through full content validation',
+  );
+});
+
 test('answer feedback parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),

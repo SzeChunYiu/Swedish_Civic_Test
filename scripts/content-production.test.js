@@ -205,7 +205,7 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.explanationPanelAccessibilityParityValidated, true);
   assert.equal(summary.uhrReferenceCardAccessibilityRulesValidated, 10);
   assert.equal(summary.uhrReferenceCardAccessibilityParityValidated, true);
-  assert.equal(summary.celebrationBurstAccessibilityRulesValidated, 11);
+  assert.equal(summary.celebrationBurstAccessibilityRulesValidated, 13);
   assert.equal(summary.celebrationBurstAccessibilityParityValidated, true);
   assert.equal(summary.examReviewItemsValidated, 20);
   assert.equal(summary.examReviewSourceParityValidated, true);

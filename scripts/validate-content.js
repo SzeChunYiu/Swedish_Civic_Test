@@ -2383,8 +2383,7 @@ const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
   },
   {
     label: 'primary onboarding link 48px flex target',
-    pattern:
-      /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
+    pattern: /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
   },
   {
     label: 'secondary onboarding link 48px flex target',
@@ -3287,6 +3286,16 @@ const EXPECTED_CELEBRATION_BURST_ACCESSIBILITY_RULES = [
   {
     label: 'decorative animation hidden from accessibility tree',
     pattern: /accessibilityElementsHidden/,
+  },
+  {
+    label: 'reduced-motion branch hidden from accessibility tree',
+    pattern:
+      /if \(reducedMotionEnabled\) \{\s*return \(\s*<View(?=[^>]*accessibilityElementsHidden)(?=[^>]*importantForAccessibility="no-hide-descendants")(?=[^>]*pointerEvents="none")[^>]*>/,
+  },
+  {
+    label: 'animated branch hidden from accessibility tree',
+    pattern:
+      /<Animated\.View(?=[^>]*accessibilityElementsHidden)(?=[^>]*importantForAccessibility="no-hide-descendants")(?=[^>]*pointerEvents="none")[^>]*>/,
   },
   {
     label: 'descendant accessibility hidden',
@@ -8203,6 +8212,16 @@ if (process.argv.includes('--focus-chapter-card-accessibility')) {
   printValidationSummary({
     chapterCardAccessibilityRulesValidated,
     chapterCardAccessibilityParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-celebration-burst-accessibility')) {
+  validateCelebrationBurstAccessibilityParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    celebrationBurstAccessibilityRulesValidated,
+    celebrationBurstAccessibilityParityValidated,
   });
   process.exit(0);
 }
