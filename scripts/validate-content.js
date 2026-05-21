@@ -3462,6 +3462,25 @@ const EXPECTED_QUESTION_REPORT_LINK_RULES = [
       /<QuestionReportLink[\s\S]*language=\{language\}[\s\S]*question=\{question\}[\s\S]*screen="quiz"[\s\S]*selectedOptionId=\{selectedOptionId\}[\s\S]*\/>/,
   },
   {
+    file: 'app/chapter/[chapterId].tsx',
+    label: 'chapter report link import',
+    pattern:
+      /import \{ QuestionReportLink \} from '\.\.\/\.\.\/components\/quiz\/QuestionReportLink';/,
+  },
+  {
+    file: 'app/chapter/[chapterId].tsx',
+    label: 'chapter reader source context',
+    message: 'QuestionReportLink missing chapter reader source context',
+    pattern:
+      /<QuestionReportLink\s+language=\{language\}\s+question=\{question\}\s+screen="chapter"\s+\/>/,
+  },
+  {
+    file: 'app/chapter/[chapterId].tsx',
+    label: 'chapter reader selected answer omission',
+    message: 'QuestionReportLink chapter reader must not include selected answer context',
+    forbiddenPattern: /<QuestionReportLink[\s\S]*screen="chapter"[\s\S]*selectedOptionId=/,
+  },
+  {
     file: 'app/support.tsx',
     label: 'selected answer search param',
     pattern: /selectedAnswer\?: string \| string\[\];/,

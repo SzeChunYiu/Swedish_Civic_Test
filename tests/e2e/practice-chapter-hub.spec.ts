@@ -76,3 +76,40 @@ test('chapter selection starts a chapter-scoped practice loop', async ({ page })
   await expect(page.getByText('Choose how to practise')).toHaveCount(0);
   expect(consoleErrors).toEqual([]);
 });
+
+test('chapter reader report link opens source context without selected answer', async ({
+  page,
+}) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await seedEnglishHub(page);
+  await page.goto('/chapter/ch02', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  const reportLink = page.getByRole('link', { name: /Report question q\d+/ }).first();
+  await expect(reportLink).toBeVisible();
+  await expectTapTarget(reportLink, 'chapter question report link');
+  await reportLink.click();
+
+  await expect(page).toHaveURL(/\/support\?/);
+  await expect(page).toHaveURL(/screen=chapter/);
+  await expect(page).not.toHaveURL(/selectedAnswer=/);
+  await expect(page.getByText('Question report context')).toBeVisible();
+  await expect(page.getByText('Question ID')).toBeVisible();
+  await expect(page.getByText('Source')).toBeVisible();
+  await expect(page.getByText(/Source: Sverige i fokus/)).toBeVisible();
+  await expect(page.getByText('Active language')).toBeVisible();
+  await expect(page.getByText('en')).toBeVisible();
+  await expect(page.getByText('Screen')).toBeVisible();
+  await expect(page.getByText('Chapter')).toBeVisible();
+  await expect(page.getByText('Selected answer')).toHaveCount(0);
+  await expect(
+    page.getByText(/Do not add names, personal identity numbers, case numbers/),
+  ).toBeVisible();
+  expect(consoleErrors).toEqual([]);
+});
