@@ -1250,6 +1250,7 @@ const EXPECTED_APP_CONFIG_PLUGINS = [
   'react-native-iap',
   'expo-tracking-transparency',
 ];
+const EXPECTED_WEB_DOCUMENT_METADATA_DESCRIPTION_LANGUAGES = ['sv', 'en'];
 const EXPECTED_APP_NATIVE_IDENTIFIER = 'com.billyyiu.almostswedish';
 const EXPECTED_TRACKING_PERMISSION =
   'This identifier may be used to deliver relevant study app ads after consent.';
@@ -8252,6 +8253,27 @@ if (process.argv.includes('--focus-static-head-metadata')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-app-config-schema')) {
+  validateValidationScriptSyntax();
+  validateAppConfigSchema();
+  validateStaticValidationSyntaxGate();
+  validateStaticHeadMetadataParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    validationScriptSyntaxChecksValidated,
+    appConfigPluginsValidated,
+    appConfigSchemaValidated,
+    staticHeadMetadataTitleValidated,
+    staticHeadMetadataDescriptionValidated,
+    staticHeadMetadataOutcomeClaimPatternsValidated,
+    staticHeadMetadataParityValidated,
+    staticValidationSyntaxFilesValidated,
+    staticValidationImportChecksValidated,
+    staticValidationSyntaxGateValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-dashboard-progress-snapshot')) {
   validateDashboardProgressSnapshotParity();
   exitWithValidationFailures();
@@ -8706,6 +8728,98 @@ function getPluginConfig(pluginEntry) {
     : undefined;
 }
 
+function loadWebDocumentMetadataModule() {
+  const metadataModulePath = path.join(repoRoot, 'lib/scaffold/webDocumentMetadata.js');
+  delete require.cache[require.resolve(metadataModulePath)];
+  return require(metadataModulePath);
+}
+
+function validateWebDocumentMetadataParity(expo, reject) {
+  let metadataModule;
+  try {
+    metadataModule = loadWebDocumentMetadataModule();
+  } catch (error) {
+    reject(`webDocumentMetadata module could not be loaded: ${error.message}`);
+    return;
+  }
+
+  const { webDocumentDescriptionForLanguage, webDocumentMetaDescriptions, webDocumentMetadata } =
+    metadataModule;
+  if (!webDocumentMetadata || typeof webDocumentMetadata !== 'object') {
+    reject('webDocumentMetadata export must be an object');
+    return;
+  }
+  if (!Array.isArray(webDocumentMetaDescriptions)) {
+    reject('webDocumentMetaDescriptions export must be an array');
+    return;
+  }
+  if (typeof webDocumentDescriptionForLanguage !== 'function') {
+    reject('webDocumentDescriptionForLanguage export must be a function');
+    return;
+  }
+
+  const appName = String(expo.name ?? '');
+  const titleFields = [
+    ['webDocumentTitle', webDocumentMetadata.title],
+    ['webDocumentApplicationName', webDocumentMetadata.applicationName],
+    ['webDocumentAppleMobileWebAppTitle', webDocumentMetadata.appleMobileWebAppTitle],
+    ['webDocumentOpenGraphSiteName', webDocumentMetadata.openGraphSiteName],
+    ['webDocumentOpenGraphTitle', webDocumentMetadata.openGraphTitle],
+  ];
+  for (const [label, value] of titleFields) {
+    if (value !== appName) {
+      reject(`${label} must match app.json expo.name`);
+    }
+  }
+
+  if (webDocumentMetadata.language !== 'sv') {
+    reject('webDocumentLanguage must default to Swedish');
+  }
+
+  const descriptionLanguages = webDocumentMetaDescriptions.map((entry) => entry?.language);
+  if (
+    descriptionLanguages.length !== EXPECTED_WEB_DOCUMENT_METADATA_DESCRIPTION_LANGUAGES.length ||
+    !EXPECTED_WEB_DOCUMENT_METADATA_DESCRIPTION_LANGUAGES.every((language) =>
+      descriptionLanguages.includes(language),
+    )
+  ) {
+    reject('webDocumentMetaDescriptions must include Swedish and English metadata descriptions');
+  }
+
+  for (const entry of webDocumentMetaDescriptions) {
+    if (!entry || typeof entry !== 'object') {
+      reject('webDocumentMetaDescriptions entries must be objects');
+      continue;
+    }
+    if (!hasText(entry.description)) {
+      reject(`webDocumentDescription for ${entry.language ?? '<missing>'} must be non-empty`);
+      continue;
+    }
+    for (const { label, pattern } of UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS) {
+      if (pattern.test(entry.description)) {
+        reject(`webDocumentDescription ${label}`);
+      }
+    }
+  }
+
+  let expectedDefaultDescription = '';
+  try {
+    expectedDefaultDescription = webDocumentDescriptionForLanguage(webDocumentMetadata.language);
+  } catch (error) {
+    reject(`webDocumentDescriptionForLanguage must support the default language: ${error.message}`);
+  }
+  if (expectedDefaultDescription) {
+    if (webDocumentMetadata.description !== expectedDefaultDescription) {
+      reject('webDocumentDescription must match the default localized metadata description');
+    }
+    if (webDocumentMetadata.openGraphDescription !== expectedDefaultDescription) {
+      reject(
+        'webDocumentOpenGraphDescription must match the default localized metadata description',
+      );
+    }
+  }
+}
+
 function validateAppConfigSchema() {
   let valid = true;
 
@@ -8743,6 +8857,7 @@ function validateAppConfigSchema() {
   if (expo.newArchEnabled !== true) {
     reject('app.json expo.newArchEnabled must be true');
   }
+  validateWebDocumentMetadataParity(expo, reject);
   if (expo.ios?.bundleIdentifier !== EXPECTED_APP_NATIVE_IDENTIFIER) {
     reject(`app.json ios.bundleIdentifier must be ${EXPECTED_APP_NATIVE_IDENTIFIER}`);
   }
