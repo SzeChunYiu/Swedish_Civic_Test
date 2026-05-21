@@ -44,11 +44,29 @@ function loadTs(relativePath, exportName) {
   return exportName ? mod.exports[exportName] : mod.exports;
 }
 
+function parseFocusedMockExamCopySummary() {
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-mock-exam-copy-parity'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused mock-exam copy validation should print JSON summary');
+  return JSON.parse(match[0]);
+}
+
 test('default mock exam config generates a full UHR-based exam from bundled questions', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-mock-exam-runtime-parity'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
 
@@ -97,6 +115,31 @@ test('default mock exam config generates a full UHR-based exam from bundled ques
   );
 });
 
+test('mock exam copy parity keeps Swedish övningsprov labels and English Mock Exam labels', () => {
+  const summary = parseFocusedMockExamCopySummary();
+  const librarySource = fs.readFileSync(
+    path.join(repoRoot, 'lib/learning/mockExamLibrary.ts'),
+    'utf8',
+  );
+  const tierSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/tierComparison.ts'),
+    'utf8',
+  );
+
+  assert.equal(summary.nativeMockExamComponentCopyLabelsValidated, 6);
+  assert.equal(summary.nativeMockExamComponentLegalCopyValidated, true);
+  assert.equal(summary.nativeMockExamLibraryLabelsValidated, 7);
+  assert.equal(summary.nativeMockExamScoreSourceCopyValidated, true);
+  assert.equal(summary.nativeMockExamSwedishCopyNaturalnessValidated, true);
+  assert.equal(summary.nativeMockExamTierCopyValidated, true);
+  assert.match(librarySource, /Övningsprov 1 – Mjuk start/);
+  assert.match(librarySource, /Slumpmässigt övningsprov/);
+  assert.match(librarySource, /Mock Exam 1 – Gentle start/);
+  assert.match(tierSource, /labelSv: 'Övningsprov'/);
+  assert.match(tierSource, /labelEn: 'Mock exams'/);
+  assert.doesNotMatch(`${librarySource}\n${tierSource}`, /\bprovexamen\b|\bprovexamina\b/i);
+});
+
 test('web rewarded unlocks require explicit completion before credit grant path', async () => {
   const { showRewardedExtraExamAd } = loadTs('lib/monetization/rewardedAd.ts');
   const rewardedAdSource = fs.readFileSync(
@@ -120,4 +163,57 @@ test('web rewarded unlocks require explicit completion before credit grant path'
     examSource,
     /showRewardedExtraExamAd|rewardPreview|grantRewardedExamCredit|sponsor preview|Complete sponsor preview|Slutför förhandsvisning|Unlock extra exam|Lås upp extra prov/i,
   );
+});
+
+test('mock exam access gates only strict boolean entitlement flags', () => {
+  const { getMockExamAccessDecision } = loadTs('lib/monetization/rewardedExam.ts');
+  const rewardedExamSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/rewardedExam.ts'),
+    'utf8',
+  );
+  const accessHookSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/useMockExamAccess.ts'),
+    'utf8',
+  );
+
+  assert.deepEqual(
+    getMockExamAccessDecision({
+      completedMockExamsToday: 1,
+      entitlements: { adsDisabled: false, unlimitedMockExams: 'yes' },
+      freeMockExamLimit: 1,
+    }),
+    {
+      canOfferRewardedAd: true,
+      canStartExam: false,
+      freeExamsRemaining: 0,
+      placement: 'rewarded_extra_exam',
+      reason: 'rewarded_ad_available',
+      rewardedExtraExamCredits: 0,
+    },
+  );
+  assert.equal(
+    getMockExamAccessDecision({
+      completedMockExamsToday: 1,
+      entitlements: { adsDisabled: false, unlimitedMockExams: 1 },
+      freeMockExamLimit: 1,
+    }).reason,
+    'rewarded_ad_available',
+  );
+  assert.equal(
+    getMockExamAccessDecision({
+      completedMockExamsToday: 1,
+      entitlements: { adsDisabled: 'yes', unlimitedMockExams: false },
+      freeMockExamLimit: 1,
+    }).reason,
+    'rewarded_ad_available',
+  );
+  assert.match(rewardedExamSource, /import \{ isStrictEntitlementFlag \} from '\.\/premium';/);
+  assert.match(rewardedExamSource, /isStrictEntitlementFlag\(entitlements\.unlimitedMockExams\)/);
+  assert.match(rewardedExamSource, /isStrictEntitlementFlag\(entitlements\.adsDisabled\)/);
+  assert.doesNotMatch(
+    rewardedExamSource,
+    /if \(entitlements\.(?:unlimitedMockExams|adsDisabled)\)/,
+  );
+  assert.match(accessHookSource, /import \{ FREE_ENTITLEMENTS, isStrictEntitlementFlag \}/);
+  assert.match(accessHookSource, /isStrictEntitlementFlag\(entitlements\.unlimitedMockExams\)/);
 });

@@ -8,6 +8,7 @@ const repoRoot = path.resolve(__dirname, '..');
 const defaultSiteDir = path.join(repoRoot, 'site');
 const defaultManifestPath = path.join(defaultSiteDir, 'asset-manifest.json');
 const manifestFileName = 'asset-manifest.json';
+const maxStylesheetImportDepth = 16;
 
 function normalizeRelativePath(filePath) {
   return filePath.split(path.sep).join('/');
@@ -39,12 +40,137 @@ function listSiteAssetFiles(siteDir, options = {}) {
   return files.sort((a, b) => a.localeCompare(b));
 }
 
-function isExternalReference(value) {
-  return /^(?:https?:|data:|mailto:|tel:|#|javascript:)/i.test(value);
+function isIgnoredReference(value) {
+  return /^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i.test(value);
 }
 
-function normalizeAssetReference(value) {
-  return value.replace(/[?#].*$/, '').replace(/^\.?\//, '');
+function normalizeAssetReference(value, baseDir = '') {
+  const trimmed = value
+    .trim()
+    .replace(/^(['"])(.*)\1$/, '$2')
+    .trim();
+  if (!trimmed || isIgnoredReference(trimmed) || /\bvar\(/i.test(trimmed)) return null;
+
+  const withoutHashOrQuery = trimmed.replace(/[?#].*$/, '');
+  if (!withoutHashOrQuery) return null;
+
+  if (withoutHashOrQuery.startsWith('/')) {
+    return path.posix.normalize(withoutHashOrQuery.replace(/^\/+/, ''));
+  }
+
+  const normalized = path.posix.normalize(path.posix.join(baseDir, withoutHashOrQuery));
+  return normalized === '.' ? null : normalized.replace(/^\.\//, '');
+}
+
+function stripCssBlockComments(cssText) {
+  return cssText.replace(/\/\*[\s\S]*?\*\//g, '');
+}
+
+function extractCssUrlReferences(cssText, baseDir = '') {
+  const references = [];
+  const urlPattern = /url\(\s*(?:"([^"]*)"|'([^']*)'|([^)]*?))\s*\)/gi;
+  const uncommentedCssText = stripCssBlockComments(cssText);
+
+  for (const match of uncommentedCssText.matchAll(urlPattern)) {
+    const reference = normalizeAssetReference(match[1] ?? match[2] ?? match[3] ?? '', baseDir);
+    if (reference) references.push(reference);
+  }
+
+  return references;
+}
+
+function extractCssImportReferences(cssText, baseDir = '') {
+  const references = [];
+  const uncommentedCssText = stripCssBlockComments(cssText);
+  const importPattern =
+    /@import\s+(?:url\(\s*)?(?:"([^"]*)"|'([^']*)'|([^)'";\s]+))(?:\s*\))?[^;]*;/gi;
+
+  for (const match of uncommentedCssText.matchAll(importPattern)) {
+    const reference = normalizeAssetReference(match[1] ?? match[2] ?? match[3] ?? '', baseDir);
+    if (reference) references.push(reference);
+  }
+
+  return references;
+}
+
+function isPathInsideDirectory(directory, candidatePath) {
+  const relativePath = path.relative(directory, candidatePath);
+  return relativePath === '' || (!relativePath.startsWith('..') && !path.isAbsolute(relativePath));
+}
+
+function extractHtmlAttribute(tag, attributeName) {
+  const attributePattern = new RegExp(
+    `\\b${attributeName}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s>]+))`,
+    'i',
+  );
+  const match = tag.match(attributePattern);
+  return match ? (match[1] ?? match[2] ?? match[3] ?? '') : '';
+}
+
+function listHtmlAssetAttributeReferences(indexHtml) {
+  return Array.from(indexHtml.matchAll(/\b(?:src|href)\s*=\s*(["'])(.*?)\1/gi), (match) =>
+    normalizeAssetReference(match[2]),
+  ).filter(Boolean);
+}
+
+function listInlineStyleAssetReferences(indexHtml) {
+  return Array.from(indexHtml.matchAll(/\bstyle\s*=\s*(["'])([\s\S]*?)\1/gi)).flatMap((match) =>
+    extractCssUrlReferences(match[2]),
+  );
+}
+
+function listStylesheetAssetReferences(siteDir, indexHtml) {
+  const references = [];
+  const visitedStylesheets = new Set();
+
+  function collectStylesheetReferences(stylesheetPath, depth = 0) {
+    if (depth > maxStylesheetImportDepth) {
+      throw new Error(`CSS import depth exceeded while scanning ${stylesheetPath}`);
+    }
+
+    const absoluteStylesheetPath = path.resolve(siteDir, stylesheetPath);
+    if (!isPathInsideDirectory(siteDir, absoluteStylesheetPath)) return [stylesheetPath];
+    if (!fs.existsSync(absoluteStylesheetPath)) return [stylesheetPath];
+
+    const normalizedStylesheetPath = normalizeRelativePath(
+      path.relative(siteDir, absoluteStylesheetPath),
+    );
+    if (visitedStylesheets.has(normalizedStylesheetPath)) return [normalizedStylesheetPath];
+    visitedStylesheets.add(normalizedStylesheetPath);
+
+    const stylesheetText = fs.readFileSync(absoluteStylesheetPath, 'utf8');
+    const baseDir = path.posix.dirname(normalizedStylesheetPath);
+    const stylesheetBaseDir = baseDir === '.' ? '' : baseDir;
+    const stylesheetReferences = [normalizedStylesheetPath];
+
+    for (const importedStylesheetPath of extractCssImportReferences(
+      stylesheetText,
+      stylesheetBaseDir,
+    )) {
+      stylesheetReferences.push(importedStylesheetPath);
+      if (path.extname(importedStylesheetPath).toLowerCase() === '.css') {
+        stylesheetReferences.push(
+          ...collectStylesheetReferences(importedStylesheetPath, depth + 1),
+        );
+      }
+    }
+
+    stylesheetReferences.push(...extractCssUrlReferences(stylesheetText, stylesheetBaseDir));
+    return stylesheetReferences;
+  }
+
+  for (const match of indexHtml.matchAll(/<link\b[^>]*>/gi)) {
+    const tag = match[0];
+    const rel = extractHtmlAttribute(tag, 'rel');
+    if (!rel.split(/\s+/).some((token) => token.toLowerCase() === 'stylesheet')) continue;
+
+    const stylesheetPath = normalizeAssetReference(extractHtmlAttribute(tag, 'href'));
+    if (!stylesheetPath || path.extname(stylesheetPath).toLowerCase() !== '.css') continue;
+
+    references.push(...collectStylesheetReferences(stylesheetPath));
+  }
+
+  return references;
 }
 
 function listIndexAssetReferences(siteDir) {
@@ -52,12 +178,11 @@ function listIndexAssetReferences(siteDir) {
   if (!fs.existsSync(indexPath)) return [];
 
   const indexHtml = fs.readFileSync(indexPath, 'utf8');
-  const references = Array.from(
-    indexHtml.matchAll(/\b(?:src|href)\s*=\s*(["'])(.*?)\1/g),
-    (match) => normalizeAssetReference(match[2]),
-  )
-    .filter(Boolean)
-    .filter((referencePath) => !isExternalReference(referencePath));
+  const references = [
+    ...listHtmlAssetAttributeReferences(indexHtml),
+    ...listInlineStyleAssetReferences(indexHtml),
+    ...listStylesheetAssetReferences(siteDir, indexHtml),
+  ];
 
   return [...new Set(references)].sort((a, b) => a.localeCompare(b));
 }

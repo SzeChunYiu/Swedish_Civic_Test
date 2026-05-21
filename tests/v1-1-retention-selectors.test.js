@@ -135,6 +135,83 @@ test('streakWithFreeze: refillFreezes repairs invalid lastEarnedAt and invalid n
   assert.equal(invalidNow.available, 1);
 });
 
+test('streakWithFreeze: refillFreezes normalizes NaN negative fractional and string counters', () => {
+  const { calculateStreakWithFreeze, refillFreezes } = loadTs('lib/learning/streakWithFreeze.ts');
+  const now = new Date('2026-05-19T08:00:00.000Z');
+
+  const malformedCurrentWeek = refillFreezes(
+    {
+      available: Number.NaN,
+      lastEarnedAt: '2026-05-18',
+      lifetimeEarned: '2',
+      lifetimeSpent: -1,
+      rescuedDayKeys: [],
+    },
+    now,
+  );
+  assert.deepEqual(
+    {
+      available: malformedCurrentWeek.available,
+      lifetimeEarned: malformedCurrentWeek.lifetimeEarned,
+      lifetimeSpent: malformedCurrentWeek.lifetimeSpent,
+    },
+    { available: 0, lifetimeEarned: 0, lifetimeSpent: 0 },
+  );
+
+  const overstocked = refillFreezes(
+    {
+      available: 99,
+      lastEarnedAt: '2026-05-11',
+      lifetimeEarned: 3.5,
+      lifetimeSpent: Infinity,
+      rescuedDayKeys: [],
+    },
+    now,
+  );
+  assert.deepEqual(
+    {
+      available: overstocked.available,
+      lifetimeEarned: overstocked.lifetimeEarned,
+      lifetimeSpent: overstocked.lifetimeSpent,
+    },
+    { available: 4, lifetimeEarned: 0, lifetimeSpent: 0 },
+  );
+
+  const blockedStringAvailable = calculateStreakWithFreeze({
+    activeDayKeys: ['2026-05-17', '2026-05-19'],
+    freezeState: {
+      available: '1',
+      lastEarnedAt: '2026-05-18',
+      lifetimeEarned: 1,
+      lifetimeSpent: 0,
+      rescuedDayKeys: [],
+    },
+    today: '2026-05-19',
+    now,
+  });
+  assert.equal(blockedStringAvailable.streakDays, 1);
+  assert.equal(blockedStringAvailable.freezeState.available, 0);
+  assert.equal(blockedStringAvailable.freezeState.lifetimeSpent, 0);
+  assert.deepEqual(blockedStringAvailable.rescuedThisRun, []);
+
+  const rescued = calculateStreakWithFreeze({
+    activeDayKeys: ['2026-05-17', '2026-05-19'],
+    freezeState: {
+      available: 4,
+      lastEarnedAt: '2026-05-18',
+      lifetimeEarned: 4,
+      lifetimeSpent: '2',
+      rescuedDayKeys: [],
+    },
+    today: '2026-05-19',
+    now,
+  });
+  assert.equal(rescued.streakDays, 3);
+  assert.equal(rescued.freezeState.available, 3);
+  assert.equal(rescued.freezeState.lifetimeSpent, 1);
+  assert.deepEqual(rescued.rescuedThisRun, ['2026-05-18']);
+});
+
 test('streakWithFreeze: freezeBannerCopy emits Sv + En only when a freeze was used', () => {
   const { freezeBannerCopy } = loadTs('lib/learning/streakWithFreeze.ts');
   const withRescue = { rescuedThisRun: ['2026-05-17'], freezeState: { available: 1 } };

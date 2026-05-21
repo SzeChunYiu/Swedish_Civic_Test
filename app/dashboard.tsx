@@ -1,6 +1,6 @@
 import { Link } from 'expo-router';
 import { useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 
 import { ActivityHeatmap } from '../components/dashboard/ActivityHeatmap';
 import { MockExamHistoryCard } from '../components/dashboard/MockExamHistoryCard';
@@ -20,12 +20,10 @@ import {
 } from '../lib/learning/dashboardStats';
 import { buildDashboardProgressSnapshot } from '../lib/learning/dashboardProgressSnapshot';
 import { calculateStreakWithFreeze } from '../lib/learning/streakWithFreeze';
-import { hasProEntitlement } from '../lib/monetization/premium';
 import { useProgressStore } from '../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { radius, space, typography, type ThemeColors } from '../lib/theme';
 import { useThemeColors } from '../lib/theme/ThemeProvider';
-import type { ProTierEntitlements } from '../types/monetization';
 
 const ACTIVITY_DAYS = 53 * 7;
 const XP_DAYS = 30;
@@ -52,6 +50,7 @@ type DashboardCopy = {
     emptyState: string;
     linkLabel: (chapterName: string) => string;
     sortAccessibilityLabel: (mode: string) => string;
+    sortGroupAccessibilityLabel: string;
     subtitle: string;
     title: string;
     weakestFirst: string;
@@ -127,6 +126,7 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
       emptyState: 'När du har svarat på frågor visas dina kapitelframsteg här.',
       linkLabel: (chapterName) => `Öppna ${chapterName}`,
       sortAccessibilityLabel: (mode) => `Sortera kapitel: ${mode}`,
+      sortGroupAccessibilityLabel: 'Sortera kapitelframsteg',
       subtitle: 'Rätt och täckning visas sida vid sida per kapitel.',
       title: 'Kapitelframsteg',
       weakestFirst: 'Svagast först',
@@ -208,6 +208,7 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
       emptyState: 'Chapter progress appears here after you answer questions.',
       linkLabel: (chapterName) => `Open ${chapterName}`,
       sortAccessibilityLabel: (mode) => `Sort chapters: ${mode}`,
+      sortGroupAccessibilityLabel: 'Sort chapter progress',
       subtitle: 'Accuracy and coverage sit side by side for each chapter.',
       title: 'Chapter progress',
       weakestFirst: 'Weakest first',
@@ -273,21 +274,6 @@ function createQuestionChapterIndex() {
   return Object.fromEntries(questions.map((question) => [question.id, question.chapterId]));
 }
 
-function createDashboardProEntitlements(): ProTierEntitlements {
-  return {
-    adsDisabled: false,
-    confidenceSlider: false,
-    customStudyPlan: false,
-    fullMistakeReview: false,
-    multiColorHighlights: false,
-    nativeLangExplanations: false,
-    notesExport: false,
-    predictedPassProbability: false,
-    spacedRepetition: false,
-    unlimitedMockExams: false,
-  };
-}
-
 export default function DashboardScreen() {
   const answerDates = useProgressStore((state) => state.answerDates);
   const answerHistory = useProgressStore((state) => state.answerHistory);
@@ -335,9 +321,6 @@ export default function DashboardScreen() {
       }),
     [answerDates, streakFreezeState],
   );
-  const proEntitlements = useMemo(createDashboardProEntitlements, []);
-  const advancedAnalyticsUnlocked =
-    hasProEntitlement(proEntitlements) && proEntitlements.predictedPassProbability;
   const summaryAccessibilityLabel = copy.summaryAccessibilityLabel(
     summary.questionsAnsweredThisWeek,
     summary.chaptersWithAnyAnswer,
@@ -386,7 +369,6 @@ export default function DashboardScreen() {
         copy={copy.mockHistory}
         entries={mockHistoryEntries}
       />
-      {advancedAnalyticsUnlocked ? <View style={styles.proAnalyticsPlaceholder} /> : null}
     </ScreenShell>
   );
 }
@@ -419,9 +401,6 @@ function createStyles(themeColors: ThemeColors) {
       paddingHorizontal: space[2],
       paddingVertical: space[1],
       textDecorationLine: 'none',
-    },
-    proAnalyticsPlaceholder: {
-      display: 'none',
     },
   });
 }

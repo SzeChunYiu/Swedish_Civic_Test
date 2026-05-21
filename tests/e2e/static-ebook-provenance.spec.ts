@@ -12,25 +12,49 @@ type SourceCounts = Record<string, number>;
 
 const chapterIds = ['1', '7', '9', '12'] as const;
 const languages = ['en', 'sv'] as const satisfies readonly StaticSiteLanguage[];
+const safeExternalSourceLinkCases = [
+  {
+    chapterId: '1',
+    labels: ['UHR public study material', 'Government Offices NATO membership notice'],
+  },
+  {
+    chapterId: '7',
+    labels: ['SCB land and water area statistics'],
+  },
+  {
+    chapterId: '9',
+    labels: ['Riksbank historical timeline'],
+  },
+  {
+    chapterId: '12',
+    labels: ['UHR: Om medborgarskapsprovet'],
+  },
+] as const;
 
 const badgeLabels: Record<StaticSiteLanguage, Record<string, string>> = {
   en: {
     editorialCommentary: 'Editorial',
-    governmentNato: 'Government Offices NATO membership',
-    riksbankHistory: 'Riksbank historical',
-    scbLandUse: 'SCB land and water area',
+    governmentNato: 'Government Offices',
+    migrationsverketCitizenshipRules: 'Migrationsverket citizenship rules',
+    riksbankHistory: 'Riksbank',
+    scbLandUse: 'SCB',
     uhrStudyMaterial: 'UHR',
   },
   sv: {
-    editorialCommentary: 'Redaktionellt',
-    governmentNato: 'Government Offices NATO membership',
-    riksbankHistory: 'Riksbank historical',
-    scbLandUse: 'SCB land and water area',
+    editorialCommentary: 'Editorial',
+    governmentNato: 'Government Offices',
+    migrationsverketCitizenshipRules: 'Migrationsverket citizenship rules',
+    riksbankHistory: 'Riksbank',
+    scbLandUse: 'SCB',
     uhrStudyMaterial: 'UHR',
   },
 };
 
 function parseSourceCounts(serialized: string): SourceCounts {
+  if (serialized.trim().startsWith('{')) {
+    return JSON.parse(serialized);
+  }
+
   return Object.fromEntries(
     serialized
       .split(';')
@@ -40,6 +64,10 @@ function parseSourceCounts(serialized: string): SourceCounts {
         return [key, Number(value)];
       }),
   );
+}
+
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 async function renderEbookAfterLanguageSwitch(page: Page, language: StaticSiteLanguage) {
@@ -56,17 +84,18 @@ async function readProvenance(page: Page) {
   return page.locator('#ebook-reader').evaluate((reader) => {
     const badge = reader.querySelector('.ebook__provenance-badge');
     const footnoteItems = Array.from(
-      reader.querySelectorAll<HTMLElement>('.ebook__footnote-list li[data-source-key]'),
+      reader.querySelectorAll<HTMLElement>('.ebook__footnotes li[data-source-key]'),
     );
     const footnoteCounts = footnoteItems.reduce<Record<string, number>>((counts, item) => {
-      const key = item.dataset.sourceKey ?? '';
-      if (!key) return counts;
-      counts[key] = (counts[key] ?? 0) + 1;
+      const keys = (item.dataset.sourceKey ?? '').split(/\s+/).filter(Boolean);
+      for (const key of new Set(keys)) {
+        counts[key] = (counts[key] ?? 0) + 1;
+      }
       return counts;
     }, {});
     const footnoteLabels = footnoteItems.reduce<Record<string, string[]>>((labels, item) => {
-      const key = item.dataset.sourceKey ?? '';
-      if (!key) return labels;
+      const keys = (item.dataset.sourceKey ?? '').split(/\s+/).filter(Boolean);
+      if (keys.length === 0) return labels;
       const sourceLabel =
         item.querySelector<HTMLAnchorElement>('a[href^="http"]')?.textContent?.trim() ??
         item.textContent
@@ -74,7 +103,9 @@ async function readProvenance(page: Page) {
           .replace(/\([^)]*\)/g, '')
           .trim() ??
         '';
-      labels[key] = Array.from(new Set([...(labels[key] ?? []), sourceLabel].filter(Boolean)));
+      for (const key of new Set(keys)) {
+        labels[key] = Array.from(new Set([...(labels[key] ?? []), sourceLabel].filter(Boolean)));
+      }
       return labels;
     }, {});
 
@@ -115,17 +146,23 @@ for (const language of languages) {
       expect(badgeCounts).toEqual(provenance.footnoteCounts);
 
       for (const [sourceKey, count] of Object.entries(badgeCounts)) {
-        expect(provenance.badgeText).toContain(`${badgeLabels[language][sourceKey]} (${count})`);
+        const countLabel = language === 'sv' ? '(?:källa|källor)' : 'cites?';
+        expect(provenance.badgeText).toMatch(
+          new RegExp(
+            `${escapeRegExp(badgeLabels[language][sourceKey])} \\(${count} ${countLabel}\\)`,
+          ),
+        );
         expect(provenance.footnoteLabels[sourceKey]?.length ?? 0).toBeGreaterThan(0);
       }
 
-      await expect(page.locator('#ebook-reader .ebook__footnote-ref a').first()).toHaveAttribute(
+      await expect(page.locator('#ebook-reader .ebook__source-ref a').first()).toHaveAttribute(
         'href',
-        new RegExp(`^#/ebook\\?c=${chapterId}&fn=${chapterId}-\\d+$`),
+        new RegExp(`^#/ebook\\?c=${chapterId}&fn=eb-${chapterId}-${language}-fn-\\d+$`),
       );
-      await expect(
-        page.locator('#ebook-reader .ebook__footnote-list li a').first(),
-      ).toHaveAttribute('href', new RegExp(`^#/ebook\\?c=${chapterId}&fnref=${chapterId}-\\d+$`));
+      await expect(page.locator('#ebook-reader .ebook__footnotes li a').first()).toHaveAttribute(
+        'href',
+        new RegExp(`^#/ebook\\?c=${chapterId}&fnref=eb-${chapterId}-${language}-fn-\\d+$`),
+      );
       expect(pageErrors).toEqual([]);
     });
   }
@@ -137,16 +174,48 @@ test('static ebook footnote and backlink keep the active chapter hash', async ({
 
   await openStaticEbook(page, staticSite.baseUrl, 'en', '#/ebook?c=7');
 
-  const firstFootnoteRef = page.locator('#ebook-reader .ebook__footnote-ref a').first();
+  const firstFootnoteRef = page.locator('#ebook-reader .ebook__source-ref a').first();
   await firstFootnoteRef.click();
-  await expect(page).toHaveURL(/#\/ebook\?c=7&fn=7-1$/);
-  await expect(page.locator('#ebook-fn-7-1')).toBeVisible();
+  await expect(page).toHaveURL(/#\/ebook\?c=7&fn=eb-7-en-fn-1$/);
+  await expect(page.locator('#eb-7-en-fn-1')).toBeVisible();
   await expect(page.locator('.ebook__nav a[data-eb="7"]')).toHaveClass(/is-active/);
 
-  await page.locator('#ebook-fn-7-1').getByRole('link', { name: 'Back to text' }).click();
-  await expect(page).toHaveURL(/#\/ebook\?c=7&fnref=7-1$/);
-  await expect(page.locator('#ebook-fnref-7-1')).toBeVisible();
+  await page.locator('#eb-7-en-fn-1 > a[href^="#/ebook"]').click();
+  await expect(page).toHaveURL(/#\/ebook\?c=7&fnref=eb-7-en-fn-1$/);
+  await expect(page.locator('#eb-7-en-fn-1-ref')).toBeVisible();
   await expect(page.locator('.ebook__nav a[data-eb="7"]')).toHaveClass(/is-active/);
+
+  expect(pageErrors).toEqual([]);
+});
+
+test('static ebook external source links use safe attributes without changing chapter hashes', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const pageErrors = collectPageErrors(page);
+
+  for (const { chapterId, labels } of safeExternalSourceLinkCases) {
+    await openStaticEbook(page, staticSite.baseUrl, 'en', `#/ebook?c=${chapterId}`);
+
+    for (const label of labels) {
+      const sourceLink = page.getByRole('link', { name: label }).first();
+      await expect(sourceLink).toHaveAttribute('target', '_blank');
+      await expect(sourceLink).toHaveAttribute('rel', /noreferrer/);
+    }
+
+    await expect(page.locator('#ebook-reader .ebook__source-ref a').first()).not.toHaveAttribute(
+      'target',
+      '_blank',
+    );
+    await expect(
+      page.locator('#ebook-reader .ebook__footnotes li a[href^="#/ebook"]').first(),
+    ).not.toHaveAttribute('target', '_blank');
+  }
+
+  await openStaticEbook(page, staticSite.baseUrl, 'en', '#/ebook?c=1');
+  await expect(
+    page.getByRole('link', { name: 'editorial commentary' }).first(),
+  ).not.toHaveAttribute('target', '_blank');
 
   expect(pageErrors).toEqual([]);
 });

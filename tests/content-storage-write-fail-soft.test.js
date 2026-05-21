@@ -2,7 +2,6 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
-const ts = require('typescript');
 
 const {
   createMemoryMMKV,
@@ -12,14 +11,24 @@ const {
 
 const repoRoot = path.resolve(__dirname, '..');
 
-require.extensions['.ts'] = function tsLoader(module, filename) {
-  const source = fs.readFileSync(filename, 'utf8');
-  const transpiled = ts.transpileModule(source, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
-    fileName: filename,
-  }).outputText;
-  module._compile(transpiled, filename);
-};
+function loadPersistenceWarningNoticeModule() {
+  return loadTsWithStorage(
+    repoRoot,
+    'components/storage/PersistenceWarningNotice.tsx',
+    {},
+    {
+      'react-native': () => ({
+        Pressable: 'Pressable',
+        StyleSheet: {
+          create: (styles) => styles,
+          hairlineWidth: 1,
+        },
+        Text: 'Text',
+        View: 'View',
+      }),
+    },
+  );
+}
 
 function createFailOnceMMKV(message = 'disk full') {
   const storage = createMemoryMMKV();
@@ -193,6 +202,97 @@ test('highlight corrupt JSON reads fall back with a recoverable read warning', (
   assert.equal(JSON.parse(storage.values.get('ebook.highlights.v1')).byChapter.ch01.length, 1);
 });
 
+test('PersistenceWarningNotice copy selector covers warning scope and operation copy', () => {
+  const { getPersistenceWarningNoticeCopy } = loadPersistenceWarningNoticeModule();
+  const expected = {
+    en: {
+      accessibilityPreferences: {
+        read: {
+          accessibilityLabel:
+            'Accessibility preferences could not be loaded. The app is using default preferences for this session.',
+          body: 'Accessibility preferences could not be loaded. The app is using default theme, text, and audio preferences for this session until storage is available again.',
+          dismiss: 'Got it',
+          title: 'Accessibility preferences could not be loaded',
+        },
+        write: {
+          accessibilityLabel:
+            'Accessibility preferences could not be saved. The change is available temporarily in this session.',
+          body: 'The theme, text, or audio change works now, but could not be saved on this device. Try the same change again when storage is available.',
+          dismiss: 'Got it',
+          title: 'Preference saved only for this session',
+        },
+      },
+      studyData: {
+        read: {
+          accessibilityLabel:
+            'Local study data could not be loaded. The app is using empty in-memory state for this session.',
+          body: 'Local study data could not be loaded. The app is using empty in-memory study data for this session until storage is available again.',
+          dismiss: 'Got it',
+          title: 'Local study data could not be loaded',
+        },
+        write: {
+          accessibilityLabel: 'Saving failed. The change is available temporarily in this session.',
+          body: 'The change works now, but could not be saved on this device. Try the same change again when storage is available.',
+          dismiss: 'Got it',
+          title: 'Saved only for this session',
+        },
+      },
+    },
+    sv: {
+      accessibilityPreferences: {
+        read: {
+          accessibilityLabel:
+            'Tillgänglighetsinställningar kunde inte läsas. Appen använder standardinställningar i den här sessionen.',
+          body: 'Tillgänglighetsinställningar kunde inte läsas. Appen använder standardinställningar för tema, text och ljud i den här sessionen tills lagringen fungerar igen.',
+          dismiss: 'Jag förstår',
+          title: 'Tillgänglighetsinställningar kunde inte läsas',
+        },
+        write: {
+          accessibilityLabel:
+            'Tillgänglighetsinställningar kunde inte sparas. Ändringen fungerar tillfälligt i den här sessionen.',
+          body: 'Ändringen för tema, text eller ljud fungerar nu, men kunde inte sparas på enheten. Prova samma ändring igen när lagringen fungerar.',
+          dismiss: 'Jag förstår',
+          title: 'Inställningen sparades bara tillfälligt',
+        },
+      },
+      studyData: {
+        read: {
+          accessibilityLabel:
+            'Lokal studiedata kunde inte läsas. Appen använder ett tomt tillfälligt läge i den här sessionen.',
+          body: 'Lokal studiedata kunde inte läsas. Appen använder ett tomt tillfälligt läge i den här sessionen tills lagringen fungerar igen.',
+          dismiss: 'Jag förstår',
+          title: 'Lokal studiedata kunde inte läsas',
+        },
+        write: {
+          accessibilityLabel:
+            'Sparningen misslyckades. Ändringen fungerar tillfälligt i den här sessionen.',
+          body: 'Ändringen fungerar nu, men kunde inte sparas på enheten. Prova samma ändring igen när lagringen fungerar.',
+          dismiss: 'Jag förstår',
+          title: 'Sparades bara tillfälligt',
+        },
+      },
+    },
+  };
+
+  for (const [language, scopedCopy] of Object.entries(expected)) {
+    for (const [warningScope, operationCopy] of Object.entries(scopedCopy)) {
+      for (const [operation, copy] of Object.entries(operationCopy)) {
+        assert.deepEqual(
+          getPersistenceWarningNoticeCopy({ language, operation, warningScope }),
+          copy,
+          `${language} ${warningScope} ${operation} copy should match the scoped warning text`,
+        );
+      }
+    }
+  }
+
+  assert.deepEqual(
+    getPersistenceWarningNoticeCopy({ language: 'en', operation: 'write' }),
+    expected.en.studyData.write,
+    'omitting warningScope should keep studyData as the component default',
+  );
+});
+
 test('routes render localized storage warning notices with dismiss hooks', () => {
   const componentSource = fs.readFileSync(
     path.join(repoRoot, 'components/storage/PersistenceWarningNotice.tsx'),
@@ -219,7 +319,7 @@ test('routes render localized storage warning notices with dismiss hooks', () =>
   assert.match(componentSource, /standardinställningar för tema, text och ljud/);
   assert.match(componentSource, /default theme, text, and audio preferences/);
   assert.match(componentSource, /warningScope = 'studyData'/);
-  assert.match(componentSource, /persistenceWarningNoticeCopy\[language\]\[warningScope\]/);
+  assert.match(componentSource, /getPersistenceWarningNoticeCopy\(\{/);
   assert.match(componentSource, /warning\.operation/);
   assert.match(componentSource, /accessibilityRole="alert"/);
   assert.match(componentSource, /onPress=\{onDismiss\}/);

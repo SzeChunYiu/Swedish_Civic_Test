@@ -9,7 +9,7 @@ const repoRoot = path.resolve(__dirname, '..');
 function validateContentSummary() {
   const output = execFileSync(
     process.execPath,
-    ['scripts/validate-content.js', '--focus-countdown-banner'],
+    ['scripts/validate-content.js', '--focus-countdown-banner-parity'],
     {
       cwd: repoRoot,
       encoding: 'utf8',
@@ -31,7 +31,10 @@ test('countdown banner keeps citizenship rules and civic test dates separate', (
   assert.equal(summary.countdownBannerTimelineCopyParityValidated, true);
   assert.equal(summary.countdownBannerHomeMountRulesValidated, 2);
   assert.equal(summary.countdownBannerHomeMountParityValidated, true);
+  assert.equal(summary.studyPlanRuntimeCasesValidated, 6);
+  assert.equal(summary.studyPlanRuntimeParityValidated, true);
   assert.equal(Object.hasOwn(summary, 'homeRouteCopyParityValidated'), false);
+  assert.equal(Object.hasOwn(summary, 'chapters'), false);
 
   const countdownBanner = fs.readFileSync(
     path.join(repoRoot, 'components/ui/CountdownBanner.tsx'),
@@ -80,7 +83,7 @@ test('validate:content rejects removing the Home countdown banner mount', () => 
       '-e',
       `
 const fs = require('node:fs');
-process.argv.push('scripts/validate-content.js', '--focus-countdown-banner');
+process.argv.push('scripts/validate-content.js', '--focus-countdown-banner-parity');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
@@ -110,7 +113,7 @@ test('countdown banner parity rejects collapsing the civic test deadline into th
       '-e',
       `
 const fs = require('node:fs');
-process.argv.push('scripts/validate-content.js', '--focus-countdown-banner');
+process.argv.push('scripts/validate-content.js', '--focus-countdown-banner-parity');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
@@ -143,7 +146,7 @@ test('countdown banner parity rejects tentative August-only test copy', () => {
       '-e',
       `
 const fs = require('node:fs');
-process.argv.push('scripts/validate-content.js', '--focus-countdown-banner');
+process.argv.push('scripts/validate-content.js', '--focus-countdown-banner-parity');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');

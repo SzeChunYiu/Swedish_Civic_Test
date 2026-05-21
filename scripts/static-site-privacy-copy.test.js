@@ -138,6 +138,26 @@ test('static site current-use AdSense copy is gated by reviewed slot IDs', () =>
   assert.deepEqual(findCurrentUseAdSenseSlotStateCopyIssues(staleSurface, configuredApp), []);
 });
 
+test('static privacy browser spec covers unconfigured AdSense slot-state copy', () => {
+  const browserSpec = read('tests/e2e/static-site-network-privacy.spec.ts');
+
+  assert.match(
+    browserSpec,
+    /privacy and consent copy describe unconfigured AdSense slots in both languages/,
+    'static privacy browser spec should cover rendered privacy and consent slot-state copy',
+  );
+  assert.match(
+    browserSpec,
+    /function expectAdSenseSlotsRemainUnconfigured\(page: Page\)[\s\S]*data-smt-ad-placement/,
+    'static privacy browser spec should inspect rendered ad slot attributes',
+  );
+  assert.match(
+    browserSpec,
+    /await expectPreparedAdSenseCopy\(page, 'en'\);[\s\S]*await setStaticSiteLanguage\(page, 'sv'\);[\s\S]*await expectPreparedAdSenseCopy\(page, 'sv'\);/,
+    'static privacy browser spec should prove prepared AdSense copy in English and Swedish',
+  );
+});
+
 test('static AdSense slot-state checks use the shared helper', () => {
   const ownSource = read('scripts/static-site-privacy-copy.test.js');
   const liveSiteSource = read('scripts/check-live-site.js');
@@ -179,8 +199,8 @@ test('static site public copy does not label the release as MVP', () => {
 
   assert.equal(assertNoUnsupportedStaticReleaseCopy(repoRoot), 3);
   assert.equal(findUnsupportedStaticReleaseCopyInSource(surface).length, 0);
-  assert.match(surface, /No\. You do not need to register\./);
-  assert.match(surface, /Nej\. Du behöver inte registrera dig\./);
+  assert.match(surface, /No — you can do everything without registering/);
+  assert.match(surface, /Nej — du kan göra allt utan att registrera dig/);
   assert.match(surface, /The app requires no account/);
   assert.match(surface, /Appen kräver inget konto/);
   assert.match(surface, /data-i18n="privacy\.meta2\.v">1\.0</);
