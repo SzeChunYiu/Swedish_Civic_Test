@@ -18234,30 +18234,90 @@
     "type": "single_choice",
     "q": {
       "en": "What does it mean that human rights apply to everyone?",
-      "sv": "Vad betyder det att mänskliga rättigheter gäller alla?"
+      "sv": "Vad betyder det att mänskliga rättigheter gäller alla?",
+      "zh-Hant": "人權適用於所有人是什麼意思？",
+      "zh-Hans": "人权适用于所有人是什么意思？",
+      "ar": "ماذا يعني أن حقوق الإنسان تنطبق على الجميع؟",
+      "ckb": "مانای ئەوەی مافەکانی مرۆڤ بۆ هەمووانە چییە؟",
+      "fa": "اینکه حقوق بشر شامل همه می‌شود یعنی چه؟",
+      "pl": "Co oznacza, że prawa człowieka dotyczą wszystkich?",
+      "so": "Maxay ka dhigan tahay in xuquuqda aadanuhu qof walba khusayso?",
+      "ti": "ሰብኣዊ መሰላት ንኩሉ ሰብ ይምልከት ማለት እንታይ ማለት እዩ?",
+      "tr": "İnsan haklarının herkese uygulanması ne anlama gelir?",
+      "uk": "Що означає, що права людини стосуються кожного?"
     },
     "opts": [
       {
         "en": "Every person has rights regardless of background or life situation",
-        "sv": "Varje människa har rättigheter oavsett bakgrund eller livssituation"
+        "sv": "Varje människa har rättigheter oavsett bakgrund eller livssituation",
+        "zh-Hant": "每個人無論背景或生活處境如何都有權利",
+        "zh-Hans": "每个人无论背景或生活处境如何都有权利",
+        "ar": "كل إنسان له حقوق بغضّ النظر عن خلفيته أو وضعه في الحياة",
+        "ckb": "هەر مرۆڤێک مافی هەیە بەبێ گوێدان بە پاشخان یان دۆخی ژیانی",
+        "fa": "هر انسان فارغ از پیشینه یا وضعیت زندگی خود حقوقی دارد",
+        "pl": "Każdy człowiek ma prawa niezależnie od pochodzenia lub sytuacji życiowej",
+        "so": "Qof kasta wuxuu leeyahay xuquuq, iyada oo aan loo eegin asalkiisa ama xaaladdiisa nololeed",
+        "ti": "ኩሉ ሰብ ብዘይ ግድን መበቆሉ ወይ ኩነታት ህይወቱ መሰላት ኣለዎ",
+        "tr": "Her insanın geçmişi veya yaşam durumu ne olursa olsun hakları vardır",
+        "uk": "Кожна людина має права незалежно від походження чи життєвої ситуації"
       },
       {
         "en": "Only Swedish citizens have human rights",
-        "sv": "Bara svenska medborgare har mänskliga rättigheter"
+        "sv": "Bara svenska medborgare har mänskliga rättigheter",
+        "zh-Hant": "只有瑞典公民有人權",
+        "zh-Hans": "只有瑞典公民有人权",
+        "ar": "المواطنون السويديون فقط لديهم حقوق إنسان",
+        "ckb": "تەنها هاووڵاتیانی سوید مافی مرۆڤیان هەیە",
+        "fa": "فقط شهروندان سوئدی حقوق بشر دارند",
+        "pl": "Tylko obywatele Szwecji mają prawa człowieka",
+        "so": "Kaliya muwaadiniinta Iswiidhan ayaa leh xuquuqda aadanaha",
+        "ti": "ሰብኣዊ መሰላት ዘለዎም ዜጋታት ሽወደን ጥራይ እዮም",
+        "tr": "Yalnızca İsveç vatandaşlarının insan hakları vardır",
+        "uk": "Лише громадяни Швеції мають права людини"
       },
       {
         "en": "The rights apply only to people who work",
-        "sv": "Rättigheterna gäller bara personer som arbetar"
+        "sv": "Rättigheterna gäller bara personer som arbetar",
+        "zh-Hant": "這些權利只適用於工作的人",
+        "zh-Hans": "这些权利只适用于工作的人",
+        "ar": "تنطبق الحقوق فقط على الأشخاص الذين يعملون",
+        "ckb": "مافەکان تەنها بۆ ئەو کەسانەن کە کار دەکەن",
+        "fa": "این حقوق فقط شامل کسانی می‌شود که کار می‌کنند",
+        "pl": "Prawa dotyczą tylko osób, które pracują",
+        "so": "Xuquuqdu waxay khusaysaa oo keliya dadka shaqeeya",
+        "ti": "እቶም መሰላት ንዝሰርሑ ሰባት ጥራይ ይምልከቱ",
+        "tr": "Haklar yalnızca çalışan kişiler için geçerlidir",
+        "uk": "Права стосуються лише людей, які працюють"
       },
       {
         "en": "Each municipality chooses which people have rights",
-        "sv": "Varje kommun väljer själv vilka människor som har rättigheter"
+        "sv": "Varje kommun väljer själv vilka människor som har rättigheter",
+        "zh-Hant": "每個市鎮自行選擇哪些人有權利",
+        "zh-Hans": "每个市镇自行选择哪些人有权利",
+        "ar": "تختار كل بلدية بنفسها أي الناس لديهم حقوق",
+        "ckb": "هەر شارەوانییەک خۆی هەڵدەبژێرێت کام خەڵک مافیان هەیە",
+        "fa": "هر کمون خودش انتخاب می‌کند کدام افراد حقوق داشته باشند",
+        "pl": "Każda gmina sama wybiera, którzy ludzie mają prawa",
+        "so": "Degmo kasta ayaa iyadu doorata dadka xuquuqda leh",
+        "ti": "ነፍሲ ወከፍ kommun ኣየኖት ሰባት መሰላት ከም ዘለዎም ባዕሉ ይመርጽ",
+        "tr": "Her belediye hangi insanların haklara sahip olacağını kendisi seçer",
+        "uk": "Кожен муніципалітет сам обирає, які люди мають права"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Human rights are based on all people being born free and equal in value and rights. They apply regardless of factors such as sex, age, origin, religion, disability, or sexual orientation.",
-      "sv": "Mänskliga rättigheter utgår från att alla människor är födda fria och lika i värde och rättigheter. De gäller oavsett till exempel kön, ålder, ursprung, religion, funktionsnedsättning eller sexuell läggning."
+      "sv": "Mänskliga rättigheter utgår från att alla människor är födda fria och lika i värde och rättigheter. De gäller oavsett till exempel kön, ålder, ursprung, religion, funktionsnedsättning eller sexuell läggning.",
+      "zh-Hant": "人權基於所有人生而自由，在價值和權利上一律平等。它們適用於所有人，無論性別、年齡、出身、宗教、身心障礙或性取向等因素。",
+      "zh-Hans": "人权基于所有人生而自由，在价值和权利上一律平等。它们适用于所有人，无论性别、年龄、出身、宗教、残障或性取向等因素。",
+      "ar": "تستند حقوق الإنسان إلى أن جميع الناس يولدون أحرارًا ومتساوين في القيمة والحقوق. وهي تنطبق بغضّ النظر عن عوامل مثل الجنس، والعمر، والأصل، والدين، والإعاقة، أو التوجه الجنسي.",
+      "ckb": "مافەکانی مرۆڤ لەسەر ئەو بنەمایەن کە هەموو مرۆڤەکان بە ئازادی لەدایک دەبن و لە بەها و مافدا یەکسانن. ئەم مافانە بێ گوێدان بە ڕەگەز، تەمەن، ڕەچەڵەک، ئایین، کەمئەندامی یان ئاراستەی سێکسی کار دەکەن.",
+      "fa": "حقوق بشر بر این پایه است که همهٔ انسان‌ها آزاد و برابر در ارزش و حقوق به دنیا می‌آیند. این حقوق بدون توجه به عواملی مانند جنسیت، سن، خاستگاه، دین، معلولیت یا گرایش جنسی اعمال می‌شود.",
+      "pl": "Prawa człowieka opierają się na tym, że wszyscy ludzie rodzą się wolni i równi pod względem wartości oraz praw. Obowiązują niezależnie od takich czynników jak płeć, wiek, pochodzenie, religia, niepełnosprawność czy orientacja seksualna.",
+      "so": "Xuquuqda aadanuhu waxay ku salaysan tahay in dhammaan dadka ay ku dhashaan xor iyo siman qiime iyo xuquuq. Waxay khusaysaa iyadoo aan loo eegin arrimo sida jinsi, da’, asal, diin, naafonimo ama jihayn jinsi.",
+      "ti": "ሰብኣዊ መሰላት ኩሎም ሰባት ናጻን ብኽብርን መሰላትን ማዕረን ተወሊዶም እዮም ዝብል መሰረት ኣለዎም። ንኣብነት ጾታ፣ ዕድመ፣ መበቆል፣ ሃይማኖት፣ ስንክልና ወይ ፆታዊ ዝንባለ ብዘይ ግድን ይምልከቱ።",
+      "tr": "İnsan hakları, tüm insanların özgür ve değer ile haklar bakımından eşit doğduğu düşüncesine dayanır. Cinsiyet, yaş, köken, din, engellilik veya cinsel yönelim gibi etkenlerden bağımsız olarak geçerlidir.",
+      "uk": "Права людини ґрунтуються на тому, що всі люди народжуються вільними й рівними у своїй гідності та правах. Вони діють незалежно від таких чинників, як стать, вік, походження, релігія, інвалідність або сексуальна орієнтація."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -62469,19 +62529,59 @@
     "opts": [
       {
         "en": "Every person has rights regardless of background or life situation",
-        "sv": "Varje människa har rättigheter oavsett bakgrund eller livssituation"
+        "sv": "Varje människa har rättigheter oavsett bakgrund eller livssituation",
+        "zh-Hant": "每個人無論背景或生活處境如何都有權利",
+        "zh-Hans": "每个人无论背景或生活处境如何都有权利",
+        "ar": "كل إنسان له حقوق بغضّ النظر عن خلفيته أو وضعه في الحياة",
+        "ckb": "هەر مرۆڤێک مافی هەیە بەبێ گوێدان بە پاشخان یان دۆخی ژیانی",
+        "fa": "هر انسان فارغ از پیشینه یا وضعیت زندگی خود حقوقی دارد",
+        "pl": "Każdy człowiek ma prawa niezależnie od pochodzenia lub sytuacji życiowej",
+        "so": "Qof kasta wuxuu leeyahay xuquuq, iyada oo aan loo eegin asalkiisa ama xaaladdiisa nololeed",
+        "ti": "ኩሉ ሰብ ብዘይ ግድን መበቆሉ ወይ ኩነታት ህይወቱ መሰላት ኣለዎ",
+        "tr": "Her insanın geçmişi veya yaşam durumu ne olursa olsun hakları vardır",
+        "uk": "Кожна людина має права незалежно від походження чи життєвої ситуації"
       },
       {
         "en": "Only Swedish citizens have human rights",
-        "sv": "Bara svenska medborgare har mänskliga rättigheter"
+        "sv": "Bara svenska medborgare har mänskliga rättigheter",
+        "zh-Hant": "只有瑞典公民有人權",
+        "zh-Hans": "只有瑞典公民有人权",
+        "ar": "المواطنون السويديون فقط لديهم حقوق إنسان",
+        "ckb": "تەنها هاووڵاتیانی سوید مافی مرۆڤیان هەیە",
+        "fa": "فقط شهروندان سوئدی حقوق بشر دارند",
+        "pl": "Tylko obywatele Szwecji mają prawa człowieka",
+        "so": "Kaliya muwaadiniinta Iswiidhan ayaa leh xuquuqda aadanaha",
+        "ti": "ሰብኣዊ መሰላት ዘለዎም ዜጋታት ሽወደን ጥራይ እዮም",
+        "tr": "Yalnızca İsveç vatandaşlarının insan hakları vardır",
+        "uk": "Лише громадяни Швеції мають права людини"
       },
       {
         "en": "The rights apply only to people who work",
-        "sv": "Rättigheterna gäller bara personer som arbetar"
+        "sv": "Rättigheterna gäller bara personer som arbetar",
+        "zh-Hant": "這些權利只適用於工作的人",
+        "zh-Hans": "这些权利只适用于工作的人",
+        "ar": "تنطبق الحقوق فقط على الأشخاص الذين يعملون",
+        "ckb": "مافەکان تەنها بۆ ئەو کەسانەن کە کار دەکەن",
+        "fa": "این حقوق فقط شامل کسانی می‌شود که کار می‌کنند",
+        "pl": "Prawa dotyczą tylko osób, które pracują",
+        "so": "Xuquuqdu waxay khusaysaa oo keliya dadka shaqeeya",
+        "ti": "እቶም መሰላት ንዝሰርሑ ሰባት ጥራይ ይምልከቱ",
+        "tr": "Haklar yalnızca çalışan kişiler için geçerlidir",
+        "uk": "Права стосуються лише людей, які працюють"
       },
       {
         "en": "Each municipality chooses which people have rights",
-        "sv": "Varje kommun väljer själv vilka människor som har rättigheter"
+        "sv": "Varje kommun väljer själv vilka människor som har rättigheter",
+        "zh-Hant": "每個市鎮自行選擇哪些人有權利",
+        "zh-Hans": "每个市镇自行选择哪些人有权利",
+        "ar": "تختار كل بلدية بنفسها أي الناس لديهم حقوق",
+        "ckb": "هەر شارەوانییەک خۆی هەڵدەبژێرێت کام خەڵک مافیان هەیە",
+        "fa": "هر کمون خودش انتخاب می‌کند کدام افراد حقوق داشته باشند",
+        "pl": "Każda gmina sama wybiera, którzy ludzie mają prawa",
+        "so": "Degmo kasta ayaa iyadu doorata dadka xuquuqda leh",
+        "ti": "ነፍሲ ወከፍ kommun ኣየኖት ሰባት መሰላት ከም ዘለዎም ባዕሉ ይመርጽ",
+        "tr": "Her belediye hangi insanların haklara sahip olacağını kendisi seçer",
+        "uk": "Кожен муніципалітет сам обирає, які люди мають права"
       }
     ],
     "answer": 0,
@@ -62597,19 +62697,59 @@
     "opts": [
       {
         "en": "Every person has rights regardless of background or life situation",
-        "sv": "Varje människa har rättigheter oavsett bakgrund eller livssituation"
+        "sv": "Varje människa har rättigheter oavsett bakgrund eller livssituation",
+        "zh-Hant": "每個人無論背景或生活處境如何都有權利",
+        "zh-Hans": "每个人无论背景或生活处境如何都有权利",
+        "ar": "كل إنسان له حقوق بغضّ النظر عن خلفيته أو وضعه في الحياة",
+        "ckb": "هەر مرۆڤێک مافی هەیە بەبێ گوێدان بە پاشخان یان دۆخی ژیانی",
+        "fa": "هر انسان فارغ از پیشینه یا وضعیت زندگی خود حقوقی دارد",
+        "pl": "Każdy człowiek ma prawa niezależnie od pochodzenia lub sytuacji życiowej",
+        "so": "Qof kasta wuxuu leeyahay xuquuq, iyada oo aan loo eegin asalkiisa ama xaaladdiisa nololeed",
+        "ti": "ኩሉ ሰብ ብዘይ ግድን መበቆሉ ወይ ኩነታት ህይወቱ መሰላት ኣለዎ",
+        "tr": "Her insanın geçmişi veya yaşam durumu ne olursa olsun hakları vardır",
+        "uk": "Кожна людина має права незалежно від походження чи життєвої ситуації"
       },
       {
         "en": "Only Swedish citizens have human rights",
-        "sv": "Bara svenska medborgare har mänskliga rättigheter"
+        "sv": "Bara svenska medborgare har mänskliga rättigheter",
+        "zh-Hant": "只有瑞典公民有人權",
+        "zh-Hans": "只有瑞典公民有人权",
+        "ar": "المواطنون السويديون فقط لديهم حقوق إنسان",
+        "ckb": "تەنها هاووڵاتیانی سوید مافی مرۆڤیان هەیە",
+        "fa": "فقط شهروندان سوئدی حقوق بشر دارند",
+        "pl": "Tylko obywatele Szwecji mają prawa człowieka",
+        "so": "Kaliya muwaadiniinta Iswiidhan ayaa leh xuquuqda aadanaha",
+        "ti": "ሰብኣዊ መሰላት ዘለዎም ዜጋታት ሽወደን ጥራይ እዮም",
+        "tr": "Yalnızca İsveç vatandaşlarının insan hakları vardır",
+        "uk": "Лише громадяни Швеції мають права людини"
       },
       {
         "en": "The rights apply only to people who work",
-        "sv": "Rättigheterna gäller bara personer som arbetar"
+        "sv": "Rättigheterna gäller bara personer som arbetar",
+        "zh-Hant": "這些權利只適用於工作的人",
+        "zh-Hans": "这些权利只适用于工作的人",
+        "ar": "تنطبق الحقوق فقط على الأشخاص الذين يعملون",
+        "ckb": "مافەکان تەنها بۆ ئەو کەسانەن کە کار دەکەن",
+        "fa": "این حقوق فقط شامل کسانی می‌شود که کار می‌کنند",
+        "pl": "Prawa dotyczą tylko osób, które pracują",
+        "so": "Xuquuqdu waxay khusaysaa oo keliya dadka shaqeeya",
+        "ti": "እቶም መሰላት ንዝሰርሑ ሰባት ጥራይ ይምልከቱ",
+        "tr": "Haklar yalnızca çalışan kişiler için geçerlidir",
+        "uk": "Права стосуються лише людей, які працюють"
       },
       {
         "en": "Each municipality chooses which people have rights",
-        "sv": "Varje kommun väljer själv vilka människor som har rättigheter"
+        "sv": "Varje kommun väljer själv vilka människor som har rättigheter",
+        "zh-Hant": "每個市鎮自行選擇哪些人有權利",
+        "zh-Hans": "每个市镇自行选择哪些人有权利",
+        "ar": "تختار كل بلدية بنفسها أي الناس لديهم حقوق",
+        "ckb": "هەر شارەوانییەک خۆی هەڵدەبژێرێت کام خەڵک مافیان هەیە",
+        "fa": "هر کمون خودش انتخاب می‌کند کدام افراد حقوق داشته باشند",
+        "pl": "Każda gmina sama wybiera, którzy ludzie mają prawa",
+        "so": "Degmo kasta ayaa iyadu doorata dadka xuquuqda leh",
+        "ti": "ነፍሲ ወከፍ kommun ኣየኖት ሰባት መሰላት ከም ዘለዎም ባዕሉ ይመርጽ",
+        "tr": "Her belediye hangi insanların haklara sahip olacağını kendisi seçer",
+        "uk": "Кожен муніципалітет сам обирає, які люди мають права"
       }
     ],
     "answer": 0,

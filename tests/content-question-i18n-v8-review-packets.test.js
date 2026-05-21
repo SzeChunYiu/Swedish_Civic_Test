@@ -8,7 +8,7 @@ const repoRoot = path.resolve(__dirname, '..');
 const packetRoot = path.join(repoRoot, 'docs/localization/review-packets/question-i18n-v8');
 const targetLocales = ['ar', 'ckb', 'fa', 'pl', 'so', 'ti', 'tr', 'uk', 'zh-Hans', 'zh-Hant'];
 const expectedIds = Array.from(
-  { length: 174 },
+  { length: 175 },
   (_, index) => `q${String(index + 1).padStart(3, '0')}`,
 );
 const expectedHeader = [
@@ -56,7 +56,7 @@ test('question i18n v8 native-review packets are reproducible', () => {
 
 test('question i18n v8 native-review packets cover every target locale and UHR question', () => {
   const readme = fs.readFileSync(path.join(packetRoot, 'README.md'), 'utf8');
-  assert.match(readme, /machine-assisted q001-q174 question localization review packets/);
+  assert.match(readme, /machine-assisted q001-q175 question localization review packets/);
   assert.match(readme, /Do not use these packets to enable a locale/);
 
   for (const locale of targetLocales) {
@@ -66,7 +66,7 @@ test('question i18n v8 native-review packets cover every target locale and UHR q
     assert.deepEqual(
       rows.slice(1).map((row) => row[0]),
       expectedIds,
-      `${locale} should list q001-q174 in order`,
+      `${locale} should list q001-q175 in order`,
     );
 
     for (const row of rows.slice(1)) {
