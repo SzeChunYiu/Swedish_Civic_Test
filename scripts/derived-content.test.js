@@ -491,6 +491,76 @@ test('derivePublishedQuestions renders q015 voter-turnout true/false without whe
   );
 });
 
+test('derivePublishedQuestions renders how-can-affect true/false as standalone propositions', () => {
+  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
+  const source = {
+    id: 'q999',
+    chapterId: 'ch02',
+    type: 'single_choice',
+    questionSv: 'Hur kan falsk information påverka demokratin?',
+    questionEn: 'How can false information affect democracy?',
+    options: [
+      {
+        id: 'a',
+        textSv: 'Det kan skapa konflikter och skrämma människor från debatt',
+        textEn: 'It can create conflicts and scare people away from debate',
+      },
+      {
+        id: 'b',
+        textSv: 'Genom att göra alla källor mer pålitliga',
+        textEn: 'By making all sources more reliable',
+      },
+      {
+        id: 'c',
+        textSv: 'Genom att förbjuda all kritik',
+        textEn: 'By banning all criticism',
+      },
+      {
+        id: 'd',
+        textSv: 'Genom att stoppa alla nyheter',
+        textEn: 'By stopping all news',
+      },
+    ],
+    correctOptionId: 'a',
+    explanationSv: 'Falsk information kan skada den demokratiska debatten.',
+    explanationEn: 'False information can harm democratic debate.',
+    uhrReference: {
+      chapter: 'Sveriges demokratiska system',
+      section: 'Hot mot demokratin',
+      pageApprox: 11,
+    },
+    difficulty: 'medium',
+    reviewStatus: 'reviewed',
+    tags: ['democracy', 'false-information'],
+  };
+
+  const derived = derivePublishedQuestions([source], 901);
+  const trueStatement = derived.find((question) => question.id === 'q902');
+  const falseStatement = derived.find((question) => question.id === 'q903');
+  const staleSplicePattern = /\b(?:när\s+[^.?!]+?\spåverkar|when\s+[^.?!]+?\saffects)\b/i;
+
+  assert.equal(
+    trueStatement?.questionSv,
+    'Falsk information kan påverka demokratin genom att skapa konflikter och skrämma människor från debatt.',
+  );
+  assert.equal(
+    trueStatement?.questionEn,
+    'False information can affect democracy by creating conflicts and scaring people away from debate.',
+  );
+  assert.equal(
+    falseStatement?.questionSv,
+    'Falsk information kan påverka demokratin genom att göra alla källor mer pålitliga.',
+  );
+  assert.equal(
+    falseStatement?.questionEn,
+    'False information can affect democracy by making all sources more reliable.',
+  );
+  assert.doesNotMatch(
+    `${trueStatement?.questionSv} ${trueStatement?.questionEn} ${falseStatement?.questionSv} ${falseStatement?.questionEn}`,
+    staleSplicePattern,
+  );
+});
+
 test('derivePublishedQuestions avoids generated true/false naturalness regressions', () => {
   const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
   const sources = [
