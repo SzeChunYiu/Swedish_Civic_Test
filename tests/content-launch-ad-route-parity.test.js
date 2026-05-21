@@ -9,14 +9,18 @@ const expectedSuppressedRoutes = [
   '/practice',
   '/quiz',
   '/about-the-test',
+  '/chapter',
   '/citizenship-requirements',
   '/disclaimer',
   '/onboarding',
   '/privacy',
+  '/search',
+  '/settings',
   '/sources',
   '/support',
   '/terms',
 ];
+const expectedEligibleRoutes = ['/', '/home', '/learn', '/mistakes', '/profile'];
 
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
@@ -30,11 +34,22 @@ function launchSuppressedRoutes(source = read('lib/monetization/ads.ts')) {
   return [...routeBlock.matchAll(/'([^']+)'/g)].map((match) => match[1]);
 }
 
-test('launch popup ad route suppression stays aligned with release-safe routes', () => {
+function launchEligibleRoutes(source = read('lib/monetization/ads.ts')) {
+  const routeBlock = source.match(
+    /export const LAUNCH_POPUP_AD_ELIGIBLE_ROUTES = \[([\s\S]*?)\] as const;/,
+  )?.[1];
+  assert.ok(routeBlock, 'launch popup eligible-route allowlist should be parseable');
+  return [...routeBlock.matchAll(/'([^']+)'/g)].map((match) => match[1]);
+}
+
+test('launch popup ad route allowlist stays aligned with safe study breakpoints', () => {
   const adsSource = read('lib/monetization/ads.ts');
   const rootLayout = read('app/_layout.tsx');
 
+  assert.deepEqual(launchEligibleRoutes(adsSource), expectedEligibleRoutes);
   assert.deepEqual(launchSuppressedRoutes(adsSource), expectedSuppressedRoutes);
+  assert.match(adsSource, /isLaunchPopupAdEligibleForPath/);
+  assert.match(adsSource, /return !isLaunchPopupAdEligibleForPath\(pathname\)/);
   for (const route of expectedSuppressedRoutes) {
     assert.ok(adsSource.includes(`'${route}'`), `${route} should be in the suppression list`);
   }
@@ -44,10 +59,19 @@ test('launch popup ad route suppression stays aligned with release-safe routes',
   assert.match(rootLayout, /!suppressLaunchPopupAd && entitlementsReady/);
 });
 
-test('launch popup ad route suppression rejects missing compliance routes', () => {
-  const mutated = read('lib/monetization/ads.ts').replace("'/privacy',", "'/privacy-disabled',");
+test('launch popup ad route suppression rejects missing explicit blocked routes', () => {
+  const mutated = read('lib/monetization/ads.ts').replace("'/settings',", "'/settings-disabled',");
 
   assert.notDeepEqual(launchSuppressedRoutes(mutated), expectedSuppressedRoutes);
+});
+
+test('launch popup ad route allowlist rejects added interruptive routes', () => {
+  const mutated = read('lib/monetization/ads.ts').replace(
+    "'/profile',",
+    "'/profile',\n  '/search',",
+  );
+
+  assert.notDeepEqual(launchEligibleRoutes(mutated), expectedEligibleRoutes);
 });
 
 test('launch popup ad route suppression rejects root-layout bypass drift', () => {

@@ -1941,14 +1941,18 @@ const EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTES = [
   '/practice',
   '/quiz',
   '/about-the-test',
+  '/chapter',
   '/citizenship-requirements',
   '/disclaimer',
   '/onboarding',
   '/privacy',
+  '/search',
+  '/settings',
   '/sources',
   '/support',
   '/terms',
 ];
+const EXPECTED_LAUNCH_POPUP_ELIGIBLE_ROUTES = ['/', '/home', '/learn', '/mistakes', '/profile'];
 const EXPECTED_FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PREFIXES = [
   '/exam',
   '/quiz',
@@ -1969,10 +1973,13 @@ const EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTE_FILES = {
   '/practice': 'app/(tabs)/practice.tsx',
   '/quiz': 'app/quiz/[sessionId].tsx',
   '/about-the-test': 'app/about-the-test.tsx',
+  '/chapter': 'app/chapter/[chapterId].tsx',
   '/citizenship-requirements': 'app/citizenship-requirements.tsx',
   '/disclaimer': 'app/disclaimer.tsx',
   '/onboarding': 'app/onboarding.tsx',
   '/privacy': 'app/privacy.tsx',
+  '/search': 'app/search.tsx',
+  '/settings': 'app/settings.tsx',
   '/sources': 'app/sources.tsx',
   '/support': 'app/support.tsx',
   '/terms': 'app/terms.tsx',
@@ -10008,6 +10015,17 @@ function validateLaunchAdRouteSuppressionParity() {
     );
   }
 
+  const eligibleRoutes = adsConfig?.eligibleLaunchPopupRoutes;
+  if (!Array.isArray(eligibleRoutes)) {
+    reject('adsConfig.eligibleLaunchPopupRoutes must be an array');
+  } else if (!arrayEquals(eligibleRoutes, EXPECTED_LAUNCH_POPUP_ELIGIBLE_ROUTES)) {
+    reject(
+      `launch popup eligible routes are ${JSON.stringify(
+        eligibleRoutes,
+      )}, expected ${JSON.stringify(EXPECTED_LAUNCH_POPUP_ELIGIBLE_ROUTES)}`,
+    );
+  }
+
   for (const route of EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTES) {
     const routeFile = EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTE_FILES[route];
     if (!fs.existsSync(path.join(repoRoot, routeFile))) {
@@ -10027,9 +10045,22 @@ function validateLaunchAdRouteSuppressionParity() {
   }
 
   if (typeof shouldSuppressLaunchPopupAdForPath === 'function') {
-    for (const studyRoute of ['/', '/home', '/learn', '/mistakes', '/profile']) {
+    for (const studyRoute of EXPECTED_LAUNCH_POPUP_ELIGIBLE_ROUTES) {
       if (shouldSuppressLaunchPopupAdForPath(studyRoute)) {
         reject(`${studyRoute} must remain eligible for the launch popup ad`);
+      }
+    }
+
+    for (const interruptivePath of [
+      '/settings',
+      '/search',
+      '/search?q=riksdag',
+      '/chapter/ch01',
+      '/unknown',
+      '/home/nested',
+    ]) {
+      if (!shouldSuppressLaunchPopupAdForPath(interruptivePath)) {
+        reject(`${interruptivePath} must suppress the launch popup ad by default`);
       }
     }
   }
