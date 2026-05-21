@@ -86,7 +86,8 @@ const staticEbookSomaliHolidayFoodRequiredCopy = [
   'kalluun la dhanaaniyey',
   'baradho cusub iyo farawle',
 ];
-const staticEbookChapter13FoodBeverageSourceTokenPatterns = [
+const staticEbookFoodBeverageSourceChapterIds = ['8', '13'];
+const staticEbookFoodBeverageSourceTokenPatterns = [
   /\bherring\b/i,
   /\bstrawberries\b/i,
   /\bschnapps\b/i,
@@ -309,7 +310,7 @@ function assertSomaliChapter13HolidayFoodIsLocalized(value) {
   }
 }
 
-function findStaticEbookChapter13ExtraLocaleFoodBeverageSourceOffenders(source) {
+function findStaticEbookExtraLocaleFoodBeverageSourceOffenders(source) {
   const offenders = [];
   let chapterId = null;
   let lang = null;
@@ -329,11 +330,18 @@ function findStaticEbookChapter13ExtraLocaleFoodBeverageSourceOffenders(source) 
       lang = langMatch[1] || langMatch[2];
     }
 
-    if (chapterId !== '13' || lang === 'en' || lang === 'sv') return;
+    if (
+      !staticEbookFoodBeverageSourceChapterIds.includes(chapterId) ||
+      lang === 'en' ||
+      lang === 'sv'
+    ) {
+      return;
+    }
 
-    for (const pattern of staticEbookChapter13FoodBeverageSourceTokenPatterns) {
+    for (const pattern of staticEbookFoodBeverageSourceTokenPatterns) {
       if (pattern.test(line)) {
         offenders.push({
+          chapterId,
           line: index + 1,
           lang: lang || 'unknown',
           token: String(pattern),
@@ -761,8 +769,8 @@ test('static ebook Somali chapter 13 localizes Midsummer food wording', () => {
   assertSomaliChapter13HolidayFoodIsLocalized(html);
 });
 
-test('static ebook chapter 13 source keeps English food and beverage tokens out of extra locales', () => {
-  const offenders = findStaticEbookChapter13ExtraLocaleFoodBeverageSourceOffenders(
+test('static ebook chapter 8 and 13 source keeps English food and beverage tokens out of extra locales', () => {
+  const offenders = findStaticEbookExtraLocaleFoodBeverageSourceOffenders(
     readSiteFile('site/ebook.js'),
   );
 

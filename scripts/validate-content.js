@@ -313,7 +313,8 @@ const STATIC_EBOOK_SOURCE_AUTHORITY_PHRASE_PATTERNS = [
   /UHR\s+ከም\s+ዝብሎ|UHR[^።<]{0,120}ይብል/,
 ];
 const STATIC_EBOOK_SOMALI_HOLIDAY_FOOD_TOKEN_PATTERNS = [/\bherring\b/i];
-const STATIC_EBOOK_CH13_EXTRA_LOCALE_FOOD_BEVERAGE_SOURCE_TOKEN_PATTERNS = [
+const STATIC_EBOOK_FOOD_BEVERAGE_SOURCE_CHAPTER_IDS = Object.freeze(['8', '13']);
+const STATIC_EBOOK_EXTRA_LOCALE_FOOD_BEVERAGE_SOURCE_TOKEN_PATTERNS = [
   /\bherring\b/i,
   /\bstrawberries\b/i,
   /\bschnapps\b/i,
@@ -5627,7 +5628,7 @@ function validateStaticEbookSourceAuthorityCopy() {
   return patternsValidated;
 }
 
-function findStaticEbookChapter13ExtraLocaleFoodBeverageSourceOffenders(source) {
+function findStaticEbookExtraLocaleFoodBeverageSourceOffenders(source) {
   const offenders = [];
   let chapterId = null;
   let lang = null;
@@ -5647,11 +5648,18 @@ function findStaticEbookChapter13ExtraLocaleFoodBeverageSourceOffenders(source) 
       lang = langMatch[1] || langMatch[2];
     }
 
-    if (chapterId !== '13' || lang === 'en' || lang === 'sv') return;
+    if (
+      !STATIC_EBOOK_FOOD_BEVERAGE_SOURCE_CHAPTER_IDS.includes(chapterId) ||
+      lang === 'en' ||
+      lang === 'sv'
+    ) {
+      return;
+    }
 
-    STATIC_EBOOK_CH13_EXTRA_LOCALE_FOOD_BEVERAGE_SOURCE_TOKEN_PATTERNS.forEach((pattern) => {
+    STATIC_EBOOK_EXTRA_LOCALE_FOOD_BEVERAGE_SOURCE_TOKEN_PATTERNS.forEach((pattern) => {
       if (pattern.test(line)) {
         offenders.push({
+          chapterId,
           line: index + 1,
           lang: lang || 'unknown',
           token: String(pattern),
@@ -5664,19 +5672,20 @@ function findStaticEbookChapter13ExtraLocaleFoodBeverageSourceOffenders(source) 
   return offenders;
 }
 
-function validateStaticEbookChapter13ExtraLocaleFoodBeverageSource() {
-  const offenders = findStaticEbookChapter13ExtraLocaleFoodBeverageSourceOffenders(
+function validateStaticEbookExtraLocaleFoodBeverageSource() {
+  const offenders = findStaticEbookExtraLocaleFoodBeverageSourceOffenders(
     loadText('site/ebook.js'),
   );
   if (offenders.length > 0) {
     offenders.forEach((offender) => {
       fail(
-        `static ebook chapter 13 ${offender.lang} source contains English food/beverage token ${offender.token} on line ${offender.line}: ${offender.text}`,
+        `static ebook chapter ${offender.chapterId} ${offender.lang} source contains English food/beverage token ${offender.token} on line ${offender.line}: ${offender.text}`,
       );
     });
   }
   return {
-    patternsValidated: STATIC_EBOOK_CH13_EXTRA_LOCALE_FOOD_BEVERAGE_SOURCE_TOKEN_PATTERNS.length,
+    chaptersValidated: STATIC_EBOOK_FOOD_BEVERAGE_SOURCE_CHAPTER_IDS.length,
+    patternsValidated: STATIC_EBOOK_EXTRA_LOCALE_FOOD_BEVERAGE_SOURCE_TOKEN_PATTERNS.length,
     offenders,
     parityValidated: offenders.length === 0,
   };
@@ -9307,8 +9316,9 @@ let staticEbookSourceAuthorityCopyParityValidated = false;
 let staticEbookSomaliHolidayFoodPatternsValidated = 0;
 let staticEbookSomaliHolidayFoodRequiredCopyValidated = 0;
 let staticEbookSomaliHolidayFoodParityValidated = false;
-let staticEbookChapter13FoodBeverageSourcePatternsValidated = 0;
-let staticEbookChapter13FoodBeverageSourceParityValidated = false;
+let staticEbookFoodBeverageSourceChaptersValidated = 0;
+let staticEbookFoodBeverageSourcePatternsValidated = 0;
+let staticEbookFoodBeverageSourceParityValidated = false;
 let staticEbookFootnoteHashChaptersValidated = 0;
 let staticEbookFootnoteHashLanguagesValidated = 0;
 let staticEbookFootnoteHashParityValidated = false;
@@ -9678,12 +9688,10 @@ if (process.argv.includes('--focus-static-ebook-provenance')) {
     staticEbookSomaliHolidayFoodParityValidated = somaliHolidayFoodValidation.parityValidated;
   }
   {
-    const chapter13FoodBeverageSourceValidation =
-      validateStaticEbookChapter13ExtraLocaleFoodBeverageSource();
-    staticEbookChapter13FoodBeverageSourcePatternsValidated =
-      chapter13FoodBeverageSourceValidation.patternsValidated;
-    staticEbookChapter13FoodBeverageSourceParityValidated =
-      chapter13FoodBeverageSourceValidation.parityValidated;
+    const foodBeverageSourceValidation = validateStaticEbookExtraLocaleFoodBeverageSource();
+    staticEbookFoodBeverageSourceChaptersValidated = foodBeverageSourceValidation.chaptersValidated;
+    staticEbookFoodBeverageSourcePatternsValidated = foodBeverageSourceValidation.patternsValidated;
+    staticEbookFoodBeverageSourceParityValidated = foodBeverageSourceValidation.parityValidated;
   }
   const civicTermGlossValidation = validateStaticEbookCivicTermGlosses();
   staticEbookCivicTermGlossesChecksValidated = civicTermGlossValidation.checksValidated;
@@ -9701,8 +9709,9 @@ if (process.argv.includes('--focus-static-ebook-provenance')) {
     staticEbookSomaliHolidayFoodPatternsValidated,
     staticEbookSomaliHolidayFoodRequiredCopyValidated,
     staticEbookSomaliHolidayFoodParityValidated,
-    staticEbookChapter13FoodBeverageSourcePatternsValidated,
-    staticEbookChapter13FoodBeverageSourceParityValidated,
+    staticEbookFoodBeverageSourceChaptersValidated,
+    staticEbookFoodBeverageSourcePatternsValidated,
+    staticEbookFoodBeverageSourceParityValidated,
     staticEbookCivicTermGlossesChecksValidated,
     staticEbookCivicTermGlossesParityValidated,
     staticValidationSyntaxFilesValidated,
@@ -10498,12 +10507,10 @@ staticEbookSourceAuthorityCopyParityValidated =
   staticEbookSomaliHolidayFoodParityValidated = somaliHolidayFoodValidation.parityValidated;
 }
 {
-  const chapter13FoodBeverageSourceValidation =
-    validateStaticEbookChapter13ExtraLocaleFoodBeverageSource();
-  staticEbookChapter13FoodBeverageSourcePatternsValidated =
-    chapter13FoodBeverageSourceValidation.patternsValidated;
-  staticEbookChapter13FoodBeverageSourceParityValidated =
-    chapter13FoodBeverageSourceValidation.parityValidated;
+  const foodBeverageSourceValidation = validateStaticEbookExtraLocaleFoodBeverageSource();
+  staticEbookFoodBeverageSourceChaptersValidated = foodBeverageSourceValidation.chaptersValidated;
+  staticEbookFoodBeverageSourcePatternsValidated = foodBeverageSourceValidation.patternsValidated;
+  staticEbookFoodBeverageSourceParityValidated = foodBeverageSourceValidation.parityValidated;
 }
 {
   const proseValidation = validateStaticEbookProseSourceMetadata();
@@ -23625,8 +23632,9 @@ console.log(
       staticEbookSomaliHolidayFoodPatternsValidated,
       staticEbookSomaliHolidayFoodRequiredCopyValidated,
       staticEbookSomaliHolidayFoodParityValidated,
-      staticEbookChapter13FoodBeverageSourcePatternsValidated,
-      staticEbookChapter13FoodBeverageSourceParityValidated,
+      staticEbookFoodBeverageSourceChaptersValidated,
+      staticEbookFoodBeverageSourcePatternsValidated,
+      staticEbookFoodBeverageSourceParityValidated,
       staticEbookProseSourceMetadataRulesValidated,
       staticEbookProseSourceMetadataParityValidated,
       staticEbookExtraLocaleHolidayGlossLanguagesValidated,
