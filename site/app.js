@@ -1119,6 +1119,8 @@ const SMT_ADS = {
   slots: {
     inline: '',
     anchor: '',
+    practice: '',
+    ebook: '',
   },
   scriptLoaded: false,
 };
@@ -1194,9 +1196,10 @@ function smtLoadAdSense() {
   s.src =
     'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + SMT_ADS.publisherId;
   document.head.appendChild(s);
-  document.querySelectorAll('ins.adsbygoogle').forEach(() => {
+  document.querySelectorAll('ins.adsbygoogle:not([data-smt-pushed])').forEach((el) => {
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
+      el.setAttribute('data-smt-pushed', '1');
     } catch (e) {}
   });
 }
@@ -1244,13 +1247,19 @@ function smtShowAds(mode) {
   try {
     anchorDismissed = sessionStorage.getItem('smt_anchor_closed') === '1';
   } catch {}
-  const inline = document.querySelector('[data-ad-slot="inline"]');
+  // In-content rectangle slots: the static landing "inline" slot plus any
+  // SPA-injected slots (practice, ebook). Use querySelectorAll so every slot
+  // toggles, not just the first match. Per-route visibility is handled by the
+  // [data-page] is-active CSS, so off-route slots stay hidden regardless.
+  const inContent = document.querySelectorAll('[data-ad-slot]:not([data-ad-slot="anchor"])');
   const anchor = document.querySelector('[data-ad-slot="anchor"]');
   const native = document.querySelectorAll('.list-quiet__ad');
   const showInline = canShowAds && (mode === 'inline' || mode === 'both');
   const showAnchor = canShowAds && !anchorDismissed && (mode === 'anchor' || mode === 'both');
   const showNative = canShowAds && (mode === 'inline' || mode === 'both');
-  if (inline) inline.hidden = !showInline;
+  inContent.forEach((el) => {
+    el.hidden = !showInline;
+  });
   if (anchor) anchor.hidden = !showAnchor;
   native.forEach((el) => {
     el.hidden = !showNative;
@@ -1270,6 +1279,47 @@ window.smtGetAdsMode = () => {
   }
 };
 window.smtRefreshAds = () => smtShowAds(window.smtGetAdsMode());
+
+// Markup for an in-content ad slot, used by SPA-rendered pages (practice, ebook).
+// Mirrors the static landing "inline" slot in index.html. Starts hidden; smtShowAds
+// reveals it only when consent is given AND a real slot ID is configured for `placement`.
+window.smtAdSlotMarkup = (placement) => {
+  const p = placement || 'inline';
+  return (
+    '<aside class="ad-slot ad-slot--inline" data-ad-slot="' +
+    p +
+    '" hidden>' +
+    '<div class="ad-slot__inner">' +
+    '<span class="ad-slot__label" data-i18n="ad.label">Sponsored</span>' +
+    '<div class="ad-slot__frame">' +
+    '<ins class="adsbygoogle" style="display: block; width: 100%; min-height: 120px" ' +
+    'data-smt-ad-placement="' +
+    p +
+    '" data-ad-format="auto" data-full-width-responsive="true"></ins>' +
+    '<div class="ad-slot__placeholder" data-i18n="ad.placeholder">' +
+    'Ad space reserved while reviewed AdSense slots are configured.</div>' +
+    '</div></div></aside>'
+  );
+};
+
+// Call after injecting smtAdSlotMarkup() into a freshly rendered SPA view.
+// Localizes the slot's data-i18n labels, wires real slot IDs (if configured),
+// fills any not-yet-pushed <ins> when AdSense is already loaded, and applies visibility.
+window.smtMountAds = () => {
+  try {
+    if (window.applyLang) window.applyLang(localStorage.getItem('smt_lang') || 'en');
+  } catch (e) {}
+  if (typeof smtConfigureAdSenseSlots === 'function') smtConfigureAdSenseSlots();
+  if (SMT_ADS.scriptLoaded) {
+    document.querySelectorAll('ins.adsbygoogle:not([data-smt-pushed])').forEach((el) => {
+      try {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+        el.setAttribute('data-smt-pushed', '1');
+      } catch (e) {}
+    });
+  }
+  if (window.smtRefreshAds) window.smtRefreshAds();
+};
 
 document.addEventListener('click', (e) => {
   if (e.target.closest('#consent-all')) {
