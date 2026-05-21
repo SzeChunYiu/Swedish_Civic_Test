@@ -17,6 +17,7 @@ test('theme token schema validates the exported design-token catalog', () => {
 
   const summary = JSON.parse(match[0]);
   const themeIndex = fs.readFileSync(path.join(repoRoot, 'lib/theme/index.ts'), 'utf8');
+  const shadowSource = fs.readFileSync(path.join(repoRoot, 'lib/theme/shadows.ts'), 'utf8');
   const spacingSource = fs.readFileSync(path.join(repoRoot, 'lib/theme/spacing.ts'), 'utf8');
 
   assert.equal(summary.themeColorTokensValidated, 37);
@@ -34,6 +35,8 @@ test('theme token schema validates the exported design-token catalog', () => {
   assert.equal(summary.themeDarkContrastPairsAAValidated, true);
   assert.equal(summary.themeTokenSchemaValidated, true);
   assert.match(spacingSource, /hairline:\s*2,/);
+  assert.match(shadowSource, /boxShadow:\s*'0px 6px 20px rgba\(11, 31, 51, 0\.06\)'/);
+  assert.match(shadowSource, /boxShadow:\s*'0px 8px 24px rgba\(11, 31, 51, 0\.08\)'/);
   assert.match(
     themeIndex,
     /export \{[\s\S]*colors[\s\S]*colorsForThemeMode[\s\S]*\} from '\.\/colors';/,
@@ -230,6 +233,37 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /theme shadows\.deep\.elevation must be no higher than 2/,
+  );
+});
+
+test('theme token schema rejects missing web box shadow tokens', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/theme/shadows.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace("boxShadow: '0px 6px 20px rgba(11, 31, 51, 0.06)',", "boxShadow: 'none',");
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-theme-token-schema');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /theme shadows\.card\.boxShadow must match tokenized web shadow 0px 6px 20px rgba\(11, 31, 51, 0\.06\)/,
   );
 });
 

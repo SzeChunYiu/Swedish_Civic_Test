@@ -1,6 +1,6 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
-import { darkColors } from '../../lib/theme';
+import { darkColors, shadows } from '../../lib/theme';
 import {
   dismissBlockingModals,
   seedFreshSettingsLanguageAndAboutSeenWithStorage,
@@ -28,6 +28,30 @@ async function computedColors(locator: Locator) {
       color: style.color,
     };
   });
+}
+
+async function closestBoxShadow(locator: Locator) {
+  return locator.evaluate((element) => {
+    let current = element.parentElement;
+    while (current) {
+      const boxShadow = window.getComputedStyle(current).boxShadow;
+      if (boxShadow && boxShadow !== 'none') return boxShadow;
+      current = current.parentElement;
+    }
+
+    return 'none';
+  });
+}
+
+function expectBoxShadowToMatchToken(actualBoxShadow: string, tokenBoxShadow: string) {
+  const color = tokenBoxShadow.match(/rgba\([^)]+\)/)?.[0];
+  const lengths = tokenBoxShadow.match(/\d+px/g) ?? [];
+
+  expect(color).toBeTruthy();
+  expect(actualBoxShadow).toContain(color);
+  for (const length of lengths.slice(1)) {
+    expect(actualBoxShadow).toContain(length);
+  }
 }
 
 async function expectComputedColor(
@@ -180,4 +204,19 @@ test('profile Remove Ads and Pro surfaces use dark theme tokens', async ({ page 
     darkColors.textPlaceholder,
     'Pro price note should use the dark placeholder text token',
   );
+});
+
+test('ebook elevated card uses the tokenized web shadow', async ({ page }) => {
+  await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, 'en');
+  await page.goto('/ebook', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  const articleHeading = page.getByRole('heading', {
+    name: "Slow down. We've got coffee.",
+  });
+  await expect(articleHeading).toBeVisible();
+
+  const articleCardBoxShadow = await closestBoxShadow(articleHeading);
+  expect(articleCardBoxShadow).not.toBe('none');
+  expectBoxShadowToMatchToken(articleCardBoxShadow, shadows.card.boxShadow);
 });
