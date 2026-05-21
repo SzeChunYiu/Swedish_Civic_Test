@@ -24,7 +24,7 @@ test('settings route shell copy follows the persisted settings language', () => 
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
 
-  assert.equal(summary.settingsRouteCopyLabelsValidated, 100);
+  assert.equal(summary.settingsRouteCopyLabelsValidated, 115);
   assert.equal(summary.settingsRouteCopyParityValidated, true);
   assert.match(source, /type SettingsCopy =/);
   assert.match(source, /const settingsCopy: Record<AppLanguage, SettingsCopy> = \{/);
@@ -39,9 +39,19 @@ test('settings route shell copy follows the persisted settings language', () => 
   assert.match(source, /const label = language === 'sv' \? labelSv : labelEn;/);
   assert.match(source, /renderLanguageButton\('sv', 'Swedish', 'Svenska'\)/);
   assert.match(source, /renderLanguageButton\('en', 'English support', 'Engelskt stöd'\)/);
-  assert.match(source, /\$\{count\} repetitionsdagar/);
-  assert.match(source, /\$\{count\} repetitionskort/);
-  assert.match(source, /\$\{count\} markerade kravområden/);
+  assert.match(source, /type CountCopy = \{/);
+  assert.match(source, /function formatImportSummaryCount\(count: number, copy: CountCopy\)/);
+  assert.match(source, /count === 1 \? copy\.one : copy\.other/);
+  assert.match(source, /one: 'repetitionsdag'/);
+  assert.match(source, /other: 'repetitionsdagar'/);
+  assert.match(source, /one: 'repetitionskort'/);
+  assert.match(source, /other: 'repetitionskort'/);
+  assert.match(source, /one: 'markerat kravområde'/);
+  assert.match(source, /other: 'markerade kravområden'/);
+  assert.match(source, /one: 'granskning av fel svar'/);
+  assert.match(source, /other: 'granskningar av fel svar'/);
+  assert.match(source, /one: 'sparad inställning'/);
+  assert.match(source, /other: 'sparade inställningar'/);
   assert.match(source, /Studiesvit och svitskydd ingår/);
   assert.match(source, /LOCAL_STUDY_DATA_IMPORT_MAX_BYTES/);
   assert.match(source, /maxLength=\{LOCAL_STUDY_DATA_IMPORT_MAX_BYTES\}/);
@@ -49,9 +59,16 @@ test('settings route shell copy follows the persisted settings language', () => 
   assert.match(source, /JSON-exporten är större än \$\{localStudyDataImportMaxLabel\}/);
   assert.match(source, /fält för köp i appen eller kvitton/);
   assert.match(source, /data om köp i appen importeras inte/);
-  assert.match(source, /\$\{count\} FSRS review days/);
-  assert.match(source, /\$\{count\} FSRS review cards/);
-  assert.match(source, /\$\{count\} marked requirements checklist items/);
+  assert.match(source, /one: 'FSRS review day'/);
+  assert.match(source, /other: 'FSRS review days'/);
+  assert.match(source, /one: 'FSRS review card'/);
+  assert.match(source, /other: 'FSRS review cards'/);
+  assert.match(source, /one: 'marked requirement'/);
+  assert.match(source, /other: 'marked requirements'/);
+  assert.match(source, /one: 'wrong-answer review'/);
+  assert.match(source, /other: 'wrong-answer reviews'/);
+  assert.match(source, /one: 'saved setting'/);
+  assert.match(source, /other: 'saved settings'/);
   assert.match(source, /under \$\{localStudyDataImportMaxLabel\}/);
   assert.match(source, /The JSON export is larger than \$\{localStudyDataImportMaxLabel\}/);
   assert.doesNotMatch(
@@ -175,8 +192,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/app/settings.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('\${count} repetitionsdagar', '\${count} dagar med FSRS-repetition')
-      .replace('\${count} repetitionskort', '\${count} FSRS-repetitionskort')
+      .replace("one: 'repetitionsdag'", "one: 'FSRS-repetitionsdag'")
+      .replace("one: 'repetitionskort'", "one: 'FSRS-repetitionskort'")
       .replace('Studiesvit och svitskydd ingår', 'Studiesvit och frysstatus ingår');
   }
   return originalReadFileSync.call(this, filePath, ...args);
@@ -193,6 +210,35 @@ require('./scripts/validate-content.js');
     `${result.stdout}\n${result.stderr}`,
     /settings route Swedish import summary copy must hide scheduler jargon/,
   );
+});
+
+test('settings route copy parity rejects singular import-summary drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/settings.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace("one: 'granskning av fel svar'", "one: 'granskningar av fel svar'")
+      .replace("one: 'wrong-answer review'", "one: 'wrong-answer reviews'");
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-settings-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(`${result.stdout}\n${result.stderr}`, /settings route is missing sv copy/);
 });
 
 test('settings route copy parity rejects Swedish IAP import jargon', () => {

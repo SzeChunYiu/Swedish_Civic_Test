@@ -89,9 +89,16 @@ test('local study data import summary keeps Swedish copy learner-facing', () => 
 
   assert.ok(swedishCopyMatch, 'Settings must keep a Swedish import summary copy block');
   assert.ok(englishCopyMatch, 'Settings must keep an English import summary copy block');
-  assert.match(swedishCopyMatch[0], /\$\{count\} repetitionsdagar/);
-  assert.match(swedishCopyMatch[0], /\$\{count\} repetitionskort/);
-  assert.match(swedishCopyMatch[0], /\$\{count\} markerade kravområden/);
+  assert.match(swedishCopyMatch[0], /one: 'repetitionsdag'/);
+  assert.match(swedishCopyMatch[0], /other: 'repetitionsdagar'/);
+  assert.match(swedishCopyMatch[0], /one: 'repetitionskort'/);
+  assert.match(swedishCopyMatch[0], /other: 'repetitionskort'/);
+  assert.match(swedishCopyMatch[0], /one: 'markerat kravområde'/);
+  assert.match(swedishCopyMatch[0], /other: 'markerade kravområden'/);
+  assert.match(swedishCopyMatch[0], /one: 'granskning av fel svar'/);
+  assert.match(swedishCopyMatch[0], /other: 'granskningar av fel svar'/);
+  assert.match(swedishCopyMatch[0], /one: 'sparad inställning'/);
+  assert.match(swedishCopyMatch[0], /other: 'sparade inställningar'/);
   assert.match(swedishCopyMatch[0], /Studiesvit och svitskydd ingår/);
   assert.match(swedishCopyMatch[0], /högst \$\{localStudyDataImportMaxLabel\}/);
   assert.match(
@@ -101,9 +108,16 @@ test('local study data import summary keeps Swedish copy learner-facing', () => 
   assert.match(swedishCopyMatch[0], /fält för köp i appen eller kvitton/);
   assert.match(swedishCopyMatch[0], /data om köp i appen importeras inte/);
   assert.doesNotMatch(swedishCopyMatch[0], /\bFSRS\b|frysstatus|\bIAP\b/);
-  assert.match(englishCopyMatch[0], /\$\{count\} FSRS review days/);
-  assert.match(englishCopyMatch[0], /\$\{count\} FSRS review cards/);
-  assert.match(englishCopyMatch[0], /\$\{count\} marked requirements checklist items/);
+  assert.match(englishCopyMatch[0], /one: 'FSRS review day'/);
+  assert.match(englishCopyMatch[0], /other: 'FSRS review days'/);
+  assert.match(englishCopyMatch[0], /one: 'FSRS review card'/);
+  assert.match(englishCopyMatch[0], /other: 'FSRS review cards'/);
+  assert.match(englishCopyMatch[0], /one: 'marked requirement'/);
+  assert.match(englishCopyMatch[0], /other: 'marked requirements'/);
+  assert.match(englishCopyMatch[0], /one: 'wrong-answer review'/);
+  assert.match(englishCopyMatch[0], /other: 'wrong-answer reviews'/);
+  assert.match(englishCopyMatch[0], /one: 'saved setting'/);
+  assert.match(englishCopyMatch[0], /other: 'saved settings'/);
   assert.match(englishCopyMatch[0], /under \$\{localStudyDataImportMaxLabel\}/);
   assert.match(
     englishCopyMatch[0],

@@ -49,16 +49,16 @@ type SettingsCopy = {
   importReset: string;
   importSectionSubtitle: string;
   importSuccess: string;
-  importSummaryBookmarks: (count: number) => string;
-  importSummaryCitizenshipRequirements: (count: number) => string;
-  importSummaryCompletedQuestions: (count: number) => string;
-  importSummaryFsrsDays: (count: number) => string;
-  importSummaryFsrsCards: (count: number) => string;
-  importSummaryMockExams: (count: number) => string;
-  importSummarySettings: (count: number) => string;
+  importSummaryBookmarks: CountCopy;
+  importSummaryCitizenshipRequirements: CountCopy;
+  importSummaryCompletedQuestions: CountCopy;
+  importSummaryFsrsDays: CountCopy;
+  importSummaryFsrsCards: CountCopy;
+  importSummaryMockExams: CountCopy;
+  importSummarySettings: CountCopy;
   importSummaryStreakFreeze: string;
   importSummaryTitle: string;
-  importSummaryWrongAnswers: (count: number) => string;
+  importSummaryWrongAnswers: CountCopy;
   importTitle: string;
   languageAccessibilityLabel: (label: string) => string;
   studyLanguageTitle: string;
@@ -71,6 +71,11 @@ type SettingsCopy = {
   themeModeTitle: string;
   themeSystemLabel: string;
   title: string;
+};
+
+type CountCopy = {
+  one: string;
+  other: string;
 };
 
 const localStudyDataImportMaxLabel = `${LOCAL_STUDY_DATA_IMPORT_MAX_BYTES / 1024 / 1024} MB`;
@@ -117,16 +122,25 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     importReset: 'Återställ importfält',
     importSectionSubtitle: `Klistra in en lokal studiedataexport i JSON-format (högst ${localStudyDataImportMaxLabel}). Du får en sammanfattning innan något skrivs.`,
     importSuccess: 'Importen är klar.',
-    importSummaryBookmarks: (count) => `${count} bokmärken`,
-    importSummaryCitizenshipRequirements: (count) => `${count} markerade kravområden`,
-    importSummaryCompletedQuestions: (count) => `${count} frågor med sparad progression`,
-    importSummaryFsrsDays: (count) => `${count} repetitionsdagar`,
-    importSummaryFsrsCards: (count) => `${count} repetitionskort`,
-    importSummaryMockExams: (count) => `${count} provhistorikposter`,
-    importSummarySettings: (count) => `${count} inställningar`,
+    importSummaryBookmarks: { one: 'bokmärke', other: 'bokmärken' },
+    importSummaryCitizenshipRequirements: {
+      one: 'markerat kravområde',
+      other: 'markerade kravområden',
+    },
+    importSummaryCompletedQuestions: {
+      one: 'fråga med sparad progression',
+      other: 'frågor med sparad progression',
+    },
+    importSummaryFsrsDays: { one: 'repetitionsdag', other: 'repetitionsdagar' },
+    importSummaryFsrsCards: { one: 'repetitionskort', other: 'repetitionskort' },
+    importSummaryMockExams: { one: 'provhistorikpost', other: 'provhistorikposter' },
+    importSummarySettings: { one: 'sparad inställning', other: 'sparade inställningar' },
     importSummaryStreakFreeze: 'Studiesvit och svitskydd ingår',
     importSummaryTitle: 'Sammanfattning före import',
-    importSummaryWrongAnswers: (count) => `${count} granskningar av fel svar`,
+    importSummaryWrongAnswers: {
+      one: 'granskning av fel svar',
+      other: 'granskningar av fel svar',
+    },
     importTitle: 'Importera studiedata',
     languageAccessibilityLabel: (label) => `Byt studiespråk till ${label}`,
     studyLanguageTitle: 'Studiespråk',
@@ -182,16 +196,28 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     importReset: 'Reset import field',
     importSectionSubtitle: `Paste a local study data export in JSON format (under ${localStudyDataImportMaxLabel}). You will see a summary before anything is written.`,
     importSuccess: 'Import complete.',
-    importSummaryBookmarks: (count) => `${count} bookmarks`,
-    importSummaryCitizenshipRequirements: (count) => `${count} marked requirements checklist items`,
-    importSummaryCompletedQuestions: (count) => `${count} questions with saved progress`,
-    importSummaryFsrsDays: (count) => `${count} FSRS review days`,
-    importSummaryFsrsCards: (count) => `${count} FSRS review cards`,
-    importSummaryMockExams: (count) => `${count} mock exam history entries`,
-    importSummarySettings: (count) => `${count} settings`,
+    importSummaryBookmarks: { one: 'bookmark', other: 'bookmarks' },
+    importSummaryCitizenshipRequirements: {
+      one: 'marked requirement',
+      other: 'marked requirements',
+    },
+    importSummaryCompletedQuestions: {
+      one: 'question with saved progress',
+      other: 'questions with saved progress',
+    },
+    importSummaryFsrsDays: { one: 'FSRS review day', other: 'FSRS review days' },
+    importSummaryFsrsCards: { one: 'FSRS review card', other: 'FSRS review cards' },
+    importSummaryMockExams: {
+      one: 'mock exam history entry',
+      other: 'mock exam history entries',
+    },
+    importSummarySettings: { one: 'saved setting', other: 'saved settings' },
     importSummaryStreakFreeze: 'Study streak and freeze status included',
     importSummaryTitle: 'Summary before import',
-    importSummaryWrongAnswers: (count) => `${count} wrong-answer reviews`,
+    importSummaryWrongAnswers: {
+      one: 'wrong-answer review',
+      other: 'wrong-answer reviews',
+    },
     importTitle: 'Import study data',
     languageAccessibilityLabel: (label) => `Set study language to ${label}`,
     studyLanguageTitle: 'Study language',
@@ -212,19 +238,26 @@ type ImportFeedback = {
   text: string;
 };
 
+function formatImportSummaryCount(count: number, copy: CountCopy): string {
+  return `${count} ${count === 1 ? copy.one : copy.other}`;
+}
+
 function buildImportSummaryLines(
   copy: SettingsCopy,
   summary: LocalStudyDataImportSummary,
 ): string[] {
   const lines = [
-    copy.importSummaryCompletedQuestions(summary.completedQuestionCount),
-    copy.importSummaryBookmarks(summary.bookmarkedQuestionCount),
-    copy.importSummaryWrongAnswers(summary.wrongAnswerReviewCount),
-    copy.importSummaryMockExams(summary.mockExamSessionCount),
-    copy.importSummaryFsrsCards(summary.fsrsReviewCardCount),
-    copy.importSummaryFsrsDays(summary.gradedReviewDayCount),
-    copy.importSummarySettings(summary.settingCount),
-    copy.importSummaryCitizenshipRequirements(summary.citizenshipRequirementChecklistCount),
+    formatImportSummaryCount(summary.completedQuestionCount, copy.importSummaryCompletedQuestions),
+    formatImportSummaryCount(summary.bookmarkedQuestionCount, copy.importSummaryBookmarks),
+    formatImportSummaryCount(summary.wrongAnswerReviewCount, copy.importSummaryWrongAnswers),
+    formatImportSummaryCount(summary.mockExamSessionCount, copy.importSummaryMockExams),
+    formatImportSummaryCount(summary.fsrsReviewCardCount, copy.importSummaryFsrsCards),
+    formatImportSummaryCount(summary.gradedReviewDayCount, copy.importSummaryFsrsDays),
+    formatImportSummaryCount(summary.settingCount, copy.importSummarySettings),
+    formatImportSummaryCount(
+      summary.citizenshipRequirementChecklistCount,
+      copy.importSummaryCitizenshipRequirements,
+    ),
   ];
   if (summary.streakFreezeStateIncluded) lines.push(copy.importSummaryStreakFreeze);
   return lines;
