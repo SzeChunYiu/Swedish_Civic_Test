@@ -35,14 +35,15 @@ test('quiz CelebrationBurst keeps success motion decorative and non-interactive'
   assert.match(source, /easing:\s*Easing\.out\(Easing\.cubic\),/);
   assert.match(source, /useNativeDriver:\s*true,/);
   assert.match(source, /if \(!active\) return null;/);
+  assert.match(source, /aria-hidden=\{true\}/);
   assert.match(source, /accessibilityElementsHidden/);
   assert.match(
     source,
-    /if \(reducedMotionEnabled\) \{\s*return \(\s*<View(?=[^>]*accessibilityElementsHidden)(?=[^>]*importantForAccessibility="no-hide-descendants")(?=[^>]*pointerEvents="none")[^>]*>/,
+    /if \(reducedMotionEnabled\) \{\s*return \(\s*<View(?=[^>]*aria-hidden=\{true\})(?=[^>]*accessibilityElementsHidden)(?=[^>]*importantForAccessibility="no-hide-descendants")(?=[^>]*pointerEvents="none")[^>]*>/,
   );
   assert.match(
     source,
-    /<Animated\.View(?=[^>]*accessibilityElementsHidden)(?=[^>]*importantForAccessibility="no-hide-descendants")(?=[^>]*pointerEvents="none")[^>]*>/,
+    /<Animated\.View(?=[^>]*aria-hidden=\{true\})(?=[^>]*accessibilityElementsHidden)(?=[^>]*importantForAccessibility="no-hide-descendants")(?=[^>]*pointerEvents="none")[^>]*>/,
   );
   assert.match(source, /importantForAccessibility="no-hide-descendants"/);
   assert.match(source, /pointerEvents="none"/);
@@ -93,7 +94,7 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('CelebrationBurst accessibility parity rejects reduced-motion tree exposure drift', () => {
+test('CelebrationBurst accessibility parity rejects native hidden tree exposure drift', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -106,7 +107,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/components/quiz/CelebrationBurst.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('accessibilityElementsHidden\\n        importantForAccessibility="no-hide-descendants"\\n        pointerEvents="none"', 'importantForAccessibility="no-hide-descendants"\\n        pointerEvents="none"');
+      .replaceAll('accessibilityElementsHidden', '');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -120,7 +121,69 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /CelebrationBurst missing reduced-motion branch hidden from accessibility tree for accessibility parity/,
+    /CelebrationBurst missing decorative animation hidden from accessibility tree for accessibility parity/,
+  );
+});
+
+test('CelebrationBurst accessibility parity rejects reduced-motion web aria-hidden drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/quiz/CelebrationBurst.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('aria-hidden={true}\\n        accessibilityElementsHidden', 'accessibilityElementsHidden');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-celebration-burst-accessibility');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /CelebrationBurst missing reduced-motion branch hidden from web accessibility tree for accessibility parity/,
+  );
+});
+
+test('CelebrationBurst accessibility parity rejects animated web aria-hidden drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/quiz/CelebrationBurst.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('aria-hidden={true}\\n      accessibilityElementsHidden', 'accessibilityElementsHidden');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-celebration-burst-accessibility');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /CelebrationBurst missing animated branch hidden from web accessibility tree for accessibility parity/,
   );
 });
 

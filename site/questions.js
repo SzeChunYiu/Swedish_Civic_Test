@@ -55415,8 +55415,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "Try to persuade others of their political ideas.",
-      "sv": "Försöka övertyga andra om sina politiska idéer."
+      "en": "In a democracy, people, groups, and parties may try to persuade others of their political ideas.",
+      "sv": "I en demokrati får människor, grupper och partier försöka övertyga andra om sina politiska idéer."
     },
     "opts": [
       {
@@ -55455,8 +55455,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "Stop others from voting.",
-      "sv": "Hindra andra från att rösta."
+      "en": "In a democracy, people, groups, and parties may not stop others from voting.",
+      "sv": "I en demokrati får människor, grupper och partier inte hindra andra från att rösta."
     },
     "opts": [
       {
@@ -64538,4 +64538,14 @@
     "questionCount": 145
   }
 ];
+
+  window.SMT_QUESTION_BANK_META = {
+  "questionCount": 895,
+  "chapterCount": 13,
+  "provenanceCounts": {
+    "uhr": 179,
+    "derived": 716,
+    "editorial": 0
+  }
+};
 })();

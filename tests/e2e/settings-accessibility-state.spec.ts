@@ -27,6 +27,13 @@ test('settings controls expose selected and checked state on web', async ({ page
   await expect(twentyAnswers).toHaveAttribute('aria-checked', 'true');
   await expect(tenAnswers).toHaveAttribute('aria-checked', 'false');
 
+  const systemTheme = page.getByLabel('Choose theme: Use system');
+  const darkTheme = page.getByLabel('Choose theme: Dark');
+  await darkTheme.click();
+
+  await expect(darkTheme).toHaveAttribute('aria-checked', 'true');
+  await expect(systemTheme).toHaveAttribute('aria-checked', 'false');
+
   await expect(
     page.getByRole('button', {
       name: /Cinnamon bun is selected as study companion\. Fika and everyday culture\./,
@@ -64,6 +71,7 @@ test('settings controls expose selected and checked state on web', async ({ page
     'aria-checked',
     'false',
   );
+  await expect(page.getByLabel('Choose theme: Dark')).toHaveAttribute('aria-checked', 'true');
   await expect(
     page.getByRole('button', {
       name: /Dala horse is selected as study companion\. Folk symbol from Dalarna\./,

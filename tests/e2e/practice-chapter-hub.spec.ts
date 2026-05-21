@@ -97,17 +97,18 @@ test('chapter reader report link opens source context without selected answer', 
   await reportLink.click();
 
   await expect(page).toHaveURL(/\/support\?/);
-  await expect(page).toHaveURL(/screen=chapter/);
+  await expect(page).toHaveURL(/reportScreen=chapter/);
   await expect(page).not.toHaveURL(/selectedAnswer=/);
-  await expect(page.getByText('Question report context')).toBeVisible();
-  await expect(page.getByText('Question ID')).toBeVisible();
-  await expect(page.getByText('Source')).toBeVisible();
-  await expect(page.getByText(/Source: Sverige i fokus/)).toBeVisible();
-  await expect(page.getByText('Active language')).toBeVisible();
-  await expect(page.getByText('en')).toBeVisible();
-  await expect(page.getByText('Screen')).toBeVisible();
-  await expect(page.getByText('Chapter')).toBeVisible();
-  await expect(page.getByText('Selected answer')).toHaveCount(0);
+  const reportContext = page.getByLabel(/Report context for question q\d+/);
+  await expect(reportContext.getByText('Question report context')).toBeVisible();
+  await expect(reportContext.getByText('Question ID')).toBeVisible();
+  await expect(reportContext.getByText('Source', { exact: true })).toBeVisible();
+  await expect(reportContext.getByText(/Source: Sverige i fokus/)).toBeVisible();
+  await expect(reportContext.getByText('Active language')).toBeVisible();
+  await expect(reportContext.getByText('en', { exact: true })).toBeVisible();
+  await expect(reportContext.getByText('Screen')).toBeVisible();
+  await expect(reportContext.getByText('Chapter', { exact: true })).toBeVisible();
+  await expect(reportContext.getByText('Selected answer')).toHaveCount(0);
   await expect(
     page.getByText(/Do not add names, personal identity numbers, case numbers/),
   ).toBeVisible();
