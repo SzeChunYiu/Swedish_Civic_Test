@@ -7,6 +7,7 @@ const test = require('node:test');
 
 const { FOCUSED_VALIDATION_REGISTRY_BY_ID } = require('../scripts/validate-content-focus-registry');
 const {
+  MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES,
   MALFORMED_ADAPTIVE_PRACTICE_SIZE_CASES,
 } = require('./helpers/adaptivePracticeRuntimeFixtures.cjs');
 
@@ -817,6 +818,76 @@ test('adaptive size focused content validation runs only its runtime summary', (
     MALFORMED_ADAPTIVE_PRACTICE_SIZE_CASES.length,
   );
   assert.equal(summary.adaptivePracticeSizeRuntimeParityValidated, true);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
+});
+
+test('adaptive difficulty focused content validation runs only its runtime summary', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const adaptiveResumeTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/v1-1-adaptive-resume.test.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('adaptivePracticeDifficulty');
+
+  assert.ok(registryEntry, 'adaptive practice difficulty focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-adaptive-practice-difficulty']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'adaptivePracticeDifficultyRuntimeCasesValidated',
+    'adaptivePracticeDifficultyRuntimeParityValidated',
+  ]);
+  assert.match(validatorSource, /--focus-adaptive-practice-difficulty/);
+  assert.match(
+    validatorSource,
+    /MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES,[\s\S]*MALFORMED_ADAPTIVE_PRACTICE_SIZE_CASES/,
+    'validator must import adaptive practice malformed runtime fixtures from the shared helper',
+  );
+  assert.match(
+    adaptiveResumeTestSource,
+    /MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES,[\s\S]*MALFORMED_ADAPTIVE_PRACTICE_SIZE_CASES/,
+    'direct adaptive selector tests must import the same malformed runtime fixtures',
+  );
+  assert.doesNotMatch(
+    validatorSource,
+    /const\s+MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES\s*=\s*(?:Object\.freeze\()?\[/,
+    'validator must not define its own malformed adaptive difficulty fixture array',
+  );
+  assert.doesNotMatch(
+    adaptiveResumeTestSource,
+    /const\s+MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES\s*=\s*(?:Object\.freeze\()?\[/,
+    'direct adaptive selector tests must not define their own malformed adaptive difficulty fixture array',
+  );
+  assert.match(
+    validatorSource,
+    /validateAdaptivePracticeDifficultyRuntimeGuards\(\);[\s\S]*adaptivePracticeDifficultyRuntimeCasesValidated[\s\S]*adaptivePracticeDifficultyRuntimeParityValidated/,
+  );
+  assert.match(
+    validatorSource,
+    /validateAdaptivePracticeSizeRuntimeGuards\(\);[\s\S]*validateAdaptivePracticeDifficultyRuntimeGuards\(\);[\s\S]*validateStreakRules\(\);/,
+    'full content validation must still invoke the adaptive practice difficulty runtime guard',
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-adaptive-practice-difficulty'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused adaptive difficulty validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.equal(
+    summary.adaptivePracticeDifficultyRuntimeCasesValidated,
+    MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES.length,
+  );
+  assert.equal(summary.adaptivePracticeDifficultyRuntimeParityValidated, true);
   assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
 });
 
