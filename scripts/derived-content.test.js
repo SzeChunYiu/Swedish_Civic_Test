@@ -1446,14 +1446,14 @@ test('derivePublishedQuestions renders q062 public-sector English as direct prop
   const falseStatementId = generatedQuestionId(sourceQuestions, 'q062', 'falseStatement');
 
   assert.equal(source?.questionSv, 'Vad menas med offentlig sektor i Sverige?');
-  assert.equal(source?.questionEn, "What does Sweden's public sector consist of?");
+  assert.equal(source?.questionEn, 'What is the public sector in Sweden?');
   assert.equal(
     source?.explanationEn,
     'The public sector consists of services and activities that the state, regions, and municipalities are responsible for and fund through taxes. Examples include health-care staff, teachers, childcare workers, police, and firefighters; private companies, banks, and non-profit associations are therefore wrong answers.',
   );
   assert.equal(
     byId.get(trueStatementId)?.questionSv,
-    'Offentlig sektor i Sverige är verksamheter som staten, regionerna och kommunerna ansvarar för.',
+    'Offentlig sektor i Sverige är tjänster och verksamheter som staten, regionerna och kommunerna ansvarar för och finansierar med skatter.',
   );
   assert.equal(
     byId.get(trueStatementId)?.questionEn,

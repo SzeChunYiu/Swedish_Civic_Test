@@ -4583,7 +4583,7 @@ test('q062 public-sector exports natural English in canonical and static banks',
   const stalePattern =
     /What is meant by the public sector|public sector(?: in Sweden)? means (?:activities for which|all privately owned companies)|Activities for which the state, regions, and municipalities are responsible/i;
 
-  assert.equal(byId.get('q062')?.q.en, "What does Sweden's public sector consist of?");
+  assert.equal(byId.get('q062')?.q.en, 'What is the public sector in Sweden?');
   assert.equal(
     byId.get(generatedQuestionId(sourceQuestions, 'q062', 'trueStatement'))?.q.en,
     'The public sector in Sweden consists of services and activities that the state, regions, and municipalities are responsible for and fund through taxes.',
