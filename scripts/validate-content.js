@@ -452,7 +452,14 @@ const EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_LABELS = {
     'View requirements guide',
   ],
 };
-const CITIZENSHIP_REQUIREMENTS_SOURCE_AUTHORITY_PATTERNS = [/\bUHR says\b/i, /\bUHR\s+säger\b/i];
+const CITIZENSHIP_REQUIREMENTS_SOURCE_AUTHORITY_PATTERNS = [
+  /\bUHR says\b/i,
+  /\bUHR\s+säger\b/i,
+  /säger\s+Migrationsverket\b/i,
+  /\bMigrationsverket\s+says\b/i,
+  /\bMigrationsverket\s+(?:also\s+)?describes\b/i,
+  /\bMigrationsverket\s+anger\s+(?:också\s+)?krav\b/i,
+];
 
 const CRIMINAL_RESPONSIBILITY_CURRENTNESS = {
   sourceId: 'q044',
@@ -6489,7 +6496,7 @@ function validateCitizenshipRequirementsSourceAuthorityCopy() {
 
         if (sourceAuthorityPattern) {
           reject(
-            `citizenship requirement ${area.id}.${field}.${language} must not use UHR-says source-authority phrasing in learner copy`,
+            `citizenship requirement ${area.id}.${field}.${language} must state facts neutrally; source rows carry provenance`,
           );
           continue;
         }
@@ -13537,7 +13544,6 @@ function validateAboutTheTestRouteCopyParity() {
 
   citizenshipRequirementsSourceAuthorityCopyAreasValidated = 0;
   citizenshipRequirementsSourceAuthorityCopyParityValidated = false;
-  const sourceAuthorityPattern = /\bUHR (?:säger|says)\b/;
   if (!Array.isArray(citizenshipRequirementAreas) || citizenshipRequirementAreas.length === 0) {
     reject('citizenship requirements areas must be available for source-authority copy checks');
   } else {
@@ -13551,10 +13557,14 @@ function validateAboutTheTestRouteCopyParity() {
           continue;
         }
         for (const language of ['sv', 'en']) {
-          if (sourceAuthorityPattern.test(value[language] || '')) {
+          const sourceAuthorityPattern = CITIZENSHIP_REQUIREMENTS_SOURCE_AUTHORITY_PATTERNS.find(
+            (pattern) => pattern.test(value[language] || ''),
+          );
+
+          if (sourceAuthorityPattern) {
             areaValid = false;
             reject(
-              `citizenship requirements ${area.id}.${field}.${language} must state facts neutrally; source rows carry UHR provenance`,
+              `citizenship requirements ${area.id}.${field}.${language} must state facts neutrally; source rows carry provenance`,
             );
           }
         }
