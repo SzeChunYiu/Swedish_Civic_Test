@@ -8893,6 +8893,7 @@ const spacedRepetitionSchedule = spacedRepetitionModule.spacedRepetitionSchedule
 const getNextReviewAt = spacedRepetitionModule.getNextReviewAt;
 const createNewCard = spacedRepetitionModule.createNewCard;
 const gradeCard = spacedRepetitionModule.gradeCard;
+const retrievability = spacedRepetitionModule.retrievability;
 const isDue = spacedRepetitionModule.isDue;
 const sortByDueAscending = spacedRepetitionModule.sortByDueAscending;
 const streakModule = loadTs('lib/learning/streaks.ts');
@@ -19928,6 +19929,45 @@ function validateSpacedRepetitionSchedule() {
           );
         },
         expected: true,
+      },
+    );
+  }
+  if (typeof retrievability === 'function') {
+    runtimeInputCases.push(
+      {
+        label: 'non-finite stability returns zero retrievability',
+        actual: () => retrievability(Number.NaN, 1),
+        expected: 0,
+      },
+      {
+        label: 'infinite stability returns zero retrievability',
+        actual: () => retrievability(Number.POSITIVE_INFINITY, 1),
+        expected: 0,
+      },
+      {
+        label: 'zero stability returns zero retrievability',
+        actual: () => retrievability(0, 1),
+        expected: 0,
+      },
+      {
+        label: 'negative stability returns zero retrievability',
+        actual: () => retrievability(-1, 1),
+        expected: 0,
+      },
+      {
+        label: 'non-finite elapsed days returns zero retrievability',
+        actual: () => retrievability(1, Number.NaN),
+        expected: 0,
+      },
+      {
+        label: 'infinite elapsed days returns zero retrievability',
+        actual: () => retrievability(1, Number.POSITIVE_INFINITY),
+        expected: 0,
+      },
+      {
+        label: 'negative elapsed days returns zero retrievability',
+        actual: () => retrievability(1, -1),
+        expected: 0,
       },
     );
   }

@@ -76,8 +76,9 @@ function cardCanBeGraded(card: ReviewCard, isNew: boolean): boolean {
 
 // Retrievability under exponential-decay forgetting curve: R(t) = exp(-t/S).
 export function retrievability(stabilityDays: number, elapsedDays: number): number {
-  if (stabilityDays <= 0) return 0;
-  return Math.exp(-Math.max(0, elapsedDays) / stabilityDays);
+  if (!Number.isFinite(stabilityDays) || stabilityDays <= 0) return 0;
+  if (!Number.isFinite(elapsedDays) || elapsedDays < 0) return 0;
+  return clamp(Math.exp(-elapsedDays / stabilityDays), 0, 1);
 }
 
 // Initial stability assigned to a brand-new card based on first grade.

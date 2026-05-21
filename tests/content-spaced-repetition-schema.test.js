@@ -36,15 +36,14 @@ test('spaced repetition schema validates schedule intervals and runtime parity',
   assert.ok(match, 'validation should print JSON summary');
 
   const summary = JSON.parse(match[0]);
-  const { spacedRepetitionSchedule, getNextReviewAt, isDue, sortByDueAscending } = loadTs(
-    'lib/learning/spacedRepetition.ts',
-  );
+  const { spacedRepetitionSchedule, getNextReviewAt, retrievability, isDue, sortByDueAscending } =
+    loadTs('lib/learning/spacedRepetition.ts');
   const answeredAt = '2026-05-15T10:00:00.000Z';
 
   assert.deepEqual(spacedRepetitionSchedule, expectedSchedule);
   assert.equal(summary.spacedRepetitionIntervalsValidated, expectedSchedule.length);
   assert.equal(summary.spacedRepetitionRuntimeParityValidated, true);
-  assert.equal(summary.spacedRepetitionRuntimeInputCasesValidated, 5);
+  assert.equal(summary.spacedRepetitionRuntimeInputCasesValidated, 12);
   assert.equal(summary.spacedRepetitionRuntimeInputParityValidated, true);
   assert.equal(summary.spacedRepetitionDueTimestampCasesValidated, 7);
   assert.equal(summary.spacedRepetitionDueTimestampParityValidated, true);
@@ -60,6 +59,13 @@ test('spaced repetition schema validates schedule intervals and runtime parity',
   assert.equal(isDue({ dueAt: '2026-02-30T00:00:00.000Z' }, '2026-03-02T12:00:00.000Z'), false);
   assert.equal(isDue({ dueAt: '2026-03-02' }, '2026-03-02T12:00:00.000Z'), false);
   assert.equal(isDue({ dueAt: '2026-03-02T12:00:00+00:00' }, '2026-03-02T12:00:00.000Z'), false);
+  assert.equal(retrievability(Number.NaN, 1), 0);
+  assert.equal(retrievability(Number.POSITIVE_INFINITY, 1), 0);
+  assert.equal(retrievability(0, 1), 0);
+  assert.equal(retrievability(-1, 1), 0);
+  assert.equal(retrievability(1, Number.NaN), 0);
+  assert.equal(retrievability(1, Number.POSITIVE_INFINITY), 0);
+  assert.equal(retrievability(1, -1), 0);
   assert.deepEqual(
     [
       { questionId: 'date-only', dueAt: '2026-03-01' },
