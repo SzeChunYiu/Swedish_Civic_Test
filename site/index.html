@@ -18,7 +18,7 @@
     <header class="topbar">
       <div class="topbar__inner">
         <a class="brand" href="#/" data-route="/">
-          <span class="brand__mark" aria-hidden="true"></span>
+          <img class="brand__mark" src="assets/logo-mark.png" alt="" aria-hidden="true" />
           <span data-i18n="brand">Almost Swedish</span>
         </a>
         <button
@@ -52,6 +52,38 @@
           <a href="#/support" data-route="/support" data-i18n="nav.support">Support</a>
         </nav>
         <div class="topbar__tools">
+          <div class="lang-pick">
+            <button
+              class="icon-btn icon-btn--square"
+              id="lang-open"
+              type="button"
+              aria-label="Language"
+              aria-haspopup="true"
+              aria-expanded="false"
+              title="Language"
+            >
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="M3 12h18"></path>
+                <path d="M12 3a14 14 0 010 18"></path>
+                <path d="M12 3a14 14 0 000 18"></path>
+              </svg>
+            </button>
+            <div class="lang-menu" id="lang-menu" hidden role="menu" aria-labelledby="lang-open">
+              <button data-lang="en" role="menuitem">English</button>
+              <button data-lang="sv" role="menuitem">Svenska</button>
+              <button data-lang="zh-Hans" role="menuitem">简体中文</button>
+              <button data-lang="zh-Hant" role="menuitem">繁體中文</button>
+              <button data-lang="ar" role="menuitem" dir="rtl">العربية</button>
+              <button data-lang="ckb" role="menuitem" dir="rtl">کوردیی ناوەندی</button>
+              <button data-lang="fa" role="menuitem" dir="rtl">فارسی</button>
+              <button data-lang="pl" role="menuitem">Polski</button>
+              <button data-lang="so" role="menuitem">Soomaali</button>
+              <button data-lang="ti" role="menuitem">ትግርኛ</button>
+              <button data-lang="tr" role="menuitem">Türkçe</button>
+              <button data-lang="uk" role="menuitem">Українська</button>
+            </div>
+          </div>
           <button
             class="icon-btn icon-btn--square"
             id="settings-open"
@@ -110,18 +142,7 @@
         </div>
       </section>
 
-      <!-- V1.1 DASHBOARD (hidden until user has progress) -->
-      <section
-        id="v11-dashboard-wrap"
-        class="band v11-band"
-        data-screen-label="01.15 Dashboard"
-        style="display: none"
-      >
-        <div class="wrap">
-          <span class="eyebrow">Your progress</span>
-          <div id="v11-dashboard"></div>
-        </div>
-      </section>
+      <!-- DASHBOARD WAS HERE - moved to /practice -->
 
       <!-- TRY A QUESTION -->
       <section id="try" class="band demo" data-screen-label="01.2 Try a question">
@@ -380,6 +401,17 @@
             </h1>
           </div>
 
+          <!-- V1.1 DASHBOARD (hidden until user has progress) -->
+          <section
+            id="v11-dashboard-wrap"
+            class="v11-band practice__dashboard"
+            data-screen-label="06.1 Dashboard"
+            style="display: none"
+          >
+            <span class="eyebrow">Your progress</span>
+            <div id="v11-dashboard"></div>
+          </section>
+
           <div class="quiz" id="quiz">
             <div class="quiz__stage" id="quiz-stage">
               <!-- progress + question + options + feedback get rendered here by JS -->
@@ -405,7 +437,7 @@
       <section class="ebook">
         <aside class="ebook__sidebar" id="ebook-sidebar" aria-label="Chapters">
           <div class="ebook__brand">
-            <span class="ebook__brand-mark" aria-hidden="true"></span>
+            <img class="ebook__brand-mark" src="assets/logo-mark.png" alt="" aria-hidden="true" />
             <span data-i18n="ebook.title">The Field Guide</span>
           </div>
           <p class="ebook__sub" data-i18n="ebook.sub">
@@ -929,7 +961,7 @@
         <div class="footer__hero">
           <div class="footer__brag">
             <a class="footer__brand" href="#/">
-              <span class="brand__mark" aria-hidden="true"></span>
+              <img class="brand__mark" src="assets/logo-mark.png" alt="" aria-hidden="true" />
               <span data-i18n="brand">Almost Swedish</span>
             </a>
             <h3 class="footer__tagline">
@@ -942,94 +974,7 @@
             </p>
           </div>
 
-          <svg class="footer__scene" viewBox="0 0 600 320" aria-hidden="true" focusable="false">
-            <defs>
-              <linearGradient id="ftr-aurora-a" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="rgba(78,220,170,.55)" />
-                <stop offset="100%" stop-color="rgba(78,220,170,0)" />
-              </linearGradient>
-              <linearGradient id="ftr-aurora-b" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="rgba(180,140,220,.42)" />
-                <stop offset="100%" stop-color="rgba(180,140,220,0)" />
-              </linearGradient>
-              <radialGradient id="ftr-sun">
-                <stop offset="0%" stop-color="#fecc00" />
-                <stop offset="100%" stop-color="#b8860a" stop-opacity=".0" />
-              </radialGradient>
-            </defs>
-            <ellipse cx="200" cy="0" rx="240" ry="120" fill="url(#ftr-aurora-a)" />
-            <ellipse cx="430" cy="20" rx="180" ry="80" fill="url(#ftr-aurora-b)" />
-            <g fill="#ffffff" opacity=".55">
-              <circle cx="60" cy="40" r="1" />
-              <circle cx="118" cy="22" r=".8" />
-              <circle cx="198" cy="62" r="1" />
-              <circle cx="276" cy="32" r=".8" />
-              <circle cx="332" cy="14" r=".8" />
-              <circle cx="378" cy="50" r="1" />
-              <circle cx="440" cy="22" r="1" />
-              <circle cx="524" cy="38" r=".8" />
-              <circle cx="80" cy="88" r=".6" />
-              <circle cx="160" cy="100" r=".8" />
-            </g>
-            <!-- low sun behind forest -->
-            <circle cx="490" cy="170" r="34" fill="url(#ftr-sun)" />
-            <!-- forest silhouette -->
-            <g fill="#040d18">
-              <path
-                d="M 40 240 L 60 180 L 50 188 L 64 150 L 56 158 L 70 118 L 84 158 L 76 150 L 90 188 L 80 180 L 100 240 Z"
-              />
-              <path
-                d="M 130 240 L 144 200 L 138 206 L 148 170 L 142 176 L 152 140 L 162 176 L 156 170 L 166 206 L 160 200 L 174 240 Z"
-              />
-              <path
-                d="M 195 240 L 207 208 L 202 213 L 211 188 L 207 192 L 215 170 L 222 192 L 218 188 L 226 213 L 222 208 L 234 240 Z"
-              />
-              <path
-                d="M 250 240 L 268 195 L 260 203 L 274 160 L 266 168 L 280 126 L 294 168 L 286 160 L 300 203 L 292 195 L 310 240 Z"
-              />
-              <path
-                d="M 338 240 L 352 200 L 346 206 L 356 170 L 350 176 L 360 140 L 370 176 L 364 170 L 374 206 L 368 200 L 382 240 Z"
-              />
-              <path
-                d="M 540 240 L 548 215 L 544 219 L 550 198 L 546 202 L 552 178 L 558 202 L 554 198 L 560 219 L 556 215 L 564 240 Z"
-              />
-            </g>
-            <!-- maypole in clearing -->
-            <line x1="425" y1="158" x2="425" y2="240" stroke="#040d18" stroke-width="3" />
-            <line x1="411" y1="172" x2="439" y2="172" stroke="#040d18" stroke-width="2" />
-            <circle cx="411" cy="186" r="6" fill="none" stroke="#1e6a40" stroke-width="1.6" />
-            <circle cx="439" cy="186" r="6" fill="none" stroke="#1e6a40" stroke-width="1.6" />
-            <g fill="#fecc00">
-              <circle cx="411" cy="170" r="2.4" />
-              <circle cx="439" cy="170" r="2.4" />
-              <circle cx="425" cy="160" r="2.6" />
-            </g>
-            <!-- lake -->
-            <path d="M 0 240 L 600 240 L 600 320 L 0 320 Z" fill="#02121f" />
-            <g stroke="#0a3050" stroke-width="1" opacity=".6">
-              <line x1="60" y1="262" x2="180" y2="262" />
-              <line x1="240" y1="278" x2="360" y2="278" />
-              <line x1="420" y1="266" x2="540" y2="266" />
-              <line x1="120" y1="296" x2="220" y2="296" />
-              <line x1="380" y1="300" x2="500" y2="300" />
-            </g>
-            <!-- dala horse on the shore -->
-            <g transform="translate(78,236) scale(.42)">
-              <path d="M12 56Q6 56 6 64Q6 70 12 70Q18 66 22 62Z" fill="#c92733" />
-              <path
-                d="M18 56L70 56Q76 56 76 60L76 68Q76 70 74 70L22 70Q18 70 18 68Z"
-                fill="#c92733"
-              />
-              <path d="M64 50L80 22Q84 18 88 24L84 28L68 56Z" fill="#c92733" />
-              <path d="M80 20Q88 18 92 20L92 28Q88 32 82 30L76 26Z" fill="#c92733" />
-              <path d="M84 16L86 12L90 18Z" fill="#c92733" />
-              <rect x="58" y="68" width="6" height="22" fill="#c92733" />
-              <rect x="48" y="68" width="6" height="22" fill="#c92733" />
-              <rect x="34" y="68" width="6" height="22" fill="#c92733" />
-              <rect x="24" y="68" width="6" height="22" fill="#c92733" />
-              <rect x="38" y="56" width="22" height="10" fill="#006aa7" />
-            </g>
-          </svg>
+          <img class="footer__banner" src="assets/banner.png" alt="Almost Swedish" />
         </div>
 
         <nav class="footer__cols" aria-label="Footer">

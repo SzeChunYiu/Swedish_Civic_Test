@@ -668,7 +668,8 @@
 
   function onRouteChange() {
     const h = location.hash;
-    if (h === '' || h === '#/' || h === '#') requestAnimationFrame(renderDashboard);
+    // Dashboard now lives on the Practice page — only render when on /practice.
+    if (h.startsWith('#/practice')) requestAnimationFrame(renderDashboard);
   }
 
   window.addEventListener('hashchange', onRouteChange);
