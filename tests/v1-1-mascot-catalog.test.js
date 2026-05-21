@@ -79,6 +79,69 @@ test('mascotAssetPath: constructs canonical path', () => {
   }
 });
 
+test('mascotAssetPath: every catalog expression has a canonical asset file', () => {
+  const { MASCOT_CATALOG, MASCOT_EXPRESSIONS, mascotAssetPath } = loadTs('lib/mascot/catalog.ts');
+
+  for (const mascot of MASCOT_CATALOG) {
+    for (const expression of MASCOT_EXPRESSIONS) {
+      const assetPath = mascotAssetPath(mascot.id, expression);
+      assert.match(assetPath, /^assets\/mascot\/[^/]+\/(?:idle|happy|oops|think|celebrate)\.svg$/);
+      assert.ok(fs.existsSync(path.join(repoRoot, assetPath)), `${assetPath} missing`);
+    }
+  }
+});
+
+test('inline mascot components share the canonical expression id contract', () => {
+  const dalaSource = fs.readFileSync(
+    path.join(repoRoot, 'components/mascot/DalaMascot.tsx'),
+    'utf8',
+  );
+  const lumiSource = fs.readFileSync(
+    path.join(repoRoot, 'components/mascot/LumiMascot.tsx'),
+    'utf8',
+  );
+  const indexSource = fs.readFileSync(path.join(repoRoot, 'components/mascot/index.ts'), 'utf8');
+
+  for (const [label, source] of [
+    ['DalaMascot', dalaSource],
+    ['LumiMascot', lumiSource],
+  ]) {
+    const expectedThinkingLabel =
+      label === 'DalaMascot' ? 'Dala mascot thinking' : 'Lumi mascot thinking';
+    assert.match(
+      source,
+      /import type \{ MascotExpression \} from '..\/..\/lib\/mascot\/catalog';/,
+      `${label} must consume the catalog MascotExpression type`,
+    );
+    assert.match(source, new RegExp(`think: '${expectedThinkingLabel}'`));
+    assert.match(source, /expression === 'think'/);
+    assert.doesNotMatch(source, /expression === 'thinking'/);
+    assert.doesNotMatch(source, /'thinking'\s*\|/);
+  }
+
+  assert.match(
+    indexSource,
+    /export type \{ MascotExpression \} from '..\/..\/lib\/mascot\/catalog';/,
+  );
+});
+
+test('mascot runtime sources do not reference legacy thinking asset paths', () => {
+  const runtimeFiles = [
+    'components/mascot/CompanionPicker.tsx',
+    'components/mascot/DalaMascot.tsx',
+    'components/mascot/LumiMascot.tsx',
+    'components/mascot/index.ts',
+    'lib/mascot/catalog.ts',
+    'lib/storage/companionStore.ts',
+  ];
+
+  for (const relativePath of runtimeFiles) {
+    const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+    assert.doesNotMatch(source, /assets\/mascots\//, `${relativePath} uses legacy mascot dir`);
+    assert.doesNotMatch(source, /thinking\.svg/, `${relativePath} uses legacy thinking asset`);
+  }
+});
+
 test('DEFAULT_COMPANION_ID: Kanelbulle is the valid default companion', () => {
   const { DEFAULT_COMPANION_ID, isMascotId } = loadTs('lib/mascot/catalog.ts');
   assert.equal(DEFAULT_COMPANION_ID, 'kanelbulle');

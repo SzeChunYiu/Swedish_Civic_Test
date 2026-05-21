@@ -1,8 +1,8 @@
 import { Circle, Ellipse, G, Path, Svg } from 'react-native-svg';
 import type { SvgProps } from 'react-native-svg';
 
+import type { MascotExpression } from '../../lib/mascot/catalog';
 import { colors } from '../../lib/theme';
-import type { MascotExpression } from './DalaMascot';
 
 export interface LumiMascotProps extends Omit<SvgProps, 'height' | 'viewBox' | 'width'> {
   accessibilityLabel?: string;
@@ -14,7 +14,7 @@ const expressionLabels: Record<MascotExpression, string> = {
   idle: 'Lumi mascot idle',
   happy: 'Lumi mascot happy',
   oops: 'Lumi mascot oops',
-  thinking: 'Lumi mascot thinking',
+  think: 'Lumi mascot thinking',
   celebrate: 'Lumi mascot celebrate',
 };
 
@@ -67,7 +67,7 @@ export function LumiMascot({
       {renderFace(expression)}
       {expression === 'happy' ? renderHappyAccent() : null}
       {expression === 'oops' ? renderOopsAccent() : null}
-      {expression === 'thinking' ? renderThinkingAccent() : null}
+      {expression === 'think' ? renderThinkingAccent() : null}
       {expression === 'celebrate' ? renderCelebrateAccent() : null}
     </Svg>
   );
@@ -83,7 +83,7 @@ function renderFace(expression: MascotExpression) {
     );
   }
 
-  if (expression === 'thinking') {
+  if (expression === 'think') {
     return (
       <G id="face" stroke={colors.text} strokeLinecap="round" strokeWidth={4}>
         <Path d="M56 58h.1M70 57h.1" />
