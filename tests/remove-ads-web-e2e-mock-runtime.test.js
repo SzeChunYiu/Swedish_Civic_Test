@@ -118,7 +118,7 @@ function loadRemoveAdsWebRuntime() {
   };
 }
 
-test('web Remove Ads E2E mock owned runtime proves createDefaultPurchaseRuntimeOptions restore and stored entitlement spoof guard', async () => {
+test('web Remove Ads E2E mock owned restore grants only in E2E runtime', async () => {
   await withGlobalProperties(
     {
       __SMT_E2E__: true,
@@ -142,7 +142,9 @@ test('web Remove Ads E2E mock owned runtime proves createDefaultPurchaseRuntimeO
       assert.equal((await getPurchaseEntitlements(runtimeOptions)).adsDisabled, true);
     },
   );
+});
 
+test('createDefaultPurchaseRuntimeOptions fails closed and clears stored entitlement outside E2E', async () => {
   await withGlobalProperties(
     {
       __SMT_E2E__: false,
