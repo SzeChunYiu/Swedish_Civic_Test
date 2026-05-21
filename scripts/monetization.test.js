@@ -2155,7 +2155,8 @@ test('global launch popup ad is suppressed on active question and compliance rou
     path.join(repoRoot, 'lib/monetization/useRemoveAdsEntitlements.ts'),
     'utf8',
   );
-  const { adsConfig, shouldSuppressLaunchPopupAdForPath } = loadTs('lib/monetization/ads.ts');
+  const { adsConfig, isLaunchPopupAdEligibleForPath, shouldSuppressLaunchPopupAdForPath } =
+    loadTs('lib/monetization/ads.ts');
 
   assert.match(layoutSource, /usePathname/);
   assert.match(layoutSource, /useRemoveAdsEntitlements/);
@@ -2169,29 +2170,44 @@ test('global launch popup ad is suppressed on active question and compliance rou
   assert.equal(shouldSuppressLaunchPopupAdForPath('/quiz/q001'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/quiz/q001/review'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/about-the-test'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/chapter/ch01'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/chapter/ch01/summary'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/citizenship-requirements'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/onboarding'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/privacy'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/search'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/search?q=riksdag'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/settings'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/terms'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/support'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/disclaimer'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/sources'), true);
-  assert.equal(shouldSuppressLaunchPopupAdForPath('/about-the-test'), true);
-  assert.equal(shouldSuppressLaunchPopupAdForPath('/citizenship-requirements'), true);
-  assert.equal(shouldSuppressLaunchPopupAdForPath('/onboarding'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/unknown'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/home/details'), true);
+  assert.equal(isLaunchPopupAdEligibleForPath('/'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/home'), false);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/learn'), false);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/mistakes'), false);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/profile'), false);
+  assert.deepEqual(adsConfig.eligibleLaunchPopupRoutes, [
+    '/',
+    '/home',
+    '/learn',
+    '/mistakes',
+    '/profile',
+  ]);
   assert.deepEqual(adsConfig.suppressedLaunchPopupRoutes, [
     '/exam',
     '/practice',
     '/quiz',
     '/about-the-test',
+    '/chapter',
     '/citizenship-requirements',
     '/disclaimer',
     '/onboarding',
     '/privacy',
+    '/search',
+    '/settings',
     '/sources',
     '/support',
     '/terms',

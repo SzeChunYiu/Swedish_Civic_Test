@@ -9,15 +9,26 @@ type AdConsentGate = Pick<AdConsentDecision, 'adServingAllowed'>;
 // Web placeholders do not initialize the native ad SDK; this keeps real-unit web exports previewable.
 export const WEB_AD_FALLBACK_CONSENT_DECISION = { adServingAllowed: true } as const;
 
+export const LAUNCH_POPUP_AD_ELIGIBLE_ROUTES = [
+  '/',
+  '/home',
+  '/learn',
+  '/mistakes',
+  '/profile',
+] as const;
+
 export const LAUNCH_POPUP_AD_SUPPRESSED_ROUTES = [
   '/exam',
   '/practice',
   '/quiz',
   '/about-the-test',
+  '/chapter',
   '/citizenship-requirements',
   '/disclaimer',
   '/onboarding',
   '/privacy',
+  '/search',
+  '/settings',
   '/sources',
   '/support',
   '/terms',
@@ -175,13 +186,21 @@ export function shouldShowLaunchPopupAd({
   );
 }
 
-function pathMatchesRoute(pathname: string, route: string): boolean {
-  const normalizedPath = pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname;
-  return normalizedPath === route || normalizedPath.startsWith(`${route}/`);
+function normalizePathname(pathname: string): string {
+  const pathOnly = pathname.split(/[?#]/)[0] || '/';
+  return pathOnly.length > 1 ? pathOnly.replace(/\/+$/, '') : pathOnly;
+}
+
+function pathMatchesExactRoute(pathname: string, route: string): boolean {
+  return normalizePathname(pathname) === route;
+}
+
+export function isLaunchPopupAdEligibleForPath(pathname: string): boolean {
+  return LAUNCH_POPUP_AD_ELIGIBLE_ROUTES.some((route) => pathMatchesExactRoute(pathname, route));
 }
 
 export function shouldSuppressLaunchPopupAdForPath(pathname: string): boolean {
-  return LAUNCH_POPUP_AD_SUPPRESSED_ROUTES.some((route) => pathMatchesRoute(pathname, route));
+  return !isLaunchPopupAdEligibleForPath(pathname);
 }
 
 export function getPlatformAdUnitId(
@@ -212,5 +231,6 @@ export const adsConfig = {
     'app_open_launch',
   ],
   blockedPlacements: ['exam_screen'],
+  eligibleLaunchPopupRoutes: LAUNCH_POPUP_AD_ELIGIBLE_ROUTES,
   suppressedLaunchPopupRoutes: LAUNCH_POPUP_AD_SUPPRESSED_ROUTES,
 };
