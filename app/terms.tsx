@@ -1,4 +1,5 @@
 import { LegalPage, LegalSection } from '../components/compliance/LegalPage';
+import { SourceMaterialLinkList } from '../components/compliance/SourceMaterialLinks';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 
 type LegalRouteSectionCopy = {
@@ -27,7 +28,7 @@ const termsCopy: Record<AppLanguage, TermsRouteCopy> = {
         title: 'Ingen garanti',
       },
       sourceMaterial: {
-        body: 'Frågor och förklaringar är skrivna för att stödja lärande från UHR-refererade avsnitt. Använd dem tillsammans med det ursprungliga utbildningsmaterialet och aktuell myndighetsinformation.',
+        body: 'Frågor och förklaringar är skrivna för att stödja lärande från UHR-refererade avsnitt. Använd dem tillsammans med UHR:s utbildningsmaterial och aktuell myndighetsinformation. Källorna nedan visar vilket UHR-material och vilken källgräns den här vägledningen bygger på.',
         title: 'Respektera källmaterialet',
       },
     },
@@ -44,7 +45,7 @@ const termsCopy: Record<AppLanguage, TermsRouteCopy> = {
         title: 'No guarantee',
       },
       sourceMaterial: {
-        body: 'Questions and explanations are written to support learning from UHR-referenced sections. Use them together with the original education material and current authority information.',
+        body: 'Questions and explanations are written to support learning from UHR-referenced sections. Use them together with the UHR education material and current authority information. The sources below show the UHR material and source-boundary guidance this notice relies on.',
         title: 'Respect source material',
       },
     },
@@ -64,8 +65,11 @@ export default function Screen() {
       <LegalSection title={copy.sections.noGuarantee.title}>
         {copy.sections.noGuarantee.body}
       </LegalSection>
-      <LegalSection title={copy.sections.sourceMaterial.title}>
-        {copy.sections.sourceMaterial.body}
+      <LegalSection
+        title={copy.sections.sourceMaterial.title}
+        body={copy.sections.sourceMaterial.body}
+      >
+        <SourceMaterialLinkList language={language} />
       </LegalSection>
     </LegalPage>
   );

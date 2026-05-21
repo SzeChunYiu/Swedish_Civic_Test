@@ -59,6 +59,8 @@ export interface LegalExternalLinkProps {
   label: string;
 }
 
+export type LegalLinkListProps = PropsWithChildren;
+
 export function LegalPage({
   backAccessibilityLabel,
   backHref = '/(tabs)/profile',
@@ -121,6 +123,10 @@ export function LegalExternalLink({
       {destination}
     </Link>
   );
+}
+
+export function LegalLinkList({ children }: LegalLinkListProps) {
+  return <View style={styles.linkList}>{children}</View>;
 }
 
 function getBackAccessibilityLabel(label: string) {
@@ -247,5 +253,8 @@ const styles = StyleSheet.create({
     paddingVertical: space[1],
     textDecorationLine: 'none',
     width: '100%',
+  },
+  linkList: {
+    gap: space[1],
   },
 });

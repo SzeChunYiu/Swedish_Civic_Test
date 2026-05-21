@@ -1,12 +1,12 @@
-import { LegalExternalLink, LegalPage, LegalSection } from '../components/compliance/LegalPage';
+import { LegalLinkList, LegalPage, LegalSection } from '../components/compliance/LegalPage';
+import {
+  UHR_AUTHORITY_BOUNDARY_SOURCE,
+  UhrAuthorityBoundaryLink,
+  UhrEducationMaterialLink,
+} from '../components/compliance/SourceMaterialLinks';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 
 const UHR_EDUCATION_MATERIAL_URL = 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/';
-const UHR_AUTHORITY_BOUNDARY_SOURCE = {
-  retrievedDate: '2026-05-20',
-  title: 'UHR: Om medborgarskapsprovet',
-  url: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
-} as const;
 
 type LegalRouteSectionCopy = {
   body: string;
@@ -15,8 +15,6 @@ type LegalRouteSectionCopy = {
 };
 
 type SourcesRouteCopy = {
-  backAccessibilityLabel: string;
-  backLabel: string;
   openAuthorityBoundarySourceAccessibilityLabel: string;
   openEducationMaterialAccessibilityLabel: string;
   sections: {
@@ -29,8 +27,6 @@ type SourcesRouteCopy = {
 
 const sourcesCopy: Record<AppLanguage, SourcesRouteCopy> = {
   sv: {
-    backAccessibilityLabel: 'Tillbaka till startsidan',
-    backLabel: '← Tillbaka till startsidan',
     openAuthorityBoundarySourceAccessibilityLabel: 'Öppna UHR:s sida Om medborgarskapsprovet',
     openEducationMaterialAccessibilityLabel: 'Öppna UHR:s utbildningsmaterial',
     sections: {
@@ -51,8 +47,6 @@ const sourcesCopy: Record<AppLanguage, SourcesRouteCopy> = {
     title: 'Källor',
   },
   en: {
-    backAccessibilityLabel: 'Back to Home',
-    backLabel: '← Back to Home',
     openAuthorityBoundarySourceAccessibilityLabel: 'Open UHR About the citizenship test page',
     openEducationMaterialAccessibilityLabel: 'Open UHR education material',
     sections: {
@@ -79,22 +73,14 @@ export default function Screen() {
   const copy = sourcesCopy[language];
 
   return (
-    <LegalPage
-      backAccessibilityLabel={copy.backAccessibilityLabel}
-      backHref="/home"
-      backLabel={copy.backLabel}
-      title={copy.title}
-    >
+    <LegalPage title={copy.title}>
       <LegalSection
         title={copy.sections.primaryStudyMaterial.title}
         body={copy.sections.primaryStudyMaterial.body}
       >
-        <LegalExternalLink
-          accessibilityLabel={copy.openEducationMaterialAccessibilityLabel}
-          destination={UHR_EDUCATION_MATERIAL_URL}
-          href={UHR_EDUCATION_MATERIAL_URL}
-          label={copy.openEducationMaterialAccessibilityLabel}
-        />
+        <LegalLinkList>
+          <UhrEducationMaterialLink href={UHR_EDUCATION_MATERIAL_URL} language={language} />
+        </LegalLinkList>
       </LegalSection>
       <LegalSection title={copy.sections.questionReferences.title}>
         {copy.sections.questionReferences.body}
@@ -103,12 +89,9 @@ export default function Screen() {
         title={copy.sections.authorityBoundaries.title}
         body={copy.sections.authorityBoundaries.body}
       >
-        <LegalExternalLink
-          accessibilityLabel={copy.openAuthorityBoundarySourceAccessibilityLabel}
-          destination={UHR_AUTHORITY_BOUNDARY_SOURCE.url}
-          href={UHR_AUTHORITY_BOUNDARY_SOURCE.url}
-          label={copy.openAuthorityBoundarySourceAccessibilityLabel}
-        />
+        <LegalLinkList>
+          <UhrAuthorityBoundaryLink language={language} />
+        </LegalLinkList>
       </LegalSection>
     </LegalPage>
   );

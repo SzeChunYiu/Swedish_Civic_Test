@@ -13,7 +13,7 @@ type LegalExternalLinkFixture = {
   actionLabel: string;
   bodyText: string;
   language: AppLanguage;
-  path: '/sources' | '/support';
+  path: '/disclaimer' | '/sources' | '/support' | '/terms';
   sectionTitle: string;
   title: string;
   url: string;
@@ -41,6 +41,7 @@ const ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS = [
   'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html',
 ];
 const OFFICIAL_SOURCE_RETRIEVED_DATE = '2026-05-20';
+const UHR_AUTHORITY_BOUNDARY_URL = ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS[0];
 
 const legalExternalLinkFixtures: LegalExternalLinkFixture[] = [
   {
@@ -60,6 +61,46 @@ const legalExternalLinkFixtures: LegalExternalLinkFixture[] = [
     sectionTitle: 'Primary study material',
     title: 'Sources',
     url: UHR_EDUCATION_MATERIAL_URL,
+  },
+  {
+    actionLabel: 'Öppna UHR:s utbildningsmaterial',
+    bodyText: 'Studera alltid UHR:s utbildningsmaterial direkt.',
+    language: 'sv',
+    path: '/disclaimer',
+    sectionTitle: 'Använd med källmaterialet',
+    title: 'Ansvarsfriskrivning',
+    url: UHR_EDUCATION_MATERIAL_URL,
+    visibleLabel: 'UHR: Utbildningsmaterial om det svenska samhället',
+  },
+  {
+    actionLabel: 'Open UHR education material',
+    bodyText: 'Always study the UHR education material directly.',
+    language: 'en',
+    path: '/disclaimer',
+    sectionTitle: 'Use with source material',
+    title: 'Disclaimer',
+    url: UHR_EDUCATION_MATERIAL_URL,
+    visibleLabel: 'UHR: Study material about Swedish society',
+  },
+  {
+    actionLabel: 'Öppna UHR:s sida Om medborgarskapsprovet',
+    bodyText: 'Källorna nedan visar vilket UHR-material',
+    language: 'sv',
+    path: '/terms',
+    sectionTitle: 'Respektera källmaterialet',
+    title: 'Användarvillkor',
+    url: UHR_AUTHORITY_BOUNDARY_URL,
+    visibleLabel: 'UHR: Om medborgarskapsprovet',
+  },
+  {
+    actionLabel: 'Open UHR About the citizenship test page',
+    bodyText: 'The sources below show the UHR material',
+    language: 'en',
+    path: '/terms',
+    sectionTitle: 'Respect source material',
+    title: 'Terms of use',
+    url: UHR_AUTHORITY_BOUNDARY_URL,
+    visibleLabel: 'UHR: About the citizenship test',
   },
   {
     actionLabel: 'Öppna den offentliga supportsidan',
