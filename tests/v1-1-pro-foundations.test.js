@@ -646,6 +646,21 @@ test('ProPaywall: renders the canonical tier model with separate Pro and Remove 
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('dashboard route stays free-scope until Pro analytics are release-gated', () => {
+  const source = fs.readFileSync(path.join(repoRoot, 'app/dashboard.tsx'), 'utf8');
+
+  assert.doesNotMatch(source, /createDashboardProEntitlements/);
+  assert.doesNotMatch(source, /advancedAnalyticsUnlocked/);
+  assert.doesNotMatch(source, /proAnalyticsPlaceholder/);
+  assert.doesNotMatch(source, /hasProEntitlement/);
+  assert.doesNotMatch(source, /ProTierEntitlements/);
+  assert.doesNotMatch(source, /predictedPassProbability/);
+  assert.doesNotMatch(source, /display:\s*'none'/);
+  assert.match(source, /<ActivityHeatmap bins=\{activityBins\} copy=\{copy\.activity\} \/>/);
+  assert.match(source, /<PerChapterProgressBars[\s\S]*bars=\{chapterBars\}/);
+  assert.match(source, /<StreakXpSparkline[\s\S]*points=\{xpPoints\}/);
+});
+
 // -------------------------------------------------------- Dashboard stats
 
 function progressWithSessions(sessions) {

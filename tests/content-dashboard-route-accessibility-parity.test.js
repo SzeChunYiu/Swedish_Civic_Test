@@ -34,6 +34,16 @@ function extractNamedStyle(source, styleName) {
 }
 
 function assertDashboardAccessibilitySeparation(sources) {
+  assert.doesNotMatch(
+    sources.dashboard,
+    /createDashboardProEntitlements|advancedAnalyticsUnlocked|proAnalyticsPlaceholder|hasProEntitlement|ProTierEntitlements/,
+    'Dashboard must not keep unreachable Pro entitlement placeholders in the free route',
+  );
+  assert.doesNotMatch(
+    sources.dashboard,
+    /display:\s*'none'/,
+    'Dashboard must not hide dead placeholder surfaces',
+  );
   assert.match(
     sources.dashboard,
     /const summaryAccessibilityLabel = copy\.summaryAccessibilityLabel\(/,

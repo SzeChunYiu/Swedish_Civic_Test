@@ -1,9 +1,8 @@
 import { Link } from 'expo-router';
 import { useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 
 import { ActivityHeatmap } from '../components/dashboard/ActivityHeatmap';
-import { MockExamHistoryCard } from '../components/dashboard/MockExamHistoryCard';
 import { PerChapterProgressBars } from '../components/dashboard/PerChapterProgressBars';
 import { StreakXpSparkline } from '../components/dashboard/StreakXpSparkline';
 import { Badge } from '../components/ui/Badge';
@@ -14,17 +13,14 @@ import { questions } from '../data/questions';
 import {
   dailyActivityHistogram,
   dashboardSummary,
-  mockHistory,
   perChapterProgress,
   xpSparkline,
 } from '../lib/learning/dashboardStats';
 import { buildDashboardProgressSnapshot } from '../lib/learning/dashboardProgressSnapshot';
 import { calculateStreakWithFreeze } from '../lib/learning/streakWithFreeze';
-import { hasProEntitlement } from '../lib/monetization/premium';
 import { useProgressStore } from '../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../lib/theme';
-import type { ProTierEntitlements } from '../types/monetization';
 
 const ACTIVITY_DAYS = 53 * 7;
 const XP_DAYS = 30;
@@ -58,28 +54,6 @@ type DashboardCopy = {
   eyebrow: string;
   homeLink: string;
   homeLinkAccessibilityLabel: string;
-  mockHistory: {
-    attemptCount: (count: number) => string;
-    averageLabel: string;
-    bestLabel: string;
-    emptyState: string;
-    examLink: string;
-    examLinkAccessibilityLabel: string;
-    latestLabel: string;
-    lowestLabel: string;
-    recentLabel: string;
-    scoreLabel: (scorePercent: number, completedDate: string, duration: string | null) => string;
-    subtitle: string;
-    summary: (
-      attemptCount: number,
-      latestScore: number,
-      bestScore: number,
-      averageScore: number,
-      lowestScore: number,
-    ) => string;
-    timeUsedLabel: (duration: string) => string;
-    title: string;
-  };
   streakXp: {
     emptyState: string;
     levelLabel: string;
@@ -115,39 +89,18 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
       accuracyLabel: 'Rätt',
       chapterOrder: 'Kapitelordning',
       coverageLabel: 'Täckning',
-      emptyState: 'När du har svarat på frågor visas dina kapitelframsteg här.',
+      emptyState: 'När du har svarat på frågor visas kapitelprogress här.',
       linkLabel: (chapterName) => `Öppna ${chapterName}`,
       sortAccessibilityLabel: (mode) => `Sortera kapitel: ${mode}`,
       subtitle: 'Rätt och täckning visas sida vid sida per kapitel.',
-      title: 'Kapitelframsteg',
+      title: 'Kapitelprogress',
       weakestFirst: 'Svagast först',
     },
     eyebrow: 'Lokal data',
     homeLink: 'Till startsidan',
     homeLinkAccessibilityLabel: 'Gå tillbaka till startsidan',
-    mockHistory: {
-      attemptCount: (count) => `${count} övningsprov`,
-      averageLabel: 'Snitt',
-      bestLabel: 'Bäst',
-      emptyState:
-        'Genomför ett övningsprov så visas tidigare resultat, tempo och bästa försök här.',
-      examLink: 'Gå till övningsprov',
-      examLinkAccessibilityLabel: 'Öppna övningsprovet',
-      latestLabel: 'Senast',
-      lowestLabel: 'Lägst',
-      recentLabel: 'Senaste övningsprov',
-      scoreLabel: (scorePercent, completedDate, duration) =>
-        duration
-          ? `${scorePercent}% den ${completedDate}, ${duration}`
-          : `${scorePercent}% den ${completedDate}`,
-      subtitle: 'Följ de senaste resultaten utan att blanda in någon server.',
-      summary: (attemptCount, latestScore, bestScore, averageScore, lowestScore) =>
-        `${attemptCount} övningsprov. Senast ${latestScore}%. Bäst ${bestScore}%. Snitt ${averageScore}%. Lägst ${lowestScore}%.`,
-      timeUsedLabel: (duration) => `Tid: ${duration}`,
-      title: 'Övningsprov över tid',
-    },
     streakXp: {
-      emptyState: 'XP-kurvan visas när du börjar få rätt svar.',
+      emptyState: 'XP-linjen visas när du börjar få rätt svar.',
       levelLabel: 'nivå',
       streakLabel: 'dagars svit',
       subtitle: 'Senaste 30 dagarna med nivå och dagsvana.',
@@ -192,27 +145,6 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
     eyebrow: 'Local data',
     homeLink: 'Back to Home',
     homeLinkAccessibilityLabel: 'Go back to Home',
-    mockHistory: {
-      attemptCount: (count) => `${count} mock exams`,
-      averageLabel: 'Average',
-      bestLabel: 'Best',
-      emptyState:
-        'Finish a mock exam and your past scores, pacing, and best attempt will appear here.',
-      examLink: 'Go to mock exam',
-      examLinkAccessibilityLabel: 'Open the mock exam',
-      latestLabel: 'Latest',
-      lowestLabel: 'Lowest',
-      recentLabel: 'Recent mock exams',
-      scoreLabel: (scorePercent, completedDate, duration) =>
-        duration
-          ? `${scorePercent}% on ${completedDate}, ${duration}`
-          : `${scorePercent}% on ${completedDate}`,
-      subtitle: 'Track recent results without sending anything to a server.',
-      summary: (attemptCount, latestScore, bestScore, averageScore, lowestScore) =>
-        `${attemptCount} mock exams. Latest ${latestScore}%. Best ${bestScore}%. Average ${averageScore}%. Lowest ${lowestScore}%.`,
-      timeUsedLabel: (duration) => `Time: ${duration}`,
-      title: 'Mock exam history',
-    },
     streakXp: {
       emptyState: 'The XP line appears once you start getting answers right.',
       levelLabel: 'level',
@@ -234,21 +166,6 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
 
 function createQuestionChapterIndex() {
   return Object.fromEntries(questions.map((question) => [question.id, question.chapterId]));
-}
-
-function createDashboardProEntitlements(): ProTierEntitlements {
-  return {
-    adsDisabled: false,
-    confidenceSlider: false,
-    customStudyPlan: false,
-    fullMistakeReview: false,
-    multiColorHighlights: false,
-    nativeLangExplanations: false,
-    notesExport: false,
-    predictedPassProbability: false,
-    spacedRepetition: false,
-    unlimitedMockExams: false,
-  };
 }
 
 export default function DashboardScreen() {
@@ -283,7 +200,6 @@ export default function DashboardScreen() {
     [progress, questionChapterIndex],
   );
   const xpPoints = useMemo(() => xpSparkline(progress, { daysBack: XP_DAYS }), [progress]);
-  const mockHistoryEntries = useMemo(() => mockHistory(progress), [progress]);
   const summary = useMemo(
     () => dashboardSummary(progress, questionChapterIndex),
     [progress, questionChapterIndex],
@@ -296,9 +212,6 @@ export default function DashboardScreen() {
       }),
     [answerDates, streakFreezeState],
   );
-  const proEntitlements = useMemo(createDashboardProEntitlements, []);
-  const advancedAnalyticsUnlocked =
-    hasProEntitlement(proEntitlements) && proEntitlements.predictedPassProbability;
   const summaryAccessibilityLabel = copy.summaryAccessibilityLabel(
     summary.questionsAnsweredThisWeek,
     summary.chaptersWithAnyAnswer,
@@ -342,12 +255,6 @@ export default function DashboardScreen() {
         level={progress.level}
         points={xpPoints}
       />
-      <MockExamHistoryCard
-        bestScore={summary.bestMockScore}
-        copy={copy.mockHistory}
-        entries={mockHistoryEntries}
-      />
-      {advancedAnalyticsUnlocked ? <View style={styles.proAnalyticsPlaceholder} /> : null}
     </ScreenShell>
   );
 }
@@ -379,8 +286,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: space[2],
     paddingVertical: space[1],
     textDecorationLine: 'none',
-  },
-  proAnalyticsPlaceholder: {
-    display: 'none',
   },
 });
