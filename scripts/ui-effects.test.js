@@ -9,6 +9,15 @@ function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
+test('npm ui-effects script forwards Node test options before the test file', () => {
+  const packageJson = JSON.parse(read('package.json'));
+  const runner = read('scripts/run-ui-effects-test.js');
+
+  assert.equal(packageJson.scripts['test:ui-effects'], 'node scripts/run-ui-effects-test.js');
+  assert.match(runner, /\['--test', \.\.\.forwardedArgs, 'scripts\/ui-effects\.test\.js'\]/);
+  assert.match(runner, /spawnSync\(\s*process\.execPath/);
+});
+
 test('progress bar uses tokenized animated motion and exposes progress to assistive tech', () => {
   const source = read('components/ui/ProgressBar.tsx');
 

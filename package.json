@@ -61,7 +61,7 @@
     "test:static-site-chapter-count-copy": "node --test scripts/static-site-chapter-count-copy.test.js",
     "test:static-site-source-provenance-copy": "node --test scripts/static-site-source-provenance-copy.test.js",
     "test:site-live": "node scripts/check-live-site.js",
-    "test:ui-effects": "node --test scripts/ui-effects.test.js",
+    "test:ui-effects": "node scripts/run-ui-effects-test.js",
     "simulate:ux-users": "node scripts/simulate-ux-users.js",
     "test:ux-simulation": "node --test scripts/ux-simulation.test.js",
     "audit:release": "npm audit --audit-level=moderate",
