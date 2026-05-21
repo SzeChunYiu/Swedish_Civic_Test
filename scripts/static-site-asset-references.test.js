@@ -268,6 +268,72 @@ test('asset manifest check follows local CSS imports and ignores commented refer
   }
 });
 
+
+test('asset manifest check follows local CSS imports recursively without leaving the site root', () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'site-css-import-reference-'));
+  const tempSiteDir = path.join(tempDir, 'site');
+
+  try {
+    fs.mkdirSync(path.join(tempSiteDir, 'css', 'nested'), { recursive: true });
+    fs.mkdirSync(path.join(tempSiteDir, 'cursors'), { recursive: true });
+    fs.mkdirSync(path.join(tempSiteDir, 'fonts'), { recursive: true });
+    fs.mkdirSync(path.join(tempSiteDir, 'images'), { recursive: true });
+    fs.writeFileSync(
+      path.join(tempSiteDir, 'index.html'),
+      '<!doctype html><link rel="stylesheet" href="css/site.css?version=1">',
+    );
+    fs.writeFileSync(
+      path.join(tempSiteDir, 'css', 'site.css'),
+      [
+        '@import "./theme.css";',
+        '@import url("./nested/buttons.css");',
+        '@import url("https://example.com/remote.css");',
+        '@import url("data:text/css,body{}");',
+        '@import url(var(--runtime-sheet));',
+        '.site { background-image: url("../images/site-bg.png#hero"); }',
+      ].join('\n'),
+    );
+    fs.writeFileSync(
+      path.join(tempSiteDir, 'css', 'theme.css'),
+      [
+        '@import url("./nested/tokens.css");',
+        '.theme { background-image: url("../images/theme-bg.svg"); }',
+      ].join('\n'),
+    );
+    fs.writeFileSync(
+      path.join(tempSiteDir, 'css', 'nested', 'buttons.css'),
+      [
+        '@import "../theme.css";',
+        '.button { cursor: url("../../cursors/button.cur"), pointer; }',
+      ].join('\n'),
+    );
+    fs.writeFileSync(
+      path.join(tempSiteDir, 'css', 'nested', 'tokens.css'),
+      [
+        '@import "../site.css";',
+        '@font-face { src: url("../../fonts/site.woff2") format("woff2"); }',
+      ].join('\n'),
+    );
+    fs.writeFileSync(path.join(tempSiteDir, 'cursors', 'button.cur'), 'cursor');
+    fs.writeFileSync(path.join(tempSiteDir, 'fonts', 'site.woff2'), 'font');
+    fs.writeFileSync(path.join(tempSiteDir, 'images', 'site-bg.png'), 'site');
+    fs.writeFileSync(path.join(tempSiteDir, 'images', 'theme-bg.svg'), '<svg />');
+
+    assert.deepEqual(listIndexAssetReferences(tempSiteDir), [
+      'css/nested/buttons.css',
+      'css/nested/tokens.css',
+      'css/site.css',
+      'css/theme.css',
+      'cursors/button.cur',
+      'fonts/site.woff2',
+      'images/site-bg.png',
+      'images/theme-bg.svg',
+    ]);
+  } finally {
+    fs.rmSync(tempDir, { force: true, recursive: true });
+  }
+});
+
 test('asset manifest check reports escaped CSS imports without reading outside site root', () => {
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'site-css-import-escape-'));
   const tempSiteDir = path.join(tempDir, 'site');
