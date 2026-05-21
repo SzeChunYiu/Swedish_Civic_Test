@@ -4202,7 +4202,14 @@ const EXPECTED_QUESTION_REPORT_LINK_RULES = [
   },
   {
     file: 'components/quiz/QuestionReportLink.tsx',
-    label: 'question surface support query parameter',
+    label: 'app-generated report screen support query parameter',
+    message: 'QuestionReportLink must emit reportScreen for app-generated support links',
+    pattern: /\['reportScreen', screen\]/,
+  },
+  {
+    file: 'components/quiz/QuestionReportLink.tsx',
+    label: 'legacy screen support query parameter',
+    message: 'QuestionReportLink must keep the legacy screen support query fallback',
     pattern: /\['screen', screen\]/,
   },
   {
@@ -4318,6 +4325,21 @@ const EXPECTED_QUESTION_REPORT_LINK_RULES = [
         source.includes('hasQuestionReportSearchParams') &&
         source.includes('questionReportResult.rejected') &&
         /if \(language\.value && language\.value !== 'sv' && language\.value !== 'en'\) \{\s*rejected = true;\s*\}\s*if \(!questionId\.value/.test(
+          source,
+        )
+      );
+    },
+  },
+  {
+    file: 'app/support.tsx',
+    label: 'support reportScreen precedence over legacy screen fallback',
+    message: 'QuestionReportLink support context must prefer reportScreen before legacy screen',
+    test(source) {
+      return (
+        source.includes(
+          'const reportScreen = getBoundedSearchParam(getReportScreenSearchParam(params), 16);',
+        ) &&
+        /function getReportScreenSearchParam\(params: QuestionReportSearchParams\) \{\s*return hasSearchParam\(params\.reportScreen\) \? params\.reportScreen : params\.screen;\s*\}/.test(
           source,
         )
       );

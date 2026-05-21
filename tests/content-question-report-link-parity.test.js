@@ -42,6 +42,101 @@ const questionReportLinkModuleMocks = {
   },
 };
 
+const supportModuleMocks = {
+  '../components/compliance/LegalPage': {
+    LegalExternalLink() {
+      return null;
+    },
+    LegalPage() {
+      return null;
+    },
+    LegalSection() {
+      return null;
+    },
+  },
+  '../data/questions': {
+    questions: [createReportQuestion()],
+  },
+  '../lib/storage/settingsStore': {
+    useSettingsStore() {
+      return 'sv';
+    },
+  },
+  '../lib/theme': {
+    colors: {
+      border: '#d6d3d1',
+      surfaceWarm: '#faf7f2',
+      text: '#1c1917',
+      textDisclaimer: '#7c2d12',
+      textMuted: '#78716c',
+      textSecondary: '#57534e',
+      warning: '#f59e0b',
+      warningSoft: '#fef3c7',
+    },
+    radius: {
+      card: 8,
+    },
+    space: {
+      0.5: 4,
+      1: 8,
+      1.25: 10,
+      1.5: 12,
+      2: 16,
+      hairline: 1,
+    },
+    typography: {
+      bodyBold: {
+        fontWeight: '700',
+      },
+      bodyTight: {
+        lineHeight: 22,
+      },
+      caption: {
+        fontSize: 12,
+        lineHeight: 16,
+      },
+      disclaimer: {
+        fontSize: 12,
+        lineHeight: 16,
+      },
+      navButton: {
+        fontSize: 16,
+        fontWeight: '600',
+      },
+      sectionTitle: {
+        fontSize: 18,
+      },
+    },
+  },
+  'expo-router': {
+    useLocalSearchParams() {
+      return {};
+    },
+  },
+  'react-native': {
+    StyleSheet: {
+      create(styles) {
+        return styles;
+      },
+    },
+    Text() {
+      return null;
+    },
+    View() {
+      return null;
+    },
+  },
+  'react/jsx-runtime': {
+    Fragment: Symbol('Fragment'),
+    jsx() {
+      return null;
+    },
+    jsxs() {
+      return null;
+    },
+  },
+};
+
 function loadQuestionReportLinkExports() {
   const filePath = path.join(repoRoot, 'components/quiz/QuestionReportLink.tsx');
   const output = ts.transpileModule(fs.readFileSync(filePath, 'utf8'), {
@@ -62,6 +157,28 @@ function loadQuestionReportLinkExports() {
     }
     if (specifier === '../../lib/theme') {
       return { space: { 6: 48 } };
+    }
+    return require(specifier);
+  }
+
+  new Function('module', 'exports', 'require', output)(mod, mod.exports, localRequire);
+  return mod.exports;
+}
+
+function loadSupportExports() {
+  const filePath = path.join(repoRoot, 'app/support.tsx');
+  const output = ts.transpileModule(fs.readFileSync(filePath, 'utf8'), {
+    compilerOptions: {
+      jsx: ts.JsxEmit.ReactJSX,
+      module: ts.ModuleKind.CommonJS,
+      target: ts.ScriptTarget.ES2020,
+    },
+  }).outputText;
+  const mod = { exports: {} };
+
+  function localRequire(specifier) {
+    if (Object.hasOwn(supportModuleMocks, specifier)) {
+      return supportModuleMocks[specifier];
     }
     return require(specifier);
   }
@@ -124,12 +241,14 @@ test('question report CTA is wired from question surfaces to support context', (
   const supportSource = fs.readFileSync(path.join(repoRoot, 'app/support.tsx'), 'utf8');
   const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
 
-  assert.equal(summary.questionReportLinkRulesValidated, 27);
+  assert.equal(summary.questionReportLinkRulesValidated, 29);
   assert.equal(summary.questionReportLinkParityValidated, true);
   assert.match(componentSource, /Rapportera den här frågan/);
   assert.match(componentSource, /Report this question/);
   assert.match(componentSource, /selectedOptionId\?: string \| null/);
   assert.match(componentSource, /getQuestionSourceCitation\(question, language\)/);
+  assert.match(componentSource, /\['reportScreen', screen\]/);
+  assert.match(componentSource, /\['screen', screen\]/);
   assert.match(componentSource, /selectedAnswer \? \['selectedAnswer', selectedAnswer\] : null/);
   assert.match(componentSource, /minHeight: space\[6\]/);
   assert.match(chapterSource, /import \{ QuestionReportLink \}/);
@@ -154,7 +273,12 @@ test('question report CTA is wired from question surfaces to support context', (
   assert.match(supportSource, /avvisade värden/);
   assert.match(supportSource, /rejected values are not shown/);
   assert.match(supportSource, /getQuestionReportContextResult/);
+  assert.match(supportSource, /getReportScreenSearchParam/);
   assert.match(supportSource, /hasQuestionReportSearchParams/);
+  assert.match(
+    supportSource,
+    /return hasSearchParam\(params\.reportScreen\) \? params\.reportScreen : params\.screen;/,
+  );
   assert.match(
     supportSource,
     /if \(language\.value && language\.value !== 'sv' && language\.value !== 'en'\) \{\s*rejected = true;\s*\}\s*if \(!questionId\.value/,
@@ -248,6 +372,131 @@ test('buildQuestionReportSupportHref accepts exam screen reports with selected a
   assert.equal(url.searchParams.get('reportScreen'), 'exam');
   assert.equal(url.searchParams.get('screen'), 'exam');
   assert.equal(url.searchParams.get('selectedAnswer'), 'Vote & choose');
+});
+
+test('buildQuestionReportSupportHref keeps app screen context ahead of the legacy reserved key', () => {
+  const { buildQuestionReportSupportHref } = loadQuestionReportLinkExports();
+  const href = buildQuestionReportSupportHref({
+    language: 'en',
+    question: createReportQuestion(),
+    screen: 'quiz',
+    selectedOptionId: 'a',
+  });
+  const url = supportUrl(href);
+
+  assert.deepEqual(Array.from(url.searchParams.keys()), [
+    'questionId',
+    'source',
+    'language',
+    'reportScreen',
+    'screen',
+    'selectedAnswer',
+  ]);
+  assert.equal(url.searchParams.get('reportScreen'), 'quiz');
+  assert.equal(url.searchParams.get('screen'), 'quiz');
+});
+
+test('support context resolves reportScreen before the legacy reserved screen fallback', () => {
+  const { getQuestionReportContextResult } = loadSupportExports();
+  const result = getQuestionReportContextResult(
+    {
+      language: 'en',
+      questionId: 'q id/å?',
+      reportScreen: 'quiz',
+      screen: 'exam',
+      selectedAnswer: 'Vote & choose',
+      source: 'Source: Sverige i fokus, Demokrati & värden, Riksdagens uppgifter, p. 12',
+    },
+    'sv',
+  );
+
+  assert.equal(result.rejected, false);
+  assert.equal(result.context.questionId, 'q id/å?');
+  assert.equal(result.context.language, 'en');
+  assert.equal(result.context.screen, 'quiz');
+  assert.equal(result.context.selectedAnswer, 'Vote & choose');
+});
+
+test('support context keeps legacy screen fallback for direct support links', () => {
+  const { getQuestionReportContextResult } = loadSupportExports();
+  const result = getQuestionReportContextResult(
+    {
+      language: 'sv',
+      questionId: 'q id/å?',
+      screen: 'exam',
+    },
+    'en',
+  );
+
+  assert.equal(result.rejected, false);
+  assert.equal(result.context.questionId, 'q id/å?');
+  assert.equal(result.context.language, 'sv');
+  assert.equal(result.context.screen, 'exam');
+});
+
+test('question report parity rejects dropping reportScreen from app-generated support links', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+process.argv.push('--focus-question-report-link-parity');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/quiz/QuestionReportLink.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(/\\n\\s*\\['reportScreen', screen\\],/, '');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /QuestionReportLink must emit reportScreen for app-generated support links/,
+  );
+});
+
+test('question report parity rejects reversing reportScreen and legacy screen precedence', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+process.argv.push('--focus-question-report-link-parity');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/support.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'return hasSearchParam(params.reportScreen) ? params.reportScreen : params.screen;',
+        'return hasSearchParam(params.screen) ? params.screen : params.reportScreen;',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /QuestionReportLink support context must prefer reportScreen before legacy screen/,
+  );
 });
 
 test('question report parity rejects dropping the practice feedback CTA', () => {

@@ -270,13 +270,13 @@ function QuestionReportContextRow({ label, value }: { label: string; value: stri
   );
 }
 
-function getQuestionReportContextResult(
+export function getQuestionReportContextResult(
   params: QuestionReportSearchParams,
   fallbackLanguage: AppLanguage,
 ): QuestionReportContextResult {
   const questionId = getBoundedSearchParam(params.questionId, 16);
   const language = getBoundedSearchParam(params.language, 8);
-  const reportScreen = getBoundedSearchParam(params.reportScreen ?? params.screen, 16);
+  const reportScreen = getBoundedSearchParam(getReportScreenSearchParam(params), 16);
   const selectedAnswer = getBoundedSearchParam(params.selectedAnswer, 240);
   const source = getBoundedSearchParam(params.source, 240);
   const hasReportParams = hasQuestionReportSearchParams(params);
@@ -316,6 +316,10 @@ function getQuestionReportContextResult(
 
 const validQuestionIds = new Set(questions.map((question) => question.id));
 const validReportScreens = new Set<QuestionReportScreen>(['chapter', 'exam', 'practice', 'quiz']);
+
+function getReportScreenSearchParam(params: QuestionReportSearchParams) {
+  return hasSearchParam(params.reportScreen) ? params.reportScreen : params.screen;
+}
 
 function hasSearchParam(value: string | string[] | undefined) {
   if (Array.isArray(value)) return value.length > 0;
