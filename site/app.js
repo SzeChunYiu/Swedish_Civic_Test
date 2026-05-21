@@ -9,8 +9,11 @@
 
 function route() {
   const hash = (location.hash || '#/').replace(/^#/, '');
-  // strip fragment after slash route
-  const [pathRaw] = hash.split('?');
+  const routeEndIndexes = [hash.indexOf('?'), hash.indexOf('#')].filter((index) => index >= 0);
+  const routeEnd = routeEndIndexes.length ? Math.min(...routeEndIndexes) : hash.length;
+  const pathRaw = hash.slice(0, routeEnd) || '/';
+  const innerAnchorMatch = hash.slice(routeEnd).match(/^#([^?]+)/);
+  const innerAnchor = innerAnchorMatch ? decodeURIComponent(innerAnchorMatch[1]) : '';
   let path = pathRaw.startsWith('/') ? pathRaw : '/';
   // map unknown paths to /
   const known = [
@@ -33,17 +36,31 @@ function route() {
     a.classList.toggle('is-active', a.dataset.route === path && path !== '/');
   });
 
-  // scroll to top on page change (but allow in-page anchors like #try)
-  if (!hash.includes('#') || hash === '#/') {
+  // scroll to top on page change, or focus an in-page document section.
+  if (innerAnchor) {
+    smtFocusInnerAnchor(innerAnchor);
+  } else if (!hash.includes('#') || hash === '#/') {
     window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
   }
-  // if there's an inner-page anchor like "/privacy#p3", scroll to it
-  const innerAnchor = pathRaw.match(/#(.+)$/);
   smtSetMobileNav(false);
 }
 
 window.addEventListener('hashchange', route);
 window.addEventListener('DOMContentLoaded', route);
+
+function smtFocusInnerAnchor(anchor) {
+  const target = document.getElementById(anchor);
+  if (!target) return;
+  if (typeof target.getAttribute === 'function' && target.getAttribute('tabindex') === null) {
+    target.setAttribute('tabindex', '-1');
+  }
+  if (typeof target.scrollIntoView === 'function') {
+    target.scrollIntoView({ block: 'start', behavior: 'instant' in window ? 'instant' : 'auto' });
+  }
+  if (typeof target.focus === 'function') {
+    target.focus({ preventScroll: true });
+  }
+}
 
 function smtTr(map) {
   let l = 'en';
