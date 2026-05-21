@@ -1,3 +1,5 @@
+import { isSafeImportedMapKey } from '../storage/importKeySafety';
+
 // Mock exam library — pre-built named mocks matching the official format.
 // competitive-teardown.md rec #2 (P0): "Ship a library of pre-built
 // full-format mock exams (e.g. Mock 1…N), not only one random generator,
@@ -121,6 +123,17 @@ function shuffle<T>(items: readonly T[], rand: () => number): T[] {
   return out;
 }
 
+function createChapterDistribution(): Record<string, number> {
+  return Object.create(null) as Record<string, number>;
+}
+
+function normalizeChapterDistributionKey(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  const chapterId = value.trim();
+  if (!chapterId || !isSafeImportedMapKey(chapterId)) return null;
+  return chapterId;
+}
+
 export interface MockExamQuestionPick {
   questionId: string;
   /** Difficulty as the bank declared it, kept for the result-screen breakdown. */
@@ -181,10 +194,11 @@ export function materializeMock(input: MaterializeMockInput): MaterializedMock |
     picked = picked.concat(topUp).slice(0, MOCK_EXAM_QUESTION_COUNT);
   }
 
-  const chapterDistribution: Record<string, number> = {};
+  const chapterDistribution = createChapterDistribution();
   for (const q of picked) {
-    if (!q.chapterId) continue;
-    chapterDistribution[q.chapterId] = (chapterDistribution[q.chapterId] ?? 0) + 1;
+    const chapterId = normalizeChapterDistributionKey(q.chapterId);
+    if (!chapterId) continue;
+    chapterDistribution[chapterId] = (chapterDistribution[chapterId] ?? 0) + 1;
   }
 
   return {
