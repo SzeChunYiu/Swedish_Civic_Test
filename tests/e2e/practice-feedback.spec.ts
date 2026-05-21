@@ -1,8 +1,19 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
-import { dismissBlockingModals, seedFreshSettingsLanguageAndAboutSeen } from './browserLaunch';
+import {
+  dismissBlockingModals,
+  seedFreshSettingsLanguageAndAboutSeen,
+  seedFreshSettingsLanguageAndAboutSeenWithStorage,
+} from './browserLaunch';
 import { startAllVisiblePractice, type PracticeHubLanguage } from './practiceHub';
+
+const accessibilityAudioPlaybackRateKey = 'accessibility\\a11y.audioPlaybackRate.v1';
+const accessibilityListenFirstAudioKey = 'accessibility\\a11y.listenFirstAudio.v1';
+
+type BrowserSpeechEvent =
+  | { type: 'cancel' }
+  | { lang: string; rate: number; text: string; type: 'speak' };
 
 async function closeLaunchAdIfPresent(page: Page) {
   const closeLaunchAd = page.getByRole('button', {
@@ -59,6 +70,92 @@ async function openPracticeQuestion(page: Page, language: PracticeHubLanguage) {
   await startAllVisiblePractice(page, language);
 }
 
+async function installSpeechSynthesisMock(page: Page) {
+  await page.addInitScript(() => {
+    const speechEvents: BrowserSpeechEvent[] = [];
+    const speechState = {
+      paused: false,
+      pending: false,
+      speaking: false,
+    };
+
+    class MockSpeechSynthesisUtterance {
+      lang = '';
+      pitch = 1;
+      rate = 1;
+      text: string;
+      voice = null;
+      volume = 1;
+
+      constructor(text: string) {
+        this.text = String(text);
+      }
+    }
+
+    Object.defineProperty(window, '__SMT_SPEECH_EVENTS__', {
+      configurable: true,
+      value: speechEvents,
+    });
+    Object.defineProperty(window, 'SpeechSynthesisUtterance', {
+      configurable: true,
+      value: MockSpeechSynthesisUtterance,
+    });
+    Object.defineProperty(window, 'speechSynthesis', {
+      configurable: true,
+      value: {
+        cancel() {
+          speechState.speaking = false;
+          speechState.pending = false;
+          speechEvents.push({ type: 'cancel' });
+        },
+        get paused() {
+          return speechState.paused;
+        },
+        get pending() {
+          return speechState.pending;
+        },
+        get speaking() {
+          return speechState.speaking;
+        },
+        getVoices() {
+          return [];
+        },
+        pause() {
+          speechState.paused = true;
+        },
+        resume() {
+          speechState.paused = false;
+        },
+        speak(utterance: MockSpeechSynthesisUtterance) {
+          speechState.speaking = true;
+          speechEvents.push({
+            lang: utterance.lang,
+            rate: utterance.rate,
+            text: utterance.text,
+            type: 'speak',
+          });
+        },
+      },
+    });
+  });
+}
+
+async function speechEvents(page: Page): Promise<BrowserSpeechEvent[]> {
+  return page.evaluate(() => {
+    const typedWindow = window as typeof window & {
+      __SMT_SPEECH_EVENTS__?: BrowserSpeechEvent[];
+    };
+
+    return [...(typedWindow.__SMT_SPEECH_EVENTS__ ?? [])];
+  });
+}
+
+function speakEvents(events: BrowserSpeechEvent[]) {
+  return events.filter(
+    (event): event is Extract<BrowserSpeechEvent, { type: 'speak' }> => event.type === 'speak',
+  );
+}
+
 test('practice audio control follows the selected question language', async ({ page }) => {
   const consoleErrors: string[] = [];
 
@@ -89,6 +186,61 @@ test('practice audio control follows the selected question language', async ({ p
   await expect(
     page.getByRole('button', { name: 'Lyssna på den svenska frågan och svaren' }),
   ).toHaveCount(0);
+
+  expect(consoleErrors).toEqual([]);
+});
+
+test('listen-first audio autoplays questions and stops on answer boundaries', async ({ page }) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await installSpeechSynthesisMock(page);
+  await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, 'en', {
+    localStorageValues: {
+      [accessibilityAudioPlaybackRateKey]: '1.25',
+      [accessibilityListenFirstAudioKey]: 'true',
+    },
+  });
+
+  await openPracticeQuestion(page, 'en');
+
+  await expect
+    .poll(async () => speakEvents(await speechEvents(page)).length)
+    .toBeGreaterThanOrEqual(1);
+
+  const practiceSpeaks = speakEvents(await speechEvents(page));
+  const practiceQuestionAudio = practiceSpeaks[0];
+  expect(practiceQuestionAudio.lang).toBe('sv-SE');
+  expect(practiceQuestionAudio.rate).toBe(1.25);
+  expect(practiceQuestionAudio.text).toContain('Alternativ A.');
+  expect(practiceQuestionAudio.text).toContain('Alternativ B.');
+
+  const cancelCountBeforeAnswer = (await speechEvents(page)).filter(
+    (event) => event.type === 'cancel',
+  ).length;
+  await page.getByLabel('Select answer In southern Europe').click();
+
+  await expect
+    .poll(async () => (await speechEvents(page)).filter((event) => event.type === 'cancel').length)
+    .toBeGreaterThan(cancelCountBeforeAnswer);
+
+  await page.goto('/quiz/q001', { waitUntil: 'networkidle' });
+  await closeLaunchAdIfPresent(page);
+  await dismissBlockingModals(page);
+
+  await expect
+    .poll(async () => speakEvents(await speechEvents(page)).length)
+    .toBeGreaterThanOrEqual(1);
+
+  const quizQuestionAudio = speakEvents(await speechEvents(page))[0];
+  expect(quizQuestionAudio.lang).toBe('sv-SE');
+  expect(quizQuestionAudio.rate).toBe(1.25);
+  expect(quizQuestionAudio.text).toContain('Alternativ A.');
+  expect(quizQuestionAudio.text).toContain('Alternativ B.');
 
   expect(consoleErrors).toEqual([]);
 });

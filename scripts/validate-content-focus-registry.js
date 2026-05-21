@@ -577,6 +577,15 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'somaliGeographyNaturalness',
+    flags: ['--focus-somali-geography-naturalness'],
+    summaryKeys: [
+      'somaliGeographyNaturalnessCasesValidated',
+      'somaliGeographyNaturalnessStaticRowsValidated',
+      'somaliGeographyNaturalnessParityValidated',
+    ],
+  },
+  {
     id: 'examGeneratorSchema',
     flags: ['--focus-exam-generator-schema'],
     summaryKeys: [

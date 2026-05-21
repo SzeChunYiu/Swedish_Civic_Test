@@ -38,6 +38,10 @@ const {
   findGeneratedTrueFalseNaturalnessPatternMatch,
 } = require('./generated-true-false-naturalness-patterns');
 const {
+  SOMALI_GEOGRAPHY_NATURALNESS_IDS,
+  summarizeSomaliGeographyNaturalness,
+} = require('./check-question-i18n-v8');
+const {
   MALFORMED_ADAPTIVE_PRACTICE_SIZE_CASES,
 } = require('../tests/helpers/adaptivePracticeRuntimeFixtures.cjs');
 
@@ -9753,6 +9757,9 @@ let questionNestedMetaStemsValidated = 0;
 let questionJudgementMetaStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
 let generatedSwedenScopeParityValidated = 0;
+let somaliGeographyNaturalnessCasesValidated = 0;
+let somaliGeographyNaturalnessStaticRowsValidated = 0;
+let somaliGeographyNaturalnessParityValidated = false;
 let questionLuciaRoleEnglishNaturalnessValidated = 0;
 let questionEuCooperationEnglishNaturalnessValidated = 0;
 let questionCouncilOfEuropeWorkForEnglishNaturalnessValidated = 0;
@@ -9763,6 +9770,7 @@ let questionReferendumAdvisorySwedishNaturalnessValidated = 0;
 let derivedCivicStatementPromptMirrorValidated = 0;
 let generatedWhyReasonTargetStemsValidated = 0;
 let generatedWhyReasonTargetStemParityValidated = false;
+let questionReligiousFreedomParallelismValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -9853,6 +9861,72 @@ let generatedSingleChoiceMetaStemsValidated = 0;
 let generatedSingleChoiceExplanationLabelsValidated = 0;
 let generatedTrueFalseExplanationMetaValidated = 0;
 let generatedTagTemplateParityValidated = 0;
+
+function toStaticSomaliNaturalnessQuestion(question) {
+  return {
+    id: question.id,
+    questionText: { so: question.q?.so },
+    explanationText: { so: question.why?.so },
+    options: (question.opts || []).map((option, index) => ({
+      id: option.id || String(index),
+      text: { so: option.so },
+    })),
+  };
+}
+
+function loadCommittedStaticSiteQuestions() {
+  const context = { window: {} };
+  try {
+    vm.runInNewContext(
+      fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'),
+      context,
+    );
+  } catch (error) {
+    fail(`site/questions.js could not be evaluated: ${error.message}`);
+    return [];
+  }
+
+  if (!Array.isArray(context.window.SMT_QUESTIONS)) {
+    fail('site/questions.js must expose window.SMT_QUESTIONS');
+    return [];
+  }
+
+  return context.window.SMT_QUESTIONS;
+}
+
+function validateSomaliGeographyNaturalnessParity() {
+  const failureCountBefore = failures.length;
+  const canonicalSummary = summarizeSomaliGeographyNaturalness(
+    questions,
+    SOMALI_GEOGRAPHY_NATURALNESS_IDS,
+  );
+  canonicalSummary.errors.forEach(fail);
+  somaliGeographyNaturalnessCasesValidated = canonicalSummary.casesValidated;
+
+  const staticQuestions = loadCommittedStaticSiteQuestions()
+    .filter((question) => SOMALI_GEOGRAPHY_NATURALNESS_IDS.includes(question.id))
+    .map(toStaticSomaliNaturalnessQuestion);
+  const staticSummary = summarizeSomaliGeographyNaturalness(
+    staticQuestions,
+    SOMALI_GEOGRAPHY_NATURALNESS_IDS,
+  );
+  staticSummary.errors.forEach((error) => fail(`static site ${error}`));
+  somaliGeographyNaturalnessStaticRowsValidated = staticSummary.casesValidated;
+
+  const guardFailed = failures.length !== failureCountBefore;
+  somaliGeographyNaturalnessParityValidated =
+    !guardFailed &&
+    canonicalSummary.parityValidated &&
+    staticSummary.parityValidated &&
+    somaliGeographyNaturalnessCasesValidated === SOMALI_GEOGRAPHY_NATURALNESS_IDS.length &&
+    somaliGeographyNaturalnessStaticRowsValidated === SOMALI_GEOGRAPHY_NATURALNESS_IDS.length;
+
+  if (!somaliGeographyNaturalnessParityValidated) {
+    fail(
+      'Somali geography naturalness guard must validate q004, q006, and q008 in canonical and static question banks',
+    );
+  }
+}
 
 if (
   process.argv.includes('--focus-countdown-banner-parity') ||
@@ -10214,6 +10288,17 @@ if (process.argv.includes('--focus-search-route-query-hydration')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-somali-geography-naturalness')) {
+  validateSomaliGeographyNaturalnessParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    somaliGeographyNaturalnessCasesValidated,
+    somaliGeographyNaturalnessStaticRowsValidated,
+    somaliGeographyNaturalnessParityValidated,
+  });
+  process.exit(0);
+}
+
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
 if (!Array.isArray(baseQuestions)) fail('baseQuestions export is not an array');
 if (!Array.isArray(additionalQuestions)) fail('additionalQuestions export is not an array');
@@ -10378,6 +10463,16 @@ if (process.argv.includes('--focus-generated-sweden-scope-parity')) {
   printValidationSummary({
     generatedSwedenScopeFocusValidated: true,
     generatedSwedenScopeParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-religious-freedom-parallelism')) {
+  validateQuestionReligiousFreedomParallelism();
+  exitWithValidationFailures();
+  printValidationSummary({
+    publishedQuestions: countPublishedQuestions(),
+    questionReligiousFreedomParallelismValidated,
   });
   process.exit(0);
 }
@@ -20717,6 +20812,26 @@ function validateReadinessAdapterRules() {
   }
 }
 
+function countPublishedQuestions() {
+  return Array.isArray(questions)
+    ? questions.filter((question) => question.reviewStatus === 'published').length
+    : 0;
+}
+
+function validateQuestionReligiousFreedomParallelism() {
+  if (!Array.isArray(questions)) return;
+
+  questions
+    .filter((question) => question.reviewStatus === 'published')
+    .forEach((question) => {
+      if (findQuestionReligiousFreedomOptionParallelismIssue(question)) {
+        fail(`${question.id} uses nonparallel religious-freedom option wording`);
+      } else {
+        questionReligiousFreedomParallelismValidated += 1;
+      }
+    });
+}
+
 function validateQuestionBankCsvContract() {
   if (!Array.isArray(questions)) return;
 
@@ -22065,6 +22180,7 @@ function validatePublishedQuestionNaturalnessGuards() {
   });
 }
 
+validateSomaliGeographyNaturalnessParity();
 validatePublishedQuestionNaturalnessGuards();
 validateStaticValidationSyntaxGate();
 exitWithValidationFailures();
@@ -22584,6 +22700,7 @@ validateXpRules();
 validateMasteryRules();
 validateWeakChapterRules();
 validateReadinessAdapterRules();
+validateQuestionReligiousFreedomParallelism();
 validateQuestionProvenanceRuntime();
 validateQuestionBankCsvContract();
 validateStaticSiteQuestionBankParity();
@@ -22932,6 +23049,9 @@ console.log(
       questionJudgementMetaStemsValidated,
       questionGeneratedTrueFalseNaturalnessValidated,
       generatedSwedenScopeParityValidated,
+      somaliGeographyNaturalnessCasesValidated,
+      somaliGeographyNaturalnessStaticRowsValidated,
+      somaliGeographyNaturalnessParityValidated,
       questionLuciaRoleEnglishNaturalnessValidated,
       questionEuCooperationEnglishNaturalnessValidated,
       questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
@@ -22940,6 +23060,7 @@ console.log(
       questionGoodFridayEnglishNaturalnessValidated,
       questionReferendumAdvisorySwedishNaturalnessValidated,
       derivedCivicStatementPromptMirrorValidated,
+      questionReligiousFreedomParallelismValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
