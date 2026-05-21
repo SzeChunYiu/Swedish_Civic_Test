@@ -61,7 +61,13 @@ function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
-function createRenderContext({ hash, language = 'en', reducedMotion = false, storedMotion }) {
+function createRenderContext({
+  hash,
+  language = 'en',
+  reducedMotion = false,
+  storedMotion,
+  storedTextSize,
+}) {
   const elements = new Map();
   const listeners = { document: [], window: [] };
   const rootAttributes = new Map();
@@ -70,16 +76,39 @@ function createRenderContext({ hash, language = 'en', reducedMotion = false, sto
     ['smt_mock_cfg', JSON.stringify({ count: 5, minutes: 30, chapters: [1] })],
   ]);
   if (storedMotion !== undefined) storage.set('smt_motion', storedMotion);
+  if (storedTextSize !== undefined) storage.set('smt_textsize', storedTextSize);
   let reloadCount = 0;
 
-  const settingButtons = staticSiteLanguageValues.map((value) => ({
-    attributes: {},
-    dataset: { val: value },
-    classList: { toggle() {} },
-    setAttribute(name, value) {
-      this.attributes[name] = String(value);
-    },
-  }));
+  function createSegmentButton(value) {
+    return {
+      attributes: {},
+      dataset: { val: value },
+      classNames: new Set(),
+      classList: {
+        toggle(name, on) {
+          if (on) this.owner.classNames.add(name);
+          else this.owner.classNames.delete(name);
+        },
+      },
+      setAttribute(name, value) {
+        this.attributes[name] = String(value);
+      },
+      getAttribute(name) {
+        return this.attributes[name] ?? null;
+      },
+    };
+  }
+
+  const segmentButtons = {
+    language: staticSiteLanguageValues.map(createSegmentButton),
+    textsize: ['90', '100', '115'].map(createSegmentButton),
+  };
+  Object.values(segmentButtons)
+    .flat()
+    .forEach((button) => {
+      button.classList.owner = button;
+    });
+  const settingButtons = segmentButtons.language;
   const a11yControlKeys = new Map([
     ['settings-open', 'a11y.settings.open'],
     ['settings-modal-close', 'a11y.close'],
@@ -181,7 +210,10 @@ function createRenderContext({ hash, language = 'en', reducedMotion = false, sto
         return null;
       },
       querySelectorAll(selector) {
-        if (selector === '[data-set="language"] button') return settingButtons;
+        const segmentMatch = selector.match(/^\[data-set="([^"]+)"\] button$/);
+        if (segmentMatch && segmentButtons[segmentMatch[1]]) {
+          return segmentButtons[segmentMatch[1]];
+        }
         if (selector === '[data-a11y-label]') {
           return Array.from(elements.values()).filter((node) => node.dataset.a11yLabel);
         }
@@ -231,10 +263,32 @@ function createRenderContext({ hash, language = 'en', reducedMotion = false, sto
 
   vm.createContext(sandbox);
   return {
+    clickSettingsOpen() {
+      const target = {
+        closest(selector) {
+          return selector === '#settings-open' ? this : null;
+        },
+      };
+      listeners.document
+        .filter((entry) => entry.type === 'click')
+        .forEach((entry) => entry.handler({ target }));
+    },
     clickSettingsLanguage(nextLanguage) {
       const target = {
         dataset: { val: nextLanguage },
         parentElement: { dataset: { set: 'language' } },
+        closest(selector) {
+          return selector === '[data-set] button[data-val]:not(.set-palette)' ? this : null;
+        },
+      };
+      listeners.document
+        .filter((entry) => entry.type === 'click')
+        .forEach((entry) => entry.handler({ target }));
+    },
+    clickSettingsTextSize(nextTextSize) {
+      const target = {
+        dataset: { val: nextTextSize },
+        parentElement: { dataset: { set: 'textsize' } },
         closest(selector) {
           return selector === '[data-set] button[data-val]:not(.set-palette)' ? this : null;
         },
@@ -267,9 +321,17 @@ function createRenderContext({ hash, language = 'en', reducedMotion = false, sto
     rootAttribute(name) {
       return rootAttributes.get(name) ?? null;
     },
+    rootFontSize() {
+      return sandbox.document.documentElement.style.fontSize;
+    },
     sandbox,
     settingLanguageValues() {
       return settingButtons.map((button) => button.dataset.val);
+    },
+    textSizePressedValues() {
+      return segmentButtons.textsize
+        .filter((button) => button.getAttribute('aria-pressed') === 'true')
+        .map((button) => button.dataset.val);
     },
     storage,
   };
@@ -470,6 +532,12 @@ test('Static Settings selected visuals mirror aria-pressed state', () => {
   const settingsSource = read('site/settings.js');
   const html = read('site/index.html');
 
+  assert.match(
+    settingsSource,
+    /const SUPPORTED_TEXT_SIZES = new Set\(\[['"]90['"], ['"]100['"], ['"]115['"]\]\)/,
+  );
+  assert.match(settingsSource, /function normalizeTextSize\(s\)/);
+  assert.match(settingsSource, /SUPPORTED_TEXT_SIZES\.has\(value\) \? value : ['"]100['"]/);
   assert.match(settingsSource, /function setPressedState\(el, on\) \{[\s\S]*?aria-pressed/);
   assert.equal(
     Array.from(settingsSource.matchAll(/\.classList\.toggle\(['"]is-on['"]/g)).length,
@@ -493,6 +561,42 @@ test('Static Settings selected visuals mirror aria-pressed state', () => {
       assert.match(tag, /aria-pressed="(?:true|false)"/, `${dataSet} button ${tag}`);
     });
   }
+});
+
+test('Static Settings text size falls back for corrupt stored and clicked values', () => {
+  for (const storedTextSize of ['abc', '2500', '-50', '90.5', '', '115px']) {
+    const context = createRenderContext({ hash: '#/', language: 'en', storedTextSize });
+    loadScripts(context);
+    context.fireWindowEvent('DOMContentLoaded');
+    context.clickSettingsOpen();
+
+    assert.equal(context.rootFontSize(), '16px', `root font size for ${storedTextSize}`);
+    assert.equal(context.storage.get('smt_textsize'), '100', `stored value for ${storedTextSize}`);
+    assert.deepEqual(
+      context.textSizePressedValues(),
+      ['100'],
+      `pressed value for ${storedTextSize}`,
+    );
+  }
+
+  const context = createRenderContext({ hash: '#/', language: 'en', storedTextSize: '90' });
+  loadScripts(context);
+  context.fireWindowEvent('DOMContentLoaded');
+  context.clickSettingsOpen();
+
+  assert.equal(context.rootFontSize(), '14.4px');
+  assert.equal(context.storage.get('smt_textsize'), '90');
+  assert.deepEqual(context.textSizePressedValues(), ['90']);
+
+  context.clickSettingsTextSize('115');
+  assert.equal(context.rootFontSize(), '18.4px');
+  assert.equal(context.storage.get('smt_textsize'), '115');
+  assert.deepEqual(context.textSizePressedValues(), ['115']);
+
+  context.clickSettingsTextSize('100.5');
+  assert.equal(context.rootFontSize(), '16px');
+  assert.equal(context.storage.get('smt_textsize'), '100');
+  assert.deepEqual(context.textSizePressedValues(), ['100']);
 });
 
 test('Settings language change rerenders an active Practice question without reload', () => {
