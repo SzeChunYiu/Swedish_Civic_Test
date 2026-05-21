@@ -98,9 +98,11 @@ test('QuestionNavigator tabs keep token-sized touch targets', () => {
   assert.match(source, /minWidth:\s*space\[6\]/);
 });
 
-test('LanguagePicker menu rows expose menu-item state semantics', () => {
+test('LanguagePicker trigger and menu rows expose popup state semantics', () => {
   const source = fs.readFileSync(path.join(ROOT, 'components', 'ui', 'LanguagePicker.tsx'), 'utf8');
 
+  assert.match(source, /aria-haspopup="menu"/);
+  assert.match(source, /aria-expanded=\{open\}/);
   assert.match(source, /accessibilityRole="menu"/);
   assert.match(source, /accessibilityRole="menuitem"/);
   assert.match(source, /aria-selected=\{selected\}/);
