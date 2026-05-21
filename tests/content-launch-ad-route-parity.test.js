@@ -98,12 +98,18 @@ test('web launch popup close control keeps keyboard button semantics', () => {
   const webSource = read('components/monetization/LaunchPopupAd.tsx');
   const launchModalSpec = read('tests/e2e/launch-modal-accessibility.spec.ts');
 
+  assert.match(webSource, /Platform\.OS !== 'web'/);
+  assert.match(webSource, /document\.addEventListener\('keydown', handleKeyDown\)/);
+  assert.match(webSource, /event\.key !== 'Escape'/);
+  assert.match(webSource, /event\.preventDefault\(\)/);
   assert.match(webSource, /accessibilityRole="button"/);
   assert.match(webSource, /accessibilityLabel=\{copy\.closeAccessibilityLabel\}/);
   assert.match(webSource, /onPress=\{\(\) => setVisible\(false\)\}/);
   assert.match(launchModalSpec, /launchCloseKeyboardCases/);
+  assert.match(launchModalSpec, /launchEscapeCloseCases/);
   assert.match(launchModalSpec, /activationKey: 'Enter'/);
   assert.match(launchModalSpec, /activationKey: 'Space'/);
+  assert.match(launchModalSpec, /page\.keyboard\.press\('Escape'\)/);
   assert.match(launchModalSpec, /page\.keyboard\.press\('Tab'\)/);
   assert.match(launchModalSpec, /page\.keyboard\.press\(activationKey\)/);
 });

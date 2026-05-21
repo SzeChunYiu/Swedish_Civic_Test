@@ -45,6 +45,25 @@ const launchCloseKeyboardCases: LaunchCloseKeyboardCase[] = [
   },
 ];
 
+type LaunchEscapeCloseCase = {
+  contentHeading: string;
+  dialogLabel: string;
+  language: AppLanguage;
+};
+
+const launchEscapeCloseCases: LaunchEscapeCloseCase[] = [
+  {
+    contentHeading: 'Dagens mål',
+    dialogLabel: 'Startannons',
+    language: 'sv',
+  },
+  {
+    contentHeading: "Today's goal",
+    dialogLabel: 'Launch sponsor ad',
+    language: 'en',
+  },
+];
+
 async function focusLaunchCloseControlByKeyboard(page: import('@playwright/test').Page) {
   const focusedCloseButton = page
     .getByRole('button', { name: /Close launch sponsor ad|Stäng startannons/ })
@@ -118,6 +137,30 @@ for (const {
     await expect(closeLaunchAd).toBeFocused();
 
     await page.keyboard.press(activationKey);
+
+    await expect(dialogs).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: contentHeading })).toBeVisible();
+    expect(consoleErrors).toEqual([]);
+  });
+}
+
+for (const { contentHeading, dialogLabel, language } of launchEscapeCloseCases) {
+  test(`launch sponsor modal closes with Escape in ${language}`, async ({ page }) => {
+    const consoleErrors: string[] = [];
+
+    page.on('console', (message) => {
+      if (message.type() === 'error') consoleErrors.push(message.text());
+    });
+    page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+    await seedFreshSettingsLanguageAndAboutSeen(page, language);
+    await page.goto('/home', { waitUntil: 'networkidle' });
+
+    const dialogs = page.locator(blockingModalOverlayLocator);
+    await expect(dialogs).toHaveCount(1);
+    await expect(dialogs.first()).toHaveAttribute('aria-label', dialogLabel);
+
+    await page.keyboard.press('Escape');
 
     await expect(dialogs).toHaveCount(0);
     await expect(page.getByRole('heading', { name: contentHeading })).toBeVisible();

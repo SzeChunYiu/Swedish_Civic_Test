@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Modal, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { getAdUnit, shouldShowLaunchPopupAd } from '../../lib/monetization/ads';
 import { FREE_ENTITLEMENTS } from '../../lib/monetization/premium';
@@ -84,6 +84,22 @@ export function LaunchPopupAd({ entitlements = FREE_ENTITLEMENTS }: LaunchPopupA
     deferFirstRunAboutModalForLaunchSession();
     setVisible(true);
   }, [entitlements, visible]);
+
+  useEffect(() => {
+    if (!visible || Platform.OS !== 'web' || typeof document === 'undefined') {
+      return undefined;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+
+      event.preventDefault();
+      setVisible(false);
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [visible]);
 
   const unit = getAdUnit('app_open_launch');
 
