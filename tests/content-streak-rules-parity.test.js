@@ -6,14 +6,39 @@ const test = require('node:test');
 const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
+const moduleCache = new Map();
+
+function resolveLocalModule(fromFilePath, request) {
+  const base = path.resolve(path.dirname(fromFilePath), request);
+  const candidates = [base, `${base}.ts`, `${base}.tsx`, `${base}.js`, path.join(base, 'index.ts')];
+  const found = candidates.find(
+    (candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isFile(),
+  );
+  if (!found) throw new Error(`Cannot resolve ${request} from ${fromFilePath}`);
+  return found;
+}
 
 function loadTs(relativePath) {
-  const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+  const filePath = path.resolve(repoRoot, relativePath);
+  if (moduleCache.has(filePath)) return moduleCache.get(filePath);
+
+  const source = fs.readFileSync(filePath, 'utf8');
   const output = ts.transpileModule(source, {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
   }).outputText;
   const mod = { exports: {} };
-  new Function('module', 'exports', 'require', output)(mod, mod.exports, require);
+  moduleCache.set(filePath, mod.exports);
+
+  function localRequire(request) {
+    if (request.startsWith('.')) {
+      const resolvedPath = resolveLocalModule(filePath, request);
+      return loadTs(path.relative(repoRoot, resolvedPath));
+    }
+    return require(request);
+  }
+
+  new Function('module', 'exports', 'require', output)(mod, mod.exports, localRequire);
+  moduleCache.set(filePath, mod.exports);
   return mod.exports;
 }
 
@@ -30,10 +55,16 @@ test('streak runtime parity validates daily habit rules', () => {
   assert.ok(match, 'validation should print JSON summary');
 
   const summary = JSON.parse(match[0]);
-  const { calculateStreak, getLocalDateKey } = loadTs('lib/learning/streaks.ts');
+  const {
+    calculateStreak,
+    countAnswerAttemptsForLocalDate,
+    countAnswersForLocalDate,
+    getLocalDateKey,
+  } = loadTs('lib/learning/streaks.ts');
   const today = '2026-05-15';
+  const rolloverTarget = new Date(2026, 2, 2, 12);
 
-  assert.equal(summary.streakRulesValidated, 17);
+  assert.equal(summary.streakRulesValidated, 21);
   assert.equal(summary.streakRulesParityValidated, true);
   assert.equal(calculateStreak([], today), 0);
   assert.equal(calculateStreak(['2026-05-13T09:00:00.000Z', '2026-05-14', '2026-05-15'], today), 3);
@@ -46,6 +77,31 @@ test('streak runtime parity validates daily habit rules', () => {
   assert.equal(calculateStreak(['2026-05-16'], today), 0);
   assert.equal(calculateStreak(['2026-05-14', 42, 'not-a-date', '2026-05-15'], today), 2);
   assert.equal(calculateStreak(['2026-05-14', '2026-05-15'], 'not-a-date'), 0);
+  assert.equal(
+    countAnswersForLocalDate(
+      {
+        valid: { lastAnsweredAt: '2026-03-02T08:00:00.000Z' },
+        lateValid: { lastAnsweredAt: '2026-03-02T20:00:00.000Z' },
+        rollover: { lastAnsweredAt: '2026-02-30T08:00:00.000Z' },
+        malformed: { lastAnsweredAt: 'not-a-date' },
+        nonString: { lastAnsweredAt: 42 },
+      },
+      rolloverTarget,
+    ),
+    2,
+  );
+  assert.equal(
+    countAnswerAttemptsForLocalDate({
+      answerAttempts: [
+        { questionId: 'q001', answeredAt: '2026-03-02T08:00:00.000Z' },
+        { questionId: 'q001', answeredAt: '2026-03-02T20:00:00.000Z' },
+        { questionId: 'q-rollover', answeredAt: '2026-02-30T08:00:00.000Z' },
+        { questionId: 'q-malformed', answeredAt: 'not-a-date' },
+      ],
+      date: rolloverTarget,
+    }),
+    2,
+  );
   assert.match(getLocalDateKey(new Date(Number.NaN)), /^\d{4}-\d{2}-\d{2}$/);
   assert.notEqual(getLocalDateKey(new Date(Number.NaN)), 'NaN-NaN-NaN');
   assert.equal(Object.prototype.hasOwnProperty.call(summary, 'xpRulesParityValidated'), false);

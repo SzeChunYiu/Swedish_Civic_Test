@@ -1,19 +1,33 @@
+import { validAnswerDate } from './answerDates';
+
 const dayInMs = 24 * 60 * 60 * 1000;
 
 type AnsweredProgress = {
-  lastAnsweredAt?: string;
+  lastAnsweredAt?: unknown;
 };
 
 type AnswerAttempt = {
-  answeredAt?: string;
+  answeredAt?: unknown;
   questionId?: string;
 };
 
-function isOnLocalDate(isoDate: string | undefined, targetDate: string): boolean {
-  if (!isoDate) return false;
+function endOfLocalDate(date: Date): Date {
+  const safeDate = date instanceof Date && Number.isFinite(date.getTime()) ? date : new Date();
 
-  const date = new Date(isoDate);
-  if (Number.isNaN(date.getTime())) return false;
+  return new Date(safeDate.getFullYear(), safeDate.getMonth(), safeDate.getDate(), 23, 59, 59, 999);
+}
+
+function validationNowForTargetDate(date: Date): Date {
+  const now = new Date();
+  const targetDate = getLocalDateKey(date);
+  const today = getLocalDateKey(now);
+
+  return targetDate < today ? endOfLocalDate(date) : now;
+}
+
+function isOnLocalDate(value: unknown, targetDate: string, validationNow: Date): boolean {
+  const date = validAnswerDate(value, validationNow);
+  if (!date) return false;
 
   return getLocalDateKey(date) === targetDate;
 }
@@ -72,9 +86,10 @@ export function countAnswersForLocalDate(
   date: Date = new Date(),
 ): number {
   const targetDate = getLocalDateKey(date);
+  const validationNow = validationNowForTargetDate(date);
 
   return Object.values(questionProgress).filter((progress) =>
-    isOnLocalDate(progress?.lastAnsweredAt, targetDate),
+    isOnLocalDate(progress?.lastAnsweredAt, targetDate, validationNow),
   ).length;
 }
 
@@ -88,10 +103,12 @@ export function countAnswerAttemptsForLocalDate({
   date?: Date;
 }): number {
   const targetDate = getLocalDateKey(date);
+  const validationNow = validationNowForTargetDate(date);
 
   if (Array.isArray(answerAttempts)) {
-    return answerAttempts.filter((attempt) => isOnLocalDate(attempt?.answeredAt, targetDate))
-      .length;
+    return answerAttempts.filter((attempt) =>
+      isOnLocalDate(attempt?.answeredAt, targetDate, validationNow),
+    ).length;
   }
 
   return countAnswersForLocalDate(questionProgress, date);
