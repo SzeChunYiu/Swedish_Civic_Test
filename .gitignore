@@ -20,3 +20,7 @@ lib/monetization/ad-units.real.ts
 lib/monetization/ad-units.real.json
 codex-tasks/logs/.watchdog-*
 codex-tasks/logs/events.jsonl
+.codex-pr-merge/
+.claude/worktrees/
+.claude/scheduled_tasks.lock
+.vercel/
