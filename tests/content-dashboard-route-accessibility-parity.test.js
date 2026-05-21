@@ -123,8 +123,23 @@ function assertDashboardAccessibilitySeparation(sources) {
   );
   assert.match(
     sources.chapters,
-    /<Pressable[\s\S]*?accessibilityLabel=\{copy\.sortAccessibilityLabel\(label\)\}[\s\S]*?accessibilityRole="button"[\s\S]*?accessibilityState=\{\{ selected \}\}/,
-    'PerChapterProgressBars sort controls must remain independently reachable buttons',
+    /<View[\s\S]*?aria-label=\{copy\.sortGroupAccessibilityLabel\}[\s\S]*?accessibilityLabel=\{copy\.sortGroupAccessibilityLabel\}[\s\S]*?accessibilityRole="radiogroup"[\s\S]*?style=\{styles\.sortRow\}/,
+    'PerChapterProgressBars sort control must expose a localized radiogroup',
+  );
+  assert.match(
+    sources.chapters,
+    /<Pressable[\s\S]*?aria-checked=\{selected\}[\s\S]*?accessibilityLabel=\{copy\.sortAccessibilityLabel\(label\)\}[\s\S]*?accessibilityRole="radio"[\s\S]*?accessibilityState=\{\{ checked: selected \}\}/,
+    'PerChapterProgressBars sort options must expose radio checked semantics',
+  );
+  assert.doesNotMatch(
+    sources.chapters,
+    /accessibilityRole="button"[\s\S]{0,240}accessibilityState=\{\{\s*selected\s*\}\}/,
+    'PerChapterProgressBars sort options must not remain selected buttons',
+  );
+  assert.doesNotMatch(
+    sources.chapters,
+    /aria-selected=\{selected\}|accessibilityState=\{\{\s*selected\s*\}\}/,
+    'PerChapterProgressBars sort options must not leak selected state',
   );
   assert.match(
     sources.chapters,
@@ -352,6 +367,16 @@ function assertDashboardAccessibilitySeparation(sources) {
   assert.match(sources.dashboard, /trendLabel: 'Score trend'/);
   assert.match(sources.dashboard, /examLinkAccessibilityLabel: 'Öppna övningsprovet'/);
   assert.match(sources.dashboard, /examLinkAccessibilityLabel: 'Open the mock exam'/);
+  assert.match(
+    sources.dashboard,
+    /sortGroupAccessibilityLabel: 'Sortera kapitelframsteg'/,
+    'Swedish chapter-progress sort group label is required',
+  );
+  assert.match(
+    sources.dashboard,
+    /sortGroupAccessibilityLabel: 'Sort chapter progress'/,
+    'English chapter-progress sort group label is required',
+  );
 
   assert.match(sources.dashboard, /accessibilitySummary:\s*\{[\s\S]*?position: 'absolute'/);
   assert.match(sources.chapters, /accessibilitySummary:\s*\{[\s\S]*?position: 'absolute'/);
@@ -393,6 +418,41 @@ test('dashboard accessibility parity rejects grouped chapter controls', () => {
         ),
       }),
     /PerChapterProgressBars parent Card must not group sort buttons or chapter links/,
+  );
+});
+
+test('dashboard accessibility parity rejects an unlabelled chapter sort group', () => {
+  const sources = loadSources();
+
+  assert.throws(
+    () =>
+      assertDashboardAccessibilitySeparation({
+        ...sources,
+        chapters: sources.chapters.replace(
+          /\s+aria-label=\{copy\.sortGroupAccessibilityLabel\}\n\s+accessibilityLabel=\{copy\.sortGroupAccessibilityLabel\}\n\s+accessibilityRole="radiogroup"\n/,
+          '\n',
+        ),
+      }),
+    /PerChapterProgressBars sort control must expose a localized radiogroup/,
+  );
+});
+
+test('dashboard accessibility parity rejects selected-button chapter sort controls', () => {
+  const sources = loadSources();
+
+  assert.throws(
+    () =>
+      assertDashboardAccessibilitySeparation({
+        ...sources,
+        chapters: sources.chapters
+          .replace('aria-checked={selected}', 'aria-selected={selected}')
+          .replace('accessibilityRole="radio"', 'accessibilityRole="button"')
+          .replace(
+            'accessibilityState={{ checked: selected }}',
+            'accessibilityState={{ selected }}',
+          ),
+      }),
+    /PerChapterProgressBars sort options must expose radio checked semantics|PerChapterProgressBars sort options must not remain selected buttons|PerChapterProgressBars sort options must not leak selected state/,
   );
 });
 
