@@ -69,7 +69,7 @@ test('quiz QuestionCard keeps question text and accessibility summary in parity'
   assert.match(source, /\{questionText\}/);
   assert.match(source, /<Text style=\{styles\.sourceCitation\}>\{sourceCitation\}<\/Text>/);
   assert.match(source, /\{questionTranslation\}/);
-  assert.match(provenanceSource, /import \{ useEffect, useMemo, useState \} from 'react';/);
+  assert.match(provenanceSource, /import \{ useEffect, useMemo, useRef, useState \} from 'react';/);
   assert.match(
     provenanceSource,
     /useEffect\(\(\) =>\s*\{[\s\S]*setSourceNoteVisible\(false\);[\s\S]*\},\s*\[\s*question\?\.id,\s*language\s*\]\s*\);/,
@@ -255,7 +255,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/components/quiz/ProvenanceBadge.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace(/\\n\\s*useEffect\\(\\(\\) => \\{\\n\\s*setSourceNoteVisible\\(false\\);\\n\\s*\\}, \\[question\\?\\.id, language\\]\\);\\n/, '\\n');
+      .replace(/\\n\\s*useEffect\\(\\(\\) => \\{\\n\\s*clearFocusRevealTimeout\\(\\);\\n\\s*setSourceNoteVisible\\(false\\);\\n\\s*\\}, \\[question\\?\\.id, language\\]\\);\\n/, '\\n');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
