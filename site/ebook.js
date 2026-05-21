@@ -82,8 +82,15 @@
     },
   ]);
 
+  function sourceAnchor(note) {
+    const safeExternalAttrs = /^https?:\/\//.test(note.url)
+      ? ' target="_blank" rel="noreferrer"'
+      : '';
+    return `<a href="${note.url}"${safeExternalAttrs}>${note.label}</a>`;
+  }
+
   function sourceLink(note) {
-    return `<a href="${note.url}">${note.label}</a> (${note.retrievedDate})`;
+    return `${sourceAnchor(note)} (${note.retrievedDate})`;
   }
 
   function ebookSourceNotes(sourceKeys) {
@@ -93,9 +100,7 @@
   }
 
   function officialTestSourceLinks() {
-    return OFFICIAL_TEST_SOURCE_NOTES.map(
-      (source) => `<a href="${source.url}">${source.label}</a>`,
-    ).join(' · ');
+    return OFFICIAL_TEST_SOURCE_NOTES.map(sourceAnchor).join(' · ');
   }
 
   function ebookLocalizedLabel(map, lang) {
