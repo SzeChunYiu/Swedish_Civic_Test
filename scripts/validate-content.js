@@ -290,6 +290,20 @@ const STATIC_EBOOK_FACTBOX_REQUIRED_COPY = [
   'Sources accessed',
   'Källor hämtade',
 ];
+const STATIC_EBOOK_EXTRA_LOCALES = [
+  'zh-Hans',
+  'zh-Hant',
+  'ar',
+  'ckb',
+  'fa',
+  'pl',
+  'so',
+  'ti',
+  'tr',
+  'uk',
+];
+const STATIC_EBOOK_CHAPTER13_ENGLISH_HOLIDAY_GLOSS_PATTERN =
+  /[（(](?:Easter|Midsummer Eve|Christmas|New Year's Eve|First of May|Walpurgis Night|All Saints' Day|Advent)[）)]/i;
 const ABOUT_THE_TEST_OFFICIAL_SOURCE_RETRIEVED_DATE = '2026-05-21';
 const ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS = [
   'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
@@ -5453,6 +5467,39 @@ function renderStaticEbookChapter(harness, lang, chapterId) {
   return renderStaticEbookHash(harness, lang, `#/ebook?c=${encodeURIComponent(chapterId)}`).html;
 }
 
+function validateStaticEbookExtraLocaleHolidayGlosses() {
+  const harness = createStaticEbookValidationHarness(readStaticEbookChapterIds());
+  const offenders = [];
+  let languagesValidated = 0;
+
+  STATIC_EBOOK_EXTRA_LOCALES.forEach((language) => {
+    const html = renderStaticEbookChapter(harness, language, '13');
+    const match = html.match(STATIC_EBOOK_CHAPTER13_ENGLISH_HOLIDAY_GLOSS_PATTERN);
+
+    if (match) {
+      offenders.push(`${language}: ${match[0]}`);
+      return;
+    }
+
+    languagesValidated += 1;
+  });
+
+  if (offenders.length > 0) {
+    fail(
+      `static ebook chapter 13 extra-language copy contains parenthetical English holiday glosses:\n${offenders.join(
+        '\n',
+      )}`,
+    );
+  }
+
+  return {
+    languagesExpected: STATIC_EBOOK_EXTRA_LOCALES.length,
+    languagesValidated,
+    parityValidated:
+      offenders.length === 0 && languagesValidated === STATIC_EBOOK_EXTRA_LOCALES.length,
+  };
+}
+
 function staticEbookAnnotatedSourceClaimBlocks(html) {
   return Array.from(
     html.matchAll(
@@ -8754,6 +8801,8 @@ let staticEbookFootnoteHashLanguagesValidated = 0;
 let staticEbookFootnoteHashParityValidated = false;
 let staticEbookProseSourceMetadataRulesValidated = 0;
 let staticEbookProseSourceMetadataParityValidated = false;
+let staticEbookExtraLocaleHolidayGlossLanguagesValidated = 0;
+let staticEbookExtraLocaleHolidayGlossParityValidated = false;
 let staticHeadMetadataTitleValidated = 0;
 let staticHeadMetadataDescriptionValidated = 0;
 let staticHeadMetadataOutcomeClaimPatternsValidated = 0;
@@ -9104,6 +9153,9 @@ if (process.argv.includes('--focus-static-ebook-provenance')) {
   staticEbookProseSourceMetadataRulesValidated = proseValidation.rulesValidated;
   staticEbookProseSourceMetadataParityValidated =
     staticEbookProseSourceMetadataRulesValidated === proseValidation.rulesExpected;
+  const holidayGlossValidation = validateStaticEbookExtraLocaleHolidayGlosses();
+  staticEbookExtraLocaleHolidayGlossLanguagesValidated = holidayGlossValidation.languagesValidated;
+  staticEbookExtraLocaleHolidayGlossParityValidated = holidayGlossValidation.parityValidated;
   exitWithValidationFailures();
   printValidationSummary({
     staticEbookFactboxClaimPatternsValidated,
@@ -9112,6 +9164,8 @@ if (process.argv.includes('--focus-static-ebook-provenance')) {
     staticEbookFactboxProvenanceValidated,
     staticEbookProseSourceMetadataRulesValidated,
     staticEbookProseSourceMetadataParityValidated,
+    staticEbookExtraLocaleHolidayGlossLanguagesValidated,
+    staticEbookExtraLocaleHolidayGlossParityValidated,
     staticValidationSyntaxFilesValidated,
     staticValidationImportChecksValidated,
     staticValidationSyntaxGateValidated,
@@ -9880,6 +9934,11 @@ staticEbookOutcomeClaimParityValidated =
   staticEbookProseSourceMetadataRulesValidated = proseValidation.rulesValidated;
   staticEbookProseSourceMetadataParityValidated =
     staticEbookProseSourceMetadataRulesValidated === proseValidation.rulesExpected;
+}
+{
+  const holidayGlossValidation = validateStaticEbookExtraLocaleHolidayGlosses();
+  staticEbookExtraLocaleHolidayGlossLanguagesValidated = holidayGlossValidation.languagesValidated;
+  staticEbookExtraLocaleHolidayGlossParityValidated = holidayGlossValidation.parityValidated;
 }
 {
   const footnoteHashValidation = validateStaticEbookFootnoteHashParity();
@@ -22570,6 +22629,8 @@ console.log(
       staticEbookFactboxProvenanceValidated,
       staticEbookProseSourceMetadataRulesValidated,
       staticEbookProseSourceMetadataParityValidated,
+      staticEbookExtraLocaleHolidayGlossLanguagesValidated,
+      staticEbookExtraLocaleHolidayGlossParityValidated,
       staticEbookFootnoteHashChaptersValidated,
       staticEbookFootnoteHashLanguagesValidated,
       staticEbookFootnoteHashParityValidated,
