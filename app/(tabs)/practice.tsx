@@ -12,6 +12,7 @@ import { ConfidenceRatingPicker } from '../../components/quiz/ConfidenceRatingPi
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
+import { QuestionReportLink } from '../../components/quiz/QuestionReportLink';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { PersistenceWarningNotice } from '../../components/storage/PersistenceWarningNotice';
 import { StudyCompanionCard } from '../../components/mascot/StudyCompanionCard';
@@ -428,6 +429,12 @@ export default function Screen() {
             text={buildAnswerFeedbackSpeechText(question, selectedOptionId)}
           />
           <UHRReferenceCard language={language} reference={question.uhrReference} />
+          <QuestionReportLink
+            language={language}
+            question={question}
+            screen="practice"
+            selectedOptionId={selectedOptionId}
+          />
           <PracticeInterstitialAd
             showKey={getPracticeInterstitialShowKey(question.id, shuffleSessionId)}
           />
