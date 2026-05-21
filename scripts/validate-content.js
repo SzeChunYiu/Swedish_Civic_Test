@@ -1182,7 +1182,7 @@ const EXPECTED_MISTAKES_ROUTE_COPY_SNIPPETS = [
   ['{copy.bookmarkedTitle}', 'bookmarked title must render localized copy'],
   ['{copy.bookmarkedMeta}', 'bookmarked metadata must render localized copy'],
   [
-    '<AnswerReviewBlock copy={copy} correctAnswer={correctAnswer} />',
+    '<AnswerReviewBlock copy={copy} correctAnswer={correctAnswer} styles={styles} />',
     'bookmarked review cards must show the localized correct answer',
   ],
   ['<Badge tone="orange">{copy.mistakeBadge}</Badge>', 'mistake badge must render localized copy'],
