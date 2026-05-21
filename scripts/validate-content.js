@@ -9251,6 +9251,20 @@ if (process.argv.includes('--focus-content-exec-cwd')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-legal-section-rendering')) {
+  validateLegalSectionRenderingParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    legalSectionRenderingTestsRoutedValidated,
+    legalSectionRenderingCasesValidated,
+    legalSectionWhitespaceTextValidated,
+    legalSectionFragmentChildrenValidated,
+    legalSectionRawTextUnderViewValidated,
+    legalSectionRenderingParityValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-search-route-query-hydration')) {
   validateSearchRouteQueryHydrationParity();
   exitWithValidationFailures();
@@ -19397,26 +19411,6 @@ if (process.argv.includes('--focus-legal-route-parity')) {
         swedishPrivacyStreakCopyNaturalnessValidated,
         legalSwedishEnglishTokenGuardValidated,
         legalSwedishEnglishTokenGuardParityValidated,
-      },
-      null,
-      2,
-    ),
-  );
-  process.exit(0);
-}
-if (process.argv.includes('--focus-legal-section-rendering')) {
-  validateLegalSectionRenderingParity();
-  if (failures.length) exitWithValidationFailures();
-  console.log('Content validation OK');
-  console.log(
-    JSON.stringify(
-      {
-        legalSectionRenderingTestsRoutedValidated,
-        legalSectionRenderingCasesValidated,
-        legalSectionWhitespaceTextValidated,
-        legalSectionFragmentChildrenValidated,
-        legalSectionRawTextUnderViewValidated,
-        legalSectionRenderingParityValidated,
       },
       null,
       2,
