@@ -1,3 +1,4 @@
+import type { Href } from 'expo-router';
 import { Link, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -100,6 +101,8 @@ const quizSessionCopy: Record<AppLanguage, QuizSessionCopy> = {
   },
 };
 
+const maxSearchReturnQueryLength = 120;
+
 function normalizeSessionId(sessionId: string | string[] | undefined): string {
   if (Array.isArray(sessionId)) return sessionId[0] ?? 'practice';
   return sessionId || 'practice';
@@ -110,18 +113,35 @@ function normalizeOptionalRouteParam(value: string | string[] | undefined): stri
   return rawValue && rawValue.trim().length > 0 ? rawValue : null;
 }
 
+function normalizeSearchQueryParam(value: string | string[] | undefined): string | null {
+  const normalizedValue = normalizeOptionalRouteParam(value);
+  if (!normalizedValue || normalizedValue.length > maxSearchReturnQueryLength) return null;
+
+  return normalizedValue;
+}
+
+function getBackToSearchHref(searchQuery: string | null): Href {
+  if (!searchQuery) return '/search';
+
+  return `/search?q=${encodeURIComponent(searchQuery)}` as Href;
+}
+
 function pickSessionQuestion(sessionId: string) {
   const exactMatch = questions.find((question) => question.id === sessionId);
   return exactMatch;
 }
 
 export default function QuizSessionScreen() {
-  const { chapterId, sessionId } = useLocalSearchParams<{
+  const { chapterId, q, query, sessionId } = useLocalSearchParams<{
     chapterId?: string | string[];
+    q?: string | string[];
+    query?: string | string[];
     sessionId: string | string[];
   }>();
   const normalizedSessionId = normalizeSessionId(sessionId);
   const normalizedChapterId = normalizeOptionalRouteParam(chapterId);
+  const returnSearchQuery = normalizeSearchQueryParam(q) ?? normalizeSearchQueryParam(query);
+  const backToSearchHref = getBackToSearchHref(returnSearchQuery);
   const pickedQuestion = useMemo(
     () => pickSessionQuestion(normalizedSessionId),
     [normalizedSessionId],
@@ -201,7 +221,7 @@ export default function QuizSessionScreen() {
             <Link
               accessibilityLabel={copy.backToSearchAccessibilityLabel}
               accessibilityRole="link"
-              href="/search"
+              href={backToSearchHref}
               style={styles.linkButton}
             >
               {copy.backToSearch}
@@ -229,7 +249,7 @@ export default function QuizSessionScreen() {
           <Link
             accessibilityLabel={copy.backToSearchAccessibilityLabel}
             accessibilityRole="link"
-            href="/search"
+            href={backToSearchHref}
             style={styles.linkButton}
           >
             {copy.backToSearch}
@@ -279,6 +299,16 @@ export default function QuizSessionScreen() {
         </Text>
         <Text style={styles.subtitle}>{sessionSubtitle}</Text>
         <ProgressBar language={language} progress={hasSelectedAnswer ? 1 : 0} />
+        <View style={styles.actions}>
+          <Link
+            accessibilityLabel={copy.backToSearchAccessibilityLabel}
+            accessibilityRole="link"
+            href={backToSearchHref}
+            style={styles.linkButton}
+          >
+            {copy.backToSearch}
+          </Link>
+        </View>
       </View>
 
       <QuestionDisclaimer language={language} />

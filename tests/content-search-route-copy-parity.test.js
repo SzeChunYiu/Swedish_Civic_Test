@@ -107,7 +107,14 @@ function assertSearchRouteQuestionResults(source) {
       /<ProvenanceBadge\s+language=\{language\}\s+question=\{result\.question\}\s+themeColors=\{themeColors\}\s+\/>/,
       'visible theme-aware provenance badge',
     ],
-    [/href=\{`\/quiz\/\$\{result\.question\.id\}`\}/, 'routed quiz question link'],
+    [
+      /function getQuestionResultHref\(questionId: string, query: string\)/,
+      'shared routed quiz question href helper',
+    ],
+    [
+      /href=\{getQuestionResultHref\(result\.question\.id, trimmedQuery\)\}/,
+      'routed quiz question link',
+    ],
     [/questionSectionTitle: 'Övningsfrågor'/, 'Swedish question section copy'],
     [/questionSectionTitle: 'Practice questions'/, 'English question section copy'],
     [
@@ -458,7 +465,7 @@ test('Question search rejects route-local punctuation-preserving normalization d
 
 test('Search route question results reject dropping routed quiz links', () => {
   const mutatedSource = readSearchRouteSource().replace(
-    'href={`/quiz/${result.question.id}`}',
+    'href={getQuestionResultHref(result.question.id, trimmedQuery)}',
     'href="/(tabs)/learn"',
   );
 
