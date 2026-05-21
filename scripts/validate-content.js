@@ -8449,6 +8449,19 @@ function validateReleaseMonetizationPolicyParity() {
     reject('releaseMonetizationPolicy no-ad placements must match adsConfig.blockedPlacements');
   }
 
+  if (adsConfig.realUnitJsonEnvKey !== 'EXPO_PUBLIC_ADMOB_REAL_UNITS_JSON') {
+    reject('adsConfig.realUnitJsonEnvKey must document EXPO_PUBLIC_ADMOB_REAL_UNITS_JSON');
+  }
+  for (const placement of adsConfig.safePlacements || []) {
+    const sources = adsConfig.realUnitSources?.[placement];
+    if (!sources || !['env', 'json', 'none'].includes(sources.android)) {
+      reject(`adsConfig.realUnitSources.${placement}.android must expose env/json/none`);
+    }
+    if (!sources || !['env', 'json', 'none'].includes(sources.ios)) {
+      reject(`adsConfig.realUnitSources.${placement}.ios must expose env/json/none`);
+    }
+  }
+
   const storeDisclosureLabels = Array.isArray(consentConfig?.storeDisclosureLabels)
     ? consentConfig.storeDisclosureLabels
     : [];

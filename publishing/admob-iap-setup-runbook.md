@@ -30,10 +30,29 @@ App identity (from publishing/release-readiness.md):
    GitHub Pages site already used for support/privacy).
 5. Set the app **content rating** and, in App settings, mark "Directed to
    children" = **No** (study app for adults).
-6. Hand the factory: 2 App IDs + 12 unit IDs. They go into a NEW
-   `lib/monetization/ad-units.real.ts` (gitignored if you prefer) or via the
-   `EXPO_PUBLIC_ADMOB_*` env keys the factory will define — do NOT hardcode in
-   tracked source. Test units stay the default for dev.
+6. Hand the factory: 2 App IDs + 12 unit IDs. Prefer either explicit
+   per-placement `EXPO_PUBLIC_ADMOB_ANDROID_*_UNIT_ID` /
+   `EXPO_PUBLIC_ADMOB_IOS_*_UNIT_ID` variables, or one JSON override in
+   `EXPO_PUBLIC_ADMOB_REAL_UNITS_JSON`. Explicit per-placement variables win
+   over JSON when both are set. Test units stay the default for dev, and real
+   units are used only when `EXPO_PUBLIC_REAL_ADS_ENABLED=true`.
+
+Accepted JSON shape:
+
+```json
+{
+  "home_banner": {
+    "androidUnitId": "ca-app-pub-1234567890123456/1234567890",
+    "iosUnitId": "ca-app-pub-1234567890123456/2345678901"
+  },
+  "quiz_completed_interstitial": {
+    "android": "ca-app-pub-1234567890123456/3456789012",
+    "ios": "ca-app-pub-1234567890123456/4567890123"
+  }
+}
+```
+
+Invalid or missing unit IDs are ignored and leave that platform disabled.
 
 ## Part B — "Remove Ads" in-app purchase (29 SEK, one-time)
 
