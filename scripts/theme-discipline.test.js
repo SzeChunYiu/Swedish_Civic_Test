@@ -8,10 +8,10 @@ const ROOT = path.resolve(__dirname, '..');
 const SOURCE_DIRS = ['app', 'components'];
 const COLOR_LITERAL = /#[0-9a-fA-F]{6}|rgba?\(/;
 const SPACING_LITERAL = /\b(?:padding(?:Horizontal|Vertical)?|marginTop|gap|borderRadius):\s*\d/;
-const TYPOGRAPHY_LITERAL =
-  /\b(?:fontSize|lineHeight|letterSpacing):\s*-?\d|\bfontWeight:\s*['\"]\d/;
 const BORDER_WIDTH_LITERAL =
   /\bborder(?:Top|Right|Bottom|Left)?Width:\s*(?:StyleSheet\.hairlineWidth|\d)/;
+const TYPOGRAPHY_LITERAL =
+  /\b(?:fontSize|lineHeight|letterSpacing):\s*-?\d|\bfontWeight:\s*['\"]\d/;
 const MIN_BODY_TEXT_CONTRAST = 4.5;
 const REQUIRED_CONTRAST_PAIRS = [
   ['text', 'surface'],
@@ -45,29 +45,6 @@ function walk(dir) {
 
 function read(relativePath) {
   return fs.readFileSync(path.join(ROOT, relativePath), 'utf8');
-}
-
-function collectThemeTokenLiteralOffenders(readFile = fs.readFileSync) {
-  const offenders = [];
-
-  for (const sourceDir of SOURCE_DIRS) {
-    for (const filePath of walk(path.join(ROOT, sourceDir))) {
-      const relPath = path.relative(ROOT, filePath);
-      const lines = readFile(filePath, 'utf8').split('\n');
-      lines.forEach((line, index) => {
-        if (
-          COLOR_LITERAL.test(line) ||
-          SPACING_LITERAL.test(line) ||
-          TYPOGRAPHY_LITERAL.test(line) ||
-          BORDER_WIDTH_LITERAL.test(line)
-        ) {
-          offenders.push(`${relPath}:${index + 1}: ${line.trim()}`);
-        }
-      });
-    }
-  }
-
-  return offenders;
 }
 
 function readColorTokens() {
@@ -121,27 +98,26 @@ function contrastRatio(foreground, background) {
 }
 
 test('app and component styles use theme tokens instead of literal colors, spacing, or typography', () => {
-  assert.deepEqual(collectThemeTokenLiteralOffenders(), []);
-});
+  const offenders = [];
 
-test('theme discipline rejects raw border width literals in app and component styles', () => {
-  const cardPath = path.join(ROOT, 'components/ui/Card.tsx');
-  const mutatedCard = read('components/ui/Card.tsx').replace(
-    'borderWidth: space.hairline,',
-    'borderWidth: StyleSheet.hairlineWidth,',
-  );
-  const offenders = collectThemeTokenLiteralOffenders((filePath, encoding) => {
-    if (filePath === cardPath) return mutatedCard;
-    return fs.readFileSync(filePath, encoding);
-  });
+  for (const sourceDir of SOURCE_DIRS) {
+    for (const filePath of walk(path.join(ROOT, sourceDir))) {
+      const relPath = path.relative(ROOT, filePath);
+      const lines = fs.readFileSync(filePath, 'utf8').split('\n');
+      lines.forEach((line, index) => {
+        if (
+          COLOR_LITERAL.test(line) ||
+          SPACING_LITERAL.test(line) ||
+          BORDER_WIDTH_LITERAL.test(line) ||
+          TYPOGRAPHY_LITERAL.test(line)
+        ) {
+          offenders.push(`${relPath}:${index + 1}: ${line.trim()}`);
+        }
+      });
+    }
+  }
 
-  assert.ok(
-    offenders.some(
-      (offender) =>
-        offender.includes('components/ui/Card.tsx') &&
-        offender.includes('borderWidth: StyleSheet.hairlineWidth,'),
-    ),
-  );
+  assert.deepEqual(offenders, []);
 });
 
 test('theme discipline rejects negative literal typography drift', () => {
@@ -150,6 +126,21 @@ test('theme discipline rejects negative literal typography drift', () => {
     TYPOGRAPHY_LITERAL.test('letterSpacing: typography.cardTitle.letterSpacing,'),
     false,
   );
+});
+
+test('app and component border widths use named theme tokens', () => {
+  for (const rawWidth of [
+    'borderWidth: StyleSheet.hairlineWidth,',
+    'borderWidth: 1,',
+    'borderTopWidth: 0,',
+    'borderBottomWidth: 2,',
+  ]) {
+    assert.match(rawWidth, BORDER_WIDTH_LITERAL);
+  }
+
+  for (const tokenizedWidth of ['borderWidth: space.hairline,', 'borderTopWidth: space[0],']) {
+    assert.doesNotMatch(tokenizedWidth, BORDER_WIDTH_LITERAL);
+  }
 });
 
 test('semantic text tokens meet WCAG AA contrast on app surfaces', () => {

@@ -16,6 +16,7 @@ test('theme token schema validates the exported design-token catalog', () => {
 
   const summary = JSON.parse(match[0]);
   const themeIndex = fs.readFileSync(path.join(repoRoot, 'lib/theme/index.ts'), 'utf8');
+  const spacingSource = fs.readFileSync(path.join(repoRoot, 'lib/theme/spacing.ts'), 'utf8');
 
   assert.equal(summary.themeColorTokensValidated, 37);
   assert.equal(summary.themeSpaceTokensValidated, 24);
@@ -31,6 +32,7 @@ test('theme token schema validates the exported design-token catalog', () => {
   assert.equal(summary.themeDarkContrastPairsValidated, 20);
   assert.equal(summary.themeDarkContrastPairsAAValidated, true);
   assert.equal(summary.themeTokenSchemaValidated, true);
+  assert.match(spacingSource, /hairline:\s*2,/);
   assert.match(
     themeIndex,
     /export \{[\s\S]*colors[\s\S]*colorsForThemeMode[\s\S]*\} from '\.\/colors';/,
@@ -97,6 +99,31 @@ require('./scripts/validate-content.js');
 
   assert.notEqual(result.status, 0);
   assert.match(`${result.stdout}\n${result.stderr}`, /theme space\.1 expected 8, found -8/);
+});
+
+test('theme token schema rejects hairline border token drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/theme/spacing.ts')) {
+    return originalReadFileSync.call(this, filePath, ...args).replace('hairline: 2,', 'hairline: 1,');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(`${result.stdout}\n${result.stderr}`, /theme space\.hairline expected 2, found 1/);
 });
 
 test('theme token schema rejects control radius token drift', () => {
