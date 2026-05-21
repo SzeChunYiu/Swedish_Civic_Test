@@ -8,6 +8,7 @@ const repoRoot = path.resolve(__dirname, '..');
 const searchRoutePath = path.join(repoRoot, 'app/search.tsx');
 const searchQueryHydrationE2ePath = path.join(repoRoot, 'tests/e2e/search-query-hydration.spec.ts');
 const glossarySearchPath = path.join(repoRoot, 'lib/learning/glossarySearch.ts');
+const questionSearchPath = path.join(repoRoot, 'lib/search/questionSearch.ts');
 
 function readSearchRouteSource() {
   return fs.readFileSync(searchRoutePath, 'utf8');
@@ -15,6 +16,10 @@ function readSearchRouteSource() {
 
 function readGlossarySearchSource() {
   return fs.readFileSync(glossarySearchPath, 'utf8');
+}
+
+function readQuestionSearchSource() {
+  return fs.readFileSync(questionSearchPath, 'utf8');
 }
 
 function readSearchQueryHydrationE2eSource() {
@@ -134,6 +139,36 @@ function assertSharedGlossaryPunctuationNormalizer(source) {
   );
 }
 
+function assertQuestionSearchPunctuationNormalizer(source) {
+  const requiredRules = [
+    [
+      /import \{ normalizeGlossarySearchText \} from '\.\.\/learning\/glossarySearch';/,
+      'shared glossary normalizer import',
+    ],
+    [/const normalizedQuery = normalizeGlossarySearchText\(query\);/, 'normalized query'],
+    [/const normalizedValue = normalizeGlossarySearchText\(value\);/, 'normalized weighted field'],
+    [
+      /searchableFields\(question, chapter\)\.map\(normalizeGlossarySearchText\)\.join\(' '\)/,
+      'normalized token haystack',
+    ],
+  ];
+
+  for (const [pattern, label] of requiredRules) {
+    assert.match(source, pattern, `Question search missing ${label}`);
+  }
+
+  assert.doesNotMatch(
+    source,
+    /function normalizeSearchText/,
+    'Question search must not keep a private punctuation-preserving normalizer',
+  );
+  assert.doesNotMatch(
+    source,
+    /\.normalize\('NFD'\)[\s\S]*?\.trim\(\);/,
+    'Question search must not fork accent-only normalization away from glossary search',
+  );
+}
+
 function assertSearchRouteQueryHydration(source) {
   const requiredRules = [
     [
@@ -202,6 +237,7 @@ test('Search route hydrates and resyncs q or query URL params around typing', ()
   assertSearchRouteQuestionResults(source);
   assertSearchRouteGlossarySearchParity(source);
   assertSharedGlossaryPunctuationNormalizer(readGlossarySearchSource());
+  assertQuestionSearchPunctuationNormalizer(readQuestionSearchSource());
 });
 
 test('Search route e2e covers mounted query-param navigation without reload', () => {
@@ -226,8 +262,10 @@ test('validate-content reports Search route query hydration parity', () => {
     },
   );
 
-  assert.match(output, /"searchRouteQueryHydrationRulesValidated":\s*31/);
+  assert.match(output, /"searchRouteQueryHydrationRulesValidated":\s*25/);
   assert.match(output, /"searchRouteQueryHydrationParityValidated":\s*true/);
+  assert.match(output, /"searchQuestionPunctuationRulesValidated":\s*4/);
+  assert.match(output, /"searchQuestionPunctuationParityValidated":\s*true/);
 });
 
 test('Search route hydration rejects blank initial query drift', () => {
@@ -321,6 +359,32 @@ test('Shared glossary normalizer rejects dropping punctuation stripping', () => 
   assert.throws(
     () => assertSharedGlossaryPunctuationNormalizer(mutatedSource),
     /replace punctuation/,
+  );
+});
+
+test('Question search rejects route-local punctuation-preserving normalization drift', () => {
+  const mutatedSource = readQuestionSearchSource()
+    .replace("import { normalizeGlossarySearchText } from '../learning/glossarySearch';\n", '')
+    .replace(
+      'const normalizedQuery = normalizeGlossarySearchText(query);',
+      'const normalizedQuery = normalizeSearchText(query);',
+    )
+    .replace(
+      'const normalizedValue = normalizeGlossarySearchText(value);',
+      'const normalizedValue = normalizeSearchText(value);',
+    )
+    .replace(
+      "const haystack = searchableFields(question, chapter).map(normalizeGlossarySearchText).join(' ');",
+      "const haystack = searchableFields(question, chapter).map(normalizeSearchText).join(' ');",
+    )
+    .replace(
+      'function searchableFields(question: PracticeQuestion, chapter: Chapter | undefined): string[] {',
+      "function normalizeSearchText(value: string): string {\n  return value\n    .normalize('NFD')\n    .replace(/[\\u0300-\\u036f]/g, '')\n    .toLocaleLowerCase('sv-SE')\n    .trim();\n}\n\nfunction searchableFields(question: PracticeQuestion, chapter: Chapter | undefined): string[] {",
+    );
+
+  assert.throws(
+    () => assertQuestionSearchPunctuationNormalizer(mutatedSource),
+    /shared glossary normalizer/,
   );
 });
 

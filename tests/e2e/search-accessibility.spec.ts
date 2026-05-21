@@ -139,6 +139,7 @@ for (const language of ['sv', 'en'] as const satisfies readonly Language[]) {
     await expect(
       page.getByRole('link', { name: /Öppna kapitlet|Open the chapter/ }).first(),
     ).toBeVisible();
+    await expect(page.getByRole('link', { name: t.questionLink }).first()).toBeVisible();
 
     expect(consoleErrors).toEqual([]);
   });

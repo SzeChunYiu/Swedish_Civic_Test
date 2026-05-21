@@ -9261,6 +9261,10 @@ let provenanceAuthorityCopyFilesValidated = 0;
 let provenanceAuthorityCopyParityValidated = false;
 let learnRouteLinkCopyLabelsValidated = 0;
 let learnRouteLinkCopyParityValidated = false;
+let searchRouteQueryHydrationRulesValidated = 0;
+let searchRouteQueryHydrationParityValidated = false;
+let searchQuestionPunctuationRulesValidated = 0;
+let searchQuestionPunctuationParityValidated = false;
 let mistakesRouteCopyLabelsValidated = 0;
 let mistakesRouteCopyParityValidated = false;
 let mistakeReviewHydrationFixtureCasesValidated = 0;
@@ -9829,10 +9833,13 @@ if (process.argv.includes('--focus-legal-section-rendering')) {
 
 if (process.argv.includes('--focus-search-route-query-hydration')) {
   validateSearchRouteQueryHydrationParity();
+  validateSearchQuestionPunctuationParity();
   exitWithValidationFailures();
   printValidationSummary({
     searchRouteQueryHydrationRulesValidated,
     searchRouteQueryHydrationParityValidated,
+    searchQuestionPunctuationRulesValidated,
+    searchQuestionPunctuationParityValidated,
   });
   process.exit(0);
 }
@@ -12526,6 +12533,58 @@ function validateMistakesRouteCopyParity() {
   }
 }
 
+function validateSearchQuestionPunctuationParity() {
+  let valid = true;
+  let questionSearch = '';
+
+  function reject(message) {
+    valid = false;
+    fail(`Question search punctuation parity: ${message}`);
+  }
+
+  try {
+    questionSearch = fs.readFileSync(path.join(repoRoot, 'lib/search/questionSearch.ts'), 'utf8');
+  } catch (error) {
+    reject(`lib/search/questionSearch.ts could not be read: ${error.message}`);
+    return;
+  }
+
+  const punctuationRules = [
+    {
+      label: 'shared glossary normalizer import',
+      pattern: /import \{ normalizeGlossarySearchText \} from '\.\.\/learning\/glossarySearch';/,
+    },
+    {
+      label: 'normalized query',
+      pattern: /const normalizedQuery = normalizeGlossarySearchText\(query\);/,
+    },
+    {
+      label: 'normalized weighted field',
+      pattern: /const normalizedValue = normalizeGlossarySearchText\(value\);/,
+    },
+    {
+      label: 'normalized token haystack',
+      pattern:
+        /searchableFields\(question, chapter\)\.map\(normalizeGlossarySearchText\)\.join\(' '\)/,
+    },
+  ];
+
+  searchQuestionPunctuationRulesValidated = validateSourcePatternRules(
+    questionSearch,
+    punctuationRules,
+    reject,
+  );
+  if (/function normalizeSearchText/.test(questionSearch)) {
+    reject('private punctuation-preserving normalizeSearchText function must stay removed');
+  }
+  if (/\.normalize\('NFD'\)[\s\S]*?\.trim\(\);/.test(questionSearch)) {
+    reject('question search must not fork accent-only normalization away from glossary search');
+  }
+  if (valid && searchQuestionPunctuationRulesValidated === punctuationRules.length) {
+    searchQuestionPunctuationParityValidated = true;
+  }
+}
+
 function validateChapterRouteHeaderParity() {
   let valid = true;
   let chapterRoute = '';
@@ -12966,6 +13025,20 @@ function validateHomeRouteSwedishMistakeReviewCopyNaturalness() {
   });
 
   if (valid) homeRouteSwedishMistakeReviewCopyNaturalnessValidated = true;
+}
+
+function validateSourcePatternRules(source, rules, reject) {
+  let validated = 0;
+
+  rules.forEach(({ label, pattern }) => {
+    if (!pattern.test(source)) {
+      reject(label);
+      return;
+    }
+    validated += 1;
+  });
+
+  return validated;
 }
 
 function validateSearchRouteQueryHydrationParity() {
@@ -21040,6 +21113,7 @@ validateHomeRouteSwedishMistakeReviewCopyNaturalness();
 validateHomeRouteCopyParity();
 validateAboutTheTestRouteCopyParity();
 validateSearchRouteQueryHydrationParity();
+validateSearchQuestionPunctuationParity();
 validateMistakesRouteHeaderParity();
 validateMistakesRouteCopyParity();
 validateMistakeReviewHydrationEvidence();
@@ -21187,6 +21261,8 @@ console.log(
       learnRouteLinkCopyParityValidated,
       searchRouteQueryHydrationRulesValidated,
       searchRouteQueryHydrationParityValidated,
+      searchQuestionPunctuationRulesValidated,
+      searchQuestionPunctuationParityValidated,
       profileRouteHeadersValidated,
       profileRouteHeaderParityValidated,
       profileRouteCopyLabelsValidated,
