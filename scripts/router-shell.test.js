@@ -36,33 +36,6 @@ function escapeRegExp(literal) {
   return literal.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-function valuesInConstArray(source, constName) {
-  const escapedConstName = escapeRegExp(constName);
-  const match = source.match(
-    new RegExp(`export const ${escapedConstName}\\s*=\\s*\\[([\\s\\S]*?)\\]`),
-  );
-
-  assert.notEqual(match, null, `${constName} should be declared as a readonly array`);
-
-  return [...match[1].matchAll(/['"]([^'"]+)['"]/g)].map((arrayMatch) => arrayMatch[1]);
-}
-
-function valuesForFieldInSource(source, fieldName) {
-  return [
-    ...source.matchAll(new RegExp(`${escapeRegExp(fieldName)}:\\s*['"]([^'"]+)['"]`, 'g')),
-  ].map((match) => match[1]);
-}
-
-function valuesForFieldInConstArray(source, constName, fieldName) {
-  const match = source.match(
-    new RegExp(`export const ${escapeRegExp(constName)}\\s*=\\s*\\[([\\s\\S]*?)\\]\\s+as const`),
-  );
-
-  assert.notEqual(match, null, `${constName} should be declared as a readonly array`);
-
-  return valuesForFieldInSource(match[1], fieldName);
-}
-
 function extractStackScreenNames(rootLayoutSource) {
   return Array.from(
     rootLayoutSource.matchAll(/<Stack\.Screen\s+name=(["'])([^"']+)\1/g),
@@ -70,69 +43,8 @@ function extractStackScreenNames(rootLayoutSource) {
   );
 }
 
-function readRouterShellManifest() {
-  const manifest = read('lib/scaffold/routerShellManifest.ts');
-
-  return {
-    files: valuesForFieldInConstArray(manifest, 'expoRouterShellFiles', 'file'),
-    roles: valuesForFieldInConstArray(manifest, 'expoRouterShellFiles', 'role'),
-    rootStackScreenNames: valuesForFieldInConstArray(
-      manifest,
-      'expoRouterRootStackScreens',
-      'name',
-    ),
-    rootStackScreenFiles: valuesForFieldInConstArray(
-      manifest,
-      'expoRouterRootStackScreens',
-      'file',
-    ),
-    recoveryHrefs: valuesInConstArray(manifest, 'expoRouterShellRecoveryHrefs'),
-    standaloneHeaderHiddenRoutes: valuesInConstArray(
-      manifest,
-      'expoRouterStandaloneHeaderHiddenRoutes',
-    ),
-    notFoundRouteNames: valuesForFieldInSource(manifest, 'notFoundRouteName'),
-    notFoundHeaderModes: valuesForFieldInSource(manifest, 'notFoundHeaderMode'),
-    rootStackHeaderModes: valuesForFieldInSource(manifest, 'rootStackHeaderMode'),
-    notFoundRedirectHrefs: valuesForFieldInSource(manifest, 'notFoundRedirectHref'),
-    notFoundFileProtocolFallbacks: valuesForFieldInSource(manifest, 'notFoundFileProtocolFallback'),
-    webLanguages: valuesForFieldInSource(manifest, 'webLanguage'),
-    webAppShellMarkers: valuesForFieldInSource(manifest, 'webAppShellMarker'),
-    themeColorTokens: valuesForFieldInSource(manifest, 'themeColorToken'),
-    statusBarStyles: valuesForFieldInSource(manifest, 'statusBarStyle'),
-    nativeFallbackHrefs: valuesForFieldInSource(manifest, 'nativeFallbackHref'),
-    appSchemes: valuesForFieldInSource(manifest, 'appScheme'),
-    webDescriptionLanguages: valuesForFieldInConstArray(
-      manifest,
-      'expoRouterWebDocumentMetaDescriptions',
-      'language',
-    ),
-    webDescriptions: valuesForFieldInConstArray(
-      manifest,
-      'expoRouterWebDocumentMetaDescriptions',
-      'description',
-    ),
-    nativeIntentStaticRoutes: valuesInConstArray(manifest, 'expoRouterNativeIntentStaticRoutes'),
-    nativeIntentRuntimeSampleInputs: valuesForFieldInConstArray(
-      manifest,
-      'expoRouterNativeIntentRuntimeSamples',
-      'input',
-    ),
-    nativeIntentRuntimeSampleExpectedPaths: valuesForFieldInConstArray(
-      manifest,
-      'expoRouterNativeIntentRuntimeSamples',
-      'expectedPath',
-    ),
-    nativeIntentConfigFiles: valuesInConstArray(manifest, 'expoRouterNativeIntentConfigFiles'),
-  };
-}
-
-function readWebDocumentMetadata() {
-  return require('../lib/scaffold/webDocumentMetadata.js');
-}
-
-function loadNativeIntentRuntime() {
-  const source = read('app/+native-intent.ts');
+function loadTsRuntime(relativePath, globals = {}) {
+  const source = read(relativePath);
   const module = { exports: {} };
   const transpiled = ts.transpileModule(source, {
     compilerOptions: {
@@ -146,12 +58,70 @@ function loadNativeIntentRuntime() {
     {
       module,
       exports: module.exports,
-      URL,
+      ...globals,
     },
-    { filename: 'app/+native-intent.ts' },
+    { filename: relativePath },
   );
 
   return module.exports;
+}
+
+function readRouterShellManifest() {
+  const manifest = loadTsRuntime('lib/scaffold/routerShellManifest.ts');
+
+  return {
+    files: Array.from(manifest.expoRouterShellFiles, (entry) => entry.file),
+    roles: Array.from(manifest.expoRouterShellFiles, (entry) => entry.role),
+    rootStackScreenNames: Array.from(
+      manifest.expoRouterRootStackScreens,
+      (entry) => entry.name,
+    ),
+    rootStackScreenFiles: Array.from(
+      manifest.expoRouterRootStackScreens,
+      (entry) => entry.file,
+    ),
+    recoveryHrefs: Array.from(manifest.expoRouterShellRecoveryHrefs),
+    standaloneHeaderHiddenRoutes: Array.from(manifest.expoRouterStandaloneHeaderHiddenRoutes),
+    notFoundRouteNames: [manifest.expoRouterShellContract.notFoundRouteName],
+    notFoundHeaderModes: [manifest.expoRouterShellContract.notFoundHeaderMode],
+    rootStackHeaderModes: [manifest.expoRouterShellContract.rootStackHeaderMode],
+    notFoundRedirectHrefs: [manifest.expoRouterShellContract.notFoundRedirectHref],
+    notFoundFileProtocolFallbacks: [
+      manifest.expoRouterShellContract.notFoundFileProtocolFallback,
+    ],
+    webLanguages: [manifest.expoRouterShellContract.webLanguage],
+    webAppShellMarkers: [manifest.expoRouterShellContract.webAppShellMarker],
+    themeColorTokens: [manifest.expoRouterShellContract.themeColorToken],
+    statusBarStyles: [manifest.expoRouterShellContract.statusBarStyle],
+    nativeFallbackHrefs: [manifest.expoRouterShellContract.nativeFallbackHref],
+    appSchemes: [manifest.expoRouterShellContract.appScheme],
+    webDescriptionLanguages: Array.from(
+      manifest.expoRouterWebDocumentMetaDescriptions,
+      (entry) => entry.language,
+    ),
+    webDescriptions: Array.from(
+      manifest.expoRouterWebDocumentMetaDescriptions,
+      (entry) => entry.description,
+    ),
+    nativeIntentStaticRoutes: Array.from(manifest.expoRouterNativeIntentStaticRoutes),
+    nativeIntentRuntimeSampleInputs: Array.from(
+      manifest.expoRouterNativeIntentRuntimeSamples,
+      (entry) => entry.input,
+    ),
+    nativeIntentRuntimeSampleExpectedPaths: Array.from(
+      manifest.expoRouterNativeIntentRuntimeSamples,
+      (entry) => entry.expectedPath,
+    ),
+    nativeIntentConfigFiles: Array.from(manifest.expoRouterNativeIntentConfigFiles),
+  };
+}
+
+function readWebDocumentMetadata() {
+  return require('../lib/scaffold/webDocumentMetadata.js');
+}
+
+function loadNativeIntentRuntime() {
+  return loadTsRuntime('app/+native-intent.ts', { URL });
 }
 
 test('router shell fallback is registered in the root Expo stack', () => {
@@ -542,6 +512,7 @@ test('native intent resolves search deep links before the Home fallback', () => 
 });
 
 test('native intent resolves ebook deep links before the Home fallback', () => {
+  const appScheme = readAppScheme();
   const { redirectSystemPath } = loadNativeIntentRuntime();
 
   assert.equal(redirectSystemPath({ initial: true, path: '/ebook' }), '/ebook');
@@ -549,12 +520,12 @@ test('native intent resolves ebook deep links before the Home fallback', () => {
   assert.equal(
     redirectSystemPath({
       initial: true,
-      path: 'almost-swedish://app/ebook?c=1',
+      path: `${appScheme}://app/ebook?c=1`,
     }),
     '/ebook?c=1',
   );
   assert.equal(
-    redirectSystemPath({ initial: true, path: 'almost-swedish://ebook?c=1' }),
+    redirectSystemPath({ initial: true, path: `${appScheme}://ebook?c=1` }),
     '/ebook?c=1',
   );
   assert.equal(redirectSystemPath({ initial: true, path: '/ebook/intro' }), '/home');
