@@ -85,6 +85,19 @@ test('npm test keeps selector routing in the project dispatcher', () => {
     pkg.scripts['test:content-focused'],
     'node scripts/test-dispatch.js content-focused',
   );
+  assert.equal(
+    pkg.scripts['test:correct-display-position'],
+    [
+      'npm run test:answer-shuffle',
+      'npm run test:static-site-answer-shuffle',
+      'node scripts/validate-content.js --focus-answer-shuffle-parity',
+    ].join(' && '),
+  );
+  assert.doesNotMatch(
+    pkg.scripts['test:correct-display-position'],
+    /test:content|test:all|validate:content(?!\.js --focus-answer-shuffle-parity)/,
+    'correct-display-position must stay limited to the P0 answer-shuffle acceptance bundle',
+  );
   assert.match(
     studyReminderParitySource,
     /lib\/notifications\/studyReminderRouting\.ts/,
@@ -1010,6 +1023,32 @@ test('monetization selector runs only the focused monetization suite', () => {
   }
 });
 
+test('correct-display-position selector runs the P0 answer shuffle acceptance script', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-shuffle-routing-'));
+  const npmLog = path.join(tmpDir, 'npm.log');
+  const env = {
+    ...process.env,
+    TEST_DISPATCH_CAPTURE: '1',
+    TEST_DISPATCH_LOG: npmLog,
+    TEST_DISPATCH_NPM: createFakeNpm(tmpDir),
+  };
+
+  try {
+    const selectedResult = runDispatcher(['--', 'correct-display-position'], env);
+    assert.equal(selectedResult.status, 0, selectedResult.stderr || selectedResult.stdout);
+    assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:correct-display-position\n');
+
+    const pkg = readPackageJson();
+    const script = pkg.scripts['test:correct-display-position'];
+    assert.match(script, /npm run test:answer-shuffle/);
+    assert.match(script, /npm run test:static-site-answer-shuffle/);
+    assert.match(script, /node scripts\/validate-content\.js --focus-answer-shuffle-parity/);
+    assert.doesNotMatch(script, /npm run test:content|npm run test:all|npm test/);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
 test('package npm test selector enters the dispatcher before running suites', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-package-routing-'));
   const npmLog = path.join(tmpDir, 'npm.log');
@@ -1025,6 +1064,11 @@ test('package npm test selector enters the dispatcher before running suites', ()
     const selectedResult = runPackageTest(['monetization'], env);
     assert.equal(selectedResult.status, 0, selectedResult.stderr || selectedResult.stdout);
     assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:monetization\n');
+
+    fs.writeFileSync(npmLog, '');
+    const shuffleResult = runPackageTest(['correct-display-position'], env);
+    assert.equal(shuffleResult.status, 0, shuffleResult.stderr || shuffleResult.stdout);
+    assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:correct-display-position\n');
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
   }
@@ -1098,6 +1142,10 @@ test('unsupported npm test selectors fail before running any suite', () => {
     const result = runDispatcher(['bogus'], env);
     assert.notEqual(result.status, 0);
     assert.match(result.stderr, /Unsupported npm test selector: bogus/);
+    assert.match(
+      result.stderr,
+      /correct-display-position -> npm run test:correct-display-position/,
+    );
     assert.match(result.stderr, /monetization -> npm run test:monetization/);
     assert.equal(fs.existsSync(npmLog), false);
   } finally {

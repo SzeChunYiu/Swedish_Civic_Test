@@ -19,6 +19,7 @@
     "test:answer-validation": "node --test scripts/answer-validation.test.js",
     "test:question-text": "node --test scripts/question-text.test.js",
     "test:answer-shuffle": "node --test scripts/answer-shuffle.test.js",
+    "test:correct-display-position": "npm run test:answer-shuffle && npm run test:static-site-answer-shuffle && node scripts/validate-content.js --focus-answer-shuffle-parity",
     "test": "node scripts/test-dispatch.js",
     "test:content-focused": "node scripts/test-dispatch.js content-focused",
     "test:audio": "node --test scripts/audio.test.js",
