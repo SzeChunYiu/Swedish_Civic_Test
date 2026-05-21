@@ -47,6 +47,18 @@ function corruptHighlights() {
         { ...VALID_HIGHLIGHT, id: 'hl-infinite', endOffset: Number.POSITIVE_INFINITY },
         { ...VALID_HIGHLIGHT, id: 'hl-bad-created', createdAt: 'not-a-date' },
         { ...VALID_HIGHLIGHT, id: 'hl-bad-updated', updatedAt: 'not-a-date' },
+        { ...VALID_HIGHLIGHT, id: 'hl-rollover-created', createdAt: '2026-02-30T00:00:00.000Z' },
+        { ...VALID_HIGHLIGHT, id: 'hl-date-only-created', createdAt: '2026-05-19' },
+        {
+          ...VALID_HIGHLIGHT,
+          id: 'hl-offset-updated',
+          updatedAt: '2026-05-19T12:05:00.000+00:00',
+        },
+        {
+          ...VALID_HIGHLIGHT,
+          id: 'hl-missing-ms-updated',
+          updatedAt: '2026-05-19T12:05:00Z',
+        },
         { ...VALID_HIGHLIGHT, id: 'hl-too-wide', endOffset: 6003 },
         { ...VALID_HIGHLIGHT, id: 'hl-long-note', note: 'x'.repeat(1200) },
         { ...VALID_HIGHLIGHT, id: 'hl-green-pro', color: 'green', note: undefined },
@@ -80,6 +92,53 @@ test('normalizeHighlightsState: drops corrupt persisted highlights and keeps val
   assert.equal(normalized.byChapter.ch01[0].note, 'Kom ihåg detta.');
   assert.equal(normalized.byChapter.ch01[1].note, undefined);
   assert.equal(normalized.byChapter.ch01[2].color, 'green');
+});
+
+test('normalizeHighlightsState: requires canonical UTC highlight timestamps', () => {
+  const { normalizeHighlightsState } = loadTs('lib/storage/highlightsStore.ts');
+  const timestampCases = [
+    ['canonical createdAt and updatedAt', VALID_HIGHLIGHT, true],
+    [
+      'missing updatedAt falls back to canonical createdAt',
+      { ...VALID_HIGHLIGHT, id: 'hl-no-updated', updatedAt: undefined },
+      true,
+    ],
+    [
+      'rollover createdAt',
+      { ...VALID_HIGHLIGHT, id: 'hl-rollover', createdAt: '2026-02-30T00:00:00.000Z' },
+      false,
+    ],
+    [
+      'date-only createdAt',
+      { ...VALID_HIGHLIGHT, id: 'hl-date-only', createdAt: '2026-05-19' },
+      false,
+    ],
+    [
+      'timezone-offset updatedAt',
+      { ...VALID_HIGHLIGHT, id: 'hl-offset', updatedAt: '2026-05-19T12:05:00.000+00:00' },
+      false,
+    ],
+    [
+      'missing-milliseconds updatedAt',
+      { ...VALID_HIGHLIGHT, id: 'hl-missing-ms', updatedAt: '2026-05-19T12:05:00Z' },
+      false,
+    ],
+    ['blank updatedAt', { ...VALID_HIGHLIGHT, id: 'hl-blank', updatedAt: '   ' }, false],
+    ['numeric createdAt', { ...VALID_HIGHLIGHT, id: 'hl-number', createdAt: 1779192000000 }, false],
+  ];
+
+  for (const [label, highlight, shouldKeep] of timestampCases) {
+    const normalized = normalizeHighlightsState({
+      byChapter: {
+        ch01: [highlight],
+      },
+    });
+    assert.equal(
+      normalized.byChapter.ch01?.length === 1,
+      shouldKeep,
+      `${label} should ${shouldKeep ? 'hydrate' : 'be dropped'}`,
+    );
+  }
 });
 
 test('normalizeHighlightsState: drops unsafe persisted chapter keys without prototype pollution', () => {
