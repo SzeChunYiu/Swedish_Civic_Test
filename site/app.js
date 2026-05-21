@@ -1841,9 +1841,10 @@ function smtQuizRender() {
   const nextLabel = isLast
     ? smtTr({ sv: 'Visa resultat', en: 'See score', 'zh-Hans': '查看成绩', 'zh-Hant': '查看成績', ar: 'عرض النتيجة', ckb: 'بینینی ئەنجام', fa: 'مشاهده نتیجه', pl: 'Zobacz wynik', so: 'Arag natiijada', ti: 'ውጽኢት ርአ', tr: 'Sonucu gör', uk: 'Переглянути результат' })
     : smtTr({ sv: 'Nästa', en: 'Next', 'zh-Hans': '下一题', 'zh-Hant': '下一題', ar: 'التالي', ckb: 'دواتر', fa: 'بعدی', pl: 'Następne', so: 'Xiga', ti: 'ዝቕጽል', tr: 'Sonraki', uk: 'Наступне' });
+  const skipLabel = smtTr({ sv: 'Hoppa över', en: 'Skip', 'zh-Hans': '跳过', 'zh-Hant': '跳過', ar: 'تخطّي', ckb: 'پەڕاندن', fa: 'رد کردن', pl: 'Pomiń', so: 'Ka bood', ti: 'ሕለፍ', tr: 'Atla', uk: 'Пропустити' });
   const nextBtn = answered
     ? `<button class="btn btn--gold" id="quiz-next">${nextLabel} →</button>`
-    : `<span></span>`;
+    : `<button class="btn btn--ghost" id="quiz-skip">${skipLabel} →</button>`;
   const prevBtn =
     SMT_QUIZ.i > 0
       ? `<button class="btn btn--ghost" id="quiz-prev">← ${smtTr({ sv: 'Föregående', en: 'Previous', 'zh-Hans': '上一题', 'zh-Hant': '上一題', ar: 'السابق', ckb: 'پێشتر', fa: 'قبلی', pl: 'Poprzednie', so: 'Hore', ti: 'ዝሓለፈ', tr: 'Önceki', uk: 'Попереднє' })}</button>`
@@ -1941,6 +1942,12 @@ document.addEventListener('click', (e) => {
     return;
   }
   if (e.target.closest('#quiz-next')) {
+    SMT_QUIZ.i++;
+    smtQuizRender();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
+  if (e.target.closest('#quiz-skip')) {
     SMT_QUIZ.i++;
     smtQuizRender();
     window.scrollTo({ top: 0, behavior: 'smooth' });
