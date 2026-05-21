@@ -33,6 +33,8 @@ function escapeRegExp(value: string) {
 }
 
 async function expectQuestionResultNavigation({
+  backSearchLinkName,
+  expectedSearchQuery,
   inputName,
   language,
   linkName,
@@ -42,6 +44,8 @@ async function expectQuestionResultNavigation({
   sourceCitationLabel,
   url,
 }: {
+  backSearchLinkName: RegExp;
+  expectedSearchQuery: string;
   inputName: string;
   language: 'sv' | 'en';
   linkName: RegExp;
@@ -67,6 +71,9 @@ async function expectQuestionResultNavigation({
 
   const questionId = href.match(/\/quiz\/(q\d+)/)?.[1];
   if (!questionId) throw new Error(`Question result href did not include a question id: ${href}`);
+  const questionUrl = new URL(href, 'https://example.test');
+  expect(questionUrl.pathname).toBe(`/quiz/${questionId}`);
+  expect(questionUrl.searchParams.get('q')).toBe(expectedSearchQuery);
 
   const linkLabel = await questionLink.getAttribute('aria-label');
   const questionTitle = linkLabel?.startsWith(linkPrefix) ? linkLabel.slice(linkPrefix.length) : '';
@@ -93,7 +100,9 @@ async function expectQuestionResultNavigation({
   }
 
   await questionLink.click();
-  await expect(page).toHaveURL(new RegExp(`/quiz/${questionId}$`));
+  await expect(page).toHaveURL(
+    new RegExp(`/quiz/${questionId}\\?q=${encodeURIComponent(expectedSearchQuery)}$`),
+  );
   await expect(page.getByRole('heading', { name: questionTitle }).first()).toBeVisible();
   await expect(
     page
@@ -104,6 +113,19 @@ async function expectQuestionResultNavigation({
       )
       .first(),
   ).toBeVisible();
+
+  const backToSearchLink = page.getByRole('link', { name: backSearchLinkName }).first();
+  await expect(backToSearchLink).toBeVisible();
+  await expect(backToSearchLink).toHaveAttribute(
+    'href',
+    `/search?q=${encodeURIComponent(expectedSearchQuery)}`,
+  );
+
+  await backToSearchLink.click();
+  await expect(page).toHaveURL(
+    new RegExp(`/search\\?q=${encodeURIComponent(expectedSearchQuery)}$`),
+  );
+  await expect(page.getByRole('textbox', { name: inputName })).toHaveValue(expectedSearchQuery);
 }
 
 test('search route hydrates q and query URL parameters before typing', async ({ page }) => {
@@ -183,6 +205,8 @@ test('search question result links open the exact routed quiz question', async (
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
   await expectQuestionResultNavigation({
+    backSearchLinkName: /Sök efter övningsfrågor|Sök övningsfrågor/,
+    expectedSearchQuery: 'riksdag',
     inputName: 'Sök samhällsbegrepp och övningsfrågor',
     language: 'sv',
     linkName: /Öppna övningsfrågan:/,
@@ -194,6 +218,8 @@ test('search question result links open the exact routed quiz question', async (
   });
 
   await expectQuestionResultNavigation({
+    backSearchLinkName: /Search for practice questions|Search questions/,
+    expectedSearchQuery: 'kommun',
     inputName: 'Search civic terms and practice questions',
     language: 'en',
     linkName: /Open practice question:/,
@@ -205,4 +231,21 @@ test('search question result links open the exact routed quiz question', async (
   });
 
   expect(consoleErrors).toEqual([]);
+});
+
+test('direct quiz visits keep the search backlink query-free', async ({ page }) => {
+  await seedSettingsLanguage(page, 'en');
+  await markAboutTheTestSeen(page);
+  await page.goto('/quiz/q001', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  const backToSearchLink = page
+    .getByRole('link', { name: /Search for practice questions/ })
+    .first();
+  await expect(backToSearchLink).toBeVisible();
+  await expect(backToSearchLink).toHaveAttribute('href', '/search');
+
+  await backToSearchLink.click();
+  await expect(page).toHaveURL(/\/search$/);
+  expectSearchUrlWithoutQueryParams(page);
 });

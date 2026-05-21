@@ -116,6 +116,13 @@ function SearchRouteLink({
   );
 }
 
+function getQuestionResultHref(questionId: string, query: string): Href {
+  const trimmedQuery = query.trim();
+  if (!trimmedQuery) return `/quiz/${questionId}` as Href;
+
+  return `/quiz/${questionId}?q=${encodeURIComponent(trimmedQuery)}` as Href;
+}
+
 export default function SearchScreen() {
   const router = useRouter();
   const searchParams = useLocalSearchParams<SearchRouteParams>();
@@ -344,7 +351,7 @@ export default function SearchScreen() {
                       <SearchRouteLink
                         aria-describedby={questionSummaryId}
                         accessibilityLabel={copy.openQuestionAccessibilityLabel(title)}
-                        href={`/quiz/${result.question.id}`}
+                        href={getQuestionResultHref(result.question.id, trimmedQuery)}
                         linkStyle={styles.questionLink}
                         styles={styles}
                       >

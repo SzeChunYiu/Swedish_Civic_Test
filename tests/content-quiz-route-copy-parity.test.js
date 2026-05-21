@@ -40,7 +40,11 @@ test('routed quiz shell copy follows the persisted settings language', () => {
   assert.match(source, /Sök övningsfrågor/);
   assert.match(source, /Question not found/);
   assert.match(source, /We could not find a practice question for this link\./);
-  assert.match(source, /href="\/search"/);
+  assert.match(source, /q\?: string \| string\[\];/);
+  assert.match(source, /query\?: string \| string\[\];/);
+  assert.match(source, /const backToSearchHref = getBackToSearchHref\(returnSearchQuery\);/);
+  assert.match(source, /href=\{backToSearchHref\}/);
+  assert.match(source, /return `\/search\?q=\$\{encodeURIComponent\(searchQuery\)\}` as Href;/);
   assert.match(source, /Tillbaka till övning/);
   assert.match(source, /Session \$\{currentSessionId\}/);
   assert.match(source, /Frågepass \$\{currentSessionId\}/);
@@ -50,7 +54,15 @@ test('routed quiz shell copy follows the persisted settings language', () => {
   assert.match(source, /\{sessionSubtitle\}/);
   assert.match(source, /Försök igen med den här frågan/);
   assert.match(source, /Try this quiz question again/);
-  assert.match(searchSource, /href=\{`\/quiz\/\$\{result\.question\.id\}`\}/);
+  assert.match(searchSource, /function getQuestionResultHref\(questionId: string, query: string\)/);
+  assert.match(
+    searchSource,
+    /`\/quiz\/\$\{questionId\}\?q=\$\{encodeURIComponent\(trimmedQuery\)\}`/,
+  );
+  assert.match(
+    searchSource,
+    /href=\{getQuestionResultHref\(result\.question\.id, trimmedQuery\)\}/,
+  );
   assert.doesNotMatch(
     source,
     new RegExp(

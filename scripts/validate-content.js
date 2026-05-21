@@ -995,8 +995,9 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
   },
   {
     file: 'app/search.tsx',
-    pattern: /href=\{`\/quiz\/\$\{result\.question\.id\}`\}/,
-    message: 'search route question results must link to the quiz question route',
+    pattern: /href=\{getQuestionResultHref\(result\.question\.id, trimmedQuery\)\}/,
+    message:
+      'search route question results must link to the quiz question route with query context',
   },
   {
     file: 'app/search.tsx',
@@ -11908,8 +11909,11 @@ function validateQuizRouteCopyParity() {
   EXPECTED_QUIZ_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!quizRoute.includes(snippet)) reject(message);
   });
-  if (!searchRoute.includes('href={`/quiz/${result.question.id}`}')) {
-    reject('search route links must keep exact question-id quiz sessions');
+  if (!searchRoute.includes('function getQuestionResultHref(questionId: string, query: string)')) {
+    reject('search route must centralize question result quiz href generation');
+  }
+  if (!searchRoute.includes('href={getQuestionResultHref(result.question.id, trimmedQuery)}')) {
+    reject('search route links must keep exact question-id quiz sessions with search return query');
   }
 
   const seenLabels = new Set();
