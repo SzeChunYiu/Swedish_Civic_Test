@@ -74,7 +74,10 @@ for (const labels of localeCases) {
     await startAllVisiblePractice(page, labels.language);
     await expect(page.getByText(labels.questionTitle, { exact: true })).toBeVisible();
 
-    await expectTouchTarget(page.getByRole('button', { name: labels.bookmark }));
+    const bookmark = page.getByRole('button', { name: labels.bookmark });
+    await expectTouchTarget(bookmark);
+    await expect(bookmark).toHaveAttribute('aria-pressed', 'false');
+    await expect(bookmark).not.toHaveAttribute('aria-selected');
 
     const audioEnabled = page.getByRole('switch', { name: labels.audioEnabled });
     await expect(audioEnabled).toHaveAttribute('aria-checked', 'true');

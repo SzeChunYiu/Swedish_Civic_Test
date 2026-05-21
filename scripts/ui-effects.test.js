@@ -380,7 +380,8 @@ test('practice screen adds bookmark controls backed by progress storage', () => 
 
   assert.match(source, /toggleBookmark/);
   assert.match(source, /bookmarked/);
-  assert.match(source, /aria-selected=\{isBookmarked\}/);
+  assert.match(source, /aria-pressed=\{isBookmarked\}/);
+  assert.doesNotMatch(source, /aria-selected=\{isBookmarked\}/);
   assert.match(source, /accessibilityState=\{\{ selected: isBookmarked \}\}/);
 });
 
