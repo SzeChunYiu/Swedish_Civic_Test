@@ -38,6 +38,8 @@ test('about-the-test route uses cautious current official-detail copy', () => {
 
   assert.equal(summary.aboutTheTestRouteCopyLabelsValidated, 42);
   assert.equal(summary.aboutTheTestRouteCopyParityValidated, true);
+  assert.equal(summary.aboutTheTestSourceAuthorityCopyPatternsValidated, 6);
+  assert.equal(summary.aboutTheTestSourceAuthorityCopyParityValidated, true);
   assert.equal(summary.aboutTheTestOfficialSourceUrlsValidated, officialSourceUrls.length);
   assert.equal(
     summary.aboutTheTestOfficialSourceRetrievedDateValidated,
@@ -49,6 +51,8 @@ test('about-the-test route uses cautious current official-detail copy', () => {
   assert.match(source, /const copy = aboutTheTestCopy\[language\];/);
   assert.match(source, /15 augusti 2026 i Stockholm/);
   assert.match(source, /15 August 2026 in Stockholm/);
+  assert.doesNotMatch(source, /UHR har bekräftat|UHR has confirmed|UHR skriver|UHR says/);
+  assert.doesNotMatch(source, /UHR beskriver|UHR describes|described by UHR/);
   assert.match(source, /Anmälan öppnar i början av juni 2026/);
   assert.match(source, /Registration opens in early June 2026/);
   assert.match(source, /brev från Migrationsverket/);
@@ -128,7 +132,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace(
-        'Det första provet som UHR beskriver gäller grundläggande kunskaper om det svenska samhället och är planerat till den 15 augusti 2026 i Stockholm.',
+        'Det första provet gäller grundläggande kunskaper om det svenska samhället och är planerat till den 15 augusti 2026 i Stockholm.',
         'Ett kort' +
           ' prov med flervals' +
           'frågor på svenska. Du svarar på en dator i en ' +
@@ -148,6 +152,40 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /about-the-test route must not make unsupported logistics claim/,
+  );
+});
+
+test('about-the-test route copy parity rejects source-authority prose', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/about-the-test.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'The first civic-knowledge test sitting is on 15 August 2026 in Stockholm.',
+        'UHR has confirmed 15 August 2026 and Stockholm for the first sitting.',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-about-the-test-route-copy');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /about-the-test route copy must state current facts neutrally/,
   );
 });
 

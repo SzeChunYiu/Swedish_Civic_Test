@@ -87,7 +87,7 @@ const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {
     eyebrow: 'Om provet',
     title: 'Vad är medborgarskapsprovet i samhällskunskap?',
     subtitle:
-      'Det första provet som UHR beskriver gäller grundläggande kunskaper om det svenska samhället och är planerat till den 15 augusti 2026 i Stockholm.',
+      'Det första provet gäller grundläggande kunskaper om det svenska samhället och är planerat till den 15 augusti 2026 i Stockholm.',
     sectionWhatTitle: 'Vad är det?',
     sectionWhatBody:
       'Medborgarskapsprovet är ett kunskapsprov som UHR ansvarar för. Första delen handlar om samhällskunskap. Prov i svenska införs senare.',
@@ -96,10 +96,10 @@ const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {
       'Migrationsverket avgör vem som får skriva provet. Du kan bara anmäla dig efter ett brev från Migrationsverket. Antalet platser är begränsat, och när platserna är fyllda går det inte längre att anmäla sig. Du kan uppfylla kunskapskravet på andra sätt än genom provet.',
     sectionFormatTitle: 'Vad är känt om första provet?',
     sectionFormatBody:
-      'UHR har bekräftat datumet 15 augusti 2026 och Stockholm för den första provomgången. Anmälan öppnar i början av juni 2026. Exakt tid och plats, anpassningar och praktiska förberedelser kommer senare. Augustiprovet är kostnadsfritt och ges som ett utprövningsprov med generös tid.',
+      'Den första provomgången i samhällskunskap är den 15 augusti 2026 i Stockholm. Anmälan öppnar i början av juni 2026. Exakt tid och plats, anpassningar och praktiska förberedelser kommer senare. Augustiprovet är kostnadsfritt och ges som ett utprövningsprov med generös tid.',
     sectionMaterialTitle: 'Vilket material bygger appen på?',
     sectionMaterialBody:
-      'Appens UHR-läge utgår från utbildningsmaterialet Sverige i fokus. Våra övningsfrågor är inte UHR:s provfrågor; UHR skriver att övningsprov från andra aktörer inte är kvalitetskontrollerade av myndigheten.',
+      'Appens UHR-läge utgår från utbildningsmaterialet Sverige i fokus. Våra övningsfrågor är inte UHR:s provfrågor; övningsprov från andra aktörer är inte kvalitetskontrollerade av UHR eller en annan myndighet.',
     sectionIndependenceTitle: 'Är appen officiell?',
     sectionIndependenceBody:
       'Nej. Appen är ett oberoende studieverktyg. Vi är inte UHR, Skolverket eller Migrationsverket. Frågorna här är inte riktiga provfrågor.',
@@ -121,7 +121,7 @@ const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {
     eyebrow: 'About the test',
     title: 'What is the Swedish civic test?',
     subtitle:
-      'The first test described by UHR covers basic knowledge of Swedish society and is planned for 15 August 2026 in Stockholm.',
+      'The first test covers basic knowledge of Swedish society and is planned for 15 August 2026 in Stockholm.',
     sectionWhatTitle: 'What is it?',
     sectionWhatBody:
       'The citizenship test is a knowledge test that UHR is responsible for. The first part is about civic knowledge. A Swedish-language test will be introduced later.',
@@ -130,10 +130,10 @@ const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {
       'Migrationsverket decides who may take the test. You can only sign up after receiving a letter from Migrationsverket. Seats are limited, and when the seats are filled, registration closes. You may be able to meet the knowledge requirement in other ways.',
     sectionFormatTitle: 'What is known about the first test?',
     sectionFormatBody:
-      'UHR has confirmed 15 August 2026 and Stockholm for the first sitting. Registration opens in early June 2026. Exact time and place, adaptations, and practical preparation details will come later. The August test is free of charge and is a trial sitting with generous time.',
+      'The first civic-knowledge test sitting is on 15 August 2026 in Stockholm. Registration opens in early June 2026. Exact time and place, adaptations, and practical preparation details will come later. The August test is free of charge and is a trial sitting with generous time.',
     sectionMaterialTitle: 'What material does this app use?',
     sectionMaterialBody:
-      "The app's UHR mode is based on the study material Sverige i fokus. Our practice questions are not UHR test questions; UHR says practice tests from other actors are not quality-checked by UHR or another authority.",
+      "The app's UHR mode is based on the study material Sverige i fokus. Our practice questions are not UHR test questions; practice tests from other actors are not quality-checked by UHR or another authority.",
     sectionIndependenceTitle: 'Is this app official?',
     sectionIndependenceBody:
       'No. The app is an independent study tool. We are not UHR, Skolverket, or Migrationsverket. The questions here are not real exam questions.',

@@ -334,6 +334,14 @@ const ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS = [
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
   'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html',
 ];
+const ABOUT_THE_TEST_SOURCE_AUTHORITY_COPY_PATTERNS = [
+  /UHR har bekräftat/i,
+  /UHR has confirmed/i,
+  /UHR skriver/i,
+  /UHR says/i,
+  /UHR beskriver/i,
+  /(?:UHR describes|described by UHR)/i,
+];
 const EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_SNIPPETS = [
   [
     "import { LegalExternalLink, LegalLinkList } from '../components/compliance/LegalPage';",
@@ -378,15 +386,15 @@ const EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_LABELS = {
   sv: [
     'Om provet',
     'Vad är medborgarskapsprovet i samhällskunskap?',
-    'Det första provet som UHR beskriver gäller grundläggande kunskaper om det svenska samhället och är planerat till den 15 augusti 2026 i Stockholm.',
+    'Det första provet gäller grundläggande kunskaper om det svenska samhället och är planerat till den 15 augusti 2026 i Stockholm.',
     'Vad är det?',
     'Medborgarskapsprovet är ett kunskapsprov som UHR ansvarar för. Första delen handlar om samhällskunskap. Prov i svenska införs senare.',
     'Vem ska göra det?',
     'Migrationsverket avgör vem som får skriva provet. Du kan bara anmäla dig efter ett brev från Migrationsverket. Antalet platser är begränsat, och när platserna är fyllda går det inte längre att anmäla sig. Du kan uppfylla kunskapskravet på andra sätt än genom provet.',
     'Vad är känt om första provet?',
-    'UHR har bekräftat datumet 15 augusti 2026 och Stockholm för den första provomgången. Anmälan öppnar i början av juni 2026. Exakt tid och plats, anpassningar och praktiska förberedelser kommer senare. Augustiprovet är kostnadsfritt och ges som ett utprövningsprov med generös tid.',
+    'Den första provomgången i samhällskunskap är den 15 augusti 2026 i Stockholm. Anmälan öppnar i början av juni 2026. Exakt tid och plats, anpassningar och praktiska förberedelser kommer senare. Augustiprovet är kostnadsfritt och ges som ett utprövningsprov med generös tid.',
     'Vilket material bygger appen på?',
-    'Appens UHR-läge utgår från utbildningsmaterialet Sverige i fokus. Våra övningsfrågor är inte UHR:s provfrågor; UHR skriver att övningsprov från andra aktörer inte är kvalitetskontrollerade av myndigheten.',
+    'Appens UHR-läge utgår från utbildningsmaterialet Sverige i fokus. Våra övningsfrågor är inte UHR:s provfrågor; övningsprov från andra aktörer är inte kvalitetskontrollerade av UHR eller en annan myndighet.',
     'Är appen officiell?',
     'Nej. Appen är ett oberoende studieverktyg. Vi är inte UHR, Skolverket eller Migrationsverket. Frågorna här är inte riktiga provfrågor.',
     'Källäge kontrollerat',
@@ -401,15 +409,15 @@ const EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_LABELS = {
   en: [
     'About the test',
     'What is the Swedish civic test?',
-    'The first test described by UHR covers basic knowledge of Swedish society and is planned for 15 August 2026 in Stockholm.',
+    'The first test covers basic knowledge of Swedish society and is planned for 15 August 2026 in Stockholm.',
     'What is it?',
     'The citizenship test is a knowledge test that UHR is responsible for. The first part is about civic knowledge. A Swedish-language test will be introduced later.',
     'Who takes it?',
     'Migrationsverket decides who may take the test. You can only sign up after receiving a letter from Migrationsverket. Seats are limited, and when the seats are filled, registration closes. You may be able to meet the knowledge requirement in other ways.',
     'What is known about the first test?',
-    'UHR has confirmed 15 August 2026 and Stockholm for the first sitting. Registration opens in early June 2026. Exact time and place, adaptations, and practical preparation details will come later. The August test is free of charge and is a trial sitting with generous time.',
+    'The first civic-knowledge test sitting is on 15 August 2026 in Stockholm. Registration opens in early June 2026. Exact time and place, adaptations, and practical preparation details will come later. The August test is free of charge and is a trial sitting with generous time.',
     'What material does this app use?',
-    "The app's UHR mode is based on the study material Sverige i fokus. Our practice questions are not UHR test questions; UHR says practice tests from other actors are not quality-checked by UHR or another authority.",
+    "The app's UHR mode is based on the study material Sverige i fokus. Our practice questions are not UHR test questions; practice tests from other actors are not quality-checked by UHR or another authority.",
     'Is this app official?',
     'No. The app is an independent study tool. We are not UHR, Skolverket, or Migrationsverket. The questions here are not real exam questions.',
     'Source status checked',
@@ -8867,8 +8875,8 @@ let aboutTheTestRouteCopyLabelsValidated = 0;
 let aboutTheTestRouteCopyParityValidated = false;
 let aboutTheTestOfficialSourceUrlsValidated = 0;
 let aboutTheTestOfficialSourceRetrievedDateValidated = null;
-let citizenshipRequirementsSourceAuthorityCopyAreasValidated = 0;
-let citizenshipRequirementsSourceAuthorityCopyParityValidated = false;
+let aboutTheTestSourceAuthorityCopyPatternsValidated = 0;
+let aboutTheTestSourceAuthorityCopyParityValidated = false;
 let mistakesRouteHeadersValidated = 0;
 let mistakesRouteHeaderParityValidated = false;
 let legalRouteHeadersValidated = 0;
@@ -9607,8 +9615,8 @@ if (process.argv.includes('--focus-about-the-test-route-copy')) {
     aboutTheTestRouteCopyParityValidated,
     aboutTheTestOfficialSourceUrlsValidated,
     aboutTheTestOfficialSourceRetrievedDateValidated,
-    citizenshipRequirementsSourceAuthorityCopyAreasValidated,
-    citizenshipRequirementsSourceAuthorityCopyParityValidated,
+    aboutTheTestSourceAuthorityCopyPatternsValidated,
+    aboutTheTestSourceAuthorityCopyParityValidated,
     aboutTheTestSeenEffectRulesValidated,
     aboutTheTestSeenEffectParityValidated,
     citizenshipRequirementsCopyFieldsValidated,
@@ -13377,6 +13385,21 @@ function validateAboutTheTestRouteCopyParity() {
     if (!aboutRoute.includes(snippet)) reject(message);
   }
 
+  aboutTheTestSourceAuthorityCopyPatternsValidated = 0;
+  aboutTheTestSourceAuthorityCopyParityValidated = false;
+  for (const pattern of ABOUT_THE_TEST_SOURCE_AUTHORITY_COPY_PATTERNS) {
+    if (pattern.test(aboutRoute)) {
+      reject(
+        'about-the-test route copy must state current facts neutrally; official source rows carry UHR provenance',
+      );
+    } else {
+      aboutTheTestSourceAuthorityCopyPatternsValidated += 1;
+    }
+  }
+  aboutTheTestSourceAuthorityCopyParityValidated =
+    aboutTheTestSourceAuthorityCopyPatternsValidated ===
+    ABOUT_THE_TEST_SOURCE_AUTHORITY_COPY_PATTERNS.length;
+
   const seenEffectSource =
     'useEffect(() => {\n    if (!hasSeenAboutTheTest) {\n      markAboutTheTestSeen();\n    }\n  }, [hasSeenAboutTheTest, markAboutTheTestSeen]);';
   const seenEffectRules = [
@@ -13519,7 +13542,8 @@ function validateAboutTheTestRouteCopyParity() {
     aboutTheTestRouteCopyLabelsValidated === expectedLabelCount &&
     aboutTheTestOfficialSourceUrlsValidated === ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS.length &&
     aboutTheTestOfficialSourceRetrievedDateValidated ===
-      ABOUT_THE_TEST_OFFICIAL_SOURCE_RETRIEVED_DATE
+      ABOUT_THE_TEST_OFFICIAL_SOURCE_RETRIEVED_DATE &&
+    aboutTheTestSourceAuthorityCopyParityValidated
   ) {
     aboutTheTestRouteCopyParityValidated = true;
     aboutTheTestSeenEffectParityValidated = true;
@@ -23066,8 +23090,8 @@ console.log(
       aboutTheTestRouteCopyParityValidated,
       aboutTheTestOfficialSourceUrlsValidated,
       aboutTheTestOfficialSourceRetrievedDateValidated,
-      citizenshipRequirementsSourceAuthorityCopyAreasValidated,
-      citizenshipRequirementsSourceAuthorityCopyParityValidated,
+      aboutTheTestSourceAuthorityCopyPatternsValidated,
+      aboutTheTestSourceAuthorityCopyParityValidated,
       mistakesRouteHeadersValidated,
       mistakesRouteHeaderParityValidated,
       mistakesRouteCopyLabelsValidated,
