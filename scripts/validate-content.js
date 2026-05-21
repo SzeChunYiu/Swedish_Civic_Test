@@ -1800,9 +1800,14 @@ const EXPECTED_QUIZ_ROUTE_HEADERS = [
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>[\s\S]{0,160}copy\.emptyTitle[\s\S]{0,160}<\/Text>/,
   },
   {
+    label: 'not-found quiz title',
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>[\s\S]{0,160}copy\.notFoundTitle[\s\S]{0,160}<\/Text>/,
+  },
+  {
     label: 'session title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*\{copy\.sessionTitle\(normalizedSessionId\)\}\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*\{sessionTitle\}\s*<\/Text>/,
   },
 ];
 const EXPECTED_QUIZ_ROUTE_COPY_LABELS = {
@@ -1813,6 +1818,8 @@ const EXPECTED_QUIZ_ROUTE_COPY_LABELS = {
     'Poäng',
     'Besvara frågan och gå sedan igenom den källbaserade återkopplingen.',
     'Frågepass ${currentSessionId}',
+    'Frågepass: ${chapterTitle}',
+    'Besvara en fråga från ${chapterTitle} och gå sedan igenom den källbaserade återkopplingen.',
     'Försök igen',
     'Försök igen med den här frågan',
   ],
@@ -1823,6 +1830,8 @@ const EXPECTED_QUIZ_ROUTE_COPY_LABELS = {
     'Score',
     'Answer the routed question, then review the source-backed feedback.',
     'Session ${currentSessionId}',
+    'Quiz session: ${chapterTitle}',
+    'Answer a question from ${chapterTitle}, then review the source-backed feedback.',
     'Try again',
     'Try this quiz question again',
   ],
@@ -1839,6 +1848,23 @@ const EXPECTED_QUIZ_ROUTE_COPY_SNIPPETS = [
     'quiz route must read language from settings store',
   ],
   ['const copy = quizSessionCopy[language];', 'quiz route must select copy from settings language'],
+  ['import { chapters }', 'quiz route must import chapter metadata for chapter-scoped sessions'],
+  ['chapterId?: string | string[];', 'quiz route must type the optional chapter route param'],
+  [
+    'const normalizedChapterId = normalizeOptionalRouteParam(chapterId);',
+    'quiz route must normalize the optional chapter route param',
+  ],
+  [
+    'getChapterContextForQuizSession(chapters, pickedQuestion, normalizedChapterId)',
+    'quiz route must resolve chapter context from the routed question',
+  ],
+  ['const sessionTitle = chapterContextTitle', 'quiz route must compute a chapter-aware title'],
+  [
+    'const sessionSubtitle = chapterContextTitle',
+    'quiz route must compute a chapter-aware subtitle',
+  ],
+  ['{sessionTitle}', 'quiz route title must render resolved session title'],
+  ['{sessionSubtitle}', 'quiz route subtitle must render resolved session subtitle'],
   [
     '<QuestionDisclaimer language={language} />',
     'routed quiz disclaimer must receive settings language',
@@ -1955,6 +1981,8 @@ const EXPECTED_CHAPTER_ROUTE_COPY_SNIPPETS = [
     'accessibilityLabel={copy.startQuizAccessibilityLabel(chapterTitle)}',
     'chapter route quiz link must expose localized accessibility copy',
   ],
+  ['getChapterQuizRouteParams', 'chapter route must build typed chapter quiz params'],
+  ['params: quizRouteParams', 'chapter route must pass chapter quiz context into the quiz route'],
   ['{copy.startQuiz}', 'chapter route quiz link must render localized copy'],
   [
     '{copy.practiceQuestionsTitle(chapterQuestions.length)}',
@@ -8538,6 +8566,8 @@ const speakSwedish = audioModule.speakSwedish;
 const stopSpeech = audioModule.stopSpeech;
 const practiceFlowModule = loadTs('lib/quiz/practiceFlow.ts');
 const getPracticeQuestionForSession = practiceFlowModule.getPracticeQuestionForSession;
+const getChapterContextForQuizSession = practiceFlowModule.getChapterContextForQuizSession;
+const getChapterQuizRouteParams = practiceFlowModule.getChapterQuizRouteParams;
 const getChapterQuizSessionId = practiceFlowModule.getChapterQuizSessionId;
 const practiceSessionStoreModule = loadTs('lib/quiz/practiceSessionStore.ts');
 const usePracticeSessionStore = practiceSessionStoreModule.usePracticeSessionStore;
@@ -9730,6 +9760,12 @@ if (typeof getPracticeQuestionForSession !== 'function') {
 }
 if (typeof getChapterQuizSessionId !== 'function') {
   fail('getChapterQuizSessionId export is not a function');
+}
+if (typeof getChapterQuizRouteParams !== 'function') {
+  fail('getChapterQuizRouteParams export is not a function');
+}
+if (typeof getChapterContextForQuizSession !== 'function') {
+  fail('getChapterContextForQuizSession export is not a function');
 }
 if (
   !usePracticeSessionStore ||
@@ -11561,6 +11597,7 @@ function validateQuizRouteHeaderParity() {
 function validateQuizRouteCopyParity() {
   let valid = true;
   let quizRoute = '';
+  let searchRoute = '';
 
   function reject(message) {
     valid = false;
@@ -11573,10 +11610,19 @@ function validateQuizRouteCopyParity() {
     reject(`quiz route copy source could not be read: ${error.message}`);
     return;
   }
+  try {
+    searchRoute = fs.readFileSync(path.join(repoRoot, 'app/search.tsx'), 'utf8');
+  } catch (error) {
+    reject(`search route source could not be read for quiz route parity: ${error.message}`);
+    return;
+  }
 
   EXPECTED_QUIZ_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!quizRoute.includes(snippet)) reject(message);
   });
+  if (!searchRoute.includes('href={`/quiz/${result.question.id}`}')) {
+    reject('search route links must keep exact question-id quiz sessions');
+  }
 
   const seenLabels = new Set();
   Object.entries(EXPECTED_QUIZ_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
@@ -17469,6 +17515,8 @@ function validateChapterQuizSessionParity() {
   if (
     !Array.isArray(chapters) ||
     !Array.isArray(questions) ||
+    typeof getChapterContextForQuizSession !== 'function' ||
+    typeof getChapterQuizRouteParams !== 'function' ||
     typeof getChapterQuizSessionId !== 'function'
   ) {
     return;
@@ -17477,6 +17525,7 @@ function validateChapterQuizSessionParity() {
   chapters.forEach((chapter) => {
     const expectedQuestion = questions.find((question) => question.chapterId === chapter.id);
     const sessionId = getChapterQuizSessionId(questions, chapter.id);
+    const routeParams = getChapterQuizRouteParams(questions, chapter.id);
     const sessionQuestion = questions.find((question) => question.id === sessionId);
     let valid = true;
 
@@ -17491,6 +17540,12 @@ function validateChapterQuizSessionParity() {
       reject(
         `${chapter.id} chapter quiz session resolves to ${sessionId}, expected ${expectedQuestion.id}`,
       );
+    } else if (
+      !routeParams ||
+      routeParams.sessionId !== expectedQuestion.id ||
+      routeParams.chapterId !== chapter.id
+    ) {
+      reject(`${chapter.id} chapter quiz route params must carry sessionId and chapterId`);
     }
 
     if (!sessionQuestion) {
@@ -17501,6 +17556,10 @@ function validateChapterQuizSessionParity() {
       );
     } else if (sessionQuestion.reviewStatus !== 'published') {
       reject(`${chapter.id} chapter quiz session id ${sessionId} is not published`);
+    } else if (getChapterContextForQuizSession(chapters, sessionQuestion, chapter.id) !== chapter) {
+      reject(`${chapter.id} chapter quiz context does not resolve from route chapter id`);
+    } else if (getChapterContextForQuizSession(chapters, sessionQuestion, 'missing-chapter')) {
+      reject(`${chapter.id} chapter quiz context must reject mismatched chapter ids`);
     }
 
     if (valid) chapterQuizSessionParityValidated += 1;
@@ -17511,6 +17570,18 @@ function validateChapterQuizSessionParity() {
   }
   if (getChapterQuizSessionId(questions, null) !== null) {
     fail('null chapter quiz session should resolve to null');
+  }
+  if (getChapterQuizRouteParams(questions, 'missing-chapter') !== null) {
+    fail('missing chapter quiz route params should resolve to null');
+  }
+  if (getChapterQuizRouteParams(questions, null) !== null) {
+    fail('null chapter quiz route params should resolve to null');
+  }
+  if (getChapterContextForQuizSession(chapters, undefined, 'ch01') !== null) {
+    fail('chapter quiz context must require a resolved question');
+  }
+  if (getChapterContextForQuizSession(chapters, questions[0], null) !== null) {
+    fail('chapter quiz context must require an explicit chapter id');
   }
 }
 
