@@ -59,10 +59,14 @@ function parseFocusedMockExamCopySummary() {
 }
 
 test('default mock exam config generates a full UHR-based exam from bundled questions', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-mock-exam-runtime-parity'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
 
@@ -113,8 +117,14 @@ test('default mock exam config generates a full UHR-based exam from bundled ques
 
 test('mock exam copy parity keeps Swedish övningsprov labels and English Mock Exam labels', () => {
   const summary = parseFocusedMockExamCopySummary();
-  const librarySource = fs.readFileSync(path.join(repoRoot, 'lib/learning/mockExamLibrary.ts'), 'utf8');
-  const tierSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/tierComparison.ts'), 'utf8');
+  const librarySource = fs.readFileSync(
+    path.join(repoRoot, 'lib/learning/mockExamLibrary.ts'),
+    'utf8',
+  );
+  const tierSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/tierComparison.ts'),
+    'utf8',
+  );
 
   assert.equal(summary.nativeMockExamComponentCopyLabelsValidated, 6);
   assert.equal(summary.nativeMockExamComponentLegalCopyValidated, true);

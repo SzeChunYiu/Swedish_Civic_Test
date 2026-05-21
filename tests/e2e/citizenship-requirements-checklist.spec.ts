@@ -26,6 +26,20 @@ test('citizenship requirements checklist persists checked planning areas', async
 
   await expect(identity).toHaveAttribute('aria-checked', 'false');
   await expect(residenceStatus).toHaveAttribute('aria-checked', 'false');
+  const identityApplicationSource = page.getByRole('link', {
+    name: /Source for Proven identity: Migrationsverket: Apply for Swedish citizenship/i,
+  });
+  const identityRulesSource = page.getByRole('link', {
+    name: /Source for Proven identity: Migrationsverket: New rules for Swedish citizenship from 6 June 2026/i,
+  });
+
+  await expect(identityApplicationSource).toContainText('Apply for Swedish citizenship');
+  await expect(identityApplicationSource).toContainText('Checked 2026-05-19');
+  await expect(identityApplicationSource).toContainText('migrationsverket.se');
+  await expect(identityRulesSource).toContainText(
+    'New rules for Swedish citizenship from 6 June 2026',
+  );
+  await expect(identityRulesSource).toContainText('Source date 2026-05-06');
 
   await identity.click();
   await residenceStatus.click();

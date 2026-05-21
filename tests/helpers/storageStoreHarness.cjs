@@ -1,5 +1,7 @@
 const Module = require('node:module');
+const fs = require('node:fs');
 const path = require('node:path');
+const ts = require('typescript');
 
 function createMemoryMMKV(initial = {}) {
   const values = new Map(Object.entries(initial));
@@ -120,8 +122,17 @@ function loadTsWithStorage(repoRoot, relativePath, storageById, moduleStubs = {}
 
   const originalResolve = Module._resolveFilename;
   const originalLoad = Module._load;
+  const originalTsExtension = require.extensions['.ts'];
   const stubs = createStorageModuleStubs(storageById, moduleStubs);
 
+  require.extensions['.ts'] = function tsLoader(module, filename) {
+    const source = fs.readFileSync(filename, 'utf8');
+    const transpiled = ts.transpileModule(source, {
+      compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
+      fileName: filename,
+    }).outputText;
+    module._compile(transpiled, filename);
+  };
   Module._resolveFilename = function patchedResolve(request, ...args) {
     if (stubs[request]) return `__storage_store_stub__:${request}`;
     return originalResolve.call(this, request, ...args);
@@ -136,6 +147,11 @@ function loadTsWithStorage(repoRoot, relativePath, storageById, moduleStubs = {}
   } finally {
     Module._resolveFilename = originalResolve;
     Module._load = originalLoad;
+    if (originalTsExtension) {
+      require.extensions['.ts'] = originalTsExtension;
+    } else {
+      delete require.extensions['.ts'];
+    }
   }
 }
 
