@@ -38,6 +38,7 @@ export const MAX_HIGHLIGHT_SPAN = 5000;
 export const MAX_HIGHLIGHT_NOTE_LENGTH = 1000;
 const ADD_HIGHLIGHT_INPUT_VALIDATION_ID = 'hl_input_validation';
 const ADD_HIGHLIGHT_INPUT_VALIDATION_TIMESTAMP = '2026-01-01T00:00:00.000Z';
+const UNSAFE_CHAPTER_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
 
 let highlightsStorage: MMKV | null = null;
 
@@ -60,6 +61,25 @@ function isHighlightColor(value: unknown): value is HighlightColor {
 
 function isNonEmptyString(value: unknown): value is string {
   return typeof value === 'string' && value.trim().length > 0 && value === value.trim();
+}
+
+function isSafeChapterId(value: unknown): value is string {
+  return isNonEmptyString(value) && !UNSAFE_CHAPTER_KEYS.has(value);
+}
+
+function createHighlightsByChapterMap(): Record<string, Highlight[]> {
+  return Object.create(null) as Record<string, Highlight[]>;
+}
+
+function copySafeHighlightsByChapterMap(
+  source: Record<string, Highlight[]>,
+): Record<string, Highlight[]> {
+  const byChapter = createHighlightsByChapterMap();
+  for (const [chapterId, list] of Object.entries(source)) {
+    if (!isSafeChapterId(chapterId) || !Array.isArray(list)) continue;
+    byChapter[chapterId] = list;
+  }
+  return byChapter;
 }
 
 function isFiniteNonNegativeInteger(value: unknown): value is number {
@@ -99,7 +119,7 @@ function normalizeHighlight(
   if (!value || typeof value !== 'object') return null;
   const h = value as Partial<Highlight>;
   if (
-    !isNonEmptyString(chapterKey) ||
+    !isSafeChapterId(chapterKey) ||
     !isNonEmptyString(h.id) ||
     !isNonEmptyString(h.chapterId) ||
     h.chapterId !== chapterKey ||
@@ -132,11 +152,11 @@ function normalizeHighlight(
 export function normalizeHighlightsState(value: unknown): PersistedHighlights {
   if (!value || typeof value !== 'object') return EMPTY;
   const candidate = value as Partial<PersistedHighlights>;
-  const byChapter: Record<string, Highlight[]> = {};
+  const byChapter = createHighlightsByChapterMap();
 
   if (candidate.byChapter && typeof candidate.byChapter === 'object') {
     for (const [chapterId, list] of Object.entries(candidate.byChapter)) {
-      if (!isNonEmptyString(chapterId)) continue;
+      if (!isSafeChapterId(chapterId)) continue;
       if (!Array.isArray(list)) continue;
       const cleaned: Highlight[] = [];
       for (const item of list) {
@@ -177,18 +197,6 @@ function write(state: PersistedHighlights): RecoverablePersistenceWarning | null
   );
 }
 
-function withoutEmptyChapterBuckets(
-  byChapter: Record<string, Highlight[]>,
-): Record<string, Highlight[]> {
-  const next: Record<string, Highlight[]> = {};
-  for (const [chapterId, list] of Object.entries(byChapter)) {
-    if (Array.isArray(list) && list.length > 0) {
-      next[chapterId] = list;
-    }
-  }
-  return next;
-}
-
 function genId(): string {
   return `hl_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
 }
@@ -205,7 +213,7 @@ export interface AddHighlightInput {
 function normalizeAddHighlightInput(input: unknown): AddHighlightInput | null {
   if (!input || typeof input !== 'object') return null;
   const candidate = input as Partial<AddHighlightInput>;
-  if (!isNonEmptyString(candidate.chapterId)) throw new Error('Invalid highlight range.');
+  if (!isSafeChapterId(candidate.chapterId)) throw new Error('Invalid highlight range.');
   if (candidate.color !== undefined && !isHighlightColor(candidate.color)) {
     throw new Error('Invalid highlight color.');
   }
@@ -273,10 +281,10 @@ export const useHighlightsStore = create<HighlightsState>((set, get) => ({
     const now = new Date().toISOString();
     const highlight = createHighlight(normalizedInput, now);
     set((state) => {
-      const existing = state.byChapter[normalizedInput.chapterId] ?? [];
-      const next = {
-        byChapter: { ...state.byChapter, [normalizedInput.chapterId]: [...existing, highlight] },
-      };
+      const byChapter = copySafeHighlightsByChapterMap(state.byChapter);
+      const existing = byChapter[normalizedInput.chapterId] ?? [];
+      byChapter[normalizedInput.chapterId] = [...existing, highlight];
+      const next = { byChapter };
       const persistenceWarning = write(next);
       return { ...next, persistenceWarning };
     });
@@ -290,10 +298,11 @@ export const useHighlightsStore = create<HighlightsState>((set, get) => ({
     const normalizedNote =
       patch.note !== undefined ? normalizeNote(patch.note, 'write') : undefined;
     set((state) => {
-      const byChapter: Record<string, Highlight[]> = {};
+      const byChapter = createHighlightsByChapterMap();
       let touched = false;
       const updatedAt = new Date().toISOString();
       for (const [chapterId, list] of Object.entries(state.byChapter)) {
+        if (!isSafeChapterId(chapterId) || !Array.isArray(list)) continue;
         byChapter[chapterId] = list.map((h) => {
           if (h.id !== id) return h;
           touched = true;
@@ -318,30 +327,23 @@ export const useHighlightsStore = create<HighlightsState>((set, get) => ({
     });
   },
   removeHighlight: (id) => {
-    if (!isNonEmptyString(id)) return;
     set((state) => {
-      const byChapter: Record<string, Highlight[]> = {};
-      let removed = false;
+      const byChapter = createHighlightsByChapterMap();
       for (const [chapterId, list] of Object.entries(state.byChapter)) {
-        const nextList = list.filter((h) => h.id !== id);
-        if (nextList.length !== list.length) removed = true;
-        if (nextList.length > 0) byChapter[chapterId] = nextList;
+        if (!isSafeChapterId(chapterId) || !Array.isArray(list)) continue;
+        byChapter[chapterId] = list.filter((h) => h.id !== id);
       }
-      if (!removed) return state;
       const next = { byChapter };
       const persistenceWarning = write(next);
       return { ...next, persistenceWarning };
     });
   },
   clearChapter: (chapterId) => {
-    if (!isNonEmptyString(chapterId)) return;
+    if (!isSafeChapterId(chapterId)) return;
     set((state) => {
-      if (!Object.prototype.hasOwnProperty.call(state.byChapter, chapterId)) {
-        return state;
-      }
-      const byChapter = { ...state.byChapter };
-      delete byChapter[chapterId];
-      const next = { byChapter: withoutEmptyChapterBuckets(byChapter) };
+      const byChapter = copySafeHighlightsByChapterMap(state.byChapter);
+      byChapter[chapterId] = [];
+      const next = { byChapter };
       const persistenceWarning = write(next);
       return { ...next, persistenceWarning };
     });
@@ -358,7 +360,7 @@ export function getHighlightsForChapter(
   state: Pick<HighlightsState, 'byChapter'>,
   chapterId: string,
 ): Highlight[] {
-  if (!isNonEmptyString(chapterId)) return [];
+  if (!isSafeChapterId(chapterId)) return [];
   const list = state.byChapter[chapterId];
   if (!Array.isArray(list)) return [];
   return list
