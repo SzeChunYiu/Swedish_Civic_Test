@@ -35,7 +35,7 @@ const sourcesCopy: Record<AppLanguage, SourcesRouteCopy> = {
     openEducationMaterialAccessibilityLabel: 'Öppna UHR:s utbildningsmaterial',
     sections: {
       authorityBoundaries: {
-        body: `UHR:s sida Om medborgarskapsprovet säger att UHR har tagit fram utbildningsmaterialet. Den förklarar också att övningsprov på internet kan vara gjorda av andra personer eller företag, att UHR inte står bakom dessa och att kvaliteten inte är kontrollerad av UHR eller någon annan myndighet. Appen håller samma gräns tydlig: det här är oberoende övningsinnehåll. Källa hämtad ${UHR_AUTHORITY_BOUNDARY_SOURCE.retrievedDate}:`,
+        body: `Utbildningsmaterialet är framtaget av UHR. Övningsprov på internet kan däremot vara gjorda av andra personer eller företag; UHR står inte bakom dessa och kvaliteten är inte kontrollerad av UHR eller någon annan myndighet. Appen håller samma gräns tydlig: det här är oberoende övningsinnehåll. Källa hämtad ${UHR_AUTHORITY_BOUNDARY_SOURCE.retrievedDate}:`,
         title: 'Myndighetsgräns',
       },
       primaryStudyMaterial: {
@@ -57,7 +57,7 @@ const sourcesCopy: Record<AppLanguage, SourcesRouteCopy> = {
     openEducationMaterialAccessibilityLabel: 'Open UHR education material',
     sections: {
       authorityBoundaries: {
-        body: `UHR's About the citizenship test page says that UHR has produced the study material. It also explains that internet practice tests may be made by other people or companies; UHR does not stand behind those tests and their quality is not controlled by UHR or any other authority. This app keeps the same boundary clear: it is independent practice content. Source accessed ${UHR_AUTHORITY_BOUNDARY_SOURCE.retrievedDate}:`,
+        body: `The study material is produced by UHR. Internet practice tests may be made by other people or companies; UHR does not stand behind those tests, and their quality is not controlled by UHR or any other authority. This app keeps the same boundary clear: it is independent practice content. Source accessed ${UHR_AUTHORITY_BOUNDARY_SOURCE.retrievedDate}:`,
         title: 'Authority boundaries',
       },
       primaryStudyMaterial: {

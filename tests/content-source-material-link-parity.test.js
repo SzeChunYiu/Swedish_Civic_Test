@@ -102,6 +102,10 @@ test('legal source-material pages stay in parity with UHR source metadata', () =
   assert.match(legalPage, /rel="noreferrer"/);
   assert.match(legalPage, /minHeight:\s*space\[6\]/);
   assert.match(sourcesRoute, /Sverige i fokus/);
+  assert.match(sourcesRoute, /Utbildningsmaterialet är framtaget av UHR/);
+  assert.match(sourcesRoute, /The study material is produced by UHR/);
+  assert.doesNotMatch(sourcesRoute, /UHR:s\s+sida[^`'"\n]{0,120}\bsäger\b/i);
+  assert.doesNotMatch(sourcesRoute, /UHR's\s+[^`'"\n]{0,120}\bpage\s+says\b/i);
   assert.doesNotMatch(sourcesRoute, /content\/uhr-section-map\.json/);
   assert.doesNotMatch(sourcesRoute, /content\/question-bank\.csv/);
   assert.ok(uhrSectionMap.source.url.includes('/medborgarskapsprovet/utbildningsmaterial/'));
@@ -138,6 +142,36 @@ test('sources parity rejects route education material URL drift', () => {
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /app\/sources\.tsx UHR_EDUCATION_MATERIAL_URL must be https:\/\/www\.uhr\.se\/medborgarskapsprovet\/utbildningsmaterial\//,
+  );
+});
+
+test('sources parity rejects source-authority phrasing in authority-boundary copy', () => {
+  const englishResult = runValidationWithRoutePatch(
+    'app/sources.tsx',
+    `replace(
+      'The study material is produced by UHR.',
+      "UHR's About the citizenship test page says that UHR has produced the study material.",
+    )`,
+  );
+
+  assert.notEqual(englishResult.status, 0);
+  assert.match(
+    `${englishResult.stdout}\n${englishResult.stderr}`,
+    /authority-boundary copy must state facts neutrally/,
+  );
+
+  const swedishResult = runValidationWithRoutePatch(
+    'app/sources.tsx',
+    `replace(
+      'Utbildningsmaterialet är framtaget av UHR.',
+      'UHR:s sida Om medborgarskapsprovet säger att UHR har tagit fram utbildningsmaterialet.',
+    )`,
+  );
+
+  assert.notEqual(swedishResult.status, 0);
+  assert.match(
+    `${swedishResult.stdout}\n${swedishResult.stderr}`,
+    /authority-boundary copy must state facts neutrally/,
   );
 });
 
