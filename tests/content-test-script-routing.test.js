@@ -190,6 +190,63 @@ test('spaced repetition schema parity uses focused content validation routing', 
   );
 });
 
+test('question provenance runtime parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const questionBankCsvTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-question-bank-csv-contract.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-question-provenance-runtime/);
+  assert.match(
+    validatorSource,
+    /validateQuestionProvenanceRuntimeInputGuard\(\);[\s\S]*questionProvenanceRuntimeCasesValidated[\s\S]*questionProvenanceRuntimeParityValidated/,
+  );
+  assert.match(questionBankCsvTestSource, /--focus-question-provenance-runtime/);
+  assert.doesNotMatch(
+    questionBankCsvTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'question provenance runtime tests must not route through full content validation',
+  );
+});
+
+test('question provenance runtime focused route rejects missing validator wiring', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/scripts/validate-content.js')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'validateQuestionProvenanceRuntimeInputGuard();',
+        'validateQuestionBankCsvContract();',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-question-provenance-runtime');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /question provenance runtime focused validator must run validateQuestionProvenanceRuntimeInputGuard only/,
+  );
+});
+
 test('monetization selector runs only the focused monetization suite', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-routing-'));
   const npmLog = path.join(tmpDir, 'npm.log');

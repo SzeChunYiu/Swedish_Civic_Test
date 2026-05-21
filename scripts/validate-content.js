@@ -7107,6 +7107,13 @@ function isHttpsUrl(value) {
   }
 }
 
+function isUhrEducationMaterialSourceUrl(value) {
+  if (!isHttpsUrl(value)) return false;
+  const sourceUrl = new URL(value);
+  const expectedMaterialPath = new URL(EXPECTED_UHR_EDUCATION_MATERIAL_URL).pathname;
+  return sourceUrl.hostname === 'www.uhr.se' && sourceUrl.pathname.includes(expectedMaterialPath);
+}
+
 function isObjectRecord(value) {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
@@ -7827,6 +7834,9 @@ const packageMetadata = loadJson('package.json');
 const appConfig = loadJson('app.json');
 const uhrSectionMap = loadJson('content/uhr-section-map.json');
 const provenanceModule = loadTs('lib/content/provenance.ts');
+const filterQuestionsByProvenance = provenanceModule.filterQuestionsByProvenance;
+const getProvenanceDescription = provenanceModule.getProvenanceDescription;
+const getProvenanceLabel = provenanceModule.getProvenanceLabel;
 const getQuestionProvenance = provenanceModule.getQuestionProvenance;
 let chapterSchemasValidated = 0;
 let chapterTextFieldsNormalizedValidated = 0;
@@ -8097,6 +8107,14 @@ let trueFalseQuestions = 0;
 let trueFalseOptionLabelsValidated = 0;
 let questionTagsValidated = 0;
 let questionBankCsvRowsValidated = 0;
+let questionBankCsvHeaderColumnsValidated = 0;
+let questionBankCsvUniqueHeaderNamesValidated = false;
+let questionBankCsvUhrSourcePublisherRowsValidated = 0;
+let questionBankCsvUhrSourcePublisherParityValidated = false;
+let questionBankCsvProvenanceCounts = { uhr: 0, derived: 0, editorial: 0 };
+let questionProvenanceRuntimeCasesValidated = 0;
+let questionProvenanceRuntimeParityValidated = false;
+const EXPECTED_QUESTION_PROVENANCE_RUNTIME_CASES = 13;
 let criminalResponsibilityCurrentnessOfficialSourcesValidated = 0;
 let criminalResponsibilityCurrentnessSourceMetadataValidated = false;
 let criminalResponsibilityCurrentnessSourceRetrievedAt = null;
@@ -8328,6 +8346,44 @@ if (
   Array.isArray(localizationStrings)
 ) {
   fail('strings export is not an object');
+}
+
+if (process.argv.includes('--focus-question-provenance-runtime')) {
+  validateQuestionProvenanceRuntimeInputGuard();
+  if (
+    questionProvenanceRuntimeCasesValidated !== EXPECTED_QUESTION_PROVENANCE_RUNTIME_CASES ||
+    questionProvenanceRuntimeParityValidated !== true
+  ) {
+    fail(
+      'question provenance runtime focused validator must run validateQuestionProvenanceRuntimeInputGuard only',
+    );
+  }
+  exitWithValidationFailures();
+  printValidationSummary({
+    questionProvenanceRuntimeCasesValidated,
+    questionProvenanceRuntimeParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-question-bank-csv')) {
+  validateUhrSourceMetadata();
+  validateQuestionBankCsvContract();
+  exitWithValidationFailures();
+  const publishedQuestions = Array.isArray(questions)
+    ? questions.filter((question) => question.reviewStatus === 'published').length
+    : 0;
+  printValidationSummary({
+    questions: Array.isArray(questions) ? questions.length : 0,
+    publishedQuestions,
+    questionBankCsvRowsValidated,
+    questionBankCsvHeaderColumnsValidated,
+    questionBankCsvUniqueHeaderNamesValidated,
+    questionBankCsvUhrSourcePublisherRowsValidated,
+    questionBankCsvUhrSourcePublisherParityValidated,
+    questionBankCsvProvenanceCounts,
+  });
+  process.exit(0);
 }
 
 if (process.argv.includes('--focus-generated-true-false-naturalness')) {
@@ -16294,6 +16350,107 @@ function validateWeakChapterRules() {
   }
 }
 
+function validateQuestionProvenanceRuntimeInputGuard() {
+  const cases = [
+    {
+      label: 'editorial tags produce editorial provenance',
+      actual: () => getQuestionProvenance({ tags: ['editorial'] }),
+      expected: 'editorial',
+    },
+    {
+      label: 'published-variant tags produce derived provenance',
+      actual: () => getQuestionProvenance({ tags: ['published-variant'] }),
+      expected: 'derived',
+    },
+    {
+      label: 'editorial tags take priority over derived tags',
+      actual: () => getQuestionProvenance({ tags: ['published-variant', 'editorial'] }),
+      expected: 'editorial',
+    },
+    {
+      label: 'empty tags fall back to UHR',
+      actual: () => getQuestionProvenance({ tags: [] }),
+      expected: 'uhr',
+    },
+    {
+      label: 'missing tags fall back to UHR',
+      actual: () => getQuestionProvenance({}),
+      expected: 'uhr',
+    },
+    {
+      label: 'non-object question input falls back to UHR',
+      actual: () => getQuestionProvenance(null),
+      expected: 'uhr',
+    },
+    {
+      label: 'string tags input falls back to UHR',
+      actual: () => getQuestionProvenance({ tags: 'editorial' }),
+      expected: 'uhr',
+    },
+    {
+      label: 'mixed non-string tags input falls back to UHR',
+      actual: () => getQuestionProvenance({ tags: ['editorial', 42] }),
+      expected: 'uhr',
+    },
+    {
+      label: 'invalid provenance label falls back to Swedish UHR copy',
+      actual: () => getProvenanceLabel('invalid-provenance', 'sv'),
+      expected: 'UHR',
+    },
+    {
+      label: 'derived provenance label uses English supplementary copy',
+      actual: () => getProvenanceLabel('derived', 'en'),
+      expected: 'Supplementary',
+    },
+    {
+      label: 'invalid provenance description falls back to UHR source note',
+      actual: () => getProvenanceDescription('not-real', 'en'),
+      expected: "Based on UHR's study material Sverige i fokus.",
+    },
+    {
+      label: 'editorial provenance description uses Swedish source note',
+      actual: () => getProvenanceDescription('editorial', 'sv'),
+      expected: 'Skriven av oss för att ge sammanhang som inte täcks direkt av UHR-materialet.',
+    },
+    {
+      label: 'question pool provenance filter excludes supplementary by default',
+      actual: () =>
+        filterQuestionsByProvenance([
+          { id: 'q001', tags: ['democracy'] },
+          { id: 'q002', tags: ['published-variant'] },
+          { id: 'q003', tags: ['editorial'] },
+        ]).map((question) => question.id),
+      expected: ['q001'],
+    },
+  ];
+  let valid = true;
+
+  cases.forEach(({ label, actual, expected }) => {
+    let actualValue;
+    try {
+      actualValue = actual();
+    } catch (error) {
+      valid = false;
+      fail(`question provenance runtime guard ${label} threw ${error.message}`);
+      return;
+    }
+
+    if (!jsonEqual(actualValue, expected)) {
+      valid = false;
+      fail(
+        `question provenance runtime guard ${label} returned ${JSON.stringify(
+          actualValue,
+        )}, expected ${JSON.stringify(expected)}`,
+      );
+    } else {
+      questionProvenanceRuntimeCasesValidated += 1;
+    }
+  });
+
+  questionProvenanceRuntimeParityValidated =
+    valid && questionProvenanceRuntimeCasesValidated === EXPECTED_QUESTION_PROVENANCE_RUNTIME_CASES;
+}
+
 function validateQuestionBankCsvContract() {
   if (!Array.isArray(questions)) return;
 
@@ -16312,6 +16469,20 @@ function validateQuestionBankCsvContract() {
   }
 
   const [header, ...dataRows] = rows;
+  questionBankCsvHeaderColumnsValidated = header.length;
+  const duplicateHeaderNames = [
+    ...new Set(header.filter((field, index) => header.indexOf(field) !== index)),
+  ];
+  if (duplicateHeaderNames.length > 0) {
+    fail(
+      `content/question-bank.csv header has duplicate column name(s): ${duplicateHeaderNames.join(
+        ', ',
+      )}`,
+    );
+  } else {
+    questionBankCsvUniqueHeaderNamesValidated = true;
+  }
+
   if (!jsonEqual(header, QUESTION_BANK_CSV_HEADER)) {
     fail(
       `content/question-bank.csv header is ${JSON.stringify(header)}, expected ${JSON.stringify(
@@ -16325,6 +16496,31 @@ function validateQuestionBankCsvContract() {
       `content/question-bank.csv has ${dataRows.length} data rows, expected ${questions.length}`,
     );
   }
+
+  const summarizedMetadataDriftFields = new Set();
+  const metadataFields = [
+    ['uhrSourceTitle', 'title'],
+    ['uhrSourcePublisher', 'publisher'],
+    ['uhrSourceUrl', 'url'],
+    ['uhrSourceRetrievedAt', 'retrievedDate'],
+  ];
+  metadataFields.forEach(([fieldName, sourceKey]) => {
+    const fieldIndex = header.indexOf(fieldName);
+    const expectedValue = uhrSectionMap?.source?.[sourceKey];
+    if (fieldIndex < 0 || !hasText(expectedValue) || dataRows.length === 0) return;
+
+    const driftCount = dataRows.filter((row) => row[fieldIndex] !== expectedValue).length;
+    if (driftCount === dataRows.length) {
+      summarizedMetadataDriftFields.add(fieldName);
+      fail(
+        `content/question-bank.csv ${fieldName} metadata drift: ${driftCount} rows disagree with content/uhr-section-map.json source.${sourceKey}`,
+      );
+    }
+  });
+
+  const provenanceIndex = header.indexOf('questionProvenance');
+  const publisherIndex = header.indexOf('uhrSourcePublisher');
+  questionBankCsvProvenanceCounts = { uhr: 0, derived: 0, editorial: 0 };
 
   dataRows.forEach((row, index) => {
     const question = questions[index];
@@ -16372,6 +16568,8 @@ function validateQuestionBankCsvContract() {
     ];
 
     QUESTION_BANK_CSV_HEADER.forEach((field, fieldIndex) => {
+      if (summarizedMetadataDriftFields.has(field)) return;
+
       if (row[fieldIndex] !== expectedRow[fieldIndex]) {
         reject(
           `content/question-bank.csv row ${rowNumber} ${label} ${field} is ${JSON.stringify(
@@ -16381,8 +16579,27 @@ function validateQuestionBankCsvContract() {
       }
     });
 
+    if (publisherIndex >= 0 && row[publisherIndex] === uhrSectionMap?.source?.publisher) {
+      questionBankCsvUhrSourcePublisherRowsValidated += 1;
+    }
+    if (provenanceIndex >= 0) {
+      const provenance = row[provenanceIndex];
+      if (Object.hasOwn(questionBankCsvProvenanceCounts, provenance)) {
+        questionBankCsvProvenanceCounts[provenance] += 1;
+      } else {
+        reject(
+          `content/question-bank.csv row ${rowNumber} ${label} questionProvenance is ${JSON.stringify(
+            provenance,
+          )}, expected uhr, derived, or editorial`,
+        );
+      }
+    }
+
     if (rowIsValid) questionBankCsvRowsValidated += 1;
   });
+
+  questionBankCsvUhrSourcePublisherParityValidated =
+    questionBankCsvUhrSourcePublisherRowsValidated === dataRows.length;
 }
 
 function criminalResponsibilityCurrentnessQuestionIds() {
@@ -17268,6 +17485,9 @@ function validateUhrSourceMetadata() {
     if (source.url !== EXPECTED_UHR_SOURCE.url) {
       reject(`UHR section map source URL must be ${EXPECTED_UHR_SOURCE.url}`);
     }
+    if (!isUhrEducationMaterialSourceUrl(source.url)) {
+      reject('UHR section map source URL must be under the UHR education material path');
+    }
     if (!isIsoDate(source.retrievedDate)) {
       reject('UHR section map source retrievedDate must use YYYY-MM-DD');
     } else {
@@ -17346,12 +17566,8 @@ function validateUhrSourceMaterialLinkParity() {
   const mapSourceUrl = uhrSectionMap?.source?.url;
   if (!isHttpsUrl(mapSourceUrl)) {
     reject('UHR section map source URL must be HTTPS');
-  } else {
-    const mapSource = new URL(mapSourceUrl);
-    const expectedMaterialPath = new URL(EXPECTED_UHR_EDUCATION_MATERIAL_URL).pathname;
-    if (mapSource.hostname !== 'www.uhr.se' || !mapSource.pathname.includes(expectedMaterialPath)) {
-      reject('UHR section map source URL must be under the UHR education material path');
-    }
+  } else if (!isUhrEducationMaterialSourceUrl(mapSourceUrl)) {
+    reject('UHR section map source URL must be under the UHR education material path');
   }
 
   if (!sourcesRoute.includes(EXPECTED_UHR_SOURCE.titleKeyword)) {
@@ -17852,6 +18068,7 @@ validateStreakRules();
 validateXpRules();
 validateMasteryRules();
 validateWeakChapterRules();
+validateQuestionProvenanceRuntimeInputGuard();
 validateQuestionBankCsvContract();
 validateStaticSiteQuestionBankParity();
 validateUhrSourceMaterialLinkParity();
@@ -18170,6 +18387,13 @@ console.log(
       trueFalseOptionLabelsValidated,
       questionTagsValidated,
       questionBankCsvRowsValidated,
+      questionBankCsvHeaderColumnsValidated,
+      questionBankCsvUniqueHeaderNamesValidated,
+      questionBankCsvUhrSourcePublisherRowsValidated,
+      questionBankCsvUhrSourcePublisherParityValidated,
+      questionBankCsvProvenanceCounts,
+      questionProvenanceRuntimeCasesValidated,
+      questionProvenanceRuntimeParityValidated,
       criminalResponsibilityCurrentnessOfficialSourcesValidated,
       criminalResponsibilityCurrentnessSourceMetadataValidated,
       criminalResponsibilityCurrentnessSourceRetrievedAt,
