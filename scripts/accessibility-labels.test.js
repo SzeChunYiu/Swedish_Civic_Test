@@ -218,6 +218,23 @@ test('MockExamConfigPanel summary header is separate from interactive controls',
   assert.doesNotMatch(source, /<Surface\b[^>]*accessibilityLabel=/);
 });
 
+test('MockExamConfigPanel adjustable values use normalized finite ranges', () => {
+  const source = fs.readFileSync(path.join(ROOT, 'components', 'MockExamConfigPanel.tsx'), 'utf8');
+
+  assert.match(source, /normalizeMockExamStepperRange/);
+  assert.match(source, /const questionRange = normalizeMockExamStepperRange\(\{/);
+  assert.match(source, /const durationRange = normalizeMockExamStepperRange\(\{/);
+  assert.match(source, /const safeQuestionStep = questionRange\.step;/);
+  assert.match(source, /const safeDurationStep = durationRange\.step;/);
+  assert.match(source, /const questionBoundsValid = questionRange\.boundsValid;/);
+  assert.match(source, /const durationBoundsValid = durationRange\.boundsValid;/);
+  assert.match(source, /accessibilityValue=\{\{ max, min, now: value, text: valueLabel \}\}/);
+  assert.match(source, /step=\{safeQuestionStep\}/);
+  assert.match(source, /step=\{safeDurationStep\}/);
+  assert.doesNotMatch(source, /step=\{questionStep\}/);
+  assert.doesNotMatch(source, /step=\{durationStep\}/);
+});
+
 test('Dashboard summary text is separate from interactive links, buttons, and scrolling', () => {
   const dashboardSource = fs.readFileSync(path.join(ROOT, 'app', 'dashboard.tsx'), 'utf8');
   const activitySource = fs.readFileSync(
