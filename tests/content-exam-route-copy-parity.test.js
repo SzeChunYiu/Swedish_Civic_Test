@@ -11,10 +11,14 @@ function readExamRouteSource() {
 }
 
 function parseValidationSummary() {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-mock-exam-runtime-parity'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
   return JSON.parse(match[0]);
@@ -51,8 +55,22 @@ test('exam route shell and review copy follows the persisted settings language',
     source,
     /import \{ getQuestionDisplayText, getQuestionSourceCitation \} from '..\/..\/lib\/quiz\/questionText';/,
   );
+  assert.match(
+    source,
+    /import \{ ProvenanceBadge \} from '..\/..\/components\/quiz\/ProvenanceBadge';/,
+  );
   assert.match(source, /getQuestionSourceCitation\(item, language\)/);
   assert.match(source, /getQuestionSourceCitation\(question, language\)/);
+  assert.match(source, /const examQuestionById = useMemo\(/);
+  assert.match(
+    source,
+    /new Map\(examQuestions\.map\(\(question\) => \[question\.id, question\] as const\)\)/,
+  );
+  assert.match(source, /<ProvenanceBadge language=\{language\} question=\{question\} \/>/);
+  assert.match(
+    source,
+    /<ProvenanceBadge language=\{language\} question=\{examQuestionById\.get\(item\.questionId\)\} \/>/,
+  );
   assert.match(source, /<UHRReferenceCard language=\{language\}/);
   assert.match(
     source,
@@ -83,6 +101,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-mock-exam-runtime-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -113,6 +132,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-mock-exam-runtime-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -140,6 +160,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-mock-exam-runtime-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -150,5 +171,40 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /exam UHR references must receive settings language/,
+  );
+});
+
+test('exam route copy parity rejects dropping provenance badges from exam questions', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/exam.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('<ProvenanceBadge language={language} question={question} />', 'null')
+      .replace(
+        '<ProvenanceBadge language={language} question={examQuestionById.get(item.questionId)} />',
+        'null',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-mock-exam-runtime-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /exam questions must render provenance badges/,
   );
 });

@@ -86,7 +86,9 @@ test('mock exam requires all answers before showing Swedish score and source-bac
   await expect(submit).toBeDisabled();
   await expect(page.getByText('Frågegenomgång')).toHaveCount(0);
   await expect(page.getByText('Förklaring', { exact: true })).toHaveCount(0);
-  await expect(page.getByText('UHR-källa', { exact: true })).toHaveCount(0);
+  await expect(
+    page.getByRole('button', { name: /Källtyp: UHR-källa\. Källanteckning:/ }),
+  ).toHaveCount(totalQuestions);
 
   for (let questionNumber = 1; questionNumber <= totalQuestions; questionNumber += 1) {
     await page
@@ -144,6 +146,9 @@ test('mock exam review follows English support mode', async ({ page }) => {
   await expect(submit).toBeDisabled();
   await expect(page.getByText('Question review')).toHaveCount(0);
   await expect(page.getByText('Explanation', { exact: true })).toHaveCount(0);
+  await expect(
+    page.getByRole('button', { name: /Provenance: UHR source\. Source note:/ }),
+  ).toHaveCount(totalQuestions);
   await expect(page.getByText('UHR reference', { exact: true })).toHaveCount(0);
 
   for (let questionNumber = 1; questionNumber <= totalQuestions; questionNumber += 1) {
