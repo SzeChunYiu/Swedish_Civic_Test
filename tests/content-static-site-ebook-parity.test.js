@@ -616,7 +616,7 @@ test('static ebook raw factbox prose renders with non-default provenance', () =>
   assertSafeOfficialTestSourceLinks(swedishCurrentSourceBlock, 'Swedish current source note');
 });
 
-test('static ebook Swedish mock-exam wording uses övningsprov', () => {
+test('static ebook Swedish mock-exam wording uses övningsprov and survival-guide heading', () => {
   const source = readSiteFile('site/ebook.js');
   const harness = createEbookHarness();
   const swedishIntroHtml = renderChapter(harness, 'sv', 'intro');
@@ -629,9 +629,19 @@ test('static ebook Swedish mock-exam wording uses övningsprov', () => {
   assert.match(source, /Starta [oö]vningsprov/);
   assert.match(source, /gör ett [oö]vningsprov/);
   assert.match(swedishIntroHtml, /Avsluta veckan med ett[\s\S]{0,80}[oö]vningsprov/);
+  assert.match(
+    swedishMockExamHtml,
+    /<h1 class="ebook__h1"><span>[OÖ]vningsprov<\/span> <em>& [oö]verlevnadsguide<\/em><\/h1>/,
+  );
   assert.match(swedishMockExamHtml, /Starta [oö]vningsprov/);
   assert.match(swedishMockExamHtml, /gör ett [oö]vningsprov/);
+  assert.match(
+    englishMockExamHtml,
+    /<h1 class="ebook__h1"><span>Mock exam<\/span> <em>& survival guide<\/em><\/h1>/,
+  );
   assert.match(englishMockExamHtml, /Start mock exam/);
+  assert.doesNotMatch(swedishMockExamHtml, /aktuell provstatus/i);
+  assert.doesNotMatch(englishMockExamHtml, /current test status/i);
 });
 
 test('static ebook does not promise source-backed footnotes without citation coverage', () => {

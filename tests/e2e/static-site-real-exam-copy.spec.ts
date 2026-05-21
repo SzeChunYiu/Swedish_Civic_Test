@@ -1,5 +1,12 @@
 import { expect, test, type Page } from '@playwright/test';
 
+import {
+  collectPageErrors,
+  openStaticPage,
+  startStaticSiteServer,
+  type StaticSite,
+} from './staticSiteServer';
+
 const forbiddenCopy = [
   new RegExp(['real', 'timing'].join('\\s+'), 'i'),
   new RegExp(['real', 'format'].join('\\s+'), 'i'),
@@ -28,38 +35,28 @@ const languageCopies: LanguageCopy[] = [
   {
     code: 'en',
     home: 'A calm, unofficial study tool',
-    demo: 'Mock exam mode with a timed practice flow',
+    demo: 'Answer one question, read the explanation, and keep going.',
     chapterTitle: 'Mock exam & survival guide',
     result: 'Strong practice round. Keep reviewing the source material before the official test.',
   },
   {
     code: 'sv',
     home: 'Ett lugnt, fristående studieverktyg',
-    demo: 'Provläge med tidsatt övning',
+    demo: 'Svara på en fråga, läs förklaringen och fortsätt.',
     chapterTitle: 'Övningsprov & överlevnadsguide',
     result: 'Starkt övningspass. Fortsätt repetera källmaterialet inför det officiella provet.',
   },
 ];
 
-function collectBrowserErrors(page: Page): string[] {
-  const errors: string[] = [];
+let staticSite: StaticSite;
 
-  page.on('console', (message) => {
-    if (message.type() === 'error') errors.push(message.text());
-  });
-  page.on('pageerror', (error) => errors.push(error.message));
+test.beforeAll(async () => {
+  staticSite = await startStaticSiteServer();
+});
 
-  return errors;
-}
-
-async function setStaticSiteLanguage(page: Page, language: LanguageCopy['code']): Promise<void> {
-  await page.addInitScript((selectedLanguage) => {
-    window.localStorage.setItem('smt_buddy_hidden', '1');
-    window.localStorage.removeItem('smt_consent');
-    window.localStorage.setItem('smt_ads_mode', 'none');
-    window.localStorage.setItem('smt_lang', selectedLanguage);
-  }, language);
-}
+test.afterAll(async () => {
+  await staticSite.close();
+});
 
 async function expectNoForbiddenCopy(page: Page): Promise<void> {
   const visibleText = await page.locator('body').innerText();
@@ -69,8 +66,8 @@ async function expectNoForbiddenCopy(page: Page): Promise<void> {
   }
 }
 
-async function renderPracticeResult(page: Page): Promise<void> {
-  await page.goto('/#/practice?c=mix', { waitUntil: 'domcontentloaded' });
+async function renderPracticeResult(page: Page, baseUrl: string): Promise<void> {
+  await page.goto(`${baseUrl}/#/practice?c=mix`, { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(
     () =>
       typeof (window as typeof window & { smtQuizRender?: unknown }).smtQuizRender === 'function',
@@ -92,19 +89,20 @@ async function renderPracticeResult(page: Page): Promise<void> {
 }
 
 for (const copy of languageCopies) {
-  test(`static site renders neutral timed-practice copy in ${copy.code}`, async ({ page }) => {
-    const browserErrors = collectBrowserErrors(page);
+  test(`static site renders neutral Mock exam / Övningsprov survival guide copy in ${copy.code}`, async ({
+    page,
+  }) => {
+    const browserErrors = collectPageErrors(page);
 
     await page.setViewportSize({ width: 390, height: 844 });
-    await setStaticSiteLanguage(page, copy.code);
+    await openStaticPage(page, staticSite.baseUrl, copy.code);
 
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('body')).toContainText(copy.home);
     await expect(page.locator('body')).toContainText(copy.demo);
     await expect(page.locator('body')).toContainText(copy.chapterTitle);
     await expectNoForbiddenCopy(page);
 
-    await renderPracticeResult(page);
+    await renderPracticeResult(page, staticSite.baseUrl);
     await expect(page.locator('#quiz-stage')).toContainText(copy.result);
     await expectNoForbiddenCopy(page);
 
