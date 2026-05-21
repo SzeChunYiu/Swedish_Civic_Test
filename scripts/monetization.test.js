@@ -305,6 +305,40 @@ test('real ad units are selected from env when the real ads flag is enabled', ()
   );
 });
 
+test('AdBanner testStatus copy is platform-neutral for web and native test units', () => {
+  const { adBannerCopy } = loadTs('lib/monetization/adCopy.ts');
+  const webBannerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
+    'utf8',
+  );
+  const nativeBannerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
+    'utf8',
+  );
+
+  assert.equal(adBannerCopy.en.testStatus, 'AdMob test unit active - preview');
+  assert.equal(adBannerCopy.sv.testStatus, 'AdMob-testannons aktiv - förhandsvisning');
+  assert.doesNotMatch(adBannerCopy.en.testStatus, /web preview/i);
+  assert.doesNotMatch(adBannerCopy.sv.testStatus, /webbförhandsvisning/i);
+  assert.match(
+    webBannerSource,
+    /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
+  );
+  assert.match(nativeBannerSource, /const unit = getAdUnit\(placement\);/);
+  assert.match(
+    nativeBannerSource,
+    /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
+  );
+  assert.match(
+    nativeBannerSource,
+    /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, adStatusLabel\)\}/,
+  );
+  assert.doesNotMatch(
+    nativeBannerSource,
+    /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, copy\.liveStatus\)\}/,
+  );
+});
+
 test('results native placement uses the native Google Mobile Ads surface on native builds', () => {
   const adsSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/ads.ts'), 'utf8');
   const adCopySource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/adCopy.ts'), 'utf8');

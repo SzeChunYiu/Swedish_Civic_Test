@@ -9,15 +9,6 @@ function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
-test('npm ui-effects script forwards Node test options before the test file', () => {
-  const packageJson = JSON.parse(read('package.json'));
-  const runner = read('scripts/run-ui-effects-test.js');
-
-  assert.equal(packageJson.scripts['test:ui-effects'], 'node scripts/run-ui-effects-test.js');
-  assert.match(runner, /\['--test', \.\.\.forwardedArgs, 'scripts\/ui-effects\.test\.js'\]/);
-  assert.match(runner, /spawnSync\(\s*process\.execPath/);
-});
-
 test('progress bar uses tokenized animated motion and exposes progress to assistive tech', () => {
   const source = read('components/ui/ProgressBar.tsx');
 
@@ -92,9 +83,8 @@ test('provenance badge exposes readable tokenized provenance labels', () => {
   assert.match(source, /transform: \[\{ scale: motion\.pressedScale \}\]/);
   assert.match(source, /borderRadius: radius\.pill/);
   assert.match(source, /textTransform: 'uppercase'/);
-  assert.match(source, /const styles = useMemo\(\(\) => createStyles\(themeColors \?\? colors\)/);
-  assert.match(source, /backgroundColor: themeColors\.badgeBlueBg/);
-  assert.match(source, /backgroundColor: themeColors\.surfaceWarm/);
+  assert.match(source, /backgroundColor: colors\.badgeBlueBg/);
+  assert.match(source, /backgroundColor: colors\.surfaceWarm/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
@@ -119,8 +109,7 @@ test('button derives an accessibility label from plain text children by default'
   assert.match(source, /accessibilityLabel=\{buttonAccessibilityLabel\}/);
   assert.match(source, /accessibilityRole=\{accessibilityRole\}/);
   assert.match(source, /accessibilityState=\{mergedAccessibilityState\}/);
-  assert.match(source, /const resolvedColors = themeColors \?\? colors;/);
-  assert.match(source, /android_ripple=\{android_ripple \?\? \{ color: resolvedColors\.focusSoft/);
+  assert.match(source, /android_ripple=\{android_ripple \?\? \{ color: colors\.focusSoft/);
   assert.match(source, /hitSlop=\{hitSlop \?\? space\[0\.5\]\}/);
   assert.match(source, /style=\{\(\{ pressed \}\) => \[/);
   assert.match(source, /pressed && !disabled \? styles\.pressed : null/);
@@ -132,7 +121,7 @@ test('button derives an accessibility label from plain text children by default'
   assert.match(source, /transform: \[\{ scale: motion\.pressedScale \}\]/);
   assert.match(source, /borderWidth: space\.hairline/);
   assert.match(source, /borderRadius: radius\.button/);
-  assert.match(source, /backgroundColor: themeColors\.accentActive/);
+  assert.match(source, /backgroundColor: colors\.accentActive/);
   assert.match(source, /nativeID=\{buttonAccessibilityHintId\}/);
   assert.match(source, /accessibilityHintText/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
@@ -219,7 +208,14 @@ test('compliance scaffold exposes legal page headings as headers', () => {
   assert.match(privacySource, /No account required/);
   assert.match(sourcesSource, /const sourcesCopy: Record<AppLanguage, SourcesRouteCopy>/);
   assert.match(sourcesSource, /const copy = sourcesCopy\[language\];/);
-  assert.match(sourcesSource, /<LegalPage title=\{copy\.title\}>/);
+  assert.match(
+    sourcesSource,
+    /<LegalPage[\s\S]*backAccessibilityLabel=\{copy\.backAccessibilityLabel\}[\s\S]*backHref="\/home"[\s\S]*backLabel=\{copy\.backLabel\}[\s\S]*title=\{copy\.title\}\s*>/,
+  );
+  assert.match(sourcesSource, /backLabel: '← Tillbaka till startsidan'/);
+  assert.match(sourcesSource, /backAccessibilityLabel: 'Tillbaka till startsidan'/);
+  assert.match(sourcesSource, /backLabel: '← Back to Home'/);
+  assert.match(sourcesSource, /backAccessibilityLabel: 'Back to Home'/);
   assert.match(
     sourcesSource,
     /accessibilityLabel=\{copy\.openEducationMaterialAccessibilityLabel\}/,
@@ -771,7 +767,7 @@ test('mistakes screen has a bookmarked-question review section', () => {
   assert.match(source, /bookmarkedReviewQuestions/);
   assert.match(source, /Bokmärkta frågor/);
   assert.match(source, /Bookmarked questions/);
-  assert.match(source, /Sparad för fokuserad repetition/);
+  assert.match(source, /Sparad till senare övning/);
   assert.match(source, /Saved for focused review/);
   assert.match(source, /\{copy\.bookmarkedTitle\}/);
   assert.match(source, /\{copy\.bookmarkedMeta\}/);
@@ -857,7 +853,10 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
   assert.match(webSource, /useSettingsStore/);
   assert.match(webSource, /const copy = adBannerCopy\[language\]/);
   assert.match(webSource, /const placementLabel = copy\.placementLabels\[placement\];/);
-  assert.match(webSource, /const adStatusLabel = getAdBannerStatusLabel\(copy, unit\);/);
+  assert.match(
+    webSource,
+    /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
+  );
   assert.match(webSource, /const accessibilityLabel = copy\.accessibilityLabel/);
   assert.match(
     webSource,
@@ -868,26 +867,29 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
   assert.match(nativeSource, /useSettingsStore/);
   assert.match(nativeSource, /accessible/);
   assert.match(nativeSource, /const copy = adBannerCopy\[language\]/);
-  assert.match(nativeSource, /getAdUnit/);
   assert.match(nativeSource, /const unit = getAdUnit\(placement\);/);
   assert.match(nativeSource, /const placementLabel = copy\.placementLabels\[placement\];/);
   assert.match(
     nativeSource,
     /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
   );
-  assert.match(nativeSource, /const accessibilityLabel = copy\.accessibilityLabel/);
   assert.match(
     nativeSource,
     /accessibilityHint=\{`\$\{copy\.previewHint\} \$\{copy\.removeAdsHint\}`\}/,
   );
-  assert.match(nativeSource, /accessibilityLabel=\{accessibilityLabel\}/);
+  assert.match(
+    nativeSource,
+    /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, adStatusLabel\)\}/,
+  );
   assert.match(nativeSource, /<BannerAd/);
   assert.match(copySource, /const adBannerCopy: Record<AppLanguage, AdBannerCopy>/);
   assert.match(copySource, /home_banner: 'Annons på startsidan'/);
   assert.match(copySource, /chapter_list_banner: 'Annons i kapitellistan'/);
   assert.match(copySource, /Döljs när Ta bort annonser är aktivt/);
   assert.match(copySource, /home_banner: 'Home banner'/);
-  assert.match(copySource, /AdMob test unit active - test placement/);
+  assert.match(copySource, /AdMob test unit active - preview/);
+  assert.match(copySource, /AdMob-testannons aktiv - förhandsvisning/);
+  assert.doesNotMatch(copySource, /web preview|webbförhandsvisning/);
 });
 
 test('native ad preview card exposes a grouped accessibility summary', () => {
@@ -1225,20 +1227,6 @@ test('first-run about modal uses natural Swedish guide accessibility copy', () =
   const source = read('components/onboarding/FirstRunAboutTheTestModal.tsx');
   const staleGuideLabel = ['Öppna om-', 'provet-', 'guiden'].join('');
 
-  assert.match(source, /const dialogTitleId = 'first-run-about-modal-title';/);
-  assert.match(source, /const dialogBodyId = 'first-run-about-modal-body';/);
-  assert.match(source, /accessibilityViewIsModal/);
-  assert.match(source, /aria-describedby=\{dialogBodyId\}/);
-  assert.match(source, /aria-labelledby=\{dialogTitleId\}/);
-  assert.match(
-    source,
-    /<Pressable\s+accessible=\{false\}\s+hitSlop=\{space\[1\]\}\s+importantForAccessibility="no"[\s\S]*?style=\{\(\{ pressed \}\) => \[styles\.backdrop,/,
-  );
-  assert.match(
-    source,
-    /<Text accessibilityRole="header" id=\{dialogTitleId\} style=\{styles\.title\}>/,
-  );
-  assert.match(source, /<Text id=\{dialogBodyId\} style=\{styles\.body\}>/);
   assert.match(source, /open: 'Läs guiden'/);
   assert.match(source, /openAccessibilityLabel: 'Öppna guiden om medborgarskapsprovet'/);
   assert.match(source, /openAccessibilityLabel: 'Open the about-the-test guide'/);

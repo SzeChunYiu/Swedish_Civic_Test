@@ -24,7 +24,9 @@ const featureEvidence = {
   googleAdsNative: fs.existsSync(
     path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
   ),
-  webAdPreviewSafe: has('components/monetization/AdBanner.tsx', /web preview/),
+  webAdPreviewSafe:
+    has('components/monetization/AdBanner.tsx', /WEB_AD_FALLBACK_CONSENT_DECISION/) &&
+    has('lib/monetization/adCopy.ts', /Sponsored ad preview/),
   homeNextAction: has('app/(tabs)/home.tsx', /nextAction/),
   homeFeedbackCard: has('app/(tabs)/home.tsx', /10,000-learner feedback pass/),
   settingsLink: has('app/(tabs)/profile.tsx', /Adjust settings/),
