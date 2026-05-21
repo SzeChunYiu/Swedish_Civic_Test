@@ -38,7 +38,7 @@ export const adBannerCopy: Record<AppLanguage, AdBannerCopy> = {
     },
     previewHint: 'Sponsrad annonsförhandsvisning.',
     removeAdsHint: 'Döljs när Ta bort annonser är aktivt.',
-    testStatus: 'AdMob-testannons aktiv - förhandsvisning',
+    testStatus: 'AdMob-testannons aktiv - testplacering',
   },
   en: {
     accessibilityLabel: (placementLabel, statusLabel) =>
@@ -54,7 +54,7 @@ export const adBannerCopy: Record<AppLanguage, AdBannerCopy> = {
     },
     previewHint: 'Sponsored ad preview.',
     removeAdsHint: 'Hidden after Remove Ads is active.',
-    testStatus: 'AdMob test unit active - preview',
+    testStatus: 'AdMob test unit active - test placement',
   },
 };
 

@@ -154,16 +154,16 @@ export async function collectMobileAdsConsentState({
     platform,
     shouldCollectConsent,
   );
-  const umpConsentStatus = await resolveUmpConsentStatus(
-    runtime,
-    shouldCollectConsent,
-    normalizedRegion,
-  );
   const trackingTransparencyStatus = await requestTrackingTransparencyStatusIfNeeded(
     runtime,
     platform,
     shouldCollectConsent,
     currentTrackingTransparencyStatus,
+  );
+  const umpConsentStatus = await resolveUmpConsentStatus(
+    runtime,
+    shouldCollectConsent,
+    normalizedRegion,
   );
 
   return {
