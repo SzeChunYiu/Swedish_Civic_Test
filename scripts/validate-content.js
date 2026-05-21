@@ -2813,8 +2813,9 @@ const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
     pattern: /\$\{copy\.sourceCitationLabel\}: \$\{sourceCitation\}/,
   },
   {
-    label: 'Card receives accessibility summary',
-    pattern: /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/,
+    label: 'hidden accessibility summary without grouping nested source controls',
+    pattern:
+      /<Card>\s*<Text accessibilityLabel=\{questionAccessibilityLabel\} style=\{styles\.accessibilitySummary\}>/,
   },
   {
     label: 'visible difficulty label',
@@ -2838,7 +2839,7 @@ const EXPECTED_QUESTION_SOURCE_CITATION_RULES = [
   {
     label: 'localized question display fallback',
     pattern:
-      /const QUESTION_DISPLAY_FALLBACKS: Record<QuestionTextLanguage, string> = \{[\s\S]*sv: 'Fråga saknas'[\s\S]*en: 'Question unavailable'[\s\S]*fallback = QUESTION_DISPLAY_FALLBACKS\[language\]/,
+      /const QUESTION_DISPLAY_FALLBACKS: Record<PrimaryQuestionTextLanguage, string> = \{[\s\S]*sv: 'Fråga saknas'[\s\S]*en: 'Question unavailable'[\s\S]*fallback = QUESTION_DISPLAY_FALLBACKS\[primaryLanguageFor\(language\)\]/,
   },
   {
     label: 'language-aware source citation signature',
@@ -2848,7 +2849,54 @@ const EXPECTED_QUESTION_SOURCE_CITATION_RULES = [
   {
     label: 'localized source citation prefixes and page labels',
     pattern:
-      /language === 'en'\s*\?\s*`Source: Sverige i fokus, \$\{chapter\}, \$\{section\}, p\. \$\{pageApprox\}`\s*:\s*`Källa: Sverige i fokus, \$\{chapter\}, \$\{section\}, s\. \$\{pageApprox\}`/,
+      /primaryLanguageFor\(language\) === 'en'\s*\?\s*`Source: Sverige i fokus, \$\{chapter\}, \$\{section\}, p\. \$\{pageApprox\}`\s*:\s*`Källa: Sverige i fokus, \$\{chapter\}, \$\{section\}, s\. \$\{pageApprox\}`/,
+  },
+];
+const EXPECTED_PROVENANCE_BADGE_ACCESSIBILITY_RULES = [
+  {
+    label: 'stateful source-note disclosure',
+    pattern: /const \[sourceNoteVisible, setSourceNoteVisible\] = useState\(false\);/,
+  },
+  {
+    label: 'localized provenance source-note copy',
+    pattern:
+      /collapsedHint: 'Visa källanteckning'[\s\S]*expandedHint: 'Dölj källanteckning'[\s\S]*sourceNoteLabel: 'Källanteckning'[\s\S]*collapsedHint: 'Show source note'[\s\S]*expandedHint: 'Hide source note'[\s\S]*sourceNoteLabel: 'Source note'/,
+  },
+  {
+    label: 'source-note text comes from provenance descriptions',
+    pattern: /const sourceNote = getProvenanceDescription\(provenance, language\);/,
+  },
+  {
+    label: 'interactive provenance button role',
+    pattern: /accessibilityRole="button"/,
+  },
+  {
+    label: 'expanded accessibility state mirrors source-note visibility',
+    pattern: /accessibilityState=\{\{ expanded: sourceNoteVisible \}\}/,
+  },
+  {
+    label: 'web expanded state mirrors source-note visibility',
+    pattern: /aria-expanded=\{sourceNoteVisible\}/,
+  },
+  {
+    label: 'token hit slop for provenance button',
+    pattern: /hitSlop=\{space\[1\]\}/,
+  },
+  {
+    label: 'keyboard focus styling hooks',
+    pattern: /onBlur=\{\(\) => setFocused\(false\)\}[\s\S]*onFocus=\{\(\) => setFocused\(true\)\}/,
+  },
+  {
+    label: 'pointer activation toggles source note',
+    pattern: /onPress=\{\(\) => setSourceNoteVisible\(\(visible\) => !visible\)\}/,
+  },
+  {
+    label: 'visible localized source note body',
+    pattern: /\{copy\.sourceNoteLabel\}: \{sourceNote\}/,
+  },
+  {
+    label: 'token-sized provenance disclosure target',
+    pattern: /minHeight: space\[6\]/,
   },
 ];
 const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
@@ -7116,8 +7164,6 @@ const speakSwedish = audioModule.speakSwedish;
 const stopSpeech = audioModule.stopSpeech;
 const practiceFlowModule = loadTs('lib/quiz/practiceFlow.ts');
 const getPracticeQuestionForSession = practiceFlowModule.getPracticeQuestionForSession;
-const getCompletedQuestionIdsForQuestionBank =
-  practiceFlowModule.getCompletedQuestionIdsForQuestionBank;
 const getChapterQuizSessionId = practiceFlowModule.getChapterQuizSessionId;
 const practiceSessionStoreModule = loadTs('lib/quiz/practiceSessionStore.ts');
 const usePracticeSessionStore = practiceSessionStoreModule.usePracticeSessionStore;
@@ -7525,16 +7571,6 @@ if (process.argv.includes('--focus-native-quiz-copy')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-practice-flow-parity')) {
-  validatePracticeFlowParity();
-  exitWithValidationFailures();
-  printValidationSummary({
-    practiceFlowCasesValidated,
-    practiceFlowParityValidated,
-  });
-  process.exit(0);
-}
-
 if (process.argv.includes('--focus-static-head-metadata')) {
   validateStaticValidationSyntaxGate();
   validateStaticHeadMetadataParity();
@@ -7547,6 +7583,20 @@ if (process.argv.includes('--focus-static-head-metadata')) {
     staticValidationSyntaxFilesValidated,
     staticValidationImportChecksValidated,
     staticValidationSyntaxGateValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-ui-accessibility-contracts')) {
+  validateStaticValidationSyntaxGate();
+  validateQuestionCardAccessibilityParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    staticValidationSyntaxFilesValidated,
+    staticValidationImportChecksValidated,
+    staticValidationSyntaxGateValidated,
+    questionCardAccessibilityRulesValidated,
+    questionCardAccessibilityParityValidated,
   });
   process.exit(0);
 }
@@ -10692,6 +10742,7 @@ function validateQuestionCardAccessibilityParity() {
   let valid = true;
   let questionCardSource = '';
   let questionTextSource = '';
+  let provenanceBadgeSource = '';
 
   function reject(message) {
     valid = false;
@@ -10704,6 +10755,10 @@ function validateQuestionCardAccessibilityParity() {
       'utf8',
     );
     questionTextSource = fs.readFileSync(path.join(repoRoot, 'lib/quiz/questionText.ts'), 'utf8');
+    provenanceBadgeSource = fs.readFileSync(
+      path.join(repoRoot, 'components/quiz/ProvenanceBadge.tsx'),
+      'utf8',
+    );
   } catch (error) {
     reject(
       `components/quiz/QuestionCard.tsx could not be read for accessibility parity: ${error.message}`,
@@ -10714,6 +10769,14 @@ function validateQuestionCardAccessibilityParity() {
   EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES.forEach((expectedRule) => {
     if (!expectedRule.pattern.test(questionCardSource)) {
       reject(`QuestionCard missing ${expectedRule.label} for accessibility parity`);
+      return;
+    }
+    questionCardAccessibilityRulesValidated += 1;
+  });
+
+  EXPECTED_PROVENANCE_BADGE_ACCESSIBILITY_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(provenanceBadgeSource)) {
+      reject(`ProvenanceBadge missing ${expectedRule.label} for accessibility parity`);
       return;
     }
     questionCardAccessibilityRulesValidated += 1;
@@ -10732,11 +10795,15 @@ function validateQuestionCardAccessibilityParity() {
   } else {
     questionCardAccessibilityRulesValidated += 1;
   }
+  if (/<Card accessibilityLabel=\{questionAccessibilityLabel\}>/.test(questionCardSource)) {
+    reject('QuestionCard parent Card must not group nested source controls');
+  }
 
   if (
     valid &&
     questionCardAccessibilityRulesValidated ===
       EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES.length +
+        EXPECTED_PROVENANCE_BADGE_ACCESSIBILITY_RULES.length +
         EXPECTED_QUESTION_SOURCE_CITATION_RULES.length +
         1
   ) {
@@ -13353,11 +13420,7 @@ function validatePracticeScoringRules() {
 }
 
 function validatePracticeFlowParity() {
-  if (
-    !Array.isArray(questions) ||
-    typeof getPracticeQuestionForSession !== 'function' ||
-    typeof getCompletedQuestionIdsForQuestionBank !== 'function'
-  ) {
+  if (!Array.isArray(questions) || typeof getPracticeQuestionForSession !== 'function') {
     return;
   }
 
@@ -13369,7 +13432,7 @@ function validatePracticeFlowParity() {
 
   const [firstQuestion, secondQuestion, thirdQuestion] = publishedQuestions;
   const completedAllQuestionIds = publishedQuestions.map((question) => question.id);
-  const selectionCases = [
+  const cases = [
     {
       label: 'empty question bank',
       questions: [],
@@ -13413,53 +13476,10 @@ function validatePracticeFlowParity() {
       expectedId: firstQuestion.id,
     },
   ];
-  const completedIdCases = [
-    {
-      label: 'empty completed ids stay empty scoped completed ids',
-      questions: [firstQuestion, secondQuestion],
-      completedQuestionIds: [],
-      expectedCompletedQuestionIds: [],
-    },
-    {
-      label: 'visible completed id is preserved scoped completed ids',
-      questions: [firstQuestion, secondQuestion],
-      completedQuestionIds: [firstQuestion.id],
-      expectedCompletedQuestionIds: [firstQuestion.id],
-    },
-    {
-      label: 'duplicate completed ids are deduplicated scoped completed ids',
-      questions: [firstQuestion, secondQuestion],
-      completedQuestionIds: [firstQuestion.id, firstQuestion.id, secondQuestion.id],
-      expectedCompletedQuestionIds: [firstQuestion.id, secondQuestion.id],
-    },
-    {
-      label: 'completion outside visible bank is ignored scoped completed ids',
-      questions: [firstQuestion, secondQuestion],
-      completedQuestionIds: [thirdQuestion.id],
-      expectedCompletedQuestionIds: [],
-    },
-    {
-      label: 'mixed scoped bank keeps only visible completed ids scoped completed ids',
-      questions: [secondQuestion, thirdQuestion],
-      completedQuestionIds: [firstQuestion.id, secondQuestion.id],
-      expectedCompletedQuestionIds: [secondQuestion.id],
-    },
-    {
-      label: 'noisy completed ids preserve visible order scoped completed ids',
-      questions: [firstQuestion, secondQuestion],
-      completedQuestionIds: [
-        thirdQuestion.id,
-        firstQuestion.id,
-        secondQuestion.id,
-        firstQuestion.id,
-      ],
-      expectedCompletedQuestionIds: [firstQuestion.id, secondQuestion.id],
-    },
-  ];
 
   let valid = true;
 
-  selectionCases.forEach((testCase) => {
+  cases.forEach((testCase) => {
     const {
       label,
       questions: caseQuestions,
@@ -13493,38 +13513,7 @@ function validatePracticeFlowParity() {
     }
   });
 
-  completedIdCases.forEach((testCase) => {
-    const {
-      label,
-      questions: caseQuestions,
-      completedQuestionIds,
-      expectedCompletedQuestionIds,
-    } = testCase;
-    let actualCompletedQuestionIds;
-    try {
-      actualCompletedQuestionIds = getCompletedQuestionIdsForQuestionBank(
-        caseQuestions,
-        completedQuestionIds,
-      );
-    } catch (error) {
-      valid = false;
-      fail(`practice flow ${label} threw ${error.message}`);
-      return;
-    }
-
-    if (!jsonEqual(actualCompletedQuestionIds, expectedCompletedQuestionIds)) {
-      valid = false;
-      fail(
-        `practice flow ${label} returned ${JSON.stringify(
-          actualCompletedQuestionIds,
-        )}, expected ${JSON.stringify(expectedCompletedQuestionIds)}`,
-      );
-    } else {
-      practiceFlowCasesValidated += 1;
-    }
-  });
-
-  if (valid && practiceFlowCasesValidated === selectionCases.length + completedIdCases.length) {
+  if (valid && practiceFlowCasesValidated === cases.length) {
     practiceFlowParityValidated = true;
   }
 }

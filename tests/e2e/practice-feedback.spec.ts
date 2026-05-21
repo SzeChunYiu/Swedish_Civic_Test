@@ -44,6 +44,25 @@ async function expectPrimaryPrompt(page: Page, primaryText: string, secondaryTex
   expect(primaryBox!.y).toBeLessThan(secondaryBox!.y);
 }
 
+async function tabToTarget(
+  page: Page,
+  targetLabel: string,
+  locator = page.getByLabel(targetLabel),
+) {
+  for (let index = 0; index < 30; index += 1) {
+    await page.keyboard.press('Tab');
+    const focused = await locator
+      .evaluate(
+        (element) => element === document.activeElement || element.contains(document.activeElement),
+      )
+      .catch(() => false);
+
+    if (focused) return;
+  }
+
+  throw new Error(`Could not tab to ${targetLabel}`);
+}
+
 test('practice audio control follows the selected question language', async ({ page }) => {
   const consoleErrors: string[] = [];
 
@@ -156,6 +175,78 @@ test('practice question source citation prefix follows the selected language', a
     ),
   ).toBeVisible();
   await expect(page.getByText(/Källa\/Source:/)).toHaveCount(0);
+
+  expect(consoleErrors).toEqual([]);
+});
+
+test('practice question source controls are keyboard and pointer activatable', async ({ page }) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await enableSwedish(page);
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await closeLaunchAdIfPresent(page);
+
+  const swedishProvenance = page.getByRole('button', { name: 'Källtyp: UHR-källa' }).first();
+  await expect(swedishProvenance).toBeVisible();
+  await expect(swedishProvenance).toHaveAttribute('aria-expanded', 'false');
+  await tabToTarget(page, 'Källtyp: UHR-källa', swedishProvenance);
+  await expect(swedishProvenance).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(swedishProvenance).toHaveAttribute('aria-expanded', 'true');
+  await expect(
+    page.getByText('Källanteckning: Baserad på UHR:s studiematerial Sverige i fokus.'),
+  ).toBeVisible();
+  await expect(
+    page.getByLabel(
+      'Källhänvisning: Källa: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, s. 5',
+      { exact: true },
+    ),
+  ).toBeVisible();
+  await swedishProvenance.click();
+  await expect(swedishProvenance).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.getByText(/Källanteckning:/)).toHaveCount(0);
+
+  await enableEnglishSupport(page);
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await closeLaunchAdIfPresent(page);
+
+  const englishProvenance = page.getByRole('button', { name: 'Provenance: UHR source' }).first();
+  await expect(englishProvenance).toBeVisible();
+  await expect(englishProvenance).toHaveAttribute('aria-expanded', 'false');
+  await englishProvenance.click();
+  await expect(englishProvenance).toHaveAttribute('aria-expanded', 'true');
+  await expect(
+    page.getByText("Source note: Based on UHR's study material Sverige i fokus."),
+  ).toBeVisible();
+  await expect(
+    page.getByLabel(
+      'Source citation: Source: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, p. 5',
+      { exact: true },
+    ),
+  ).toBeVisible();
+
+  await page.goto('/quiz/q001', { waitUntil: 'networkidle' });
+  await closeLaunchAdIfPresent(page);
+
+  const routedQuizProvenance = page.getByRole('button', { name: 'Provenance: UHR source' }).first();
+  await expect(routedQuizProvenance).toBeVisible();
+  await expect(routedQuizProvenance).toHaveAttribute('aria-expanded', 'false');
+  await routedQuizProvenance.click();
+  await expect(routedQuizProvenance).toHaveAttribute('aria-expanded', 'true');
+  await expect(
+    page.getByText("Source note: Based on UHR's study material Sverige i fokus."),
+  ).toBeVisible();
+  await expect(
+    page.getByLabel(
+      'Source citation: Source: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, p. 5',
+      { exact: true },
+    ),
+  ).toBeVisible();
 
   expect(consoleErrors).toEqual([]);
 });
