@@ -278,8 +278,37 @@ function assertDashboardAccessibilitySeparation(sources) {
     'MockExamHistoryCard Card must not group the Exam link',
   );
   assert.match(sources.history, /formatDuration\(entry\.durationMs\)/);
+  assert.match(
+    sources.history,
+    /const trendEntries = scoredEntries\.slice\(-trendMockLimit\);/,
+    'MockExamHistoryCard trend must use the latest bounded scored entries',
+  );
+  assert.match(
+    sources.history,
+    /const hasTrend = trendEntries\.length >= 2;/,
+    'MockExamHistoryCard must render trend chrome only for multiple scored attempts',
+  );
+  assert.match(
+    sources.history,
+    /accessibilityLabel=\{copy\.trendPointAccessibilityLabel\(/,
+    'MockExamHistoryCard trend bars must keep localized per-attempt labels',
+  );
+  assert.match(
+    sources.history,
+    /<Text style=\{styles\.trendSummary\}>\s*\{trendSummary\}\s*<\/Text>/,
+    'MockExamHistoryCard trend must expose a hidden trend summary',
+  );
+  assert.match(
+    sources.history,
+    /height: `\$\{Math\.max\(8, scorePercent\)\}%`/,
+    'MockExamHistoryCard trend bars must be bounded by score percent',
+  );
+  assert.match(sources.history, /scoreTrendChart/);
+  assert.match(sources.history, /backgroundColor: colors\.accent/);
   assert.match(sources.dashboard, /title: 'Övningsprov över tid'/);
   assert.match(sources.dashboard, /title: 'Mock exam history'/);
+  assert.match(sources.dashboard, /trendLabel: 'Resultattrend'/);
+  assert.match(sources.dashboard, /trendLabel: 'Score trend'/);
   assert.match(sources.dashboard, /examLinkAccessibilityLabel: 'Öppna övningsprovet'/);
   assert.match(sources.dashboard, /examLinkAccessibilityLabel: 'Open the mock exam'/);
 
@@ -287,6 +316,7 @@ function assertDashboardAccessibilitySeparation(sources) {
   assert.match(sources.chapters, /accessibilitySummary:\s*\{[\s\S]*?position: 'absolute'/);
   assert.match(sources.activity, /accessibilitySummary:\s*\{[\s\S]*?position: 'absolute'/);
   assert.match(sources.history, /accessibilitySummary:\s*\{[\s\S]*?position: 'absolute'/);
+  assert.match(sources.history, /trendSummary:\s*\{[\s\S]*?position: 'absolute'/);
 }
 
 test('dashboard accessibility summaries do not group interactive descendants', () => {
@@ -370,6 +400,38 @@ test('dashboard accessibility parity rejects grouped mock history links', () => 
         ),
       }),
     /MockExamHistoryCard visual card must not group the Exam link/,
+  );
+});
+
+test('dashboard accessibility parity rejects unlabelled mock history trend bars', () => {
+  const sources = loadSources();
+
+  assert.throws(
+    () =>
+      assertDashboardAccessibilitySeparation({
+        ...sources,
+        history: sources.history.replace(
+          'accessibilityLabel={copy.trendPointAccessibilityLabel(',
+          'accessibilityLabel={String(',
+        ),
+      }),
+    /trend bars must keep localized per-attempt labels/,
+  );
+});
+
+test('dashboard accessibility parity rejects missing mock history trend summary', () => {
+  const sources = loadSources();
+
+  assert.throws(
+    () =>
+      assertDashboardAccessibilitySeparation({
+        ...sources,
+        history: sources.history.replace(
+          '<Text style={styles.trendSummary}>{trendSummary}</Text>',
+          '',
+        ),
+      }),
+    /trend must expose a hidden trend summary/,
   );
 });
 

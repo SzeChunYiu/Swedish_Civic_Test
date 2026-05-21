@@ -52,12 +52,18 @@ function assertNaturalSwedishDashboardCopy(sources) {
   assert.match(sources.dashboard, /title: 'Streak and XP'/);
   assert.match(sources.dashboard, /title: 'Övningsprov över tid'/);
   assert.match(sources.dashboard, /title: 'Mock exam history'/);
+  assert.match(sources.dashboard, /trendLabel: 'Resultattrend'/);
+  assert.match(sources.dashboard, /trendLabel: 'Score trend'/);
+  assert.match(sources.dashboard, /procentenheter/);
+  assert.match(sources.dashboard, /recent scored/);
   assert.match(sources.dashboard, /examLink: 'Gå till övningsprov'/);
   assert.match(sources.dashboard, /examLink: 'Go to mock exam'/);
   assert.match(sources.dashboard, /emptyState:\s*'Genomför ett övningsprov/);
   assert.match(sources.dashboard, /emptyState:\s*'Finish a mock exam/);
   assert.match(sources.dashboardE2e, /mockHistoryTitle: 'Övningsprov över tid'/);
   assert.match(sources.dashboardE2e, /mockHistoryTitle: 'Mock exam history'/);
+  assert.match(sources.dashboardE2e, /mockHistoryTrendLabel: 'Resultattrend'/);
+  assert.match(sources.dashboardE2e, /mockHistoryTrendLabel: 'Score trend'/);
 }
 
 test('dashboard and profile Swedish copy uses natural study-dashboard terms', () => {
