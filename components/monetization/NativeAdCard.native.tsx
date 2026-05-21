@@ -10,7 +10,10 @@ import {
   NativeMediaView,
 } from 'react-native-google-mobile-ads';
 
-import { getNativeAdCardCopy } from '../../lib/monetization/adCopy';
+import {
+  getNativeAdCardCopy,
+  getNativeAdSummaryAccessibilityLabel,
+} from '../../lib/monetization/adCopy';
 import { getAdUnit, getPlatformAdUnitId, shouldShowAd } from '../../lib/monetization/ads';
 import { useMobileAdsConsent } from '../../lib/monetization/useMobileAdsConsent';
 import { useResolvedAdEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
@@ -95,12 +98,18 @@ export function NativeAdCard({
 
   if (!nativeAd || !visible) return null;
 
+  const summaryAccessibilityLabel = getNativeAdSummaryAccessibilityLabel(copy, {
+    advertiser: nativeAd.advertiser,
+    body: nativeAd.body,
+    headline: nativeAd.headline,
+  });
+
   return (
     <NativeAdView accessible={false} nativeAd={nativeAd} style={styles.card}>
       <View
         accessible
         accessibilityHint={copy.hint}
-        accessibilityLabel={copy.accessibilityLabel}
+        accessibilityLabel={summaryAccessibilityLabel}
         accessibilityRole="summary"
         style={styles.summary}
       >
