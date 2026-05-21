@@ -3785,6 +3785,30 @@ const EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULES = [
     label: 'visible approximate page label',
     pattern: /\{pageLabel \? <Text style=\{styles\.meta\}>\{pageLabel\}<\/Text> : null\}/,
   },
+  {
+    label: 'nested SourceCitation opts out of duplicate accessibility node',
+    pattern: /<SourceCitation[\s\S]*accessibilityRole="none"[\s\S]*label=\{copy\.title\}/,
+  },
+  {
+    label: 'standalone SourceCitation text role default',
+    source: 'sourceCitation',
+    pattern: /accessibilityRole = 'text'/,
+  },
+  {
+    label: 'standalone SourceCitation composite accessibility label',
+    source: 'sourceCitation',
+    pattern: /const defaultAccessibilityLabel = \[resolvedLabel, citationText, pageText\]/,
+  },
+  {
+    label: 'standalone SourceCitation suppresses duplicate labels when hidden',
+    source: 'sourceCitation',
+    pattern: /accessibilityRole === 'none'\s*\? undefined/,
+  },
+  {
+    label: 'standalone SourceCitation label visible by default',
+    source: 'sourceCitation',
+    pattern: /showLabel = true/,
+  },
 ];
 const EXPECTED_CELEBRATION_BURST_ACCESSIBILITY_RULES = [
   {
@@ -3818,6 +3842,16 @@ const EXPECTED_CELEBRATION_BURST_ACCESSIBILITY_RULES = [
   {
     label: 'decorative animation hidden from accessibility tree',
     pattern: /accessibilityElementsHidden/,
+  },
+  {
+    label: 'reduced-motion branch hidden from accessibility tree',
+    pattern:
+      /if \(reducedMotionEnabled\) \{\s*return \(\s*<View(?=[^>]*accessibilityElementsHidden)(?=[^>]*importantForAccessibility="no-hide-descendants")(?=[^>]*pointerEvents="none")[^>]*>/,
+  },
+  {
+    label: 'animated branch hidden from accessibility tree',
+    pattern:
+      /<Animated\.View(?=[^>]*accessibilityElementsHidden)(?=[^>]*importantForAccessibility="no-hide-descendants")(?=[^>]*pointerEvents="none")[^>]*>/,
   },
   {
     label: 'descendant accessibility hidden',
@@ -10057,6 +10091,26 @@ if (process.argv.includes('--focus-chapter-card-accessibility')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-celebration-burst-accessibility')) {
+  validateCelebrationBurstAccessibilityParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    celebrationBurstAccessibilityRulesValidated,
+    celebrationBurstAccessibilityParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-uhr-reference-card-accessibility')) {
+  validateUhrReferenceCardAccessibilityParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    uhrReferenceCardAccessibilityRulesValidated,
+    uhrReferenceCardAccessibilityParityValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-onboarding-route-scroll')) {
   validateOnboardingRouteScrollParity();
   exitWithValidationFailures();
@@ -15114,6 +15168,7 @@ function validateExplanationPanelAccessibilityParity() {
 function validateUhrReferenceCardAccessibilityParity() {
   let valid = true;
   let uhrReferenceCardSource = '';
+  let sourceCitationSource = '';
 
   function reject(message) {
     valid = false;
@@ -15132,8 +15187,28 @@ function validateUhrReferenceCardAccessibilityParity() {
     return;
   }
 
+  try {
+    sourceCitationSource = fs.readFileSync(
+      path.join(repoRoot, 'components/quiz/SourceCitation.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(
+      `components/quiz/SourceCitation.tsx could not be read for UHRReferenceCard accessibility parity: ${error.message}`,
+    );
+    return;
+  }
+
   EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULES.forEach((expectedRule) => {
-    if (!expectedRule.pattern.test(uhrReferenceCardSource)) {
+    const source =
+      expectedRule.source === 'sourceCitation' ? sourceCitationSource : uhrReferenceCardSource;
+    if (!expectedRule.pattern.test(source)) {
+      if (expectedRule.source === 'sourceCitation') {
+        reject(
+          `SourceCitation missing ${expectedRule.label} for UHRReferenceCard accessibility parity`,
+        );
+        return;
+      }
       reject(`UHRReferenceCard missing ${expectedRule.label} for accessibility parity`);
       return;
     }

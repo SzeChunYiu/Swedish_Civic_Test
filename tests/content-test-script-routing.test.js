@@ -148,6 +148,52 @@ test('ChapterCard accessibility parity uses focused content validation routing',
   );
 });
 
+test('CelebrationBurst accessibility parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const celebrationBurstTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-celebration-burst-accessibility-parity.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-celebration-burst-accessibility/);
+  assert.match(
+    validatorSource,
+    /validateCelebrationBurstAccessibilityParity\(\);[\s\S]*celebrationBurstAccessibilityRulesValidated[\s\S]*celebrationBurstAccessibilityParityValidated/,
+  );
+  assert.match(celebrationBurstTestSource, /--focus-celebration-burst-accessibility/);
+  assert.doesNotMatch(
+    celebrationBurstTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'CelebrationBurst accessibility tests must not route through full content validation',
+  );
+});
+
+test('UHRReferenceCard accessibility parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const uhrReferenceCardTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-uhr-reference-card-accessibility-parity.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-uhr-reference-card-accessibility/);
+  assert.match(
+    validatorSource,
+    /validateUhrReferenceCardAccessibilityParity\(\);[\s\S]*uhrReferenceCardAccessibilityRulesValidated[\s\S]*uhrReferenceCardAccessibilityParityValidated/,
+  );
+  assert.match(uhrReferenceCardTestSource, /--focus-uhr-reference-card-accessibility/);
+  assert.doesNotMatch(
+    uhrReferenceCardTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'UHRReferenceCard accessibility tests must not route through full content validation',
+  );
+});
+
 test('Onboarding route scroll parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
@@ -554,6 +600,29 @@ test('spaced repetition schema parity uses focused content validation routing', 
     spacedRepetitionTestSource,
     /\['scripts\/validate-content\.js'\]/,
     'spaced repetition tests must not route through full content validation',
+  );
+});
+
+test('XP rules parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const xpRulesTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-xp-rules-parity.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-xp-rules/);
+  assert.match(
+    validatorSource,
+    /validateXpRules\(\);[\s\S]*xpRulesValidated[\s\S]*xpRulesParityValidated/,
+  );
+  assert.match(xpRulesTestSource, /--focus-xp-rules/);
+  assert.doesNotMatch(
+    xpRulesTestSource,
+    /--focus-badge-xp-runtime/,
+    'XP rules tests must not route through the broader badge XP runtime focus',
   );
 });
 
