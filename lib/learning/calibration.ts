@@ -17,7 +17,7 @@ export interface ConfidenceAnswerEvent {
   questionId: string;
   isCorrect: boolean;
   answeredAt: string;
-  confidenceRating: ConfidenceRating;
+  confidenceRating: unknown;
 }
 
 export interface CalibrationBucket {
@@ -54,6 +54,14 @@ function expectedFor(rating: ConfidenceRating): number {
   return rating * 0.2;
 }
 
+export function isConfidenceRating(value: unknown): value is ConfidenceRating {
+  return value === 1 || value === 2 || value === 3 || value === 4 || value === 5;
+}
+
+export function normalizeConfidenceRating(value: unknown): ConfidenceRating | null {
+  return isConfidenceRating(value) ? value : null;
+}
+
 export function generateCalibration(
   events: ReadonlyArray<ConfidenceAnswerEvent>,
 ): CalibrationSummary {
@@ -68,9 +76,12 @@ export function generateCalibration(
   const correctByRating: Record<ConfidenceRating, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
 
   for (const event of events) {
-    const bucket = buckets[event.confidenceRating - 1];
+    const confidenceRating = normalizeConfidenceRating(event.confidenceRating);
+    if (confidenceRating === null) continue;
+
+    const bucket = buckets[confidenceRating - 1];
     bucket.count += 1;
-    if (event.isCorrect) correctByRating[event.confidenceRating] += 1;
+    if (event.isCorrect === true) correctByRating[confidenceRating] += 1;
   }
 
   let totalRatedAnswers = 0;
@@ -105,9 +116,11 @@ export function generateCalibration(
 // When a confidence rating is recorded, override the legacy isCorrect-only
 // grade map. Returns 1..4 matching ReviewGrade in spacedRepetition.ts.
 
-export function gradeFromConfidence(isCorrect: boolean, rating: ConfidenceRating): 1 | 2 | 3 | 4 {
+export function gradeFromConfidence(isCorrect: boolean, rating: unknown): 1 | 2 | 3 | 4 {
   if (!isCorrect) return 1; // always 'again'
-  if (rating <= 3) return 3; // good
+  const confidenceRating = normalizeConfidenceRating(rating);
+  if (confidenceRating === null) return 3; // safe default for corrupt imported values
+  if (confidenceRating <= 3) return 3; // good
   return 4; // easy — confidence 4 or 5 AND correct
 }
 
@@ -119,8 +132,10 @@ export function gradeFromConfidence(isCorrect: boolean, rating: ConfidenceRating
  *   confidence 4   → +1
  *   confidence 5   → +2 (calibration penalty for "I'm sure" + wrong)
  */
-export function lapsePenaltyForWrong(rating: ConfidenceRating): number {
-  if (rating <= 2) return 0;
-  if (rating <= 4) return 1;
+export function lapsePenaltyForWrong(rating: unknown): number {
+  const confidenceRating = normalizeConfidenceRating(rating);
+  if (confidenceRating === null) return 0;
+  if (confidenceRating <= 2) return 0;
+  if (confidenceRating <= 4) return 1;
   return 2;
 }

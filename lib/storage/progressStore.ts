@@ -3,7 +3,11 @@ import type { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 
 import type { ConfidenceRating } from '../../types/progress';
-import { gradeFromConfidence, lapsePenaltyForWrong } from '../learning/calibration';
+import {
+  gradeFromConfidence,
+  lapsePenaltyForWrong,
+  normalizeConfidenceRating as normalizeCalibrationConfidenceRating,
+} from '../learning/calibration';
 import { getNextReviewAt } from '../learning/spacedRepetition';
 import { createInitialFreezeState, type StreakFreezeState } from '../learning/streakWithFreeze';
 import { getLocalDateKey } from '../learning/streaks';
@@ -118,11 +122,7 @@ function normalizeNonNegativeInteger(value: unknown, fallback = 0, max = Number.
 }
 
 function normalizeConfidenceRating(value: unknown): ConfidenceRating | undefined {
-  if (value === 1 || value === 2 || value === 3 || value === 4 || value === 5) {
-    return value;
-  }
-
-  return undefined;
+  return normalizeCalibrationConfidenceRating(value) ?? undefined;
 }
 
 function clampScore(value: unknown): number {
