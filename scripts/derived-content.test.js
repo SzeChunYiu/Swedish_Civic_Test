@@ -1022,7 +1022,7 @@ test('generated true/false naturalness patterns allow direct media and web propo
 
 test('derivePublishedQuestions turns policy-goal meanings into direct English propositions', () => {
   const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
-  const source = {
+  const genderEqualitySource = {
     id: 'q900',
     chapterId: 'ch07',
     type: 'single_choice',
@@ -1066,10 +1066,46 @@ test('derivePublishedQuestions turns policy-goal meanings into direct English pr
     reviewStatus: 'reviewed',
     tags: ['gender-equality', 'rights', 'policy'],
   };
+  const publicHealthSource = {
+    ...genderEqualitySource,
+    id: 'q901',
+    questionSv: 'Vad innebär målet med Sveriges folkhälsopolitik?',
+    questionEn: 'What does the goal of Sweden’s public health policy mean?',
+    options: [
+      {
+        id: 'a',
+        textSv: 'Att människor ska ha lika möjligheter till en god hälsa',
+        textEn: 'That people should have equal opportunities for good health',
+      },
+      {
+        id: 'b',
+        textSv: 'Att folkhälsa bara handlar om årliga motionskampanjer',
+        textEn: 'That public health is only about annual exercise campaigns',
+      },
+      {
+        id: 'c',
+        textSv: 'Att vård bara ska ges i stora städer',
+        textEn: 'That health care should only be provided in large cities',
+      },
+      {
+        id: 'd',
+        textSv: 'Att arbetsmiljö aldrig påverkar hälsa',
+        textEn: 'That working conditions never affect health',
+      },
+    ],
+    explanationSv:
+      'Folkhälsopolitik handlar om att människor ska ha lika möjligheter till en god hälsa.',
+    explanationEn:
+      'Public health policy is about people having equal opportunities for good health.',
+    tags: ['public-health', 'policy'],
+  };
 
-  const derived = derivePublishedQuestions([source], 901);
-  const trueVariant = derived[1];
-  const falseVariant = derived[2];
+  const genderEqualityDerived = derivePublishedQuestions([genderEqualitySource], 901);
+  const publicHealthDerived = derivePublishedQuestions([publicHealthSource], 905);
+  const trueVariant = genderEqualityDerived[1];
+  const falseVariant = genderEqualityDerived[2];
+  const publicHealthTrueVariant = publicHealthDerived[1];
+  const publicHealthFalseVariant = publicHealthDerived[2];
 
   assert.equal(
     trueVariant.questionEn,
@@ -1079,9 +1115,34 @@ test('derivePublishedQuestions turns policy-goal meanings into direct English pr
     falseVariant.questionEn,
     'Sweden’s gender equality policy is only about how many women are in politics.',
   );
+  assert.equal(
+    publicHealthTrueVariant.questionEn,
+    'Sweden’s public health policy aims for people to have equal opportunities for good health.',
+  );
+  assert.equal(
+    publicHealthFalseVariant.questionEn,
+    'Sweden’s public health policy is only about annual exercise campaigns.',
+  );
   assert.doesNotMatch(
-    `${trueVariant.questionEn}\n${falseVariant.questionEn}`,
+    [
+      trueVariant.questionEn,
+      falseVariant.questionEn,
+      publicHealthTrueVariant.questionEn,
+      publicHealthFalseVariant.questionEn,
+    ].join('\n'),
     /\bThe goal of .+?\bpolicy means(?: that)?\b/i,
+  );
+  assert.match(
+    findGeneratedTrueFalseNaturalnessPatternMatch(
+      'The goal of public health policy means that people should have equal opportunities for good health.',
+    )?.pattern.source ?? '',
+    /The goal of/,
+  );
+  assert.match(
+    findGeneratedTrueFalseNaturalnessPatternMatch(
+      'Målet med Sveriges folkhälsopolitik betyder att människor ska ha lika möjligheter till en god hälsa.',
+    )?.pattern.source ?? '',
+    /Målet med/,
   );
 });
 
