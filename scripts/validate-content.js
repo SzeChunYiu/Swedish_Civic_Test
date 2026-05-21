@@ -7887,6 +7887,8 @@ let homeRouteCopyLabelsValidated = 0;
 let homeRouteCopyParityValidated = false;
 let homeRouteInternalBenchmarkCopyValidated = false;
 let homeRouteSwedishMistakeReviewCopyNaturalnessValidated = false;
+let searchRouteQueryHydrationRulesValidated = 0;
+let searchRouteQueryHydrationParityValidated = false;
 let aboutTheTestRouteCopyLabelsValidated = 0;
 let aboutTheTestRouteCopyParityValidated = false;
 let aboutTheTestOfficialSourceUrlsValidated = 0;
@@ -8270,6 +8272,16 @@ if (process.argv.includes('--focus-about-the-test-route-copy')) {
     aboutTheTestRouteCopyParityValidated,
     aboutTheTestOfficialSourceUrlsValidated,
     aboutTheTestOfficialSourceRetrievedDateValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-search-route-query-hydration')) {
+  validateSearchRouteQueryHydrationParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    searchRouteQueryHydrationRulesValidated,
+    searchRouteQueryHydrationParityValidated,
   });
   process.exit(0);
 }
@@ -10800,6 +10812,73 @@ function validateHomeRouteSwedishMistakeReviewCopyNaturalness() {
   });
 
   if (valid) homeRouteSwedishMistakeReviewCopyNaturalnessValidated = true;
+}
+
+function validateSearchRouteQueryHydrationParity() {
+  let valid = true;
+  let searchRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    searchRoute = fs.readFileSync(path.join(repoRoot, 'app/search.tsx'), 'utf8');
+  } catch (error) {
+    reject(`search route source could not be read: ${error.message}`);
+    return;
+  }
+
+  const expectedRules = [
+    [/import \{ Link, useLocalSearchParams, useRouter \} from 'expo-router';/, 'router hooks'],
+    [/type SearchRouteParams = \{/, 'typed route params'],
+    [/q\?: string \| string\[\];/, 'q route param'],
+    [/query\?: string \| string\[\];/, 'query route param'],
+    [/const router = useRouter\(\);/, 'router replacement hook'],
+    [/const searchParams = useLocalSearchParams<SearchRouteParams>\(\);/, 'local params read'],
+    [/const routeQuery = getRouteSearchQuery\(searchParams\);/, 'route query resolution'],
+    [/const \[query, setQuery\] = useState\(\(\) => routeQuery\);/, 'initial route query state'],
+    [/const previousRouteQueryRef = useRef\(routeQuery\);/, 'route query sync ref'],
+    [/useEffect\(\(\) => \{/, 'route query sync effect'],
+    [/if \(previousRouteQueryRef\.current === routeQuery\) return;/, 'unchanged query guard'],
+    [/previousRouteQueryRef\.current = routeQuery;/, 'route query ref update'],
+    [/setQuery\(routeQuery\);/, 'route query state resync'],
+    [/\}, \[routeQuery\]\);/, 'route query sync dependency'],
+    [/function getFirstSearchParamValue/, 'single-value param helper'],
+    [/Array\.isArray\(value\) \? value\[0\] : value/, 'array param support'],
+    [/function getRouteSearchQuery\(params: SearchRouteParams\)/, 'route query helper'],
+    [
+      /return getFirstSearchParamValue\(params\.q\) \|\| getFirstSearchParamValue\(params\.query\);/,
+      'q before query fallback',
+    ],
+    [/onChangeText=\{setQuery\}/, 'controlled typing'],
+    [/const handleClearSearch = \(\) => \{/, 'clear search handler'],
+    [/router\.replace\('\/search'\);/, 'clear search URL replacement'],
+    [/onPress=\{handleClearSearch\}/, 'clear button handler'],
+    [/const handleSubmitSearch = \(\) => \{/, 'submit search handler'],
+    [
+      /router\.replace\(`\/search\?q=\$\{encodeURIComponent\(submittedQuery\)\}`\);/,
+      'submitted query URL replacement',
+    ],
+    [/onSubmitEditing=\{handleSubmitSearch\}/, 'search key submit handler'],
+  ];
+
+  expectedRules.forEach(([pattern, label]) => {
+    if (!pattern.test(searchRoute)) {
+      reject(`Search route missing ${label} for query hydration parity`);
+      return;
+    }
+    searchRouteQueryHydrationRulesValidated += 1;
+  });
+
+  if (/const \[query, setQuery\] = useState\(''\);/.test(searchRoute)) {
+    reject('Search route must not ignore q/query route params by initializing blank');
+  }
+
+  if (valid && searchRouteQueryHydrationRulesValidated === expectedRules.length) {
+    searchRouteQueryHydrationParityValidated = true;
+  }
 }
 
 function validateAboutTheTestRouteCopyParity() {
@@ -17785,6 +17864,7 @@ validateProfileRouteCopyParity();
 validateHomeRouteHeaderParity();
 validateHomeRouteSwedishMistakeReviewCopyNaturalness();
 validateHomeRouteCopyParity();
+validateSearchRouteQueryHydrationParity();
 validateAboutTheTestRouteCopyParity();
 validateMistakesRouteHeaderParity();
 validateMistakesRouteCopyParity();
@@ -17935,6 +18015,8 @@ console.log(
       homeRouteCopyParityValidated,
       homeRouteInternalBenchmarkCopyValidated,
       homeRouteSwedishMistakeReviewCopyNaturalnessValidated,
+      searchRouteQueryHydrationRulesValidated,
+      searchRouteQueryHydrationParityValidated,
       aboutTheTestRouteCopyLabelsValidated,
       aboutTheTestRouteCopyParityValidated,
       aboutTheTestOfficialSourceUrlsValidated,
