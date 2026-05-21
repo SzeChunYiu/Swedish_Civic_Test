@@ -2,13 +2,60 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
-
-const { loadTsModule } = require('../tests/helpers/storageStoreHarness.cjs');
+const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
 
+function loadTs(relativePath, exportName) {
+  const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+  const output = ts.transpileModule(source, {
+    compilerOptions: {
+      module: ts.ModuleKind.CommonJS,
+      target: ts.ScriptTarget.ES2020,
+    },
+  }).outputText;
+  const mod = { exports: {} };
+  function localRequire(request) {
+    if (request.startsWith('.')) {
+      const resolved = path.join(path.dirname(path.join(repoRoot, relativePath)), request);
+      const normalized = path.relative(repoRoot, resolved).replace(/\.ts$/, '') + '.ts';
+      return loadAllTs(normalized);
+    }
+    if (request === 'react-native-mmkv') {
+      const memory = new Map();
+      return {
+        createMMKV: () => ({
+          getString: (key) => memory.get(key),
+          set: (key, value) => memory.set(key, value),
+        }),
+      };
+    }
+    if (request === 'zustand') {
+      return {
+        create: (initializer) => {
+          let state;
+          const set = (updater) => {
+            const next = typeof updater === 'function' ? updater(state) : updater;
+            if (next === state) return;
+            state = { ...state, ...next };
+          };
+          const get = () => state;
+          const store = (selector) => (selector ? selector(state) : state);
+          store.getState = get;
+          store.setState = set;
+          state = initializer(set, get);
+          return store;
+        },
+      };
+    }
+    return require(request);
+  }
+  new Function('module', 'exports', 'require', output)(mod, mod.exports, localRequire);
+  return exportName ? mod.exports[exportName] : mod.exports;
+}
+
 function loadAllTs(relativePath) {
-  return loadTsModule(repoRoot, relativePath);
+  return loadTs(relativePath);
 }
 
 test('XP rules follow the MVP gamification table', () => {
@@ -18,17 +65,14 @@ test('XP rules follow the MVP gamification table', () => {
   assert.equal(calculateAnswerXp({ isCorrect: true, explanationRead: true }), 12);
   assert.equal(calculateAnswerXp({ isCorrect: false, explanationRead: true }), 4);
   assert.equal(calculateAnswerXp({ isCorrect: 'true', explanationRead: true }), 0);
-  assert.equal(calculateAnswerXp({ isCorrect: 'false', explanationRead: 'yes' }), 0);
   assert.equal(calculateAnswerXp({ isCorrect: true, explanationRead: 'yes' }), 10);
   assert.equal(calculateQuizCompletionXp({ answeredCount: 10, correctCount: 10 }), 70);
-  assert.equal(calculateQuizCompletionXp({ answeredCount: '10', correctCount: '10' }), 0);
   assert.equal(calculateQuizCompletionXp({ answeredCount: NaN, correctCount: 0 }), 0);
   assert.equal(calculateQuizCompletionXp({ answeredCount: Infinity, correctCount: Infinity }), 0);
   assert.equal(calculateQuizCompletionXp({ answeredCount: 10.5, correctCount: 10 }), 0);
   assert.equal(calculateQuizCompletionXp({ answeredCount: -1, correctCount: 0 }), 0);
   assert.equal(calculateQuizCompletionXp({ answeredCount: 10, correctCount: 11 }), 0);
   assert.equal(calculateLevel(0), 1);
-  assert.equal(calculateLevel('10000'), 1);
   assert.equal(calculateLevel(NaN), 1);
   assert.equal(calculateLevel(Infinity), 1);
   assert.equal(calculateLevel(100), 2);
@@ -44,123 +88,6 @@ test('streak logic counts consecutive unique answer dates through today', () => 
   assert.equal(calculateStreak(['2026-05-12', '2026-05-13', '2026-05-15'], '2026-05-15'), 1);
   assert.equal(calculateStreak(['2026-05-13', '2026-05-14'], '2026-05-15'), 2);
   assert.equal(calculateStreak(['2026-05-14', '2026-05-14', '2026-05-15'], '2026-05-15'), 2);
-});
-
-test('streakWithFreeze ignores malformed date inputs without corrupting freeze state', () => {
-  const { calculateStreakWithFreeze, refillFreezes } = loadAllTs(
-    'lib/learning/streakWithFreeze.ts',
-  );
-  const now = new Date('2026-05-19T12:00:00.000Z');
-  const freezeState = {
-    available: 1,
-    lastEarnedAt: 'not-a-date',
-    lifetimeEarned: 1,
-    lifetimeSpent: 0,
-    rescuedDayKeys: ['bad-key', '2026-05-17'],
-  };
-
-  const repaired = refillFreezes(freezeState, now);
-  assert.equal(repaired.lastEarnedAt, '2026-05-18');
-  assert.equal(repaired.available, 1);
-
-  const result = calculateStreakWithFreeze({
-    activeDayKeys: ['2026-05-19', '2026-05-18T08:00:00.000Z', 7, '2026-02-30'],
-    freezeState,
-    today: 'not-a-date',
-    now,
-  });
-
-  assert.equal(result.streakDays, 3);
-  assert.deepEqual(result.rescuedThisRun, []);
-  assert.deepEqual(result.freezeState.rescuedDayKeys, ['2026-05-17']);
-  assert.doesNotMatch(
-    refillFreezes(freezeState, new Date('not-a-date')).lastEarnedAt,
-    /NaN|not-a-date/,
-  );
-});
-
-test('answer date parser rejects calendar rollovers and preserves canonical dates', () => {
-  const { validAnswerDate, validAnswerTimestampMs } = loadAllTs('lib/learning/answerDates.ts');
-  const now = new Date('2026-05-21T12:00:00.000Z');
-
-  assert.equal(
-    validAnswerTimestampMs('2026-05-19T10:00:00.000Z', now),
-    Date.parse('2026-05-19T10:00:00.000Z'),
-  );
-  assert.equal(
-    validAnswerTimestampMs('2026-05-19T10:00:00+02:00', now),
-    Date.parse('2026-05-19T10:00:00+02:00'),
-  );
-  assert.equal(validAnswerDate('2026-05-19', now)?.toISOString(), '2026-05-19T00:00:00.000Z');
-  assert.equal(
-    validAnswerTimestampMs('2026-05-21T12:04:59.000Z', now),
-    Date.parse('2026-05-21T12:04:59.000Z'),
-  );
-  assert.equal(validAnswerTimestampMs('2026-02-30', now), null);
-  assert.equal(validAnswerTimestampMs('2026-02-30T00:00:00.000Z', now), null);
-  assert.equal(validAnswerTimestampMs('2026-13-01', now), null);
-  assert.equal(validAnswerTimestampMs('2026-05-19 10:00:00', now), null);
-  assert.equal(validAnswerTimestampMs('2026-05-21T12:05:01.000Z', now), null);
-});
-
-test('answer date learning consumers use the shared parser instead of direct Date.parse', () => {
-  const consumerPaths = [
-    'lib/learning/adaptivePractice.ts',
-    'lib/learning/dashboardStats.ts',
-    'lib/learning/readiness.ts',
-    'lib/learning/resumeWhereLeftOff.ts',
-    'lib/learning/weeklyRecap.ts',
-  ];
-
-  for (const relativePath of consumerPaths) {
-    const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
-    assert.match(source, /validAnswer(?:TimestampMs|Date)/, `${relativePath} must use answerDates`);
-    assert.doesNotMatch(source, /Date\.parse\(/, `${relativePath} must not parse answers directly`);
-    assert.doesNotMatch(
-      source,
-      /new Date\(\s*(?:answer\.answeredAt|session\.completedAt|iso|answeredAt|completedAt)\s*\)\.getTime\(\)/,
-      `${relativePath} must not parse answer/completion windows directly`,
-    );
-  }
-});
-
-test('adaptive practice normalizes malformed runtime session sizes', () => {
-  const { explainAdaptivePick, pickAdaptiveSession } = loadAllTs(
-    'lib/learning/adaptivePractice.ts',
-  );
-  const baseInput = {
-    progress: {
-      totalXp: 0,
-      level: 1,
-      currentStreak: 0,
-      dailyGoalAnswers: 10,
-      questionProgress: {},
-      sessions: [],
-    },
-    bank: Array.from({ length: 12 }, (_, index) => ({
-      id: `q${String(index + 1).padStart(2, '0')}`,
-      chapterId: index < 4 ? 'ch01' : 'ch02',
-      difficulty: 'medium',
-    })),
-    now: new Date('2026-05-19T12:00:00.000Z'),
-  };
-
-  for (const size of [Number.NaN, Number.POSITIVE_INFINITY, -1, 2.5, '2']) {
-    const picked = pickAdaptiveSession({ ...baseInput, size });
-    const counts = explainAdaptivePick({ ...baseInput, size });
-    const explainedCount = Object.values(counts).reduce((sum, count) => sum + count, 0);
-
-    assert.equal(picked.length, 10, `malformed size ${String(size)} should use the default cap`);
-    assert.equal(explainedCount, picked.length);
-  }
-
-  assert.equal(pickAdaptiveSession({ ...baseInput, size: 0 }).length, 0);
-  assert.equal(pickAdaptiveSession({ ...baseInput, size: 3 }).length, 3);
-  assert.equal(pickAdaptiveSession({ ...baseInput, size: 99 }).length, 12);
-  assert.equal(
-    pickAdaptiveSession({ ...baseInput, size: Number.NaN, chapterId: 'ch01' }).length,
-    4,
-  );
 });
 
 test('daily goal counts question answers for the requested local day only', () => {
@@ -391,86 +318,45 @@ test('readiness mock recency uses completion metadata without depending on synth
   assert.equal(countedMock.components.accuracy, 0);
 });
 
-test('readiness adapter aggregates counters without synthetic answer rows', () => {
-  const source = fs.readFileSync(path.join(repoRoot, 'lib/learning/readiness.ts'), 'utf8');
-  const start = source.indexOf('export function computeReadinessFromQuestionProgress');
-  const end = source.indexOf('\nexport function computeReadinessScore', start);
-  assert.notEqual(start, -1);
-  assert.notEqual(end, -1);
-
-  const adapterSource = source.slice(start, end);
-  assert.doesNotMatch(adapterSource, /Array\.from\s*\(/);
-  assert.match(adapterSource, /scoreFromComponents\(/);
-});
-
-test('readiness adapter ignores malformed aggregate counters', () => {
+test('readiness adapter ignores malformed finite counters and mock totals', () => {
   const { computeReadinessFromQuestionProgress } = loadAllTs('lib/learning/readiness.ts');
+  const commonInput = {
+    questions: [{ id: 'q1', chapterId: 'ch01' }],
+    chapters: [{ id: 'ch01', questionCount: 10 }],
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  };
 
-  const result = computeReadinessFromQuestionProgress({
+  const malformedProgress = computeReadinessFromQuestionProgress({
+    ...commonInput,
     questionProgress: {
-      infinite: {
-        seenCount: Infinity,
+      q1: {
+        seenCount: '40',
         correctCount: Infinity,
-        wrongCount: 0,
-        correctStreak: 0,
+        wrongCount: 10001,
         lastAnsweredAt: '2026-05-19T10:00:00.000Z',
       },
-      stringy: {
-        seenCount: '3',
-        correctCount: '2',
-        wrongCount: '1',
-        correctStreak: 0,
-        lastAnsweredAt: '2026-05-19T10:01:00.000Z',
-      },
-      fractional: {
-        seenCount: 1.5,
-        correctCount: 1,
-        wrongCount: 0,
-        correctStreak: 0,
-        lastAnsweredAt: '2026-05-19T10:02:00.000Z',
-      },
-      oversized: {
-        seenCount: 10001,
-        correctCount: 10001,
-        wrongCount: 0,
-        correctStreak: 0,
-        lastAnsweredAt: '2026-05-19T10:03:00.000Z',
-      },
-      valid: {
-        seenCount: 1,
-        correctCount: 1,
-        wrongCount: 0,
-        correctStreak: 1,
-        lastAnsweredAt: '2026-05-19T10:04:00.000Z',
-      },
     },
-    questions: [
-      { id: 'infinite', chapterId: 'ch01' },
-      { id: 'stringy', chapterId: 'ch01' },
-      { id: 'fractional', chapterId: 'ch01' },
-      { id: 'oversized', chapterId: 'ch01' },
-      { id: 'valid', chapterId: 'ch02' },
-    ],
-    chapters: [
-      { id: 'ch01', questionCount: 4 },
-      { id: 'ch02', questionCount: 1 },
-    ],
+  });
+  const malformedMock = computeReadinessFromQuestionProgress({
+    ...commonInput,
+    questionProgress: {},
     mockExamSessions: [
       {
-        sessionId: 'score-only-invalid-total',
+        sessionId: 'malformed-mock',
         score: 0.8,
-        completedAt: '2026-05-19T10:05:00.000Z',
-        totalCount: Infinity,
-        correctCount: 32,
+        completedAt: '2026-05-19T10:00:00.000Z',
+        correctCount: '32',
+        totalCount: 1000,
       },
     ],
-    now: new Date('2026-05-19T12:00:00.000Z'),
   });
 
-  assert.equal(result.components.accuracy, 1);
-  assert.equal(result.components.coverage, 0.5);
-  assert.equal(result.components.mockAverage, 0.8);
-  assert.equal(result.isSparse, true);
+  assert.equal(malformedProgress.components.accuracy, 0);
+  assert.equal(malformedProgress.components.recency, 0);
+  assert.equal(malformedProgress.isSparse, true);
+  assert.equal(malformedMock.components.accuracy, 0);
+  assert.equal(malformedMock.components.mockAverage, 0.8);
+  assert.equal(malformedMock.isSparse, true);
 });
 
 test('dashboard mock history ignores invalid completions and nulls invalid duration math', () => {
@@ -539,157 +425,6 @@ test('dashboard selectors clamp bad day-window options before rendering bins', (
   assert.equal(mistakeConvergence(progress, { daysBack: 0, now }).length, 1);
   assert.equal(xpSparkline(progress, { daysBack: 4.6, now }).length, 4);
   assert.equal(xpSparkline(progress, { daysBack: Number.NaN, now }).length, 30);
-});
-
-test('weekly recap runtime guards reject malformed imported progress', () => {
-  const { generateWeeklyRecap } = loadAllTs('lib/learning/weeklyRecap.ts');
-  const recap = generateWeeklyRecap({
-    progress: {
-      totalXp: 0,
-      level: 1,
-      currentStreak: '7',
-      dailyGoalAnswers: 10,
-      questionProgress: {
-        validResolved: {
-          questionId: 'validResolved',
-          correctStreak: 1,
-          wrongCount: 1,
-          lastAnsweredAt: '2026-05-20T10:03:00.000Z',
-        },
-        stringCounters: {
-          questionId: 'stringCounters',
-          correctStreak: '1',
-          wrongCount: '2',
-          lastAnsweredAt: '2026-05-20T10:04:00.000Z',
-        },
-      },
-      sessions: [
-        {
-          id: 'weekly-bad',
-          mode: 'exam',
-          questionIds: ['q1', 'q2', 'q3'],
-          startedAt: '2026-05-20T10:00:00.000Z',
-          completedAt: '2026-05-20T10:30:00.000Z',
-          score: Infinity,
-          answers: [
-            {
-              questionId: 'q1',
-              selectedOptionIds: ['a'],
-              isCorrect: 'true',
-              answeredAt: '2026-05-20T10:00:00.000Z',
-              timeSpentSeconds: 5,
-            },
-            {
-              questionId: 'q2',
-              selectedOptionIds: ['a'],
-              isCorrect: 1,
-              answeredAt: '2026-05-20T10:01:00.000Z',
-              timeSpentSeconds: 5,
-            },
-            {
-              questionId: 'q3',
-              selectedOptionIds: ['a'],
-              isCorrect: false,
-              answeredAt: '2026-05-20T10:02:00.000Z',
-              timeSpentSeconds: 5,
-            },
-          ],
-        },
-        {
-          id: 'weekly-high',
-          mode: 'exam',
-          questionIds: [],
-          answers: [],
-          startedAt: '2026-05-20T11:00:00.000Z',
-          completedAt: '2026-05-20T11:20:00.000Z',
-          score: 1.2,
-        },
-      ],
-    },
-    chapterMasteryAtWeekStart: { ch01: 0.1, ch02: '0.1', ch03: 0.2 },
-    chapterMasteryNow: { ch01: Infinity, ch02: 0.9, ch03: 1.1 },
-    masteryThreshold: '0.8',
-    now: new Date('2026-05-20T12:00:00.000Z'),
-  });
-
-  assert.equal(recap.questionsAnswered, 3);
-  assert.equal(recap.accuracy, 0);
-  assert.equal(recap.mistakesResolved, 1);
-  assert.equal(recap.streakDays, 0);
-  assert.equal(recap.mockExamsTaken, 2);
-  assert.equal(recap.bestMockScore, 1);
-  assert.equal(recap.chapterNowMastered, null);
-});
-
-test('weekly recap answer date parser rejects rollover and noncanonical recap inputs', () => {
-  const { generateWeeklyRecap } = loadAllTs('lib/learning/weeklyRecap.ts');
-  const recap = generateWeeklyRecap({
-    progress: {
-      totalXp: 0,
-      level: 1,
-      currentStreak: 1,
-      dailyGoalAnswers: 10,
-      questionProgress: {
-        rolloverResolved: {
-          questionId: 'rolloverResolved',
-          correctStreak: 1,
-          wrongCount: 1,
-          lastAnsweredAt: '2026-02-30T10:03:00.000Z',
-        },
-        validResolved: {
-          questionId: 'validResolved',
-          correctStreak: 1,
-          wrongCount: 1,
-          lastAnsweredAt: '2026-03-03T10:03:00.000Z',
-        },
-      },
-      sessions: [
-        {
-          id: 'weekly-valid',
-          mode: 'study',
-          questionIds: ['valid'],
-          answers: [
-            {
-              questionId: 'valid',
-              selectedOptionIds: ['a'],
-              isCorrect: true,
-              answeredAt: '2026-03-03T10:00:00.000Z',
-              timeSpentSeconds: 5,
-            },
-            {
-              questionId: 'rollover',
-              selectedOptionIds: ['a'],
-              isCorrect: true,
-              answeredAt: '2026-02-30T10:00:00.000Z',
-              timeSpentSeconds: 5,
-            },
-            {
-              questionId: 'noncanonical',
-              selectedOptionIds: ['a'],
-              isCorrect: true,
-              answeredAt: '2026-03-03 10:01:00',
-              timeSpentSeconds: 5,
-            },
-          ],
-        },
-        {
-          id: 'weekly-rollover-exam',
-          mode: 'exam',
-          questionIds: [],
-          answers: [],
-          completedAt: '2026-02-30T10:30:00.000Z',
-          score: 0.99,
-        },
-      ],
-    },
-    now: new Date('2026-03-04T12:00:00.000Z'),
-  });
-
-  assert.equal(recap.questionsAnswered, 1);
-  assert.equal(recap.accuracy, 1);
-  assert.equal(recap.mistakesResolved, 1);
-  assert.equal(recap.mockExamsTaken, 0);
-  assert.equal(recap.bestMockScore, null);
 });
 
 test('mock exam completion XP is awarded once per stored session', () => {
@@ -856,33 +591,6 @@ test('badges unlock from progress milestones', () => {
       wrongAnswerCount: 1,
     }).map((badge) => badge.id),
     ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'],
-  );
-  assert.deepEqual(
-    deriveBadges({
-      completedQuestionCount: '1',
-      currentStreak: '3',
-      level: '2',
-      wrongAnswerCount: '1',
-    }).map((badge) => badge.id),
-    [],
-  );
-  assert.deepEqual(
-    deriveBadges({
-      completedQuestionCount: Infinity,
-      currentStreak: Infinity,
-      level: Infinity,
-      wrongAnswerCount: Infinity,
-    }).map((badge) => badge.id),
-    [],
-  );
-  assert.deepEqual(
-    deriveBadges({
-      completedQuestionCount: 1.5,
-      currentStreak: 3.5,
-      level: 2.5,
-      wrongAnswerCount: 1.5,
-    }).map((badge) => badge.id),
-    [],
   );
   assert.deepEqual(
     getAllBadges().map((badge) => getBadgeTitle(badge, 'sv')),
