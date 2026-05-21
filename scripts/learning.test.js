@@ -743,6 +743,70 @@ test('readiness and dashboard selectors ignore invalid or future answer dates', 
   assert.equal(summary.chaptersWithAnyAnswer, 1);
 });
 
+test('adaptive practice treats malformed correctness and accuracy overrides as neutral runtime input', () => {
+  const { explainAdaptivePick, pickAdaptiveSession } = loadAllTs(
+    'lib/learning/adaptivePractice.ts',
+  );
+  const now = new Date('2026-05-19T12:00:00.000Z');
+  const progress = {
+    totalXp: 0,
+    level: 1,
+    currentStreak: 0,
+    dailyGoalAnswers: 10,
+    questionProgress: {},
+    sessions: [
+      {
+        id: 'adaptive-malformed',
+        mode: 'study',
+        questionIds: [],
+        startedAt: '2026-05-19T09:00:00.000Z',
+        answers: [
+          {
+            questionId: 'q-hard-old',
+            selectedOptionIds: [],
+            isCorrect: 'yes',
+            answeredAt: '2026-05-19T10:00:00.000Z',
+            timeSpentSeconds: 5,
+          },
+          {
+            questionId: 'q-truthy-one',
+            selectedOptionIds: [],
+            isCorrect: 1,
+            answeredAt: '2026-05-19T10:01:00.000Z',
+            timeSpentSeconds: 5,
+          },
+        ],
+      },
+    ],
+  };
+  const bank = [
+    { id: 'q-hard-old', difficulty: 'hard', chapterId: 'ch01' },
+    { id: 'q-easy-new', difficulty: 'easy', chapterId: 'ch01' },
+    { id: 'q-medium-new', difficulty: 'medium', chapterId: 'ch01' },
+  ];
+
+  assert.deepEqual(pickAdaptiveSession({ progress, bank, size: 2, now }), [
+    'q-hard-old',
+    'q-easy-new',
+  ]);
+  assert.deepEqual(explainAdaptivePick({ progress, bank, size: 2, now }), {
+    'recently-wrong': 1,
+    unseen: 1,
+    mastered: 0,
+    stale: 0,
+  });
+  assert.deepEqual(
+    pickAdaptiveSession({
+      progress: { ...progress, sessions: [] },
+      bank,
+      size: 1,
+      now,
+      recentAccuracyOverride: Number.POSITIVE_INFINITY,
+    }),
+    ['q-medium-new'],
+  );
+});
+
 test('spaced repetition schedules wrong answers soon and known answers later', () => {
   const { getNextReviewAt } = loadAllTs('lib/learning/spacedRepetition.ts');
 

@@ -220,6 +220,72 @@ test('pickAdaptiveSession: low accuracy biases toward easy questions', () => {
   assert.equal(picked[0], 'easy1');
 });
 
+test('pickAdaptiveSession: truthy non-boolean correctness cannot inflate adaptive buckets', () => {
+  const { explainAdaptivePick, pickAdaptiveSession } = loadTs('lib/learning/adaptivePractice.ts');
+  const answers = [
+    {
+      questionId: 'q-hard-old',
+      selectedOptionIds: [],
+      isCorrect: 'yes',
+      answeredAt: '2026-05-19T10:00:00.000Z',
+      timeSpentSeconds: 5,
+    },
+    {
+      questionId: 'q-truthy-one',
+      selectedOptionIds: [],
+      isCorrect: 1,
+      answeredAt: '2026-05-19T10:01:00.000Z',
+      timeSpentSeconds: 5,
+    },
+    {
+      questionId: 'q-false',
+      selectedOptionIds: [],
+      isCorrect: false,
+      answeredAt: '2026-05-19T10:02:00.000Z',
+      timeSpentSeconds: 5,
+    },
+  ];
+  const input = {
+    progress: progressFromAnswers(answers),
+    bank: [
+      { id: 'q-hard-old', difficulty: 'hard', chapterId: 'c1' },
+      { id: 'q-medium-new', difficulty: 'medium', chapterId: 'c1' },
+      { id: 'q-easy-new', difficulty: 'easy', chapterId: 'c1' },
+    ],
+    size: 2,
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  };
+
+  assert.deepEqual(pickAdaptiveSession(input), ['q-hard-old', 'q-easy-new']);
+  assert.deepEqual(explainAdaptivePick(input), {
+    'recently-wrong': 1,
+    unseen: 1,
+    mastered: 0,
+    stale: 0,
+  });
+});
+
+test('pickAdaptiveSession: malformed recentAccuracyOverride falls back to neutral difficulty', () => {
+  const { pickAdaptiveSession } = loadTs('lib/learning/adaptivePractice.ts');
+  const bankMixed = [
+    { id: 'easy1', difficulty: 'easy', chapterId: 'c1' },
+    { id: 'med1', difficulty: 'medium', chapterId: 'c1' },
+    { id: 'hard1', difficulty: 'hard', chapterId: 'c1' },
+  ];
+
+  for (const recentAccuracyOverride of [Number.NaN, Infinity, -1, 2]) {
+    const picked = pickAdaptiveSession({
+      progress: progressFromAnswers([]),
+      bank: bankMixed,
+      size: 1,
+      recentAccuracyOverride,
+      now: new Date('2026-05-19T12:00:00.000Z'),
+    });
+
+    assert.equal(picked[0], 'med1', `neutral fallback expected for ${recentAccuracyOverride}`);
+  }
+});
+
 test('adaptivePractice: picker and explanation share the scoring helper', () => {
   const source = fs.readFileSync(path.join(repoRoot, 'lib/learning/adaptivePractice.ts'), 'utf8');
   const picker = source.match(/export function pickAdaptiveSession[\s\S]*?\n}/)?.[0] ?? '';
