@@ -171,3 +171,27 @@ test('static Settings selected controls mirror aria-pressed state', async ({ pag
 
   expect(pageErrors).toEqual([]);
 });
+
+test('static Settings normalizes corrupt text size preferences', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const pageErrors = collectPageErrors(page);
+
+  await page.addInitScript(() => {
+    localStorage.setItem('smt_textsize', '2500');
+  });
+  await openSettings(page, staticSite.baseUrl);
+
+  await expect(page.locator('html')).toHaveCSS('font-size', '16px');
+  await expectPressed(page, '[data-set="textsize"] button[data-val="100"]', true);
+  await expectPressed(page, '[data-set="textsize"] button[data-val="90"]', false);
+  await expectPressed(page, '[data-set="textsize"] button[data-val="115"]', false);
+  await expect(page.locator('[data-set="textsize"] button[aria-pressed="true"]')).toHaveCount(1);
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('smt_textsize'))).toBe('100');
+
+  await page.locator('[data-set="textsize"] button[data-val="90"]').click();
+  await expect(page.locator('html')).toHaveCSS('font-size', '14.4px');
+  await expectPressed(page, '[data-set="textsize"] button[data-val="90"]', true);
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('smt_textsize'))).toBe('90');
+
+  expect(pageErrors).toEqual([]);
+});

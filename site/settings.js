@@ -68,6 +68,7 @@
       },
     },
   };
+  const SUPPORTED_TEXT_SIZES = new Set(['90', '100', '115']);
 
   function ls(key, fallback) {
     try {
@@ -106,9 +107,15 @@
     Object.entries(pal.vars).forEach(([k, v]) => document.documentElement.style.setProperty(k, v));
     lsSet('smt_palette', p);
   }
+  function normalizeTextSize(s) {
+    const value = String(s ?? '').trim();
+    return SUPPORTED_TEXT_SIZES.has(value) ? value : '100';
+  }
   function applyTextSize(s) {
-    document.documentElement.style.fontSize = 16 * (parseInt(s, 10) / 100) + 'px';
-    lsSet('smt_textsize', s);
+    const value = normalizeTextSize(s);
+    document.documentElement.style.fontSize = 16 * (Number(value) / 100) + 'px';
+    lsSet('smt_textsize', value);
+    return value;
   }
   function emitMotionChange(reduced) {
     if (typeof window.dispatchEvent !== 'function') return;
@@ -249,7 +256,7 @@
       : ls('smt_lang', 'en');
     setSegment('language', lang);
     setSegment('sources', ls('smt_question_sources', 'all'));
-    setSegment('textsize', ls('smt_textsize', '100'));
+    setSegment('textsize', normalizeTextSize(ls('smt_textsize', '100')));
     setCheckbox('motion', ls('smt_motion', '') === 'reduce');
     setCheckbox('aurora', ls('smt_aurora', 'on') !== 'off');
     setCheckbox('flagcross', ls('smt_flagcross', '1') === '1');
@@ -303,7 +310,10 @@
           lsSet('smt_lang', v);
           location.reload();
         }
-      } else if (group === 'textsize') applyTextSize(v);
+      } else if (group === 'textsize') {
+        setSegment(group, applyTextSize(v));
+        return;
+      }
       setSegment(group, v);
       return;
     }
