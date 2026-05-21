@@ -1,60 +1,45 @@
 const assert = require('node:assert/strict');
-const Module = require('node:module');
 const fs = require('node:fs');
+const Module = require('node:module');
 const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
-const React = require('react');
 
 const repoRoot = path.resolve(__dirname, '..');
+const legalPagePath = path.join(repoRoot, 'components/compliance/LegalPage.tsx');
 
 function installTsxLoader() {
-  const originalTsExtension = require.extensions['.ts'];
-  const originalTsxExtension = require.extensions['.tsx'];
+  const previousTsxLoader = require.extensions['.tsx'];
 
-  const compileTsModule = (module, filename) => {
+  require.extensions['.tsx'] = function tsxLoader(module, filename) {
     const source = fs.readFileSync(filename, 'utf8');
-    const transpiled = ts.transpileModule(source, {
+    const output = ts.transpileModule(source, {
       compilerOptions: {
+        esModuleInterop: true,
         jsx: ts.JsxEmit.ReactJSX,
         module: ts.ModuleKind.CommonJS,
         target: ts.ScriptTarget.ES2020,
       },
       fileName: filename,
-    }).outputText;
-    module._compile(transpiled, filename);
+    });
+
+    module._compile(output.outputText, filename);
   };
 
-  require.extensions['.ts'] = compileTsModule;
-  require.extensions['.tsx'] = compileTsModule;
-
   return () => {
-    if (originalTsExtension) {
-      require.extensions['.ts'] = originalTsExtension;
-    } else {
-      delete require.extensions['.ts'];
-    }
-
-    if (originalTsxExtension) {
-      require.extensions['.tsx'] = originalTsxExtension;
+    if (previousTsxLoader) {
+      require.extensions['.tsx'] = previousTsxLoader;
     } else {
       delete require.extensions['.tsx'];
     }
   };
 }
 
-function loadLegalPageModule() {
-  const targetPath = path.join(repoRoot, 'components/compliance/LegalPage.tsx');
-  delete require.cache[targetPath];
-
+function withComponentStubs(callback) {
   const originalLoad = Module._load;
-  const restoreTsxLoader = installTsxLoader();
 
-  Module._load = function patchedLoad(request, parent, isMain) {
-    if (request === 'expo-router') {
-      return { Link: 'Link' };
-    }
-
+  Module._load = function loadStubbedModule(request, parent, isMain) {
+    if (request === 'expo-router') return { Link: 'Link' };
     if (request === 'react-native') {
       return {
         ScrollView: 'ScrollView',
@@ -63,30 +48,23 @@ function loadLegalPageModule() {
         View: 'View',
       };
     }
-
-    if (request === './ComplianceActionLink') {
-      return { ComplianceActionLink: 'ComplianceActionLink' };
-    }
-
-    if (request.endsWith('/lib/storage/settingsStore')) {
+    if (request === '../../lib/storage/settingsStore') {
       return { useSettingsStore: (selector) => selector({ language: 'sv' }) };
     }
-
-    if (request.endsWith('/lib/theme')) {
-      const space = Object.assign([0, 4, 8, 12, 16, 20, 44], { hairline: 1 });
+    if (request === '../../lib/theme') {
       return {
         colors: {
-          accent: '#006aa7',
-          border: '#dbe3ec',
-          surface: '#ffffff',
-          surfaceWarm: '#eaf0f7',
-          text: '#0b1f33',
-          textMuted: '#44586b',
+          accent: 'accent',
+          border: 'border',
+          surface: 'surface',
+          surfaceWarm: 'surfaceWarm',
+          text: 'text',
+          textMuted: 'textMuted',
         },
         radius: { card: 12 },
-        space,
+        space: { 1: 8, 1.25: 10, 1.75: 14, 2: 16, 2.25: 18, 3: 24, 6: 48, hairline: 1 },
         typography: {
-          bodyBold: { fontWeight: '600' },
+          bodyBold: { fontWeight: '700' },
           bodyTight: { lineHeight: 22 },
           navButton: { fontSize: 16, fontWeight: '600' },
           sectionTitle: { fontSize: 20 },
@@ -94,121 +72,119 @@ function loadLegalPageModule() {
         },
       };
     }
+    if (request === './ComplianceActionLink')
+      return { ComplianceActionLink: 'ComplianceActionLink' };
 
     return originalLoad.call(this, request, parent, isMain);
   };
 
   try {
-    return require(targetPath);
+    return callback();
   } finally {
     Module._load = originalLoad;
+  }
+}
+
+function loadLegalPage() {
+  const restoreTsxLoader = installTsxLoader();
+  delete require.cache[legalPagePath];
+
+  try {
+    return withComponentStubs(() => require(legalPagePath));
+  } finally {
     restoreTsxLoader();
   }
 }
 
-function collectLegalSectionNodes(node, nodes = []) {
-  if (node == null || typeof node === 'boolean') return nodes;
-
-  if (Array.isArray(node)) {
-    node.forEach((child) => collectLegalSectionNodes(child, nodes));
-    return nodes;
-  }
-
-  if (typeof node === 'string' || typeof node === 'number') {
-    nodes.push({ text: String(node), type: 'raw-text' });
-    return nodes;
-  }
-
-  if (!React.isValidElement(node)) return nodes;
-
-  if (node.type === 'Text') {
-    nodes.push({ text: flattenText(node.props.children), type: 'Text' });
-    return nodes;
-  }
-
-  if (node.type === 'LegalExternalLink') {
-    nodes.push({ label: node.props.label, type: 'LegalExternalLink' });
-    return nodes;
-  }
-
-  collectLegalSectionNodes(node.props.children, nodes);
-  return nodes;
+function childrenOf(node) {
+  const children = node?.props?.children;
+  if (children == null) return [];
+  return Array.isArray(children) ? children.flatMap((child) => child) : [children];
 }
 
-function flattenText(value) {
-  if (value == null || typeof value === 'boolean') return '';
-  if (Array.isArray(value)) return value.map(flattenText).join('');
-  if (React.isValidElement(value)) return flattenText(value.props.children);
-  return String(value);
+function flattenChildren(children) {
+  return children.flatMap((child) => (Array.isArray(child) ? flattenChildren(child) : [child]));
 }
 
-test('LegalSection ignores formatted whitespace-only children around links', () => {
-  const { LegalSection } = loadLegalPageModule();
-  const section = LegalSection({
-    title: 'Public support page',
-    children: [
-      '\n        ',
-      React.createElement(
-        React.Fragment,
-        null,
-        '\n          ',
-        'Send feedback through the public support page:',
-        '\n          ',
-        React.createElement('LegalExternalLink', { key: 'support', label: 'Open support' }),
-        '\n        ',
-      ),
-      '\n      ',
-    ],
+function findUnsafeViewChildren(node, React) {
+  const unsafe = [];
+
+  function visit(current) {
+    if (current == null || typeof current === 'boolean') return;
+    if (typeof current === 'string' || typeof current === 'number') return;
+    if (Array.isArray(current)) {
+      current.forEach(visit);
+      return;
+    }
+
+    const directChildren = flattenChildren(childrenOf(current));
+
+    if (current.type === 'View') {
+      directChildren.forEach((child) => {
+        if (typeof child === 'string' || typeof child === 'number') {
+          unsafe.push(`raw ${typeof child} under View`);
+        } else if (child?.type === React.Fragment) {
+          unsafe.push('Fragment under View');
+        }
+      });
+    }
+
+    directChildren.forEach(visit);
+  }
+
+  visit(node);
+  return unsafe;
+}
+
+test('LegalSection normalizes mixed direct children into native-safe paragraphs and links', () => {
+  const React = require('react');
+  const { LegalExternalLink, LegalSection } = loadLegalPage();
+  const link = React.createElement(LegalExternalLink, {
+    accessibilityLabel: 'Open source',
+    destination: 'uhr.se',
+    href: 'https://www.uhr.se',
+    label: 'UHR',
   });
 
-  const nodes = collectLegalSectionNodes(section);
+  const section = LegalSection({
+    title: 'Sources',
+    children: ['Read ', link, ' before practicing.', 2026],
+  });
 
-  assert.deepEqual(nodes, [
-    { text: 'Public support page', type: 'Text' },
-    { text: 'Send feedback through the public support page:', type: 'Text' },
-    { label: 'Open support', type: 'LegalExternalLink' },
-  ]);
-  assert.equal(
-    nodes.some((node) => node.type === 'Text' && node.text.trim().length === 0),
-    false,
-  );
-  assert.equal(
-    nodes.some((node) => node.type === 'raw-text' && node.text.trim().length === 0),
-    false,
-  );
+  assert.deepEqual(findUnsafeViewChildren(section, React), []);
 });
 
-test('LegalSection preserves nested fragment text, numbers, and link order', () => {
-  const { LegalSection, normalizeLegalSectionChildren } = loadLegalPageModule();
-  const firstLink = React.createElement('LegalExternalLink', {
-    key: 'first',
-    label: 'First source',
+test('LegalSection recursively flattens Fragment-wrapped mixed children before rendering', () => {
+  const React = require('react');
+  const { LegalExternalLink, LegalSection } = loadLegalPage();
+  const link = React.createElement(LegalExternalLink, {
+    accessibilityLabel: 'Open support',
+    destination: 'example.se',
+    href: 'https://example.se',
+    label: 'Support',
   });
-  const secondLink = React.createElement('LegalExternalLink', {
-    key: 'second',
-    label: 'Second source',
+  const nestedFragment = React.createElement(
+    React.Fragment,
+    null,
+    'Start ',
+    React.createElement(React.Fragment, null, link, ' end'),
+  );
+
+  const section = LegalSection({
+    title: 'Support',
+    children: nestedFragment,
   });
-  const children = [
-    '\n',
-    React.createElement(
-      React.Fragment,
-      null,
-      'One',
-      '\n  ',
-      firstLink,
-      React.createElement(React.Fragment, null, '\n', 2026, '\n', secondLink),
-      '\n',
-    ),
-  ];
 
-  assert.deepEqual(normalizeLegalSectionChildren(children), ['One', firstLink, 2026, secondLink]);
+  assert.deepEqual(findUnsafeViewChildren(section, React), []);
+});
 
-  const section = LegalSection({ title: 'Sources', children });
-  assert.deepEqual(collectLegalSectionNodes(section), [
-    { text: 'Sources', type: 'Text' },
-    { text: 'One', type: 'Text' },
-    { label: 'First source', type: 'LegalExternalLink' },
-    { text: '2026', type: 'Text' },
-    { label: 'Second source', type: 'LegalExternalLink' },
-  ]);
+test('LegalSection source keeps a recursive Fragment child normalizer', () => {
+  const source = fs.readFileSync(legalPagePath, 'utf8');
+
+  assert.match(source, /import \{ Children, Fragment, isValidElement \} from 'react';/);
+  assert.match(source, /function flattenSectionChildren\(children: ReactNode\)/);
+  assert.match(source, /isFragmentChild\(child\)/);
+  assert.match(source, /flattenSectionChildren\(child\.props\.children\)/);
+  assert.match(source, /function flushParagraph\(/);
+  assert.doesNotMatch(source, /function renderSectionChildren[\s\S]*return children;/);
 });
