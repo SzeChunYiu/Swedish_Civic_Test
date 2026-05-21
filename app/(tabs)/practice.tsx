@@ -19,12 +19,7 @@ import { PersistenceWarningNotice } from '../../components/storage/PersistenceWa
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
-import { useQuestionAudioAutoplay } from '../../lib/audio/questionAudioAutoplay';
-import {
-  buildAnswerFeedbackSpeechText,
-  buildQuestionSpeechText,
-  stopSpeech,
-} from '../../lib/audio/speak';
+import { buildAnswerFeedbackSpeechText, buildQuestionSpeechText } from '../../lib/audio/speak';
 import { filterQuestionsByProvenance } from '../../lib/content/provenance';
 import {
   buildDailyChallenge,
@@ -36,16 +31,15 @@ import {
   getCompletedQuestionIdsForQuestionBank,
   getPracticeQuestionForSession,
 } from '../../lib/quiz/practiceFlow';
+import { isProRuntimeScopeEnabled } from '../../lib/monetization/releasePolicy';
 import { useProLifetimeEntitlements } from '../../lib/monetization/useProLifetimeEntitlements';
 import {
-  getPracticeAnswerXpAwardKey,
   getPracticeInterstitialShowKey,
   usePracticeSessionStore,
 } from '../../lib/quiz/practiceSessionStore';
 import { scoreAnswers } from '../../lib/quiz/scoring';
 import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
 import { useProgressStore } from '../../lib/storage/progressStore';
-import { useAccessibilityStore } from '../../lib/storage/accessibilityStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, motion, radius, space, typography } from '../../lib/theme';
 import type { PracticeQuestion } from '../../types/content';
@@ -164,7 +158,6 @@ export default function Screen() {
   const activeQuestionId = usePracticeSessionStore((state) => state.activeQuestionId);
   const selectedOptionId = usePracticeSessionStore((state) => state.selectedOptionId);
   const selectOption = usePracticeSessionStore((state) => state.selectOption);
-  const claimAnswerXpAward = usePracticeSessionStore((state) => state.claimAnswerXpAward);
   const resetSelection = usePracticeSessionStore((state) => state.resetSelection);
   const advanceQuestion = usePracticeSessionStore((state) => state.advanceQuestion);
   const shuffleSessionId = usePracticeSessionStore((state) => state.shuffleSessionId);
@@ -188,8 +181,6 @@ export default function Screen() {
   const toggleBookmark = useProgressStore((state) => state.toggleBookmark);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
-  const audioPlaybackRate = useAccessibilityStore((state) => state.audioPlaybackRate);
-  const listenFirstAudioEnabled = useAccessibilityStore((state) => state.listenFirstAudioEnabled);
   const includeSupplementary = useSettingsStore((state) => state.includeSupplementaryQuestions);
   const setIncludeSupplementary = useSettingsStore(
     (state) => state.setIncludeSupplementaryQuestions,
@@ -208,6 +199,7 @@ export default function Screen() {
   const [challengeAnswers, setChallengeAnswers] = useState<Record<string, boolean>>({});
   const { entitlements: proEntitlements, entitlementsReady: proEntitlementsReady } =
     useProLifetimeEntitlements();
+  const proRuntimeScopeEnabled = isProRuntimeScopeEnabled();
   const copy = practiceCopy[language];
   const dailyChallenge = useMemo(() => buildDailyChallenge({ bank: questions }), []);
   const challengeQuestions = useMemo(
@@ -236,24 +228,8 @@ export default function Screen() {
       rawQuestion ? shuffleQuestionOptionsForSession(rawQuestion, shuffleSessionId) : undefined,
     [rawQuestion, shuffleSessionId],
   );
-  const confidenceRatingEnabled = proEntitlementsReady && proEntitlements.confidenceSlider === true;
-  const hasSelectedAnswer = Boolean(
-    question && selectedOptionId && activeQuestionId === question.id,
-  );
-  const challengeTimedOut = isChallengeMode && remainingChallengeSeconds <= 0;
-  const questionSpeechText = useMemo(
-    () => (question ? buildQuestionSpeechText(question) : ''),
-    [question],
-  );
-
-  useQuestionAudioAutoplay({
-    audioEnabled,
-    listenFirstAudioEnabled,
-    questionKey: question ? `${shuffleSessionId}:${question.id}` : null,
-    rate: audioPlaybackRate,
-    speechText: questionSpeechText,
-    stopSignal: hasSelectedAnswer || challengeTimedOut,
-  });
+  const confidenceRatingEnabled =
+    proRuntimeScopeEnabled && proEntitlementsReady && proEntitlements.confidenceSlider === true;
 
   useEffect(() => {
     setSelectedConfidenceRating(null);
@@ -264,6 +240,11 @@ export default function Screen() {
     setChallengeAnswers({});
     setChallengeRetryActive(false);
   }, [dailyChallenge.dayKey, isChallengeMode]);
+
+  const hasSelectedAnswer = Boolean(
+    question && selectedOptionId && activeQuestionId === question.id,
+  );
+  const challengeTimedOut = isChallengeMode && remainingChallengeSeconds <= 0;
 
   useEffect(() => {
     if (!isChallengeMode || hasSelectedAnswer || challengeTimedOut) return undefined;
@@ -302,7 +283,6 @@ export default function Screen() {
     practiceQuestionBank.length > 0 ? questionNumber / practiceQuestionBank.length : 0;
   const handleSelectOption = (optionId: string) => {
     if (challengeTimedOut) return;
-    stopSpeech();
 
     const selectedOption = question.options.find((option) => option.id === optionId);
     const optionIsCorrect = isCorrectAnswer(question, optionId);
@@ -311,9 +291,7 @@ export default function Screen() {
       : undefined;
 
     selectOption(question.id, optionId);
-    recordAnswer(question.id, optionIsCorrect, answerConfidenceRating, {
-      awardXp: claimAnswerXpAward(getPracticeAnswerXpAwardKey(question.id, shuffleSessionId)),
-    });
+    recordAnswer(question.id, optionIsCorrect, answerConfidenceRating);
 
     if (isChallengeMode) {
       const nextChallengeAnswers = { ...challengeAnswers, [question.id]: optionIsCorrect };
@@ -343,12 +321,10 @@ export default function Screen() {
     }
   };
   const handleAdvanceQuestion = () => {
-    stopSpeech();
     setSelectedConfidenceRating(null);
     advanceQuestion();
   };
   const handleTryAgain = () => {
-    stopSpeech();
     setSelectedConfidenceRating(null);
     if (isChallengeMode) {
       setChallengeRetryActive(true);
@@ -467,8 +443,7 @@ export default function Screen() {
       <AudioButton
         enabled={audioEnabled}
         language={language}
-        rate={audioPlaybackRate}
-        text={questionSpeechText}
+        text={buildQuestionSpeechText(question)}
       />
       {confidenceRatingEnabled ? (
         <ConfidenceRatingPicker
@@ -523,7 +498,6 @@ export default function Screen() {
           <FeedbackAudioButton
             enabled={audioEnabled}
             language={language}
-            rate={audioPlaybackRate}
             text={buildAnswerFeedbackSpeechText(question, selectedOptionId)}
           />
           <UHRReferenceCard language={language} reference={question.uhrReference} />

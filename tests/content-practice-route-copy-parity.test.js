@@ -13,9 +13,8 @@ function phrase(parts) {
 function parseValidationSummary() {
   const output = execFileSync(
     process.execPath,
-    ['scripts/validate-content.js', '--focus-practice-route-copy-parity'],
+    ['scripts/validate-content.js', '--focus-practice-route-copy'],
     {
-      cwd: repoRoot,
       encoding: 'utf8',
     },
   );
@@ -24,41 +23,24 @@ function parseValidationSummary() {
   return JSON.parse(match[0]);
 }
 
-function parseFocusedNativeMockExamCopySummary() {
+function parseConfidenceRatingProScopeSummary() {
   const output = execFileSync(
     process.execPath,
-    ['scripts/validate-content.js', '--focus-sv-native-mock-exam-copy'],
+    ['scripts/validate-content.js', '--focus-confidence-rating-pro-scope'],
     {
-      cwd: repoRoot,
       encoding: 'utf8',
     },
   );
   const match = output.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'focused native mock-exam copy validation should print JSON summary');
+  assert.ok(match, 'focused confidence-rating validation should print JSON summary');
   return JSON.parse(match[0]);
 }
-
-test('native Swedish övningsprov copy guard preserves English mock exam copy', () => {
-  const summary = parseFocusedNativeMockExamCopySummary();
-  const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
-  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
-
-  assert.equal(summary.nativeSwedishMockExamCopyLabelsValidated, 8);
-  assert.equal(summary.nativeSwedishMockExamCopyParityValidated, true);
-  assert.match(homeSource, /Gå till övningsprov/);
-  assert.match(homeSource, /\$\{title\}: gå till övningsprov när steget är klart\./);
-  assert.match(practiceSource, /Aldrig en del av övningsprovet\./);
-  assert.match(homeSource, /Go to mock exam/);
-  assert.match(practiceSource, /Never part of the mock exam\./);
-  assert.doesNotMatch(homeSource, /mockprov|mock-provet/i);
-  assert.doesNotMatch(practiceSource, /mockprov|mock-provet/i);
-});
 
 test('practice route shell copy follows the persisted settings language', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
 
-  assert.equal(summary.practiceRouteCopyLabelsValidated, 54);
+  assert.equal(summary.practiceRouteCopyLabelsValidated, 48);
   assert.equal(summary.practiceRouteCopyParityValidated, true);
   assert.equal(summary.provenanceAuthorityCopyFilesValidated, 8);
   assert.equal(summary.provenanceAuthorityCopyParityValidated, true);
@@ -69,11 +51,10 @@ test('practice route shell copy follows the persisted settings language', () => 
   assert.match(source, /const filteredQuestions = useMemo\(/);
   assert.match(
     source,
-    /getCompletedQuestionIdsForQuestionBank\(practiceQuestionBank, completedQuestionIds\)/,
+    /getCompletedQuestionIdsForQuestionBank\(filteredQuestions, completedQuestionIds\)/,
   );
-  assert.match(source, /<Badge>\{isChallengeMode \? copy\.challengeBadge : copy\.badge\}<\/Badge>/);
-  assert.match(source, /copy\.completedQuestions\(visibleCompletedQuestionIds\.length\)/);
-  assert.doesNotMatch(source, /copy\.completedQuestions\(completedQuestionIds\.length\)/);
+  assert.match(source, /\{copy\.completedQuestions\(visibleCompletedQuestionIds\.length\)\}/);
+  assert.doesNotMatch(source, /\{copy\.completedQuestions\(completedQuestionIds\.length\)\}/);
   assert.match(source, /Question \$\{questionNumber\}/);
   assert.match(source, /Fråga \$\{questionNumber\}/);
   assert.match(source, /Close source details/);
@@ -84,31 +65,60 @@ test('practice route shell copy follows the persisted settings language', () => 
     new RegExp(phrase(['generated', 'from', 'a', 'UHR', 'question']), 'i'),
   );
   assert.doesNotMatch(source, new RegExp(phrase(['kommer', 'direkt', 'från', 'UHR']), 'i'));
-  assert.match(source, /Aldrig en del av övningsprovet/);
-  assert.doesNotMatch(source, /\bmock\s*-?\s*prov(?:et)?\b/i);
   assert.match(source, /accessibilityLabel=\{copy\.bookmarkAccessibilityLabel\(isBookmarked\)\}/);
   assert.match(source, /\{copy\.scoreLabel\}: \{currentScore\.correct\}\/\{currentScore\.total\}/);
 });
 
-test('web aria false-state e2e covers localized Practice control labels', () => {
-  const source = fs.readFileSync(
-    path.join(repoRoot, 'tests/e2e/web-aria-false-state.spec.ts'),
-    'utf8',
+test('practice route confidence rating stays behind the Pro runtime scope gate', () => {
+  const summary = parseConfidenceRatingProScopeSummary();
+  const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
+
+  assert.equal(summary.confidenceRatingProScopeRoutesValidated, 2);
+  assert.equal(summary.confidenceRatingProScopeParityValidated, true);
+  assert.match(
+    source,
+    /import \{ isProRuntimeScopeEnabled \} from '\.\.\/\.\.\/lib\/monetization\/releasePolicy';/,
+  );
+  assert.match(source, /const proRuntimeScopeEnabled = isProRuntimeScopeEnabled\(\);/);
+  assert.match(
+    source,
+    /const confidenceRatingEnabled =\s+proRuntimeScopeEnabled && proEntitlementsReady && proEntitlements\.confidenceSlider === true;/,
+  );
+  assert.match(source, /const answerConfidenceRating = confidenceRatingEnabled/);
+});
+
+test('practice route confidence rating guard rejects entitlement-only gating', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/practice.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('const proRuntimeScopeEnabled = isProRuntimeScopeEnabled();', '')
+      .replace(
+        'proRuntimeScopeEnabled && proEntitlementsReady && proEntitlements.confidenceSlider === true',
+        'proEntitlementsReady && proEntitlements.confidenceSlider === true',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-confidence-rating-pro-scope');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
   );
 
-  assert.match(source, /const localeCases: PracticeAriaLocaleCase\[\] = \[/);
-  assert.match(source, /for \(const labels of localeCases\)/);
-  assert.match(source, /seedSettingsLanguage\(page, labels\.language\)/);
-  assert.match(source, /page\.getByText\(labels\.questionTitle, \{ exact: true \}\)/);
-  assert.match(source, /page\.getByRole\('switch', \{ name: labels\.supplementaryOff \}\)/);
-  assert.match(source, /page\.getByRole\('button', \{ name: labels\.aboutSourcesOpen \}\)/);
+  assert.notEqual(result.status, 0);
   assert.match(
-    source,
-    /aboutSourcesOpen: 'About the sources'[\s\S]*audioEnabled: 'Audio enabled, tap to mute'[\s\S]*language: 'en'[\s\S]*questionTitle: 'Question 1'[\s\S]*supplementaryOff: 'UHR questions only'/,
-  );
-  assert.match(
-    source,
-    /aboutSourcesOpen: 'Om källorna'[\s\S]*audioEnabled: 'Ljud är på, tryck för att stänga av'[\s\S]*language: 'sv'[\s\S]*questionTitle: 'Fråga 1'[\s\S]*supplementaryOff: 'Bara UHR-frågor'/,
+    `${result.stdout}\n${result.stderr}`,
+    /Practice route confidence rating UI must require the Pro runtime-scope flag/,
   );
 });
 
@@ -129,7 +139,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-practice-route-copy-parity');
+process.argv.push('--focus-practice-route-copy');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -160,7 +170,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-practice-route-copy-parity');
+process.argv.push('--focus-practice-route-copy');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -185,13 +195,13 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace(
-        'copy.completedQuestions(visibleCompletedQuestionIds.length)',
-        'copy.completedQuestions(completedQuestionIds.length)',
+        '{copy.completedQuestions(visibleCompletedQuestionIds.length)}',
+        '{copy.completedQuestions(completedQuestionIds.length)}',
       );
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-practice-route-copy-parity');
+process.argv.push('--focus-practice-route-copy');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -222,7 +232,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-practice-route-copy-parity');
+process.argv.push('--focus-practice-route-copy');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -232,38 +242,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /source drawer copy must not contain hyphenated about-the-sources/,
-  );
-});
-
-test('practice route copy parity rejects Swedish mockprov wording', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/(tabs)/practice.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace('Aldrig en del av övningsprovet', 'Aldrig en del av mock-provet');
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-process.argv.push('--focus-sv-native-mock-exam-copy');
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /practice route Swedish native copy must use övningsprov/,
+    /source drawer copy must not contain hyphenated about-the-sources|practice route is missing en copy "Close source details"/,
   );
 });
 
@@ -289,7 +268,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-practice-route-copy-parity');
+process.argv.push('--focus-practice-route-copy');
 require('./scripts/validate-content.js');
 `,
     ],

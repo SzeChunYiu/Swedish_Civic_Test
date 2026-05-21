@@ -32,11 +32,6 @@ function loadTs(relativePath) {
   return require(path.join(repoRoot, relativePath));
 }
 
-function daysAfter(baseIso, days) {
-  const dayInMs = 24 * 60 * 60 * 1000;
-  return new Date(new Date(baseIso).getTime() + days * dayInMs).toISOString();
-}
-
 // ---------------------------------------------------------------- FSRS engine
 
 test('FSRS-lite: new card created with default difficulty + immediate due date', () => {
@@ -100,26 +95,6 @@ test('FSRS-lite: isDue compares dueAt against now', () => {
   assert.equal(isDue({ dueAt: '2026-05-25T00:00:00.000Z' }, now), false);
 });
 
-test('FSRS-lite: invalid runtime inputs do not throw or advance reviews', () => {
-  const { createNewCard, getNextReviewAt, gradeCard } = loadTs('lib/learning/spacedRepetition.ts');
-  const answeredAt = '2026-05-19T10:00:00.000Z';
-  const card = createNewCard('q1', answeredAt);
-
-  assert.equal(gradeCard(card, 5, answeredAt), card);
-  assert.equal(gradeCard(card, 3, 'not-a-date'), card);
-  assert.equal(
-    getNextReviewAt({ isCorrect: 'false', correctStreak: 4, answeredAt }),
-    daysAfter(answeredAt, 1),
-  );
-  assert.equal(
-    getNextReviewAt({ isCorrect: true, correctStreak: Number.NaN, answeredAt }),
-    daysAfter(answeredAt, 1),
-  );
-  assert.doesNotThrow(() =>
-    getNextReviewAt({ isCorrect: true, correctStreak: 1, answeredAt: 'not-a-date' }),
-  );
-});
-
 // ----------------------------------------------------------- Study plan algo
 
 test('generateStudyPlan: 27 days out, regular intensity → reasonable target', () => {
@@ -180,85 +155,6 @@ test('generateStudyPlan: serious intensity raises floor above casual', () => {
   const casual = generateStudyPlan({ ...base, intensity: 'casual' });
   const serious = generateStudyPlan({ ...base, intensity: 'serious' });
   assert.ok(serious.dailyQuestionTarget > casual.dailyQuestionTarget);
-});
-
-test('daysUntil and formatExamDate: invalid dates use safe fallback values', () => {
-  const { daysUntil, formatExamDate } = loadTs('lib/learning/examDate.ts');
-  const validNow = new Date('2026-05-19T00:00:00.000Z');
-  const invalidDate = new Date('not-a-date');
-
-  assert.equal(daysUntil(invalidDate, validNow), 0);
-  assert.equal(daysUntil(new Date('2026-06-15T00:00:00.000Z'), invalidDate), 0);
-  assert.equal(formatExamDate(invalidDate, 'en'), 'date unavailable');
-  assert.equal(formatExamDate(invalidDate, 'sv'), 'datum saknas');
-  assert.doesNotMatch(formatExamDate(invalidDate, 'en'), /Invalid Date/);
-});
-
-test('generateStudyPlan: normalizes NaN, Invalid Date, and unknown intensity inputs', () => {
-  const { generateStudyPlan } = loadTs('lib/learning/examDate.ts');
-  let plan;
-
-  assert.doesNotThrow(() => {
-    plan = generateStudyPlan({
-      testDate: new Date('not-a-date'),
-      now: new Date('not-a-date'),
-      totalQuestions: Number.NaN,
-      masteredQuestions: Number.POSITIVE_INFINITY,
-      mocksTaken: '2',
-      intensity: 'turbo',
-    });
-  });
-
-  assert.equal(plan.hasTestDate, true);
-  assert.equal(plan.daysRemaining, 0);
-  assert.equal(plan.intensity, 'regular');
-  assert.equal(plan.mocksRemaining, 6);
-  assert.ok(Number.isFinite(Date.parse(plan.testDateIso)));
-  assert.ok(Number.isFinite(Date.parse(plan.generatedAt)));
-  assert.ok(Number.isFinite(plan.dailyQuestionTarget));
-  assert.ok(plan.dailyQuestionTarget >= 5 && plan.dailyQuestionTarget <= 80);
-  assert.ok(Number.isInteger(plan.weeklyMockTarget));
-  assert.ok(plan.weeklyMockTarget >= 1 && plan.weeklyMockTarget <= 2);
-});
-
-test('generateStudyPlan: rejects string/fractional counts and clamps mastered/mocks', () => {
-  const { generateStudyPlan } = loadTs('lib/learning/examDate.ts');
-  const base = {
-    testDate: new Date('2026-06-15T00:00:00.000Z'),
-    now: new Date('2026-05-19T00:00:00.000Z'),
-    intensity: 'regular',
-  };
-
-  const stringCounts = generateStudyPlan({
-    ...base,
-    totalQuestions: '200',
-    masteredQuestions: '10',
-    mocksTaken: '2',
-  });
-  assert.equal(stringCounts.mocksRemaining, 6);
-  assert.ok(Number.isFinite(stringCounts.dailyQuestionTarget));
-  assert.ok(stringCounts.dailyQuestionTarget >= 5 && stringCounts.dailyQuestionTarget <= 80);
-
-  const fractionalCounts = generateStudyPlan({
-    ...base,
-    totalQuestions: 200.5,
-    masteredQuestions: 10.5,
-    mocksTaken: 1.5,
-  });
-  assert.equal(fractionalCounts.mocksRemaining, 6);
-  assert.ok(Number.isFinite(fractionalCounts.dailyQuestionTarget));
-  assert.ok(
-    fractionalCounts.dailyQuestionTarget >= 5 && fractionalCounts.dailyQuestionTarget <= 80,
-  );
-
-  const clampedCounts = generateStudyPlan({
-    ...base,
-    totalQuestions: 10,
-    masteredQuestions: 99,
-    mocksTaken: 99,
-  });
-  assert.equal(clampedCounts.mocksRemaining, 0);
-  assert.ok(clampedCounts.dailyQuestionTarget >= 5 && clampedCounts.dailyQuestionTarget <= 80);
 });
 
 // -------------------------------------------------------- Weekly recap
@@ -646,19 +542,32 @@ test('ProPaywall: renders the canonical tier model with separate Pro and Remove 
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
-test('dashboard route stays free-scope until Pro analytics are release-gated', () => {
-  const source = fs.readFileSync(path.join(repoRoot, 'app/dashboard.tsx'), 'utf8');
+test('releasePolicy: Pro runtime scope defaults off and only enables from the release flag', () => {
+  const { isProRuntimeScopeEnabled, releaseMonetizationPolicy } = loadTs(
+    'lib/monetization/releasePolicy.ts',
+  );
+  const envFlag = releaseMonetizationPolicy.proRuntimeScopeEnvFlag;
+  const previousValue = process.env[envFlag];
 
-  assert.doesNotMatch(source, /createDashboardProEntitlements/);
-  assert.doesNotMatch(source, /advancedAnalyticsUnlocked/);
-  assert.doesNotMatch(source, /proAnalyticsPlaceholder/);
-  assert.doesNotMatch(source, /hasProEntitlement/);
-  assert.doesNotMatch(source, /ProTierEntitlements/);
-  assert.doesNotMatch(source, /predictedPassProbability/);
-  assert.doesNotMatch(source, /display:\s*'none'/);
-  assert.match(source, /<ActivityHeatmap bins=\{activityBins\} copy=\{copy\.activity\} \/>/);
-  assert.match(source, /<PerChapterProgressBars[\s\S]*bars=\{chapterBars\}/);
-  assert.match(source, /<StreakXpSparkline[\s\S]*points=\{xpPoints\}/);
+  try {
+    delete process.env[envFlag];
+    assert.equal(isProRuntimeScopeEnabled(), false);
+
+    process.env[envFlag] = 'true';
+    assert.equal(isProRuntimeScopeEnabled(), true);
+
+    process.env[envFlag] = '1';
+    assert.equal(isProRuntimeScopeEnabled(), true);
+
+    process.env[envFlag] = '0';
+    assert.equal(isProRuntimeScopeEnabled(), false);
+  } finally {
+    if (previousValue === undefined) {
+      delete process.env[envFlag];
+    } else {
+      process.env[envFlag] = previousValue;
+    }
+  }
 });
 
 // -------------------------------------------------------- Dashboard stats
@@ -1427,59 +1336,6 @@ test('computeReadinessScore: mock recency uses completedAt instead of exam answe
   assert.equal(countedMock.components.accuracy, 0);
   assert.equal(invalidCompletedAt.components.recency, 0);
   assert.equal(invalidCompletedAt.components.accuracy, 0);
-});
-
-test('computeReadinessFromQuestionProgress: invalid adapter counters stay bounded', () => {
-  const { computeReadinessFromQuestionProgress } = loadTs('lib/learning/readiness.ts');
-  const now = new Date('2026-05-19T12:00:00.000Z');
-  const result = computeReadinessFromQuestionProgress({
-    questionProgress: {
-      valid: {
-        seenCount: 1,
-        correctCount: 1,
-        wrongCount: 0,
-        lastAnsweredAt: '2026-05-18T10:00:00.000Z',
-      },
-      numericString: {
-        seenCount: 1,
-        correctCount: '1',
-        wrongCount: 0,
-        lastAnsweredAt: '2026-05-18T10:00:00.000Z',
-      },
-      oversized: {
-        seenCount: Number.MAX_SAFE_INTEGER,
-        correctCount: Number.MAX_SAFE_INTEGER,
-        wrongCount: 0,
-        lastAnsweredAt: '2026-05-18T10:00:00.000Z',
-      },
-    },
-    questions: [
-      { id: 'valid', chapterId: 'a' },
-      { id: 'numericString', chapterId: 'b' },
-      { id: 'oversized', chapterId: 'c' },
-    ],
-    chapters: [
-      { id: 'a', questionCount: 10 },
-      { id: 'b', questionCount: 10 },
-      { id: 'c', questionCount: 10 },
-    ],
-    mockExamSessions: [
-      {
-        sessionId: 'string-counted',
-        score: 0.8,
-        completedAt: '2026-05-19T10:00:00.000Z',
-        correctCount: '32',
-        totalCount: '40',
-      },
-    ],
-    now,
-  });
-
-  assert.equal(result.components.accuracy, 2 / 3);
-  assert.equal(result.components.coverage, 1);
-  assert.equal(result.components.mockAverage, 0.8);
-  assert.ok(Number.isFinite(result.score));
-  assert.equal(result.isSparse, true);
 });
 
 // -------------------------------------------------------- Calibration

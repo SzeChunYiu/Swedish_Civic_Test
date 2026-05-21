@@ -16,12 +16,8 @@ import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
-import { useQuestionAudioAutoplay } from '../../lib/audio/questionAudioAutoplay';
-import {
-  buildAnswerFeedbackSpeechText,
-  buildQuestionSpeechText,
-  stopSpeech,
-} from '../../lib/audio/speak';
+import { buildAnswerFeedbackSpeechText, buildQuestionSpeechText } from '../../lib/audio/speak';
+import { isProRuntimeScopeEnabled } from '../../lib/monetization/releasePolicy';
 import { useProLifetimeEntitlements } from '../../lib/monetization/useProLifetimeEntitlements';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
@@ -29,21 +25,15 @@ import { getQuestionOptionText } from '../../lib/quiz/questionText';
 import { scoreAnswers } from '../../lib/quiz/scoring';
 import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
 import { useProgressStore } from '../../lib/storage/progressStore';
-import { useAccessibilityStore } from '../../lib/storage/accessibilityStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 import type { ConfidenceRating } from '../../types/progress';
 
 type QuizSessionCopy = {
-  backToSearch: string;
-  backToSearchAccessibilityLabel: string;
   backToPractice: string;
   backToPracticeAccessibilityLabel: string;
   badge: string;
-  emptyBody: string;
   emptyTitle: string;
-  notFoundBody: string;
-  notFoundTitle: string;
   scoreLabel: string;
   sessionSubtitle: string;
   sessionTitle: (sessionId: string) => string;
@@ -53,15 +43,10 @@ type QuizSessionCopy = {
 
 const quizSessionCopy: Record<AppLanguage, QuizSessionCopy> = {
   sv: {
-    backToSearch: 'Sök övningsfrågor',
-    backToSearchAccessibilityLabel: 'Sök efter övningsfrågor',
     backToPractice: 'Tillbaka till övning',
     backToPracticeAccessibilityLabel: 'Tillbaka till övning',
     badge: 'Frågepass',
-    emptyBody: 'Gå tillbaka till övning eller sök när frågor har lagts till.',
     emptyTitle: 'Det finns inga övningsfrågor ännu.',
-    notFoundBody: 'Vi hittar ingen övningsfråga för den här länken.',
-    notFoundTitle: 'Frågan hittades inte',
     scoreLabel: 'Poäng',
     sessionSubtitle: 'Besvara frågan och gå sedan igenom den källbaserade återkopplingen.',
     sessionTitle: (currentSessionId) => `Frågepass ${currentSessionId}`,
@@ -69,15 +54,10 @@ const quizSessionCopy: Record<AppLanguage, QuizSessionCopy> = {
     tryAgainAccessibilityLabel: 'Försök igen med den här frågan',
   },
   en: {
-    backToSearch: 'Search questions',
-    backToSearchAccessibilityLabel: 'Search for practice questions',
     backToPractice: 'Back to Practice',
     backToPracticeAccessibilityLabel: 'Back to practice',
     badge: 'Quiz session',
-    emptyBody: 'Go back to Practice or Search when questions have been added.',
     emptyTitle: 'No quiz questions are available yet.',
-    notFoundBody: 'We could not find a practice question for this link.',
-    notFoundTitle: 'Question not found',
     scoreLabel: 'Score',
     sessionSubtitle: 'Answer the routed question, then review the source-backed feedback.',
     sessionTitle: (currentSessionId) => `Session ${currentSessionId}`,
@@ -93,7 +73,13 @@ function normalizeSessionId(sessionId: string | string[] | undefined): string {
 
 function pickSessionQuestion(sessionId: string) {
   const exactMatch = questions.find((question) => question.id === sessionId);
-  return exactMatch;
+  if (exactMatch || questions.length === 0) return exactMatch;
+
+  const stableIndex =
+    [...sessionId].reduce((total, character) => total + character.charCodeAt(0), 0) %
+    questions.length;
+
+  return questions[stableIndex];
 }
 
 export default function QuizSessionScreen() {
@@ -119,26 +105,12 @@ export default function QuizSessionScreen() {
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
-  const audioPlaybackRate = useAccessibilityStore((state) => state.audioPlaybackRate);
-  const listenFirstAudioEnabled = useAccessibilityStore((state) => state.listenFirstAudioEnabled);
   const { entitlements: proEntitlements, entitlementsReady: proEntitlementsReady } =
     useProLifetimeEntitlements();
-  const confidenceRatingEnabled = proEntitlementsReady && proEntitlements.confidenceSlider === true;
+  const proRuntimeScopeEnabled = isProRuntimeScopeEnabled();
+  const confidenceRatingEnabled =
+    proRuntimeScopeEnabled && proEntitlementsReady && proEntitlements.confidenceSlider === true;
   const copy = quizSessionCopy[language];
-  const hasSelectedAnswer = Boolean(selectedOptionId);
-  const questionSpeechText = useMemo(
-    () => (question ? buildQuestionSpeechText(question) : ''),
-    [question],
-  );
-
-  useQuestionAudioAutoplay({
-    audioEnabled,
-    listenFirstAudioEnabled,
-    questionKey: question ? `${normalizedSessionId}:${question.id}` : null,
-    rate: audioPlaybackRate,
-    speechText: questionSpeechText,
-    stopSignal: hasSelectedAnswer,
-  });
 
   useEffect(() => {
     setSelectedOptionId(null);
@@ -146,38 +118,24 @@ export default function QuizSessionScreen() {
   }, [normalizedSessionId, question?.id]);
 
   if (!question) {
-    const unknownSessionId = questions.length > 0;
-
     return (
       <View style={styles.emptyContainer}>
         <Text accessibilityRole="header" style={styles.title}>
-          {unknownSessionId ? copy.notFoundTitle : copy.emptyTitle}
+          {copy.emptyTitle}
         </Text>
-        <Text style={styles.emptyBody}>
-          {unknownSessionId ? copy.notFoundBody : copy.emptyBody}
-        </Text>
-        <View style={styles.actions}>
-          <Link
-            accessibilityLabel={copy.backToPracticeAccessibilityLabel}
-            accessibilityRole="link"
-            href="/practice"
-            style={styles.linkButton}
-          >
-            {copy.backToPractice}
-          </Link>
-          <Link
-            accessibilityLabel={copy.backToSearchAccessibilityLabel}
-            accessibilityRole="link"
-            href="/search"
-            style={styles.linkButton}
-          >
-            {copy.backToSearch}
-          </Link>
-        </View>
+        <Link
+          accessibilityLabel={copy.backToPracticeAccessibilityLabel}
+          accessibilityRole="link"
+          href="/practice"
+          style={styles.link}
+        >
+          {copy.backToPractice}
+        </Link>
       </View>
     );
   }
 
+  const hasSelectedAnswer = Boolean(selectedOptionId);
   const selectedIsCorrect = selectedOptionId ? isCorrectAnswer(question, selectedOptionId) : false;
   const score = hasSelectedAnswer ? scoreAnswers([selectedIsCorrect]) : null;
   const celebrationStreak = selectedIsCorrect
@@ -185,7 +143,6 @@ export default function QuizSessionScreen() {
     : 0;
 
   const handleSelectOption = (optionId: string) => {
-    stopSpeech();
     const selectedOption = question.options.find((option) => option.id === optionId);
     const optionIsCorrect = isCorrectAnswer(question, optionId);
     const answerConfidenceRating = confidenceRatingEnabled
@@ -204,7 +161,6 @@ export default function QuizSessionScreen() {
     }
   };
   const handleTryAgain = () => {
-    stopSpeech();
     setSelectedOptionId(null);
     setSelectedConfidenceRating(null);
   };
@@ -225,8 +181,7 @@ export default function QuizSessionScreen() {
       <AudioButton
         enabled={audioEnabled}
         language={language}
-        rate={audioPlaybackRate}
-        text={questionSpeechText}
+        text={buildQuestionSpeechText(question)}
       />
       {confidenceRatingEnabled ? (
         <ConfidenceRatingPicker
@@ -282,7 +237,6 @@ export default function QuizSessionScreen() {
           <FeedbackAudioButton
             enabled={audioEnabled}
             language={language}
-            rate={audioPlaybackRate}
             text={buildAnswerFeedbackSpeechText(question, selectedOptionId)}
           />
           <UHRReferenceCard language={language} reference={question.uhrReference} />
@@ -354,13 +308,6 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontSize: typography.body.fontSize,
     lineHeight: typography.body.lineHeight,
-  },
-  emptyBody: {
-    color: colors.textMuted,
-    fontSize: typography.body.fontSize,
-    lineHeight: typography.body.lineHeight,
-    maxWidth: 420,
-    textAlign: 'center',
   },
   options: {
     gap: space[1],

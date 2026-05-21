@@ -19,6 +19,19 @@ function parseValidationSummary() {
   return JSON.parse(match[0]);
 }
 
+function parseConfidenceRatingProScopeSummary() {
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-confidence-rating-pro-scope'],
+    {
+      encoding: 'utf8',
+    },
+  );
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused confidence-rating validation should print JSON summary');
+  return JSON.parse(match[0]);
+}
+
 test('routed quiz shell copy follows the persisted settings language', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/quiz/[sessionId].tsx'), 'utf8');
@@ -50,6 +63,59 @@ test('routed quiz shell copy follows the persisted settings language', () => {
   assert.match(source, /<UHRReferenceCard language=\{language\}/);
   assert.match(source, /return exactMatch;/);
   assert.doesNotMatch(source, /stableIndex|charCodeAt|return\s+questions\[/);
+});
+
+test('routed quiz confidence rating stays behind the Pro runtime scope gate', () => {
+  const summary = parseConfidenceRatingProScopeSummary();
+  const source = fs.readFileSync(path.join(repoRoot, 'app/quiz/[sessionId].tsx'), 'utf8');
+
+  assert.equal(summary.confidenceRatingProScopeRoutesValidated, 2);
+  assert.equal(summary.confidenceRatingProScopeParityValidated, true);
+  assert.match(
+    source,
+    /import \{ isProRuntimeScopeEnabled \} from '\.\.\/\.\.\/lib\/monetization\/releasePolicy';/,
+  );
+  assert.match(source, /const proRuntimeScopeEnabled = isProRuntimeScopeEnabled\(\);/);
+  assert.match(
+    source,
+    /const confidenceRatingEnabled =\s+proRuntimeScopeEnabled && proEntitlementsReady && proEntitlements\.confidenceSlider === true;/,
+  );
+  assert.match(source, /const answerConfidenceRating = confidenceRatingEnabled/);
+});
+
+test('routed quiz confidence rating guard rejects entitlement-only gating', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/quiz/[sessionId].tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('const proRuntimeScopeEnabled = isProRuntimeScopeEnabled();', '')
+      .replace(
+        'proRuntimeScopeEnabled && proEntitlementsReady && proEntitlements.confidenceSlider === true',
+        'proEntitlementsReady && proEntitlements.confidenceSlider === true',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-confidence-rating-pro-scope');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /routed quiz confidence rating UI must require the Pro runtime-scope flag/,
+  );
 });
 
 test('native routed Swedish study copy avoids learner-facing quiz loanwords', () => {
