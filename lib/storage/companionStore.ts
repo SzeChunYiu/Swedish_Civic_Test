@@ -11,7 +11,7 @@ import { create } from 'zustand';
 
 import { DEFAULT_COMPANION_ID, isMascotId, type MascotId } from '../mascot/catalog';
 import type { RecoverablePersistenceWarning } from './persistenceWarning';
-import { writeRecoverably } from './persistenceWarning';
+import { readRecoverably, writeRecoverably } from './persistenceWarning';
 
 const SELECTED_ID_KEY = 'companion.selectedId.v1';
 const companionStorageId = 'companion';
@@ -23,12 +23,17 @@ try {
   companionStorage = null;
 }
 
-function readSelected(): MascotId {
-  try {
-    return resolveCompanionId(companionStorage?.getString(SELECTED_ID_KEY));
-  } catch {
-    return DEFAULT_COMPANION_ID;
-  }
+function readSelected(): {
+  persistenceWarning: RecoverablePersistenceWarning | null;
+  selectedId: MascotId;
+} {
+  const result = readRecoverably(companionStorage, companionStorageId, SELECTED_ID_KEY, () =>
+    companionStorage?.getString(SELECTED_ID_KEY),
+  );
+  return {
+    persistenceWarning: result.warning,
+    selectedId: resolveCompanionId(result.value),
+  };
 }
 
 type CompanionState = {
@@ -39,9 +44,11 @@ type CompanionState = {
   clearPersistenceWarning: () => void;
 };
 
+const initialCompanionState = readSelected();
+
 export const useCompanionStore = create<CompanionState>((set) => ({
-  selectedId: readSelected(),
-  persistenceWarning: null,
+  selectedId: initialCompanionState.selectedId,
+  persistenceWarning: initialCompanionState.persistenceWarning,
   setSelected: (id) => {
     if (!isMascotId(id)) return;
     const persistenceWarning = writeRecoverably(

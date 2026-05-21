@@ -8,6 +8,7 @@ import { getNextReviewAt } from '../learning/spacedRepetition';
 import { createInitialFreezeState, type StreakFreezeState } from '../learning/streakWithFreeze';
 import { getLocalDateKey } from '../learning/streaks';
 import { calculateAnswerXp, calculateQuizCompletionXp } from '../learning/xp';
+import { isSafeImportedMapKey } from './importKeySafety';
 import type { RecoverablePersistenceWarning } from './persistenceWarning';
 import { writeRecoverably } from './persistenceWarning';
 
@@ -307,7 +308,9 @@ function normalizeProgress(value: unknown): PersistedProgress {
 
   const candidate = value as Partial<PersistedProgress>;
   const completedQuestionIds = Array.isArray(candidate.completedQuestionIds)
-    ? candidate.completedQuestionIds.filter((id): id is string => typeof id === 'string')
+    ? candidate.completedQuestionIds.filter(
+        (id): id is string => typeof id === 'string' && isSafeImportedMapKey(id),
+      )
     : [];
   const answerDates = Array.isArray(candidate.answerDates)
     ? [
@@ -328,6 +331,7 @@ function normalizeProgress(value: unknown): PersistedProgress {
 
   if (candidate.questionProgress && typeof candidate.questionProgress === 'object') {
     for (const [questionId, progress] of Object.entries(candidate.questionProgress)) {
+      if (!isSafeImportedMapKey(questionId)) continue;
       if (!progress || typeof progress !== 'object') continue;
       const item = progress as Partial<QuestionProgress>;
       const rawCorrectCount = normalizeNonNegativeInteger(

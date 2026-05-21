@@ -212,9 +212,13 @@ test('companion store: throwing MMKV reads fall back to the default companion', 
     companion: storage,
   });
   const { DEFAULT_COMPANION_ID } = loadTs('lib/mascot/catalog.ts');
+  const state = useCompanionStore.getState();
 
-  assert.equal(useCompanionStore.getState().selectedId, DEFAULT_COMPANION_ID);
-  assert.equal(useCompanionStore.getState().persistenceWarning, null);
+  assert.equal(state.selectedId, DEFAULT_COMPANION_ID);
+  assert.equal(state.persistenceWarning.recoverable, true);
+  assert.equal(state.persistenceWarning.storageId, 'companion');
+  assert.equal(state.persistenceWarning.key, 'companion.selectedId.v1');
+  assert.equal(state.persistenceWarning.operation, 'read');
 });
 
 test('companion store: successful writes persist and clear persistence warning', () => {
