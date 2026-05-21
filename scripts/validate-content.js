@@ -630,6 +630,11 @@ const EXPECTED_MASTERY_RULE_COUNT = 17;
 const EXPECTED_WEAK_CHAPTER_RULE_COUNT = 5;
 const EXPECTED_READINESS_ADAPTER_RULE_COUNT = 6;
 const EXPECTED_SUPPORTED_LANGUAGES = ['sv', 'en'];
+const BASE_CONTENT_LOCALES = new Set(['sv', 'en']);
+const CHAPTER_LOCALIZATION_ENGLISH_GLOSS_PATTERNS = [
+  { label: 'welfare', pattern: /\(welfare\)/i },
+  { label: 'public service', pattern: /\bpublic service\b/i },
+];
 const EXPECTED_LANGUAGE_LABELS = {
   sv: 'Swedish',
   en: 'English support',
@@ -8202,6 +8207,23 @@ function chapterTextFieldsAreNormalized(chapter) {
   return ['id', 'nameSv', 'nameEn', 'descriptionSv', 'descriptionEn'].every((field) =>
     textIsTrimmedSingleSpaced(chapter[field]),
   );
+}
+
+function chapterLocalizationEnglishGlossFailures(chapter, label) {
+  const failures = [];
+  for (const field of ['nameText', 'descriptionText']) {
+    const localized = chapter?.[field];
+    if (!isObjectRecord(localized)) continue;
+    for (const [locale, value] of Object.entries(localized)) {
+      if (BASE_CONTENT_LOCALES.has(locale) || typeof value !== 'string') continue;
+      for (const { label: patternLabel, pattern } of CHAPTER_LOCALIZATION_ENGLISH_GLOSS_PATTERNS) {
+        if (pattern.test(value)) {
+          failures.push(`${label}.${field}.${locale} contains bare English ${patternLabel}`);
+        }
+      }
+    }
+  }
+  return failures;
 }
 
 function validateQuestionSchema(question, index) {
@@ -21996,6 +22018,9 @@ if (Array.isArray(chapters)) {
       if (chapterTextFieldsAreNormalized(chapter)) {
         chapterTextFieldsNormalizedValidated += 1;
       }
+      chapterLocalizationEnglishGlossFailures(chapter, chapter.id || `chapter[${index}]`).forEach(
+        (message) => fail(message),
+      );
     }
   });
 }
