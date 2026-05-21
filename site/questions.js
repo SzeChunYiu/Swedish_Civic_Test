@@ -40703,7 +40703,7 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'true_false',
       q: {
-        en: 'Every five years.',
+        en: 'Elections to the European Parliament are held every five years.',
         sv: 'Val till EU-parlamentet hålls vart femte år.',
       },
       opts: [
@@ -40743,7 +40743,7 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'true_false',
       q: {
-        en: 'Every four years.',
+        en: 'Elections to the European Parliament are held every four years.',
         sv: 'Val till EU-parlamentet hålls vart fjärde år.',
       },
       opts: [
@@ -41213,8 +41213,8 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'true_false',
       q: {
-        en: 'Which polling station the voter should go to.',
-        sv: 'Vilken vallokal väljaren ska gå till.',
+        en: 'The voting card shows which polling station the voter should go to.',
+        sv: 'Röstkortet visar vilken vallokal väljaren ska gå till.',
       },
       opts: [
         {
@@ -41247,8 +41247,8 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'true_false',
       q: {
-        en: 'Which party the voter must vote for.',
-        sv: 'Vilket parti väljaren måste rösta på.',
+        en: 'The voting card shows which party the voter must vote for.',
+        sv: 'Röstkortet visar vilket parti väljaren måste rösta på.',
       },
       opts: [
         {
@@ -41458,8 +41458,8 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'true_false',
       q: {
-        en: 'Become a member of a political party or start a new party together with others.',
-        sv: 'Bli medlem i ett politiskt parti eller starta ett nytt parti tillsammans med andra.',
+        en: 'A person can influence party politics by becoming a member of a political party or starting a new party together with others.',
+        sv: 'En person kan påverka partipolitik genom att bli medlem i ett politiskt parti eller starta ett nytt parti tillsammans med andra.',
       },
       opts: [
         {
@@ -41499,8 +41499,8 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'true_false',
       q: {
-        en: 'Only vote if the person already sits in the Riksdag.',
-        sv: 'Bara rösta om personen redan sitter i riksdagen.',
+        en: 'A person can influence party politics only by voting if they already sit in the Riksdag.',
+        sv: 'En person kan bara påverka partipolitik genom att rösta om personen redan sitter i riksdagen.',
       },
       opts: [
         {

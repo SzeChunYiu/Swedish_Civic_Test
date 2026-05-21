@@ -1287,3 +1287,67 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
     );
   });
 });
+
+test('derivePublishedQuestions writes standalone generated civic answer-option propositions', () => {
+  const { questions } = loadTs('data/questions.ts');
+  const byId = new Map(questions.map((question) => [question.id, question]));
+  const expectedRows = {
+    q767: [
+      'Kommersiella radio- och tv-kanaler kan få inkomster genom att sälja reklamplats eller ta betalt för en särskild kanal.',
+      'Commercial radio and TV channels can earn income by selling advertising space or charging for a specific channel.',
+      'true',
+    ],
+    q768: [
+      'Kommersiella radio- och tv-kanaler kan få inkomster genom domstolsavgifter från rättegångar.',
+      'Commercial radio and TV channels can earn income through court fees from trials.',
+      'false',
+    ],
+    q827: [
+      'Val till EU-parlamentet hålls vart femte år.',
+      'Elections to the European Parliament are held every five years.',
+      'true',
+    ],
+    q828: [
+      'Val till EU-parlamentet hålls vart fjärde år.',
+      'Elections to the European Parliament are held every four years.',
+      'false',
+    ],
+    q835: [
+      'Röstkortet visar vilken vallokal väljaren ska gå till.',
+      'The voting card shows which polling station the voter should go to.',
+      'true',
+    ],
+    q836: [
+      'Röstkortet visar vilket parti väljaren måste rösta på.',
+      'The voting card shows which party the voter must vote for.',
+      'false',
+    ],
+    q839: [
+      'En person kan påverka partipolitik genom att bli medlem i ett politiskt parti eller starta ett nytt parti tillsammans med andra.',
+      'A person can influence party politics by becoming a member of a political party or starting a new party together with others.',
+      'true',
+    ],
+    q840: [
+      'En person kan bara påverka partipolitik genom att rösta om personen redan sitter i riksdagen.',
+      'A person can influence party politics only by voting if they already sit in the Riksdag.',
+      'false',
+    ],
+  };
+
+  for (const [id, [questionSv, questionEn, correctOptionId]] of Object.entries(expectedRows)) {
+    const question = byId.get(id);
+    assert.ok(question, `${id} must exist`);
+    assert.equal(question.type, 'true_false', `${id} type`);
+    assert.equal(question.correctOptionId, correctOptionId, `${id} correct option`);
+    assert.equal(question.questionSv, questionSv, `${id} Swedish generated stem`);
+    assert.equal(question.questionEn, questionEn, `${id} English generated stem`);
+  }
+
+  const checkedText = Object.keys(expectedRows)
+    .map((id) => `${byId.get(id).questionSv} ${byId.get(id).questionEn}`)
+    .join('\n');
+  assert.doesNotMatch(
+    checkedText,
+    /^(?:De säljer reklamplats|Genom domstolsavgifter|Vart femte år|Vart fjärde år|Vilken vallokal|Vilket parti|Bli medlem|Bara rösta|They sell advertising|Through court fees|Every five years|Every four years|Which polling station|Which party|Become a member|Only vote if)/im,
+  );
+});
