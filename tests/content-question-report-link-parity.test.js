@@ -26,32 +26,24 @@ test('question report CTA is wired from question surfaces to support context', (
     path.join(repoRoot, 'components/quiz/QuestionReportLink.tsx'),
     'utf8',
   );
+  const chapterSource = fs.readFileSync(path.join(repoRoot, 'app/chapter/[chapterId].tsx'), 'utf8');
   const supportSource = fs.readFileSync(path.join(repoRoot, 'app/support.tsx'), 'utf8');
   const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
 
-  assert.equal(summary.questionReportLinkRulesValidated, 34);
+  assert.equal(summary.questionReportLinkRulesValidated, 23);
   assert.equal(summary.questionReportLinkParityValidated, true);
   assert.match(componentSource, /Rapportera den här frågan/);
   assert.match(componentSource, /Report this question/);
-  assert.match(
-    componentSource,
-    /type QuestionReportScreen = 'chapter' \| 'exam' \| 'practice' \| 'quiz';/,
-  );
   assert.match(componentSource, /selectedOptionId\?: string \| null/);
   assert.match(componentSource, /getQuestionSourceCitation\(question, language\)/);
   assert.match(componentSource, /selectedAnswer \? \['selectedAnswer', selectedAnswer\] : null/);
   assert.match(componentSource, /minHeight: space\[6\]/);
-  assert.match(supportSource, /const questionReportParamLimits = \{/);
-  assert.match(supportSource, /const questionReportQuestionIdPattern = \/\^q\\d\{3,5\}\$\//);
-  assert.match(supportSource, /const questionReportLanguages = \['sv', 'en'\]/);
+  assert.match(chapterSource, /import \{ QuestionReportLink \}/);
   assert.match(
-    supportSource,
-    /const questionReportScreens = \['chapter', 'exam', 'practice', 'quiz'\]/,
+    chapterSource,
+    /<QuestionReportLink\s+language=\{language\}\s+question=\{question\}\s+screen="chapter"\s+\/>/,
   );
-  assert.match(supportSource, /exam: 'Övningsprov'/);
-  assert.match(supportSource, /exam: 'Mock exam'/);
-  assert.match(supportSource, /getQuestionReportContext\(params, language\)/);
-  assert.match(supportSource, /selectedAnswer: getQuestionReportTextParam/);
+  assert.doesNotMatch(chapterSource, /screen="chapter"[\s\S]*selectedOptionId=/);
   assert.match(supportSource, /Lägg inte till namn, personnummer, ärendenummer/);
   assert.match(supportSource, /Do not add names, personal identity numbers, case numbers/);
   assert.doesNotMatch(supportSource, /mailto:|Linking\.openURL|fetch\(/);
@@ -59,65 +51,6 @@ test('question report CTA is wired from question surfaces to support context', (
     packageJson.scripts['test:content'],
     /tests\/content-question-report-link-parity\.test\.js/,
   );
-});
-
-test('question report parity rejects unbounded support query context', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-process.argv.push('--focus-question-report-link-parity');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/support.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace('const questionReportParamLimits = {', 'const removedQuestionReportParamLimits = {');
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /QuestionReportLink missing question report param limits/,
-  );
-});
-
-test('question report parity rejects unknown support screen labels', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-process.argv.push('--focus-question-report-link-parity');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/support.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace("const questionReportScreens = ['chapter', 'exam', 'practice', 'quiz'] as const;", "const questionReportScreens = ['chapter', 'practice', 'quiz'] as const;");
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(`${result.stdout}\n${result.stderr}`, /QuestionReportLink missing screen allowlist/);
 });
 
 test('question report parity rejects dropping the practice feedback CTA', () => {
@@ -148,6 +81,71 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /QuestionReportLink missing practice feedback selected answer context/,
+  );
+});
+
+test('question report parity rejects dropping the chapter reader CTA', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+process.argv.push('--focus-question-report-link-parity');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/chapter/[chapterId].tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(/\\n\\s*<QuestionReportLink\\s+language=\\{language\\}\\s+question=\\{question\\}\\s+screen="chapter"\\s+\\/>/, '');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /QuestionReportLink missing chapter reader source context/,
+  );
+});
+
+test('question report parity rejects selected-answer context from chapter reading', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+process.argv.push('--focus-question-report-link-parity');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/chapter/[chapterId].tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        '<QuestionReportLink language={language} question={question} screen="chapter" />',
+        '<QuestionReportLink language={language} question={question} screen="chapter" selectedOptionId={question.correctOptionId} />',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /QuestionReportLink chapter reader must not include selected answer context/,
   );
 });
 

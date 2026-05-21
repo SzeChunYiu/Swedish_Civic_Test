@@ -4,6 +4,7 @@ import type { ListRenderItem } from 'react-native';
 
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
+import { QuestionReportLink } from '../../components/quiz/QuestionReportLink';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { Button } from '../../components/Button';
 import { chapters } from '../../data/chapters';
@@ -70,7 +71,6 @@ export default function ChapterScreen() {
         <Link
           accessibilityLabel={copy.backToListAccessibilityLabel}
           accessibilityRole="link"
-          dismissTo
           href="/learn"
           style={styles.link}
         >
@@ -82,12 +82,20 @@ export default function ChapterScreen() {
 
   const quizSessionId = getChapterQuizSessionId(questions, chapter.id);
   const chapterTitle = copy.chapterTitle(chapter);
+  const renderQuestionItem: ListRenderItem<PracticeQuestion> = ({ item: question }) => (
+    <View style={styles.questionBlock}>
+      <QuestionCard question={question} language={language} />
+      <UHRReferenceCard language={language} reference={question.uhrReference} />
+      <QuestionReportLink language={language} question={question} screen="chapter" />
+    </View>
+  );
+  const renderQuestionSeparator = () => <View style={styles.questionSeparator} />;
+  const renderEmptyQuestions = () => <Text style={styles.empty}>{copy.emptyQuestions}</Text>;
   const renderListHeader = () => (
     <View style={styles.headerContent}>
       <Link
         accessibilityLabel={copy.backToListAccessibilityLabel}
         accessibilityRole="link"
-        dismissTo
         href="/learn"
         style={styles.link}
       >
@@ -120,14 +128,6 @@ export default function ChapterScreen() {
       </Text>
     </View>
   );
-  const renderQuestionItem: ListRenderItem<PracticeQuestion> = ({ item: question }) => (
-    <View style={styles.questionBlock}>
-      <QuestionCard question={question} language={language} />
-      <UHRReferenceCard language={language} reference={question.uhrReference} />
-    </View>
-  );
-  const renderQuestionSeparator = () => <View style={styles.questionSeparator} />;
-  const renderEmptyQuestions = () => <Text style={styles.empty}>{copy.emptyQuestions}</Text>;
 
   return (
     <FlatList
