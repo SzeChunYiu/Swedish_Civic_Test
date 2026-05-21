@@ -41,6 +41,8 @@ const saltsjobadenAgreementStiltedEnglishPattern =
   /\b(?:What did the 1938 Saltsj(?:ö|o)baden Agreement become important for|bec(?:o|a)me important for)\b/i;
 const humanRightsDefinitionCleftPattern =
   /\b(?:Att mänskliga rättigheter gäller alla betyder att|That human rights apply to everyone means)\b/i;
+const genderEqualityPolicyGoalCleftPattern =
+  /\bThe goal of Sweden’s gender equality policy means that\b/i;
 const luciaExplanationRoleScaffoldPattern =
   /\b(?:In a Lucia procession,\s+one person is Lucia|I ett luciatåg\s+(?:är en person Lucia|en person är Lucia))\b/i;
 const umeaDemonymOldSwedishPattern = /\bumebor\b/i;
@@ -1598,6 +1600,54 @@ test('human-rights definition true/false exports use direct propositions', () =>
   );
 });
 
+test('gender-equality policy goal true/false exports use direct English propositions', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q053TrueId = generatedQuestionId(sourceQuestions, 'q053', 'trueStatement');
+  const q053FalseId = generatedQuestionId(sourceQuestions, 'q053', 'falseStatement');
+  const expectedEn = [
+    'Sweden’s gender equality policy aims for women and men to have the same rights, duties, and power to influence society and their own lives.',
+    'Sweden’s gender equality policy is only about how many women are in politics.',
+  ];
+  const generatedRows = [q053TrueId, q053FalseId].map((id) =>
+    generatedSiteBank.find((question) => question.id === id),
+  );
+  const actualRows = [q053TrueId, q053FalseId].map((id) =>
+    Array.from(actualSiteBank).find((question) => question.id === id),
+  );
+  const csvRows = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/)
+    .filter((line) => [q053TrueId, q053FalseId].includes(line.match(/^"([^"]+)"/)?.[1]));
+
+  assert.ok(generatedRows.every(Boolean), 'generated q053 true/false rows should exist');
+  assert.ok(actualRows.every(Boolean), 'static q053 true/false rows should exist');
+  assert.equal(csvRows.length, 2);
+  assert.deepEqual(
+    generatedRows.map((question) => question.q.en),
+    expectedEn,
+  );
+  assert.deepEqual(
+    actualRows.map((question) => question.q.en),
+    expectedEn,
+  );
+  assert.deepEqual(
+    [...generatedRows, ...actualRows]
+      .filter((question) =>
+        genderEqualityPolicyGoalCleftPattern.test(`${question.q.sv} ${question.q.en}`),
+      )
+      .map((question) => question.id),
+    [],
+  );
+  assert.deepEqual(
+    csvRows.filter((line) => genderEqualityPolicyGoalCleftPattern.test(line)),
+    [],
+  );
+});
+
 test('free-media source prompts ask the civic concept directly in exports', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const actualSiteBank = actualStaticQuestions();
@@ -3011,6 +3061,51 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "    ? {",
         "        ...question,",
         "        ...humanRightsDefinitionResiduals[question.id],",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 2);
+});
+
+test('published question schema rejects gender-equality policy goal cleft true/false stems', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "const genderEqualityPolicyGoalResiduals = {",
+        "  [generatedFixtureId('q053', 1)]: { questionEn: 'The goal of Sweden’s gender equality policy means that women and men should have the same rights and duties and equal power to influence society and their own lives.' },",
+        "  [generatedFixtureId('q053', 2)]: { questionEn: 'The goal of Sweden’s gender equality policy means that gender equality is only about how many women are in politics.' },",
+        "};",
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  genderEqualityPolicyGoalResiduals[question.id]",
+        "    ? {",
+        "        ...question,",
+        "        ...genderEqualityPolicyGoalResiduals[question.id],",
         "      }",
         "    : question,",
         ");",

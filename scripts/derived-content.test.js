@@ -422,6 +422,71 @@ test('derivePublishedQuestions turns human-rights definition prompts into direct
   );
 });
 
+test('derivePublishedQuestions turns gender-equality policy goal prompts into direct English propositions', () => {
+  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
+  const source = {
+    id: 'q053',
+    chapterId: 'ch07',
+    type: 'single_choice',
+    questionSv: 'Vad innebär målet med Sveriges jämställdhetspolitik?',
+    questionEn: 'What does the goal of Sweden’s gender equality policy mean?',
+    options: [
+      {
+        id: 'a',
+        textSv:
+          'Att kvinnor och män ska ha samma rättigheter och skyldigheter och lika mycket makt att påverka samhället och sina egna liv',
+        textEn:
+          'That women and men should have the same rights and duties and equal power to influence society and their own lives',
+      },
+      {
+        id: 'b',
+        textSv: 'Att jämställdhet bara handlar om hur många kvinnor som finns i politiken',
+        textEn: 'That gender equality is only about how many women are in politics',
+      },
+      {
+        id: 'c',
+        textSv: 'Att kvinnor och män ska ha olika rättigheter i arbetslivet',
+        textEn: 'That women and men should have different rights in working life',
+      },
+      {
+        id: 'd',
+        textSv: 'Att föräldraledighet bara ska tas av kvinnor',
+        textEn: 'That parental leave should only be taken by women',
+      },
+    ],
+    correctOptionId: 'a',
+    explanationSv:
+      'Sveriges jämställdhetspolitik innebär att kvinnor och män ska ha samma rättigheter och skyldigheter och lika mycket makt att påverka samhället och sina egna liv.',
+    explanationEn:
+      'Sweden’s gender equality policy means women and men should have the same rights and duties and equal power to influence society and their own lives.',
+    uhrReference: {
+      chapter: 'Mänskliga rättigheter',
+      section: 'Jämställdhet mellan könen',
+      pageApprox: 23,
+    },
+    difficulty: 'medium',
+    reviewStatus: 'reviewed',
+    tags: ['gender-equality', 'rights', 'policy'],
+  };
+
+  const generatedTrueFalse = derivePublishedQuestions([source], 389).filter(
+    (question) => question.type === 'true_false',
+  );
+  const text = generatedTrueFalse.map((question) => question.questionEn).join('\n');
+
+  assert.doesNotMatch(text, /The goal of Sweden’s gender equality policy means that/i);
+  assertQuestionTextPresent(
+    generatedTrueFalse,
+    'Målet med Sveriges jämställdhetspolitik innebär att kvinnor och män ska ha samma rättigheter och skyldigheter och lika mycket makt att påverka samhället och sina egna liv.',
+    'Sweden’s gender equality policy aims for women and men to have the same rights, duties, and power to influence society and their own lives.',
+  );
+  assertQuestionTextPresent(
+    generatedTrueFalse,
+    'Målet med Sveriges jämställdhetspolitik innebär att jämställdhet bara handlar om hur många kvinnor som finns i politiken.',
+    'Sweden’s gender equality policy is only about how many women are in politics.',
+  );
+});
+
 test('derivePublishedQuestions avoids generated true/false naturalness regressions', () => {
   const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
   const sources = [
@@ -1297,7 +1362,7 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
 
   assert.doesNotMatch(
     residualText,
-    /Det stämmer i sak att|It is factually true that|describes (?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)|beskriver (?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)|is the list that contains|är listan som innehåller|about public power in Sweden|om offentlig makt i Sverige|means it gives|innebär att den ger|när ett lågt valdeltagande påverkar demokratin|when a low voter turnout affects democracy|när\s+[^.?!]+?\spåverkar\s+[^.?!]+|when\s+[^.?!]+?\saffects\s+[^.?!]+|from (?:13|15) years|One reason is to (?:prevent war|decide Swedish municipal taxes|protect employees|decide who becomes head of state)|^One reason is\b|^En anledning är\b|One reason is (?:better farming methods|eU membership|EU membership|the vote is secret|votes are counted faster)|En anledning är(?: att)? (?:förhindra krig|bestämma svenska kommunalskatter|skydda anställdas rättigheter|bestämma vem som blir statschef|bättre jordbruksmetoder|EU-medlemskapet|valet är hemligt|rösterna ska räknas snabbare)|It was presented in (?:1918|1948)|Den presenterades (?:1918|1948)|One reason is that so|One reason is that Sweden had|En anledning är att Sverige (?:hade|saknade)|have they|har de|applies to|gäller för|common to (?:eating|lighting|opening|holding)|har förändrat bara hur|has changed only how|arbetar för endast|works for only|den näst största i Sverige|the second largest in Sweden|,\s*,|it is common to large bonfires|brukar [^.?!]* arrangerar|spreadinging|welcominging|Advent occurs (?:the four Sundays|a Saturday)|Travel to Asia and increased interest[^.?!]*\bis mentioned|^That Sweden's first mosques were built|skyddar rätten [^.?!]* och skydd mot|protects the right [^.?!]* and protection from|skyddar att staten väljer|protects that the state chooses|Många svenskar firar id al-fitr och Newroz även om|Many Swedes celebrate Eid al-Fitr and Newroz even if|fick rätt att bo i landet och utöva|gained the right to live in the country and practice|called Lucia procession|^En (?:ljuskrona|blomsterkrans) på huvudet|(?:fram till julafton|på kvällen)\s+med en adventskalender hemma|(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home|^Det är (?:brottsligt enligt svensk lag|alltid en privat familjefråga)|^Sverige beslutade att barnkonventionen blev svensk lag|^(?:De|They) (?:företräder|bestämmer|represent|decide)|^En myndighet som|^An authority that/im,
+    /Det stämmer i sak att|It is factually true that|describes (?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)|beskriver (?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)|is the list that contains|är listan som innehåller|about public power in Sweden|om offentlig makt i Sverige|means it gives|The goal of .+? policy means that|innebär att den ger|när ett lågt valdeltagande påverkar demokratin|when a low voter turnout affects democracy|när\s+[^.?!]+?\spåverkar\s+[^.?!]+|when\s+[^.?!]+?\saffects\s+[^.?!]+|from (?:13|15) years|One reason is to (?:prevent war|decide Swedish municipal taxes|protect employees|decide who becomes head of state)|^One reason is\b|^En anledning är\b|One reason is (?:better farming methods|eU membership|EU membership|the vote is secret|votes are counted faster)|En anledning är(?: att)? (?:förhindra krig|bestämma svenska kommunalskatter|skydda anställdas rättigheter|bestämma vem som blir statschef|bättre jordbruksmetoder|EU-medlemskapet|valet är hemligt|rösterna ska räknas snabbare)|It was presented in (?:1918|1948)|Den presenterades (?:1918|1948)|One reason is that so|One reason is that Sweden had|En anledning är att Sverige (?:hade|saknade)|have they|har de|applies to|gäller för|common to (?:eating|lighting|opening|holding)|har förändrat bara hur|has changed only how|arbetar för endast|works for only|den näst största i Sverige|the second largest in Sweden|,\s*,|it is common to large bonfires|brukar [^.?!]* arrangerar|spreadinging|welcominging|Advent occurs (?:the four Sundays|a Saturday)|Travel to Asia and increased interest[^.?!]*\bis mentioned|^That Sweden's first mosques were built|skyddar rätten [^.?!]* och skydd mot|protects the right [^.?!]* and protection from|skyddar att staten väljer|protects that the state chooses|Många svenskar firar id al-fitr och Newroz även om|Many Swedes celebrate Eid al-Fitr and Newroz even if|fick rätt att bo i landet och utöva|gained the right to live in the country and practice|called Lucia procession|^En (?:ljuskrona|blomsterkrans) på huvudet|(?:fram till julafton|på kvällen)\s+med en adventskalender hemma|(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home|^Det är (?:brottsligt enligt svensk lag|alltid en privat familjefråga)|^Sverige beslutade att barnkonventionen blev svensk lag|^(?:De|They) (?:företräder|bestämmer|represent|decide)|^En myndighet som|^An authority that/im,
   );
   assert.doesNotMatch(
     residualText,
