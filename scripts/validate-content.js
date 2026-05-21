@@ -1998,6 +1998,11 @@ const EXPECTED_SETTINGS_ROUTE_HEADERS = [
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.themeModeTitle\}\s*<\/Text>/,
   },
   {
+    label: 'study companion section title',
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.companionTitle\}\s*<\/Text>/,
+  },
+  {
     label: 'daily goal section title',
     pattern:
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.dailyGoalTitle\}\s*<\/Text>/,
@@ -2015,6 +2020,8 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Ljud',
     '← Tillbaka till profil',
     'Tillbaka till profil',
+    'Välj en studiekompis för övningen. Valet är gratis och sparas bara på enheten.',
+    'Studiekompis',
     '${answerCount} svar per dag',
     'Dagligt mål',
     'Stäng av ljud',
@@ -2049,7 +2056,7 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Studiespråk',
     'Ställ in dagligt mål till ${goal} svar',
     'Välj tema: ${label}',
-    'Styr studiespråk, ljud, tema och ditt dagliga mål.',
+    'Styr studiespråk, ljud, tema, studiekompis och ditt dagliga mål.',
     'Mörkt',
     'Ljust',
     'Tema: ${label}',
@@ -2065,6 +2072,8 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Audio',
     '← Back to Profile',
     'Back to profile',
+    'Choose a study companion for practice. It is free and saved only on this device.',
+    'Study companion',
     '${answerCount} answers per day',
     'Daily goal',
     'Disable audio',
@@ -2099,7 +2108,7 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Study language',
     'Set daily goal to ${goal} answers',
     'Choose theme: ${label}',
-    'Control study language, audio, theme, and your daily goal.',
+    'Control study language, audio, theme, study companion, and your daily goal.',
     'Dark',
     'Light',
     'Theme: ${label}',
@@ -7948,6 +7957,32 @@ if (process.argv.includes('--focus-about-the-test-route-copy')) {
     aboutTheTestRouteCopyParityValidated,
     aboutTheTestOfficialSourceUrlsValidated,
     aboutTheTestOfficialSourceRetrievedDateValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-settings-route-copy')) {
+  validateSettingsRouteCopyParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    settingsRouteCopyLabelsValidated,
+    settingsRouteCopyParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-settings-route')) {
+  validateSettingsRouteHeaderParity();
+  validateSettingsRouteCopyParity();
+  validateSettingsRouteScrollParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    settingsRouteHeadersValidated,
+    settingsRouteHeaderParityValidated,
+    settingsRouteCopyLabelsValidated,
+    settingsRouteCopyParityValidated,
+    settingsRouteScrollRulesValidated,
+    settingsRouteScrollParityValidated,
   });
   process.exit(0);
 }
