@@ -104,6 +104,9 @@ const forbiddenPurchaseKeyFragments = [
   'subscription',
   'transaction',
 ];
+const localStudyDataImportDetailHeadSegments = 3;
+const localStudyDataImportDetailTailSegments = 2;
+const localStudyDataImportDetailMaxSegmentChars = 48;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return !!value && typeof value === 'object' && !Array.isArray(value);
@@ -115,6 +118,31 @@ function normalizeKey(value: string): string {
 
 function appendImportPathSegment(path: string, segment: string): string {
   return path ? `${path}.${segment}` : segment;
+}
+
+function formatImportDetailSegment(segment: string): string {
+  if (segment.length <= localStudyDataImportDetailMaxSegmentChars) return segment;
+
+  return `${segment.slice(0, 28)}...${segment.slice(-12)}`;
+}
+
+export function formatLocalStudyDataImportErrorDetail(detail?: string): string | null {
+  const segments = String(detail ?? '')
+    .split('.')
+    .filter(Boolean)
+    .map(formatImportDetailSegment);
+
+  if (segments.length === 0) return null;
+
+  const maxVisibleSegments =
+    localStudyDataImportDetailHeadSegments + localStudyDataImportDetailTailSegments + 1;
+  if (segments.length <= maxVisibleSegments) return segments.join('.');
+
+  return [
+    ...segments.slice(0, localStudyDataImportDetailHeadSegments),
+    '[...]',
+    ...segments.slice(-localStudyDataImportDetailTailSegments),
+  ].join('.');
 }
 
 function findForbiddenPurchaseField(value: unknown): string | null {

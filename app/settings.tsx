@@ -10,6 +10,7 @@ import { useReducedMotion } from '../lib/motion/useReducedMotion';
 import {
   LOCAL_STUDY_DATA_IMPORT_MAX_BYTES,
   applyLocalStudyDataImport,
+  formatLocalStudyDataImportErrorDetail,
   previewLocalStudyDataImport,
   type LocalStudyDataImportErrorCode,
   type LocalStudyDataImportPreview,
@@ -44,7 +45,7 @@ type SettingsCopy = {
   enableListenFirstAudioAccessibilityLabel: string;
   confirmImport: string;
   confirmImportAccessibilityLabel: string;
-  importErrorMessage: (code: LocalStudyDataImportErrorCode) => string;
+  importErrorMessage: (code: LocalStudyDataImportErrorCode, detail?: string) => string;
   importPasteLabel: string;
   importPastePlaceholder: string;
   importPreview: string;
@@ -88,6 +89,11 @@ function formatCount(count: number, labels: CountLabels): string {
   return `${count} ${count === 1 ? labels.one : labels.other}`;
 }
 
+function appendImportErrorDetail(message: string, detail: string | undefined, fieldLabel: string) {
+  const formattedDetail = formatLocalStudyDataImportErrorDetail(detail);
+  return formattedDetail ? `${message}\n${fieldLabel}: ${formattedDetail}` : message;
+}
+
 const localStudyDataImportMaxLabel = `${LOCAL_STUDY_DATA_IMPORT_MAX_BYTES / (1024 * 1024)} MB`;
 
 const settingsCopy: Record<AppLanguage, SettingsCopy> = {
@@ -118,7 +124,7 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     enableListenFirstAudioAccessibilityLabel: 'Slå på automatisk uppläsning av nya frågor',
     confirmImport: 'Bekräfta import',
     confirmImportAccessibilityLabel: 'Bekräfta lokal studiedataimport',
-    importErrorMessage: (code) => {
+    importErrorMessage: (code, detail) => {
       if (code === 'empty_input') return 'Klistra in JSON innan du förhandsgranskar.';
       if (code === 'input_too_large') {
         return `JSON-exporten är större än ${localStudyDataImportMaxLabel}. Klistra in en export på högst ${localStudyDataImportMaxLabel}.`;
@@ -127,7 +133,11 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
       if (code === 'invalid_schema') return 'Importen har fel format eller okända toppnivåfält.';
       if (code === 'unsupported_version') return 'Importversionen stöds inte.';
       if (code === 'purchase_fields_rejected') {
-        return 'Importen innehåller fält för köp i appen eller kvitton. Ta bort dem och återställ köp via appbutiken.';
+        return appendImportErrorDetail(
+          'Importen innehåller fält för köp i appen eller kvitton. Ta bort dem och återställ köp via appbutiken.',
+          detail,
+          'Fält',
+        );
       }
       return 'Importen innehåller inga stödda studiedata.';
     },
@@ -202,7 +212,7 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     enableListenFirstAudioAccessibilityLabel: 'Enable automatic playback for new questions',
     confirmImport: 'Confirm import',
     confirmImportAccessibilityLabel: 'Confirm local study data import',
-    importErrorMessage: (code) => {
+    importErrorMessage: (code, detail) => {
       if (code === 'empty_input') return 'Paste JSON before previewing.';
       if (code === 'input_too_large') {
         return `The JSON export is larger than ${localStudyDataImportMaxLabel}. Paste an export under ${localStudyDataImportMaxLabel}.`;
@@ -212,7 +222,11 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
         return 'The import has the wrong format or unknown top-level fields.';
       if (code === 'unsupported_version') return 'This import version is not supported.';
       if (code === 'purchase_fields_rejected') {
-        return 'The import contains purchase, receipt, or IAP fields. Remove them and restore purchases through the app store.';
+        return appendImportErrorDetail(
+          'The import contains purchase, receipt, or IAP fields. Remove them and restore purchases through the app store.',
+          detail,
+          'Field',
+        );
       }
       return 'The import does not contain supported study data.';
     },
@@ -407,7 +421,10 @@ export default function Screen() {
     const result = previewLocalStudyDataImport(importText);
     if (!result.ok) {
       setImportPreview(null);
-      setImportFeedback({ tone: 'error', text: copy.importErrorMessage(result.code) });
+      setImportFeedback({
+        tone: 'error',
+        text: copy.importErrorMessage(result.code, result.detail),
+      });
       return;
     }
 

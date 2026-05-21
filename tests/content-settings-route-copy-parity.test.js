@@ -223,6 +223,53 @@ test('settings import reset coverage proves no-write preview and feedback cleari
   );
 });
 
+test('settings import rejected purchase-field alerts include bounded field detail', () => {
+  const settingsSource = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+  const e2eSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/e2e/settings-import-deep-nesting.spec.ts'),
+    'utf8',
+  );
+
+  assertIncludes(
+    settingsSource,
+    'formatLocalStudyDataImportErrorDetail',
+    'settings import detail formatter import',
+  );
+  assertIncludes(
+    settingsSource,
+    'importErrorMessage: (code: LocalStudyDataImportErrorCode, detail?: string) => string',
+    'settings import error message detail signature',
+  );
+  assertIncludes(settingsSource, 'fieldLabel: string', 'settings import field label helper');
+  assertIncludes(settingsSource, "'Fält'", 'settings import Swedish field label');
+  assertIncludes(settingsSource, "'Field'", 'settings import English field label');
+  assertIncludes(
+    settingsSource,
+    'copy.importErrorMessage(result.code, result.detail)',
+    'settings import preview must pass rejected field detail',
+  );
+  assertIncludes(
+    e2eSource,
+    "await expect(alert).toContainText('Fält: source.level0.level1.[...]');",
+    'settings deep import E2E bounded head detail',
+  );
+  assertIncludes(
+    e2eSource,
+    "await expect(alert).toContainText('level479.removeAdsReceipt');",
+    'settings deep import E2E final forbidden key',
+  );
+  assertIncludes(
+    e2eSource,
+    "await expect(alert).toContainText('Field: source.level0.level1.[...]');",
+    'settings deep import E2E English bounded head detail',
+  );
+  assertIncludes(
+    e2eSource,
+    "await expect(alert).not.toContainText('level2.level3.level4');",
+    'settings deep import E2E middle path truncation',
+  );
+});
+
 test('settings route copy parity rejects Swedish import-summary scheduler jargon', () => {
   const result = spawnSync(
     process.execPath,
