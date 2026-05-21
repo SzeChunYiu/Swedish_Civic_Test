@@ -1903,15 +1903,30 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(paywallSource, /setCurrentEntitlements\(entitlements\)/);
   assert.match(paywallSource, /onEntitlementsChange/);
   assert.match(paywallSource, /adsDisabled/);
+  assert.match(paywallSource, /purchaseUnavailableReason === 'web_store_unavailable'/);
+  assert.match(paywallSource, /copy\.webUnavailableBody\(REMOVE_ADS_PRICE_LABEL\)/);
+  assert.match(paywallSource, /copy\.webUnavailableAccessibilityHint/);
+  assert.match(paywallSource, /Buy in mobile app/);
+  assert.match(paywallSource, /Köp i mobilappen/);
+  assert.match(paywallSource, /Restore in mobile app/);
+  assert.match(paywallSource, /Återställ i mobilappen/);
+  assert.match(paywallSource, /web version shows status only/);
+  assert.match(paywallSource, /Webbversionen visar bara status/);
   assert.match(paywallSource, /Buy Remove Ads for \$\{price\}/);
   assert.match(paywallSource, /Köp Ta bort annonser för \$\{price\}/);
-  assert.match(paywallSource, /accessibilityHint=\{copy\.buyAccessibilityHint\}/);
+  assert.match(
+    paywallSource,
+    /purchaseUnavailable \? copy\.webUnavailableAccessibilityHint : copy\.buyAccessibilityHint/,
+  );
   assert.match(paywallSource, /Purchase removes ads after store confirmation/);
   assert.match(paywallSource, /tidsatta övningsprov i appen redan är annonsfria/);
   assert.match(paywallSource, /Tidsatta övningsprov i appen är redan annonsfria/);
   assert.match(paywallSource, /Restore Remove Ads purchase/);
   assert.match(paywallSource, /Återställ köp av Ta bort annonser/);
-  assert.match(paywallSource, /accessibilityHint=\{copy\.restoreAccessibilityHint\}/);
+  assert.match(
+    paywallSource,
+    /purchaseUnavailable[\s\S]*\? copy\.webUnavailableAccessibilityHint[\s\S]*: copy\.restoreAccessibilityHint/,
+  );
   assert.match(paywallSource, /same store account/);
   assert.match(paywallSource, /samma butikskonto/);
   assert.doesNotMatch(paywallSource, /ads are deferred|RevenueCat can be added/i);
