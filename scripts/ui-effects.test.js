@@ -83,8 +83,9 @@ test('provenance badge exposes readable tokenized provenance labels', () => {
   assert.match(source, /transform: \[\{ scale: motion\.pressedScale \}\]/);
   assert.match(source, /borderRadius: radius\.pill/);
   assert.match(source, /textTransform: 'uppercase'/);
-  assert.match(source, /backgroundColor: colors\.badgeBlueBg/);
-  assert.match(source, /backgroundColor: colors\.surfaceWarm/);
+  assert.match(source, /const styles = useMemo\(\(\) => createStyles\(themeColors \?\? colors\)/);
+  assert.match(source, /backgroundColor: themeColors\.badgeBlueBg/);
+  assert.match(source, /backgroundColor: themeColors\.surfaceWarm/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
@@ -109,7 +110,8 @@ test('button derives an accessibility label from plain text children by default'
   assert.match(source, /accessibilityLabel=\{buttonAccessibilityLabel\}/);
   assert.match(source, /accessibilityRole=\{accessibilityRole\}/);
   assert.match(source, /accessibilityState=\{mergedAccessibilityState\}/);
-  assert.match(source, /android_ripple=\{android_ripple \?\? \{ color: colors\.focusSoft/);
+  assert.match(source, /const resolvedColors = themeColors \?\? colors;/);
+  assert.match(source, /android_ripple=\{android_ripple \?\? \{ color: resolvedColors\.focusSoft/);
   assert.match(source, /hitSlop=\{hitSlop \?\? space\[0\.5\]\}/);
   assert.match(source, /style=\{\(\{ pressed \}\) => \[/);
   assert.match(source, /pressed && !disabled \? styles\.pressed : null/);
@@ -121,7 +123,7 @@ test('button derives an accessibility label from plain text children by default'
   assert.match(source, /transform: \[\{ scale: motion\.pressedScale \}\]/);
   assert.match(source, /borderWidth: space\.hairline/);
   assert.match(source, /borderRadius: radius\.button/);
-  assert.match(source, /backgroundColor: colors\.accentActive/);
+  assert.match(source, /backgroundColor: themeColors\.accentActive/);
   assert.match(source, /nativeID=\{buttonAccessibilityHintId\}/);
   assert.match(source, /accessibilityHintText/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
