@@ -46,9 +46,15 @@ test('onboarding route title stays accessible as a header', () => {
   assert.match(source, /Lugn/);
   assert.match(source, /Regular/);
   assert.match(source, /40 svar per dag/);
+  assert.match(source, /aria-label=\{copy\.dailyGoalTitle\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.dailyGoalTitle\}/);
+  assert.match(source, /accessibilityRole="radiogroup"/);
   assert.match(source, /accessibilityLabel=\{preset\.accessibilityLabel\}/);
-  assert.match(source, /aria-selected=\{selected\}/);
-  assert.match(source, /accessibilityState=\{\{ selected \}\}/);
+  assert.match(source, /aria-checked=\{selected\}/);
+  assert.match(source, /accessibilityRole="radio"/);
+  assert.match(source, /accessibilityState=\{\{ checked: selected \}\}/);
+  assert.doesNotMatch(source, /aria-selected=\{selected\}/);
+  assert.doesNotMatch(source, /accessibilityState=\{\{ selected \}\}/);
   assert.match(source, /onPress=\{\(\) => setDailyGoalAnswers\(goal\)\}/);
   assert.match(source, /accessibilityLabel=\{copy\.decideLaterAccessibilityLabel\}/);
   assert.match(
@@ -400,5 +406,38 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /onboarding route Swedish mistake-review copy must describe reviewing missed questions/,
+  );
+});
+
+test('onboarding route copy parity rejects selected-button daily goal presets', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/onboarding.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('aria-checked={selected}', 'aria-selected={selected}')
+      .replace('accessibilityRole="radio"', 'accessibilityRole="button"')
+      .replace('accessibilityState={{ checked: selected }}', 'accessibilityState={{ selected }}');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-onboarding-route-copy');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /onboarding daily goal presets must use radiogroup\/radio checked semantics/,
   );
 });
