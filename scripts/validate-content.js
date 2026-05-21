@@ -493,6 +493,7 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\babout public power in Sweden\b/i,
   /\bom offentlig makt i Sverige\b/i,
   /\bmeans it gives\b/i,
+  /\b(?:Att mänskliga rättigheter gäller alla betyder att|That human rights apply to everyone means)\b/i,
   /\bThe goal of .+?\bpolicy means(?: that)?\b/i,
   /\binnebär att den ger\b/i,
   /^Viktiga verksamheter som skola, arbete och hälso- och sjukvård kan fortsätta fungera\.?$/i,
@@ -5942,6 +5943,36 @@ function generatedSingleChoicePromptFromSourceEn(source, variant) {
     ? `Which fact is correct about ${match[1]}?`
     : `What is correct about ${match[1]}?`;
 }
+function universalHumanRightsStatementSv(answer) {
+  if (/^varje människa har rättigheter oavsett bakgrund eller livssituation$/i.test(answer)) {
+    return 'Mänskliga rättigheter gäller varje människa oavsett bakgrund eller livssituation';
+  }
+  if (/^bara svenska medborgare har mänskliga rättigheter$/i.test(answer)) {
+    return 'Mänskliga rättigheter gäller bara svenska medborgare';
+  }
+  if (/^rättigheterna gäller bara personer som arbetar$/i.test(answer)) {
+    return 'Mänskliga rättigheter gäller bara personer som arbetar';
+  }
+  if (/^varje kommun väljer själv vilka människor som har rättigheter$/i.test(answer)) {
+    return 'Varje kommun väljer själv vilka människor som har mänskliga rättigheter';
+  }
+  return null;
+}
+function universalHumanRightsStatementEn(answer) {
+  if (/^every person has rights regardless of background or life situation$/i.test(answer)) {
+    return 'Human rights apply to every person regardless of background or life situation';
+  }
+  if (/^only Swedish citizens have human rights$/i.test(answer)) {
+    return 'Human rights apply only to Swedish citizens';
+  }
+  if (/^the rights apply only to people who work$/i.test(answer)) {
+    return 'Human rights apply only to people who work';
+  }
+  if (/^each municipality chooses which people have rights$/i.test(answer)) {
+    return 'Each municipality chooses which people have human rights';
+  }
+  return null;
+}
 function civicStatementSv(source, option) {
   if (isTrueFalseSource(source)) {
     return trueFalseSourceStatementSv(source, option.id === source.correctOptionId);
@@ -6001,7 +6032,13 @@ function civicStatementSv(source, option) {
   match = q.match(/^Från vilken ålder är (.+)$/i);
   if (match) return `Från ${lowerFirst(answer)} är ${match[1]}`;
   match = q.match(/^Vad betyder det att (.+)$/i);
-  if (match) return `Att ${match[1]} betyder att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
+  if (match) {
+    if (/^mänskliga rättigheter gäller alla$/i.test(match[1])) {
+      const statement = universalHumanRightsStatementSv(answer);
+      if (statement) return statement;
+    }
+    return `Att ${match[1]} betyder att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
+  }
   match = q.match(/^Vad kan göra (.+?) (starkare)$/i);
   if (match) {
     return `${upperFirst(match[1])} blir ${match[2]} när ${lowerFirst(
@@ -6332,7 +6369,13 @@ function civicStatementEn(source, option) {
     return `${upperFirst(predicate)} from ${englishAgePhrase(lowerFirst(answer))}`;
   }
   match = q.match(/^What does it mean that (.+)$/i);
-  if (match) return `That ${match[1]} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+  if (match) {
+    if (/^human rights apply to everyone$/i.test(match[1])) {
+      const statement = universalHumanRightsStatementEn(answer);
+      if (statement) return statement;
+    }
+    return `That ${match[1]} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+  }
   match = q.match(/^What does it mean to (.+)$/i);
   if (match) return `To ${match[1]} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
   match = q.match(/^What can make (.+?) (stronger)$/i);

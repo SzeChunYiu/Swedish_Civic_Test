@@ -2907,6 +2907,10 @@ test('published question schema guards generated statement-choice meta prompts a
   assert.match(validatorSource, /Which statement best matches/);
   assert.match(validatorSource, /påståendet som motsvarar den uppgiften/);
   assert.match(validatorSource, /statement that matches that fact/);
+  assert.match(validatorSource, /universalHumanRightsStatementSv/);
+  assert.match(validatorSource, /Mänskliga rättigheter gäller varje människa/);
+  assert.match(validatorSource, /Human rights apply to every person/);
+  assert.match(validatorSource, /That human rights apply to everyone means/);
 });
 
 test('published question schema rejects generated true/false grammar-splice stems', () => {
@@ -3248,6 +3252,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('--focus-generated-true-false-naturalness');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -3256,7 +3261,8 @@ require('./scripts/validate-content.js');
 
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
-  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 2);
+  assert.match(output, /q877 contains a generated true\/false grammar-splice stem/);
+  assert.match(output, /q878 contains a generated true\/false grammar-splice stem/);
 });
 
 test('published question schema rejects policy-goal cleft true/false stems', () => {
