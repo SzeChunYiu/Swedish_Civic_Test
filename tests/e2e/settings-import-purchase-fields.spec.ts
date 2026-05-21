@@ -63,6 +63,32 @@ test('settings import rejects oversized JSON with localized max-size feedback', 
   expect(errors.get()).toEqual([]);
 });
 
+test('settings import rejects multibyte payloads that are under the character limit', async ({
+  page,
+}) => {
+  await seedFreshSettingsLanguageAndAboutSeen(page, 'en');
+  const errors = collectConsoleAndPageErrors(page);
+
+  await page.goto('/settings', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  const importInput = page.getByLabel('Paste JSON export');
+  const maxLength = await importInput.evaluate(
+    (element) => (element as HTMLInputElement | HTMLTextAreaElement).maxLength,
+  );
+  const oversizedByBytes = 'å'.repeat(Math.floor(maxLength / 2) + 1);
+
+  expect(oversizedByBytes.length).toBeLessThan(maxLength);
+  await forceTextInputValue(importInput, oversizedByBytes);
+  await page.getByRole('button', { name: 'Preview local study data import' }).click();
+
+  await expect(page.getByRole('alert')).toContainText(
+    'The JSON export is larger than 1 MB. Choose a smaller export and try again.',
+  );
+  await expectNoLearnerImportWrites(page);
+  expect(errors.get()).toEqual([]);
+});
+
 test('settings import keeps in-limit purchase fields rejected before writes', async ({ page }) => {
   await seedFreshSettingsLanguageAndAboutSeen(page, 'sv');
   const errors = collectConsoleAndPageErrors(page);

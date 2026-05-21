@@ -331,6 +331,71 @@ test('local study data import rejects oversized payloads before parsing', () => 
   }
 });
 
+test('local study data import rejects multibyte payloads by UTF-8 byte size', () => {
+  const storageById = createStorageById();
+  const { LOCAL_STUDY_DATA_IMPORT_MAX_BYTES, previewLocalStudyDataImport } =
+    loadImportModule(storageById);
+  const originalParse = JSON.parse;
+  let parseCalls = 0;
+
+  JSON.parse = (...args) => {
+    parseCalls += 1;
+    return originalParse(...args);
+  };
+
+  try {
+    const nonLatinPayload = 'å'.repeat(Math.floor(LOCAL_STUDY_DATA_IMPORT_MAX_BYTES / 2) + 1);
+    const emojiPayload = '🙂'.repeat(Math.floor(LOCAL_STUDY_DATA_IMPORT_MAX_BYTES / 4) + 1);
+
+    assert.ok(
+      nonLatinPayload.length < LOCAL_STUDY_DATA_IMPORT_MAX_BYTES,
+      'non-Latin payload should stay below the TextInput character maxLength',
+    );
+    assert.ok(
+      emojiPayload.length < LOCAL_STUDY_DATA_IMPORT_MAX_BYTES,
+      'emoji payload should stay below the TextInput character maxLength',
+    );
+    assert.equal(Buffer.byteLength(nonLatinPayload, 'utf8'), LOCAL_STUDY_DATA_IMPORT_MAX_BYTES + 2);
+    assert.equal(Buffer.byteLength(emojiPayload, 'utf8'), LOCAL_STUDY_DATA_IMPORT_MAX_BYTES + 4);
+
+    assert.deepEqual(previewLocalStudyDataImport(nonLatinPayload), {
+      ok: false,
+      code: 'input_too_large',
+    });
+    assert.deepEqual(previewLocalStudyDataImport(emojiPayload), {
+      ok: false,
+      code: 'input_too_large',
+    });
+    assert.equal(parseCalls, 0);
+    assert.equal(storageById.progress.values.size, 0);
+    assert.equal(storageById['mistake-review'].values.size, 0);
+    assert.equal(storageById.reviews.values.size, 0);
+    assert.equal(storageById.settings.values.size, 0);
+    assert.equal(storageById['citizenship-requirements'].values.size, 0);
+  } finally {
+    JSON.parse = originalParse;
+  }
+});
+
+test('local study data import accepts valid UTF-8 payloads below the byte limit', () => {
+  const storageById = createStorageById();
+  const { LOCAL_STUDY_DATA_IMPORT_MAX_BYTES, previewLocalStudyDataImport } =
+    loadImportModule(storageById);
+  const rawPayload = JSON.stringify({
+    version: 1,
+    settings: {
+      language: 'sv',
+      dailyGoalAnswers: 10,
+    },
+  });
+
+  assert.ok(Buffer.byteLength(rawPayload, 'utf8') < LOCAL_STUDY_DATA_IMPORT_MAX_BYTES);
+  const result = previewLocalStudyDataImport(rawPayload);
+
+  assert.equal(result.ok, true);
+  assert.equal(result.preview.summary.settingCount, 2);
+});
+
 test('local study data import ignores unsafe imported map keys with the shared guard', () => {
   const storageById = createStorageById();
   const { previewLocalStudyDataImport } = loadImportModule(storageById);
