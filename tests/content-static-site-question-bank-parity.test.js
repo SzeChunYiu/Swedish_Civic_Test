@@ -14,7 +14,7 @@ const {
 } = require('../scripts/export-site-question-bank');
 const {
   generatedQuestionId,
-  generatedQuestionIdLiteralsInSource,
+  generatedQuestionIdLiteralFindingsForSource,
 } = require('../scripts/generated-question-fixture-ids');
 
 const repoRoot = path.resolve(__dirname, '..');
@@ -156,18 +156,44 @@ test('static site question bank source fixture limits one-question localization 
   );
 
   assert.equal(drift.hasSemanticDrift, true);
-  assert.deepEqual(drift.questionIds, ['q020', ...q020GeneratedVariantIds]);
+  assert.equal(drift.questionIds[0], 'q020');
+  assert.deepEqual(drift.questionIds.slice(1), q020GeneratedVariantIds);
   assert.deepEqual(drift.chapterIds, []);
 });
 
-test('static site question bank drift fixtures derive generated question ids', () => {
-  const source = fs.readFileSync(__filename, 'utf8');
+test('static question-bank drift fixture derives generated ids from source ids', () => {
   const canonical = loadCanonicalExportInputs();
-
-  assert.deepEqual(generatedQuestionIdLiteralsInSource(source, canonical.sourceQuestions), []);
-  assert.match(source, /generatedQuestionId\(canonical\.sourceQuestions,\s*'q020'/);
-  assert.match(
+  const source = fs.readFileSync(__filename, 'utf8');
+  const findings = generatedQuestionIdLiteralFindingsForSource(
+    'tests/content-static-site-question-bank-parity.test.js',
     source,
-    /assert\.deepEqual\(drift\.questionIds,\s*\[\s*'q020',\s*\.\.\.q020GeneratedVariantIds\s*\]\)/,
+    canonical.sourceQuestions.length + 1,
   );
+
+  assert.deepEqual(findings, []);
+  assert.match(source, /generatedQuestionId\(canonical\.sourceQuestions, 'q020', variantOffset\)/);
+  assert.match(source, /assert\.equal\(drift\.questionIds\[0\], 'q020'\)/);
+});
+
+test('static generated-id fixture guard rejects literal generated ids but allows source ids', () => {
+  const firstGeneratedNumber = 900;
+  const generatedLiteral = `q${String(firstGeneratedNumber).padStart(3, '0')}`;
+  const nextGeneratedLiteral = `q${String(firstGeneratedNumber + 1).padStart(3, '0')}`;
+  const findings = generatedQuestionIdLiteralFindingsForSource(
+    'tests/content-static-site-question-bank-parity.test.js',
+    [
+      "assert.equal(drift.questionIds[0], 'q020');",
+      `assert.deepEqual(drift.questionIds.slice(1), ['${generatedLiteral}']);`,
+      'const expected = {',
+      `  ${nextGeneratedLiteral}: { questionSv: 'stale generated fixture' },`,
+      '};',
+      "const derived = generatedQuestionId(canonical.sourceQuestions, 'q020', variantOffset);",
+    ].join('\n'),
+    firstGeneratedNumber,
+  );
+
+  assert.deepEqual(findings, [
+    `tests/content-static-site-question-bank-parity.test.js:2 hardcodes generated question id literal ${generatedLiteral}`,
+    `tests/content-static-site-question-bank-parity.test.js:4 hardcodes generated question id object key ${nextGeneratedLiteral}`,
+  ]);
 });

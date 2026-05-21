@@ -4,10 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 
-const {
-  createThrowingReadMMKV,
-  loadTsWithStorage,
-} = require('./helpers/storageStoreHarness.cjs');
+const { createThrowingReadMMKV, loadTsWithStorage } = require('./helpers/storageStoreHarness.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
 
