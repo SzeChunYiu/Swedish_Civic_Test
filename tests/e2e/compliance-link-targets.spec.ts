@@ -32,7 +32,7 @@ const complianceRouteCases: ComplianceRouteCase[] = [
   },
   {
     expectedLinkLabels: [
-      'Tillbaka till profil',
+      'Tillbaka till startsidan',
       'Öppna UHR:s utbildningsmaterial',
       'Öppna UHR:s sida Om medborgarskapsprovet',
     ],

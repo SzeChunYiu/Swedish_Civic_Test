@@ -84,6 +84,10 @@ const expectedLegalRoutes = [
       "url: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/'",
       'const language = useSettingsStore((state) => state.language);',
       'const copy = sourcesCopy[language];',
+      "backAccessibilityLabel: 'Tillbaka till startsidan'",
+      "backLabel: '← Tillbaka till startsidan'",
+      "backAccessibilityLabel: 'Back to Home'",
+      "backLabel: '← Back to Home'",
       'Källor',
       'Primärt studiematerial',
       'UHR inte står bakom dessa',
@@ -96,12 +100,13 @@ const expectedLegalRoutes = [
       'Every practice question shows a source line with the UHR chapter',
     ],
     sectionPatterns: [
-      /<LegalSection\s+title=\{copy\.sections\.primaryStudyMaterial\.title\}[\s\S]*?>/,
-      /<LegalSection\s+title=\{copy\.sections\.questionReferences\.title\}[\s\S]*?>/,
-      /<LegalSection\s+title=\{copy\.sections\.authorityBoundaries\.title\}[\s\S]*?>/,
+      /<LegalSection[\s\S]*?title=\{copy\.sections\.primaryStudyMaterial\.title\}[\s\S]*?>/,
+      /<LegalSection[\s\S]*?title=\{copy\.sections\.questionReferences\.title\}[\s\S]*?>/,
+      /<LegalSection[\s\S]*?title=\{copy\.sections\.authorityBoundaries\.title\}[\s\S]*?>/,
     ],
     title: 'Sources',
-    titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
+    titlePattern:
+      /<LegalPage[\s\S]*backAccessibilityLabel=\{copy\.backAccessibilityLabel\}[\s\S]*backHref="\/home"[\s\S]*backLabel=\{copy\.backLabel\}[\s\S]*title=\{copy\.title\}\s*>/,
     sections: ['Primary study material', 'Question references', 'Authority boundaries'],
   },
   {
@@ -186,7 +191,7 @@ test('legal, source, and support routes stay on shared accessible header path', 
   assert.equal(summary.legalRouteHeadersValidated, 23);
   assert.equal(summary.legalRouteHeaderParityValidated, true);
   assert.equal(summary.swedishPrivacyStreakCopyNaturalnessValidated, true);
-  assert.equal(summary.legalSwedishEnglishTokenGuardValidated, 60);
+  assert.equal(summary.legalSwedishEnglishTokenGuardValidated, 62);
   assert.equal(summary.legalSwedishEnglishTokenGuardParityValidated, true);
   assert.equal(summary.legalInternalMonetizationKeyGuardValidated, 7);
   assert.equal(summary.legalInternalMonetizationKeyGuardParityValidated, true);
@@ -239,7 +244,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-legal-route-parity');
+process.argv.push('scripts/validate-content.js', '--focus-legal-route-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -270,7 +275,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-legal-route-parity');
+process.argv.push('scripts/validate-content.js', '--focus-legal-route-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -304,7 +309,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-legal-route-parity');
+process.argv.push('scripts/validate-content.js', '--focus-legal-route-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -338,7 +343,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-legal-route-parity');
+process.argv.push('scripts/validate-content.js', '--focus-legal-route-parity');
 require('./scripts/validate-content.js');
 `,
     ],
