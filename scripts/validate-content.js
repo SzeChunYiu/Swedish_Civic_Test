@@ -18120,6 +18120,9 @@ function validateAuthoredSourcePartition(questionsToValidate, label, startQuesti
 }
 
 function expectedPublishedSourceField(question, field) {
+  if (field === 'options') {
+    return expectedPublishedSourceOptions(question);
+  }
   if (question.type === 'true_false' && field === 'questionSv') {
     return ensureSentence(stripTrueFalsePromptSv(question.questionSv));
   }
@@ -18127,6 +18130,14 @@ function expectedPublishedSourceField(question, field) {
     return ensureSentence(stripTrueFalsePromptEn(question.questionEn));
   }
   return question[field];
+}
+
+function expectedPublishedSourceOptions(question) {
+  if (typeof applyQuestionLocalizationPilot !== 'function') {
+    return question.options;
+  }
+
+  return applyQuestionLocalizationPilot(question).options;
 }
 
 function validateAuthoredSourceParity() {
@@ -18152,9 +18163,7 @@ function validateAuthoredSourceParity() {
     EXPECTED_SOURCE_QUESTIONS - EXPECTED_BASE_SOURCE_QUESTIONS,
   );
 
-  const localizedAdditionalQuestions = additionalQuestions.map(applyQuestionLocalizationPilot);
   const authoredQuestions = [...baseQuestions, ...additionalQuestions];
-  const expectedPublishedSourceQuestions = [...baseQuestions, ...localizedAdditionalQuestions];
   if (authoredQuestions.length !== EXPECTED_SOURCE_QUESTIONS) {
     fail(
       `expected ${EXPECTED_SOURCE_QUESTIONS} authored source questions, found ${authoredQuestions.length}`,
@@ -18201,7 +18210,7 @@ function validateAuthoredSourceParity() {
     }
 
     const publishedQuestion = sourceQuestions[index];
-    const expectedSourceQuestion = expectedPublishedSourceQuestions[index] ?? question;
+    const expectedSourceQuestion = question;
     if (!publishedQuestion) return;
 
     let publicationParityIsValid = true;
@@ -18221,6 +18230,17 @@ function validateAuthoredSourceParity() {
 }
 
 validateAuthoredSourceParity();
+
+if (process.argv.includes('--focus-authored-source-parity')) {
+  exitWithValidationFailures();
+  printValidationSummary({
+    authoredSourcePartitionQuestionsValidated,
+    authoredSourceQuestionsValidated,
+    sourcePublicationParityValidated,
+    sourceQuestions: Array.isArray(sourceQuestions) ? sourceQuestions.length : 0,
+  });
+  process.exit(0);
+}
 
 function validateGenerationParity() {
   if (
