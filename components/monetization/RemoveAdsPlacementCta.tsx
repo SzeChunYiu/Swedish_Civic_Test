@@ -21,17 +21,22 @@ type RemoveAdsPlacementCtaCopy = {
   buyAccessibilityHint: string;
   buyAccessibilityLabel: (price: string) => string;
   buyIdle: (price: string) => string;
+  buyUnavailable: string;
   buying: string;
   eyebrow: string;
   restoreAccessibilityHint: string;
   restoreAccessibilityLabel: string;
   restoreIdle: string;
+  restoreUnavailable: string;
   restoring: string;
-  statusMessages: Partial<Record<RemoveAdsPurchaseStatus | 'error', string>>;
+  statusMessages: Partial<Record<PlacementPurchaseStatus, string>>;
   title: (placementLabel: string) => string;
+  webUnavailableAccessibilityHint: string;
+  webUnavailableBody: (price: string) => string;
 };
 
 type ActivePurchaseAction = 'buy' | 'restore';
+type PlacementPurchaseStatus = RemoveAdsPurchaseStatus | 'error' | 'unavailable';
 
 const removeAdsPlacementCtaCopy: Record<AppLanguage, RemoveAdsPlacementCtaCopy> = {
   sv: {
@@ -40,12 +45,14 @@ const removeAdsPlacementCtaCopy: Record<AppLanguage, RemoveAdsPlacementCtaCopy> 
       'Köpet döljer den här annonsplaceringen och andra studieannonser på den här enheten.',
     buyAccessibilityLabel: (price) => `Köp Ta bort annonser för ${price}`,
     buyIdle: (price) => `Köp ${price}`,
+    buyUnavailable: 'Köp i mobilappen',
     buying: 'Köper...',
     eyebrow: 'Ta bort annonser',
     restoreAccessibilityHint:
       'Kontrollerar butikskontot efter ett tidigare köp av Ta bort annonser.',
     restoreAccessibilityLabel: 'Återställ köp av Ta bort annonser',
     restoreIdle: 'Återställ',
+    restoreUnavailable: 'Återställ i mobilappen',
     restoring: 'Återställer...',
     statusMessages: {
       error: 'Köp är inte tillgängligt. Försök igen senare.',
@@ -53,19 +60,26 @@ const removeAdsPlacementCtaCopy: Record<AppLanguage, RemoveAdsPlacementCtaCopy> 
       pending: 'Väntar på butikens bekräftelse innan annonser tas bort.',
       purchased: 'Köpet är bekräftat. Studieannonser tas bort.',
       restored: 'Köpet är återställt. Studieannonser tas bort.',
+      unavailable: 'Ta bort annonser kan köpas eller återställas i mobilappen.',
     },
     title: (placementLabel) => `Ta bort annonser vid ${placementLabel.toLowerCase()}`,
+    webUnavailableAccessibilityHint:
+      'Ta bort annonser är ett butiksköp i mobilappen och kan inte köpas från webbversionen.',
+    webUnavailableBody: (price) =>
+      `Ta bort annonser för ${price} är ett butiksköp i mobilappen. Den här placeringen visar bara status på webben och kan inte starta eller återställa köp.`,
   },
   en: {
     body: 'Hides this and other study ads after store confirmation. Exams are already ad-free.',
     buyAccessibilityHint: 'Purchase hides this ad placement and other study ads on this device.',
     buyAccessibilityLabel: (price) => `Buy Remove Ads for ${price}`,
     buyIdle: (price) => `Buy ${price}`,
+    buyUnavailable: 'Buy in mobile app',
     buying: 'Buying...',
     eyebrow: 'Remove Ads',
     restoreAccessibilityHint: 'Checks the store account for a previous Remove Ads purchase.',
     restoreAccessibilityLabel: 'Restore Remove Ads purchase',
     restoreIdle: 'Restore',
+    restoreUnavailable: 'Restore in mobile app',
     restoring: 'Restoring...',
     statusMessages: {
       error: 'Purchase is unavailable. Try again later.',
@@ -73,8 +87,13 @@ const removeAdsPlacementCtaCopy: Record<AppLanguage, RemoveAdsPlacementCtaCopy> 
       pending: 'Waiting for store confirmation before removing ads.',
       purchased: 'Purchase confirmed. Study ads are being removed.',
       restored: 'Purchase restored. Study ads are being removed.',
+      unavailable: 'Remove Ads can be bought or restored in the mobile app.',
     },
     title: (placementLabel) => `Remove ads near ${placementLabel.toLowerCase()}`,
+    webUnavailableAccessibilityHint:
+      'Remove Ads is a mobile app store purchase and cannot be bought from the web version.',
+    webUnavailableBody: (price) =>
+      `Remove Ads for ${price} is a mobile app store purchase. This placement shows status only on the web and cannot create or restore purchases.`,
   },
 };
 
@@ -87,16 +106,22 @@ export function RemoveAdsPlacementCta({ placement }: { placement: AdPlacement })
   const { entitlements, entitlementsReady, purchaseRuntime, setEntitlements } =
     useRemoveAdsEntitlements();
   const [activeAction, setActiveAction] = useState<ActivePurchaseAction | null>(null);
-  const [status, setStatus] = useState<RemoveAdsPurchaseStatus | 'error' | null>(null);
+  const [status, setStatus] = useState<PlacementPurchaseStatus | null>(null);
   const purchaseActionInFlightRef = useRef(false);
 
   if (!entitlementsReady || entitlements.adsDisabled) return null;
+  const purchaseUnavailable =
+    purchaseRuntime?.purchaseUnavailableReason === 'web_store_unavailable';
 
   async function runPurchaseAction(
     action: ActivePurchaseAction,
     purchaseAction: typeof buyRemoveAds,
   ) {
     if (purchaseActionInFlightRef.current) return;
+    if (purchaseUnavailable) {
+      setStatus('unavailable');
+      return;
+    }
 
     purchaseActionInFlightRef.current = true;
     setActiveAction(action);
@@ -114,8 +139,12 @@ export function RemoveAdsPlacementCta({ placement }: { placement: AdPlacement })
     }
   }
 
-  const actionActive = activeAction !== null;
-  const statusMessage = status ? copy.statusMessages[status] : undefined;
+  const actionsDisabled = activeAction !== null || purchaseUnavailable;
+  const statusMessage = purchaseUnavailable
+    ? copy.statusMessages.unavailable
+    : status
+      ? copy.statusMessages[status]
+      : undefined;
 
   return (
     <Card style={styles.card}>
@@ -125,31 +154,47 @@ export function RemoveAdsPlacementCta({ placement }: { placement: AdPlacement })
           <Text accessibilityRole="header" style={styles.title}>
             {copy.title(placementLabel)}
           </Text>
-          <Text style={styles.body}>{copy.body}</Text>
+          <Text style={styles.body}>
+            {purchaseUnavailable ? copy.webUnavailableBody(REMOVE_ADS_PRICE_LABEL) : copy.body}
+          </Text>
         </View>
         <View style={styles.actions}>
           <Button
-            accessibilityHint={copy.buyAccessibilityHint}
+            accessibilityHint={
+              purchaseUnavailable ? copy.webUnavailableAccessibilityHint : copy.buyAccessibilityHint
+            }
             accessibilityLabel={copy.buyAccessibilityLabel(REMOVE_ADS_PRICE_LABEL)}
             accessibilityRole="button"
-            accessibilityState={{ busy: activeAction === 'buy', disabled: actionActive }}
-            disabled={actionActive}
+            accessibilityState={{ busy: activeAction === 'buy', disabled: actionsDisabled }}
+            disabled={actionsDisabled}
             onPress={() => void runPurchaseAction('buy', buyRemoveAds)}
             style={styles.button}
           >
-            {activeAction === 'buy' ? copy.buying : copy.buyIdle(REMOVE_ADS_PRICE_LABEL)}
+            {activeAction === 'buy'
+              ? copy.buying
+              : purchaseUnavailable
+                ? copy.buyUnavailable
+                : copy.buyIdle(REMOVE_ADS_PRICE_LABEL)}
           </Button>
           <Button
-            accessibilityHint={copy.restoreAccessibilityHint}
+            accessibilityHint={
+              purchaseUnavailable
+                ? copy.webUnavailableAccessibilityHint
+                : copy.restoreAccessibilityHint
+            }
             accessibilityLabel={copy.restoreAccessibilityLabel}
             accessibilityRole="button"
-            accessibilityState={{ busy: activeAction === 'restore', disabled: actionActive }}
-            disabled={actionActive}
+            accessibilityState={{ busy: activeAction === 'restore', disabled: actionsDisabled }}
+            disabled={actionsDisabled}
             onPress={() => void runPurchaseAction('restore', restoreRemoveAdsPurchase)}
             style={styles.button}
             variant="secondary"
           >
-            {activeAction === 'restore' ? copy.restoring : copy.restoreIdle}
+            {activeAction === 'restore'
+              ? copy.restoring
+              : purchaseUnavailable
+                ? copy.restoreUnavailable
+                : copy.restoreIdle}
           </Button>
         </View>
       </View>

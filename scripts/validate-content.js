@@ -1689,7 +1689,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 14;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 22;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 25;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_RUNTIME_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
@@ -16330,9 +16330,44 @@ function validateRemoveAdsPurchaseRuntimeParity() {
     ],
     [
       normalizedPlacementCtaSource.includes(
-        'accessibilityLabel={copy.restoreAccessibilityLabel}',
+        "purchaseRuntime?.purchaseUnavailableReason === 'web_store_unavailable'",
       ) &&
-        normalizedPlacementCtaSource.includes('accessibilityHint={copy.restoreAccessibilityHint}'),
+        normalizedPlacementCtaSource.includes('copy.webUnavailableBody(REMOVE_ADS_PRICE_LABEL)') &&
+        normalizedPlacementCtaSource.includes('copy.webUnavailableAccessibilityHint') &&
+        normalizedPlacementCtaSource.includes('copy.buyUnavailable') &&
+        normalizedPlacementCtaSource.includes('copy.restoreUnavailable') &&
+        /Buy in mobile app/.test(placementCtaSource) &&
+        /Köp i mobilappen/.test(placementCtaSource) &&
+        /Restore in mobile app/.test(placementCtaSource) &&
+        /Återställ i mobilappen/.test(placementCtaSource),
+      'RemoveAdsPlacementCta must render localized mobile-app-only copy when web purchases are unavailable',
+    ],
+    [
+      normalizedPlacementCtaSource.includes(
+        "if (purchaseUnavailable) { setStatus('unavailable'); return; }",
+      ) &&
+        normalizedPlacementCtaSource.includes(
+          'const actionsDisabled = activeAction !== null || purchaseUnavailable;',
+        ) &&
+        normalizedPlacementCtaSource.includes('disabled={actionsDisabled}'),
+      'RemoveAdsPlacementCta must disable buy and restore actions for unavailable web purchase runtime',
+    ],
+    [
+      normalizedPlacementCtaSource.includes(
+        'purchaseUnavailable ? copy.statusMessages.unavailable',
+      ) &&
+        normalizedPlacementCtaSource.includes(
+          'Remove Ads can be bought or restored in the mobile app.',
+        ) &&
+        normalizedPlacementCtaSource.includes(
+          'Ta bort annonser kan köpas eller återställas i mobilappen.',
+        ),
+      'RemoveAdsPlacementCta must show mobile-app-only status copy for unavailable web purchase runtime',
+    ],
+    [
+      normalizedPlacementCtaSource.includes(
+        'accessibilityLabel={copy.restoreAccessibilityLabel}',
+      ) && normalizedPlacementCtaSource.includes('copy.restoreAccessibilityHint'),
       'RemoveAdsPlacementCta restore action must keep localized accessibility label and hint copy',
     ],
     placementCtaInFlightCase,
