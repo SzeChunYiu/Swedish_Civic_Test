@@ -139,8 +139,8 @@ export const citizenshipRequirementAreas = [
       en: 'You need to prove who you are before Migrationsverket can assess the application.',
     },
     detail: {
-      sv: 'Huvudregeln är att identiteten styrks med identitetshandling och personligt besök. Om identiteten inte kan styrkas säger Migrationsverket att medborgarskap tidigast kan bli aktuellt efter 10 år i Sverige.',
-      en: 'The main route is to prove identity with an identity document and an in-person visit. If identity cannot be proven, Migrationsverket says citizenship can normally be possible no earlier than after 10 years in Sweden.',
+      sv: 'Huvudregeln är att identiteten styrks med identitetshandling och personligt besök. Om identiteten inte kan styrkas kan medborgarskap normalt bli aktuellt tidigast efter 10 år i Sverige.',
+      en: 'The main route is to prove identity with an identity document and an in-person visit. If identity cannot be proven, citizenship can normally become possible no earlier than after 10 years in Sweden.',
     },
     checklistPrompt: {
       sv: 'Jag kan styrka min identitet eller har kontrollerat vilken undantagsväg som gäller.',
@@ -215,8 +215,8 @@ export const citizenshipRequirementAreas = [
       en: 'From 6 June 2026, adult applicants normally need their own long-term income of at least SEK 250,200 per year using the 2026 income base amount.',
     },
     detail: {
-      sv: 'Beloppet motsvarar tre inkomstbasbelopp. Migrationsverket anger också krav på varaktig inkomst från arbete eller näringsverksamhet, stabilitet över tid och högst sex månaders försörjningsstöd under de senaste tre åren. Inkomster från partner, tillgångar som sparande eller fastigheter och tillfälliga anställningar utan varaktighet kan inte räknas.',
-      en: 'The amount equals three income base amounts. Migrationsverket also describes requirements for long-term income from work or self-employment, stability over time, and no more than six months of income support during the past three years. Partner income, assets such as savings or property, and temporary jobs without long-term duration cannot be counted.',
+      sv: 'Beloppet motsvarar tre inkomstbasbelopp. Kraven gäller också varaktig inkomst från arbete eller näringsverksamhet, stabilitet över tid och högst sex månaders försörjningsstöd under de senaste tre åren. Inkomster från partner, tillgångar som sparande eller fastigheter och tillfälliga anställningar utan varaktighet kan inte räknas.',
+      en: 'The amount equals three income base amounts. The requirements also cover long-term income from work or self-employment, stability over time, and no more than six months of income support during the past three years. Partner income, assets such as savings or property, and temporary jobs without long-term duration cannot be counted.',
     },
     checklistPrompt: {
       sv: 'Jag har kontrollerat egen inkomst, varaktighet och försörjningsstöd mot de nya reglerna.',

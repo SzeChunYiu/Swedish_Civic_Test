@@ -36,6 +36,14 @@ const expectedOfficialUrls = [
   'https://www.regeringen.se/regeringsuppdrag/2026/02/andring-av-uppdraget-till-goteborgs-universitet-och-stockholms-universitet-att-bista-universitets--och-hogskoleradet-med-utvecklingen-av-ett-medborgarskapsprov/',
   'https://www.regeringen.se/artiklar/2025/11/inkomstbasbelopp-och-inkomstindex-for-ar-2026-faststallt/',
 ];
+const forbiddenCitizenshipRequirementSourceAuthorityPatterns = [
+  /\bUHR says\b/i,
+  /\bUHR\s+säger\b/i,
+  /säger\s+Migrationsverket\b/i,
+  /\bMigrationsverket\s+says\b/i,
+  /\bMigrationsverket\s+(?:also\s+)?describes\b/i,
+  /\bMigrationsverket\s+anger\s+(?:också\s+)?krav\b/i,
+];
 
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
@@ -133,19 +141,33 @@ test('citizenship requirements data covers seven sourced bilingual planning area
 
 test('citizenship requirements area copy avoids redundant source-authority phrasing', () => {
   const { citizenshipRequirementAreas } = loadTs('data/citizenshipRequirements.ts');
-  const sourceAuthorityPattern = /\bUHR (?:säger|says)\b/;
 
   for (const area of citizenshipRequirementAreas) {
     for (const field of ['summary', 'detail']) {
       for (const language of ['sv', 'en']) {
-        assert.doesNotMatch(
-          area[field][language],
-          sourceAuthorityPattern,
-          `${area.id}.${field}.${language} should state facts neutrally; source rows carry provenance`,
-        );
+        for (const pattern of forbiddenCitizenshipRequirementSourceAuthorityPatterns) {
+          assert.doesNotMatch(
+            area[field][language],
+            pattern,
+            `${area.id}.${field}.${language} should state facts neutrally; source rows carry provenance`,
+          );
+        }
       }
     }
   }
+
+  const identity = citizenshipRequirementAreas.find((area) => area.id === 'identity');
+  const selfSupport = citizenshipRequirementAreas.find((area) => area.id === 'selfSupport');
+  const habitualResidence = citizenshipRequirementAreas.find(
+    (area) => area.id === 'habitualResidence',
+  );
+
+  assert.match(identity.detail.sv, /kan medborgarskap normalt bli aktuellt tidigast efter 10 år/);
+  assert.match(identity.detail.en, /citizenship can normally become possible no earlier/);
+  assert.match(selfSupport.detail.sv, /Kraven gäller också varaktig inkomst/);
+  assert.match(selfSupport.detail.en, /The requirements also cover long-term income/);
+  assert.match(habitualResidence.detail.sv, /Migrationsverket avgör/);
+  assert.match(habitualResidence.detail.en, /Migrationsverket decides/);
 });
 
 test('citizenship requirement sources are official, dated, and currentness-labelled', () => {
@@ -168,14 +190,13 @@ test('citizenship requirement sources are official, dated, and currentness-label
 
 test('citizenship requirement area copy states sourced facts without UHR-says phrasing', () => {
   const { citizenshipRequirementAreas } = loadTs('data/citizenshipRequirements.ts');
-  const forbiddenSourceAuthorityPatterns = [/\bUHR says\b/i, /\bUHR\s+säger\b/i];
 
   for (const area of citizenshipRequirementAreas) {
     for (const field of ['summary', 'detail']) {
       for (const language of ['sv', 'en']) {
         const text = area[field][language];
 
-        for (const pattern of forbiddenSourceAuthorityPatterns) {
+        for (const pattern of forbiddenCitizenshipRequirementSourceAuthorityPatterns) {
           assert.doesNotMatch(
             text,
             pattern,

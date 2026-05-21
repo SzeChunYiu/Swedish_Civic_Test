@@ -30,6 +30,24 @@ const areaSourceLayoutCases = [
     viewportName: 'desktop',
   },
 ] as const;
+const neutralRequirementCopyCases = [
+  {
+    forbidden: [/säger Migrationsverket/i, /Migrationsverket anger också krav/i],
+    identity:
+      'Om identiteten inte kan styrkas kan medborgarskap normalt bli aktuellt tidigast efter 10 år i Sverige.',
+    language: 'sv',
+    selfSupport:
+      'Kraven gäller också varaktig inkomst från arbete eller näringsverksamhet, stabilitet över tid och högst sex månaders försörjningsstöd under de senaste tre åren.',
+  },
+  {
+    forbidden: [/Migrationsverket says/i, /Migrationsverket also describes/i],
+    identity:
+      'If identity cannot be proven, citizenship can normally become possible no earlier than after 10 years in Sweden.',
+    language: 'en',
+    selfSupport:
+      'The requirements also cover long-term income from work or self-employment, stability over time, and no more than six months of income support during the past three years.',
+  },
+] as const;
 
 async function openRequirementsRoute(page: Page, language: 'sv' | 'en') {
   await seedSettingsLanguage(page, language);
@@ -110,6 +128,26 @@ for (const fixture of areaSourceLayoutCases) {
     expect(consoleErrors.get()).toEqual([]);
   });
 }
+
+test('citizenship requirements render neutral source-authority copy in Swedish and English', async ({
+  page,
+}) => {
+  const consoleErrors = collectConsoleAndPageErrors(page);
+
+  for (const fixture of neutralRequirementCopyCases) {
+    await openRequirementsRoute(page, fixture.language);
+
+    await expect(page.getByText(fixture.identity, { exact: false })).toBeVisible();
+    await expect(page.getByText(fixture.selfSupport, { exact: false })).toBeVisible();
+
+    const bodyText = await page.locator('body').innerText();
+    for (const forbidden of fixture.forbidden) {
+      expect(bodyText).not.toMatch(forbidden);
+    }
+  }
+
+  expect(consoleErrors.get()).toEqual([]);
+});
 
 test('citizenship requirements checklist persists checked planning areas', async ({ page }) => {
   const consoleErrors = collectConsoleAndPageErrors(page);
