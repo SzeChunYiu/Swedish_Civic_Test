@@ -440,6 +440,7 @@ test('static ebook provenance metadata is route-preserving and count-addressable
 
   assert.match(ebookSource, /function ebookRouteHash\(chapterId,\s*targetParam,\s*targetId\)/);
   assert.match(ebookSource, /data-source-counts='\$\{serializedCounts\}'/);
+  assert.match(ebookSource, /data-source-key="\$\{sourceKeys\}"/);
   assert.match(ebookSource, /ebookRouteHash\(chapterId,\s*'fn',\s*id\)/);
   assert.match(ebookSource, /ebookRouteHash\(chapterId,\s*'fnref',\s*footnote\.id\)/);
   assert.match(ebookSource, /function scrollEbookRouteTarget\(\)/);
