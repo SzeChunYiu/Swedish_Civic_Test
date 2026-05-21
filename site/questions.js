@@ -60353,8 +60353,8 @@
       title: {
         en: 'The country of Sweden',
         sv: 'Landet Sverige',
-        'zh-Hans': '瑞典这个国家',
-        'zh-Hant': '瑞典這個國家',
+        'zh-Hans': '认识瑞典',
+        'zh-Hant': '認識瑞典',
         ar: 'دولة السويد',
         ckb: 'وڵاتی سوید',
         fa: 'کشور سوئد',
@@ -60716,8 +60716,8 @@
       title: {
         en: 'A secular state and a multi-religious country',
         sv: 'En sekulär stat och ett mångreligiöst land',
-        'zh-Hans': '世俗国家与多宗教的国度',
-        'zh-Hant': '世俗國家與多宗教的國度',
+        'zh-Hans': '世俗国家与多元宗教',
+        'zh-Hant': '世俗國家與多元宗教',
         ar: 'دولة علمانية وبلد متعدّد الأديان',
         ckb: 'دەوڵەتێکی سێکۆلار و وڵاتێکی فرە‌ئاینی',
         fa: 'دولتی سکولار و کشوری چنددینی',

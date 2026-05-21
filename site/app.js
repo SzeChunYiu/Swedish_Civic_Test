@@ -1796,11 +1796,17 @@ function smtQuizRender() {
   const answered = ans !== undefined;
   const sessionId = `practice:${scope}`;
   const sourceRow = smtQuizQuestionSourceRow(q, lang);
+  const qNavLabel = smtTr({ sv: 'Fråga', en: 'Question', 'zh-Hans': '题目', 'zh-Hant': '題目', ar: 'سؤال', ckb: 'پرسیار', fa: 'سؤال', pl: 'Pytanie', so: "Su'aal", ti: 'ሕቶ', tr: 'Soru', uk: 'Питання' });
   const dots = Array.from({ length: n }, (_, k) => {
+    const isAnswered = SMT_QUIZ.answers[k] !== undefined;
+    const navigable = isAnswered || k === SMT_QUIZ.i;
     let cls = '';
-    if (k < SMT_QUIZ.i) cls = SMT_QUIZ.answers[k] === questions[k].answer ? 'is-right' : 'is-wrong';
-    else if (k === SMT_QUIZ.i) cls = 'is-on';
-    return `<span class="quiz__dot ${cls}"></span>`;
+    if (k === SMT_QUIZ.i) cls = 'is-on';
+    else if (isAnswered) cls = SMT_QUIZ.answers[k] === questions[k].answer ? 'is-right' : 'is-wrong';
+    if (navigable) cls += ' is-nav';
+    cls = cls.trim();
+    if (!navigable) return `<span class="quiz__dot ${cls}"></span>`;
+    return `<button type="button" class="quiz__dot ${cls}" data-go="${k}" aria-label="${qNavLabel} ${k + 1}"${k === SMT_QUIZ.i ? ' aria-current="true"' : ''}></button>`;
   }).join('');
 
   const opts = smtQuizDisplayOptions(q, sessionId)
@@ -1823,23 +1829,29 @@ function smtQuizRender() {
   if (answered) {
     const right = ans === q.answer;
     const feedbackSource = smtQuizEscapeHtml(smtQuizSourceCitation(q, lang));
-    const feedbackDisclaimer = smtQuizEscapeHtml(smtQuizQuestionDisclaimer(lang));
     feedback = `
       <div class="quiz__feedback ${right ? '' : 'is-wrong'}">
         <b>${right ? copy.correct : copy.wrong}</b> ${q.why[lang] || q.why.en}
         <p class="quiz__feedback-source">${feedbackSource}</p>
-        <p class="quiz__feedback-disclaimer">${feedbackDisclaimer}</p>
       </div>
     `;
   }
 
   const isLast = SMT_QUIZ.i === n - 1;
-  const nextLabel = isLast ? copy.finish : copy.next;
+  const nextLabel = isLast
+    ? smtTr({ sv: 'Visa resultat', en: 'See score', 'zh-Hans': '查看成绩', 'zh-Hant': '查看成績', ar: 'عرض النتيجة', ckb: 'بینینی ئەنجام', fa: 'مشاهده نتیجه', pl: 'Zobacz wynik', so: 'Arag natiijada', ti: 'ውጽኢት ርአ', tr: 'Sonucu gör', uk: 'Переглянути результат' })
+    : smtTr({ sv: 'Nästa', en: 'Next', 'zh-Hans': '下一题', 'zh-Hant': '下一題', ar: 'التالي', ckb: 'دواتر', fa: 'بعدی', pl: 'Następne', so: 'Xiga', ti: 'ዝቕጽል', tr: 'Sonraki', uk: 'Наступне' });
   const nextBtn = answered
-    ? `<button class="btn btn--gold" id="quiz-next">${nextLabel}</button>`
+    ? `<button class="btn btn--gold" id="quiz-next">${nextLabel} →</button>`
     : `<span></span>`;
+  const prevBtn =
+    SMT_QUIZ.i > 0
+      ? `<button class="btn btn--ghost" id="quiz-prev">← ${smtTr({ sv: 'Föregående', en: 'Previous', 'zh-Hans': '上一题', 'zh-Hant': '上一題', ar: 'السابق', ckb: 'پێشتر', fa: 'قبلی', pl: 'Poprzednie', so: 'Hore', ti: 'ዝሓለፈ', tr: 'Önceki', uk: 'Попереднє' })}</button>`
+      : `<span></span>`;
+  const screenDisclaimer = smtQuizEscapeHtml(smtQuizQuestionDisclaimer(lang));
 
   stage.innerHTML = `
+    <p class="quiz__screen-disclaimer">${screenDisclaimer}</p>
     <div class="quiz__progress">${dots}</div>
     <div class="quiz__card">
       <div class="quiz__crumb">${q.chapter}</div>
@@ -1848,6 +1860,7 @@ function smtQuizRender() {
       <div class="quiz__opts">${opts}</div>
       ${feedback}
       <div class="quiz__actions">
+        ${prevBtn}
         <span class="quiz__counter">${copy.counter(SMT_QUIZ.i, n)}</span>
         ${nextBtn}
       </div>
@@ -1931,6 +1944,24 @@ document.addEventListener('click', (e) => {
     SMT_QUIZ.i++;
     smtQuizRender();
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
+  if (e.target.closest('#quiz-prev')) {
+    if (SMT_QUIZ.i > 0) {
+      SMT_QUIZ.i--;
+      smtQuizRender();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    return;
+  }
+  const quizDot = e.target.closest('#quiz-stage .quiz__dot[data-go]');
+  if (quizDot) {
+    const k = parseInt(quizDot.dataset.go, 10);
+    if (!Number.isNaN(k) && k !== SMT_QUIZ.i) {
+      SMT_QUIZ.i = k;
+      smtQuizRender();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
     return;
   }
   if (e.target.closest('#quiz-again')) {
