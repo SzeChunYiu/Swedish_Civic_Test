@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Stack, usePathname } from 'expo-router';
+import { Stack, usePathname, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SystemUI from 'expo-system-ui';
 
@@ -8,6 +8,10 @@ import { FirstRunAboutTheTestModal } from '../components/onboarding/FirstRunAbou
 import { LanguagePicker } from '../components/ui/LanguagePicker';
 import { shouldSuppressLaunchPopupAdForPath } from '../lib/monetization/ads';
 import { useRemoveAdsEntitlements } from '../lib/monetization/useRemoveAdsEntitlements';
+import {
+  createExpoStudyReminderNotificationRoutingRuntime,
+  registerStudyReminderNotificationResponseRouting,
+} from '../lib/notifications/studyReminderRouting';
 import { ThemeProvider, useTheme } from '../lib/theme/ThemeProvider';
 
 function useSystemCanvasColor(canvasColor: string) {
@@ -16,9 +20,31 @@ function useSystemCanvasColor(canvasColor: string) {
   }, [canvasColor]);
 }
 
+function useStudyReminderNotificationRouting() {
+  const router = useRouter();
+
+  useEffect(() => {
+    let cleanup: (() => void) | null = null;
+    let cancelled = false;
+
+    void createExpoStudyReminderNotificationRoutingRuntime().then((runtime) => {
+      if (cancelled || !runtime) return;
+      cleanup = registerStudyReminderNotificationResponseRouting(runtime, (route) => {
+        router.push(route);
+      });
+    });
+
+    return () => {
+      cancelled = true;
+      cleanup?.();
+    };
+  }, [router]);
+}
+
 function RootLayoutContent() {
   const { colors: themeColors, resolvedColorScheme } = useTheme();
   useSystemCanvasColor(themeColors.canvas);
+  useStudyReminderNotificationRouting();
   const pathname = usePathname();
   const suppressLaunchPopupAd = shouldSuppressLaunchPopupAdForPath(pathname);
   const { entitlements: monetizationEntitlements, entitlementsReady } = useRemoveAdsEntitlements();

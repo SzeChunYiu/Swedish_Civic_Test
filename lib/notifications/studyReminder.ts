@@ -132,14 +132,14 @@ export function buildStudyReminderNotificationContent(
     return {
       title: 'Dagens lilla pass väntar',
       body: 'Några frågor nu gör provdagen lugnare.',
-      data: { route: '/(tabs)/practice', source: 'local-study-reminder' },
+      data: { route: '/practice', source: 'local-study-reminder' },
     };
   }
 
   return {
     title: 'Your study check-in is ready',
     body: 'A few questions today keeps test day calmer.',
-    data: { route: '/(tabs)/practice', source: 'local-study-reminder' },
+    data: { route: '/practice', source: 'local-study-reminder' },
   };
 }
 
