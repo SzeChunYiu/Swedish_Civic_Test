@@ -66,9 +66,10 @@ function visibleText(node) {
   return [node.textContent, ...node.children.map(visibleText)].filter(Boolean).join(' ');
 }
 
-function renderDashboard(language) {
+function renderDashboard(language, storageOverrides = []) {
   const dashboard = new Element('div');
   const dashboardEyebrow = new Element('span');
+  const today = dateKey(new Date());
   const storage = new Map([
     ['smt_lang', language],
     [
@@ -82,12 +83,13 @@ function renderDashboard(language) {
     [
       'smt_streak',
       JSON.stringify({
-        activeDays: [new Date().toISOString().slice(0, 10)],
+        activeDays: [today],
         answeredThisWeek: 50,
         days: 1,
-        lastDate: new Date().toISOString().slice(0, 10),
+        lastDate: today,
       }),
     ],
+    ...storageOverrides,
   ]);
 
   const listeners = {};
@@ -299,6 +301,38 @@ test('static v1.1 dashboard renders localized local-practice caveats', () => {
   [englishText, swedishText].forEach((text) => {
     assert.doesNotMatch(text, /Readiness|Din beredskap|Almost ready|Nästan redo/);
   });
+});
+
+test('static v1.1 dashboard uses natural Swedish streak protection copy', () => {
+  const today = dateKey(new Date());
+  const twoDaysAgo = new Date();
+  twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+  const currentWeek = mondayKey(new Date());
+  const swedishText = renderDashboard('sv', [
+    [
+      'smt_streak',
+      JSON.stringify({
+        activeDays: [today, dateKey(twoDaysAgo)],
+        answeredThisWeek: 50,
+        days: 2,
+        lastDate: today,
+      }),
+    ],
+    [
+      'smt_freeze',
+      JSON.stringify({
+        available: 2,
+        lastEarnedWeek: currentWeek,
+        lifetimeSpent: 0,
+        rescuedDays: [],
+      }),
+    ],
+  ]);
+
+  assert.match(swedishText, /Svit/);
+  assert.match(swedishText, /Svitskydd/);
+  assert.match(swedishText, /Sviten är räddad — 1 svitskydd kvar/);
+  assert.doesNotMatch(swedishText, /\b(?:streak|freeze|freezes)\b|Strecket|frysar|Frysar/i);
 });
 
 test('static storage: v1.1 dashboard bounds local study-data shapes before rendering', () => {

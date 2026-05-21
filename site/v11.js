@@ -827,7 +827,7 @@
       banner.className = 'v11-freeze-banner';
       banner.textContent = dtr({
         sv: function (n) {
-          return 'Sviten räddades — ' + n + ' frys' + (n !== 1 ? 'ar' : '') + ' kvar';
+          return 'Sviten är räddad — ' + n + ' svitskydd kvar';
         },
         en: function (n) {
           return 'Streak protected — ' + n + ' freeze' + (n !== 1 ? 's' : '') + ' left';
@@ -875,7 +875,7 @@
     const freezeLabel = document.createElement('span');
     freezeLabel.className = 'v11-freeze-label';
     freezeLabel.textContent = dtr({
-      sv: 'Frysar',
+      sv: 'Svitskydd',
       en: 'Freezes',
       'zh-Hans': '冻结',
       'zh-Hant': '凍結',
