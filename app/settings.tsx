@@ -150,7 +150,7 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     importSummaryFsrsCards: (count) =>
       formatCount(count, { one: 'repetitionskort', other: 'repetitionskort' }),
     importSummaryMockExams: (count) =>
-      formatCount(count, { one: 'provhistorikpost', other: 'provhistorikposter' }),
+      formatCount(count, { one: 'genomfört övningsprov', other: 'genomförda övningsprov' }),
     importSummarySettings: (count) =>
       formatCount(count, { one: 'sparad inställning', other: 'sparade inställningar' }),
     importSummaryStreakFreeze: 'Studiesvit och svitskydd ingår',
@@ -234,8 +234,8 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
       formatCount(count, { one: 'FSRS review card', other: 'FSRS review cards' }),
     importSummaryMockExams: (count) =>
       formatCount(count, {
-        one: 'mock exam history entry',
-        other: 'mock exam history entries',
+        one: 'completed mock exam',
+        other: 'completed mock exams',
       }),
     importSummarySettings: (count) =>
       formatCount(count, { one: 'saved setting', other: 'saved settings' }),

@@ -126,6 +126,8 @@ test('local study data import summary keeps Swedish copy learner-facing', () => 
   assert.match(swedishCopyMatch[0], /other: 'repetitionsdagar'/);
   assert.match(swedishCopyMatch[0], /one: 'repetitionskort'/);
   assert.match(swedishCopyMatch[0], /other: 'repetitionskort'/);
+  assert.match(swedishCopyMatch[0], /one: 'genomfört övningsprov'/);
+  assert.match(swedishCopyMatch[0], /other: 'genomförda övningsprov'/);
   assert.match(swedishCopyMatch[0], /one: 'markerat kravområde'/);
   assert.match(swedishCopyMatch[0], /other: 'markerade kravområden'/);
   assert.match(swedishCopyMatch[0], /one: 'granskning av fel svar'/);
@@ -145,6 +147,8 @@ test('local study data import summary keeps Swedish copy learner-facing', () => 
   assert.match(englishCopyMatch[0], /other: 'FSRS review days'/);
   assert.match(englishCopyMatch[0], /one: 'FSRS review card'/);
   assert.match(englishCopyMatch[0], /other: 'FSRS review cards'/);
+  assert.match(englishCopyMatch[0], /one: 'completed mock exam'/);
+  assert.match(englishCopyMatch[0], /other: 'completed mock exams'/);
   assert.match(englishCopyMatch[0], /one: 'marked requirement'/);
   assert.match(englishCopyMatch[0], /other: 'marked requirements'/);
   assert.match(englishCopyMatch[0], /one: 'wrong-answer review'/);
