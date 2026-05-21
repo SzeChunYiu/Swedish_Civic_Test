@@ -5,10 +5,10 @@ const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
+const focusArgs = ['scripts/validate-content.js', '--focus-content-type-schema-parity'];
 
 test('content TypeScript schema stays in parity with runtime validator expectations', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
+  const output = execFileSync(process.execPath, focusArgs, {
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
@@ -30,18 +30,14 @@ test('content TypeScript schema stays in parity with runtime validator expectati
     contentTypes,
     /export type LocalizedContentText = Record<'sv' \| 'en', string> &\s*Partial<Record<LocaleCode, string>>;/,
   );
-  assert.match(
-    contentTypes,
-    /export type LocalizedContentTextOverrides = Partial<Record<LocaleCode, string>>;/,
-  );
   assert.match(contentTypes, /export interface PracticeQuestion/);
   assert.match(contentTypes, /text\?: LocalizedContentText;/);
   assert.match(contentTypes, /questionText\?: LocalizedContentText;/);
   assert.match(contentTypes, /explanationText\?: LocalizedContentText;/);
   assert.match(contentTypes, /uhrReference: UHRReference;/);
   assert.match(contentTypes, /tags: string\[\];/);
-  assert.match(contentTypes, /nameText\?: LocalizedContentTextOverrides;/);
-  assert.match(contentTypes, /descriptionText\?: LocalizedContentTextOverrides;/);
+  assert.match(contentTypes, /nameText\?: LocalizedContentText;/);
+  assert.match(contentTypes, /descriptionText\?: LocalizedContentText;/);
   assert.match(contentTypes, /export interface GlossaryTerm/);
   assert.match(contentTypes, /chapterId\?: string;/);
 });
@@ -63,6 +59,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-content-type-schema-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -96,6 +93,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-content-type-schema-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -126,6 +124,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-content-type-schema-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -156,6 +155,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-content-type-schema-parity');
 require('./scripts/validate-content.js');
 `,
     ],

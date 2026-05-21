@@ -7601,6 +7601,17 @@ if (process.argv.includes('--focus-static-head-metadata')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-content-type-schema-parity')) {
+  validateContentTypeSchemaParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    contentTypeUnionsValidated,
+    contentTypeInterfacesValidated,
+    contentTypeSchemaParityValidated,
+  });
+  process.exit(0);
+}
+
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
 if (!Array.isArray(baseQuestions)) fail('baseQuestions export is not an array');
 if (!Array.isArray(additionalQuestions)) fail('additionalQuestions export is not an array');
