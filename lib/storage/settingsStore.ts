@@ -25,7 +25,9 @@ const includeSupplementaryKey = 'includeSupplementaryQuestions';
 const hasSeenAboutTheTestKey = 'hasSeenAboutTheTest';
 const settingsStorageId = 'settings';
 const defaultDailyGoalAnswers = 10;
-const dailyGoalAnswerOptions = [5, 10, 20, 40] as const;
+export const supportedDailyGoalAnswerOptions = [5, 10, 20, 40] as const;
+
+const dailyGoalAnswerOptions = new Set<number>(supportedDailyGoalAnswerOptions);
 
 let settingsStorage: MMKV | null = null;
 
@@ -70,12 +72,7 @@ function readAudioEnabled(): boolean {
 }
 
 function normalizeDailyGoalAnswers(answerCount: unknown): number {
-  if (
-    typeof answerCount !== 'number' ||
-    !Number.isFinite(answerCount) ||
-    !Number.isInteger(answerCount) ||
-    !dailyGoalAnswerOptions.includes(answerCount as (typeof dailyGoalAnswerOptions)[number])
-  ) {
+  if (!isDailyGoalAnswerOption(answerCount)) {
     return defaultDailyGoalAnswers;
   }
 
@@ -83,16 +80,16 @@ function normalizeDailyGoalAnswers(answerCount: unknown): number {
 }
 
 function normalizeImportedDailyGoalAnswers(answerCount: unknown): number | undefined {
-  if (
-    typeof answerCount !== 'number' ||
-    !Number.isFinite(answerCount) ||
-    !Number.isInteger(answerCount) ||
-    !dailyGoalAnswerOptions.includes(answerCount as (typeof dailyGoalAnswerOptions)[number])
-  ) {
-    return undefined;
-  }
+  return isDailyGoalAnswerOption(answerCount) ? answerCount : undefined;
+}
 
-  return answerCount;
+function isDailyGoalAnswerOption(answerCount: unknown): answerCount is number {
+  return (
+    typeof answerCount === 'number' &&
+    Number.isFinite(answerCount) &&
+    Number.isInteger(answerCount) &&
+    dailyGoalAnswerOptions.has(answerCount)
+  );
 }
 
 function readDailyGoalAnswers(): number {
@@ -148,10 +145,8 @@ export function normalizeImportedSettings(value: unknown): ImportableSettings {
     settings.audioEnabled = candidate.audioEnabled;
   }
   if (Object.prototype.hasOwnProperty.call(candidate, 'dailyGoalAnswers')) {
-    const importedDailyGoalAnswers = normalizeImportedDailyGoalAnswers(candidate.dailyGoalAnswers);
-    if (importedDailyGoalAnswers !== undefined) {
-      settings.dailyGoalAnswers = importedDailyGoalAnswers;
-    }
+    const dailyGoalAnswers = normalizeImportedDailyGoalAnswers(candidate.dailyGoalAnswers);
+    if (dailyGoalAnswers !== undefined) settings.dailyGoalAnswers = dailyGoalAnswers;
   }
   if (typeof candidate.includeSupplementaryQuestions === 'boolean') {
     settings.includeSupplementaryQuestions = candidate.includeSupplementaryQuestions;

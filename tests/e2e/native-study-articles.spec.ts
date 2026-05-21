@@ -5,6 +5,8 @@ import { dismissBlockingModals } from './browserLaunch';
 test('learn links to native study articles and back to chapter practice', async ({ page }) => {
   const consoleErrors: string[] = [];
 
+  await page.setViewportSize({ height: 844, width: 390 });
+
   page.on('console', (message) => {
     if (message.type() === 'error') consoleErrors.push(message.text());
   });
@@ -25,12 +27,30 @@ test('learn links to native study articles and back to chapter practice', async 
   await expect(page.getByRole('button', { name: 'Lyssna på artikeln' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Lyssna på avsnittet' }).first()).toBeVisible();
 
-  await page.getByLabel(/Öppna artikel Kapitel 01 · Historia/).click();
+  const articleNav = page.getByRole('tablist', { name: 'Välj studieartikel' });
+  await expect(articleNav).toBeVisible();
+
+  const introTab = articleNav.getByRole('tab', {
+    name: /Öppna artikel Hur man läser den här boken/,
+  });
+  const chapterOneTab = articleNav.getByRole('tab', {
+    name: /Öppna artikel Kapitel 01 · Historia/,
+  });
+
+  await expect(introTab).toHaveAttribute('aria-selected', 'true');
+  await expect(chapterOneTab).toHaveAttribute('aria-selected', 'false');
+
+  await chapterOneTab.click();
 
   await expect(page).toHaveURL(/\/ebook\?c=1$/);
+  await expect(chapterOneTab).toHaveAttribute('aria-selected', 'true');
   await expect(page.locator('body')).toContainText('En kort historia om Sverige.');
   await expect(page.locator('body')).toContainText('Repetera nära källan');
   await expect(page.getByRole('button', { name: 'Lyssna på artikeln' })).toBeVisible();
+
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1))
+    .toBe(true);
 
   await page.getByLabel('Öppna övning för En kort historia om Sverige.').click();
 

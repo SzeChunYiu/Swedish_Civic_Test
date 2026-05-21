@@ -746,6 +746,16 @@ function embeddedEnglishClause(value: string): string {
 }
 
 function replaceLeadingSwedishSubject(subject: string, value: string): string {
+  if (/^att köpa sex i Sverige$/i.test(subject.trim())) {
+    if (
+      /^Det är olagligt att köpa sex, men personen som säljer straffas inte$/i.test(value.trim())
+    ) {
+      return 'Att köpa sex är olagligt i Sverige, men personen som säljer sex straffas inte';
+    }
+    if (/^Det är alltid lagligt att köpa sex$/i.test(value.trim())) {
+      return 'Att köpa sex är alltid lagligt i Sverige';
+    }
+  }
   if (/^äktenskap mellan personer av samma kön i Sverige$/i.test(subject.trim())) {
     if (/^Det är tillåtet att gifta sig med en person av samma kön$/i.test(value.trim())) {
       return 'Äktenskap mellan personer av samma kön är tillåtet i Sverige';
@@ -762,6 +772,24 @@ function replaceLeadingSwedishSubject(subject: string, value: string): string {
 }
 
 function replaceLeadingEnglishSubject(subject: string, value: string): string {
+  if (/^buying sex in Sweden$/i.test(subject.trim())) {
+    if (
+      /^It is illegal to buy sex, but the person who sells it is not punished$/i.test(value.trim())
+    ) {
+      return 'In Sweden, buying sex is illegal, but the person who sells sex is not punished';
+    }
+    if (/^It is always legal to buy sex$/i.test(value.trim())) {
+      return 'In Sweden, buying sex is always legal';
+    }
+  }
+  if (/^marriage between people of the same sex in Sweden$/i.test(subject.trim())) {
+    if (/^It is permitted to marry a person of the same sex$/i.test(value.trim())) {
+      return 'In Sweden, marriage between people of the same sex is permitted';
+    }
+    if (/^It is prohibited to marry a person of the same sex$/i.test(value.trim())) {
+      return 'In Sweden, marriage between people of the same sex is prohibited';
+    }
+  }
   const normalizedSubject = upperFirst(subject.trim());
   return value
     .replace(/^They are\s+/i, `${normalizedSubject} are `)
@@ -954,7 +982,8 @@ function appliesStatementEn(subject: string, answer: string): string {
   if (/^They are\s+/i.test(answer)) {
     return replaceLeadingEnglishSubject(subject, answer);
   }
-  return answer;
+  const subjectStatement = replaceLeadingEnglishSubject(subject, answer);
+  return subjectStatement === answer ? answer : subjectStatement;
 }
 
 function decisionStatementSv(subject: string, context: string, answer: string): string {
