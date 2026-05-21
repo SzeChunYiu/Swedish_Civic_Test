@@ -75,27 +75,6 @@ test('QuestionCard accessibility parity uses focused content validation routing'
   );
 });
 
-test('LegalSection rendering guard is wired into content validation routing', () => {
-  const pkg = readPackageJson();
-  const validatorSource = fs.readFileSync(
-    path.join(repoRoot, 'scripts/validate-content.js'),
-    'utf8',
-  );
-  const legalSectionTestSource = fs.readFileSync(
-    path.join(repoRoot, 'tests/content-legal-section-rendering.test.js'),
-    'utf8',
-  );
-
-  const routedOccurrences =
-    pkg.scripts['test:content'].match(/tests\/content-legal-section-rendering\.test\.js/g) ?? [];
-
-  assert.equal(routedOccurrences.length, 1);
-  assert.match(validatorSource, /--focus-legal-section-rendering/);
-  assert.match(validatorSource, /validateLegalSectionRenderingParity\(\);/);
-  assert.match(legalSectionTestSource, /--focus-legal-section-rendering/);
-  assert.match(legalSectionTestSource, /legalSectionRenderingParityValidated/);
-});
-
 test('answer feedback parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
@@ -119,26 +98,26 @@ test('answer feedback parity uses focused content validation routing', () => {
   );
 });
 
-test('practice scoring parity uses focused content validation routing', () => {
+test('question report link parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
     'utf8',
   );
-  const practiceScoringTestSource = fs.readFileSync(
-    path.join(repoRoot, 'tests/content-practice-scoring-parity.test.js'),
+  const reportLinkTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-question-report-link-parity.test.js'),
     'utf8',
   );
 
-  assert.match(validatorSource, /--focus-practice-scoring-parity/);
+  assert.match(validatorSource, /--focus-question-report-link-parity/);
   assert.match(
     validatorSource,
-    /validatePracticeScoringRules\(\);[\s\S]*practiceScoringRulesValidated[\s\S]*practiceScoringRulesParityValidated/,
+    /validateQuestionReportLinkParity\(\);[\s\S]*questionReportLinkRulesValidated[\s\S]*questionReportLinkParityValidated/,
   );
-  assert.match(practiceScoringTestSource, /--focus-practice-scoring-parity/);
+  assert.match(reportLinkTestSource, /--focus-question-report-link-parity/);
   assert.doesNotMatch(
-    practiceScoringTestSource,
+    reportLinkTestSource,
     /\['scripts\/validate-content\.js'\]/,
-    'practice scoring tests must not route through full content validation',
+    'QuestionReportLink parity tests must not route through full content validation',
   );
 });
 

@@ -3257,6 +3257,142 @@ const EXPECTED_QUESTION_DISCLAIMER_ROUTES = [
   { route: '/chapter/[chapterId]', file: 'app/chapter/[chapterId].tsx' },
   { route: '/quiz/[sessionId]', file: 'app/quiz/[sessionId].tsx' },
 ];
+const EXPECTED_QUESTION_REPORT_LINK_RULES = [
+  {
+    file: 'components/quiz/QuestionReportLink.tsx',
+    label: 'screen union includes every question surface',
+    pattern: /type QuestionReportScreen = 'chapter' \| 'exam' \| 'practice' \| 'quiz';/,
+  },
+  {
+    file: 'components/quiz/QuestionReportLink.tsx',
+    label: 'optional selected-answer prop',
+    pattern: /selectedOptionId\?: string \| null;/,
+  },
+  {
+    file: 'components/quiz/QuestionReportLink.tsx',
+    label: 'localized Swedish report label',
+    pattern: /Rapportera den här frågan/,
+  },
+  {
+    file: 'components/quiz/QuestionReportLink.tsx',
+    label: 'localized English report label',
+    pattern: /Report this question/,
+  },
+  {
+    file: 'components/quiz/QuestionReportLink.tsx',
+    label: 'localized Swedish accessibility label',
+    pattern: /Rapportera frågan \$\{questionId\}/,
+  },
+  {
+    file: 'components/quiz/QuestionReportLink.tsx',
+    label: 'localized English accessibility label',
+    pattern: /Report question \$\{questionId\}/,
+  },
+  {
+    file: 'components/quiz/QuestionReportLink.tsx',
+    label: 'localized source citation context',
+    pattern: /getQuestionSourceCitation\(question, language\)/,
+  },
+  {
+    file: 'components/quiz/QuestionReportLink.tsx',
+    label: 'question id support query parameter',
+    pattern: /\['questionId', question\.id\]/,
+  },
+  {
+    file: 'components/quiz/QuestionReportLink.tsx',
+    label: 'source support query parameter',
+    pattern: /\['source', getQuestionSourceCitation\(question, language\)\]/,
+  },
+  {
+    file: 'components/quiz/QuestionReportLink.tsx',
+    label: 'active language support query parameter',
+    pattern: /\['language', language\]/,
+  },
+  {
+    file: 'components/quiz/QuestionReportLink.tsx',
+    label: 'question surface support query parameter',
+    pattern: /\['screen', screen\]/,
+  },
+  {
+    file: 'components/quiz/QuestionReportLink.tsx',
+    label: 'selected answer support query is conditional',
+    pattern: /selectedAnswer \? \['selectedAnswer', selectedAnswer\] : null/,
+  },
+  {
+    file: 'components/quiz/QuestionReportLink.tsx',
+    label: 'support query encoding',
+    pattern: /`\$\{encodeURIComponent\(key\)\}=\$\{encodeURIComponent\(value\)\}`/,
+  },
+  {
+    file: 'components/quiz/QuestionReportLink.tsx',
+    label: 'link accessibility role',
+    pattern: /accessibilityRole="link"/,
+  },
+  {
+    file: 'components/quiz/QuestionReportLink.tsx',
+    label: '44px-plus report link target',
+    pattern: /minHeight: space\[6\]/,
+  },
+  {
+    file: 'components/quiz/QuestionReportLink.tsx',
+    label: 'selected option lookup',
+    pattern: /question\.options\.find\(\(option\) => option\.id === selectedOptionId\)/,
+  },
+  {
+    file: 'components/quiz/QuestionReportLink.tsx',
+    label: 'localized selected answer text',
+    pattern: /return language === 'en' \? selectedOption\.textEn : selectedOption\.textSv;/,
+  },
+  {
+    file: 'app/(tabs)/practice.tsx',
+    label: 'practice route QuestionReportLink import',
+    pattern:
+      /import \{ QuestionReportLink \} from '\.\.\/\.\.\/components\/quiz\/QuestionReportLink';/,
+  },
+  {
+    file: 'app/(tabs)/practice.tsx',
+    label: 'practice feedback selected answer context',
+    message: 'QuestionReportLink missing practice feedback selected answer context',
+    pattern:
+      /<QuestionReportLink\s+language=\{language\}\s+question=\{question\}\s+screen="practice"\s+selectedOptionId=\{selectedOptionId\}\s+\/>/,
+  },
+  {
+    file: 'app/quiz/[sessionId].tsx',
+    label: 'quiz feedback selected answer context',
+    pattern:
+      /<QuestionReportLink\s+language=\{language\}\s+question=\{question\}\s+screen="quiz"\s+selectedOptionId=\{selectedOptionId\}\s+\/>/,
+  },
+  {
+    file: 'app/chapter/[chapterId].tsx',
+    label: 'chapter reader source context',
+    message: 'QuestionReportLink missing chapter reader source context',
+    pattern:
+      /<QuestionReportLink\s+language=\{language\}\s+question=\{question\}\s+screen="chapter"\s+\/>/,
+  },
+  {
+    absent: true,
+    file: 'app/chapter/[chapterId].tsx',
+    label: 'chapter reader has no selected answer context',
+    message: 'QuestionReportLink chapter reader must not include selected answer context',
+    pattern: /screen="chapter"[\s\S]{0,220}selectedOptionId=/,
+  },
+  {
+    file: 'app/support.tsx',
+    label: 'support context non-PII and no-network handling',
+    message: 'QuestionReportLink missing support context non-PII copy',
+    test(source) {
+      return (
+        source.includes(
+          'Lägg inte till namn, personnummer, ärendenummer eller andra personuppgifter i rapporten.',
+        ) &&
+        source.includes(
+          'Do not add names, personal identity numbers, case numbers, or other personal data to the report.',
+        ) &&
+        !/mailto:|Linking\.openURL|fetch\(/.test(source)
+      );
+    },
+  },
+];
 const REQUIRED_QUESTION_DISCLAIMER_PHRASES = [
   'independent study tool',
   'not official',
@@ -7723,6 +7859,8 @@ let audioButtonAccessibilityRulesValidated = 0;
 let audioButtonAccessibilityParityValidated = false;
 let questionCardAccessibilityRulesValidated = 0;
 let questionCardAccessibilityParityValidated = false;
+let questionReportLinkRulesValidated = 0;
+let questionReportLinkParityValidated = false;
 let answerOptionAccessibilityRulesValidated = 0;
 let answerOptionAccessibilityParityValidated = false;
 let explanationPanelAccessibilityRulesValidated = 0;
@@ -7963,6 +8101,16 @@ if (process.argv.includes('--focus-question-card-accessibility')) {
   printValidationSummary({
     questionCardAccessibilityRulesValidated,
     questionCardAccessibilityParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-question-report-link-parity')) {
+  validateQuestionReportLinkParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    questionReportLinkRulesValidated,
+    questionReportLinkParityValidated,
   });
   process.exit(0);
 }
@@ -11595,6 +11743,48 @@ function validateQuestionCardAccessibilityParity() {
         1
   ) {
     questionCardAccessibilityParityValidated = true;
+  }
+}
+
+function validateQuestionReportLinkParity() {
+  let valid = true;
+  const sourceByFile = new Map();
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  for (const { file } of EXPECTED_QUESTION_REPORT_LINK_RULES) {
+    if (sourceByFile.has(file)) continue;
+    try {
+      sourceByFile.set(file, fs.readFileSync(path.join(repoRoot, file), 'utf8'));
+    } catch (error) {
+      reject(`${file} could not be read for question report link parity: ${error.message}`);
+    }
+  }
+
+  if (!valid) return;
+
+  for (const rule of EXPECTED_QUESTION_REPORT_LINK_RULES) {
+    const source = sourceByFile.get(rule.file) || '';
+    const ruleIsValid =
+      typeof rule.test === 'function'
+        ? rule.test(source)
+        : rule.absent
+          ? !rule.pattern.test(source)
+          : rule.pattern.test(source);
+
+    if (!ruleIsValid) {
+      reject(rule.message || `QuestionReportLink missing ${rule.label}`);
+      continue;
+    }
+
+    questionReportLinkRulesValidated += 1;
+  }
+
+  if (valid && questionReportLinkRulesValidated === EXPECTED_QUESTION_REPORT_LINK_RULES.length) {
+    questionReportLinkParityValidated = true;
   }
 }
 
@@ -17136,6 +17326,7 @@ validateChapterCardAccessibilityParity();
 validateFlashcardAccessibilityParity();
 validateAudioButtonAccessibilityParity();
 validateQuestionCardAccessibilityParity();
+validateQuestionReportLinkParity();
 validateAnswerOptionAccessibilityParity();
 validateExplanationPanelAccessibilityParity();
 validateUhrReferenceCardAccessibilityParity();
@@ -17330,6 +17521,8 @@ console.log(
       audioButtonAccessibilityParityValidated,
       questionCardAccessibilityRulesValidated,
       questionCardAccessibilityParityValidated,
+      questionReportLinkRulesValidated,
+      questionReportLinkParityValidated,
       answerOptionAccessibilityRulesValidated,
       answerOptionAccessibilityParityValidated,
       explanationPanelAccessibilityRulesValidated,
