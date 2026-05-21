@@ -5,9 +5,10 @@ const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
+const focusArgs = ['scripts/validate-content.js', '--focus-content-type-schema-parity'];
 
 test('content TypeScript schema stays in parity with runtime validator expectations', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+  const output = execFileSync(process.execPath, focusArgs, {
     cwd: repoRoot,
     encoding: 'utf8',
   });
@@ -63,6 +64,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('scripts/validate-content.js', '--focus-content-type-schema-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -96,6 +98,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('scripts/validate-content.js', '--focus-content-type-schema-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -126,6 +129,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('scripts/validate-content.js', '--focus-content-type-schema-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -156,6 +160,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('scripts/validate-content.js', '--focus-content-type-schema-parity');
 require('./scripts/validate-content.js');
 `,
     ],

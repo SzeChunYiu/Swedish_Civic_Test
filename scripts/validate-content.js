@@ -3440,10 +3440,10 @@ const EXPECTED_CONTENT_INTERFACES = [
       { name: 'id', type: 'string', optional: false },
       { name: 'nameSv', type: 'string', optional: false },
       { name: 'nameEn', type: 'string', optional: false },
-      { name: 'nameText', type: 'LocalizedContentText', optional: true },
+      { name: 'nameText', type: 'LocalizedContentTextOverrides', optional: true },
       { name: 'descriptionSv', type: 'string', optional: false },
       { name: 'descriptionEn', type: 'string', optional: false },
-      { name: 'descriptionText', type: 'LocalizedContentText', optional: true },
+      { name: 'descriptionText', type: 'LocalizedContentTextOverrides', optional: true },
       { name: 'questionCount', type: 'number', optional: false },
     ],
   },
@@ -7347,6 +7347,18 @@ let uxBenchmarksValidated = 0;
 let contentTypeUnionsValidated = 0;
 let contentTypeInterfacesValidated = 0;
 let contentTypeSchemaParityValidated = false;
+
+if (process.argv.includes('--focus-content-type-schema-parity')) {
+  validateContentTypeSchemaParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    contentTypeUnionsValidated,
+    contentTypeInterfacesValidated,
+    contentTypeSchemaParityValidated,
+  });
+  process.exit(0);
+}
+
 let supportedLanguagesValidated = 0;
 let localizationStringsValidated = 0;
 let languageSettingsParityValidated = false;
