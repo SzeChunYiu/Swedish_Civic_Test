@@ -472,6 +472,44 @@ test('generated true/false naturalness guards share one pattern source', () => {
   );
 });
 
+test('generated civic statement parity uses the production generator only', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const derivedQuestionSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/content/derivedQuestions.ts'),
+    'utf8',
+  );
+
+  assert.match(
+    validatorSource,
+    /const derivedQuestionModule = loadTs\('lib\/content\/derivedQuestions\.ts'\);/,
+  );
+  assert.match(
+    validatorSource,
+    /derivePublishedQuestions\(sourceQuestions,\s*sourceQuestions\.length \+ 1\)/,
+  );
+  assert.match(derivedQuestionSource, /export function deriveCivicStatementSv\(/);
+  assert.match(derivedQuestionSource, /export function deriveCivicStatementEn\(/);
+  assert.doesNotMatch(
+    validatorSource,
+    /function civicStatementSv\(/,
+    'validate-content must not keep a Swedish civic-statement shadow generator',
+  );
+  assert.doesNotMatch(
+    validatorSource,
+    /function civicStatementEn\(/,
+    'validate-content must not keep an English civic-statement shadow generator',
+  );
+  assert.doesNotMatch(
+    validatorSource,
+    /Människor kan påverka samhället och delta i demokratin genom att/,
+  );
+  assert.doesNotMatch(validatorSource, /folkomröstningar i Sverige är rådgivande/);
+  assert.doesNotMatch(validatorSource, /Some people who are not Swedish citizens may vote/);
+});
+
 test('religious-freedom option parallelism uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
