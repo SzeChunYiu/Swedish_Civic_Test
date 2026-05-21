@@ -2245,6 +2245,59 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
   assert.deepEqual(consentInfoFallbackCalls, ['ump', 'ump:cached-info', 'ads:init']);
 });
 
+test('Mobile Ads consent hook retries after blocked initialization results', async () => {
+  const hookSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/useMobileAdsConsent.ts'),
+    'utf8',
+  );
+  const { initializeGoogleMobileAdsAfterConsent } = loadTs('lib/monetization/mobileAdsConsent.ts');
+
+  assert.match(hookSource, /function resetInitializationPromise\(\)/);
+  assert.match(hookSource, /function resolveInitializationResult/);
+  assert.match(
+    hookSource,
+    /if \(!result\.initialized\) \{[\s\S]*resetInitializationPromise\(\);[\s\S]*return result;/,
+  );
+  assert.match(
+    hookSource,
+    /cachedInitialization = result;[\s\S]*cachedInitializationPlatform = platform;/,
+  );
+  assert.doesNotMatch(
+    hookSource,
+    /\.then\(\(result\) => \{[\s\S]*cachedInitialization = result;[\s\S]*return result;[\s\S]*\}\)/,
+  );
+
+  const pendingConsentCalls = [];
+  const blockedResult = await initializeGoogleMobileAdsAfterConsent({
+    entitlements: { adsDisabled: false },
+    googleMobileAdsEnabled: true,
+    realAdsEnabled: true,
+    runtime: {
+      async gatherUmpConsent() {
+        pendingConsentCalls.push('ump');
+        return { status: 'REQUIRED' };
+      },
+      async getTrackingPermissionsAsync() {
+        pendingConsentCalls.push('att:get');
+        return { status: 'undetermined' };
+      },
+      async initializeGoogleMobileAds() {
+        pendingConsentCalls.push('ads:init');
+      },
+      platform: 'ios',
+      async requestTrackingPermissionsAsync() {
+        pendingConsentCalls.push('att:request');
+        return { status: 'undetermined' };
+      },
+    },
+  });
+
+  assert.equal(blockedResult.initialized, false);
+  assert.equal(blockedResult.decision.canInitializeGoogleMobileAds, false);
+  assert.equal(blockedResult.decision.blockReason, 'pending_consent_prompts');
+  assert.deepEqual(pendingConsentCalls, ['att:get', 'att:request', 'ump']);
+});
+
 test('exam screen does not import ad components', () => {
   const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
   const accessHookSource = fs.readFileSync(
