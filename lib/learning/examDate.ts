@@ -12,7 +12,13 @@ export const CITIZENSHIP_TIMELINE_SOURCE_URLS = {
     'https://www.regeringen.se/regeringsuppdrag/2026/02/andring-av-uppdraget-till-goteborgs-universitet-och-stockholms-universitet-att-bista-universitets--och-hogskoleradet-med-utvecklingen-av-ett-medborgarskapsprov/',
 } as const;
 
+function isFiniteDate(value: unknown): value is Date {
+  return value instanceof Date && Number.isFinite(value.getTime());
+}
+
 export function daysUntil(target: Date, now: Date = new Date()): number {
+  if (!isFiniteDate(target) || !isFiniteDate(now)) return 0;
+
   const msPerDay = 1000 * 60 * 60 * 24;
   const diff = target.getTime() - now.getTime();
   return Math.max(0, Math.ceil(diff / msPerDay));
@@ -51,6 +57,8 @@ export function getCitizenshipTimelineCountdown(
 }
 
 export function formatExamDate(target: Date, language: 'sv' | 'en'): string {
+  if (!isFiniteDate(target)) return language === 'sv' ? 'datum saknas' : 'date unavailable';
+
   return target.toLocaleDateString(language === 'sv' ? 'sv-SE' : 'en-GB', {
     day: 'numeric',
     month: 'long',
@@ -100,6 +108,20 @@ const MOCKS_GOAL = 6;
 const MIN_DAILY = 5;
 const MAX_DAILY = 80;
 
+function normalizeStudyIntensity(value: unknown): StudyIntensity {
+  if (value === 'casual' || value === 'regular' || value === 'serious') return value;
+  return 'regular';
+}
+
+function normalizeNonNegativeInteger(value: unknown): number {
+  return typeof value === 'number' &&
+    Number.isFinite(value) &&
+    Number.isInteger(value) &&
+    value >= 0
+    ? value
+    : 0;
+}
+
 function intensityFloor(intensity: StudyIntensity): number {
   switch (intensity) {
     case 'casual':
@@ -112,17 +134,17 @@ function intensityFloor(intensity: StudyIntensity): number {
 }
 
 export function generateStudyPlan(input: StudyPlanInput): StudyPlan {
-  const {
-    testDate,
-    now = new Date(),
+  const now = isFiniteDate(input.now) ? input.now : new Date();
+  const testDate = isFiniteDate(input.testDate) ? input.testDate : now;
+  const totalQuestions = normalizeNonNegativeInteger(input.totalQuestions);
+  const masteredQuestions = Math.min(
     totalQuestions,
-    masteredQuestions,
-    mocksTaken,
-    intensity = 'regular',
-  } = input;
+    normalizeNonNegativeInteger(input.masteredQuestions),
+  );
+  const mocksTaken = Math.min(MOCKS_GOAL, normalizeNonNegativeInteger(input.mocksTaken));
+  const intensity = normalizeStudyIntensity(input.intensity);
 
-  const msPerDay = 1000 * 60 * 60 * 24;
-  const daysRemaining = Math.max(0, Math.ceil((testDate.getTime() - now.getTime()) / msPerDay));
+  const daysRemaining = daysUntil(testDate, now);
 
   const remainingQuestions = Math.max(0, totalQuestions - masteredQuestions);
   const mocksRemaining = Math.max(0, MOCKS_GOAL - mocksTaken);

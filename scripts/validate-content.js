@@ -4592,6 +4592,118 @@ function validateCitizenshipTimeline() {
   };
 }
 
+function validateStudyPlanRuntimeInputGuards() {
+  let casesValidated = 0;
+  let parity = true;
+
+  function reject(message) {
+    parity = false;
+    fail(message);
+  }
+
+  const { daysUntil, formatExamDate, generateStudyPlan } = examDateModule;
+  if (typeof daysUntil !== 'function') reject('daysUntil export is not a function');
+  if (typeof formatExamDate !== 'function') reject('formatExamDate export is not a function');
+  if (typeof generateStudyPlan !== 'function') reject('generateStudyPlan export is not a function');
+  if (!parity) return { casesValidated, parity };
+
+  const invalidDate = new Date('not-a-date');
+  const validNow = new Date('2026-05-19T00:00:00.000Z');
+
+  if (daysUntil(invalidDate, validNow) !== 0) {
+    reject('daysUntil must return 0 for invalid target dates');
+  } else {
+    casesValidated += 1;
+  }
+
+  if (daysUntil(new Date('2026-06-15T00:00:00.000Z'), invalidDate) !== 0) {
+    reject('daysUntil must return 0 for invalid now dates');
+  } else {
+    casesValidated += 1;
+  }
+
+  const fallbackDateLabel = formatExamDate(invalidDate, 'en');
+  if (fallbackDateLabel === 'Invalid Date' || /Invalid Date/i.test(fallbackDateLabel)) {
+    reject('formatExamDate must not render Invalid Date for invalid dates');
+  } else {
+    casesValidated += 1;
+  }
+
+  let invalidPlan;
+  try {
+    invalidPlan = generateStudyPlan({
+      testDate: invalidDate,
+      now: invalidDate,
+      totalQuestions: Number.NaN,
+      masteredQuestions: Number.POSITIVE_INFINITY,
+      mocksTaken: '2',
+      intensity: 'turbo',
+    });
+  } catch (error) {
+    reject(`generateStudyPlan must not throw for invalid runtime inputs: ${error.message}`);
+  }
+
+  if (invalidPlan) {
+    if (
+      invalidPlan.intensity !== 'regular' ||
+      invalidPlan.daysRemaining !== 0 ||
+      invalidPlan.mocksRemaining !== 6 ||
+      !Number.isFinite(Date.parse(invalidPlan.testDateIso)) ||
+      !Number.isFinite(Date.parse(invalidPlan.generatedAt)) ||
+      !Number.isFinite(invalidPlan.dailyQuestionTarget) ||
+      invalidPlan.dailyQuestionTarget < 5 ||
+      invalidPlan.dailyQuestionTarget > 80 ||
+      !Number.isInteger(invalidPlan.weeklyMockTarget) ||
+      invalidPlan.weeklyMockTarget < 1 ||
+      invalidPlan.weeklyMockTarget > 2
+    ) {
+      reject('generateStudyPlan must normalize invalid runtime inputs to finite bounded targets');
+    } else {
+      casesValidated += 1;
+    }
+  }
+
+  const stringCountPlan = generateStudyPlan({
+    testDate: new Date('2026-06-15T00:00:00.000Z'),
+    now: validNow,
+    totalQuestions: '200',
+    masteredQuestions: '10',
+    mocksTaken: '2',
+    intensity: 'regular',
+  });
+  if (
+    stringCountPlan.mocksRemaining !== 6 ||
+    !Number.isFinite(stringCountPlan.dailyQuestionTarget) ||
+    stringCountPlan.dailyQuestionTarget < 5 ||
+    stringCountPlan.dailyQuestionTarget > 80
+  ) {
+    reject('generateStudyPlan must reject string counts instead of coercing them');
+  } else {
+    casesValidated += 1;
+  }
+
+  const clampedPlan = generateStudyPlan({
+    testDate: new Date('2026-06-15T00:00:00.000Z'),
+    now: validNow,
+    totalQuestions: 10,
+    masteredQuestions: 99,
+    mocksTaken: 99,
+    intensity: 'regular',
+  });
+  if (
+    clampedPlan.mocksRemaining !== 0 ||
+    !Number.isFinite(clampedPlan.dailyQuestionTarget) ||
+    clampedPlan.dailyQuestionTarget < 5 ||
+    clampedPlan.dailyQuestionTarget > 80
+  ) {
+    reject('generateStudyPlan must clamp mastered and mock counts to sensible bounds');
+  } else {
+    casesValidated += 1;
+  }
+
+  return { casesValidated, parity };
+}
+
 function findQuestionAuthorityOverclaim(question) {
   const text = [
     question.questionSv,
@@ -7438,6 +7550,8 @@ let civicKnowledgeTestDeadlineDateValidated = '';
 let citizenshipTimelineSourceUrlsValidated = 0;
 let citizenshipTimelineDateParityValidated = false;
 let countdownBannerTimelineCopyParityValidated = false;
+let studyPlanRuntimeCasesValidated = 0;
+let studyPlanRuntimeParityValidated = false;
 let practiceScoringRulesValidated = 0;
 let practiceScoringRulesParityValidated = false;
 let practiceFlowCasesValidated = 0;
@@ -7636,6 +7750,29 @@ if (process.argv.includes('--focus-answer-feedback-parity')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-countdown-banner-parity')) {
+  const timelineValidation = validateCitizenshipTimeline();
+  citizenshipRulesEffectiveDateValidated = timelineValidation.rulesDate;
+  civicKnowledgeTestDeadlineDateValidated = timelineValidation.testDeadlineDate;
+  citizenshipTimelineSourceUrlsValidated = timelineValidation.sourceUrlsValidated;
+  citizenshipTimelineDateParityValidated = timelineValidation.dateParity;
+  countdownBannerTimelineCopyParityValidated = timelineValidation.countdownCopyParity;
+  const studyPlanValidation = validateStudyPlanRuntimeInputGuards();
+  studyPlanRuntimeCasesValidated = studyPlanValidation.casesValidated;
+  studyPlanRuntimeParityValidated = studyPlanValidation.parity;
+  exitWithValidationFailures();
+  printValidationSummary({
+    citizenshipRulesEffectiveDateValidated,
+    civicKnowledgeTestDeadlineDateValidated,
+    citizenshipTimelineSourceUrlsValidated,
+    citizenshipTimelineDateParityValidated,
+    countdownBannerTimelineCopyParityValidated,
+    studyPlanRuntimeCasesValidated,
+    studyPlanRuntimeParityValidated,
+  });
+  process.exit(0);
+}
+
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
 if (!Array.isArray(baseQuestions)) fail('baseQuestions export is not an array');
 if (!Array.isArray(additionalQuestions)) fail('additionalQuestions export is not an array');
@@ -7664,6 +7801,11 @@ if (
   citizenshipTimelineSourceUrlsValidated = timelineValidation.sourceUrlsValidated;
   citizenshipTimelineDateParityValidated = timelineValidation.dateParity;
   countdownBannerTimelineCopyParityValidated = timelineValidation.countdownCopyParity;
+}
+{
+  const studyPlanValidation = validateStudyPlanRuntimeInputGuards();
+  studyPlanRuntimeCasesValidated = studyPlanValidation.casesValidated;
+  studyPlanRuntimeParityValidated = studyPlanValidation.parity;
 }
 if (typeof generateExam !== 'function') fail('generateExam export is not a function');
 if (typeof buildExamReviewItems !== 'function') {
@@ -16570,6 +16712,8 @@ console.log(
       citizenshipTimelineSourceUrlsValidated,
       citizenshipTimelineDateParityValidated,
       countdownBannerTimelineCopyParityValidated,
+      studyPlanRuntimeCasesValidated,
+      studyPlanRuntimeParityValidated,
       practiceScoringRulesValidated,
       practiceScoringRulesParityValidated,
       practiceFlowCasesValidated,
