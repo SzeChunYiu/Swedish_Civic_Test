@@ -3890,6 +3890,21 @@ const EXPECTED_THEME_TYPOGRAPHY_TOKENS = [
   'micro',
 ];
 const EXPECTED_THEME_SHADOW_TOKENS = ['card', 'deep'];
+const EXPECTED_THEME_SHADOW_RGB = [11, 31, 51];
+const EXPECTED_THEME_SHADOW_BOUNDS = {
+  card: {
+    maxOffsetHeight: 6,
+    maxOpacity: 0.08,
+    maxRadius: 20,
+    maxElevation: 1,
+  },
+  deep: {
+    maxOffsetHeight: 8,
+    maxOpacity: 0.1,
+    maxRadius: 24,
+    maxElevation: 2,
+  },
+};
 const EXPECTED_THEME_MOTION_DURATIONS = {
   fast: 120,
   base: 200,
@@ -16052,6 +16067,7 @@ function validateThemeTokenSchema() {
   if (isObjectRecord(shadows)) {
     for (const token of EXPECTED_THEME_SHADOW_TOKENS) {
       const shadow = shadows[token];
+      const bounds = EXPECTED_THEME_SHADOW_BOUNDS[token];
       let tokenIsValid = true;
 
       function rejectToken(message) {
@@ -16064,6 +16080,18 @@ function validateThemeTokenSchema() {
       } else {
         if (!isColorToken(shadow.shadowColor)) {
           rejectToken(`theme shadows.${token}.shadowColor must be a color token`);
+        } else {
+          const shadowRgb = parseColorTokenRgb(shadow.shadowColor);
+          const roundedRgb = shadowRgb?.map((channel) => Math.round(channel * 255));
+          if (
+            !roundedRgb ||
+            roundedRgb.length !== EXPECTED_THEME_SHADOW_RGB.length ||
+            roundedRgb.some((channel, index) => channel !== EXPECTED_THEME_SHADOW_RGB[index])
+          ) {
+            rejectToken(
+              `theme shadows.${token}.shadowColor must use the navy whisper shadow #0b1f33`,
+            );
+          }
         }
         if (!isObjectRecord(shadow.shadowOffset)) {
           rejectToken(`theme shadows.${token}.shadowOffset must be an object`);
@@ -16072,6 +16100,18 @@ function validateThemeTokenSchema() {
           !Number.isFinite(shadow.shadowOffset.height)
         ) {
           rejectToken(`theme shadows.${token}.shadowOffset must have numeric width and height`);
+        } else {
+          if (shadow.shadowOffset.width !== 0) {
+            rejectToken(`theme shadows.${token}.shadowOffset.width must stay 0`);
+          }
+          if (
+            shadow.shadowOffset.height < 0 ||
+            shadow.shadowOffset.height > bounds.maxOffsetHeight
+          ) {
+            rejectToken(
+              `theme shadows.${token}.shadowOffset.height must be between 0 and ${bounds.maxOffsetHeight}`,
+            );
+          }
         }
         if (
           !Number.isFinite(shadow.shadowOpacity) ||
@@ -16079,12 +16119,24 @@ function validateThemeTokenSchema() {
           shadow.shadowOpacity > 1
         ) {
           rejectToken(`theme shadows.${token}.shadowOpacity must be between 0 and 1`);
+        } else if (shadow.shadowOpacity <= 0 || shadow.shadowOpacity > bounds.maxOpacity) {
+          rejectToken(
+            `theme shadows.${token}.shadowOpacity must be a whisper value no higher than ${bounds.maxOpacity}`,
+          );
         }
         if (!Number.isFinite(shadow.shadowRadius) || shadow.shadowRadius < 0) {
           rejectToken(`theme shadows.${token}.shadowRadius must be non-negative`);
+        } else if (shadow.shadowRadius > bounds.maxRadius) {
+          rejectToken(
+            `theme shadows.${token}.shadowRadius must be no higher than ${bounds.maxRadius}`,
+          );
         }
         if (!Number.isFinite(shadow.elevation) || shadow.elevation < 0) {
           rejectToken(`theme shadows.${token}.elevation must be non-negative`);
+        } else if (shadow.elevation > bounds.maxElevation) {
+          rejectToken(
+            `theme shadows.${token}.elevation must be no higher than ${bounds.maxElevation}`,
+          );
         }
       }
 
