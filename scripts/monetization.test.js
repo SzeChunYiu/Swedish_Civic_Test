@@ -1747,7 +1747,7 @@ test('ad consent decision covers ATT and UMP prompts before real ad serving', ()
   assert.equal(testUnitInit.blockReason, undefined);
 });
 
-test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', async () => {
+test('native Mobile Ads consent runtime requests UMP before ATT and SDK init', async () => {
   const appJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'app.json'), 'utf8'));
   const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
   const nativeBannerSource = fs.readFileSync(
@@ -1782,6 +1782,22 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
   assert.match(mobileConsentSource, /expo-tracking-transparency/);
   assert.match(mobileConsentSource, /AdsConsent\.gatherConsent/);
   assert.match(mobileConsentSource, /mobileAds\(\)\.initialize/);
+  assert.doesNotMatch(mobileConsentSource, /Promise\.all/);
+  assert.ok(
+    mobileConsentSource.indexOf('const currentTrackingTransparencyStatus = await') <
+      mobileConsentSource.indexOf('const umpConsentStatus = await'),
+    'current ATT status should be read before UMP gathers IDFA messaging context',
+  );
+  assert.ok(
+    mobileConsentSource.indexOf('const umpConsentStatus = await') <
+      mobileConsentSource.indexOf('const trackingTransparencyStatus = await'),
+    'UMP consent should resolve before requesting ATT',
+  );
+  assert.ok(
+    mobileConsentSource.indexOf('const decision = getAdSdkInitializationDecision(state)') <
+      mobileConsentSource.indexOf('await options.runtime.initializeGoogleMobileAds'),
+    'SDK initialization should wait for the serialized consent decision',
+  );
   assert.match(hookSource, /const platform = options\.platform \?\? Platform\.OS/);
   assert.match(hookSource, /createNativeMobileAdsConsentRuntime\(platform\)/);
   assert.match(nativeBannerSource, /useMobileAdsConsent/);
@@ -1829,7 +1845,7 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
   assert.equal(initializedResult.state.umpConsentStatus, 'obtained');
   assert.equal(initializedResult.decision.canInitializeGoogleMobileAds, true);
   assert.equal(initializedResult.decision.requestNonPersonalizedAdsOnly, true);
-  assert.deepEqual(calls, ['att:get', 'att:request', 'ump', 'ads:init']);
+  assert.deepEqual(calls, ['att:get', 'ump', 'att:request', 'ads:init']);
 
   const disabledCalls = [];
   const disabledState = await collectMobileAdsConsentState({
