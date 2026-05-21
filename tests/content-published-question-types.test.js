@@ -1670,6 +1670,65 @@ test('human-rights definition true/false exports use direct propositions', () =>
   );
 });
 
+test('political-rights generated true/false exports use direct propositions', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q146TrueId = generatedQuestionId(sourceQuestions, 'q146', 'trueStatement');
+  const q146FalseId = generatedQuestionId(sourceQuestions, 'q146', 'falseStatement');
+  const expectedSv = [
+    'I en demokrati får människor, grupper och partier försöka övertyga andra om sina politiska idéer.',
+    'I en demokrati får människor, grupper och partier inte hindra andra från att rösta.',
+  ];
+  const expectedEn = [
+    'In a democracy, people, groups, and parties may try to persuade others of their political ideas.',
+    'In a democracy, people, groups, and parties may not stop others from voting.',
+  ];
+  const generatedRows = [q146TrueId, q146FalseId].map((id) =>
+    generatedSiteBank.find((question) => question.id === id),
+  );
+  const actualRows = [q146TrueId, q146FalseId].map((id) =>
+    Array.from(actualSiteBank).find((question) => question.id === id),
+  );
+  const csvRows = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/)
+    .filter((line) => [q146TrueId, q146FalseId].includes(line.match(/^"([^"]+)"/)?.[1]));
+  const barePhrasePattern = /^(?:Försöka övertyga|Hindra andra|Try to persuade|Stop others)/i;
+
+  assert.ok(generatedRows.every(Boolean), 'generated q146 true/false rows should exist');
+  assert.ok(actualRows.every(Boolean), 'static q146 true/false rows should exist');
+  assert.equal(csvRows.length, 2);
+  assert.deepEqual(
+    generatedRows.map((question) => question.q.sv),
+    expectedSv,
+  );
+  assert.deepEqual(
+    generatedRows.map((question) => question.q.en),
+    expectedEn,
+  );
+  assert.deepEqual(
+    actualRows.map((question) => question.q.sv),
+    expectedSv,
+  );
+  assert.deepEqual(
+    actualRows.map((question) => question.q.en),
+    expectedEn,
+  );
+  assert.deepEqual(
+    [...generatedRows, ...actualRows]
+      .filter((question) => barePhrasePattern.test(`${question.q.sv}\n${question.q.en}`))
+      .map((question) => question.id),
+    [],
+  );
+  assert.deepEqual(
+    csvRows.filter((line) => barePhrasePattern.test(line)),
+    [],
+  );
+});
+
 test('gender-equality policy goal true/false exports use direct English propositions', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const actualSiteBank = actualStaticQuestions();

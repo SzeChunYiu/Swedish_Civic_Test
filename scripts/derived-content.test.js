@@ -1171,6 +1171,37 @@ test('derivePublishedQuestions renders q877/q878 human-rights true/false as dire
   );
 });
 
+test('derivePublishedQuestions renders q146 political-rights true/false as direct propositions', () => {
+  const { questions, sourceQuestions } = loadTs('data/questions.ts');
+  const byId = new Map(questions.map((question) => [question.id, question]));
+  const trueStatementId = generatedQuestionId(sourceQuestions, 'q146', 'trueStatement');
+  const falseStatementId = generatedQuestionId(sourceQuestions, 'q146', 'falseStatement');
+
+  assert.equal(
+    byId.get(trueStatementId)?.questionSv,
+    'I en demokrati får människor, grupper och partier försöka övertyga andra om sina politiska idéer.',
+  );
+  assert.equal(
+    byId.get(trueStatementId)?.questionEn,
+    'In a democracy, people, groups, and parties may try to persuade others of their political ideas.',
+  );
+  assert.equal(byId.get(trueStatementId)?.correctOptionId, 'true');
+  assert.equal(
+    byId.get(falseStatementId)?.questionSv,
+    'I en demokrati får människor, grupper och partier inte hindra andra från att rösta.',
+  );
+  assert.equal(
+    byId.get(falseStatementId)?.questionEn,
+    'In a democracy, people, groups, and parties may not stop others from voting.',
+  );
+  assert.equal(byId.get(falseStatementId)?.correctOptionId, 'false');
+
+  const text = [byId.get(trueStatementId), byId.get(falseStatementId)]
+    .map((question) => `${question?.questionSv} ${question?.questionEn}`)
+    .join('\n');
+  assert.doesNotMatch(text, /^(?:Försöka övertyga|Hindra andra|Try to persuade|Stop others)/im);
+});
+
 test('derivePublishedQuestions cleans residual generated true/false splice rows', () => {
   const { questions, sourceQuestions } = loadTs('data/questions.ts');
   const byId = new Map(questions.map((question) => [question.id, question]));
