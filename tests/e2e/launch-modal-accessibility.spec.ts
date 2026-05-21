@@ -1,5 +1,63 @@
 import { expect, test } from '@playwright/test';
 
+import {
+  type AppLanguage,
+  blockingModalOverlayLocator,
+  seedFreshSettingsLanguageAndAboutSeen,
+} from './browserLaunch';
+
+type LaunchCloseKeyboardCase = {
+  activationKey: 'Enter' | 'Space';
+  closeLabel: string;
+  contentHeading: string;
+  dialogLabel: string;
+  language: AppLanguage;
+};
+
+const launchCloseKeyboardCases: LaunchCloseKeyboardCase[] = [
+  {
+    activationKey: 'Enter',
+    closeLabel: 'Stäng startannons',
+    contentHeading: 'Dagens mål',
+    dialogLabel: 'Startannons',
+    language: 'sv',
+  },
+  {
+    activationKey: 'Space',
+    closeLabel: 'Stäng startannons',
+    contentHeading: 'Dagens mål',
+    dialogLabel: 'Startannons',
+    language: 'sv',
+  },
+  {
+    activationKey: 'Enter',
+    closeLabel: 'Close launch sponsor ad',
+    contentHeading: "Today's goal",
+    dialogLabel: 'Launch sponsor ad',
+    language: 'en',
+  },
+  {
+    activationKey: 'Space',
+    closeLabel: 'Close launch sponsor ad',
+    contentHeading: "Today's goal",
+    dialogLabel: 'Launch sponsor ad',
+    language: 'en',
+  },
+];
+
+async function focusLaunchCloseControlByKeyboard(page: import('@playwright/test').Page) {
+  const focusedCloseButton = page
+    .getByRole('button', { name: /Close launch sponsor ad|Stäng startannons/ })
+    .and(page.locator(':focus'));
+
+  for (let attempt = 0; attempt < 6; attempt += 1) {
+    await page.keyboard.press('Tab');
+    if ((await focusedCloseButton.count()) > 0) return;
+  }
+
+  await expect(focusedCloseButton).toHaveCount(1);
+}
+
 test('launch sponsor modal exposes one named dialog on web', async ({ page }) => {
   const consoleErrors: string[] = [];
 
@@ -28,6 +86,44 @@ test('launch sponsor modal exposes one named dialog on web', async ({ page }) =>
 
   expect(consoleErrors).toEqual([]);
 });
+
+for (const {
+  activationKey,
+  closeLabel,
+  contentHeading,
+  dialogLabel,
+  language,
+} of launchCloseKeyboardCases) {
+  test(`launch sponsor close control closes from keyboard ${activationKey} in ${language}`, async ({
+    page,
+  }) => {
+    const consoleErrors: string[] = [];
+
+    page.on('console', (message) => {
+      if (message.type() === 'error') consoleErrors.push(message.text());
+    });
+    page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+    await seedFreshSettingsLanguageAndAboutSeen(page, language);
+    await page.goto('/home', { waitUntil: 'networkidle' });
+
+    const dialogs = page.locator(blockingModalOverlayLocator);
+    await expect(dialogs).toHaveCount(1);
+    await expect(dialogs.first()).toHaveAttribute('aria-label', dialogLabel);
+
+    const closeLaunchAd = page.getByRole('button', { name: closeLabel });
+    await expect(closeLaunchAd).toBeVisible();
+
+    await focusLaunchCloseControlByKeyboard(page);
+    await expect(closeLaunchAd).toBeFocused();
+
+    await page.keyboard.press(activationKey);
+
+    await expect(dialogs).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: contentHeading })).toBeVisible();
+    expect(consoleErrors).toEqual([]);
+  });
+}
 
 test('first-run about modal exposes only real guide actions on web', async ({ page }) => {
   const consoleErrors: string[] = [];
