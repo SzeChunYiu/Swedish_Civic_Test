@@ -106,7 +106,7 @@
       'purchase.removeAds.ready': '继续前往 Google Play — 29 kr',
       'purchase.premium.eyebrow': '高级版',
       'purchase.premium.title': '终身高级版',
-      'purchase.premium.body': '为你登录的账号解锁高级学习工具。移除广告是单独项目。',
+      'purchase.premium.body': '包含“移除广告”的全部内容，外加高级学习工具——电子书标注、笔记等——绑定到你登录的账号。',
       'purchase.premium.locked': '登录后购买高级版',
       'purchase.premium.ready': '继续前往 Google Play — 59 kr',
       'purchase.price.once': '一次性购买',
@@ -495,7 +495,7 @@
       'purchase.removeAds.ready': '繼續前往 Google Play — 29 kr',
       'purchase.premium.eyebrow': '進階版',
       'purchase.premium.title': '終身進階版',
-      'purchase.premium.body': '為你登入的帳號解鎖進階學習工具。移除廣告是單獨項目。',
+      'purchase.premium.body': '包含「移除廣告」的全部內容，外加進階學習工具——電子書標註、筆記等——綁定到你登入的帳號。',
       'purchase.premium.locked': '登入後購買進階版',
       'purchase.premium.ready': '繼續前往 Google Play — 59 kr',
       'purchase.price.once': '一次性購買',
@@ -892,7 +892,7 @@
       'purchase.premium.eyebrow': 'مميز',
       'purchase.premium.title': 'مميز مدى الحياة',
       'purchase.premium.body':
-        'يفتح أدوات الدراسة المميزة للحساب الذي تسجل الدخول به. إزالة الإعلانات تبقى منفصلة.',
+        'يشمل كل ما في خطة بلا إعلانات، بالإضافة إلى أدوات دراسة مميّزة — تظليل الكتاب الإلكتروني والملاحظات وغيرها — للحساب الذي تسجّل الدخول به.',
       'purchase.premium.locked': 'سجّل الدخول لشراء Premium',
       'purchase.premium.ready': 'تابع إلى Google Play — 59 kr',
       'purchase.price.once': 'مرة واحدة',
@@ -1300,7 +1300,7 @@
       'purchase.premium.eyebrow': 'Premium',
       'purchase.premium.title': 'Ömür boyu Premium',
       'purchase.premium.body':
-        'Giriş yaptığınız hesap için premium çalışma araçlarını açar. Reklamları Kaldır ayrı kalır.',
+        'هەموو ئەوەی پلانی بێ‌ڕیکلام لەخۆدەگرێت، لەگەڵ ئامرازی خوێندنی پڕیمیەم — نیشانەکردن و تێبینی لە کتێبە ئەلیکترۆنییەکە و زیاتر — بۆ ئەو هەژمارەی پێیدا دەچیتە ژوورەوە.',
       'purchase.premium.locked': 'Premium satın almak için giriş yapın',
       'purchase.premium.ready': 'Google Play ile devam et — 59 kr',
       'purchase.price.once': 'tek seferlik',
@@ -1715,7 +1715,7 @@
       'purchase.premium.eyebrow': 'Premium',
       'purchase.premium.title': 'Ömür boyu Premium',
       'purchase.premium.body':
-        'Giriş yaptığınız hesap için premium çalışma araçlarını açar. Reklamları Kaldır ayrı kalır.',
+        'شامل همهٔ امکانات پلن بدون تبلیغات، به‌علاوهٔ ابزارهای مطالعهٔ ویژه — هایلایت و یادداشت در کتاب الکترونیکی و موارد دیگر — برای حسابی که با آن وارد می‌شوی.',
       'purchase.premium.locked': 'Premium satın almak için giriş yapın',
       'purchase.premium.ready': 'Google Play ile devam et — 59 kr',
       'purchase.price.once': 'tek seferlik',
@@ -2130,7 +2130,7 @@
       'purchase.premium.eyebrow': 'Premium',
       'purchase.premium.title': 'Premium dożywotnio',
       'purchase.premium.body':
-        'Odblokowuje narzędzia Premium dla konta, na które się logujesz. Usuń reklamy pozostaje osobno.',
+        'Zawiera wszystko z planu bez reklam oraz narzędzia Premium do nauki — podświetlanie w e-booku, notatki i więcej — dla konta, na które się logujesz.',
       'purchase.premium.locked': 'Zaloguj się, aby kupić Premium',
       'purchase.premium.ready': 'Przejdź do Google Play — 59 kr',
       'purchase.price.once': 'jednorazowo',
@@ -2556,7 +2556,7 @@
       'purchase.premium.eyebrow': 'Premium',
       'purchase.premium.title': 'Ömür boyu Premium',
       'purchase.premium.body':
-        'Giriş yaptığınız hesap için premium çalışma araçlarını açar. Reklamları Kaldır ayrı kalır.',
+        'Wuxuu ku jiraa dhammaan waxa ku jira qorshaha Xayeysiis-la’aanta, iyo agab waxbarasho oo premium ah — calaamadaynta buugga elegtarooniga ah, qoraallada iyo wax kale — oo loogu talagalay akoonkaaga aad ku gasho.',
       'purchase.premium.locked': 'Premium satın almak için giriş yapın',
       'purchase.premium.ready': 'Google Play ile devam et — 59 kr',
       'purchase.price.once': 'tek seferlik',
@@ -2971,7 +2971,7 @@
       'purchase.premium.eyebrow': 'Premium',
       'purchase.premium.title': 'Ömür boyu Premium',
       'purchase.premium.body':
-        'Giriş yaptığınız hesap için premium çalışma araçlarını açar. Reklamları Kaldır ayrı kalır.',
+        'ኩሉ ናይ ብዘይ መወዓውዒ መደብ ዘጠቓልል፣ ምስኡ ድማ ናይ ፕሪሚየም መሳርሒ መጽናዕቲ — ኣብ ኢ-ቡክ ምልክት ምግባር፣ መዘኻኸርን ካልእን — ነቲ እትኣትዎ ሕሳብ።',
       'purchase.premium.locked': 'Premium satın almak için giriş yapın',
       'purchase.premium.ready': 'Google Play ile devam et — 59 kr',
       'purchase.price.once': 'tek seferlik',
@@ -3369,7 +3369,7 @@
       'purchase.premium.eyebrow': 'Premium',
       'purchase.premium.title': 'Ömür boyu Premium',
       'purchase.premium.body':
-        'Giriş yaptığınız hesap için premium çalışma araçlarını açar. Reklamları Kaldır ayrı kalır.',
+        'Reklamsız paketteki her şeyi ve premium çalışma araçlarını — e-kitapta vurgulama, notlar ve daha fazlası — giriş yaptığınız hesap için içerir.',
       'purchase.premium.locked': 'Premium satın almak için giriş yapın',
       'purchase.premium.ready': 'Google Play ile devam et — 59 kr',
       'purchase.price.once': 'tek seferlik',
@@ -3784,7 +3784,7 @@
       'purchase.premium.eyebrow': 'Premium',
       'purchase.premium.title': 'Premium назавжди',
       'purchase.premium.body':
-        'Відкриває преміум-інструменти навчання для облікового запису, з яким ви входите. Прибрати рекламу залишається окремо.',
+        'Містить усе з плану без реклами, а також преміум-інструменти навчання — виділення в електронній книзі, нотатки та інше — для облікового запису, з яким ви входите.',
       'purchase.premium.locked': 'Увійдіть, щоб купити Premium',
       'purchase.premium.ready': 'Продовжити в Google Play — 59 kr',
       'purchase.price.once': 'одноразово',
