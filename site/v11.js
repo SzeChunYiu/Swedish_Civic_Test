@@ -427,9 +427,63 @@
     return Math.round(v * 100) + '%';
   }
 
+  const GATE_COPY = {
+    title: { en: 'Sign in to unlock your dashboard', sv: 'Logga in för att låsa upp din panel', 'zh-Hans': '登录以解锁你的学习面板', 'zh-Hant': '登入以解鎖你的學習面板', ar: 'سجّل الدخول لفتح لوحة المعلومات', ckb: 'بچۆ ژوورەوە بۆ کردنەوەی داشبۆردەکەت', fa: 'برای باز کردن داشبورد وارد شو', pl: 'Zaloguj się, aby odblokować panel', so: 'Soo gal si aad u furto dashboard-kaaga', ti: 'ዳሽቦርድካ ንምኽፋት እቶ', tr: 'Panonu açmak için giriş yap', uk: 'Увійдіть, щоб відкрити панель' },
+    body: { en: 'Track your readiness, streaks, weak chapters, and progress — synced across all your devices.', sv: 'Följ din beredskap, sviter, svaga kapitel och framsteg — synkat på alla dina enheter.', 'zh-Hans': '跟踪你的备考状态、连续天数、薄弱章节和学习进度——在所有设备间同步。', 'zh-Hant': '追蹤你的備考狀態、連續天數、薄弱章節和學習進度——在所有裝置間同步。', ar: 'تابع جاهزيتك وسلاسلك والفصول الضعيفة وتقدّمك — متزامنة عبر كل أجهزتك.', ckb: 'ئامادەیی، زنجیرە ڕۆژەکان، بەشە لاوازەکان و پێشکەوتنت بەدوادابچە — لەنێوان هەموو ئامێرەکانت هاوکات.', fa: 'آمادگی، روزهای پیاپی، فصل‌های ضعیف و پیشرفتت را دنبال کن — همگام در همه دستگاه‌هایت.', pl: 'Śledź swoją gotowość, passy, słabe rozdziały i postępy — zsynchronizowane na wszystkich urządzeniach.', so: 'La soco diyaargarowgaaga, taxanaha, cutubyada daciifka ah iyo horumarkaaga — laga sinkiriyo dhammaan qalabkaaga.', ti: 'ድሉውነትካ፣ ተኸታታሊ መዓልትታት፣ ድኹማት ምዕራፋትን ምዕባለኻን ተኸታተል — ኣብ ኩሎም መሳርሕታትካ ይሳነ።', tr: 'Hazırlığını, serilerini, zayıf bölümlerini ve ilerlemeni takip et — tüm cihazlarında senkronize.', uk: 'Відстежуйте свою готовність, серії, слабкі розділи та прогрес — синхронізовано на всіх пристроях.' },
+    cta: { en: 'Sign in', sv: 'Logga in', 'zh-Hans': '登录', 'zh-Hant': '登入', ar: 'تسجيل الدخول', ckb: 'چوونەژوورەوە', fa: 'ورود', pl: 'Zaloguj się', so: 'Soo gal', ti: 'እቶ', tr: 'Giriş yap', uk: 'Увійти' },
+  };
+
+  function renderSigninGate(el) {
+    const l = lang();
+    el.textContent = '';
+    const gate = document.createElement('div');
+    gate.className = 'v11-gate';
+    const badge = document.createElement('div');
+    badge.className = 'v11-gate__badge';
+    badge.setAttribute('aria-hidden', 'true');
+    badge.textContent = '📊';
+    const title = document.createElement('h3');
+    title.className = 'v11-gate__title';
+    title.textContent = GATE_COPY.title[l] || GATE_COPY.title.en;
+    const body = document.createElement('p');
+    body.className = 'v11-gate__body';
+    body.textContent = GATE_COPY.body[l] || GATE_COPY.body.en;
+    const cta = document.createElement('button');
+    cta.type = 'button';
+    cta.className = 'btn btn--gold v11-gate__cta';
+    cta.textContent = GATE_COPY.cta[l] || GATE_COPY.cta.en;
+    cta.addEventListener('click', function () {
+      if (typeof window.smtOpenSignin === 'function') window.smtOpenSignin();
+    });
+    gate.appendChild(badge);
+    gate.appendChild(title);
+    gate.appendChild(body);
+    gate.appendChild(cta);
+    el.appendChild(gate);
+  }
+
   function renderDashboard() {
     const el = document.getElementById('v11-dashboard');
     if (!el) return;
+
+    // The dashboard is a login-gated, cross-device feature. It must NOT appear
+    // during an active practice/quiz session (hash carries c= or ch=) — only on
+    // the practice hub. When signed out we still show the dashboard "shape"
+    // with a sign-in prompt, so users discover the feature.
+    const h = (typeof location !== 'undefined' && location.hash) || '';
+    const inActiveQuiz = /[?&](c|ch)=/.test(h);
+    if (inActiveQuiz) {
+      el.style.display = 'none';
+      return;
+    }
+    const signedIn = (function () {
+      try { return localStorage.getItem('smt_signed_in') === '1'; } catch { return false; }
+    })();
+    if (!signedIn) {
+      el.style.display = '';
+      renderSigninGate(el);
+      return;
+    }
 
     const progress = getProgress();
     const hasAnyProgress = Object.values(progress).some(function (ch) {
@@ -674,6 +728,8 @@
 
   window.addEventListener('hashchange', onRouteChange);
   window.addEventListener('smt:answer', renderDashboard);
+  // Re-render when the user signs in/out (dashboard is login-gated).
+  window.addEventListener('smt:authchange', renderDashboard);
 
   const _orig = window.smtRecordAnswer;
   window.smtRecordAnswer = function (chapterId, correct) {

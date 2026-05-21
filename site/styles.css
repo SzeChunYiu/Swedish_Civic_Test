@@ -4535,3 +4535,194 @@ html[dir="rtl"] .lang-menu { right: auto; left: 0; }
   line-height: 1.45;
   text-align: center;
 }
+
+/* ============================ V11 DASHBOARD (login-gated progress panel) */
+#v11-dashboard {
+  margin-top: 8px;
+}
+.v11-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+.v11-card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 1px 2px rgba(11, 31, 51, 0.04);
+}
+.v11-card--readiness {
+  align-items: center;
+  text-align: center;
+}
+.v11-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.v11-score-ring {
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.v11-score-ring svg {
+  transform: rotate(-90deg);
+}
+.v11-score-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--display, inherit);
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--ink);
+}
+.v11-verdict {
+  font-weight: 600;
+  font-size: 14px;
+}
+.v11-weak-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.v11-weak-item {
+  display: flex;
+}
+.v11-weak-link {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--ink);
+  font-size: 14px;
+  transition: border-color 0.15s, background 0.15s;
+}
+.v11-weak-link:hover {
+  border-color: var(--blue);
+  background: rgba(0, 117, 222, 0.04);
+}
+.v11-weak-title {
+  font-weight: 500;
+}
+.v11-weak-acc {
+  font-family: var(--mono, monospace);
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.v11-recap-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+.v11-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.v11-stat b {
+  font-family: var(--display, inherit);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.v11-stat--warn b {
+  color: #c2410c;
+}
+.v11-streak-num {
+  font-family: var(--display, inherit);
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 1;
+  color: #dd5b00;
+}
+.v11-streak-unit {
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.v11-freeze-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.v11-freeze-bar {
+  display: inline-flex;
+  gap: 4px;
+}
+.v11-freeze-pip {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--line);
+}
+.v11-freeze-pip--on {
+  background: #1aae39;
+}
+.v11-sparse {
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+
+/* Signed-out dashboard "shape" + prompt */
+.v11-gate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  padding: 36px 24px;
+  background: var(--white);
+  border: 1px dashed var(--line);
+  border-radius: 14px;
+}
+.v11-gate__badge {
+  font-size: 34px;
+  line-height: 1;
+}
+.v11-gate__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.v11-gate__body {
+  margin: 0;
+  max-width: 420px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.v11-gate__cta {
+  margin-top: 4px;
+}
+
+/* ============================ BRAND WORDMARK (header logo) */
+.brand__wordmark {
+  display: block;
+  height: 30px;
+  width: auto;
+  object-fit: contain;
+}
+@media (max-width: 640px) {
+  .brand__wordmark {
+    height: 26px;
+  }
+}
