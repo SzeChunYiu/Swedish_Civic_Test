@@ -3737,7 +3737,48 @@ require('./scripts/validate-content.js');
   assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 4);
 });
 
+test('q146 political-rights generated true/false exports direct propositions', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const byId = new Map(generatedSiteBank.map((question) => [question.id, question]));
+  const trueStatement = byId.get(generatedQuestionId(sourceQuestions, 'q146', 'trueStatement'));
+  const falseStatement = byId.get(generatedQuestionId(sourceQuestions, 'q146', 'falseStatement'));
+
+  assert.equal(
+    trueStatement?.q.sv,
+    'I en demokrati får människor, grupper och partier försöka övertyga andra om sina politiska idéer.',
+  );
+  assert.equal(
+    trueStatement?.q.en,
+    'In a democracy, people, groups, and parties may try to persuade others of their political ideas.',
+  );
+  assert.equal(
+    falseStatement?.q.sv,
+    'I en demokrati får människor, grupper och partier inte hindra andra från att rösta.',
+  );
+  assert.equal(
+    falseStatement?.q.en,
+    'In a democracy, people, groups, and parties may not stop others from voting.',
+  );
+});
+
 test('published question schema rejects generated true/false bare answer phrases', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const expectedOffenderIds = [
+    generatedQuestionId(sourceQuestions, 'q146', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q146', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q157', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q157', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q158', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q158', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q159', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q159', 'falseStatement'),
+  ];
   const result = spawnSync(
     process.execPath,
     [
@@ -3777,6 +3818,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('--focus-generated-true-false-naturalness');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -3785,6 +3827,9 @@ require('./scripts/validate-content.js');
 
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
+  for (const id of expectedOffenderIds) {
+    assert.match(output, new RegExp(`${id} contains a generated true/false grammar-splice stem`));
+  }
   assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 8);
 });
 
