@@ -1538,8 +1538,14 @@ test('municipal responsibilities source and generated prompts ask directly about
   assert.equal(q026.q.sv, 'Vilka vardagstjänster ansvarar kommuner för?');
   assert.equal(q026.q.en, 'Which everyday services are municipalities responsible for?');
   assert.ok(q026SectionPractice, 'q026 section-practice generated variant should be published');
-  assert.equal(q026SectionPractice.q.sv, 'Kommuner ansvarar för ...');
-  assert.equal(q026SectionPractice.q.en, 'Municipalities are responsible for ...');
+  assert.equal(
+    q026SectionPractice.q.sv,
+    'Vilket svar stämmer bäst? Vilka vardagstjänster ansvarar kommuner för?',
+  );
+  assert.equal(
+    q026SectionPractice.q.en,
+    'Which answer best matches? Which everyday services are municipalities responsible for?',
+  );
   assert.ok(q026Judgement, 'q026 judgement generated variant should be published');
   assert.match(q026Judgement.q.sv, /Vilka vardagstjänster ansvarar kommuner för/);
   assert.match(q026Judgement.q.en, /Which everyday services are municipalities responsible for/);
@@ -2864,6 +2870,51 @@ require('./scripts/validate-content.js');
   assert.ok(
     (output.match(/contains a generated true\/false grammar-splice stem/g) ?? []).length >= 10,
   );
+});
+
+test('published question schema rejects generated municipal-services answer fragments', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "const municipalServicesResiduals = {",
+        "  [generatedFixtureId('q026', 1)]: { questionSv: 'Vatten och avlopp, omsorg, snöröjning, parkskötsel och vuxenutbildning.', questionEn: 'Water and sewage, care services, snow removal, park maintenance, and adult education.' },",
+        "  [generatedFixtureId('q026', 2)]: { questionSv: 'Skicka ambassadörer till andra länder.', questionEn: 'Sending ambassadors to other countries.' },",
+        "};",
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  municipalServicesResiduals[question.id]",
+        "    ? {",
+        "        ...question,",
+        "        ...municipalServicesResiduals[question.id],",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 2);
 });
 
 test('published question schema rejects generated true/false statement-about-statement stems', () => {

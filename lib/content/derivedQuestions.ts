@@ -403,6 +403,22 @@ function swedishPurposeClause(value: string): string {
   return `att ${lowerLeadingSwedishClauseStart(stripLeadingPurposeSv(value))}`;
 }
 
+function swedishResponsibilityObject(value: string): string {
+  const stripped = stripLeadingPurposeSv(value);
+  if (/^(?:skicka|bestämma|välja)\b/i.test(stripped)) {
+    return swedishPurposeClause(value);
+  }
+  return lowerFirst(stripped);
+}
+
+function englishResponsibilityObject(value: string): string {
+  const stripped = stripLeadingPurposeEn(value).trim();
+  if (/^\w+ing\b/i.test(stripped) || stripped.includes(',')) {
+    return lowerFirst(stripped);
+  }
+  return englishGerundPhrase(value);
+}
+
 function swedishProtectedReligionStatement(subject: string, answer: string): string {
   const trimmed = answer.trim();
   const rightAndProtection = trimmed.match(/^Rätten att (.+?) och skydd mot (.+)$/i);
@@ -1466,6 +1482,9 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vad ingår i (.+)$/i);
   if (match) return `${upperFirst(match[1])} omfattar ${lowerFirst(answer)}`;
 
+  match = q.match(/^Vilka vardagstjänster ansvarar (.+?) för$/i);
+  if (match) return `${upperFirst(match[1])} ansvarar för ${swedishResponsibilityObject(answer)}`;
+
   match = q.match(/^Vilket ansvar har (.+?) för (.+)$/i);
   if (match) return `${upperFirst(match[1])} ansvarar för ${swedishPurposeClause(answer)}`;
 
@@ -1978,6 +1997,10 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^What is included in (.+)$/i);
   if (match) return `${upperFirst(match[1])} includes ${lowerFirst(answer)}`;
+
+  match = q.match(/^Which everyday services are (.+?) responsible for$/i);
+  if (match)
+    return `${upperFirst(match[1])} are responsible for ${englishResponsibilityObject(answer)}`;
 
   match = q.match(/^What responsibility does (.+?) have for (.+)$/i);
   if (match) return `${upperFirst(match[1])} is responsible for ${englishGerundPhrase(answer)}`;
