@@ -2,7 +2,7 @@ const fs = require('node:fs');
 const http = require('node:http');
 const path = require('node:path');
 
-const root = path.resolve(__dirname, '../../dist-web');
+const root = path.resolve(process.env.DIST_WEB_ROOT || path.join(__dirname, '../../dist-web'));
 const port = Number(process.env.PORT || 4173);
 
 function assertDistWebReady(outputDir = root) {
@@ -29,33 +29,79 @@ function sendFile(res, filePath) {
   fs.createReadStream(filePath).pipe(res);
 }
 
-function startServer() {
-  assertDistWebReady(root);
+function createRequestHandler({ outputDir = root, listenPort = port } = {}) {
+  return (req, res) => {
+    const url = new URL(req.url || '/', `http://127.0.0.1:${listenPort}`);
+    const safePath = path.normalize(decodeURIComponent(url.pathname)).replace(/^\.\.(?:\/|$)/, '');
+    const requested = path.join(outputDir, safePath);
+    if (
+      requested.startsWith(outputDir) &&
+      fs.existsSync(requested) &&
+      fs.statSync(requested).isFile()
+    ) {
+      sendFile(res, requested);
+      return;
+    }
+    sendFile(res, path.join(outputDir, 'index.html'));
+  };
+}
+
+function startServer({ outputDir = root, listenPort = port } = {}) {
+  assertDistWebReady(outputDir);
   return http
-    .createServer((req, res) => {
-      const url = new URL(req.url || '/', `http://127.0.0.1:${port}`);
-      const safePath = path
-        .normalize(decodeURIComponent(url.pathname))
-        .replace(/^\.\.(?:\/|$)/, '');
-      const requested = path.join(root, safePath);
-      if (
-        requested.startsWith(root) &&
-        fs.existsSync(requested) &&
-        fs.statSync(requested).isFile()
-      ) {
-        sendFile(res, requested);
-        return;
-      }
-      sendFile(res, path.join(root, 'index.html'));
-    })
-    .listen(port, '127.0.0.1', () => {
-      console.log(`Serving dist-web on http://127.0.0.1:${port}`);
+    .createServer(createRequestHandler({ outputDir, listenPort }))
+    .listen(listenPort, '127.0.0.1', () => {
+      console.log(`Serving dist-web on http://127.0.0.1:${listenPort}`);
     });
+}
+
+function closeServer(server, callback = () => {}) {
+  if (typeof server.closeIdleConnections === 'function') {
+    server.closeIdleConnections();
+  }
+  server.close((error) => {
+    if (typeof server.closeAllConnections === 'function') {
+      server.closeAllConnections();
+    }
+    callback(error);
+  });
+}
+
+function installSignalHandlers(server) {
+  let shuttingDown = false;
+  const shutdown = (signal) => {
+    if (shuttingDown) {
+      return;
+    }
+    shuttingDown = true;
+    const forcedExit = setTimeout(() => {
+      console.error(`Timed out closing dist-web server after ${signal}`);
+      process.exit(1);
+    }, 5000);
+    forcedExit.unref();
+
+    closeServer(server, (error) => {
+      clearTimeout(forcedExit);
+      if (error) {
+        console.error(error instanceof Error ? error.message : error);
+        process.exit(1);
+      }
+      process.exit(0);
+    });
+  };
+
+  process.once('SIGTERM', shutdown);
+  process.once('SIGINT', shutdown);
 }
 
 if (require.main === module) {
   try {
-    startServer();
+    const server = startServer();
+    installSignalHandlers(server);
+    server.once('error', (error) => {
+      console.error(error instanceof Error ? error.message : error);
+      process.exit(1);
+    });
   } catch (error) {
     console.error(error instanceof Error ? error.message : error);
     process.exit(1);
@@ -64,5 +110,8 @@ if (require.main === module) {
 
 module.exports = {
   assertDistWebReady,
+  closeServer,
+  createRequestHandler,
+  installSignalHandlers,
   startServer,
 };

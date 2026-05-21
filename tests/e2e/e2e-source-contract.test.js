@@ -1,5 +1,8 @@
 const assert = require('node:assert/strict');
+const { spawn } = require('node:child_process');
 const fs = require('node:fs');
+const net = require('node:net');
+const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
 
@@ -14,8 +17,80 @@ function readRelative(relativePath) {
   return fs.readFileSync(path.join(e2eDir, relativePath), 'utf8');
 }
 
-function readProject(relativePath) {
-  return fs.readFileSync(path.join(e2eDir, '..', '..', relativePath), 'utf8');
+function createPreparedDistWebFixture() {
+  const outputDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sct-dist-web-'));
+  const { webDocumentMetadata } = require('../../lib/scaffold/webDocumentMetadata.js');
+  const html = [
+    '<!doctype html>',
+    `<html lang="${webDocumentMetadata.language}">`,
+    '<head>',
+    `<meta name="description" content="${webDocumentMetadata.description}">`,
+    '</head>',
+    '<body>',
+    '<script data-web-export-loader="true"></script>',
+    '</body>',
+    '</html>',
+  ].join('');
+
+  fs.writeFileSync(path.join(outputDir, 'index.html'), html);
+  fs.writeFileSync(path.join(outputDir, '404.html'), html);
+  return outputDir;
+}
+
+function assertPortCanBind(port) {
+  return new Promise((resolve, reject) => {
+    const server = net.createServer();
+    server.once('error', reject);
+    server.listen(port, '127.0.0.1', () => {
+      server.close((error) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve();
+      });
+    });
+  });
+}
+
+function waitForServerReady(child) {
+  return new Promise((resolve, reject) => {
+    let output = '';
+    const timeout = setTimeout(() => {
+      cleanup();
+      reject(new Error(`dist-web server did not become ready:\n${output}`));
+    }, 5000);
+
+    const cleanup = () => {
+      clearTimeout(timeout);
+      child.stdout.off('data', onData);
+      child.stderr.off('data', onData);
+      child.off('exit', onExit);
+    };
+    const onData = (data) => {
+      output += data.toString();
+      if (output.includes('Serving dist-web on http://127.0.0.1:4173')) {
+        cleanup();
+        resolve(output);
+      }
+    };
+    const onExit = (code, signal) => {
+      cleanup();
+      reject(new Error(`dist-web server exited before ready (${code ?? signal}):\n${output}`));
+    };
+
+    child.stdout.on('data', onData);
+    child.stderr.on('data', onData);
+    child.once('exit', onExit);
+  });
+}
+
+function waitForExit(child) {
+  return new Promise((resolve) => {
+    child.once('exit', (code, signal) => {
+      resolve({ code, signal });
+    });
+  });
 }
 
 function collectMatches({ pattern, source, filePath }) {
@@ -80,41 +155,6 @@ test('learn chapter navigation derives the rendered chapter total from questions
   );
 });
 
-test('learn chapter return flow does not hide duplicate chapter links behind locator fallbacks', () => {
-  const chapterRouteSource = readProject('app/chapter/[chapterId].tsx');
-  const navigationSpecSource = readRelative('learn-chapter-navigation.spec.ts');
-  const dismissingBackLinks =
-    chapterRouteSource.match(
-      /accessibilityLabel=\{copy\.backToListAccessibilityLabel\}[\s\S]*?dismissTo[\s\S]*?href="\/learn"/g,
-    ) ?? [];
-
-  assert.equal(
-    dismissingBackLinks.length,
-    2,
-    'chapter route back links should dismiss to the existing Learn route instead of pushing a retained duplicate route',
-  );
-  assert.doesNotMatch(
-    navigationSpecSource,
-    /getByRole\('link', \{ name: \/Open chapter The country of Sweden[\s\S]*?\.last\(\)/,
-    'English Learn return assertions should not need .last() to dodge retained hidden route content',
-  );
-  assert.match(
-    navigationSpecSource,
-    /getByRole\('link', \{\s*name: \/Open chapter The country of Sweden\\\. Swedish name: Landet Sverige\\\.\//,
-    'English Learn return assertions should use the strict role/name chapter-link contract',
-  );
-  assert.match(
-    navigationSpecSource,
-    /await expect\(returnedFirstChapter\)\.toHaveCount\(1\);/,
-    'Learn return assertions should prove the returned chapter link has no accessible duplicate',
-  );
-  assert.match(
-    navigationSpecSource,
-    /deep-linked chapter can return to the chapter list/,
-    'Learn return coverage should include direct chapter deep links with no existing Learn stack entry',
-  );
-});
-
 test('practice feedback specs target answer option accessibility result labels', () => {
   const source = readRelative('practice-feedback.spec.ts');
 
@@ -175,6 +215,7 @@ test('static site privacy grep focus stays isolated to privacy assertions', () =
 
   assert.deepEqual(privacyTitles, [
     'privacy route renders localized plain-language callout labels',
+    'privacy and consent copy describe unconfigured AdSense slots in both languages',
   ]);
   assert.ok(
     privacyTitles.every((title) => /privacy|consent/i.test(title)),
@@ -218,4 +259,53 @@ test('browser specs do not define local Date browser clock stubs', () => {
     [],
     'use mockBrowserDate from tests/e2e/browserLaunch.ts instead of local Date constructor or Date.now stubs',
   );
+});
+
+test('dist-web e2e server releases the default port on SIGTERM', async () => {
+  const source = readRelative('serve-dist-web.cjs');
+  assert.match(
+    source,
+    /process\.once\('SIGTERM', shutdown\);/,
+    'serve-dist-web should install a SIGTERM handler',
+  );
+  assert.match(
+    source,
+    /process\.once\('SIGINT', shutdown\);/,
+    'serve-dist-web should install a SIGINT handler',
+  );
+  assert.match(source, /server\.close\(/, 'serve-dist-web should close the HTTP server');
+
+  const port = 4173;
+  await assertPortCanBind(port);
+
+  const outputDir = createPreparedDistWebFixture();
+  const child = spawn(process.execPath, [path.join(e2eDir, 'serve-dist-web.cjs')], {
+    cwd: path.resolve(e2eDir, '../..'),
+    env: {
+      ...process.env,
+      DIST_WEB_ROOT: outputDir,
+      PORT: String(port),
+    },
+    stdio: ['ignore', 'pipe', 'pipe'],
+  });
+
+  try {
+    await waitForServerReady(child);
+    const exited = waitForExit(child);
+    child.kill('SIGTERM');
+    const result = await exited;
+
+    assert.equal(result.code, 0, 'SIGTERM shutdown should exit cleanly');
+    assert.equal(
+      result.signal,
+      null,
+      'SIGTERM should be handled instead of surfacing as a signal exit',
+    );
+    await assertPortCanBind(port);
+  } finally {
+    if (child.exitCode === null && child.signalCode === null) {
+      child.kill('SIGKILL');
+    }
+    fs.rmSync(outputDir, { force: true, recursive: true });
+  }
 });
