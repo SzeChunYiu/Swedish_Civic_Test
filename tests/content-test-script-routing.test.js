@@ -37,6 +37,20 @@ function runPackageTest(args, env) {
   });
 }
 
+function runValidateContent(args) {
+  return spawnSync(process.execPath, ['scripts/validate-content.js', ...args], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+    env: process.env,
+  });
+}
+
+function parseValidationSummary(stdout) {
+  const match = stdout.match(/\{[\s\S]*\}\s*$/);
+  assert.ok(match, `validation output did not end with JSON summary:\n${stdout}`);
+  return JSON.parse(match[0]);
+}
+
 test('npm test keeps selector routing in the project dispatcher', () => {
   const pkg = readPackageJson();
   const testContentScript = pkg.scripts['test:content'];
@@ -188,6 +202,45 @@ test('spaced repetition schema parity uses focused content validation routing', 
     /\['scripts\/validate-content\.js'\]/,
     'spaced repetition tests must not route through full content validation',
   );
+});
+
+test('learning Pro-gated selectors use focused content validation routing', () => {
+  const result = runValidateContent(['--focus-learning-pro-gated-selectors']);
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const summary = parseValidationSummary(result.stdout);
+
+  assert.equal(summary.learningProGatedReviewCasesValidated, 19);
+  assert.equal(summary.learningProGatedHighlightCasesValidated, 15);
+  assert.equal(summary.learningProGatedSelectorsParityValidated, true);
+  assert.deepEqual(Object.keys(summary).sort(), [
+    'learningProGatedHighlightCasesValidated',
+    'learningProGatedReviewCasesValidated',
+    'learningProGatedSelectorsParityValidated',
+  ]);
+
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const reviewStoreTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/v1-1-review-store.test.js'),
+    'utf8',
+  );
+  const highlightsStoreTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/v1-1-highlights-store.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-learning-pro-gated-selectors/);
+  assert.match(
+    validatorSource,
+    /validateLearningProGatedSelectorsParity\(\);[\s\S]*learningProGatedSelectorsParityValidated/,
+  );
+  assert.match(
+    reviewStoreTestSource,
+    /remainingDailyReviews: strict Pro boolean and finite free caps/,
+  );
+  assert.match(highlightsStoreTestSource, /isColorAllowed: requires strict Pro boolean/);
 });
 
 test('monetization selector runs only the focused monetization suite', () => {

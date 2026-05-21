@@ -62,7 +62,7 @@ function createZustandStub() {
       const setFn = (partial) => {
         const next = typeof partial === 'function' ? partial(state) : partial;
         if (next && next !== state) {
-          state = { ...state, ...next };
+          Object.assign(state, next);
         }
       };
       const getFn = () => state;

@@ -24,7 +24,7 @@ import {
 import { getLocalDateKey } from '../learning/streaks';
 import { isSafeImportedMapKey } from './importKeySafety';
 import type { RecoverablePersistenceWarning } from './persistenceWarning';
-import { readRecoverably, writeRecoverably } from './persistenceWarning';
+import { parseJsonRecoverably, readRecoverably, writeRecoverably } from './persistenceWarning';
 
 export const REVIEW_STORE_KEY = 'learning.reviews.cards.v1';
 export const FREE_DAILY_REVIEW_CAP = 3;
@@ -59,6 +59,21 @@ function isValidDayKey(value: string): boolean {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
   const parsed = new Date(`${value}T00:00:00.000Z`);
   return Number.isFinite(parsed.getTime()) && parsed.toISOString().startsWith(value);
+}
+
+function isSafeRuntimeQuestionId(value: unknown): value is string {
+  return (
+    typeof value === 'string' &&
+    value.trim() === value &&
+    value.length > 0 &&
+    isSafeImportedMapKey(value)
+  );
+}
+
+function assertSafeRuntimeQuestionId(questionId: unknown): asserts questionId is string {
+  if (!isSafeRuntimeQuestionId(questionId)) {
+    throw new Error('Review questionId must be a non-empty safe string.');
+  }
 }
 
 function isReviewCard(value: unknown, id?: string): value is ReviewCard {
@@ -121,11 +136,14 @@ function read(): {
     () => reviewStorage?.getString(REVIEW_STORE_KEY),
   );
   if (!raw) return { reviews: EMPTY, persistenceWarning: warning };
-  try {
-    return { reviews: normalize(JSON.parse(raw)), persistenceWarning: warning };
-  } catch {
-    return { reviews: EMPTY, persistenceWarning: warning };
-  }
+  const parsed = parseJsonRecoverably(
+    raw,
+    reviewStorageId,
+    REVIEW_STORE_KEY,
+    (value) => normalize(JSON.parse(value)),
+    EMPTY,
+  );
+  return { reviews: parsed.value, persistenceWarning: parsed.warning ?? warning };
 }
 
 function write(state: PersistedReviews): RecoverablePersistenceWarning | null {
@@ -161,6 +179,7 @@ export const useReviewStore = create<ReviewState>((set, get) => ({
   ...initial.reviews,
   persistenceWarning: initial.persistenceWarning,
   ensureCard: (questionId, now) => {
+    assertSafeRuntimeQuestionId(questionId);
     const existing = get().byId[questionId];
     if (existing) return existing;
     const card = createNewCard(questionId, now);
@@ -175,6 +194,7 @@ export const useReviewStore = create<ReviewState>((set, get) => ({
     return card;
   },
   grade: (questionId, grade, now = new Date().toISOString()) => {
+    assertSafeRuntimeQuestionId(questionId);
     const state = get();
     if (!isReviewGrade(grade) || !isCanonicalReviewTimestamp(now)) {
       return state.byId[questionId] ?? null;
@@ -229,16 +249,21 @@ export function dueCount(state: Pick<PersistedReviews, 'byId'>, now?: string): n
 
 /**
  * Remaining reviews the Free tier can grade today. Returns
- * Number.POSITIVE_INFINITY for Pro callers (or any unlimited config).
+ * Number.POSITIVE_INFINITY only for explicit Pro callers.
  */
 export function remainingDailyReviews(
   state: Pick<PersistedReviews, 'gradedPerDay'>,
   options: { now?: Date; isPro?: boolean; freeCap?: number } = {},
 ): number {
-  if (options.isPro) return Number.POSITIVE_INFINITY;
-  const cap = options.freeCap ?? FREE_DAILY_REVIEW_CAP;
+  if (options.isPro === true) return Number.POSITIVE_INFINITY;
+  const requestedCap = options.freeCap;
+  const cap =
+    requestedCap !== undefined && Number.isInteger(requestedCap) && requestedCap >= 0
+      ? requestedCap
+      : FREE_DAILY_REVIEW_CAP;
   const dayKey = getLocalDateKey(options.now ?? new Date());
-  const used = state.gradedPerDay[dayKey] ?? 0;
+  const usedToday = state.gradedPerDay[dayKey] ?? 0;
+  const used = Number.isInteger(usedToday) && usedToday >= 0 ? usedToday : 0;
   return Math.max(0, cap - used);
 }
 

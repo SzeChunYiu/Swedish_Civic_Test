@@ -4325,6 +4325,9 @@ function loadTs(relativePath, exportName) {
     if (request === 'expo-speech') {
       return speechMock;
     }
+    if (request === 'react-native-mmkv') {
+      return { createMMKV: () => null };
+    }
     if (request.startsWith('.')) {
       const resolvedPath = resolveLocalModule(filePath, request);
       const relativeResolvedPath = path.relative(repoRoot, resolvedPath);
@@ -7781,6 +7784,7 @@ const createNewCard = spacedRepetitionModule.createNewCard;
 const gradeCard = spacedRepetitionModule.gradeCard;
 const streakModule = loadTs('lib/learning/streaks.ts');
 const calculateStreak = streakModule.calculateStreak;
+const getLocalDateKey = streakModule.getLocalDateKey;
 const streakWithFreezeModule = loadTs('lib/learning/streakWithFreeze.ts');
 const freezeBannerCopy = streakWithFreezeModule.freezeBannerCopy;
 const xpModule = loadTs('lib/learning/xp.ts');
@@ -7797,6 +7801,11 @@ const findWeakChapterIds = masteryModule.findWeakChapterIds;
 const weakChaptersModule = loadTs('lib/learning/weakChapters.ts');
 const chapterWeaknesses = weakChaptersModule.chapterWeaknesses;
 const topWeakChapters = weakChaptersModule.topWeakChapters;
+const reviewStoreModule = loadTs('lib/storage/reviewStore.ts');
+const FREE_DAILY_REVIEW_CAP = reviewStoreModule.FREE_DAILY_REVIEW_CAP;
+const remainingDailyReviews = reviewStoreModule.remainingDailyReviews;
+const highlightsStoreModule = loadTs('lib/storage/highlightsStore.ts');
+const isColorAllowed = highlightsStoreModule.isColorAllowed;
 const themeModule = loadTs('lib/theme/index.ts');
 const colors = themeModule.colors;
 const motion = themeModule.motion;
@@ -8073,6 +8082,9 @@ let masteryRulesValidated = 0;
 let masteryRulesParityValidated = false;
 let weakChapterRulesValidated = 0;
 let weakChapterRulesParityValidated = false;
+let learningProGatedReviewCasesValidated = 0;
+let learningProGatedHighlightCasesValidated = 0;
+let learningProGatedSelectorsParityValidated = false;
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
 let publishedQuestionTypesValidated = 0;
@@ -8370,6 +8382,17 @@ if (process.argv.includes('--focus-weak-chapter-rules')) {
   printValidationSummary({
     weakChapterRulesValidated,
     weakChapterRulesParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-learning-pro-gated-selectors')) {
+  validateLearningProGatedSelectorsParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    learningProGatedReviewCasesValidated,
+    learningProGatedHighlightCasesValidated,
+    learningProGatedSelectorsParityValidated,
   });
   process.exit(0);
 }
@@ -16294,6 +16317,149 @@ function validateWeakChapterRules() {
   }
 }
 
+function validateLearningProGatedSelectorsParity() {
+  let reviewCasesAreValid = true;
+  let highlightCasesAreValid = true;
+
+  function rejectReview(message) {
+    reviewCasesAreValid = false;
+    fail(message);
+  }
+
+  function rejectHighlight(message) {
+    highlightCasesAreValid = false;
+    fail(message);
+  }
+
+  if (typeof remainingDailyReviews !== 'function') {
+    rejectReview('remainingDailyReviews export is not a function');
+    return;
+  }
+  if (!Number.isInteger(FREE_DAILY_REVIEW_CAP) || FREE_DAILY_REVIEW_CAP <= 0) {
+    rejectReview(`FREE_DAILY_REVIEW_CAP is ${JSON.stringify(FREE_DAILY_REVIEW_CAP)}`);
+    return;
+  }
+  if (typeof getLocalDateKey !== 'function') {
+    rejectReview('getLocalDateKey export is not a function');
+    return;
+  }
+  if (typeof isColorAllowed !== 'function') {
+    rejectHighlight('isColorAllowed export is not a function');
+    return;
+  }
+
+  const now = new Date('2026-05-19T12:00:00.000Z');
+  const dayKey = getLocalDateKey(now);
+  const usedOneReviewState = { gradedPerDay: { [dayKey]: 1 } };
+  const malformedProFlags = ['yes', 1, {}, [], null];
+  const invalidFreeCaps = [Number.NaN, Number.POSITIVE_INFINITY, -1, 1.5, '4', null];
+  const invalidUsedCounts = [Number.NaN, Number.POSITIVE_INFINITY, -1, 1.5, '2'];
+  const freeAfterOneReview = FREE_DAILY_REVIEW_CAP - 1;
+
+  function expectRemaining(label, state, options, expected) {
+    let actual;
+    try {
+      actual = remainingDailyReviews(state, options);
+    } catch (error) {
+      rejectReview(`learning Pro review selector ${label} threw ${error.message}`);
+      return;
+    }
+
+    if (!Object.is(actual, expected)) {
+      rejectReview(
+        `learning Pro review selector ${label} returned ${JSON.stringify(
+          actual,
+        )}, expected ${JSON.stringify(expected)}`,
+      );
+      return;
+    }
+    if (expected !== Number.POSITIVE_INFINITY && !Number.isFinite(actual)) {
+      rejectReview(`learning Pro review selector ${label} returned a non-finite free result`);
+      return;
+    }
+    learningProGatedReviewCasesValidated += 1;
+  }
+
+  expectRemaining(
+    'explicit Pro unlocks unlimited review',
+    usedOneReviewState,
+    { now, isPro: true },
+    Number.POSITIVE_INFINITY,
+  );
+  expectRemaining(
+    'explicit Free keeps daily review cap',
+    usedOneReviewState,
+    { now, isPro: false },
+    freeAfterOneReview,
+  );
+  malformedProFlags.forEach((isPro) => {
+    expectRemaining(
+      `malformed Pro flag ${JSON.stringify(isPro)} stays Free`,
+      usedOneReviewState,
+      { now, isPro },
+      freeAfterOneReview,
+    );
+  });
+  expectRemaining(
+    'valid finite custom free cap is honored',
+    usedOneReviewState,
+    { now, freeCap: 2 },
+    1,
+  );
+  invalidFreeCaps.forEach((freeCap) => {
+    expectRemaining(
+      `invalid freeCap ${JSON.stringify(freeCap)} falls back`,
+      usedOneReviewState,
+      { now, freeCap },
+      freeAfterOneReview,
+    );
+  });
+  invalidUsedCounts.forEach((usedToday) => {
+    expectRemaining(
+      `invalid used count ${JSON.stringify(usedToday)} falls back`,
+      { gradedPerDay: { [dayKey]: usedToday } },
+      { now },
+      FREE_DAILY_REVIEW_CAP,
+    );
+  });
+
+  function expectColorAllowed(label, color, isPro, expected) {
+    let actual;
+    try {
+      actual = isColorAllowed(color, isPro);
+    } catch (error) {
+      rejectHighlight(`learning Pro highlight selector ${label} threw ${error.message}`);
+      return;
+    }
+
+    if (actual !== expected) {
+      rejectHighlight(
+        `learning Pro highlight selector ${label} returned ${JSON.stringify(
+          actual,
+        )}, expected ${JSON.stringify(expected)}`,
+      );
+      return;
+    }
+    learningProGatedHighlightCasesValidated += 1;
+  }
+
+  expectColorAllowed('yellow is free', 'yellow', false, true);
+  expectColorAllowed('green is locked for Free', 'green', false, false);
+  expectColorAllowed('green is unlocked for explicit Pro', 'green', true, true);
+  expectColorAllowed('blue is unlocked for explicit Pro', 'blue', true, true);
+  expectColorAllowed('pink is unlocked for explicit Pro', 'pink', true, true);
+  malformedProFlags.forEach((isPro) => {
+    expectColorAllowed(`green stays locked for ${JSON.stringify(isPro)}`, 'green', isPro, false);
+    expectColorAllowed(`yellow stays free for ${JSON.stringify(isPro)}`, 'yellow', isPro, true);
+  });
+
+  learningProGatedSelectorsParityValidated =
+    reviewCasesAreValid &&
+    highlightCasesAreValid &&
+    learningProGatedReviewCasesValidated === 19 &&
+    learningProGatedHighlightCasesValidated === 15;
+}
+
 function validateQuestionBankCsvContract() {
   if (!Array.isArray(questions)) return;
 
@@ -17852,6 +18018,7 @@ validateStreakRules();
 validateXpRules();
 validateMasteryRules();
 validateWeakChapterRules();
+validateLearningProGatedSelectorsParity();
 validateQuestionBankCsvContract();
 validateStaticSiteQuestionBankParity();
 validateUhrSourceMaterialLinkParity();
@@ -18126,6 +18293,9 @@ console.log(
       masteryRulesParityValidated,
       weakChapterRulesValidated,
       weakChapterRulesParityValidated,
+      learningProGatedReviewCasesValidated,
+      learningProGatedHighlightCasesValidated,
+      learningProGatedSelectorsParityValidated,
       questions: questions.length,
       publishedQuestions,
       sourceQuestions: Array.isArray(sourceQuestions) ? sourceQuestions.length : 0,
