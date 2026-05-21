@@ -555,7 +555,7 @@ const i18n = (window.i18n = {
     'hero.h1b': 'Öva med källor.',
     'hero.h1c': 'Känn dig förberedd.',
     'hero.lede':
-      'Ett lugnt, fristående studieverktyg för svensk samhällskunskap. Korta kapitel, fokuserad övning och provexempel hjälper dig att förstå innehållet steg för steg.',
+      'Ett lugnt, fristående studieverktyg för svensk samhällskunskap. Korta kapitel, fokuserad övning och tidsatt övningsprov hjälper dig att förstå innehållet steg för steg.',
     'hero.cta1': 'Börja öva',
     'hero.cta2': 'Testa en fråga',
     'hero.stat1': 'samhällsfrågor',
