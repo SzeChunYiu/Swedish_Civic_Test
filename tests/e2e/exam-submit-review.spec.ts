@@ -118,6 +118,7 @@ test('mock exam requires all answers before showing Swedish score and source pro
   await expect(page.getByText('Frågegenomgång')).toHaveCount(0);
   await expect(page.getByText('Förklaring', { exact: true })).toHaveCount(0);
   await expect(page.getByText('UHR-källa', { exact: true }).first()).toBeVisible();
+  await expect(page.getByLabel(/^UHR-källa:/)).toHaveCount(0);
   await expectProvenanceSourceNoteToggle(page, {
     buttonName: /Källtyp: UHR-källa/,
     sourceNoteLabel: /^Källanteckning:/,
@@ -167,6 +168,7 @@ test('mock exam requires all answers before showing Swedish score and source pro
   await expect(page.getByText('Rätt svar').first()).toBeVisible();
   await expect(page.getByText('Förklaring', { exact: true }).first()).toBeVisible();
   await expect(page.getByText('UHR-källa', { exact: true }).first()).toBeVisible();
+  await expect(page.getByLabel(/^UHR-källa:/).first()).toBeVisible();
   await expectProvenanceSourceNoteToggle(page, {
     buttonName: /Källtyp: UHR-källa/,
     sourceNoteLabel: /^Källanteckning:/,
@@ -218,6 +220,7 @@ test('mock exam provenance review follows English support mode', async ({ page }
   await expect(page.getByText('Question review')).toHaveCount(0);
   await expect(page.getByText('Explanation', { exact: true })).toHaveCount(0);
   await expect(page.getByText('UHR reference', { exact: true })).toHaveCount(0);
+  await expect(page.getByLabel(/^UHR reference:/)).toHaveCount(0);
   await expect(page.getByText('UHR source', { exact: true }).first()).toBeVisible();
   await expectProvenanceSourceNoteToggle(page, {
     buttonName: /Provenance: UHR source/,
@@ -272,6 +275,7 @@ test('mock exam provenance review follows English support mode', async ({ page }
   await expect(page.getByText('Correct answer').first()).toBeVisible();
   await expect(page.getByText('Explanation', { exact: true }).first()).toBeVisible();
   await expect(page.getByText('UHR reference', { exact: true }).first()).toBeVisible();
+  await expect(page.getByLabel(/^UHR reference:/).first()).toBeVisible();
   const reviewReportLink = page.getByRole('link', { name: /^Report question q/ }).first();
   await expect(reviewReportLink).toBeVisible();
   const reviewReportHref = await reviewReportLink.getAttribute('href');

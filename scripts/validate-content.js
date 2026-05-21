@@ -2057,7 +2057,10 @@ const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
   ['{copy.correctAnswerLabel}', 'exam correct-answer label must render localized copy'],
   ['ExplanationPanel', 'exam review must render the localized explanation panel'],
   ['language={language}', 'exam review components must receive settings language'],
-  ['<UHRReferenceCard language={language}', 'exam UHR references must receive settings language'],
+  [
+    '<UHRReferenceCard language={language} reference={item.uhrReference} />',
+    'submitted exam review must render localized UHR reference cards',
+  ],
 ];
 const EXPECTED_NATIVE_MOCK_EXAM_COMPONENT_COPY = [
   {
@@ -12598,6 +12601,25 @@ function validateExamRouteCopyParity() {
   EXPECTED_EXAM_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!examRoute.includes(snippet)) reject(message);
   });
+
+  const reviewSectionStart = examRoute.indexOf('{filteredReviewItems.map((item) => {');
+  const activeQuestionSectionStart = examRoute.indexOf('{examQuestions.map((question, index) => (');
+  if (reviewSectionStart < 0 || activeQuestionSectionStart < 0) {
+    reject('exam route must keep distinct submitted-review and active-question sections');
+  } else {
+    const activeQuestionSection = examRoute.slice(activeQuestionSectionStart);
+    if (activeQuestionSection.includes('UHRReferenceCard')) {
+      reject('active unsubmitted exam questions must not render UHRReferenceCard');
+    }
+    if (!activeQuestionSection.includes('<QuestionSourceCitation')) {
+      reject('active unsubmitted exam questions must keep compact source citations');
+    }
+    if (
+      !activeQuestionSection.includes('<ProvenanceBadge language={language} question={question} />')
+    ) {
+      reject('active unsubmitted exam questions must keep provenance badges');
+    }
+  }
 
   if (
     /aria-selected=\{isSelected\}/.test(examRoute) ||
