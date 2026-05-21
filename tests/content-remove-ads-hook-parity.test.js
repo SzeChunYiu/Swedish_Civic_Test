@@ -83,6 +83,37 @@ test('Home Remove Ads surfaces wait for entitlement readiness before rendering',
   );
 });
 
+test('Remove Ads entitlement hook parity rejects ungated Home ad entitlements', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('{entitlementsReady ? (', '{true ? (');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-remove-ads-hook-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /Home monetization surfaces must wait for Remove Ads entitlements before rendering/,
+  );
+});
+
 test('Remove Ads E2E mock owned runtime has a dedicated focused harness', () => {
   const focusedHarnessSource = fs.readFileSync(
     path.join(repoRoot, 'tests/remove-ads-web-e2e-mock-runtime.test.js'),
