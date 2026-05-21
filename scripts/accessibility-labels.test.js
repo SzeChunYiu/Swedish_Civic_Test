@@ -7,6 +7,7 @@ const ROOT = path.resolve(__dirname, '..');
 const SOURCE_DIRS = ['app', 'components'];
 const INTERACTIVE_TAG = /<(Pressable|Link|Button)\b/;
 const HOME_ROUTE_SOURCE = path.join(ROOT, 'app', '(tabs)', 'home.tsx');
+const EXAM_ROUTE_SOURCE = path.join(ROOT, 'app', '(tabs)', 'exam.tsx');
 const PRACTICE_ROUTE_SOURCE = path.join(ROOT, 'app', '(tabs)', 'practice.tsx');
 const QUESTION_NAVIGATOR_SOURCE = path.join(ROOT, 'components', 'QuestionNavigator.tsx');
 const TOP_BAR_ACTIONS_SOURCE = path.join(ROOT, 'components', 'ui', 'TopBarActions.tsx');
@@ -117,6 +118,19 @@ test('Home rewarded extra exam actions expose labels roles and state', () => {
   assert.match(
     source,
     /<Button\s+accessibilityLabel=\{copy\.rewardedExamUnlockAccessibilityLabel\}[\s\S]*?accessibilityRole="button"[\s\S]*?accessibilityState=\{\{[\s\S]*?busy: rewardUnlockInFlight,[\s\S]*?disabled: !rewardPreviewCompleted \|\| rewardUnlockInFlight,[\s\S]*?\}\}[\s\S]*?disabled=\{!rewardPreviewCompleted \|\| rewardUnlockInFlight\}/,
+  );
+});
+
+test('Exam review filters expose labels and selected state mirrors', () => {
+  const source = fs.readFileSync(EXAM_ROUTE_SOURCE, 'utf8');
+
+  assert.match(
+    source,
+    /<Pressable\s+accessibilityLabel=\{copy\.reviewFilterFlagged\(flaggedReviewCount\)\}[\s\S]*?accessibilityRole="button"[\s\S]*?accessibilityState=\{\{ selected: reviewFilter === 'flagged' \}\}[\s\S]*?aria-selected=\{reviewFilter === 'flagged'\}/,
+  );
+  assert.match(
+    source,
+    /<Pressable\s+accessibilityLabel=\{copy\.reviewFilterAll\}[\s\S]*?accessibilityRole="button"[\s\S]*?accessibilityState=\{\{ selected: reviewFilter === 'all' \}\}[\s\S]*?aria-selected=\{reviewFilter === 'all'\}/,
   );
 });
 
