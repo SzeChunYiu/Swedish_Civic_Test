@@ -1644,7 +1644,20 @@
     },
 
     5: {
-      kicker: { en: 'Chapter 05 · Equality', sv: 'Kapitel 05 · Jämställdhet' },
+      kicker: {
+        en: 'Chapter 05 · Equality',
+        sv: 'Kapitel 05 · Jämställdhet',
+        'zh-Hans': '第 05 章 · 平等',
+        'zh-Hant': '第 05 章 · 平等',
+        ar: 'الفصل 05 · المساواة',
+        ckb: 'بەشی 05 · یەکسانی',
+        fa: 'فصل 05 · برابری',
+        pl: 'Rozdział 05 · Równość',
+        so: 'Cutubka 05 · Sinnaan',
+        ti: 'ምዕራፍ 05 · ማዕርነት',
+        tr: 'Bölüm 05 · Eşitlik',
+        uk: 'Розділ 05 · Рівність',
+      },
       title: { en: 'Equality', sv: 'Jämställdhet' },
       title_em: { en: 'and the modern household.', sv: 'och det moderna hemmet.' },
       lede: {
@@ -1679,7 +1692,20 @@
     },
 
     6: {
-      kicker: { en: 'Chapter 06 · Society', sv: 'Kapitel 06 · Samhälle' },
+      kicker: {
+        en: 'Chapter 06 · Society',
+        sv: 'Kapitel 06 · Samhälle',
+        'zh-Hans': '第 06 章 · 社会',
+        'zh-Hant': '第 06 章 · 社會',
+        ar: 'الفصل 06 · المجتمع',
+        ckb: 'بەشی 06 · کۆمەڵگا',
+        fa: 'فصل 06 · جامعه',
+        pl: 'Rozdział 06 · Społeczeństwo',
+        so: 'Cutubka 06 · Bulshada',
+        ti: 'ምዕራፍ 06 · ሕብረተሰብ',
+        tr: 'Bölüm 06 · Toplum',
+        uk: 'Розділ 06 · Суспільство',
+      },
       title: { en: 'Society, school,', sv: 'Samhälle, skola' },
       title_em: { en: 'and healthcare.', sv: 'och vård.' },
       lede: {
@@ -1714,7 +1740,20 @@
     },
 
     7: {
-      kicker: { en: 'Chapter 07 · Nature', sv: 'Kapitel 07 · Natur' },
+      kicker: {
+        en: 'Chapter 07 · Nature',
+        sv: 'Kapitel 07 · Natur',
+        'zh-Hans': '第 07 章 · 自然',
+        'zh-Hant': '第 07 章 · 自然',
+        ar: 'الفصل 07 · الطبيعة',
+        ckb: 'بەشی 07 · سروشت',
+        fa: 'فصل 07 · طبیعت',
+        pl: 'Rozdział 07 · Przyroda',
+        so: 'Cutubka 07 · Dabeecadda',
+        ti: 'ምዕራፍ 07 · ተፈጥሮ',
+        tr: 'Bölüm 07 · Doğa',
+        uk: 'Розділ 07 · Природа',
+      },
       title: { en: 'Nature, climate,', sv: 'Natur, klimat' },
       title_em: { en: 'and allemansrätten.', sv: 'och allemansrätten.' },
       lede: {
@@ -1751,7 +1790,20 @@
     },
 
     8: {
-      kicker: { en: 'Chapter 08 · Culture', sv: 'Kapitel 08 · Kultur' },
+      kicker: {
+        en: 'Chapter 08 · Culture',
+        sv: 'Kapitel 08 · Kultur',
+        'zh-Hans': '第 08 章 · 文化',
+        'zh-Hant': '第 08 章 · 文化',
+        ar: 'الفصل 08 · الثقافة',
+        ckb: 'بەشی 08 · کەلتوور',
+        fa: 'فصل 08 · فرهنگ',
+        pl: 'Rozdział 08 · Kultura',
+        so: 'Cutubka 08 · Dhaqanka',
+        ti: 'ምዕራፍ 08 · ባህሊ',
+        tr: 'Bölüm 08 · Kültür',
+        uk: 'Розділ 08 · Культура',
+      },
       title: { en: 'Culture, traditions,', sv: 'Kultur, traditioner' },
       title_em: { en: 'and the Swedish calendar.', sv: 'och svenska kalendern.' },
       lede: {
@@ -1789,7 +1841,20 @@
     },
 
     9: {
-      kicker: { en: 'Chapter 09 · Money', sv: 'Kapitel 09 · Pengar' },
+      kicker: {
+        en: 'Chapter 09 · Money',
+        sv: 'Kapitel 09 · Pengar',
+        'zh-Hans': '第 09 章 · 金钱',
+        'zh-Hant': '第 09 章 · 金錢',
+        ar: 'الفصل 09 · المال',
+        ckb: 'بەشی 09 · پارە',
+        fa: 'فصل 09 · پول',
+        pl: 'Rozdział 09 · Pieniądze',
+        so: 'Cutubka 09 · Lacagta',
+        ti: 'ምዕራፍ 09 · ገንዘብ',
+        tr: 'Bölüm 09 · Para',
+        uk: 'Розділ 09 · Гроші',
+      },
       title: { en: 'Money,', sv: 'Pengar,' },
       title_em: { en: 'banks, and BankID.', sv: 'banker och BankID.' },
       lede: {
@@ -1827,7 +1892,20 @@
     },
 
     10: {
-      kicker: { en: 'Chapter 10 · EU & world', sv: 'Kapitel 10 · EU & världen' },
+      kicker: {
+        en: 'Chapter 10 · EU & world',
+        sv: 'Kapitel 10 · EU & världen',
+        'zh-Hans': '第 10 章 · 欧盟与世界',
+        'zh-Hant': '第 10 章 · 歐盟與世界',
+        ar: 'الفصل 10 · الاتحاد الأوروبي والعالم',
+        ckb: 'بەشی 10 · یەکێتیی ئەورووپا و جیهان',
+        fa: 'فصل 10 · اتحادیهٔ اروپا و جهان',
+        pl: 'Rozdział 10 · UE i świat',
+        so: 'Cutubka 10 · Midowga Yurub & adduunka',
+        ti: 'ምዕራፍ 10 · ኤውሮጳዊ ሕብረትን ዓለምን',
+        tr: 'Bölüm 10 · AB ve dünya',
+        uk: 'Розділ 10 · ЄС і світ',
+      },
       title: { en: 'Sweden,', sv: 'Sverige,' },
       title_em: { en: 'the EU, and the world.', sv: 'EU och världen.' },
       lede: {
@@ -1865,7 +1943,20 @@
     },
 
     11: {
-      kicker: { en: 'Chapter 11 · Migration', sv: 'Kapitel 11 · Migration' },
+      kicker: {
+        en: 'Chapter 11 · Migration',
+        sv: 'Kapitel 11 · Migration',
+        'zh-Hans': '第 11 章 · 移民',
+        'zh-Hant': '第 11 章 · 移民',
+        ar: 'الفصل 11 · الهجرة',
+        ckb: 'بەشی 11 · کۆچ',
+        fa: 'فصل 11 · مهاجرت',
+        pl: 'Rozdział 11 · Migracja',
+        so: 'Cutubka 11 · Socdaalka',
+        ti: 'ምዕራፍ 11 · ስደት',
+        tr: 'Bölüm 11 · Göç',
+        uk: 'Розділ 11 · Міграція',
+      },
       title: { en: 'Migration, residence,', sv: 'Migration, uppehåll' },
       title_em: { en: 'and citizenship.', sv: 'och medborgarskap.' },
       lede: {
@@ -1915,7 +2006,20 @@
     },
 
     12: {
-      kicker: { en: 'Chapter 12 · Mock exam', sv: 'Kapitel 12 · Övningsprov' },
+      kicker: {
+        en: 'Chapter 12 · Mock exam',
+        sv: 'Kapitel 12 · Övningsprov',
+        'zh-Hans': '第 12 章 · 模拟考试',
+        'zh-Hant': '第 12 章 · 模擬考試',
+        ar: 'الفصل 12 · اختبار تجريبي',
+        ckb: 'بەشی 12 · تاقیکردنەوەی ئەزموونی',
+        fa: 'فصل 12 · آزمون آزمایشی',
+        pl: 'Rozdział 12 · Egzamin próbny',
+        so: 'Cutubka 12 · Imtixaan tijaabo ah',
+        ti: 'ምዕራፍ 12 · ናይ ልምምድ ፈተና',
+        tr: 'Bölüm 12 · Deneme sınavı',
+        uk: 'Розділ 12 · Пробний іспит',
+      },
       title: { en: 'Mock exam', sv: 'Övningsprov' },
       title_em: { en: 'and current test status.', sv: 'och aktuell provstatus.' },
       lede: {
@@ -1957,7 +2061,20 @@
     },
 
     13: {
-      kicker: { en: 'Chapter 13 · Traditions', sv: 'Kapitel 13 · Traditioner' },
+      kicker: {
+        en: 'Chapter 13 · Traditions',
+        sv: 'Kapitel 13 · Traditioner',
+        'zh-Hans': '第 13 章 · 传统',
+        'zh-Hant': '第 13 章 · 傳統',
+        ar: 'الفصل 13 · التقاليد',
+        ckb: 'بەشی 13 · نەریتەکان',
+        fa: 'فصل 13 · سنت‌ها',
+        pl: 'Rozdział 13 · Tradycje',
+        so: 'Cutubka 13 · Caadooyinka',
+        ti: 'ምዕራፍ 13 · ባህልታት',
+        tr: 'Bölüm 13 · Gelenekler',
+        uk: 'Розділ 13 · Традиції',
+      },
       title: { en: 'Traditions,', sv: 'Traditioner,' },
       title_em: { en: 'holidays, and change.', sv: 'högtider och förändring.' },
       lede: {

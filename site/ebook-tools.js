@@ -53,8 +53,34 @@
     }),
   });
 
+  // Per-key 12-locale overrides for strings that must localize beyond sv/en.
+  // (Most COPY keys are sv/en only; only keys listed here resolve all locales.)
+  const COPY_I18N = Object.freeze({
+    noHighlights: Object.freeze({
+      en: 'No highlights yet. Select text to mark it.',
+      sv: 'Inga markeringar än. Välj text för att markera.',
+      'zh-Hans': '还没有标注。选中文字即可标记。',
+      'zh-Hant': '還沒有標註。選取文字即可標記。',
+      ar: 'لا توجد تظليلات بعد. حدّد نصًا لتمييزه.',
+      ckb: 'هێشتا هیچ نیشانەکردنێک نییە. دەقێک هەڵبژێرە بۆ نیشانەکردنی.',
+      fa: 'هنوز هایلایتی نیست. متنی را انتخاب کنید تا علامت‌گذاری شود.',
+      pl: 'Brak zaznaczeń. Zaznacz tekst, aby go oznaczyć.',
+      so: 'Weli ma jiraan calaamado. Dooro qoraal si aad u calaamadayso.',
+      ti: 'ገና ምልክታት የለን። ንምልካት ጽሑፍ ምረጽ።',
+      tr: 'Henüz işaretleme yok. İşaretlemek için metin seçin.',
+      uk: 'Поки що немає виділень. Виділіть текст, щоб позначити його.',
+    }),
+  });
+
   function copy() {
-    return lang() === 'sv' ? COPY.sv : COPY.en;
+    const base = lang() === 'sv' ? COPY.sv : COPY.en;
+    const l = lang();
+    const out = {};
+    for (const k of Object.keys(base)) {
+      const override = COPY_I18N[k];
+      out[k] = (override && (override[l] || override.en)) || base[k];
+    }
+    return out;
   }
 
   function localizeButton(button, label, text) {
