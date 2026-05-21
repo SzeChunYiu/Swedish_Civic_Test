@@ -470,6 +470,8 @@ const i18n = (window.i18n = {
     'purchase.status.realSignin': 'Real Supabase sign-in is required before purchase handoff.',
     'purchase.status.preparing': 'Preparing your account-bound Google Play handoff…',
     'purchase.status.error': 'Purchase could not start. Please sign in again and retry.',
+    'purchase.status.backendMissing':
+      'Purchase setup is not finished yet: the purchase-intent table is missing in Supabase.',
     'privacy.s5.web.t': 'Ads on this website',
     'privacy.s5.web.p':
       'This website is prepared for <b>Google AdSense</b>, but the static build does not load AdSense until reviewed web slot IDs are configured. When enabled, AdSense and its partners may set cookies on your device and use them to personalise ads, measure performance, and detect fraud. We load AdSense according to your cookie choice: <em>Accept all</em> allows personalised ads, while <em>Necessary only</em> keeps ads non-personalised. You can change your choice by clearing site data for this domain.',
@@ -881,6 +883,8 @@ const i18n = (window.i18n = {
     'purchase.status.realSignin': 'Riktig Supabase-inloggning krävs innan köpet skickas vidare.',
     'purchase.status.preparing': 'Förbereder kontoanknuten vidarebefordran till Google Play…',
     'purchase.status.error': 'Köpet kunde inte starta. Logga in igen och försök på nytt.',
+    'purchase.status.backendMissing':
+      'Köpet är inte färdigkopplat än: tabellen för köpintentioner saknas i Supabase.',
     'privacy.s5.web.t': 'Annonser på webbplatsen',
     'privacy.s5.web.p':
       'Den här webbplatsen är förberedd för <b>Google AdSense</b>, men den statiska versionen laddar inte AdSense förrän granskade annonsplats-ID:n är konfigurerade. När AdSense är aktiverat kan AdSense och dess partner sätta cookies på din enhet och använda dem för personalisering, mätning och bedrägeridetektering. Vi laddar AdSense enligt ditt cookieval: <em>Godkänn allt</em> tillåter personaliserade annonser, medan <em>Bara nödvändiga</em> håller annonserna icke-personaliserade. Du kan ändra valet genom att tömma platsdata för domänen.',
@@ -1230,13 +1234,23 @@ function smtApplyConsent(choice) {
   if (window.smtRefreshAds) window.smtRefreshAds();
 }
 
+function smtNotifyConsentVisibility(visible) {
+  try {
+    document.documentElement.toggleAttribute('data-consent-visible', !!visible);
+    window.dispatchEvent(
+      new CustomEvent('smt:consentvisibility', { detail: { visible: !!visible } }),
+    );
+  } catch {}
+}
 function smtShowConsent() {
   const el = document.getElementById('consent');
   if (el) el.hidden = false;
+  smtNotifyConsentVisibility(true);
 }
 function smtHideConsent() {
   const el = document.getElementById('consent');
   if (el) el.hidden = true;
+  smtNotifyConsentVisibility(false);
 }
 
 function smtShowAds(mode) {

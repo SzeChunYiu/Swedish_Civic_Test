@@ -245,7 +245,13 @@
 
   function redirectTarget() {
     try {
-      return location.origin + location.pathname;
+      const configuredOrigin =
+        typeof window !== 'undefined' && typeof window.SMT_SITE_ORIGIN === 'string'
+          ? window.SMT_SITE_ORIGIN.replace(/\/+$/, '')
+          : '';
+      const isLocal = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
+      const origin = configuredOrigin && !isLocal ? configuredOrigin : location.origin;
+      return origin + location.pathname;
     } catch {
       return undefined;
     }

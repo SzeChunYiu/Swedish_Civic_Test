@@ -682,6 +682,21 @@
     return BUDDIES.find((b) => b.id === getBuddyId()) || BUDDIES[0];
   }
 
+  function buddyDeferredForConsent() {
+    const consent = document.getElementById('consent');
+    return Boolean(consent && !consent.hidden);
+  }
+
+  function showBuddyWidgetAfterConsent() {
+    let hidden = false;
+    try {
+      hidden = localStorage.getItem('smt_buddy_hidden') === '1';
+    } catch {}
+    const widget = document.getElementById('dala-buddy');
+    if (!widget || hidden || buddyDeferredForConsent()) return;
+    widget.hidden = false;
+  }
+
   // ---------- Render ----------
 
   function renderBuddy() {
@@ -700,7 +715,7 @@
     const bubble = document.getElementById('dala-bubble');
     const msg = document.getElementById('dala-msg');
     const widget = document.getElementById('dala-buddy');
-    if (!bubble || !msg || !widget) return;
+    if (!bubble || !msg || !widget || buddyDeferredForConsent()) return;
     msg.innerHTML = html;
     clearTimeout(hideTimer);
     clearTimeout(fadeTimer);
@@ -815,7 +830,7 @@
   };
   window.smtBuddyShow = () => {
     const w = document.getElementById('dala-buddy');
-    if (w) w.hidden = false;
+    if (w && !buddyDeferredForConsent()) w.hidden = false;
     try {
       localStorage.removeItem('smt_buddy_hidden');
     } catch {}
@@ -866,9 +881,10 @@
     } catch {}
     const widget = document.getElementById('dala-buddy');
     if (!widget) return;
-    widget.hidden = hidden;
+    const deferred = buddyDeferredForConsent();
+    widget.hidden = hidden || deferred;
     renderBuddy();
-    if (!hidden) {
+    if (!hidden && !deferred) {
       let seen = false;
       try {
         seen = sessionStorage.getItem('smt_buddy_greeted') === '1';
@@ -881,6 +897,25 @@
           } catch {}
         }, 1800);
       }
+    }
+  });
+
+  window.addEventListener('smt:consentvisibility', (event) => {
+    if (!event.detail || event.detail.visible) return;
+    showBuddyWidgetAfterConsent();
+    let seen = false;
+    try {
+      seen = sessionStorage.getItem('smt_buddy_greeted') === '1';
+    } catch {}
+    if (!seen) {
+      setTimeout(() => {
+        if (!buddyDeferredForConsent()) {
+          showGreeting();
+          try {
+            sessionStorage.setItem('smt_buddy_greeted', '1');
+          } catch {}
+        }
+      }, 500);
     }
   });
 })();
