@@ -109,19 +109,20 @@ function normalizeAvailableFreezes(value: unknown, fallback: number): number {
 
 function normalizeFreezeState(state: unknown): StreakFreezeState {
   const fallback = createInitialFreezeState();
-  const candidate = state && typeof state === 'object' ? (state as Partial<StreakFreezeState>) : {};
+  if (!state || typeof state !== 'object') return fallback;
 
+  const candidate = state as Partial<StreakFreezeState>;
   return {
-    available: normalizeAvailableFreezes(candidate.available, fallback.available),
+    available: normalizeAvailableFreezes(candidate.available, 0),
     lastEarnedAt: normalizeDayKey(candidate.lastEarnedAt) ?? fallback.lastEarnedAt,
     lifetimeEarned: normalizeNonNegativeInteger(
       candidate.lifetimeEarned,
-      fallback.lifetimeEarned,
+      0,
       MAX_HYDRATED_FREEZE_LIFETIME_COUNT,
     ),
     lifetimeSpent: normalizeNonNegativeInteger(
       candidate.lifetimeSpent,
-      fallback.lifetimeSpent,
+      0,
       MAX_HYDRATED_FREEZE_LIFETIME_COUNT,
     ),
     rescuedDayKeys: normalizeDayKeyList(candidate.rescuedDayKeys),
