@@ -18660,30 +18660,90 @@
     "type": "single_choice",
     "q": {
       "en": "Which statement describes protection against discrimination in Sweden?",
-      "sv": "Vilket påstående beskriver diskrimineringsskyddet i Sverige?"
+      "sv": "Vilket påstående beskriver diskrimineringsskyddet i Sverige?",
+      "zh-Hant": "哪項說法描述了瑞典的反歧視保護？",
+      "zh-Hans": "哪项说法描述了瑞典的反歧视保护？",
+      "ar": "أي عبارة تصف الحماية من التمييز في السويد؟",
+      "ckb": "کام لێدوان پاراستن لە دژی جیاکاری لە سویددا وەسف دەکات؟",
+      "fa": "کدام گزاره حمایت در برابر تبعیض در سوئد را توصیف می‌کند؟",
+      "pl": "Które stwierdzenie opisuje ochronę przed dyskryminacją w Szwecji?",
+      "so": "Hadalkee sharxaya ilaalinta ka dhanka ah takooridda ee Iswiidhan?",
+      "ti": "ኣየናይ ኣበሃህላ ንዕቝባ ካብ ኣድልዎ ኣብ ሽወደን ይገልጽ?",
+      "tr": "Hangi ifade İsveç’te ayrımcılığa karşı korumayı açıklar?",
+      "uk": "Яке твердження описує захист від дискримінації у Швеції?"
     },
     "opts": [
       {
         "en": "Discrimination connected to, for example, sex, religion, disability, sexual orientation, or age is prohibited",
-        "sv": "Diskriminering som har samband med till exempel kön, religion, funktionsnedsättning, sexuell läggning eller ålder är förbjuden"
+        "sv": "Diskriminering som har samband med till exempel kön, religion, funktionsnedsättning, sexuell läggning eller ålder är förbjuden",
+        "zh-Hant": "禁止與例如性別、宗教、身心障礙、性取向或年齡有關的歧視",
+        "zh-Hans": "禁止与例如性别、宗教、残障、性取向或年龄有关的歧视",
+        "ar": "التمييز المرتبط مثلًا بالجنس أو الدين أو الإعاقة أو التوجه الجنسي أو العمر محظور",
+        "ckb": "جیاکاری پەیوەندیدار بە بۆ نموونە ڕەگەز، ئایین، کەمئەندامی، ئاراستەی سێکسی یان تەمەن قەدەغەیە",
+        "fa": "تبعیض مرتبط با مواردی مانند جنسیت، دین، معلولیت، گرایش جنسی یا سن ممنوع است",
+        "pl": "Dyskryminacja związana na przykład z płcią, religią, niepełnosprawnością, orientacją seksualną lub wiekiem jest zakazana",
+        "so": "Takoor la xiriira tusaale ahaan jinsi, diin, naafonimo, jihayn jinsi ama da’ waa mamnuuc",
+        "ti": "ኣድልዎ ምስ ንኣብነት ጾታ፣ ሃይማኖት፣ ስንክልና፣ ፆታዊ ዝንባለ ወይ ዕድመ ዝተኣሳሰረ ክልኩል እዩ",
+        "tr": "Örneğin cinsiyet, din, engellilik, cinsel yönelim veya yaşla bağlantılı ayrımcılık yasaktır",
+        "uk": "Дискримінація, пов’язана, наприклад, зі статтю, релігією, інвалідністю, сексуальною орієнтацією або віком, заборонена"
       },
       {
         "en": "Employers may always treat people differently on these grounds",
-        "sv": "Arbetsgivare får alltid behandla personer olika på dessa grunder"
+        "sv": "Arbetsgivare får alltid behandla personer olika på dessa grunder",
+        "zh-Hant": "雇主在這些理由上永遠可以不同地對待人",
+        "zh-Hans": "雇主在这些理由上永远可以不同地对待人",
+        "ar": "يجوز لأصحاب العمل دائمًا معاملة الناس بصورة مختلفة على هذه الأسس",
+        "ckb": "خاوەنکاران هەمیشە دەتوانن لەسەر ئەم بنەمایانە خەڵک بە جیاوازی مامەڵە بکەن",
+        "fa": "کارفرمایان همیشه می‌توانند بر این پایه‌ها با افراد متفاوت رفتار کنند",
+        "pl": "Pracodawcy zawsze mogą traktować ludzi różnie z tych powodów",
+        "so": "Loo-shaqeeyayaashu mar walba way ku kala duwi karaan dadka sababahan awgood",
+        "ti": "ኣስራሕቲ ኩሉ ግዜ ብእዞም መሰረታት ሰባት ብዝተፈላለየ ክሕዙ ይኽእሉ",
+        "tr": "İşverenler bu gerekçelerle insanlara her zaman farklı davranabilir",
+        "uk": "Роботодавці завжди можуть по-різному ставитися до людей на цих підставах"
       },
       {
         "en": "The Discrimination Act applies only to people over age 65",
-        "sv": "Diskrimineringslagen gäller bara personer över 65 år"
+        "sv": "Diskrimineringslagen gäller bara personer över 65 år",
+        "zh-Hant": "《歧視法》只適用於 65 歲以上的人",
+        "zh-Hans": "《歧视法》只适用于 65 岁以上的人",
+        "ar": "ينطبق قانون التمييز فقط على الأشخاص الذين تزيد أعمارهم على 65 عامًا",
+        "ckb": "یاسای جیاکاری تەنها بۆ کەسانی سەرووی ٦٥ ساڵ کار دەکات",
+        "fa": "قانون تبعیض فقط برای افراد بالای ۶۵ سال اعمال می‌شود",
+        "pl": "Ustawa o dyskryminacji dotyczy tylko osób powyżej 65 roku życia",
+        "so": "Xeerka takooriddu wuxuu khuseeyaa oo keliya dadka ka weyn 65 sano",
+        "ti": "ሕጊ ኣድልዎ ንሰባት ልዕሊ 65 ዓመት ጥራይ ይምልከት",
+        "tr": "Ayrımcılık Yasası yalnızca 65 yaş üstü kişiler için geçerlidir",
+        "uk": "Закон про дискримінацію стосується лише людей старших за 65 років"
       },
       {
         "en": "The protection applies only if someone is already a Swedish citizen",
-        "sv": "Skyddet gäller bara om någon redan är svensk medborgare"
+        "sv": "Skyddet gäller bara om någon redan är svensk medborgare",
+        "zh-Hant": "保護只在某人已經是瑞典公民時才適用",
+        "zh-Hans": "保护只在某人已经是瑞典公民时才适用",
+        "ar": "تنطبق الحماية فقط إذا كان الشخص مواطنًا سويديًا بالفعل",
+        "ckb": "پاراستنەکە تەنها کاتێک کار دەکات کە کەسێک پێشتر هاووڵاتی سوید بێت",
+        "fa": "این حمایت فقط وقتی اعمال می‌شود که فرد از قبل شهروند سوئد باشد",
+        "pl": "Ochrona obowiązuje tylko wtedy, gdy ktoś jest już obywatelem Szwecji",
+        "so": "Ilaalintu waxay khusaysaa oo keliya haddii qofku hore u yahay muwaadin Iswiidhish ah",
+        "ti": "እቲ ዕቝባ ሓደ ሰብ ቀድሞም ዜጋ ሽወደን እንተኾይኑ ጥራይ ይምልከት",
+        "tr": "Koruma yalnızca kişi zaten İsveç vatandaşıysa geçerlidir",
+        "uk": "Захист діє лише тоді, коли людина вже є громадянином Швеції"
       }
     ],
     "answer": 0,
     "why": {
       "en": "The Discrimination Act prohibits discrimination connected to several protected grounds, such as sex, transgender identity or expression, ethnicity, religion, disability, sexual orientation, and age.",
-      "sv": "Diskrimineringslagen förbjuder diskriminering som har samband med flera diskrimineringsgrunder, till exempel kön, könsidentitet eller könsuttryck, etnisk tillhörighet, religion, funktionsnedsättning, sexuell läggning och ålder."
+      "sv": "Diskrimineringslagen förbjuder diskriminering som har samband med flera diskrimineringsgrunder, till exempel kön, könsidentitet eller könsuttryck, etnisk tillhörighet, religion, funktionsnedsättning, sexuell läggning och ålder.",
+      "zh-Hant": "《歧視法》禁止與多種歧視理由有關的歧視，例如性別、性別認同或性別表達、族裔歸屬、宗教、身心障礙、性取向和年齡。",
+      "zh-Hans": "《歧视法》禁止与多种歧视理由有关的歧视，例如性别、性别认同或性别表达、族裔归属、宗教、残障、性取向和年龄。",
+      "ar": "يحظر قانون التمييز التمييز المرتبط بعدة أسس محمية، مثل الجنس، والهوية الجندرية أو التعبير الجندري، والانتماء الإثني، والدين، والإعاقة، والتوجه الجنسي، والعمر.",
+      "ckb": "یاسای جیاکاری جیاکارییەکانی پەیوەندیدار بە چەند بنەمای جیاکاری قەدەغە دەکات، وەک ڕەگەز، ناسنامەی ڕەگەزی یان دەربڕینی ڕەگەزی، پەیوەندی ئێتنیکی، ئایین، کەمئەندامی، ئاراستەی سێکسی و تەمەن.",
+      "fa": "قانون تبعیض، تبعیض مرتبط با چند مبنای حمایت‌شده را ممنوع می‌کند؛ مانند جنسیت، هویت یا بیان جنسیتی، وابستگی قومی، دین، معلولیت، گرایش جنسی و سن.",
+      "pl": "Ustawa o dyskryminacji zakazuje dyskryminacji związanej z kilkoma chronionymi przesłankami, takimi jak płeć, tożsamość lub ekspresja płciowa, pochodzenie etniczne, religia, niepełnosprawność, orientacja seksualna i wiek.",
+      "so": "Xeerka takooriddu wuxuu mamnuucaa takoor la xiriira dhowr sababood oo la ilaaliyo, sida jinsi, aqoonsi jinsi ama muujin jinsi, asal qoomiyadeed, diin, naafonimo, jihayn jinsi iyo da’.",
+      "ti": "ሕጊ ኣድልዎ ምስ ብዙሓት ዝተዓቀቡ መሰረታት ኣድልዎ ዝተኣሳሰረ ኣድልዎ ይኽልክል፣ ንኣብነት ጾታ፣ መንነት ጾታ ወይ መግለጺ ጾታ፣ ብሄራዊ መበቆል፣ ሃይማኖት፣ ስንክልና፣ ፆታዊ ዝንባለን ዕድመን።",
+      "tr": "Ayrımcılık Yasası; cinsiyet, cinsiyet kimliği veya ifadesi, etnik köken, din, engellilik, cinsel yönelim ve yaş gibi birkaç korunan gerekçeyle bağlantılı ayrımcılığı yasaklar.",
+      "uk": "Закон про дискримінацію забороняє дискримінацію, пов’язану з кількома захищеними підставами, такими як стать, гендерна ідентичність або самовираження, етнічна належність, релігія, інвалідність, сексуальна орієнтація та вік."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -63741,19 +63801,59 @@
     "opts": [
       {
         "en": "Discrimination connected to, for example, sex, religion, disability, sexual orientation, or age is prohibited",
-        "sv": "Diskriminering som har samband med till exempel kön, religion, funktionsnedsättning, sexuell läggning eller ålder är förbjuden"
+        "sv": "Diskriminering som har samband med till exempel kön, religion, funktionsnedsättning, sexuell läggning eller ålder är förbjuden",
+        "zh-Hant": "禁止與例如性別、宗教、身心障礙、性取向或年齡有關的歧視",
+        "zh-Hans": "禁止与例如性别、宗教、残障、性取向或年龄有关的歧视",
+        "ar": "التمييز المرتبط مثلًا بالجنس أو الدين أو الإعاقة أو التوجه الجنسي أو العمر محظور",
+        "ckb": "جیاکاری پەیوەندیدار بە بۆ نموونە ڕەگەز، ئایین، کەمئەندامی، ئاراستەی سێکسی یان تەمەن قەدەغەیە",
+        "fa": "تبعیض مرتبط با مواردی مانند جنسیت، دین، معلولیت، گرایش جنسی یا سن ممنوع است",
+        "pl": "Dyskryminacja związana na przykład z płcią, religią, niepełnosprawnością, orientacją seksualną lub wiekiem jest zakazana",
+        "so": "Takoor la xiriira tusaale ahaan jinsi, diin, naafonimo, jihayn jinsi ama da’ waa mamnuuc",
+        "ti": "ኣድልዎ ምስ ንኣብነት ጾታ፣ ሃይማኖት፣ ስንክልና፣ ፆታዊ ዝንባለ ወይ ዕድመ ዝተኣሳሰረ ክልኩል እዩ",
+        "tr": "Örneğin cinsiyet, din, engellilik, cinsel yönelim veya yaşla bağlantılı ayrımcılık yasaktır",
+        "uk": "Дискримінація, пов’язана, наприклад, зі статтю, релігією, інвалідністю, сексуальною орієнтацією або віком, заборонена"
       },
       {
         "en": "Employers may always treat people differently on these grounds",
-        "sv": "Arbetsgivare får alltid behandla personer olika på dessa grunder"
+        "sv": "Arbetsgivare får alltid behandla personer olika på dessa grunder",
+        "zh-Hant": "雇主在這些理由上永遠可以不同地對待人",
+        "zh-Hans": "雇主在这些理由上永远可以不同地对待人",
+        "ar": "يجوز لأصحاب العمل دائمًا معاملة الناس بصورة مختلفة على هذه الأسس",
+        "ckb": "خاوەنکاران هەمیشە دەتوانن لەسەر ئەم بنەمایانە خەڵک بە جیاوازی مامەڵە بکەن",
+        "fa": "کارفرمایان همیشه می‌توانند بر این پایه‌ها با افراد متفاوت رفتار کنند",
+        "pl": "Pracodawcy zawsze mogą traktować ludzi różnie z tych powodów",
+        "so": "Loo-shaqeeyayaashu mar walba way ku kala duwi karaan dadka sababahan awgood",
+        "ti": "ኣስራሕቲ ኩሉ ግዜ ብእዞም መሰረታት ሰባት ብዝተፈላለየ ክሕዙ ይኽእሉ",
+        "tr": "İşverenler bu gerekçelerle insanlara her zaman farklı davranabilir",
+        "uk": "Роботодавці завжди можуть по-різному ставитися до людей на цих підставах"
       },
       {
         "en": "The Discrimination Act applies only to people over age 65",
-        "sv": "Diskrimineringslagen gäller bara personer över 65 år"
+        "sv": "Diskrimineringslagen gäller bara personer över 65 år",
+        "zh-Hant": "《歧視法》只適用於 65 歲以上的人",
+        "zh-Hans": "《歧视法》只适用于 65 岁以上的人",
+        "ar": "ينطبق قانون التمييز فقط على الأشخاص الذين تزيد أعمارهم على 65 عامًا",
+        "ckb": "یاسای جیاکاری تەنها بۆ کەسانی سەرووی ٦٥ ساڵ کار دەکات",
+        "fa": "قانون تبعیض فقط برای افراد بالای ۶۵ سال اعمال می‌شود",
+        "pl": "Ustawa o dyskryminacji dotyczy tylko osób powyżej 65 roku życia",
+        "so": "Xeerka takooriddu wuxuu khuseeyaa oo keliya dadka ka weyn 65 sano",
+        "ti": "ሕጊ ኣድልዎ ንሰባት ልዕሊ 65 ዓመት ጥራይ ይምልከት",
+        "tr": "Ayrımcılık Yasası yalnızca 65 yaş üstü kişiler için geçerlidir",
+        "uk": "Закон про дискримінацію стосується лише людей старших за 65 років"
       },
       {
         "en": "The protection applies only if someone is already a Swedish citizen",
-        "sv": "Skyddet gäller bara om någon redan är svensk medborgare"
+        "sv": "Skyddet gäller bara om någon redan är svensk medborgare",
+        "zh-Hant": "保護只在某人已經是瑞典公民時才適用",
+        "zh-Hans": "保护只在某人已经是瑞典公民时才适用",
+        "ar": "تنطبق الحماية فقط إذا كان الشخص مواطنًا سويديًا بالفعل",
+        "ckb": "پاراستنەکە تەنها کاتێک کار دەکات کە کەسێک پێشتر هاووڵاتی سوید بێت",
+        "fa": "این حمایت فقط وقتی اعمال می‌شود که فرد از قبل شهروند سوئد باشد",
+        "pl": "Ochrona obowiązuje tylko wtedy, gdy ktoś jest już obywatelem Szwecji",
+        "so": "Ilaalintu waxay khusaysaa oo keliya haddii qofku hore u yahay muwaadin Iswiidhish ah",
+        "ti": "እቲ ዕቝባ ሓደ ሰብ ቀድሞም ዜጋ ሽወደን እንተኾይኑ ጥራይ ይምልከት",
+        "tr": "Koruma yalnızca kişi zaten İsveç vatandaşıysa geçerlidir",
+        "uk": "Захист діє лише тоді, коли людина вже є громадянином Швеції"
       }
     ],
     "answer": 0,
@@ -63869,19 +63969,59 @@
     "opts": [
       {
         "en": "Discrimination connected to, for example, sex, religion, disability, sexual orientation, or age is prohibited",
-        "sv": "Diskriminering som har samband med till exempel kön, religion, funktionsnedsättning, sexuell läggning eller ålder är förbjuden"
+        "sv": "Diskriminering som har samband med till exempel kön, religion, funktionsnedsättning, sexuell läggning eller ålder är förbjuden",
+        "zh-Hant": "禁止與例如性別、宗教、身心障礙、性取向或年齡有關的歧視",
+        "zh-Hans": "禁止与例如性别、宗教、残障、性取向或年龄有关的歧视",
+        "ar": "التمييز المرتبط مثلًا بالجنس أو الدين أو الإعاقة أو التوجه الجنسي أو العمر محظور",
+        "ckb": "جیاکاری پەیوەندیدار بە بۆ نموونە ڕەگەز، ئایین، کەمئەندامی، ئاراستەی سێکسی یان تەمەن قەدەغەیە",
+        "fa": "تبعیض مرتبط با مواردی مانند جنسیت، دین، معلولیت، گرایش جنسی یا سن ممنوع است",
+        "pl": "Dyskryminacja związana na przykład z płcią, religią, niepełnosprawnością, orientacją seksualną lub wiekiem jest zakazana",
+        "so": "Takoor la xiriira tusaale ahaan jinsi, diin, naafonimo, jihayn jinsi ama da’ waa mamnuuc",
+        "ti": "ኣድልዎ ምስ ንኣብነት ጾታ፣ ሃይማኖት፣ ስንክልና፣ ፆታዊ ዝንባለ ወይ ዕድመ ዝተኣሳሰረ ክልኩል እዩ",
+        "tr": "Örneğin cinsiyet, din, engellilik, cinsel yönelim veya yaşla bağlantılı ayrımcılık yasaktır",
+        "uk": "Дискримінація, пов’язана, наприклад, зі статтю, релігією, інвалідністю, сексуальною орієнтацією або віком, заборонена"
       },
       {
         "en": "Employers may always treat people differently on these grounds",
-        "sv": "Arbetsgivare får alltid behandla personer olika på dessa grunder"
+        "sv": "Arbetsgivare får alltid behandla personer olika på dessa grunder",
+        "zh-Hant": "雇主在這些理由上永遠可以不同地對待人",
+        "zh-Hans": "雇主在这些理由上永远可以不同地对待人",
+        "ar": "يجوز لأصحاب العمل دائمًا معاملة الناس بصورة مختلفة على هذه الأسس",
+        "ckb": "خاوەنکاران هەمیشە دەتوانن لەسەر ئەم بنەمایانە خەڵک بە جیاوازی مامەڵە بکەن",
+        "fa": "کارفرمایان همیشه می‌توانند بر این پایه‌ها با افراد متفاوت رفتار کنند",
+        "pl": "Pracodawcy zawsze mogą traktować ludzi różnie z tych powodów",
+        "so": "Loo-shaqeeyayaashu mar walba way ku kala duwi karaan dadka sababahan awgood",
+        "ti": "ኣስራሕቲ ኩሉ ግዜ ብእዞም መሰረታት ሰባት ብዝተፈላለየ ክሕዙ ይኽእሉ",
+        "tr": "İşverenler bu gerekçelerle insanlara her zaman farklı davranabilir",
+        "uk": "Роботодавці завжди можуть по-різному ставитися до людей на цих підставах"
       },
       {
         "en": "The Discrimination Act applies only to people over age 65",
-        "sv": "Diskrimineringslagen gäller bara personer över 65 år"
+        "sv": "Diskrimineringslagen gäller bara personer över 65 år",
+        "zh-Hant": "《歧視法》只適用於 65 歲以上的人",
+        "zh-Hans": "《歧视法》只适用于 65 岁以上的人",
+        "ar": "ينطبق قانون التمييز فقط على الأشخاص الذين تزيد أعمارهم على 65 عامًا",
+        "ckb": "یاسای جیاکاری تەنها بۆ کەسانی سەرووی ٦٥ ساڵ کار دەکات",
+        "fa": "قانون تبعیض فقط برای افراد بالای ۶۵ سال اعمال می‌شود",
+        "pl": "Ustawa o dyskryminacji dotyczy tylko osób powyżej 65 roku życia",
+        "so": "Xeerka takooriddu wuxuu khuseeyaa oo keliya dadka ka weyn 65 sano",
+        "ti": "ሕጊ ኣድልዎ ንሰባት ልዕሊ 65 ዓመት ጥራይ ይምልከት",
+        "tr": "Ayrımcılık Yasası yalnızca 65 yaş üstü kişiler için geçerlidir",
+        "uk": "Закон про дискримінацію стосується лише людей старших за 65 років"
       },
       {
         "en": "The protection applies only if someone is already a Swedish citizen",
-        "sv": "Skyddet gäller bara om någon redan är svensk medborgare"
+        "sv": "Skyddet gäller bara om någon redan är svensk medborgare",
+        "zh-Hant": "保護只在某人已經是瑞典公民時才適用",
+        "zh-Hans": "保护只在某人已经是瑞典公民时才适用",
+        "ar": "تنطبق الحماية فقط إذا كان الشخص مواطنًا سويديًا بالفعل",
+        "ckb": "پاراستنەکە تەنها کاتێک کار دەکات کە کەسێک پێشتر هاووڵاتی سوید بێت",
+        "fa": "این حمایت فقط وقتی اعمال می‌شود که فرد از قبل شهروند سوئد باشد",
+        "pl": "Ochrona obowiązuje tylko wtedy, gdy ktoś jest już obywatelem Szwecji",
+        "so": "Ilaalintu waxay khusaysaa oo keliya haddii qofku hore u yahay muwaadin Iswiidhish ah",
+        "ti": "እቲ ዕቝባ ሓደ ሰብ ቀድሞም ዜጋ ሽወደን እንተኾይኑ ጥራይ ይምልከት",
+        "tr": "Koruma yalnızca kişi zaten İsveç vatandaşıysa geçerlidir",
+        "uk": "Захист діє лише тоді, коли людина вже є громадянином Швеції"
       }
     ],
     "answer": 0,
