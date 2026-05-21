@@ -1,5 +1,4 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Pressable } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
 import { QuestionDisclaimer } from '../components/quiz/QuestionDisclaimer';
@@ -346,8 +345,12 @@ const styles = StyleSheet.create({
     color: colors.badgeBlueText,
   },
   decideLaterLink: {
+    alignItems: 'center',
     alignSelf: 'flex-start',
     color: colors.textSecondary,
+    display: 'flex',
+    justifyContent: 'center',
+    minHeight: space[6],
   },
   actions: {
     flexDirection: 'row',
@@ -355,9 +358,17 @@ const styles = StyleSheet.create({
     gap: space[1.5],
   },
   primaryLink: {
+    alignItems: 'center',
     borderRadius: radius.micro,
+    display: 'flex',
+    justifyContent: 'center',
+    minHeight: space[6],
   },
   secondaryLink: {
+    alignItems: 'center',
     borderRadius: radius.micro,
+    display: 'flex',
+    justifyContent: 'center',
+    minHeight: space[6],
   },
 });

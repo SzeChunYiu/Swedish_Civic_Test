@@ -2338,7 +2338,7 @@ const EXPECTED_SETTINGS_ROUTE_SCROLL_RULES = [
 const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
   {
     label: 'ScrollView import',
-    pattern: /import \{ ScrollView, StyleSheet, Text, View \} from 'react-native';/,
+    pattern: /import \{ Pressable, ScrollView, StyleSheet, Text, View \} from 'react-native';/,
   },
   {
     label: 'scroll root container',
@@ -2356,6 +2356,21 @@ const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
   {
     label: 'bottom safe padding',
     pattern: /paddingBottom:\s*space\[10\]/,
+  },
+  {
+    label: 'decide later link 48px flex target',
+    pattern:
+      /decideLaterLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
+  },
+  {
+    label: 'primary onboarding link 48px flex target',
+    pattern:
+      /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
+  },
+  {
+    label: 'secondary onboarding link 48px flex target',
+    pattern:
+      /secondaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
   },
 ];
 const EXPECTED_LEGAL_ROUTE_SCROLL_RULES = [
