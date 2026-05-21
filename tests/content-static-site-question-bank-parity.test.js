@@ -87,3 +87,26 @@ test('static site question bank preserves canonical question provenance', () => 
     );
   }
 });
+
+test('static site q831 names the non-citizen voting subject', () => {
+  const context = { window: {} };
+  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
+
+  const q831 = context.window.SMT_QUESTIONS.find((question) => question.id === 'q831');
+  const q832 = context.window.SMT_QUESTIONS.find((question) => question.id === 'q832');
+
+  assert.ok(q831, 'q831 should be present in the static question bank');
+  assert.equal(q831.type, 'true_false');
+  assert.equal(q831.answer, 0);
+  assert.match(q831.q.sv, /personer som inte är svenska medborgare/);
+  assert.match(q831.q.sv, /kommun- och regionval/);
+  assert.match(q831.q.en, /people who are not Swedish citizens/);
+  assert.match(q831.q.en, /municipal and regional elections/);
+  assert.doesNotMatch(q831.q.sv, /^Vissa kan rösta om/);
+  assert.doesNotMatch(q831.q.en, /^Some may vote if/);
+
+  assert.ok(q832, 'q832 should remain paired with q831');
+  assert.equal(q832.type, 'true_false');
+  assert.equal(q832.answer, 1);
+  assert.match(q832.q.en, /^No one without Swedish citizenship/);
+});

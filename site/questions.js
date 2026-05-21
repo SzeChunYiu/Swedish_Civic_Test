@@ -40954,8 +40954,8 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'true_false',
       q: {
-        en: 'Some may vote if they are registered as living in Sweden and meet the rules for their group.',
-        sv: 'Vissa kan rösta om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp.',
+        en: 'Some people who are not Swedish citizens may vote in municipal and regional elections if they are registered as living in Sweden and meet the rules for their group.',
+        sv: 'Vissa personer som inte är svenska medborgare kan rösta i kommun- och regionval om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp.',
       },
       opts: [
         {

@@ -1388,6 +1388,16 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
 
   const answer = stripFinalPunctuation(answerLabel(option));
   const q = stripFinalPunctuation(source.questionSv);
+
+  if (
+    source.id === 'q166' &&
+    /^Vissa kan rösta om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp$/i.test(
+      answer,
+    )
+  ) {
+    return 'Vissa personer som inte är svenska medborgare kan rösta i kommun- och regionval om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp';
+  }
+
   let match = q.match(/^Var ligger (.+)$/i);
   if (match) return `${upperFirst(match[1])} ligger ${lowerFirst(answer)}`;
 
@@ -1877,6 +1887,16 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   const answer = stripFinalPunctuation(answerTextEn(option));
   const q = stripFinalPunctuation(source.questionEn);
+
+  if (
+    source.id === 'q166' &&
+    /^Some may vote if they are registered as living in Sweden and meet the rules for their group$/i.test(
+      answer,
+    )
+  ) {
+    return 'Some people who are not Swedish citizens may vote in municipal and regional elections if they are registered as living in Sweden and meet the rules for their group';
+  }
+
   let match = q.match(/^Where is (.+) located$/i);
   if (match) return `${upperFirst(match[1])} is located ${lowerFirst(answer)}`;
 

@@ -304,6 +304,85 @@ test('derivePublishedQuestions writes natural generated true/false civic stateme
   );
 });
 
+test('derivePublishedQuestions names the non-citizen voting subject in true/false variants', () => {
+  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
+  const source = {
+    id: 'q166',
+    chapterId: 'ch04',
+    type: 'single_choice',
+    questionSv:
+      'Vilket svar beskriver rösträtt i kommun- och regionval för personer som inte är svenska medborgare?',
+    questionEn:
+      'Which answer describes voting rights in municipal and regional elections for people who are not Swedish citizens?',
+    options: [
+      {
+        id: 'a',
+        textSv:
+          'Vissa kan rösta om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp',
+        textEn:
+          'Some may vote if they are registered as living in Sweden and meet the rules for their group',
+      },
+      {
+        id: 'b',
+        textSv: 'Ingen utan svenskt medborgarskap får rösta i kommun- eller regionval',
+        textEn: 'No one without Swedish citizenship may vote in municipal or regional elections',
+      },
+      {
+        id: 'c',
+        textSv: 'Alla turister får rösta om de är i Sverige på valdagen',
+        textEn: 'All tourists may vote if they are in Sweden on election day',
+      },
+      {
+        id: 'd',
+        textSv: 'Partimedlemskap är alltid det enda kravet',
+        textEn: 'Party membership is always the only requirement',
+      },
+    ],
+    correctOptionId: 'a',
+    explanationSv:
+      'För kommun- och regionval krävs inte alltid svenskt medborgarskap. Personer som inte är svenska medborgare kan ha rösträtt om de är folkbokförda i Sverige och uppfyller reglerna.',
+    explanationEn:
+      'Swedish citizenship is not always required for municipal and regional elections. People who are not Swedish citizens may have the right to vote if they are registered as living in Sweden and meet the rules.',
+    uhrReference: {
+      chapter: 'Politiska val och partier',
+      section: 'Val och röstning',
+      pageApprox: 14,
+    },
+    difficulty: 'medium',
+    reviewStatus: 'reviewed',
+    tags: ['voting-rights', 'municipal-elections', 'regional-elections', 'non-citizen-voting'],
+  };
+
+  const derived = derivePublishedQuestions([source], 830);
+
+  assert.equal(
+    derived[0].options[0].textSv,
+    'Vissa kan rösta om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp',
+  );
+  assert.equal(
+    derived[0].options[0].textEn,
+    'Some may vote if they are registered as living in Sweden and meet the rules for their group',
+  );
+  assert.equal(
+    derived[1].questionSv,
+    'Vissa personer som inte är svenska medborgare kan rösta i kommun- och regionval om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp.',
+  );
+  assert.equal(
+    derived[1].questionEn,
+    'Some people who are not Swedish citizens may vote in municipal and regional elections if they are registered as living in Sweden and meet the rules for their group.',
+  );
+  assert.equal(derived[1].correctOptionId, 'true');
+  assert.equal(
+    derived[2].questionSv,
+    'Ingen utan svenskt medborgarskap får rösta i kommun- eller regionval.',
+  );
+  assert.equal(
+    derived[2].questionEn,
+    'No one without Swedish citizenship may vote in municipal or regional elections.',
+  );
+  assert.equal(derived[2].correctOptionId, 'false');
+});
+
 test('derivePublishedQuestions avoids generated true/false naturalness regressions', () => {
   const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
   const sources = [
