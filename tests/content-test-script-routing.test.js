@@ -4,8 +4,43 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
+const {
+  FOCUSED_VALIDATION_REGISTRY,
+  SUPPORTED_FOCUSED_VALIDATION_FLAGS,
+  focusedValidationRequested,
+} = require('../scripts/validate-content-focus-registry');
 
 const repoRoot = path.resolve(__dirname, '..');
+
+function collectFocusFlagsFromSourceTree() {
+  const flags = new Set();
+  const stack = ['scripts', 'tests'];
+
+  while (stack.length > 0) {
+    const relativeDir = stack.pop();
+    const absoluteDir = path.join(repoRoot, relativeDir);
+    for (const entry of fs.readdirSync(absoluteDir, { withFileTypes: true })) {
+      if (entry.name === 'node_modules' || entry.name === '.git') continue;
+      const relativePath = path.join(relativeDir, entry.name);
+      const absolutePath = path.join(repoRoot, relativePath);
+      if (entry.isDirectory()) {
+        stack.push(relativePath);
+        continue;
+      }
+      if (relativePath === path.join('scripts', 'validate-content-focus-registry.js')) {
+        continue;
+      }
+      if (!/\.(?:js|ts|tsx)$/.test(entry.name)) continue;
+      const source = fs.readFileSync(absolutePath, 'utf8');
+      for (const match of source.matchAll(/--focus-[a-z0-9-]+/g)) {
+        if (match[0] === '--focus-not-real') continue;
+        flags.add(match[0]);
+      }
+    }
+  }
+
+  return flags;
+}
 
 function readPackageJson() {
   return JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
@@ -62,7 +97,13 @@ test('QuestionCard accessibility parity uses focused content validation routing'
     'utf8',
   );
 
-  assert.match(validatorSource, /--focus-question-card-accessibility/);
+  assert.match(validatorSource, /focusedValidationRequested\('questionCardAccessibility'\)/);
+  assert.equal(
+    focusedValidationRequested('questionCardAccessibility', [
+      '--focus-question-card-accessibility',
+    ]),
+    true,
+  );
   assert.match(
     validatorSource,
     /validateQuestionCardAccessibilityParity\(\);[\s\S]*questionCardAccessibilityRulesValidated[\s\S]*questionCardAccessibilityParityValidated/,
@@ -85,7 +126,11 @@ test('ChapterCard accessibility parity uses focused content validation routing',
     'utf8',
   );
 
-  assert.match(validatorSource, /--focus-chapter-card-accessibility/);
+  assert.match(validatorSource, /focusedValidationRequested\('chapterCardAccessibility'\)/);
+  assert.equal(
+    focusedValidationRequested('chapterCardAccessibility', ['--focus-chapter-card-accessibility']),
+    true,
+  );
   assert.match(
     validatorSource,
     /validateChapterCardAccessibilityParity\(\);[\s\S]*chapterCardAccessibilityRulesValidated[\s\S]*chapterCardAccessibilityParityValidated/,
@@ -108,7 +153,11 @@ test('answer feedback parity uses focused content validation routing', () => {
     'utf8',
   );
 
-  assert.match(validatorSource, /--focus-answer-feedback-parity/);
+  assert.match(validatorSource, /focusedValidationRequested\('answerFeedbackParity'\)/);
+  assert.equal(
+    focusedValidationRequested('answerFeedbackParity', ['--focus-answer-feedback-parity']),
+    true,
+  );
   assert.match(
     validatorSource,
     /validateAnswerValidationTypeSchemaParity\(\);[\s\S]*validateAnswerFeedbackParity\(\);[\s\S]*answerFeedbackRuntimeParityValidated/,
@@ -131,7 +180,11 @@ test('question report link parity uses focused content validation routing', () =
     'utf8',
   );
 
-  assert.match(validatorSource, /--focus-question-report-link-parity/);
+  assert.match(validatorSource, /focusedValidationRequested\('questionReportLinkParity'\)/);
+  assert.equal(
+    focusedValidationRequested('questionReportLinkParity', ['--focus-question-report-link-parity']),
+    true,
+  );
   assert.match(
     validatorSource,
     /validateQuestionReportLinkParity\(\);[\s\S]*questionReportLinkRulesValidated[\s\S]*questionReportLinkParityValidated/,
@@ -154,7 +207,11 @@ test('Mistakes route copy parity uses focused content validation routing', () =>
     'utf8',
   );
 
-  assert.match(validatorSource, /--focus-mistakes-route-copy/);
+  assert.match(validatorSource, /focusedValidationRequested\('mistakesRouteCopy'\)/);
+  assert.equal(
+    focusedValidationRequested('mistakesRouteCopy', ['--focus-mistakes-route-copy']),
+    true,
+  );
   assert.match(
     validatorSource,
     /validateMistakesRouteCopyParity\(\);[\s\S]*mistakesRouteCopyLabelsValidated[\s\S]*mistakesRouteCopyParityValidated/,
@@ -177,7 +234,11 @@ test('spaced repetition schema parity uses focused content validation routing', 
     'utf8',
   );
 
-  assert.match(validatorSource, /--focus-spaced-repetition-schema/);
+  assert.match(validatorSource, /focusedValidationRequested\('spacedRepetitionSchema'\)/);
+  assert.equal(
+    focusedValidationRequested('spacedRepetitionSchema', ['--focus-spaced-repetition-schema']),
+    true,
+  );
   assert.match(
     validatorSource,
     /validateSpacedRepetitionSchedule\(\);[\s\S]*spacedRepetitionIntervalsValidated[\s\S]*spacedRepetitionRuntimeInputParityValidated/,
@@ -188,6 +249,80 @@ test('spaced repetition schema parity uses focused content validation routing', 
     /\['scripts\/validate-content\.js'\]/,
     'spaced repetition tests must not route through full content validation',
   );
+});
+
+test('validate-content focus registry is the shared focus flag source', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const usedFocusFlags = collectFocusFlagsFromSourceTree();
+  const unsupportedUsedFlags = Array.from(usedFocusFlags)
+    .filter((flag) => !SUPPORTED_FOCUSED_VALIDATION_FLAGS.has(flag))
+    .sort();
+
+  assert.match(validatorSource, /validate-content-focus-registry/);
+  assert.equal(
+    validatorSource.indexOf('rejectUnsupportedFocusedValidationFlags();') <
+      validatorSource.indexOf("require('typescript')"),
+    true,
+    'unknown focus flags must be rejected before TypeScript is loaded',
+  );
+  assert.doesNotMatch(
+    validatorSource,
+    /SUPPORTED_FOCUSED_VALIDATION_FLAGS\s*=\s*new Set/,
+    'validate-content.js must import the focus registry instead of duplicating it',
+  );
+  assert.deepEqual(unsupportedUsedFlags, []);
+
+  for (const entry of FOCUSED_VALIDATION_REGISTRY) {
+    assert.ok(entry.id, 'focused validation registry entries need stable ids');
+    assert.ok(entry.flags.length > 0, `${entry.id} must register at least one flag`);
+    assert.ok(entry.summaryKeys.length > 0, `${entry.id} must declare summary keys`);
+    assert.equal(
+      focusedValidationRequested(entry.id, entry.flags),
+      true,
+      `${entry.id} should route through the registry helper`,
+    );
+  }
+});
+
+test('unknown focused validator flags fail before heavy validator imports', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'validate-focus-unknown-'));
+  const preload = path.join(tmpDir, 'preload.js');
+  fs.writeFileSync(
+    preload,
+    [
+      "const Module = require('node:module');",
+      'const originalLoad = Module._load;',
+      'Module._load = function guardedLoad(request, parent, isMain) {',
+      "  if (request === 'typescript' || request === './export-site-question-bank') {",
+      '    console.error(`heavy validator import loaded: ${request}`);',
+      '    process.exit(99);',
+      '  }',
+      '  return originalLoad.apply(this, arguments);',
+      '};',
+      '',
+    ].join('\n'),
+  );
+
+  try {
+    const result = spawnSync(
+      process.execPath,
+      ['--require', preload, 'scripts/validate-content.js', '--focus-not-real'],
+      {
+        cwd: repoRoot,
+        encoding: 'utf8',
+        env: { ...process.env, NODE_OPTIONS: '--v8-pool-size=1' },
+      },
+    );
+
+    assert.equal(result.status, 1, result.stderr || result.stdout);
+    assert.match(result.stderr, /Unsupported validate-content focus flag: --focus-not-real/);
+    assert.doesNotMatch(result.stderr, /heavy validator import loaded/);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
 });
 
 test('monetization selector runs only the focused monetization suite', () => {

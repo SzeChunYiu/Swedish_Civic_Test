@@ -1,4 +1,11 @@
 #!/usr/bin/env node
+const {
+  focusedValidationRequested,
+  rejectUnsupportedFocusedValidationFlags,
+} = require('./validate-content-focus-registry');
+
+rejectUnsupportedFocusedValidationFlags();
+
 const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -8166,7 +8173,7 @@ let generatedSingleChoiceExplanationLabelsValidated = 0;
 let generatedTrueFalseExplanationMetaValidated = 0;
 let generatedTagTemplateParityValidated = 0;
 
-if (process.argv.includes('--focus-static-v11-readiness-copy')) {
+if (focusedValidationRequested('staticV11ReadinessCopy')) {
   validateStaticValidationSyntaxGate();
   const readinessValidation = validateStaticV11ReadinessCopy();
   staticV11ReadinessUnsupportedPatternsValidated = readinessValidation.unsupportedPatternsValidated;
@@ -8187,7 +8194,7 @@ if (process.argv.includes('--focus-static-v11-readiness-copy')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-question-card-accessibility')) {
+if (focusedValidationRequested('questionCardAccessibility')) {
   validateQuestionCardAccessibilityParity();
   exitWithValidationFailures();
   printValidationSummary({
@@ -8197,7 +8204,7 @@ if (process.argv.includes('--focus-question-card-accessibility')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-chapter-card-accessibility')) {
+if (focusedValidationRequested('chapterCardAccessibility')) {
   validateChapterCardAccessibilityParity();
   exitWithValidationFailures();
   printValidationSummary({
@@ -8207,7 +8214,7 @@ if (process.argv.includes('--focus-chapter-card-accessibility')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-question-report-link-parity')) {
+if (focusedValidationRequested('questionReportLinkParity')) {
   validateQuestionReportLinkParity();
   exitWithValidationFailures();
   printValidationSummary({
@@ -8217,7 +8224,7 @@ if (process.argv.includes('--focus-question-report-link-parity')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-native-quiz-copy')) {
+if (focusedValidationRequested('nativeQuizCopy')) {
   validateQuizRouteHeaderParity();
   validateQuizRouteCopyParity();
   validateChapterRouteHeaderParity();
@@ -8236,7 +8243,7 @@ if (process.argv.includes('--focus-native-quiz-copy')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-static-head-metadata')) {
+if (focusedValidationRequested('staticHeadMetadata')) {
   validateStaticValidationSyntaxGate();
   validateStaticHeadMetadataParity();
   exitWithValidationFailures();
@@ -8252,7 +8259,7 @@ if (process.argv.includes('--focus-static-head-metadata')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-dashboard-progress-snapshot')) {
+if (focusedValidationRequested('dashboardProgressSnapshot')) {
   validateDashboardProgressSnapshotParity();
   exitWithValidationFailures();
   printValidationSummary({
@@ -8262,7 +8269,7 @@ if (process.argv.includes('--focus-dashboard-progress-snapshot')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-about-the-test-route-copy')) {
+if (focusedValidationRequested('aboutTheTestRouteCopy')) {
   validateAboutTheTestRouteCopyParity();
   exitWithValidationFailures();
   printValidationSummary({
@@ -8274,7 +8281,7 @@ if (process.argv.includes('--focus-about-the-test-route-copy')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-settings-route-copy')) {
+if (focusedValidationRequested('settingsRouteCopy')) {
   validateSettingsRouteCopyParity();
   exitWithValidationFailures();
   printValidationSummary({
@@ -8284,7 +8291,7 @@ if (process.argv.includes('--focus-settings-route-copy')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-settings-route')) {
+if (focusedValidationRequested('settingsRoute')) {
   validateSettingsRouteHeaderParity();
   validateSettingsRouteCopyParity();
   validateSettingsRouteScrollParity();
@@ -8300,7 +8307,7 @@ if (process.argv.includes('--focus-settings-route')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-content-exec-cwd')) {
+if (focusedValidationRequested('contentExecCwd')) {
   validateContentTestValidateContentExecCwdGuard();
   exitWithValidationFailures();
   printValidationSummary({
@@ -8330,7 +8337,7 @@ if (
   fail('strings export is not an object');
 }
 
-if (process.argv.includes('--focus-generated-true-false-naturalness')) {
+if (focusedValidationRequested('generatedTrueFalseNaturalness')) {
   if (Array.isArray(questions)) {
     questions
       .filter(
@@ -8354,7 +8361,7 @@ if (process.argv.includes('--focus-generated-true-false-naturalness')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-mastery-rules')) {
+if (focusedValidationRequested('masteryRules')) {
   validateMasteryRules();
   exitWithValidationFailures();
   printValidationSummary({
@@ -8364,7 +8371,7 @@ if (process.argv.includes('--focus-mastery-rules')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-weak-chapter-rules')) {
+if (focusedValidationRequested('weakChapterRules')) {
   validateWeakChapterRules();
   exitWithValidationFailures();
   printValidationSummary({
@@ -8374,7 +8381,7 @@ if (process.argv.includes('--focus-weak-chapter-rules')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-practice-scoring-parity')) {
+if (focusedValidationRequested('practiceScoringParity')) {
   validatePracticeScoringRules();
   exitWithValidationFailures();
   printValidationSummary({
@@ -8384,7 +8391,7 @@ if (process.argv.includes('--focus-practice-scoring-parity')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-spaced-repetition-schema')) {
+if (focusedValidationRequested('spacedRepetitionSchema')) {
   validateSpacedRepetitionSchedule();
   exitWithValidationFailures();
   printValidationSummary({
@@ -8396,7 +8403,7 @@ if (process.argv.includes('--focus-spaced-repetition-schema')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-mobile-ads-consent-hook')) {
+if (focusedValidationRequested('mobileAdsConsentHook')) {
   validateMobileAdsConsentHookParity();
   exitWithValidationFailures();
   printValidationSummary({
@@ -8406,7 +8413,7 @@ if (process.argv.includes('--focus-mobile-ads-consent-hook')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-settings-store')) {
+if (focusedValidationRequested('settingsStore')) {
   validateSettingsStoreSchemaParity();
   validateSettingsDailyGoalParity();
   validateSettingsAudioParity();
@@ -8422,7 +8429,7 @@ if (process.argv.includes('--focus-settings-store')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-progress-schema-parity')) {
+if (focusedValidationRequested('progressSchemaParity')) {
   validateProgressQuestionSchemaParity();
   validateProgressTypeSchemaParity();
   validateProgressStoreSchemaParity();
@@ -8439,7 +8446,7 @@ if (process.argv.includes('--focus-progress-schema-parity')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-content-type-schema-parity')) {
+if (focusedValidationRequested('contentTypeSchemaParity')) {
   validateContentTypeSchemaParity();
   exitWithValidationFailures();
   printValidationSummary({
@@ -8450,7 +8457,7 @@ if (process.argv.includes('--focus-content-type-schema-parity')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-answer-feedback-parity')) {
+if (focusedValidationRequested('answerFeedbackParity')) {
   validateAnswerValidationTypeSchemaParity();
   validateAnswerFeedbackParity();
   exitWithValidationFailures();
@@ -8469,7 +8476,7 @@ if (process.argv.includes('--focus-answer-feedback-parity')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-purchase-schema')) {
+if (focusedValidationRequested('purchaseSchema')) {
   validatePurchaseTypeSchemaParity();
   exitWithValidationFailures();
   printValidationSummary({
@@ -8480,7 +8487,7 @@ if (process.argv.includes('--focus-purchase-schema')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-rewarded-exam-schema')) {
+if (focusedValidationRequested('rewardedExamSchema')) {
   validateRewardedAdTypeSchemaParity();
   validateMockExamAccessTypeSchemaParity();
   exitWithValidationFailures();
@@ -16567,7 +16574,7 @@ function validateCriminalResponsibilityCurrentness() {
     criminalResponsibilityCurrentnessQuestionsValidated === currentnessIds.length;
 }
 
-if (process.argv.includes('--focus-exam-generator-schema')) {
+if (focusedValidationRequested('examGeneratorSchema')) {
   validateStaticValidationSyntaxGate();
   validateExamGeneratorTypeSchemaParity();
   exitWithValidationFailures();
@@ -17415,7 +17422,7 @@ function validateUhrSourceMaterialLinkParity() {
 
 validateStaticValidationSyntaxGate();
 exitWithValidationFailures();
-if (process.argv.includes('--focus-legal-route-parity')) {
+if (focusedValidationRequested('legalRouteParity')) {
   validateLegalRouteHeaderParity();
   validateLegalSectionRenderingParity();
   if (failures.length) exitWithValidationFailures();
@@ -17441,7 +17448,7 @@ if (process.argv.includes('--focus-legal-route-parity')) {
   );
   process.exit(0);
 }
-if (process.argv.includes('--focus-legal-section-rendering')) {
+if (focusedValidationRequested('legalSectionRendering')) {
   validateLegalSectionRenderingParity();
   if (failures.length) exitWithValidationFailures();
   console.log('Content validation OK');
@@ -17461,7 +17468,7 @@ if (process.argv.includes('--focus-legal-section-rendering')) {
   );
   process.exit(0);
 }
-if (process.argv.includes('--focus-mistakes-route-copy')) {
+if (focusedValidationRequested('mistakesRouteCopy')) {
   validateMistakesRouteCopyParity();
   if (failures.length) exitWithValidationFailures();
   console.log('Content validation OK');
@@ -17477,7 +17484,7 @@ if (process.argv.includes('--focus-mistakes-route-copy')) {
   );
   process.exit(0);
 }
-if (process.argv.includes('--focus-source-material-link-parity')) {
+if (focusedValidationRequested('sourceMaterialLinkParity')) {
   validateUhrSectionMapExactSchemaKeys();
   validateUhrSourceMaterialLinkParity();
   if (failures.length) exitWithValidationFailures();
@@ -17494,7 +17501,7 @@ if (process.argv.includes('--focus-source-material-link-parity')) {
   );
   process.exit(0);
 }
-if (process.argv.includes('--focus-home-sv-mistake-review-copy')) {
+if (focusedValidationRequested('homeSvMistakeReviewCopy')) {
   validateHomeRouteSwedishMistakeReviewCopyNaturalness();
   if (failures.length) exitWithValidationFailures();
   console.log('Content validation OK');
