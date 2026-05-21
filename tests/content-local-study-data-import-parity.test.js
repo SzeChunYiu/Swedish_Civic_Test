@@ -280,6 +280,153 @@ test('local study data import previews and applies all learner snapshot sections
   assert.deepEqual(citizenshipRequirements.checkedAreaIds, ['identity', 'civicKnowledge']);
 });
 
+test('local study data import summary reports plural bookmark wrong-answer mock exam FSRS settings and citizenship rows', () => {
+  const storageById = createStorageById();
+  const { applyLocalStudyDataImport, previewLocalStudyDataImport } = loadImportModule(storageById);
+  const rawPayload = JSON.stringify({
+    version: 1,
+    progress: {
+      completedQuestionIds: ['q001', 'q002', 'q003'],
+      questionProgress: {
+        q001: {
+          seenCount: 3,
+          correctCount: 2,
+          wrongCount: 1,
+          correctStreak: 2,
+          bookmarked: true,
+          lastAnsweredAt: '2026-05-20T08:00:00.000Z',
+          nextReviewAt: '2026-05-21T08:00:00.000Z',
+        },
+        q002: {
+          seenCount: 2,
+          correctCount: 1,
+          wrongCount: 1,
+          correctStreak: 1,
+          bookmarked: true,
+          lastAnsweredAt: '2026-05-21T08:00:00.000Z',
+          nextReviewAt: '2026-05-22T08:00:00.000Z',
+        },
+      },
+      mockExamSessions: [
+        {
+          sessionId: 'mock-1',
+          score: 0.75,
+          completedAt: '2026-05-20T09:00:00.000Z',
+          correctCount: 3,
+          totalCount: 4,
+        },
+        {
+          sessionId: 'mock-2',
+          score: 0.8,
+          completedAt: '2026-05-21T09:00:00.000Z',
+          correctCount: 4,
+          totalCount: 5,
+        },
+      ],
+      streakFreezeState: {
+        available: 2,
+        lastEarnedAt: '2026-05-21',
+        lifetimeEarned: 5,
+        lifetimeSpent: 1,
+        rescuedDayKeys: ['2026-05-19', '2026-05-20'],
+      },
+    },
+    mistakeReview: {
+      wrongAnswerReviews: {
+        q001: {
+          answeredAt: '2026-05-20T08:05:00.000Z',
+          selectedOptionTextEn: 'Wrong answer',
+          selectedOptionTextSv: 'Fel svar',
+        },
+        q002: {
+          answeredAt: '2026-05-21T08:05:00.000Z',
+          selectedOptionTextEn: 'Another wrong answer',
+          selectedOptionTextSv: 'Ännu ett fel svar',
+        },
+      },
+    },
+    reviews: {
+      byId: {
+        q001: validReviewCard('q001'),
+        q002: {
+          ...validReviewCard('q002'),
+          difficulty: 4,
+          stability: 6,
+          reps: 3,
+          lapses: 1,
+          lastReviewAt: '2026-05-21T08:00:00.000Z',
+          dueAt: '2026-05-22T08:00:00.000Z',
+        },
+      },
+      gradedPerDay: {
+        '2026-05-20': 2,
+        '2026-05-21': 1,
+      },
+    },
+    settings: {
+      language: 'en',
+      audioEnabled: false,
+      dailyGoalAnswers: 20,
+      includeSupplementaryQuestions: true,
+      hasSeenAboutTheTest: true,
+    },
+    citizenshipRequirements: {
+      checkedAreaIds: ['conduct', 'identity', 'residenceStatus', 'identity', 'unknown'],
+    },
+  });
+
+  const previewResult = previewLocalStudyDataImport(rawPayload);
+  assert.equal(previewResult.ok, true);
+  assert.deepEqual(previewResult.preview.summary, {
+    completedQuestionCount: 3,
+    bookmarkedQuestionCount: 2,
+    wrongAnswerReviewCount: 2,
+    mockExamSessionCount: 2,
+    streakFreezeStateIncluded: true,
+    fsrsReviewCardCount: 2,
+    gradedReviewDayCount: 2,
+    settingCount: 5,
+    citizenshipRequirementChecklistCount: 3,
+  });
+  assert.deepEqual(previewResult.preview.citizenshipRequirements.checkedAreaIds, [
+    'identity',
+    'residenceStatus',
+    'conduct',
+  ]);
+
+  const appliedSummary = applyLocalStudyDataImport(previewResult.preview);
+  assert.deepEqual(appliedSummary, previewResult.preview.summary);
+
+  const progress = JSON.parse(storageById.progress.values.get('progressState'));
+  assert.deepEqual(progress.completedQuestionIds, ['q001', 'q002', 'q003']);
+  assert.deepEqual(
+    Object.entries(progress.questionProgress)
+      .filter(([, value]) => value.bookmarked === true)
+      .map(([questionId]) => questionId),
+    ['q001', 'q002'],
+  );
+  assert.deepEqual(
+    progress.mockExamSessions.map((session) => session.sessionId),
+    ['mock-1', 'mock-2'],
+  );
+
+  const mistakeReview = JSON.parse(storageById['mistake-review'].values.get('mistakeReviewState'));
+  assert.deepEqual(Object.keys(mistakeReview.wrongAnswerReviews), ['q001', 'q002']);
+
+  const reviews = JSON.parse(storageById.reviews.values.get('learning.reviews.cards.v1'));
+  assert.deepEqual(Object.keys(reviews.byId), ['q001', 'q002']);
+  assert.deepEqual(reviews.gradedPerDay, { '2026-05-20': 2, '2026-05-21': 1 });
+
+  const checkedAreaIds = JSON.parse(
+    storageById['citizenship-requirements'].values.get('citizenshipRequirements.checkedAreaIds.v1'),
+  );
+  const legacyChecklist = JSON.parse(
+    storageById['citizenship-requirements'].values.get('citizenshipRequirementsChecklistState'),
+  );
+  assert.deepEqual(checkedAreaIds, ['identity', 'residenceStatus', 'conduct']);
+  assert.deepEqual(legacyChecklist.checkedAreaIds, checkedAreaIds);
+});
+
 test('local study data export round-trips citizenship requirements without purchase fields', () => {
   const sourceStorageById = createStorageById();
   sourceStorageById['citizenship-requirements'].set(

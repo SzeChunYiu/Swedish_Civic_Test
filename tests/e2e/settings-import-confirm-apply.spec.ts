@@ -14,6 +14,28 @@ const settingsLanguageKey = 'settings\\language';
 const settingsAudioEnabledKey = 'settings\\audioEnabled';
 const settingsDailyGoalKey = 'settings\\dailyGoalAnswers';
 const settingsIncludeSupplementaryKey = 'settings\\includeSupplementaryQuestions';
+const citizenshipRequirementsCheckedAreaIdsKey =
+  'citizenship-requirements\\citizenshipRequirements.checkedAreaIds.v1';
+const citizenshipRequirementsLegacyStateKey =
+  'citizenship-requirements\\citizenshipRequirementsChecklistState';
+
+type ImportExpectation = {
+  completedQuestionIds: string[];
+  bookmarkedQuestionIds: string[];
+  wrongAnswerReviewIds: string[];
+  mockExamSessionIds: string[];
+  rescuedDayKeys: string[];
+  reviewIds: string[];
+  gradedPerDay: Record<string, number>;
+  checkedAreaIds: string[];
+};
+
+type ImportPayloadCase = {
+  name: 'singular' | 'plural';
+  buildPayload: (importedLanguage: AppLanguage) => string;
+  expected: ImportExpectation;
+  summaryTexts: Record<AppLanguage, string[]>;
+};
 
 type Scenario = {
   language: AppLanguage;
@@ -22,7 +44,6 @@ type Scenario = {
   previewName: string;
   confirmName: string;
   successText: string;
-  summaryTexts: string[];
 };
 
 const scenarios: Scenario[] = [
@@ -33,13 +54,6 @@ const scenarios: Scenario[] = [
     previewName: 'Förhandsgranska lokal studiedataimport',
     confirmName: 'Bekräfta lokal studiedataimport',
     successText: 'Importen är klar.',
-    summaryTexts: [
-      '2 frågor med sparad progression',
-      '1 granskning av fel svar',
-      '1 genomfört övningsprov',
-      '1 repetitionskort',
-      '5 sparade inställningar',
-    ],
   },
   {
     language: 'en',
@@ -48,17 +62,87 @@ const scenarios: Scenario[] = [
     previewName: 'Preview local study data import',
     confirmName: 'Confirm local study data import',
     successText: 'Import complete.',
-    summaryTexts: [
-      '2 questions with saved progress',
-      '1 wrong-answer review',
-      '1 completed mock exam',
-      '1 FSRS review card',
-      '5 saved settings',
-    ],
   },
 ];
 
-function buildValidImportPayload(importedLanguage: AppLanguage): string {
+const importPayloadCases: ImportPayloadCase[] = [
+  {
+    name: 'singular',
+    buildPayload: buildSingularImportPayload,
+    expected: {
+      completedQuestionIds: ['q001', 'q002'],
+      bookmarkedQuestionIds: ['q001'],
+      wrongAnswerReviewIds: ['q001'],
+      mockExamSessionIds: ['mock-1'],
+      rescuedDayKeys: ['2026-05-19'],
+      reviewIds: ['q001'],
+      gradedPerDay: { '2026-05-20': 2 },
+      checkedAreaIds: [],
+    },
+    summaryTexts: {
+      sv: [
+        '2 frågor med sparad progression',
+        '1 bokmärke',
+        '1 granskning av fel svar',
+        '1 genomfört övningsprov',
+        '1 repetitionskort',
+        '1 repetitionsdag',
+        '5 sparade inställningar',
+        'Studiesvit och svitskydd ingår',
+      ],
+      en: [
+        '2 questions with saved progress',
+        '1 bookmark',
+        '1 wrong-answer review',
+        '1 completed mock exam',
+        '1 FSRS review card',
+        '1 FSRS review day',
+        '5 saved settings',
+        'Study streak and freeze status included',
+      ],
+    },
+  },
+  {
+    name: 'plural',
+    buildPayload: buildPluralImportPayload,
+    expected: {
+      completedQuestionIds: ['q001', 'q002', 'q003'],
+      bookmarkedQuestionIds: ['q001', 'q002'],
+      wrongAnswerReviewIds: ['q001', 'q002'],
+      mockExamSessionIds: ['mock-1', 'mock-2'],
+      rescuedDayKeys: ['2026-05-19', '2026-05-20'],
+      reviewIds: ['q001', 'q002'],
+      gradedPerDay: { '2026-05-20': 2, '2026-05-21': 1 },
+      checkedAreaIds: ['identity', 'residenceStatus', 'conduct'],
+    },
+    summaryTexts: {
+      sv: [
+        '3 frågor med sparad progression',
+        '2 bokmärken',
+        '2 granskningar av fel svar',
+        '2 genomförda övningsprov',
+        '2 repetitionskort',
+        '2 repetitionsdagar',
+        '5 sparade inställningar',
+        '3 markerade kravområden',
+        'Studiesvit och svitskydd ingår',
+      ],
+      en: [
+        '3 questions with saved progress',
+        '2 bookmarks',
+        '2 wrong-answer reviews',
+        '2 completed mock exams',
+        '2 FSRS review cards',
+        '2 FSRS review days',
+        '5 saved settings',
+        '3 marked requirements',
+        'Study streak and freeze status included',
+      ],
+    },
+  },
+];
+
+function buildSingularImportPayload(importedLanguage: AppLanguage): string {
   return JSON.stringify({
     version: 1,
     progress: {
@@ -129,10 +213,118 @@ function buildValidImportPayload(importedLanguage: AppLanguage): string {
   });
 }
 
+function buildPluralImportPayload(importedLanguage: AppLanguage): string {
+  return JSON.stringify({
+    version: 1,
+    progress: {
+      completedQuestionIds: ['q001', 'q002', 'q003'],
+      questionProgress: {
+        q001: {
+          seenCount: 3,
+          correctCount: 2,
+          wrongCount: 1,
+          correctStreak: 2,
+          bookmarked: true,
+          lastAnsweredAt: '2026-05-20T08:00:00.000Z',
+          nextReviewAt: '2026-05-21T08:00:00.000Z',
+        },
+        q002: {
+          seenCount: 2,
+          correctCount: 1,
+          wrongCount: 1,
+          correctStreak: 1,
+          bookmarked: true,
+          lastAnsweredAt: '2026-05-21T08:00:00.000Z',
+          nextReviewAt: '2026-05-22T08:00:00.000Z',
+        },
+      },
+      totalXp: 84,
+      answerDates: ['2026-05-20', '2026-05-21'],
+      mockExamSessions: [
+        {
+          sessionId: 'mock-1',
+          score: 0.75,
+          completedAt: '2026-05-20T09:00:00.000Z',
+          correctCount: 3,
+          totalCount: 4,
+        },
+        {
+          sessionId: 'mock-2',
+          score: 0.8,
+          completedAt: '2026-05-21T09:00:00.000Z',
+          correctCount: 4,
+          totalCount: 5,
+        },
+      ],
+      streakFreezeState: {
+        available: 2,
+        lastEarnedAt: '2026-05-21',
+        lifetimeEarned: 5,
+        lifetimeSpent: 1,
+        rescuedDayKeys: ['2026-05-19', '2026-05-20'],
+      },
+    },
+    mistakeReview: {
+      wrongAnswerReviews: {
+        q001: {
+          answeredAt: '2026-05-20T08:05:00.000Z',
+          selectedOptionTextEn: 'Wrong answer',
+          selectedOptionTextSv: 'Fel svar',
+        },
+        q002: {
+          answeredAt: '2026-05-21T08:05:00.000Z',
+          selectedOptionTextEn: 'Another wrong answer',
+          selectedOptionTextSv: 'Ännu ett fel svar',
+        },
+      },
+    },
+    reviews: {
+      byId: {
+        q001: {
+          questionId: 'q001',
+          difficulty: 5,
+          stability: 7,
+          reps: 2,
+          lapses: 0,
+          state: 'review',
+          lastReviewAt: null,
+          dueAt: '2026-05-21T08:00:00.000Z',
+        },
+        q002: {
+          questionId: 'q002',
+          difficulty: 4,
+          stability: 6,
+          reps: 3,
+          lapses: 1,
+          state: 'review',
+          lastReviewAt: '2026-05-21T08:00:00.000Z',
+          dueAt: '2026-05-22T08:00:00.000Z',
+        },
+      },
+      gradedPerDay: {
+        '2026-05-20': 2,
+        '2026-05-21': 1,
+      },
+    },
+    settings: {
+      language: importedLanguage,
+      audioEnabled: false,
+      dailyGoalAnswers: 20,
+      includeSupplementaryQuestions: true,
+      hasSeenAboutTheTest: true,
+    },
+    citizenshipRequirements: {
+      checkedAreaIds: ['conduct', 'identity', 'residenceStatus', 'identity'],
+    },
+  });
+}
+
 async function readImportStorage(page: Page) {
   return page.evaluate(
     ({
       audioKey,
+      citizenshipRequirementsCheckedKey,
+      citizenshipRequirementsLegacyKey,
       dailyGoalKey,
       includeSupplementaryKey,
       languageKey,
@@ -149,9 +341,15 @@ async function readImportStorage(page: Page) {
         dailyGoalAnswers: window.localStorage.getItem(dailyGoalKey),
         includeSupplementaryQuestions: window.localStorage.getItem(includeSupplementaryKey),
       },
+      citizenshipRequirements: {
+        checkedAreaIds: window.localStorage.getItem(citizenshipRequirementsCheckedKey),
+        legacyState: window.localStorage.getItem(citizenshipRequirementsLegacyKey),
+      },
     }),
     {
       audioKey: settingsAudioEnabledKey,
+      citizenshipRequirementsCheckedKey: citizenshipRequirementsCheckedAreaIdsKey,
+      citizenshipRequirementsLegacyKey: citizenshipRequirementsLegacyStateKey,
       dailyGoalKey: settingsDailyGoalKey,
       includeSupplementaryKey: settingsIncludeSupplementaryKey,
       languageKey: settingsLanguageKey,
@@ -175,60 +373,57 @@ async function expectNoImportApplied(page: Page, language: AppLanguage) {
         dailyGoalAnswers: null,
         includeSupplementaryQuestions: null,
       },
+      citizenshipRequirements: {
+        checkedAreaIds: null,
+        legacyState: null,
+      },
     });
 }
 
-async function expectImportApplied(page: Page, importedLanguage: AppLanguage) {
+async function expectImportApplied(
+  page: Page,
+  importedLanguage: AppLanguage,
+  expected: ImportExpectation,
+) {
   await expect
     .poll(async () => {
       const storage = await readImportStorage(page);
+      const progress = storage.progress ? JSON.parse(storage.progress) : null;
+      const mistakeReview = storage.mistakeReview ? JSON.parse(storage.mistakeReview) : null;
+      const reviews = storage.reviews ? JSON.parse(storage.reviews) : null;
+      const checkedAreaIds = storage.citizenshipRequirements.checkedAreaIds
+        ? JSON.parse(storage.citizenshipRequirements.checkedAreaIds)
+        : [];
+      const legacyState = storage.citizenshipRequirements.legacyState
+        ? JSON.parse(storage.citizenshipRequirements.legacyState)
+        : null;
+      const questionProgress = (progress?.questionProgress ?? {}) as Record<
+        string,
+        { bookmarked?: boolean }
+      >;
+      const mockExamSessions = (progress?.mockExamSessions ?? []) as Array<{
+        sessionId: string;
+      }>;
+
       return {
-        progress: storage.progress ? JSON.parse(storage.progress) : null,
-        mistakeReview: storage.mistakeReview ? JSON.parse(storage.mistakeReview) : null,
-        reviews: storage.reviews ? JSON.parse(storage.reviews) : null,
+        completedQuestionIds: progress?.completedQuestionIds ?? [],
+        bookmarkedQuestionIds: Object.entries(questionProgress)
+          .filter(([, value]) => value.bookmarked === true)
+          .map(([questionId]) => questionId)
+          .sort(),
+        wrongAnswerReviewIds: Object.keys(mistakeReview?.wrongAnswerReviews ?? {}).sort(),
+        mockExamSessionIds: mockExamSessions.map((session) => session.sessionId).sort(),
+        rescuedDayKeys: progress?.streakFreezeState?.rescuedDayKeys ?? [],
+        reviewIds: Object.keys(reviews?.byId ?? {}).sort(),
+        gradedPerDay: reviews?.gradedPerDay ?? {},
+        checkedAreaIds,
+        legacyCheckedAreaIds: legacyState?.checkedAreaIds ?? [],
         settings: storage.settings,
       };
     })
-    .toMatchObject({
-      progress: {
-        completedQuestionIds: ['q001', 'q002'],
-        questionProgress: {
-          q001: {
-            bookmarked: true,
-            correctCount: 2,
-            wrongCount: 1,
-          },
-        },
-        mockExamSessions: [
-          {
-            sessionId: 'mock-1',
-            correctCount: 3,
-            totalCount: 4,
-          },
-        ],
-        streakFreezeState: {
-          rescuedDayKeys: ['2026-05-19'],
-        },
-      },
-      mistakeReview: {
-        wrongAnswerReviews: {
-          q001: {
-            selectedOptionTextEn: 'Wrong answer',
-            selectedOptionTextSv: 'Fel svar',
-          },
-        },
-      },
-      reviews: {
-        byId: {
-          q001: {
-            state: 'review',
-            dueAt: '2026-05-21T08:00:00.000Z',
-          },
-        },
-        gradedPerDay: {
-          '2026-05-20': 2,
-        },
-      },
+    .toEqual({
+      ...expected,
+      legacyCheckedAreaIds: expected.checkedAreaIds,
       settings: {
         language: importedLanguage,
         audioEnabled: 'false',
@@ -239,32 +434,34 @@ async function expectImportApplied(page: Page, importedLanguage: AppLanguage) {
 }
 
 for (const scenario of scenarios) {
-  test(`settings import previews and confirms valid study data in ${scenario.language}`, async ({
-    page,
-  }) => {
-    await seedFreshSettingsLanguageAndAboutSeen(page, scenario.language);
-    const errors = collectConsoleAndPageErrors(page);
+  for (const payloadCase of importPayloadCases) {
+    test(`settings import previews and confirms ${payloadCase.name} study data in ${scenario.language}`, async ({
+      page,
+    }) => {
+      await seedFreshSettingsLanguageAndAboutSeen(page, scenario.language);
+      const errors = collectConsoleAndPageErrors(page);
 
-    await page.goto('/settings', { waitUntil: 'networkidle' });
-    await dismissBlockingModals(page);
-    await expectNoImportApplied(page, scenario.language);
+      await page.goto('/settings', { waitUntil: 'networkidle' });
+      await dismissBlockingModals(page);
+      await expectNoImportApplied(page, scenario.language);
 
-    await page
-      .getByLabel(scenario.inputLabel)
-      .fill(buildValidImportPayload(scenario.importedLanguage));
-    await page.getByRole('button', { name: scenario.previewName }).click();
+      await page
+        .getByLabel(scenario.inputLabel)
+        .fill(payloadCase.buildPayload(scenario.importedLanguage));
+      await page.getByRole('button', { name: scenario.previewName }).click();
 
-    for (const summaryText of scenario.summaryTexts) {
-      await expect(page.getByText(summaryText)).toBeVisible();
-    }
-    await expect(page.getByRole('button', { name: scenario.confirmName })).toBeVisible();
-    await expectNoImportApplied(page, scenario.language);
+      for (const summaryText of payloadCase.summaryTexts[scenario.language]) {
+        await expect(page.getByText(summaryText)).toBeVisible();
+      }
+      await expect(page.getByRole('button', { name: scenario.confirmName })).toBeVisible();
+      await expectNoImportApplied(page, scenario.language);
 
-    await page.getByRole('button', { name: scenario.confirmName }).click();
+      await page.getByRole('button', { name: scenario.confirmName }).click();
 
-    await expect(page.getByText(scenario.successText)).toBeVisible();
-    await expect(page.getByText(scenario.summaryTexts[0])).toHaveCount(0);
-    await expectImportApplied(page, scenario.importedLanguage);
-    expect(errors.get()).toEqual([]);
-  });
+      await expect(page.getByText(scenario.successText)).toBeVisible();
+      await expect(page.getByText(payloadCase.summaryTexts[scenario.language][0])).toHaveCount(0);
+      await expectImportApplied(page, scenario.importedLanguage, payloadCase.expected);
+      expect(errors.get()).toEqual([]);
+    });
+  }
 }
