@@ -1289,6 +1289,12 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vilka (.+?) är viktiga i Sverige$/i);
   if (match) return `${upperFirst(answer)} är viktiga ${match[1]} i Sverige`;
 
+  match = q.match(/^Vilka (.+?) kan (.+)$/i);
+  if (match) {
+    if (option.id === source.correctOptionId) return `${upperFirst(answer)} kan ${match[2]}`;
+    return `${upperFirst(answer)} är ${match[1]} som kan ${match[2]}`;
+  }
+
   match = q.match(/^Vad betyder (?!det att\b)(.+)$/i);
   if (match) return `${upperFirst(match[1])} betyder ${lowerFirst(answer)}`;
 
@@ -1775,6 +1781,14 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^Which (.+?) are important in Sweden$/i);
   if (match) return `${upperFirst(answer)} are important ${match[1]} in Sweden`;
+
+  match = q.match(/^Which (.+?) can (.+)$/i);
+  if (match) {
+    if (option.id === source.correctOptionId) return `${upperFirst(answer)} can ${match[2]}`;
+    return `${upperFirst(answer)} ${englishSubjectVerb(answer, 'is', 'are')} ${
+      match[1]
+    } that can ${match[2]}`;
+  }
 
   match = q.match(/^What does (.+) mean$/i);
   if (match) return meaningStatementEn(match[1], answer);

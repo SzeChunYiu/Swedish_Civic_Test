@@ -23,9 +23,9 @@ const traditionCommonToDoEnglishPattern =
   /\bWhat is common to do on (?:New Year(?:’|')s Eve|All Saints(?:’|') Day)\b/i;
 const religiousFreedom1951StiltedEnglishPattern = /\bcompletely freely\b/i;
 const mayDayEnglishCalquePattern = /\bFirst of May\b/i;
-const referendumMasteInteSwedishPattern = /\bmåste inte följa resultatet\b/i;
-const referendumGeneratedBadSubordinatePattern =
-  /\bbetyder att politikerna måste (?:inte|alltid)\b/i;
+const referendumAdvisorySvNaturalnessPattern = /\bmåste inte följa resultatet\b/i;
+const generatedReferendumMeaningWrongOrderSvPattern =
+  /\bbetyder att politikerna (?:måste inte|behöver inte|måste alltid) följa resultatet\b/i;
 const euCooperationMissingArticleEnglishPattern =
   /\bThe EU is political and economic cooperation between European countries\b/i;
 const councilOfEuropeWorkForEnglishPattern =
@@ -44,6 +44,10 @@ const q140OldChristmasPromptPattern =
   /\b(?:Vilket påstående stämmer om julfirande i Sverige|Which statement is correct about Christmas celebrations in Sweden)\b/i;
 const sourceRecallPromptPattern =
   /\b(?:nämns som exempel|mentioned as examples?|nämns som en anledning|mentioned as a reason|Vad nämns som exempel|What is mentioned as an example|Vilken händelse från[^?!.]*nämns|Which event from[^?!.]*mentioned)\b/i;
+const focusGeneratedTrueFalseNaturalness = [
+  "process.argv.push('--focus-generated-true-false-naturalness');",
+  "require('./scripts/validate-content.js');",
+].join('\n');
 const generatedIdLiteralPatterns = [
   {
     label: 'question.id equality',
@@ -119,6 +123,35 @@ function contentMutationFixtureFiles() {
   return [...testFiles, ...scriptFiles].sort();
 }
 
+test('published source parity localizes only q160-q169 source option maps', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const paritySetMatch = validatorSource.match(
+    /const LOCALIZED_ADDITIONAL_SOURCE_OPTION_PARITY_IDS = new Set\(\[([\s\S]*?)\]\);/,
+  );
+
+  assert.ok(paritySetMatch, 'validator should declare a localized source-option parity set');
+  const parityIds = [...paritySetMatch[1].matchAll(/'q\d{3}'/g)].map((match) =>
+    match[0].slice(1, -1),
+  );
+
+  assert.deepEqual(parityIds, [
+    'q160',
+    'q161',
+    'q162',
+    'q163',
+    'q164',
+    'q165',
+    'q166',
+    'q167',
+    'q168',
+    'q169',
+  ]);
+  assert.match(validatorSource, /applyQuestionLocalizationPilot\(question\)/);
+});
+
 test('published question types stay answerable by quiz runtime', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
     encoding: 'utf8',
@@ -134,6 +167,10 @@ test('published question types stay answerable by quiz runtime', () => {
   );
   assert.equal(summary.questionMayDayEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(summary.questionLuciaExplanationRoleScaffoldValidated, summary.publishedQuestions);
+  assert.equal(
+    summary.questionReferendumAdvisorySvNaturalnessValidated,
+    summary.publishedQuestions,
+  );
   assert.equal(summary.derivedCivicStatementPromptMirrorValidated, 2);
 });
 
@@ -569,6 +606,46 @@ test('state welfare source coverage separates q071 higher education from q156 so
   assert.doesNotMatch(textForQuestion(q156), /higher education|research at colleges/i);
 });
 
+test('state welfare generated true/false prompts are complete propositions', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = Array.from(actualStaticQuestions());
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q156TrueId = generatedQuestionId(sourceQuestions, 'q156', 'trueStatement');
+  const q156FalseId = generatedQuestionId(sourceQuestions, 'q156', 'falseStatement');
+  const expectedRows = [
+    [
+      q156TrueId,
+      'Sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet.',
+      'Sickness insurance, parental insurance, and unemployment insurance can provide financial support during illness, parenthood, or unemployment.',
+      0,
+    ],
+    [
+      q156FalseId,
+      'Vårdcentraler, sjukhus och regional kollektivtrafik är statliga trygghetssystem som kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet.',
+      'Health centres, hospitals, and regional public transport are state-funded social insurance systems that can provide financial support during illness, parenthood, or unemployment.',
+      1,
+    ],
+  ];
+
+  for (const [id, sv, en, answer] of expectedRows) {
+    const generatedQuestion = generatedSiteBank.find((question) => question.id === id);
+    const staticQuestion = actualSiteBank.find((question) => question.id === id);
+
+    assert.ok(generatedQuestion, `${id} should be generated`);
+    assert.ok(staticQuestion, `${id} should be exported to the static site bank`);
+    assert.equal(generatedQuestion.q.sv, sv);
+    assert.equal(generatedQuestion.q.en, en);
+    assert.equal(generatedQuestion.answer, answer);
+    assert.equal(staticQuestion.q.sv, sv);
+    assert.equal(staticQuestion.q.en, en);
+    assert.equal(staticQuestion.answer, answer);
+    assert.match(generatedQuestion.q.sv, /kan ge ekonomiskt stöd/);
+    assert.match(generatedQuestion.q.en, /can provide financial support/);
+  }
+});
+
 test('state welfare source coverage guard rejects q071 social-insurance duplication', () => {
   const result = spawnSync(
     process.execPath,
@@ -655,13 +732,10 @@ test('tradition prompts avoid literal common-to-do English', () => {
   );
   assert.equal(
     q097Judgement?.q.en,
-    'Choose the correct option: How is New Year’s Eve on 31 December commonly celebrated in Sweden?',
+    'How is New Year’s Eve on 31 December commonly celebrated in Sweden?',
   );
   assert.equal(q104SingleChoice?.q.en, 'All Saints’ Day is commonly observed by ...');
-  assert.equal(
-    q104Judgement?.q.en,
-    'Choose the correct option: How is All Saints’ Day commonly observed in Sweden?',
-  );
+  assert.equal(q104Judgement?.q.en, 'How is All Saints’ Day commonly observed in Sweden?');
 });
 
 test('tradition common-to-do guard rejects literal English prompts', () => {
@@ -757,72 +831,45 @@ require('./scripts/validate-content.js');
   assert.match(output, /q103 uses literal First of May English wording/);
 });
 
-test('referendum source and generated Swedish copy use natural modal word order', () => {
+test('referendum advisory source and exports use natural Swedish wording', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const actualSiteBank = Array.from(actualStaticQuestions());
-  const sourceQuestions = generatedSiteBank.filter(
-    (question) => question.questionProvenance === 'uhr',
+  const fileFindings = [
+    'data/questions.ts',
+    'content/question-bank.csv',
+    'site/questions.js',
+  ].filter((relativePath) =>
+    referendumAdvisorySvNaturalnessPattern.test(
+      fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'),
+    ),
   );
-  const q020GeneratedIds = [
-    generatedQuestionId(sourceQuestions, 'q020', 'singleChoice'),
-    generatedQuestionId(sourceQuestions, 'q020', 'trueStatement'),
-    generatedQuestionId(sourceQuestions, 'q020', 'falseStatement'),
-    generatedQuestionId(sourceQuestions, 'q020', 'judgement'),
-  ];
-  const q020Ids = ['q020', ...q020GeneratedIds];
-  const fileFindings = ['data/questions.ts', 'content/question-bank.csv', 'site/questions.js']
-    .map((relativePath) => ({
-      relativePath,
-      source: fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'),
-    }))
-    .filter(
-      ({ source }) =>
-        referendumMasteInteSwedishPattern.test(source) ||
-        referendumGeneratedBadSubordinatePattern.test(source),
-    )
-    .map(({ relativePath }) => relativePath);
   const textForQuestion = (question) =>
     [question.q?.sv, question.why?.sv, ...(question.opts || []).map((option) => option.sv)].join(
       ' ',
     );
-  const bankFindings = [...generatedSiteBank, ...actualSiteBank]
-    .filter(
-      (question) =>
-        q020Ids.includes(question.id) &&
-        (referendumMasteInteSwedishPattern.test(textForQuestion(question)) ||
-          referendumGeneratedBadSubordinatePattern.test(textForQuestion(question))),
+  const wrongOrderFindings = [...generatedSiteBank, ...actualSiteBank]
+    .filter((question) =>
+      generatedReferendumMeaningWrongOrderSvPattern.test(textForQuestion(question)),
     )
     .map((question) => question.id);
   const q020 = generatedSiteBank.find((question) => question.id === 'q020');
-  const q020True = generatedSiteBank.find((question) => question.id === q020GeneratedIds[1]);
-  const q020False = generatedSiteBank.find((question) => question.id === q020GeneratedIds[2]);
+  const referendumGeneratedText = generatedSiteBank
+    .filter((question) => question.type === 'true_false')
+    .map(textForQuestion)
+    .join('\n');
 
   assert.deepEqual(fileFindings, []);
-  assert.deepEqual(bankFindings, []);
+  assert.deepEqual(wrongOrderFindings, []);
   assert.ok(q020, 'q020 should be published in the site bank');
-  assert.ok(q020True, 'q020 true-statement derivative should be published');
-  assert.ok(q020False, 'q020 false-statement derivative should be published');
-  assert.equal(q020.opts[0]?.sv, 'Politikerna behöver inte följa resultatet');
-  assert.match(q020.why.sv, /politikerna inte behöver följa resultatet/);
-  assert.equal(
-    q020True.q.sv,
-    'Att folkomröstningar i Sverige är rådgivande betyder att politikerna inte behöver följa resultatet.',
-  );
-  assert.equal(
-    q020False.q.sv,
-    'Att folkomröstningar i Sverige är rådgivande betyder att politikerna alltid måste följa resultatet.',
-  );
-});
-
-test('referendum Swedish naturalness guard patterns reject the old wording', () => {
-  assert.match('Politikerna måste inte följa resultatet', referendumMasteInteSwedishPattern);
+  assert.equal(q020.opts[0].sv, 'Politikerna behöver inte följa resultatet');
+  assert.match(q020.why.sv, /politikerna behöver inte följa resultatet/);
   assert.match(
-    'Att folkomröstningar i Sverige är rådgivande betyder att politikerna måste inte följa resultatet.',
-    referendumGeneratedBadSubordinatePattern,
+    referendumGeneratedText,
+    /Att folkomröstningar i Sverige är rådgivande betyder att politikerna inte behöver följa resultatet\./,
   );
   assert.match(
-    'Att folkomröstningar i Sverige är rådgivande betyder att politikerna måste alltid följa resultatet.',
-    referendumGeneratedBadSubordinatePattern,
+    referendumGeneratedText,
+    /Att folkomröstningar i Sverige är rådgivande betyder att politikerna alltid måste följa resultatet\./,
   );
 });
 
@@ -2062,7 +2109,7 @@ test('generated single-choice banks omit true-false and filler option shells', (
   const fillerOptionPattern =
     /^(?:Inget av alternativen stämmer|None of the options is correct|Endast ibland|Only sometimes)$/i;
   const metaStemPattern =
-    /^(?:Vilket svar stämmer bäst\?|Which answer best matches\?|Vilket svar är korrekt\?|Which answer is correct\?)/i;
+    /^(?:Vilket svar stämmer bäst\?|Välj rätt alternativ:|Which answer best matches\?|Choose the correct option:|Vilket svar är korrekt\?|Which answer is correct\?)/i;
   const absentTrueFalseExplanationPattern =
     /\b(?:Påståendet är sant|alternativet\s+Sant|medan\s+Falskt|That makes True correct|True is correct|while False)\b/i;
 
@@ -2373,7 +2420,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -2383,6 +2430,43 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q002 contains a generated true\/false grammar-splice stem/,
+  );
+});
+
+test('focused generated true/false naturalness rejects q831 without the non-citizen subject', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/lib/content/derivedQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'Vissa personer som inte är svenska medborgare kan rösta i kommun- och regionval om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp',
+        'Vissa kan rösta om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp',
+      )
+      .replace(
+        'Some people who are not Swedish citizens may vote in municipal and regional elections if they are registered as living in Sweden and meet the rules for their group',
+        'Some may vote if they are registered as living in Sweden and meet the rules for their group',
+      );
+  }
+  return contents;
+};
+${focusGeneratedTrueFalseNaturalness}
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q831 contains a generated true\/false grammar-splice stem/,
   );
 });
 
@@ -2442,7 +2526,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -2479,7 +2563,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -2516,7 +2600,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -2553,7 +2637,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -2590,7 +2674,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -2627,7 +2711,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -2664,7 +2748,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -2744,6 +2828,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "const bareAnswerPhraseResiduals = {",
         "  [generatedFixtureId('q146', 1)]: { questionSv: 'Försöka övertyga andra om sina politiska idéer.', questionEn: 'Try to persuade others of their political ideas.' },",
         "  [generatedFixtureId('q146', 2)]: { questionSv: 'Hindra andra från att rösta.', questionEn: 'Stop others from voting.' },",
+        "  [generatedFixtureId('q156', 1)]: { questionSv: 'Sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring.', questionEn: 'Sickness insurance, parental insurance, and unemployment insurance.' },",
+        "  [generatedFixtureId('q156', 2)]: { questionSv: 'Vårdcentraler, sjukhus och regional kollektivtrafik.', questionEn: 'Health centres, hospitals, and regional public transport.' },",
         "  [generatedFixtureId('q157', 1)]: { questionSv: 'Vårdcentraler, barnavårdscentraler och mödravårdscentraler.', questionEn: 'Health centres, child health centres, and maternity clinics.' },",
         "  [generatedFixtureId('q157', 2)]: { questionSv: 'Domstolar, åklagare och kriminalvård.', questionEn: 'Courts, prosecutors, and prison and probation services.' },",
         "  [generatedFixtureId('q158', 1)]: { questionSv: 'Ordna förskolor, fritidshem, grundskolor och gymnasieskolor.', questionEn: 'Arrange preschools, after-school centres, compulsory schools, and upper-secondary schools.' },",
@@ -2764,6 +2850,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('--focus-generated-true-false-naturalness');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -2772,7 +2859,11 @@ require('./scripts/validate-content.js');
 
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
-  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 8);
+  assert.match(output, /q791 contains a generated true\/false grammar-splice stem/);
+  assert.match(output, /q792 contains a generated true\/false grammar-splice stem/);
+  assert.ok(
+    (output.match(/contains a generated true\/false grammar-splice stem/g) ?? []).length >= 10,
+  );
 });
 
 test('published question schema rejects generated true/false statement-about-statement stems', () => {
@@ -2799,7 +2890,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -2836,7 +2927,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -3021,7 +3112,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -3072,7 +3163,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -3115,7 +3206,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -3158,7 +3249,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -3209,7 +3300,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -3259,7 +3350,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -3306,7 +3397,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -3398,7 +3489,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -3444,7 +3535,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -3455,7 +3546,7 @@ require('./scripts/validate-content.js');
   assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 3);
 });
 
-test('published question schema rejects generated media and web target fragments', () => {
+test('published question schema rejects generated web/social-media target fragments', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -3472,19 +3563,15 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       marker,
       [
         ${JSON.stringify(generatedFixtureIdHelperSource())},
-        "const mediaResiduals = {",
-        "  [generatedFixtureId('q151', 1)]: { questionSv: 'De drivs ofta av privata företag och får inkomster genom reklam.', questionEn: 'They are often run by private companies and earn income from advertising.' },",
-        "  [generatedFixtureId('q151', 2)]: { questionSv: 'De får aldrig sälja reklamplats.', questionEn: 'They may never sell advertising space.' },",
-        "  [generatedFixtureId('q152', 1)]: { questionSv: 'De finns också på internet och uppdateras med nyheter flera gånger per dag.', questionEn: 'They are also available online and updated with news several times per day.' },",
-        "  [generatedFixtureId('q152', 2)]: { questionSv: 'De får bara säljas som ett exemplar per år.', questionEn: 'They may be sold only as one copy per year.' },",
+        "const webSocialMediaResiduals = {",
         "  [generatedFixtureId('q153', 1)]: { questionSv: 'Vem som helst kan skapa innehåll där, och det kontrolleras inte alltid som i andra medier.', questionEn: 'Anyone can create content there, and it is not always checked the same way as in other media.' },",
         "  [generatedFixtureId('q153', 2)]: { questionSv: 'Bara ansvariga utgivare får skriva inlägg där.', questionEn: 'Only responsible publishers may write posts there.' },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
-        "  mediaResiduals[question.id]",
+        "  webSocialMediaResiduals[question.id]",
         "    ? {",
         "        ...question,",
-        "        ...mediaResiduals[question.id],",
+        "        ...webSocialMediaResiduals[question.id],",
         "      }",
         "    : question,",
         ");",
@@ -3493,7 +3580,6 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-process.argv.push('--focus-generated-true-false-naturalness');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -3502,20 +3588,7 @@ require('./scripts/validate-content.js');
 
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
-  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 6);
-});
-
-test('generated true/false naturalness can be focused without source-option parity blockers', () => {
-  const result = spawnSync(
-    process.execPath,
-    ['scripts/validate-content.js', '--focus-generated-true-false-naturalness'],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  const output = `${result.stdout}\n${result.stderr}`;
-  assert.equal(result.status, 0, output);
-  assert.match(output, /generatedTrueFalseNaturalnessFocusValidated/);
-  assert.doesNotMatch(output, /published source options does not match authored source/);
+  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 2);
 });
 
 test('published question schema rejects generated proportional-party referent splices', () => {
