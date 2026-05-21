@@ -88,6 +88,21 @@ test('FSRS-lite: retrievability decays from 1 to 0 over time', () => {
   assert.ok(retrievability(10, 100) < 0.001);
 });
 
+test('FSRS-lite: retrievability rejects malformed stability and elapsed inputs', () => {
+  const { retrievability } = loadTs('lib/learning/spacedRepetition.ts');
+  for (const [stabilityDays, elapsedDays] of [
+    [Number.NaN, 1],
+    [Number.POSITIVE_INFINITY, 1],
+    [0, 1],
+    [-1, 1],
+    [1, Number.NaN],
+    [1, Number.POSITIVE_INFINITY],
+    [1, -1],
+  ]) {
+    assert.equal(retrievability(stabilityDays, elapsedDays), 0);
+  }
+});
+
 test('FSRS-lite: isDue compares dueAt against now', () => {
   const { isDue } = loadTs('lib/learning/spacedRepetition.ts');
   const now = '2026-05-19T12:00:00.000Z';
