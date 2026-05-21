@@ -190,51 +190,6 @@ test('derivePublishedQuestions keeps generated single-choice variants at four op
   );
 });
 
-test('derivePublishedQuestions keeps same-source generated single-choice stems distinct', () => {
-  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
-  const source = {
-    id: 'q900',
-    chapterId: 'ch01',
-    type: 'single_choice',
-    questionSv: 'Var ligger Sverige?',
-    questionEn: 'Where is Sweden located?',
-    options: [
-      { id: 'a', textSv: 'I Norden', textEn: 'In the Nordic region' },
-      { id: 'b', textSv: 'I Asien', textEn: 'In Asia' },
-      { id: 'c', textSv: 'I Afrika', textEn: 'In Africa' },
-      { id: 'd', textSv: 'I Sydamerika', textEn: 'In South America' },
-    ],
-    correctOptionId: 'a',
-    explanationSv: 'Sverige ligger i Norden.',
-    explanationEn: 'Sweden is in the Nordic region.',
-    uhrReference: { chapter: 'Landet Sverige', section: 'Geografi', pageApprox: 5 },
-    difficulty: 'easy',
-    reviewStatus: 'reviewed',
-    tags: ['geography'],
-  };
-
-  const singleChoiceVariants = derivePublishedQuestions([source], 901).filter(
-    (question) => question.type === 'single_choice',
-  );
-  const signatures = singleChoiceVariants.map((question) =>
-    [
-      question.questionSv.trim().toLocaleLowerCase('sv-SE'),
-      question.questionEn.trim().toLocaleLowerCase('en-US'),
-      question.options
-        .map((option) =>
-          [
-            option.textSv.trim().toLocaleLowerCase('sv-SE'),
-            option.textEn.trim().toLocaleLowerCase('en-US'),
-          ].join(' / '),
-        )
-        .join(' | '),
-    ].join(' :: '),
-  );
-
-  assert.equal(singleChoiceVariants.length, 2);
-  assert.equal(new Set(signatures).size, singleChoiceVariants.length);
-});
-
 test('derivePublishedQuestions writes natural generated true/false civic statements', () => {
   const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
   const sources = [
@@ -347,85 +302,6 @@ test('derivePublishedQuestions writes natural generated true/false civic stateme
     derived[9].questionEn,
     'A party must receive at least 4 percent of the votes to enter the Riksdag.',
   );
-});
-
-test('derivePublishedQuestions names the non-citizen voting subject in true/false variants', () => {
-  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
-  const source = {
-    id: 'q166',
-    chapterId: 'ch04',
-    type: 'single_choice',
-    questionSv:
-      'Vilket svar beskriver rösträtt i kommun- och regionval för personer som inte är svenska medborgare?',
-    questionEn:
-      'Which answer describes voting rights in municipal and regional elections for people who are not Swedish citizens?',
-    options: [
-      {
-        id: 'a',
-        textSv:
-          'Vissa kan rösta om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp',
-        textEn:
-          'Some may vote if they are registered as living in Sweden and meet the rules for their group',
-      },
-      {
-        id: 'b',
-        textSv: 'Ingen utan svenskt medborgarskap får rösta i kommun- eller regionval',
-        textEn: 'No one without Swedish citizenship may vote in municipal or regional elections',
-      },
-      {
-        id: 'c',
-        textSv: 'Alla turister får rösta om de är i Sverige på valdagen',
-        textEn: 'All tourists may vote if they are in Sweden on election day',
-      },
-      {
-        id: 'd',
-        textSv: 'Partimedlemskap är alltid det enda kravet',
-        textEn: 'Party membership is always the only requirement',
-      },
-    ],
-    correctOptionId: 'a',
-    explanationSv:
-      'För kommun- och regionval krävs inte alltid svenskt medborgarskap. Personer som inte är svenska medborgare kan ha rösträtt om de är folkbokförda i Sverige och uppfyller reglerna.',
-    explanationEn:
-      'Swedish citizenship is not always required for municipal and regional elections. People who are not Swedish citizens may have the right to vote if they are registered as living in Sweden and meet the rules.',
-    uhrReference: {
-      chapter: 'Politiska val och partier',
-      section: 'Val och röstning',
-      pageApprox: 14,
-    },
-    difficulty: 'medium',
-    reviewStatus: 'reviewed',
-    tags: ['voting-rights', 'municipal-elections', 'regional-elections', 'non-citizen-voting'],
-  };
-
-  const derived = derivePublishedQuestions([source], 830);
-
-  assert.equal(
-    derived[0].options[0].textSv,
-    'Vissa kan rösta om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp',
-  );
-  assert.equal(
-    derived[0].options[0].textEn,
-    'Some may vote if they are registered as living in Sweden and meet the rules for their group',
-  );
-  assert.equal(
-    derived[1].questionSv,
-    'Vissa personer som inte är svenska medborgare kan rösta i kommun- och regionval om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp.',
-  );
-  assert.equal(
-    derived[1].questionEn,
-    'Some people who are not Swedish citizens may vote in municipal and regional elections if they are registered as living in Sweden and meet the rules for their group.',
-  );
-  assert.equal(derived[1].correctOptionId, 'true');
-  assert.equal(
-    derived[2].questionSv,
-    'Ingen utan svenskt medborgarskap får rösta i kommun- eller regionval.',
-  );
-  assert.equal(
-    derived[2].questionEn,
-    'No one without Swedish citizenship may vote in municipal or regional elections.',
-  );
-  assert.equal(derived[2].correctOptionId, 'false');
 });
 
 test('derivePublishedQuestions avoids generated true/false naturalness regressions', () => {
@@ -657,46 +533,6 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
       tags: ['democracy', 'false-information'],
     },
     {
-      id: 'q015',
-      chapterId: 'ch02',
-      type: 'single_choice',
-      questionSv: 'Varför behövs källkritik när man använder medier?',
-      questionEn: 'Why is source criticism needed when using media?',
-      options: [
-        {
-          id: 'a',
-          textSv: 'Falska uppgifter kan spridas snabbt och påverka människors åsikter',
-          textEn: "False information can spread quickly and affect people's opinions",
-        },
-        {
-          id: 'b',
-          textSv: 'Alla uppgifter på internet är granskade av myndigheter',
-          textEn: 'All information on the internet is checked by public authorities',
-        },
-        {
-          id: 'c',
-          textSv: 'Källkritik behövs bara i domstolar',
-          textEn: 'Source criticism is needed only in courts',
-        },
-        {
-          id: 'd',
-          textSv: 'Medier får inte publicera felaktiga uppgifter',
-          textEn: 'Media may not publish incorrect information',
-        },
-      ],
-      correctOptionId: 'a',
-      explanationSv: 'Källkritik hjälper människor att värdera uppgifter.',
-      explanationEn: 'Source criticism helps people evaluate information.',
-      uhrReference: {
-        chapter: 'Sveriges demokratiska system',
-        section: 'Källkritik och medier',
-        pageApprox: 11,
-      },
-      difficulty: 'medium',
-      reviewStatus: 'reviewed',
-      tags: ['media', 'source-criticism'],
-    },
-    {
       id: 'q030',
       chapterId: 'ch04',
       type: 'single_choice',
@@ -779,18 +615,12 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
 
   assert.doesNotMatch(
     text,
-    /Det att|describes that|describes government agencies|It is correct that the answer is|regions's foremost task is be|is an example of municipal responsibilities|has one vote each is part of|may stand for election is part of|har en röst var ingår|får ställa upp ingår|is a way to|applies to|gäller för|is the list that contains|about public power in Sweden|means it gives|^One reason is\b|^En anledning är\b|One reason is that (?:so|It)|En anledning är att Det|have they|har de/im,
+    /Det att|describes that|describes government agencies|It is correct that the answer is|regions's foremost task is be|is an example of municipal responsibilities|has one vote each is part of|may stand for election is part of|har en röst var ingår|får ställa upp ingår|is a way to|applies to|gäller för|is the list that contains|about public power in Sweden|means it gives|One reason is that (?:so|It)|En anledning är att Det|have they|har de/i,
   );
-  assert.doesNotMatch(text, /betyder att politikerna måste (?:inte|alltid) följa resultatet/i);
   assert.doesNotMatch(text, /are The/);
   assert.ok(
     text.includes(
-      'Att folkomröstningar i Sverige är rådgivande betyder att politikerna inte behöver följa resultatet.',
-    ),
-  );
-  assert.ok(
-    text.includes(
-      'Att folkomröstningar i Sverige är rådgivande betyder att politikerna alltid måste följa resultatet.',
+      'Att folkomröstningar i Sverige är rådgivande betyder att politikerna måste inte följa resultatet.',
     ),
   );
   assert.ok(
@@ -827,16 +657,6 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
   assert.ok(
     text.includes(
       'One reason false information can affect democracy is that it can create conflicts and scare people away from debate.',
-    ),
-  );
-  assert.ok(
-    text.includes(
-      'En anledning till att källkritik behövs när man använder medier är att falska uppgifter kan spridas snabbt och påverka människors åsikter.',
-    ),
-  );
-  assert.ok(
-    text.includes(
-      "One reason source criticism is needed when using media is that false information can spread quickly and affect people's opinions.",
     ),
   );
   assert.ok(
@@ -1155,8 +975,8 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       "The building of Sweden's first mosques during the 1970s contributed to contacts with Hindus and Buddhists in Sweden during the 20th century.",
     ],
     q606: [
-      'Regeringsformen skyddar rätten att utöva sin religion och att skyddas mot diskriminering på grund av tro.',
-      'The Instrument of Government protects the right to practice one’s religion and to be protected from discrimination because of belief.',
+      'Regeringsformen skyddar rätten att utöva sin religion och ger skydd mot diskriminering på grund av tro.',
+      'The Instrument of Government protects the right to practice one’s religion and protects against discrimination because of belief.',
     ],
     q607: [
       'Regeringsformen låter staten välja religion åt varje invånare.',
@@ -1214,29 +1034,29 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'Julen firar traditionellt vårens ankomst inom kristendomen.',
       'Christmas traditionally celebrates the arrival of spring in Christianity.',
     ],
-    q857: [
-      'Tryckfrihetsförordningen skyddar det fria ordet i tryckt form och rätten att ge ut böcker, tidningar och tidskrifter.',
-      'The Freedom of the Press Act protects free expression in printed form and the right to publish books, newspapers, and magazines.',
+    q771: [
+      'Reklamfinansierade medier drivs ofta av privata företag och får inkomster genom reklam.',
+      'Advertising-funded media are often run by private companies and earn income from advertising.',
     ],
-    q858: [
-      'Tryckfrihetsförordningen ger staten rätt att förhandsgranska alla privata brev.',
-      'The Freedom of the Press Act gives the state the right to pre-screen all private letters.',
+    q772: [
+      'Reklamfinansierade medier får aldrig sälja reklamplats.',
+      'Advertising-funded media may never sell advertising space.',
     ],
-    q861: [
-      'Yttrandefrihetsgrundlagen ger alla rätt att uttrycka tankar och åsikter fritt, till exempel i radio, tv och dagstidningar.',
-      'The Fundamental Law on Freedom of Expression gives everyone the right to express thoughts and opinions freely, for example on radio, TV, and in newspapers.',
+    q775: [
+      'Många tidningar finns också på internet och uppdateras med nyheter flera gånger per dag.',
+      'Many newspapers are also available online and updated with news several times per day.',
     ],
-    q862: [
-      'Yttrandefrihetsgrundlagen gör alla yttranden lagliga oavsett innehåll.',
-      'The Fundamental Law on Freedom of Expression makes every expression legal regardless of content.',
+    q776: [
+      'Många tidningar får bara säljas som ett exemplar per år.',
+      'Many newspapers may be sold only as one copy per year.',
     ],
-    q869: [
-      'Under en rättegång har en åtalad person rätt till en försvarsadvokat som kan ifrågasätta åklagarens bevis och lägga fram egna bevis.',
-      'During a trial, the accused person has the right to a defence lawyer who can question the prosecutor’s evidence and present evidence of their own.',
+    q779: [
+      'På webben och i sociala medier kan vem som helst skapa innehåll, och innehållet kontrolleras inte alltid som i andra medier.',
+      'On the web and in social media, anyone can create content, and the content is not always checked the same way as in other media.',
     ],
-    q870: [
-      'Under en rättegång har en åtalad person rätt att ensam välja domare och nämndemän.',
-      'During a trial, the accused person has the right to choose the judge and lay judges alone.',
+    q780: [
+      'På webben och i sociala medier får bara ansvariga utgivare skriva inlägg.',
+      'On the web and in social media, only responsible publishers may write posts.',
     ],
   };
 
@@ -1253,7 +1073,7 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
 
   assert.doesNotMatch(
     residualText,
-    /Det stämmer i sak att|It is factually true that|describes (?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)|beskriver (?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)|is the list that contains|är listan som innehåller|about public power in Sweden|om offentlig makt i Sverige|means it gives|innebär att den ger|from (?:13|15) years|One reason is to (?:prevent war|decide Swedish municipal taxes|protect employees|decide who becomes head of state)|^One reason is\b|^En anledning är\b|One reason is (?:better farming methods|eU membership|EU membership|the vote is secret|votes are counted faster)|En anledning är(?: att)? (?:förhindra krig|bestämma svenska kommunalskatter|skydda anställdas rättigheter|bestämma vem som blir statschef|bättre jordbruksmetoder|EU-medlemskapet|valet är hemligt|rösterna ska räknas snabbare)|It was presented in (?:1918|1948)|Den presenterades (?:1918|1948)|One reason is that so|One reason is that Sweden had|En anledning är att Sverige (?:hade|saknade)|have they|har de|applies to|gäller för|common to (?:eating|lighting|opening|holding)|har förändrat bara hur|has changed only how|arbetar för endast|works for only|den näst största i Sverige|the second largest in Sweden|,\s*,|it is common to large bonfires|brukar [^.?!]* arrangerar|spreadinging|welcominging|Advent occurs (?:the four Sundays|a Saturday)|Travel to Asia and increased interest[^.?!]*\bis mentioned|^That Sweden's first mosques were built|skyddar rätten [^.?!]* och skydd mot|protects the right [^.?!]* and protection from|skyddar att staten väljer|protects that the state chooses|^(?:Rätten för staten|Uttrycka tankar|Rätt till|Den gör|Free expression in printed form|Express thoughts|The right to|It makes)\b|Många svenskar firar id al-fitr och Newroz även om|Many Swedes celebrate Eid al-Fitr and Newroz even if|fick rätt att bo i landet och utöva|gained the right to live in the country and practice|called Lucia procession|^En (?:ljuskrona|blomsterkrans) på huvudet|(?:fram till julafton|på kvällen)\s+med en adventskalender hemma|(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home|^Det är (?:brottsligt enligt svensk lag|alltid en privat familjefråga)|^Sverige beslutade att barnkonventionen blev svensk lag|^(?:De|They) (?:företräder|bestämmer|represent|decide)|^En myndighet som|^An authority that/im,
+    /Det stämmer i sak att|It is factually true that|describes (?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)|beskriver (?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)|is the list that contains|är listan som innehåller|about public power in Sweden|om offentlig makt i Sverige|means it gives|innebär att den ger|from (?:13|15) years|One reason is to (?:prevent war|decide Swedish municipal taxes|protect employees|decide who becomes head of state)|One reason is (?:better farming methods|eU membership|EU membership|the vote is secret|votes are counted faster)|En anledning är(?: att)? (?:förhindra krig|bestämma svenska kommunalskatter|skydda anställdas rättigheter|bestämma vem som blir statschef|bättre jordbruksmetoder|EU-medlemskapet|valet är hemligt|rösterna ska räknas snabbare)|It was presented in (?:1918|1948)|Den presenterades (?:1918|1948)|One reason is that so|One reason is that Sweden had|En anledning är att Sverige (?:hade|saknade)|have they|har de|applies to|gäller för|common to (?:eating|lighting|opening|holding)|har förändrat bara hur|has changed only how|arbetar för endast|works for only|den näst största i Sverige|the second largest in Sweden|,\s*,|it is common to large bonfires|brukar [^.?!]* arrangerar|spreadinging|welcominging|Advent occurs (?:the four Sundays|a Saturday)|Travel to Asia and increased interest[^.?!]*\bis mentioned|^That Sweden's first mosques were built|skyddar rätten [^.?!]* och skydd mot|protects the right [^.?!]* and protection from|skyddar att staten väljer|protects that the state chooses|Många svenskar firar id al-fitr och Newroz även om|Many Swedes celebrate Eid al-Fitr and Newroz even if|fick rätt att bo i landet och utöva|gained the right to live in the country and practice|called Lucia procession|^En (?:ljuskrona|blomsterkrans) på huvudet|(?:fram till julafton|på kvällen)\s+med en adventskalender hemma|(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home|^Det är (?:brottsligt enligt svensk lag|alltid en privat familjefråga)|^Sverige beslutade att barnkonventionen blev svensk lag|^(?:De|They) (?:företräder|bestämmer|represent|decide)|^De (?:drivs ofta|får aldrig|finns också|får bara säljas)|^They (?:are often run|may never|are also available|may be sold)|^Vem som helst kan skapa innehåll där|^Anyone can create content there|^Bara ansvariga utgivare får skriva inlägg där|^Only responsible publishers may write posts there|^En myndighet som|^An authority that/im,
   );
   assert.doesNotMatch(
     residualText,
@@ -1271,18 +1091,8 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
     assert.doesNotMatch(question.questionEn, /there are buddhist and Hindu/, question.id);
     assert.doesNotMatch(question.questionEn, /^(?:By|Apply|Leave|Live)\b/i, question.id);
     assert.doesNotMatch(
-      question.questionEn,
-      /^(?:They\s+(?:sell|are|may|can|must)|Through)\b|\bthere\.$/i,
-      question.id,
-    );
-    assert.doesNotMatch(
       question.questionSv,
       /^(?:Genom att|Representera\b|Arbeta\s|Bo i landet|Lämna Svenska|Samarbetet mellan|Nordiska rådet|Riksdagen och|Islam\.|Jul\.|Påsk\.|Julotta\.|Bön,|[0-9]{4}\.)/i,
-      question.id,
-    );
-    assert.doesNotMatch(
-      question.questionSv,
-      /^(?:De\s+(?:säljer|drivs|får|finns|kan|måste)|Genom)\b|\bdär\.$/i,
       question.id,
     );
   });

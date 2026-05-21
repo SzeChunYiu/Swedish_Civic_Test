@@ -461,6 +461,18 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bMany Swedes celebrate Eid al-Fitr and Newroz even if\b/i,
   /\bfick rätt att bo i landet och utöva\b/i,
   /\bgained the right to live in the country and practice\b/i,
+  /^De drivs ofta av privata företag och får inkomster genom reklam\.?$/i,
+  /^They are often run by private companies and earn income from advertising\.?$/i,
+  /^De får aldrig sälja reklamplats\.?$/i,
+  /^They may never sell advertising space\.?$/i,
+  /^De finns också på internet och uppdateras med nyheter flera gånger per dag\.?$/i,
+  /^They are also available online and updated with news several times per day\.?$/i,
+  /^De får bara säljas som ett exemplar per år\.?$/i,
+  /^They may be sold only as one copy per year\.?$/i,
+  /^Vem som helst kan skapa innehåll där, och det kontrolleras inte alltid som i andra medier\.?$/i,
+  /^Anyone can create content there, and it is not always checked the same way as in other media\.?$/i,
+  /^Bara ansvariga utgivare får skriva inlägg där\.?$/i,
+  /^Only responsible publishers may write posts there\.?$/i,
 ];
 const QUESTION_LUCIA_ROLE_ENGLISH_NATURALNESS_PATTERNS = [/\b(?:the\s+)?person who is Lucia\b/i];
 const QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS = [
@@ -1873,11 +1885,6 @@ const EXPECTED_SETTINGS_ROUTE_HEADERS = [
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.themeModeTitle\}\s*<\/Text>/,
   },
   {
-    label: 'companion section title',
-    pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.companionTitle\}\s*<\/Text>/,
-  },
-  {
     label: 'daily goal section title',
     pattern:
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.dailyGoalTitle\}\s*<\/Text>/,
@@ -1895,8 +1902,6 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Ljud',
     '← Tillbaka till profil',
     'Tillbaka till profil',
-    'Välj en studiekompis för övningen. Valet är gratis och sparas bara på enheten.',
-    'Studiekompis',
     '${answerCount} svar per dag',
     'Dagligt mål',
     'Stäng av ljud',
@@ -1931,7 +1936,7 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Studiespråk',
     'Ställ in dagligt mål till ${goal} svar',
     'Välj tema: ${label}',
-    'Styr studiespråk, ljud, tema, studiekompis och ditt dagliga mål.',
+    'Styr studiespråk, ljud, tema och ditt dagliga mål.',
     'Mörkt',
     'Ljust',
     'Tema: ${label}',
@@ -1947,8 +1952,6 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Audio',
     '← Back to Profile',
     'Back to profile',
-    'Choose a study companion for practice. It is free and saved only on this device.',
-    'Study companion',
     '${answerCount} answers per day',
     'Daily goal',
     'Disable audio',
@@ -1983,7 +1986,7 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Study language',
     'Set daily goal to ${goal} answers',
     'Choose theme: ${label}',
-    'Control study language, audio, theme, study companion, and your daily goal.',
+    'Control study language, audio, theme, and your daily goal.',
     'Dark',
     'Light',
     'Theme: ${label}',
@@ -2046,48 +2049,6 @@ const EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS = [
   [
     '{audioEnabled ? copy.audioEnabledLabel : copy.audioDisabledLabel}',
     'settings audio switch must render localized state copy',
-  ],
-  [
-    "import { CompanionPicker } from '../components/mascot/CompanionPicker';",
-    'settings route must import the companion picker surface',
-  ],
-  [
-    "import { useCompanionStore } from '../lib/storage/companionStore';",
-    'settings route must import the companion store',
-  ],
-  [
-    'const selectedCompanionId = useCompanionStore((state) => state.selectedId);',
-    'settings companion section must read selected companion from companion store',
-  ],
-  [
-    'const setSelectedCompanion = useCompanionStore((state) => state.setSelected);',
-    'settings companion section must write selected companion through companion store',
-  ],
-  [
-    'const companionPersistenceWarning = useCompanionStore((state) => state.persistenceWarning);',
-    'settings companion section must read companion persistence warnings',
-  ],
-  [
-    'const clearCompanionPersistenceWarning = useCompanionStore(',
-    'settings companion section must expose companion warning dismissal',
-  ],
-  ['{copy.companionTitle}', 'settings companion section must render localized copy'],
-  ['{copy.companionSubtitle}', 'settings companion subtitle must render localized copy'],
-  [
-    'warning={companionPersistenceWarning}',
-    'settings companion warning notice must receive companion persistence warning',
-  ],
-  [
-    'onDismiss={clearCompanionPersistenceWarning}',
-    'settings companion warning notice must dismiss companion persistence warning',
-  ],
-  [
-    'selectedId={selectedCompanionId}',
-    'settings companion picker must receive the persisted selected companion',
-  ],
-  [
-    'onSelect={setSelectedCompanion}',
-    'settings companion picker must persist selection through the store',
   ],
   ['{copy.dailyGoalTitle}', 'settings daily-goal section must render localized copy'],
   [
@@ -5242,6 +5203,44 @@ function replaceLeadingEnglishSubject(subject, value) {
     .replace(/^It says\s+/i, `${normalizedSubject} says `)
     .replace(/^It (gives|lets|applies)\b/i, `${normalizedSubject} $1`);
 }
+function webSocialMediaStatementSv(answer) {
+  if (
+    /^Vem som helst kan skapa innehåll där, och det kontrolleras inte alltid som i andra medier$/i.test(
+      answer,
+    )
+  ) {
+    return 'På webben och i sociala medier kan vem som helst skapa innehåll, och innehållet kontrolleras inte alltid som i andra medier';
+  }
+  if (/^Bara ansvariga utgivare får skriva inlägg där$/i.test(answer)) {
+    return 'På webben och i sociala medier får bara ansvariga utgivare skriva inlägg';
+  }
+  if (/^Allt innehåll godkänns först av staten$/i.test(answer)) {
+    return 'På webben och i sociala medier godkänns allt innehåll först av staten';
+  }
+  if (/^Innehållet är alltid mer pålitligt än nyheter i tidningar$/i.test(answer)) {
+    return 'Innehåll på webben och i sociala medier är alltid mer pålitligt än nyheter i tidningar';
+  }
+  return answer;
+}
+function webSocialMediaStatementEn(answer) {
+  if (
+    /^Anyone can create content there, and it is not always checked the same way as in other media$/i.test(
+      answer,
+    )
+  ) {
+    return 'On the web and in social media, anyone can create content, and the content is not always checked the same way as in other media';
+  }
+  if (/^Only responsible publishers may write posts there$/i.test(answer)) {
+    return 'On the web and in social media, only responsible publishers may write posts';
+  }
+  if (/^All content is first approved by the state$/i.test(answer)) {
+    return 'On the web and in social media, all content is first approved by the state';
+  }
+  if (/^The content is always more reliable than news in newspapers$/i.test(answer)) {
+    return 'Content on the web and in social media is always more reliable than news in newspapers';
+  }
+  return answer;
+}
 function describesStatementSv(subject, answer) {
   if (/^Som\s+/i.test(answer) && /Sverige för tvåhundra år sedan/i.test(subject)) {
     return `För tvåhundra år sedan var Sverige ${lowerFirst(answer.replace(/^Som\s+/i, ''))}`;
@@ -5749,6 +5748,12 @@ function civicStatementSv(source, option) {
   if (match) return `Ett sätt att ${match[1]} är att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
   match = q.match(/^Vad kallas det när (.+)$/i);
   if (match) return `När ${match[1]} kallas det ${lowerFirst(answer)}`;
+  match = q.match(/^Vad kännetecknar medier som finansieras med reklam$/i);
+  if (match) return replaceLeadingSwedishSubject('reklamfinansierade medier', answer);
+  match = q.match(/^Hur publiceras många tidningar i dag$/i);
+  if (match) return replaceLeadingSwedishSubject('många tidningar', answer);
+  match = q.match(/^Vad är viktigt att komma ihåg om webben och sociala medier$/i);
+  if (match) return webSocialMediaStatementSv(answer);
   match = q.match(/^Hur kan (.+?) påverka (.+)$/i);
   if (match) return `${upperFirst(answer)} när ${match[1]} påverkar ${match[2]}`;
   match = q.match(/^Hur underlättar (.+?) (.+)$/i);
@@ -6067,6 +6072,12 @@ function civicStatementEn(source, option) {
   if (match) return `One way to ${match[1]} is to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
   match = q.match(/^What is it called when (.+)$/i);
   if (match) return `When ${match[1]}, it is called ${lowerFirst(answer)}`;
+  match = q.match(/^What characterizes media financed by advertising$/i);
+  if (match) return replaceLeadingEnglishSubject('advertising-funded media', answer);
+  match = q.match(/^How are many newspapers published today$/i);
+  if (match) return replaceLeadingEnglishSubject('many newspapers', answer);
+  match = q.match(/^What is important to remember about the web and social media$/i);
+  if (match) return webSocialMediaStatementEn(answer);
   match = q.match(/^How can (.+?) affect (.+)$/i);
   if (match) return `${upperFirst(answer)} when ${match[1]} affects ${match[2]}`;
   match = q.match(/^How does (.+?) make it easier to (.+)$/i);
@@ -7590,24 +7601,6 @@ if (process.argv.includes('--focus-static-head-metadata')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-settings-route')) {
-  validateSettingsRouteHeaderParity();
-  validateSettingsRouteCopyParity();
-  validateSettingsRouteScrollParity();
-  validateLocalizationLanguageContract();
-  exitWithValidationFailures();
-  printValidationSummary({
-    settingsRouteHeadersValidated,
-    settingsRouteHeaderParityValidated,
-    settingsRouteCopyLabelsValidated,
-    settingsRouteCopyParityValidated,
-    settingsRouteScrollRulesValidated,
-    settingsRouteScrollParityValidated,
-    languageSettingsParityValidated,
-  });
-  process.exit(0);
-}
-
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
 if (!Array.isArray(baseQuestions)) fail('baseQuestions export is not an array');
 if (!Array.isArray(additionalQuestions)) fail('additionalQuestions export is not an array');
@@ -7626,6 +7619,31 @@ if (
 ) {
   fail('strings export is not an object');
 }
+
+if (process.argv.includes('--focus-generated-true-false-naturalness')) {
+  if (Array.isArray(questions)) {
+    questions
+      .filter(
+        (question) =>
+          question.type === 'true_false' && question.tags?.includes('published-variant'),
+      )
+      .forEach((question) => {
+        const issue = findQuestionGeneratedTrueFalseNaturalnessIssue(question);
+        if (issue) {
+          fail(`${question.id} contains a generated true/false grammar-splice stem`);
+        } else {
+          questionGeneratedTrueFalseNaturalnessValidated += 1;
+        }
+      });
+  }
+  exitWithValidationFailures();
+  printValidationSummary({
+    generatedTrueFalseNaturalnessFocusValidated: true,
+    questionGeneratedTrueFalseNaturalnessValidated,
+  });
+  process.exit(0);
+}
+
 {
   const timelineValidation = validateCitizenshipTimeline();
   citizenshipRulesEffectiveDateValidated = timelineValidation.rulesDate;
