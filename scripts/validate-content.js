@@ -1828,6 +1828,25 @@ const NATIVE_MOCK_EXAM_UNSUPPORTED_SCORE_SOURCE_PATTERNS = [
     pattern: /\bPassed\b/,
   },
 ];
+const EXPECTED_NATIVE_MOCK_EXAM_LIBRARY_LABELS_SV = [
+  'Övningsprov 1 – Mjuk start',
+  'Övningsprov 2 – Standard',
+  'Övningsprov 3 – Standard',
+  'Övningsprov 4 – Standard plus',
+  'Övningsprov 5 – Utmaning',
+  'Övningsprov 6 – Slutspurt',
+  'Slumpmässigt övningsprov',
+];
+const EXPECTED_NATIVE_MOCK_EXAM_LIBRARY_LABELS_EN = [
+  'Mock Exam 1 – Gentle start',
+  'Mock Exam 2 – Standard',
+  'Mock Exam 3 – Standard',
+  'Mock Exam 4 – Standard plus',
+  'Mock Exam 5 – Challenge',
+  'Mock Exam 6 – Final stretch',
+  'Random mock exam',
+];
+const SWEDISH_MOCK_EXAM_FORBIDDEN_COPY_PATTERN = /\bprovexamen\b|\bprovexamina\b/i;
 const EXPECTED_QUIZ_ROUTE_HEADERS = [
   {
     label: 'empty quiz title',
@@ -8330,6 +8349,9 @@ let examRouteCopyParityValidated = false;
 let nativeMockExamComponentCopyLabelsValidated = 0;
 let nativeMockExamComponentLegalCopyValidated = false;
 let nativeMockExamScoreSourceCopyValidated = false;
+let nativeMockExamLibraryLabelsValidated = 0;
+let nativeMockExamSwedishCopyNaturalnessValidated = false;
+let nativeMockExamTierCopyValidated = false;
 let quizRouteHeadersValidated = 0;
 let quizRouteHeaderParityValidated = false;
 let quizRouteCopyLabelsValidated = 0;
@@ -9012,6 +9034,21 @@ if (process.argv.includes('--focus-rewarded-exam-schema')) {
     mockExamAccessTypeUnionsValidated,
     mockExamAccessTypeInterfacesValidated,
     mockExamAccessTypeSchemaParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-mock-exam-copy-parity')) {
+  validateNativeMockExamComponentLegalCopy();
+  validateNativeMockExamLibraryAndTierCopy();
+  exitWithValidationFailures();
+  printValidationSummary({
+    nativeMockExamComponentCopyLabelsValidated,
+    nativeMockExamComponentLegalCopyValidated,
+    nativeMockExamLibraryLabelsValidated,
+    nativeMockExamScoreSourceCopyValidated,
+    nativeMockExamSwedishCopyNaturalnessValidated,
+    nativeMockExamTierCopyValidated,
   });
   process.exit(0);
 }
@@ -10544,6 +10581,7 @@ function validateNativeMockExamComponentLegalCopy() {
     new RegExp(`\b${['skarp', swedishExamNoun].join('\\s+')}\b`, 'i'),
     new RegExp(`\b${['starta', 'provet'].join('\\s+')}\b`, 'i'),
     new RegExp(`\b${swedishExamNoun}\b`, 'i'),
+    SWEDISH_MOCK_EXAM_FORBIDDEN_COPY_PATTERN,
   ];
 
   function reject(message) {
@@ -10591,6 +10629,75 @@ function validateNativeMockExamComponentLegalCopy() {
   if (valid && nativeMockExamComponentCopyLabelsValidated === expectedLabelCount) {
     nativeMockExamComponentLegalCopyValidated = true;
     nativeMockExamScoreSourceCopyValidated = true;
+  }
+}
+
+function validateNativeMockExamLibraryAndTierCopy() {
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  ['lib/learning/mockExamLibrary.ts', 'lib/monetization/tierComparison.ts'].forEach((file) => {
+    let source = '';
+    try {
+      source = fs.readFileSync(path.join(repoRoot, file), 'utf8');
+    } catch (error) {
+      reject(`${file} native mock-exam copy source could not be read: ${error.message}`);
+      return;
+    }
+
+    if (SWEDISH_MOCK_EXAM_FORBIDDEN_COPY_PATTERN.test(source)) {
+      reject(`${file} Swedish mock-exam copy must use Övningsprov, not provexamen/provexamina`);
+    }
+  });
+
+  const mockExamLibrary = loadTs('lib/learning/mockExamLibrary.ts');
+  const library = Array.isArray(mockExamLibrary.MOCK_EXAM_LIBRARY)
+    ? mockExamLibrary.MOCK_EXAM_LIBRARY
+    : [];
+  const labelsSv = library.map((mock) => mock.labelSv);
+  const labelsEn = library.map((mock) => mock.labelEn);
+
+  EXPECTED_NATIVE_MOCK_EXAM_LIBRARY_LABELS_SV.forEach((expectedLabel, index) => {
+    if (labelsSv[index] === expectedLabel) {
+      nativeMockExamLibraryLabelsValidated += 1;
+      return;
+    }
+    reject(
+      `MOCK_EXAM_LIBRARY[${index}] labelSv is ${JSON.stringify(
+        labelsSv[index],
+      )}, expected ${JSON.stringify(expectedLabel)}`,
+    );
+  });
+
+  if (labelsSv.length !== EXPECTED_NATIVE_MOCK_EXAM_LIBRARY_LABELS_SV.length) {
+    reject(
+      `MOCK_EXAM_LIBRARY has ${labelsSv.length} Swedish labels, expected ${EXPECTED_NATIVE_MOCK_EXAM_LIBRARY_LABELS_SV.length}`,
+    );
+  }
+  if (JSON.stringify(labelsEn) !== JSON.stringify(EXPECTED_NATIVE_MOCK_EXAM_LIBRARY_LABELS_EN)) {
+    reject('MOCK_EXAM_LIBRARY must preserve the English Mock Exam labels');
+  }
+
+  const tierComparison = loadTs('lib/monetization/tierComparison.ts');
+  const tierRows = Array.isArray(tierComparison.TIER_ROWS) ? tierComparison.TIER_ROWS : [];
+  const mockExamRow = tierRows.find((row) => row.id === 'mockExams');
+  if (!mockExamRow) {
+    reject('TIER_ROWS must include the mockExams monetization row');
+  } else if (mockExamRow.labelSv !== 'Övningsprov' || mockExamRow.labelEn !== 'Mock exams') {
+    reject('TIER_ROWS mockExams row must use Övningsprov / Mock exams labels');
+  } else {
+    nativeMockExamTierCopyValidated = true;
+  }
+
+  if (
+    valid &&
+    nativeMockExamLibraryLabelsValidated === EXPECTED_NATIVE_MOCK_EXAM_LIBRARY_LABELS_SV.length
+  ) {
+    nativeMockExamSwedishCopyNaturalnessValidated = true;
   }
 }
 
@@ -18469,6 +18576,7 @@ validateExamSubmissionFinalityParity();
 validateExamRouteHeaderParity();
 validateExamRouteCopyParity();
 validateNativeMockExamComponentLegalCopy();
+validateNativeMockExamLibraryAndTierCopy();
 validateQuizRouteHeaderParity();
 validateQuizRouteCopyParity();
 validatePracticeRouteHeaderParity();
@@ -18606,6 +18714,9 @@ console.log(
       nativeMockExamComponentCopyLabelsValidated,
       nativeMockExamComponentLegalCopyValidated,
       nativeMockExamScoreSourceCopyValidated,
+      nativeMockExamLibraryLabelsValidated,
+      nativeMockExamSwedishCopyNaturalnessValidated,
+      nativeMockExamTierCopyValidated,
       quizRouteHeadersValidated,
       quizRouteHeaderParityValidated,
       quizRouteCopyLabelsValidated,

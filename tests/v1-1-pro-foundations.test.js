@@ -463,7 +463,7 @@ test('tierComparison: every flag referenced in TIER_ROWS exists on PRO_LIFETIME_
   }
 });
 
-test('tierComparison: Pro Lifetime is an ad-free superset while Remove Ads stays non-Pro', () => {
+test('tierComparison: Pro Lifetime is study-only while Remove Ads stays non-Pro', () => {
   const tier = loadTs('lib/monetization/tierComparison.ts');
   const premium = loadTs('lib/monetization/premium.ts');
   const adsRow = tier.TIER_ROWS.find((row) => row.id === 'ads');
@@ -478,10 +478,10 @@ test('tierComparison: Pro Lifetime is an ad-free superset while Remove Ads stays
     }),
     false,
   );
-  assert.equal(premium.PRO_LIFETIME_ENTITLEMENTS.adsDisabled, true);
-  assert.equal(adsRow.flag, 'adsDisabled');
+  assert.equal(premium.PRO_LIFETIME_ENTITLEMENTS.adsDisabled, false);
+  assert.equal(adsRow.flag, undefined);
   assert.deepEqual(adsRow.adFree, { kind: 'text', sv: 'inga', en: 'none' });
-  assert.deepEqual(adsRow.pro, { kind: 'text', sv: 'inga', en: 'none' });
+  assert.deepEqual(adsRow.pro, { kind: 'text', sv: 'vid sessionsskifte', en: 'at session boundaries' });
 });
 
 test('tierComparison: three columns in canonical order', () => {
@@ -491,10 +491,27 @@ test('tierComparison: three columns in canonical order', () => {
     TIER_COLUMNS.map((c) => c.id),
     ['free', 'adFree', 'pro'],
   );
-  assert.equal(columnsById.adFree.priceSv, '29 SEK · engångsköp');
+  assert.equal(columnsById.adFree.priceSv, '29 kr · engångsköp');
   assert.equal(columnsById.adFree.priceEn, '29 SEK · one-time');
-  assert.equal(columnsById.pro.priceSv, '59 SEK · engångsköp');
+  assert.equal(columnsById.pro.priceSv, '59 kr · engångsköp');
   assert.equal(columnsById.pro.priceEn, '59 SEK · one-time');
+});
+
+test('tierComparison: Swedish mock exam row uses övningsprov copy, not provexamina', () => {
+  const { TIER_ROWS } = loadTs('lib/monetization/tierComparison.ts');
+  const mockExamRow = TIER_ROWS.find((row) => row.id === 'mockExams');
+
+  assert.ok(mockExamRow, 'mockExams row must exist');
+  assert.equal(mockExamRow.labelSv, 'Övningsprov');
+  assert.equal(mockExamRow.labelEn, 'Mock exams');
+  assert.equal(mockExamRow.flag, 'unlimitedMockExams');
+  assert.deepEqual(mockExamRow.free, { kind: 'text', sv: '3 / vecka', en: '3 / week' });
+  assert.deepEqual(mockExamRow.adFree, { kind: 'text', sv: '3 / vecka', en: '3 / week' });
+  assert.deepEqual(mockExamRow.pro, { kind: 'text', sv: 'obegränsat', en: 'unlimited' });
+  assert.doesNotMatch(
+    [mockExamRow.labelSv, mockExamRow.free.sv, mockExamRow.adFree.sv, mockExamRow.pro.sv].join('\n'),
+    /\bprovexamen\b|\bprovexamina\b/i,
+  );
 });
 
 test('tierComparison: every row has all three cells present', () => {
