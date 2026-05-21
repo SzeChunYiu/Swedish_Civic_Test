@@ -11,6 +11,8 @@ type AboutTheTestCopy = {
   eyebrow: string;
   title: string;
   subtitle: string;
+  registrationSummaryTitle: string;
+  registrationSummaryItems: readonly string[];
   sectionWhatTitle: string;
   sectionWhatBody: string;
   sectionWhoTitle: string;
@@ -88,6 +90,14 @@ const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {
     title: 'Vad är medborgarskapsprovet i samhällskunskap?',
     subtitle:
       'Det första provet gäller grundläggande kunskaper om det svenska samhället och är planerat till den 15 augusti 2026 i Stockholm.',
+    registrationSummaryTitle: 'Anmälan i korthet',
+    registrationSummaryItems: [
+      'Första provtillfället är den 15 augusti 2026 i Stockholm.',
+      'Anmälan öppnar i början av juni 2026.',
+      'Du kan bara anmäla dig efter ett brev från Migrationsverket.',
+      'Antalet platser är begränsat, och när platserna är fyllda stänger anmälan.',
+      'Du kan uppfylla kunskapskravet på andra sätt än genom provet.',
+    ],
     sectionWhatTitle: 'Vad är det?',
     sectionWhatBody:
       'Medborgarskapsprovet är ett kunskapsprov som UHR ansvarar för. Första delen handlar om samhällskunskap. Prov i svenska införs senare.',
@@ -122,6 +132,14 @@ const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {
     title: 'What is the Swedish civic test?',
     subtitle:
       'The first test covers basic knowledge of Swedish society and is planned for 15 August 2026 in Stockholm.',
+    registrationSummaryTitle: 'Registration at a glance',
+    registrationSummaryItems: [
+      'The first sitting is on 15 August 2026 in Stockholm.',
+      'Registration opens in early June 2026.',
+      'You can only sign up after receiving a letter from Migrationsverket.',
+      'Seats are limited, and when the seats are filled, registration closes.',
+      'You may meet the knowledge requirement in ways other than the test.',
+    ],
     sectionWhatTitle: 'What is it?',
     sectionWhatBody:
       'The citizenship test is a knowledge test that UHR is responsible for. The first part is about civic knowledge. A Swedish-language test will be introduced later.',
@@ -182,6 +200,20 @@ export default function Screen() {
           {copy.title}
         </Text>
         <Text style={styles.subtitle}>{copy.subtitle}</Text>
+      </View>
+
+      <View style={styles.registrationSummary}>
+        <Text accessibilityRole="header" style={styles.registrationSummaryTitle}>
+          {copy.registrationSummaryTitle}
+        </Text>
+        <View style={styles.registrationSummaryList}>
+          {copy.registrationSummaryItems.map((item) => (
+            <View key={item} style={styles.registrationSummaryItem}>
+              <View style={styles.registrationSummaryMarker} />
+              <Text style={styles.registrationSummaryText}>{item}</Text>
+            </View>
+          ))}
+        </View>
       </View>
 
       <View style={styles.sections}>
@@ -274,6 +306,40 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     color: colors.textMuted,
+    fontSize: typography.body.fontSize,
+    lineHeight: typography.body.lineHeight,
+  },
+  registrationSummary: {
+    backgroundColor: colors.badgeBlueBg,
+    borderColor: colors.border,
+    borderRadius: radius.small,
+    borderWidth: space.hairline,
+    gap: space[1.25],
+    padding: space[2],
+  },
+  registrationSummaryTitle: {
+    color: colors.badgeBlueText,
+    fontSize: typography.subHeading.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+  },
+  registrationSummaryList: {
+    gap: space[1],
+  },
+  registrationSummaryItem: {
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    gap: space[1],
+  },
+  registrationSummaryMarker: {
+    backgroundColor: colors.badgeBlueText,
+    borderRadius: radius.pill,
+    height: space[0.75],
+    marginTop: space[1],
+    width: space[0.75],
+  },
+  registrationSummaryText: {
+    color: colors.text,
+    flex: 1,
     fontSize: typography.body.fontSize,
     lineHeight: typography.body.lineHeight,
   },
