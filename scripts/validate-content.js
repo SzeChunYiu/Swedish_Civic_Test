@@ -2763,9 +2763,30 @@ const EXPECTED_CHAPTER_CARD_ACCESSIBILITY_RULES = [
     pattern: /description \? copy\.accessibilityLabel\.description\(description\) : null/,
   },
   {
+    label: 'accessibility mode prop contract',
+    pattern: /accessibilityMode\?: 'summary' \| 'presentation';/,
+  },
+  {
+    label: 'summary mode groups Card accessibility',
+    pattern: /const shouldGroupForAccessibility = accessibilityMode === 'summary';/,
+  },
+  {
+    label: 'presentation mode hides nested accessibility',
+    pattern: /const shouldHideNestedAccessibility = accessibilityMode === 'presentation';/,
+  },
+  {
     label: 'Card receives chapter accessibility summary',
     pattern:
       /<Card[\s\S]*accessibilityLabel=\{shouldGroupForAccessibility \? chapterAccessibilityLabel : undefined\}[\s\S]*elevated[\s\S]*style=\{styles\.card\}/,
+  },
+  {
+    label: 'Card hides nested presentation descendants',
+    pattern: /accessibilityElementsHidden=\{shouldHideNestedAccessibility\}/,
+  },
+  {
+    label: 'native presentation descendants hidden from accessibility',
+    pattern:
+      /importantForAccessibility=\{shouldHideNestedAccessibility \? 'no-hide-descendants' : undefined\}/,
   },
   {
     label: 'visible chapter title',
@@ -8101,6 +8122,16 @@ if (process.argv.includes('--focus-question-card-accessibility')) {
   printValidationSummary({
     questionCardAccessibilityRulesValidated,
     questionCardAccessibilityParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-chapter-card-accessibility')) {
+  validateChapterCardAccessibilityParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    chapterCardAccessibilityRulesValidated,
+    chapterCardAccessibilityParityValidated,
   });
   process.exit(0);
 }

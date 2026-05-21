@@ -7,10 +7,14 @@ const test = require('node:test');
 const repoRoot = path.resolve(__dirname, '..');
 
 function parseValidationSummary() {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-chapter-card-accessibility'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
   return JSON.parse(match[0]);
@@ -23,7 +27,7 @@ test('learning ChapterCard keeps visible progress and accessibility summary in p
     'utf8',
   );
 
-  assert.equal(summary.chapterCardAccessibilityRulesValidated, 23);
+  assert.equal(summary.chapterCardAccessibilityRulesValidated, 28);
   assert.equal(summary.chapterCardAccessibilityParityValidated, true);
   assert.match(source, /const chapterCardCopy: Record<AppLanguage, ChapterCardCopy> = \{/);
   assert.match(source, /accessibilityMode = 'summary'/);
@@ -58,6 +62,10 @@ test('learning ChapterCard keeps visible progress and accessibility summary in p
     /accessibilityLabel=\{shouldGroupForAccessibility \? chapterAccessibilityLabel : undefined\}/,
   );
   assert.match(source, /accessibilityElementsHidden=\{shouldHideNestedAccessibility\}/);
+  assert.match(
+    source,
+    /importantForAccessibility=\{shouldHideNestedAccessibility \? 'no-hide-descendants' : undefined\}/,
+  );
   assert.match(source, /<Text style=\{styles\.title\}>\{title\}<\/Text>/);
   assert.match(source, /<Text style=\{styles\.subtitle\}>\{secondaryName\}<\/Text>/);
   assert.match(source, /<Text style=\{styles\.description\}>\{description\}<\/Text>/);
@@ -81,6 +89,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-chapter-card-accessibility');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -111,6 +120,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-chapter-card-accessibility');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -121,5 +131,39 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /ChapterCard missing progress status in accessibility summary for accessibility parity/,
+  );
+});
+
+test('ChapterCard accessibility parity rejects ungrouped Card summaries', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/learning/ChapterCard.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'accessibilityLabel={shouldGroupForAccessibility ? chapterAccessibilityLabel : undefined}',
+        'accessibilityLabel={undefined}',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-chapter-card-accessibility');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /ChapterCard missing Card receives chapter accessibility summary for accessibility parity/,
   );
 });
