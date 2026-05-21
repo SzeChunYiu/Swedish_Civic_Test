@@ -53,6 +53,10 @@ test('about-the-test route uses cautious current official-detail copy', () => {
   assert.match(source, /Registration opens in early June 2026/);
   assert.match(source, /brev från Migrationsverket/);
   assert.match(source, /letter from Migrationsverket/);
+  assert.match(source, /Antalet platser är begränsat/);
+  assert.match(source, /när platserna är fyllda går det inte längre att anmäla sig/);
+  assert.match(source, /Seats are limited/);
+  assert.match(source, /when the seats are filled, registration closes/);
   assert.match(source, /kostnadsfritt och ges som ett utprövningsprov med generös tid/);
   assert.match(source, /free of charge and is a trial sitting with generous time/);
   assert.match(

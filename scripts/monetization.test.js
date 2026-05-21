@@ -1482,6 +1482,84 @@ test('remove-ads buy persists before native finish and leaves failed persistence
   assert.equal(failingEvents.includes('finish'), false);
 });
 
+test('native Remove Ads purchases require an injected receipt verifier', async () => {
+  const {
+    REMOVE_ADS_PRODUCT_ID,
+    REMOVE_ADS_STORAGE_KEY,
+    buyRemoveAds,
+    createMemoryPurchaseStorage,
+    createNativePurchaseProvider,
+    restoreRemoveAdsPurchase,
+  } = loadTs('lib/monetization/purchases.ts');
+  const nativePurchase = {
+    ids: [REMOVE_ADS_PRODUCT_ID],
+    productId: REMOVE_ADS_PRODUCT_ID,
+    purchaseToken: 'tok-native-remove-ads',
+    transactionId: 'tx-native-remove-ads',
+  };
+
+  const unverifiedPurchaseFixture = makeNativeIapProductFixture({
+    availablePurchases: [nativePurchase],
+  });
+  const unverifiedPurchaseStorage = createMemoryPurchaseStorage();
+  const unverifiedPurchase = await buyRemoveAds({
+    provider: createNativePurchaseProvider({
+      loadIap: async () => unverifiedPurchaseFixture.iap,
+      purchaseTimeoutMs: 10,
+    }),
+    storage: unverifiedPurchaseStorage,
+  });
+
+  assert.equal(unverifiedPurchase.status, 'pending');
+  assert.equal(unverifiedPurchase.entitlements.adsDisabled, false);
+  assert.equal(await unverifiedPurchaseStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
+
+  const unverifiedRestoreFixture = makeNativeIapProductFixture({
+    availablePurchases: [nativePurchase],
+  });
+  const unverifiedRestoreStorage = createMemoryPurchaseStorage();
+  const unverifiedRestore = await restoreRemoveAdsPurchase({
+    provider: createNativePurchaseProvider({
+      loadIap: async () => unverifiedRestoreFixture.iap,
+      purchaseTimeoutMs: 10,
+    }),
+    storage: unverifiedRestoreStorage,
+  });
+
+  assert.equal(unverifiedRestore.status, 'not_found');
+  assert.equal(unverifiedRestore.entitlements.adsDisabled, false);
+  assert.equal(await unverifiedRestoreStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
+  assert.equal(unverifiedRestoreFixture.state.restored, true);
+
+  const verifiedFixture = makeNativeIapProductFixture({
+    availablePurchases: [nativePurchase],
+  });
+  const verifiedStorage = createMemoryPurchaseStorage();
+  const verifiedPurchase = await buyRemoveAds({
+    provider: createNativePurchaseProvider({
+      loadIap: async () => verifiedFixture.iap,
+      purchaseTimeoutMs: 10,
+      async receiptValidator(purchase, productId) {
+        return {
+          productId,
+          purchaseToken: purchase.purchaseToken ?? null,
+          status: 'valid',
+          transactionId: purchase.transactionId ?? null,
+          validatedAt: '2026-05-20T12:00:00.000Z',
+        };
+      },
+    }),
+    storage: verifiedStorage,
+  });
+
+  assert.equal(verifiedPurchase.status, 'purchased');
+  assert.equal(verifiedPurchase.entitlements.adsDisabled, true);
+  assert.equal(
+    JSON.parse(await verifiedStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY)).transactionId,
+    `tx-${REMOVE_ADS_PRODUCT_ID}`,
+  );
+});
+
 test('native purchase provider matches requested product ids instead of Remove Ads only', async () => {
   const { REMOVE_ADS_PRODUCT_ID, createNativePurchaseProvider } = loadTs(
     'lib/monetization/purchases.ts',

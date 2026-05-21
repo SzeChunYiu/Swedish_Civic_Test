@@ -2,16 +2,32 @@ import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
 import {
+  currentProgressStateStorageKey,
   dismissBlockingModals,
   markAboutTheTestSeen,
+  seedFreshSettingsLanguageAndAboutSeenWithStorage,
   seedSettingsLanguage,
   type AppLanguage,
 } from './browserLaunch';
 
+const dayMs = 24 * 60 * 60 * 1000;
+
 type DashboardLocaleFixture = {
   activityTitle: string;
+  chapterAccuracyText: string;
   dashboardLinkLabel: RegExp | string;
   language: AppLanguage;
+  nonEmptyActivityHigh: string;
+  nonEmptyActivityLegendTitle: string;
+  nonEmptyActivityLow: string;
+  nonEmptyActivityMedium: string;
+  nonEmptyActivityNone: string;
+  nonEmptyActivitySummary: string;
+  nonEmptyChapterLinkLabel: string;
+  nonEmptyChapterName: string;
+  nonEmptyChapterProgressCoverageText: string;
+  nonEmptyStreakSummary: string;
+  nonEmptySummaryLine: string;
   mockHistoryAverage: string;
   mockHistoryEmptyState: string;
   mockHistoryExamLink: string;
@@ -29,12 +45,31 @@ type DashboardLocaleFixture = {
   streakXpTitle: string;
 };
 
+type DashboardProgressSeed = {
+  activeDayKeys: string[];
+  dayBeforeYesterdayKey: string;
+  todayKey: string;
+  yesterdayKey: string;
+};
+
 const dashboardLocales: DashboardLocaleFixture[] = [
   {
     activityTitle: 'Aktiva dagar',
+    chapterAccuracyText: 'Rätt: 75%',
     chapterProgressTitle: 'Kapitelframsteg',
     dashboardLinkLabel: /Öppna framstegsöversikten/,
     language: 'sv',
+    nonEmptyActivityHigh: 'Hög aktivitet',
+    nonEmptyActivityLegendTitle: 'Aktivitetsskala',
+    nonEmptyActivityLow: 'Låg aktivitet',
+    nonEmptyActivityMedium: 'Medelaktivitet',
+    nonEmptyActivityNone: 'Inga svar',
+    nonEmptyActivitySummary: '4 svar under perioden. 3 aktiva dagar. Högsta dag: 2 svar.',
+    nonEmptyChapterLinkLabel: 'Öppna Landet Sverige',
+    nonEmptyChapterName: 'Landet Sverige',
+    nonEmptyChapterProgressCoverageText: 'Täckning: 6%',
+    nonEmptyStreakSummary: '30 XP de senaste 30 dagarna. 3 aktiva dagar. 3 dagars svit. Nivå 3.',
+    nonEmptySummaryLine: '4 svar den här veckan · 1 kapitel provade · 1 olösta misstag',
     mockHistoryAverage: 'Snitt',
     mockHistoryEmptyState:
       'Genomför ett övningsprov så visas tidigare resultat, tempo och bästa försök här.',
@@ -54,9 +89,21 @@ const dashboardLocales: DashboardLocaleFixture[] = [
   },
   {
     activityTitle: 'Active days',
+    chapterAccuracyText: 'Accuracy: 75%',
     chapterProgressTitle: 'Chapter progress',
     dashboardLinkLabel: /Open (?:the )?progress dashboard/,
     language: 'en',
+    nonEmptyActivityHigh: 'High activity',
+    nonEmptyActivityLegendTitle: 'Activity scale',
+    nonEmptyActivityLow: 'Low activity',
+    nonEmptyActivityMedium: 'Medium activity',
+    nonEmptyActivityNone: 'No answers',
+    nonEmptyActivitySummary: '4 answers in this period. 3 active days. Highest day: 2 answers.',
+    nonEmptyChapterLinkLabel: 'Open The country of Sweden',
+    nonEmptyChapterName: 'The country of Sweden',
+    nonEmptyChapterProgressCoverageText: 'Coverage: 6%',
+    nonEmptyStreakSummary: '30 XP in the last 30 days. 3 active days. 3 day streak. Level 3.',
+    nonEmptySummaryLine: '4 answers this week · 1 chapters tried · 1 unresolved mistakes',
     mockHistoryAverage: 'Average',
     mockHistoryEmptyState:
       'Finish a mock exam and your past scores, pacing, and best attempt will appear here.',
@@ -78,6 +125,137 @@ const dashboardLocales: DashboardLocaleFixture[] = [
 
 test.use({ viewport: { width: 390, height: 844 } });
 
+function dateOffset(baseDate: Date, daysFromBase: number): Date {
+  return new Date(baseDate.getTime() + daysFromBase * dayMs);
+}
+
+function localDateKey(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function isoAtLocalHour(baseDate: Date, daysFromBase: number, hour: number): string {
+  const date = dateOffset(baseDate, daysFromBase);
+  date.setHours(hour, 0, 0, 0);
+  return date.toISOString();
+}
+
+function buildNonEmptyDashboardProgressSeed() {
+  const today = new Date();
+  const dayBeforeYesterdayDate = dateOffset(today, -2);
+  const yesterdayDate = dateOffset(today, -1);
+  const seed: DashboardProgressSeed = {
+    activeDayKeys: [
+      localDateKey(dayBeforeYesterdayDate),
+      localDateKey(yesterdayDate),
+      localDateKey(today),
+    ],
+    dayBeforeYesterdayKey: localDateKey(dayBeforeYesterdayDate),
+    todayKey: localDateKey(today),
+    yesterdayKey: localDateKey(yesterdayDate),
+  };
+  const todayMorning = isoAtLocalHour(today, 0, 9);
+  const todayLater = isoAtLocalHour(today, 0, 10);
+  const yesterday = isoAtLocalHour(today, -1, 11);
+  const dayBeforeYesterday = isoAtLocalHour(today, -2, 12);
+
+  return {
+    progress: {
+      answerDates: seed.activeDayKeys,
+      answerHistory: [
+        {
+          answeredAt: todayMorning,
+          confidenceRating: 4,
+          isCorrect: true,
+          questionId: 'q001',
+          timeSpentSeconds: 45,
+        },
+        {
+          answeredAt: todayLater,
+          confidenceRating: 2,
+          isCorrect: false,
+          questionId: 'q002',
+          timeSpentSeconds: 70,
+        },
+        {
+          answeredAt: yesterday,
+          confidenceRating: 5,
+          isCorrect: true,
+          questionId: 'q003',
+          timeSpentSeconds: 55,
+        },
+        {
+          answeredAt: dayBeforeYesterday,
+          confidenceRating: 4,
+          isCorrect: true,
+          questionId: 'q004',
+          timeSpentSeconds: 60,
+        },
+      ],
+      completedQuestionIds: ['q001', 'q003', 'q004'],
+      dailyChallengeCompletions: {},
+      mockExamSessions: [
+        {
+          completedAt: yesterday,
+          correctCount: 41,
+          questionTimings: [
+            { questionId: 'q001', timeSpentSeconds: 720 },
+            { questionId: 'q002', timeSpentSeconds: 540 },
+          ],
+          score: 0.82,
+          sessionId: 'dashboard-nonempty-mock-1',
+          totalCount: 50,
+        },
+      ],
+      questionProgress: {
+        q001: {
+          correctCount: 1,
+          correctStreak: 1,
+          lastAnsweredAt: todayMorning,
+          questionId: 'q001',
+          seenCount: 1,
+          wrongCount: 0,
+        },
+        q002: {
+          correctCount: 0,
+          correctStreak: 0,
+          lastAnsweredAt: todayLater,
+          questionId: 'q002',
+          seenCount: 1,
+          wrongCount: 1,
+        },
+        q003: {
+          correctCount: 1,
+          correctStreak: 1,
+          lastAnsweredAt: yesterday,
+          questionId: 'q003',
+          seenCount: 1,
+          wrongCount: 0,
+        },
+        q004: {
+          correctCount: 1,
+          correctStreak: 1,
+          lastAnsweredAt: dayBeforeYesterday,
+          questionId: 'q004',
+          seenCount: 1,
+          wrongCount: 0,
+        },
+      },
+      streakFreezeState: {
+        available: 1,
+        lastEarnedAt: seed.dayBeforeYesterdayKey,
+        lifetimeEarned: 1,
+        lifetimeSpent: 0,
+        rescuedDayKeys: [],
+      },
+      totalXp: 420,
+    },
+    seed,
+  };
+}
+
 async function seedCleanLanguage(page: Page, language: AppLanguage) {
   await page.addInitScript(() => {
     window.localStorage.clear();
@@ -85,6 +263,18 @@ async function seedCleanLanguage(page: Page, language: AppLanguage) {
   });
   await seedSettingsLanguage(page, language);
   await markAboutTheTestSeen(page);
+}
+
+async function seedNonEmptyDashboardProgress(page: Page, language: AppLanguage) {
+  const { progress, seed } = buildNonEmptyDashboardProgressSeed();
+
+  await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, language, {
+    localStorageValues: {
+      [currentProgressStateStorageKey]: JSON.stringify(progress),
+    },
+  });
+
+  return seed;
 }
 
 async function seedMockExamHistory(page: Page, language: AppLanguage) {
@@ -200,6 +390,56 @@ async function expectMockHistoryVisible(page: Page, fixture: DashboardLocaleFixt
   await expectNoHorizontalOverflow(page);
 }
 
+async function expectNonEmptyProgressVisible(
+  page: Page,
+  fixture: DashboardLocaleFixture,
+  seed: DashboardProgressSeed,
+) {
+  await expect(page).toHaveURL(/\/dashboard(?:\?|$)/);
+  await expect(page.getByRole('heading', { name: fixture.title }).last()).toBeVisible();
+  await expect(page.getByText(fixture.nonEmptyActivitySummary, { exact: true })).toBeVisible();
+  await expect(page.getByText(fixture.nonEmptySummaryLine, { exact: true })).toBeVisible();
+
+  await expect(page.getByText(fixture.nonEmptyActivityLegendTitle, { exact: true })).toBeVisible();
+  await expect(page.getByText(fixture.nonEmptyActivityNone, { exact: true })).toBeVisible();
+  await expect(page.getByText(fixture.nonEmptyActivityLow, { exact: true })).toBeVisible();
+  await expect(page.getByText(fixture.nonEmptyActivityMedium, { exact: true })).toBeVisible();
+  await expect(page.getByText(fixture.nonEmptyActivityHigh, { exact: true })).toBeVisible();
+  await expect(
+    page.getByLabel(
+      fixture.language === 'sv' ? `${seed.todayKey}: 2 svar` : `${seed.todayKey}: 2 answers`,
+    ),
+  ).toBeVisible();
+  await expect(
+    page.getByLabel(
+      fixture.language === 'sv'
+        ? `${seed.yesterdayKey}: 1 svar`
+        : `${seed.yesterdayKey}: 1 answers`,
+    ),
+  ).toBeVisible();
+  await expect(
+    page.getByLabel(
+      fixture.language === 'sv'
+        ? `${seed.dayBeforeYesterdayKey}: 1 svar`
+        : `${seed.dayBeforeYesterdayKey}: 1 answers`,
+    ),
+  ).toBeVisible();
+
+  const chapterLink = page.getByRole('link', { name: fixture.nonEmptyChapterLinkLabel }).last();
+  await expect(chapterLink).toBeVisible();
+  await expect(chapterLink).toContainText(fixture.nonEmptyChapterName);
+  await expect(chapterLink).toContainText(fixture.chapterAccuracyText);
+  await expect(chapterLink).toContainText(fixture.nonEmptyChapterProgressCoverageText);
+
+  await expect(page.getByLabel(fixture.nonEmptyStreakSummary).first()).toBeVisible();
+  await expect(page.getByLabel(`${seed.todayKey}: 10`).first()).toBeVisible();
+  await expect(page.getByLabel(`${seed.yesterdayKey}: 10`).first()).toBeVisible();
+  await expect(page.getByLabel(`${seed.dayBeforeYesterdayKey}: 10`).first()).toBeVisible();
+  await expect(page.getByText(fixture.mockHistoryTitle, { exact: true }).last()).toBeVisible();
+  await expect(page.getByText(fixture.mockHistoryEmptyState, { exact: true })).toHaveCount(0);
+  await expectNoHorizontalOverflow(page);
+}
+
 for (const fixture of dashboardLocales) {
   test(`dashboard route renders and stays linked in ${fixture.language}`, async ({ page }) => {
     const consoleErrors = collectConsoleErrors(page);
@@ -233,6 +473,17 @@ for (const fixture of dashboardLocales) {
     await page.goto('/dashboard', { waitUntil: 'networkidle' });
     await dismissBlockingModals(page);
     await expectMockHistoryVisible(page, fixture);
+
+    expect(consoleErrors).toEqual([]);
+  });
+
+  test(`dashboard route renders non-empty progress in ${fixture.language}`, async ({ page }) => {
+    const consoleErrors = collectConsoleErrors(page);
+    const seed = await seedNonEmptyDashboardProgress(page, fixture.language);
+
+    await page.goto('/dashboard', { waitUntil: 'networkidle' });
+    await dismissBlockingModals(page);
+    await expectNonEmptyProgressVisible(page, fixture, seed);
 
     expect(consoleErrors).toEqual([]);
   });

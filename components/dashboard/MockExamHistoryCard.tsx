@@ -1,8 +1,10 @@
 import { Link } from 'expo-router';
+import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { MockHistoryEntry } from '../../lib/learning/dashboardStats';
-import { colors, radius, space, typography } from '../../lib/theme';
+import { radius, space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 import { Card } from '../ui/Card';
 
 const recentMockLimit = 3;
@@ -69,6 +71,8 @@ function completedDate(entry: MockHistoryEntry): string {
 }
 
 export function MockExamHistoryCard({ bestScore, copy, entries }: MockExamHistoryCardProps) {
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const scoredEntries = entries.filter(
     (entry): entry is MockHistoryEntry & { score: number } => entry.score !== null,
   );
@@ -213,202 +217,204 @@ export function MockExamHistoryCard({ bestScore, copy, entries }: MockExamHistor
   );
 }
 
-const styles = StyleSheet.create({
-  accessibilitySummary: {
-    height: space[0],
-    left: space[0],
-    opacity: 0,
-    position: 'absolute',
-    top: space[0],
-    width: space[0],
-  },
-  card: {
-    gap: space[1.5],
-  },
-  header: {
-    alignItems: 'flex-start',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-    justifyContent: 'space-between',
-  },
-  titleBlock: {
-    flex: 1,
-    gap: space[0.5],
-    minWidth: space[15],
-  },
-  title: {
-    color: colors.text,
-    fontSize: typography.cardTitle.fontSize,
-    fontWeight: typography.cardTitle.fontWeight,
-    lineHeight: typography.cardTitle.lineHeight,
-  },
-  subtitle: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  attemptCount: {
-    backgroundColor: colors.surfaceMuted,
-    borderColor: colors.border,
-    borderRadius: radius.pill,
-    borderWidth: space.hairline,
-    color: colors.textSecondary,
-    fontSize: typography.micro.fontSize,
-    lineHeight: typography.micro.lineHeight,
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[0.75],
-  },
-  metricGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-  },
-  metricPill: {
-    backgroundColor: colors.surfaceMuted,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: space.hairline,
-    flexBasis: space[12],
-    flexGrow: 1,
-    minWidth: space[12],
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[1],
-  },
-  metricValue: {
-    color: colors.text,
-    fontSize: typography.sectionTitle.fontSize,
-    fontWeight: typography.sectionTitle.fontWeight,
-    lineHeight: typography.sectionTitle.lineHeight,
-  },
-  metricLabel: {
-    color: colors.textSecondary,
-    fontSize: typography.micro.fontSize,
-    lineHeight: typography.micro.lineHeight,
-  },
-  scoreTrendBlock: {
-    backgroundColor: colors.surfaceMuted,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: space.hairline,
-    gap: space[1],
-    padding: space[1.5],
-  },
-  scoreTrendHeader: {
-    gap: space[0.5],
-  },
-  scoreTrendTitle: {
-    color: colors.text,
-    fontSize: typography.caption.fontSize,
-    fontWeight: typography.caption.fontWeight,
-    lineHeight: typography.caption.lineHeight,
-  },
-  scoreTrendSummaryVisible: {
-    color: colors.textSecondary,
-    fontSize: typography.micro.fontSize,
-    lineHeight: typography.micro.lineHeight,
-  },
-  trendSummary: {
-    height: space[0],
-    left: space[0],
-    opacity: 0,
-    position: 'absolute',
-    top: space[0],
-    width: space[0],
-  },
-  scoreTrendChart: {
-    alignItems: 'flex-end',
-    flexDirection: 'row',
-    gap: space[1],
-    minHeight: space[10],
-  },
-  scoreTrendPoint: {
-    alignItems: 'center',
-    flex: 1,
-    gap: space[0.5],
-    minWidth: space[4],
-  },
-  scoreTrendTrack: {
-    alignItems: 'stretch',
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.pill,
-    borderWidth: space.hairline,
-    height: space[8],
-    justifyContent: 'flex-end',
-    overflow: 'hidden',
-    width: '100%',
-  },
-  scoreTrendBar: {
-    backgroundColor: colors.accent,
-    borderRadius: radius.pill,
-    minHeight: space[1],
-  },
-  scoreTrendPercent: {
-    color: colors.textMuted,
-    fontSize: typography.micro.fontSize,
-    lineHeight: typography.micro.lineHeight,
-  },
-  recentBlock: {
-    gap: space[1],
-  },
-  recentTitle: {
-    color: colors.text,
-    fontSize: typography.caption.fontSize,
-    fontWeight: typography.caption.fontWeight,
-    lineHeight: typography.caption.lineHeight,
-  },
-  recentList: {
-    gap: space[1],
-  },
-  recentRow: {
-    alignItems: 'flex-start',
-    backgroundColor: colors.surfaceWarm,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: space.hairline,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-    justifyContent: 'space-between',
-    padding: space[1.5],
-  },
-  recentCopy: {
-    flex: 1,
-    gap: space[0.5],
-    minWidth: space[15],
-  },
-  recentScore: {
-    color: colors.text,
-    fontSize: typography.body.fontSize,
-    fontWeight: typography.cardTitle.fontWeight,
-    lineHeight: typography.body.lineHeight,
-  },
-  recentMeta: {
-    color: colors.textSecondary,
-    fontSize: typography.micro.fontSize,
-    lineHeight: typography.micro.lineHeight,
-  },
-  duration: {
-    color: colors.textMuted,
-    fontSize: typography.micro.fontSize,
-    lineHeight: typography.micro.lineHeight,
-  },
-  emptyState: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  examLink: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: radius.micro,
-    color: colors.text,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    minHeight: space[6],
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    accessibilitySummary: {
+      height: space[0],
+      left: space[0],
+      opacity: 0,
+      position: 'absolute',
+      top: space[0],
+      width: space[0],
+    },
+    card: {
+      gap: space[1.5],
+    },
+    header: {
+      alignItems: 'flex-start',
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1],
+      justifyContent: 'space-between',
+    },
+    titleBlock: {
+      flex: 1,
+      gap: space[0.5],
+      minWidth: space[15],
+    },
+    title: {
+      color: themeColors.text,
+      fontSize: typography.cardTitle.fontSize,
+      fontWeight: typography.cardTitle.fontWeight,
+      lineHeight: typography.cardTitle.lineHeight,
+    },
+    subtitle: {
+      color: themeColors.textMuted,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+    attemptCount: {
+      backgroundColor: themeColors.surfaceMuted,
+      borderColor: themeColors.border,
+      borderRadius: radius.pill,
+      borderWidth: space.hairline,
+      color: themeColors.textSecondary,
+      fontSize: typography.micro.fontSize,
+      lineHeight: typography.micro.lineHeight,
+      paddingHorizontal: space[1.5],
+      paddingVertical: space[0.75],
+    },
+    metricGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1],
+    },
+    metricPill: {
+      backgroundColor: themeColors.surfaceMuted,
+      borderColor: themeColors.border,
+      borderRadius: radius.card,
+      borderWidth: space.hairline,
+      flexBasis: space[12],
+      flexGrow: 1,
+      minWidth: space[12],
+      paddingHorizontal: space[1.5],
+      paddingVertical: space[1],
+    },
+    metricValue: {
+      color: themeColors.text,
+      fontSize: typography.sectionTitle.fontSize,
+      fontWeight: typography.sectionTitle.fontWeight,
+      lineHeight: typography.sectionTitle.lineHeight,
+    },
+    metricLabel: {
+      color: themeColors.textSecondary,
+      fontSize: typography.micro.fontSize,
+      lineHeight: typography.micro.lineHeight,
+    },
+    scoreTrendBlock: {
+      backgroundColor: themeColors.surfaceMuted,
+      borderColor: themeColors.border,
+      borderRadius: radius.card,
+      borderWidth: space.hairline,
+      gap: space[1],
+      padding: space[1.5],
+    },
+    scoreTrendHeader: {
+      gap: space[0.5],
+    },
+    scoreTrendTitle: {
+      color: themeColors.text,
+      fontSize: typography.caption.fontSize,
+      fontWeight: typography.caption.fontWeight,
+      lineHeight: typography.caption.lineHeight,
+    },
+    scoreTrendSummaryVisible: {
+      color: themeColors.textSecondary,
+      fontSize: typography.micro.fontSize,
+      lineHeight: typography.micro.lineHeight,
+    },
+    trendSummary: {
+      height: space[0],
+      left: space[0],
+      opacity: 0,
+      position: 'absolute',
+      top: space[0],
+      width: space[0],
+    },
+    scoreTrendChart: {
+      alignItems: 'flex-end',
+      flexDirection: 'row',
+      gap: space[1],
+      minHeight: space[10],
+    },
+    scoreTrendPoint: {
+      alignItems: 'center',
+      flex: 1,
+      gap: space[0.5],
+      minWidth: space[4],
+    },
+    scoreTrendTrack: {
+      alignItems: 'stretch',
+      backgroundColor: themeColors.surface,
+      borderColor: themeColors.border,
+      borderRadius: radius.pill,
+      borderWidth: space.hairline,
+      height: space[8],
+      justifyContent: 'flex-end',
+      overflow: 'hidden',
+      width: '100%',
+    },
+    scoreTrendBar: {
+      backgroundColor: themeColors.accent,
+      borderRadius: radius.pill,
+      minHeight: space[1],
+    },
+    scoreTrendPercent: {
+      color: themeColors.textMuted,
+      fontSize: typography.micro.fontSize,
+      lineHeight: typography.micro.lineHeight,
+    },
+    recentBlock: {
+      gap: space[1],
+    },
+    recentTitle: {
+      color: themeColors.text,
+      fontSize: typography.caption.fontSize,
+      fontWeight: typography.caption.fontWeight,
+      lineHeight: typography.caption.lineHeight,
+    },
+    recentList: {
+      gap: space[1],
+    },
+    recentRow: {
+      alignItems: 'flex-start',
+      backgroundColor: themeColors.surfaceWarm,
+      borderColor: themeColors.border,
+      borderRadius: radius.card,
+      borderWidth: space.hairline,
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1],
+      justifyContent: 'space-between',
+      padding: space[1.5],
+    },
+    recentCopy: {
+      flex: 1,
+      gap: space[0.5],
+      minWidth: space[15],
+    },
+    recentScore: {
+      color: themeColors.text,
+      fontSize: typography.body.fontSize,
+      fontWeight: typography.cardTitle.fontWeight,
+      lineHeight: typography.body.lineHeight,
+    },
+    recentMeta: {
+      color: themeColors.textSecondary,
+      fontSize: typography.micro.fontSize,
+      lineHeight: typography.micro.lineHeight,
+    },
+    duration: {
+      color: themeColors.textMuted,
+      fontSize: typography.micro.fontSize,
+      lineHeight: typography.micro.lineHeight,
+    },
+    emptyState: {
+      color: themeColors.textSecondary,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+    examLink: {
+      alignSelf: 'flex-start',
+      backgroundColor: themeColors.surfaceMuted,
+      borderRadius: radius.micro,
+      color: themeColors.text,
+      fontSize: typography.navButton.fontSize,
+      fontWeight: typography.navButton.fontWeight,
+      minHeight: space[6],
+      paddingHorizontal: space[2],
+      paddingVertical: space[1],
+      textDecorationLine: 'none',
+    },
+  });
+}

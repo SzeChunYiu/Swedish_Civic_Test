@@ -336,7 +336,7 @@ const EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_LABELS = {
     'Vad är det?',
     'Medborgarskapsprovet är ett kunskapsprov som UHR ansvarar för. Första delen handlar om samhällskunskap. Prov i svenska införs senare.',
     'Vem ska göra det?',
-    'Migrationsverket avgör vem som får skriva provet. Du kan bara anmäla dig efter ett brev från Migrationsverket, och du kan uppfylla kunskapskravet på andra sätt än genom provet.',
+    'Migrationsverket avgör vem som får skriva provet. Du kan bara anmäla dig efter ett brev från Migrationsverket. Antalet platser är begränsat, och när platserna är fyllda går det inte längre att anmäla sig. Du kan uppfylla kunskapskravet på andra sätt än genom provet.',
     'Vad är känt om första provet?',
     'UHR har bekräftat datumet 15 augusti 2026 och Stockholm för den första provomgången. Anmälan öppnar i början av juni 2026. Exakt tid och plats, anpassningar och praktiska förberedelser kommer senare. Augustiprovet är kostnadsfritt och ges som ett utprövningsprov med generös tid.',
     'Vilket material bygger appen på?',
@@ -359,7 +359,7 @@ const EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_LABELS = {
     'What is it?',
     'The citizenship test is a knowledge test that UHR is responsible for. The first part is about civic knowledge. A Swedish-language test will be introduced later.',
     'Who takes it?',
-    'Migrationsverket decides who may take the test. You can only sign up after receiving a letter from Migrationsverket, and you may be able to meet the knowledge requirement in other ways.',
+    'Migrationsverket decides who may take the test. You can only sign up after receiving a letter from Migrationsverket. Seats are limited, and when the seats are filled, registration closes. You may be able to meet the knowledge requirement in other ways.',
     'What is known about the first test?',
     'UHR has confirmed 15 August 2026 and Stockholm for the first sitting. Registration opens in early June 2026. Exact time and place, adaptations, and practical preparation details will come later. The August test is free of charge and is a trial sitting with generous time.',
     'What material does this app use?',
@@ -724,7 +724,10 @@ const EXPECTED_PRACTICE_ROUTE_COPY_SNIPPETS = [
     '() => getCompletedQuestionIdsForQuestionBank(filteredQuestions, completedQuestionIds)',
     'completed-question metadata must scope persisted progress to the visible question bank',
   ],
-  ['sessionCompletedQuestionIds,', 'practice selection must use visible completed-question ids'],
+  [
+    'sessionCompletedQuestionIds,',
+    'practice selection must use active-scope completed-question ids',
+  ],
   [
     '{copy.completedQuestions(visibleCompletedQuestionIds.length)}',
     'completed-question metadata must render localized copy',
@@ -1522,7 +1525,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 10;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 21;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 22;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_RUNTIME_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
@@ -1798,9 +1801,14 @@ const EXPECTED_QUIZ_ROUTE_HEADERS = [
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>[\s\S]{0,160}copy\.emptyTitle[\s\S]{0,160}<\/Text>/,
   },
   {
+    label: 'not-found quiz title',
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>[\s\S]{0,160}copy\.notFoundTitle[\s\S]{0,160}<\/Text>/,
+  },
+  {
     label: 'session title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*\{copy\.sessionTitle\(normalizedSessionId\)\}\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*\{sessionTitle\}\s*<\/Text>/,
   },
 ];
 const EXPECTED_QUIZ_ROUTE_COPY_LABELS = {
@@ -1811,6 +1819,8 @@ const EXPECTED_QUIZ_ROUTE_COPY_LABELS = {
     'Poäng',
     'Besvara frågan och gå sedan igenom den källbaserade återkopplingen.',
     'Frågepass ${currentSessionId}',
+    'Frågepass: ${chapterTitle}',
+    'Besvara en fråga från ${chapterTitle} och gå sedan igenom den källbaserade återkopplingen.',
     'Försök igen',
     'Försök igen med den här frågan',
   ],
@@ -1821,6 +1831,8 @@ const EXPECTED_QUIZ_ROUTE_COPY_LABELS = {
     'Score',
     'Answer the routed question, then review the source-backed feedback.',
     'Session ${currentSessionId}',
+    'Quiz session: ${chapterTitle}',
+    'Answer a question from ${chapterTitle}, then review the source-backed feedback.',
     'Try again',
     'Try this quiz question again',
   ],
@@ -1837,6 +1849,23 @@ const EXPECTED_QUIZ_ROUTE_COPY_SNIPPETS = [
     'quiz route must read language from settings store',
   ],
   ['const copy = quizSessionCopy[language];', 'quiz route must select copy from settings language'],
+  ['import { chapters }', 'quiz route must import chapter metadata for chapter-scoped sessions'],
+  ['chapterId?: string | string[];', 'quiz route must type the optional chapter route param'],
+  [
+    'const normalizedChapterId = normalizeOptionalRouteParam(chapterId);',
+    'quiz route must normalize the optional chapter route param',
+  ],
+  [
+    'getChapterContextForQuizSession(chapters, pickedQuestion, normalizedChapterId)',
+    'quiz route must resolve chapter context from the routed question',
+  ],
+  ['const sessionTitle = chapterContextTitle', 'quiz route must compute a chapter-aware title'],
+  [
+    'const sessionSubtitle = chapterContextTitle',
+    'quiz route must compute a chapter-aware subtitle',
+  ],
+  ['{sessionTitle}', 'quiz route title must render resolved session title'],
+  ['{sessionSubtitle}', 'quiz route subtitle must render resolved session subtitle'],
   [
     '<QuestionDisclaimer language={language} />',
     'routed quiz disclaimer must receive settings language',
@@ -1953,6 +1982,8 @@ const EXPECTED_CHAPTER_ROUTE_COPY_SNIPPETS = [
     'accessibilityLabel={copy.startQuizAccessibilityLabel(chapterTitle)}',
     'chapter route quiz link must expose localized accessibility copy',
   ],
+  ['getChapterQuizRouteParams', 'chapter route must build typed chapter quiz params'],
+  ['params: quizRouteParams', 'chapter route must pass chapter quiz context into the quiz route'],
   ['{copy.startQuiz}', 'chapter route quiz link must render localized copy'],
   [
     '{copy.practiceQuestionsTitle(chapterQuestions.length)}',
@@ -2543,7 +2574,7 @@ const EXPECTED_SETTINGS_ROUTE_SCROLL_RULES = [
 const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
   {
     label: 'ScrollView import',
-    pattern: /import \{ Pressable, ScrollView, StyleSheet, Text, View \} from 'react-native';/,
+    pattern: /import\s+\{[\s\S]*\bScrollView\b[\s\S]*\}\s+from 'react-native';/,
   },
   {
     label: 'scroll root container',
@@ -2994,7 +3025,11 @@ const EXPECTED_BADGE_ACCESSIBILITY_RULES = [
     pattern: /accessibilityLabel=\{badgeAccessibilityLabel\}/,
   },
   {
-    label: 'tone style path with caller override',
+    label: 'tone style path',
+    pattern: /style=\{\[styles\.badge, styles\[tone\]/,
+  },
+  {
+    label: 'caller style override',
     pattern: /style=\{\[styles\.badge, styles\[tone\], style\]\}/,
   },
   {
@@ -8532,6 +8567,8 @@ const speakSwedish = audioModule.speakSwedish;
 const stopSpeech = audioModule.stopSpeech;
 const practiceFlowModule = loadTs('lib/quiz/practiceFlow.ts');
 const getPracticeQuestionForSession = practiceFlowModule.getPracticeQuestionForSession;
+const getChapterContextForQuizSession = practiceFlowModule.getChapterContextForQuizSession;
+const getChapterQuizRouteParams = practiceFlowModule.getChapterQuizRouteParams;
 const getChapterQuizSessionId = practiceFlowModule.getChapterQuizSessionId;
 const practiceSessionStoreModule = loadTs('lib/quiz/practiceSessionStore.ts');
 const usePracticeSessionStore = practiceSessionStoreModule.usePracticeSessionStore;
@@ -8893,6 +8930,13 @@ let trueFalseQuestions = 0;
 let trueFalseOptionLabelsValidated = 0;
 let questionTagsValidated = 0;
 let questionBankCsvRowsValidated = 0;
+let questionBankCsvHeaderColumnsValidated = 0;
+let questionBankCsvUniqueHeaderNamesValidated = false;
+let questionBankCsvUhrSourcePublisherRowsValidated = 0;
+let questionBankCsvUhrSourcePublisherParityValidated = false;
+let questionBankCsvProvenanceCounts = { uhr: 0, derived: 0, editorial: 0 };
+let questionProvenanceRuntimeCasesValidated = 0;
+let questionProvenanceRuntimeParityValidated = false;
 let criminalResponsibilityCurrentnessOfficialSourcesValidated = 0;
 let criminalResponsibilityCurrentnessSourceMetadataValidated = false;
 let criminalResponsibilityCurrentnessSourceRetrievedAt = null;
@@ -9036,6 +9080,16 @@ if (process.argv.includes('--focus-chapter-card-accessibility')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-onboarding-route-scroll')) {
+  validateOnboardingRouteScrollParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    onboardingRouteScrollRulesValidated,
+    onboardingRouteScrollParityValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-badge-accessibility')) {
   validateBadgeAccessibilityParity();
   exitWithValidationFailures();
@@ -9045,7 +9099,6 @@ if (process.argv.includes('--focus-badge-accessibility')) {
   });
   process.exit(0);
 }
-
 if (process.argv.includes('--focus-flashcard-accessibility')) {
   validateFlashcardAccessibilityParity();
   exitWithValidationFailures();
@@ -9723,6 +9776,12 @@ if (typeof getPracticeQuestionForSession !== 'function') {
 }
 if (typeof getChapterQuizSessionId !== 'function') {
   fail('getChapterQuizSessionId export is not a function');
+}
+if (typeof getChapterQuizRouteParams !== 'function') {
+  fail('getChapterQuizRouteParams export is not a function');
+}
+if (typeof getChapterContextForQuizSession !== 'function') {
+  fail('getChapterContextForQuizSession export is not a function');
 }
 if (
   !usePracticeSessionStore ||
@@ -11554,6 +11613,7 @@ function validateQuizRouteHeaderParity() {
 function validateQuizRouteCopyParity() {
   let valid = true;
   let quizRoute = '';
+  let searchRoute = '';
 
   function reject(message) {
     valid = false;
@@ -11566,10 +11626,19 @@ function validateQuizRouteCopyParity() {
     reject(`quiz route copy source could not be read: ${error.message}`);
     return;
   }
+  try {
+    searchRoute = fs.readFileSync(path.join(repoRoot, 'app/search.tsx'), 'utf8');
+  } catch (error) {
+    reject(`search route source could not be read for quiz route parity: ${error.message}`);
+    return;
+  }
 
   EXPECTED_QUIZ_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!quizRoute.includes(snippet)) reject(message);
   });
+  if (!searchRoute.includes('href={`/quiz/${result.question.id}`}')) {
+    reject('search route links must keep exact question-id quiz sessions');
+  }
 
   const seenLabels = new Set();
   Object.entries(EXPECTED_QUIZ_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
@@ -14828,7 +14897,7 @@ function validateProgressStoreSchemaParity() {
       'progress storage must use the stable progress MMKV id',
     ],
     [
-      'progressStorage?.getString(progressStateKey)',
+      'readRecoverably(progressStorage, progressStorageId, progressStateKey, () => progressStorage?.getString(progressStateKey)',
       'readProgress must read persisted JSON through progressStateKey',
     ],
     [
@@ -14851,6 +14920,22 @@ function validateProgressStoreSchemaParity() {
     [
       "if (typeof isCorrect !== 'boolean') return state;",
       'recordAnswer must ignore non-boolean correctness before mutating progress',
+    ],
+    [
+      'const seenCount = normalizeNonNegativeInteger( item.seenCount, rawCorrectCount + rawWrongCount, maxHydratedQuestionAnswerCount, );',
+      'progress hydration must normalize seenCount with capped numeric helper',
+    ],
+    [
+      'if (lastAnsweredAt) normalizedQuestionProgress.lastAnsweredAt = lastAnsweredAt;',
+      'question progress hydration must normalize and omit absent lastAnsweredAt timestamps',
+    ],
+    [
+      "if (typeof item.bookmarked === 'boolean') { normalizedQuestionProgress.bookmarked = item.bookmarked; }",
+      'question progress hydration must preserve only boolean bookmark values',
+    ],
+    [
+      'if (confidenceRating) normalizedQuestionProgress.confidenceRating = confidenceRating;',
+      'question progress hydration must preserve only valid 1..5 confidence ratings',
     ],
     ['writeProgress(nextProgress);', 'progress mutations must persist nextProgress'],
     ['writeProgress(emptyProgress);', 'resetProgress must persist the empty progress state'],
@@ -15420,6 +15505,11 @@ function validateRemoveAdsPurchaseRuntimeParity() {
   const normalizedPurchaseSource = purchaseSource.replace(/\s+/g, ' ');
   const normalizedPaywallSource = paywallSource.replace(/\s+/g, ' ');
   const normalizedPlacementCtaSource = placementCtaSource.replace(/\s+/g, ' ');
+  const nativeReceiptValidationBlock =
+    purchaseSource.match(
+      /async validateRemoveAdsReceipt\(purchase, productId\) \{([\s\S]*?)\n    \},\n    async requestRemoveAdsPurchase/,
+    )?.[1] ?? '';
+
   function assertInFlightCase(source, options) {
     try {
       assertPurchaseActionInFlightGuard(source, options);
@@ -15513,6 +15603,12 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       normalizedPurchaseSource.includes('validateRemoveAdsReceipt?(') &&
         normalizedPurchaseSource.includes('Promise<RemoveAdsReceiptValidationResult>'),
       'Remove Ads purchase provider must expose a receipt validation hook',
+    ],
+    [
+      /if\s*\(\s*!receiptValidator\s*\)\s*\{\s*return\s*\{[\s\S]*productId,[\s\S]*purchaseToken:\s*purchase\.purchaseToken\s*\?\?\s*null,[\s\S]*status:\s*'pending',[\s\S]*transactionId:\s*purchase\.transactionId\s*\?\?\s*null,[\s\S]*\};\s*\}/.test(
+        nativeReceiptValidationBlock,
+      ) && !/createReceiptValidationResult\s*\(/.test(nativeReceiptValidationBlock),
+      'native Remove Ads provider must fail closed without an injected receipt verifier',
     ],
     [
       normalizedPurchaseSource.includes(
@@ -16688,6 +16784,13 @@ function validatePracticeFlowParity() {
       expectedId: thirdQuestion.id,
     },
     {
+      label: 'completion outside visible bank is ignored',
+      questions: [firstQuestion, secondQuestion],
+      completedQuestionIds: [thirdQuestion.id, firstQuestion.id],
+      activeQuestionId: null,
+      expectedId: secondQuestion.id,
+    },
+    {
       label: 'completed question count wraps to the first question',
       questions: publishedQuestions,
       completedQuestionIds: completedAllQuestionIds,
@@ -17512,6 +17615,8 @@ function validateChapterQuizSessionParity() {
   if (
     !Array.isArray(chapters) ||
     !Array.isArray(questions) ||
+    typeof getChapterContextForQuizSession !== 'function' ||
+    typeof getChapterQuizRouteParams !== 'function' ||
     typeof getChapterQuizSessionId !== 'function'
   ) {
     return;
@@ -17520,6 +17625,7 @@ function validateChapterQuizSessionParity() {
   chapters.forEach((chapter) => {
     const expectedQuestion = questions.find((question) => question.chapterId === chapter.id);
     const sessionId = getChapterQuizSessionId(questions, chapter.id);
+    const routeParams = getChapterQuizRouteParams(questions, chapter.id);
     const sessionQuestion = questions.find((question) => question.id === sessionId);
     let valid = true;
 
@@ -17534,6 +17640,12 @@ function validateChapterQuizSessionParity() {
       reject(
         `${chapter.id} chapter quiz session resolves to ${sessionId}, expected ${expectedQuestion.id}`,
       );
+    } else if (
+      !routeParams ||
+      routeParams.sessionId !== expectedQuestion.id ||
+      routeParams.chapterId !== chapter.id
+    ) {
+      reject(`${chapter.id} chapter quiz route params must carry sessionId and chapterId`);
     }
 
     if (!sessionQuestion) {
@@ -17544,6 +17656,10 @@ function validateChapterQuizSessionParity() {
       );
     } else if (sessionQuestion.reviewStatus !== 'published') {
       reject(`${chapter.id} chapter quiz session id ${sessionId} is not published`);
+    } else if (getChapterContextForQuizSession(chapters, sessionQuestion, chapter.id) !== chapter) {
+      reject(`${chapter.id} chapter quiz context does not resolve from route chapter id`);
+    } else if (getChapterContextForQuizSession(chapters, sessionQuestion, 'missing-chapter')) {
+      reject(`${chapter.id} chapter quiz context must reject mismatched chapter ids`);
     }
 
     if (valid) chapterQuizSessionParityValidated += 1;
@@ -17554,6 +17670,18 @@ function validateChapterQuizSessionParity() {
   }
   if (getChapterQuizSessionId(questions, null) !== null) {
     fail('null chapter quiz session should resolve to null');
+  }
+  if (getChapterQuizRouteParams(questions, 'missing-chapter') !== null) {
+    fail('missing chapter quiz route params should resolve to null');
+  }
+  if (getChapterQuizRouteParams(questions, null) !== null) {
+    fail('null chapter quiz route params should resolve to null');
+  }
+  if (getChapterContextForQuizSession(chapters, undefined, 'ch01') !== null) {
+    fail('chapter quiz context must require a resolved question');
+  }
+  if (getChapterContextForQuizSession(chapters, questions[0], null) !== null) {
+    fail('chapter quiz context must require an explicit chapter id');
   }
 }
 
@@ -18282,6 +18410,21 @@ function validateQuestionBankCsvContract() {
   }
 
   const [header, ...dataRows] = rows;
+  const duplicateHeaderNames = [
+    ...new Set(header.filter((field, index) => header.indexOf(field) !== index)),
+  ];
+  if (header.length === QUESTION_BANK_CSV_HEADER.length) {
+    questionBankCsvHeaderColumnsValidated = header.length;
+  }
+  if (duplicateHeaderNames.length) {
+    fail(
+      `content/question-bank.csv header has duplicate column name(s): ${duplicateHeaderNames.join(
+        ', ',
+      )}`,
+    );
+  } else {
+    questionBankCsvUniqueHeaderNamesValidated = true;
+  }
   if (!jsonEqual(header, QUESTION_BANK_CSV_HEADER)) {
     fail(
       `content/question-bank.csv header is ${JSON.stringify(header)}, expected ${JSON.stringify(
@@ -18295,6 +18438,25 @@ function validateQuestionBankCsvContract() {
       `content/question-bank.csv has ${dataRows.length} data rows, expected ${questions.length}`,
     );
   }
+
+  const metadataDriftCounts = {
+    uhrSourceTitle: 0,
+    uhrSourcePublisher: 0,
+    uhrSourceUrl: 0,
+    uhrSourceRetrievedAt: 0,
+  };
+  const metadataDriftFindings = {
+    uhrSourceTitle: [],
+    uhrSourcePublisher: [],
+    uhrSourceUrl: [],
+    uhrSourceRetrievedAt: [],
+  };
+  const metadataSourceFields = {
+    uhrSourceTitle: 'title',
+    uhrSourcePublisher: 'publisher',
+    uhrSourceUrl: 'url',
+    uhrSourceRetrievedAt: 'retrievedDate',
+  };
 
   dataRows.forEach((row, index) => {
     const question = questions[index];
@@ -18343,16 +18505,105 @@ function validateQuestionBankCsvContract() {
 
     QUESTION_BANK_CSV_HEADER.forEach((field, fieldIndex) => {
       if (row[fieldIndex] !== expectedRow[fieldIndex]) {
-        reject(
-          `content/question-bank.csv row ${rowNumber} ${label} ${field} is ${JSON.stringify(
-            row[fieldIndex],
-          )}, expected ${JSON.stringify(expectedRow[fieldIndex])}`,
-        );
+        if (Object.prototype.hasOwnProperty.call(metadataDriftCounts, field)) {
+          rowIsValid = false;
+          metadataDriftCounts[field] += 1;
+          metadataDriftFindings[field].push(
+            `content/question-bank.csv row ${rowNumber} ${label} ${field} is ${JSON.stringify(
+              row[fieldIndex],
+            )}, expected ${JSON.stringify(expectedRow[fieldIndex])}`,
+          );
+        } else {
+          reject(
+            `content/question-bank.csv row ${rowNumber} ${label} ${field} is ${JSON.stringify(
+              row[fieldIndex],
+            )}, expected ${JSON.stringify(expectedRow[fieldIndex])}`,
+          );
+        }
       }
     });
 
+    const publisherIndex = QUESTION_BANK_CSV_HEADER.indexOf('uhrSourcePublisher');
+    if (
+      publisherIndex >= 0 &&
+      row[publisherIndex] === uhrSectionMap?.source?.publisher &&
+      hasText(row[publisherIndex])
+    ) {
+      questionBankCsvUhrSourcePublisherRowsValidated += 1;
+    }
+
+    const provenanceIndex = QUESTION_BANK_CSV_HEADER.indexOf('questionProvenance');
+    const provenance = row[provenanceIndex];
+    if (Object.prototype.hasOwnProperty.call(questionBankCsvProvenanceCounts, provenance)) {
+      questionBankCsvProvenanceCounts[provenance] += 1;
+    }
+
     if (rowIsValid) questionBankCsvRowsValidated += 1;
   });
+
+  Object.entries(metadataDriftCounts).forEach(([field, count]) => {
+    if (count <= 0) return;
+    if (count === dataRows.length && count > 1) {
+      fail(
+        `content/question-bank.csv ${field} metadata drift: ${count} rows disagree with content/uhr-section-map.json source.${metadataSourceFields[field]}`,
+      );
+      return;
+    }
+    metadataDriftFindings[field].forEach(fail);
+  });
+
+  questionBankCsvUhrSourcePublisherParityValidated =
+    questionBankCsvUhrSourcePublisherRowsValidated === questions.length;
+}
+
+function validateQuestionProvenanceRuntime() {
+  if (typeof getQuestionProvenance !== 'function') {
+    fail('question provenance runtime guard cannot load getQuestionProvenance');
+    return;
+  }
+
+  const cases = [
+    ['undefined question', undefined, 'uhr'],
+    ['null question', null, 'uhr'],
+    ['empty object', {}, 'uhr'],
+    ['array question object', [], 'uhr'],
+    ['null tags', { tags: null }, 'uhr'],
+    ['string tags', { tags: 'published-variant' }, 'uhr'],
+    ['object tags with includes', { tags: { includes: () => true } }, 'uhr'],
+    ['mixed non-string tags', { tags: ['published-variant', 123] }, 'uhr'],
+    ['plain UHR tag', { tags: ['uhr'] }, 'uhr'],
+    ['published variant tag', { tags: ['published-variant'] }, 'derived'],
+    ['editorial tag', { tags: ['editorial'] }, 'editorial'],
+    ['editorial wins over derived', { tags: ['published-variant', 'editorial'] }, 'editorial'],
+    ['unknown string tag falls back', { tags: ['supplementary'] }, 'uhr'],
+  ];
+
+  let valid = true;
+  cases.forEach(([label, question, expected]) => {
+    let actual;
+    try {
+      actual = getQuestionProvenance(question);
+    } catch (error) {
+      valid = false;
+      fail(`question provenance runtime guard ${label} threw ${error.message}`);
+      return;
+    }
+
+    if (actual !== expected) {
+      valid = false;
+      fail(
+        `question provenance runtime guard ${label} tags returned ${JSON.stringify(
+          actual,
+        )}, expected ${JSON.stringify(expected)}`,
+      );
+      return;
+    }
+
+    questionProvenanceRuntimeCasesValidated += 1;
+  });
+
+  questionProvenanceRuntimeParityValidated =
+    valid && questionProvenanceRuntimeCasesValidated === cases.length;
 }
 
 function criminalResponsibilityCurrentnessQuestionIds() {
@@ -19492,6 +19743,50 @@ function validatePublishedQuestionNaturalnessGuards() {
 validatePublishedQuestionNaturalnessGuards();
 validateStaticValidationSyntaxGate();
 exitWithValidationFailures();
+if (process.argv.includes('--focus-question-provenance-runtime')) {
+  validateQuestionProvenanceRuntime();
+  if (failures.length) exitWithValidationFailures();
+  console.log('Content validation OK');
+  console.log(
+    JSON.stringify(
+      {
+        questionProvenanceRuntimeCasesValidated,
+        questionProvenanceRuntimeParityValidated,
+      },
+      null,
+      2,
+    ),
+  );
+  process.exit(0);
+}
+if (process.argv.includes('--focus-question-bank-csv')) {
+  validateUhrSectionMapExactSchemaKeys();
+  validateUhrSourceMaterialLinkParity();
+  validateQuestionBankCsvContract();
+  if (failures.length) exitWithValidationFailures();
+  const publishedQuestions = Array.isArray(questions)
+    ? questions.filter((question) => question.reviewStatus === 'published').length
+    : 0;
+  console.log('Content validation OK');
+  console.log(
+    JSON.stringify(
+      {
+        publishedQuestions,
+        questionBankCsvRowsValidated,
+        questionBankCsvHeaderColumnsValidated,
+        questionBankCsvUniqueHeaderNamesValidated,
+        questionBankCsvUhrSourcePublisherRowsValidated,
+        questionBankCsvUhrSourcePublisherParityValidated,
+        questionBankCsvProvenanceCounts,
+        uhrMapExactSchemaKeysValidated,
+        uhrSourceMaterialLinkParityValidated,
+      },
+      null,
+      2,
+    ),
+  );
+  process.exit(0);
+}
 if (process.argv.includes('--focus-legal-route-parity')) {
   validateLegalRouteHeaderParity();
   validateLegalSectionRenderingParity();
@@ -19953,6 +20248,7 @@ validateStreakRules();
 validateXpRules();
 validateMasteryRules();
 validateWeakChapterRules();
+validateQuestionProvenanceRuntime();
 validateQuestionBankCsvContract();
 validateStaticSiteQuestionBankParity();
 validateUhrSourceMaterialLinkParity();
@@ -20296,6 +20592,13 @@ console.log(
       trueFalseOptionLabelsValidated,
       questionTagsValidated,
       questionBankCsvRowsValidated,
+      questionBankCsvHeaderColumnsValidated,
+      questionBankCsvUniqueHeaderNamesValidated,
+      questionBankCsvUhrSourcePublisherRowsValidated,
+      questionBankCsvUhrSourcePublisherParityValidated,
+      questionBankCsvProvenanceCounts,
+      questionProvenanceRuntimeCasesValidated,
+      questionProvenanceRuntimeParityValidated,
       criminalResponsibilityCurrentnessOfficialSourcesValidated,
       criminalResponsibilityCurrentnessSourceMetadataValidated,
       criminalResponsibilityCurrentnessSourceRetrievedAt,

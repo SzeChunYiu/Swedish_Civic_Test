@@ -1,8 +1,10 @@
+import { useMemo } from 'react';
 import { StyleSheet, Text } from 'react-native';
 import type { UHRReference } from '../../types/content';
 import { Card } from '../ui/Card';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, space, typography } from '../../lib/theme';
+import { space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 import { SourceCitation } from './SourceCitation';
 
 type UHRReferenceCardCopy = {
@@ -34,6 +36,8 @@ export function UHRReferenceCard({
   language?: AppLanguage;
   reference?: UHRReference;
 }) {
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const copy = uhrReferenceCardCopy[language];
   const label = reference ? `${reference.chapter} · ${reference.section}` : copy.unavailable;
   const pageLabel = reference?.pageApprox
@@ -62,21 +66,23 @@ export function UHRReferenceCard({
   );
 }
 
-const styles = StyleSheet.create({
-  title: {
-    color: colors.text,
-    fontSize: typography.body.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-  },
-  body: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-    marginTop: space[1],
-  },
-  meta: {
-    color: colors.textMuted,
-    fontSize: typography.badge.fontSize,
-    marginTop: space[0.5],
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    title: {
+      color: themeColors.text,
+      fontSize: typography.body.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+    },
+    body: {
+      color: themeColors.textSecondary,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+      marginTop: space[1],
+    },
+    meta: {
+      color: themeColors.textMuted,
+      fontSize: typography.badge.fontSize,
+      marginTop: space[0.5],
+    },
+  });
+}

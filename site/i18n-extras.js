@@ -106,7 +106,8 @@
       'purchase.removeAds.ready': '继续前往 Google Play — 29 kr',
       'purchase.premium.eyebrow': '高级版',
       'purchase.premium.title': '终身高级版',
-      'purchase.premium.body': '包含“移除广告”的全部内容，外加高级学习工具——电子书标注、笔记等——绑定到你登录的账号。',
+      'purchase.premium.body':
+        '包含“移除广告”的全部内容，外加高级学习工具——电子书标注、笔记等——绑定到你登录的账号。',
       'purchase.premium.locked': '登录后购买高级版',
       'purchase.premium.ready': '继续前往 Google Play — 59 kr',
       'purchase.price.once': '一次性购买',
@@ -495,7 +496,8 @@
       'purchase.removeAds.ready': '繼續前往 Google Play — 29 kr',
       'purchase.premium.eyebrow': '進階版',
       'purchase.premium.title': '終身進階版',
-      'purchase.premium.body': '包含「移除廣告」的全部內容，外加進階學習工具——電子書標註、筆記等——綁定到你登入的帳號。',
+      'purchase.premium.body':
+        '包含「移除廣告」的全部內容，外加進階學習工具——電子書標註、筆記等——綁定到你登入的帳號。',
       'purchase.premium.locked': '登入後購買進階版',
       'purchase.premium.ready': '繼續前往 Google Play — 59 kr',
       'purchase.price.once': '一次性購買',
@@ -793,7 +795,8 @@
     ar: {
       brand: 'Almost Swedish',
       'meta.title': 'Almost Swedish — دراسة وتدريب.',
-      'meta.description': 'تدريب غير رسمي على المعرفة المدنية السويدية مع أسئلة موثقة المصادر وفصول قصيرة وأدوات مراجعة هادئة.',
+      'meta.description':
+        'تدريب غير رسمي على المعرفة المدنية السويدية مع أسئلة موثقة المصادر وفصول قصيرة وأدوات مراجعة هادئة.',
       'nav.home': 'الرئيسية',
       'nav.practice': 'تدريب',
       'nav.ebook': 'دليل الدراسة',
@@ -1199,7 +1202,8 @@
     ckb: {
       brand: 'Almost Swedish',
       'meta.title': 'Almost Swedish — خوێندن و مەشق.',
-      'meta.description': 'مەشقی ناڕەسمی بۆ زانیاریی مەدەنیی سوید، بە پرسیاری پشتبەستوو بە سەرچاوە، بەشی کورت و ئامرازی دووبارەکردنەوەی ئارام.',
+      'meta.description':
+        'مەشقی ناڕەسمی بۆ زانیاریی مەدەنیی سوید، بە پرسیاری پشتبەستوو بە سەرچاوە، بەشی کورت و ئامرازی دووبارەکردنەوەی ئارام.',
       'nav.home': 'سەرەتا',
       'nav.practice': 'مەشق',
       'nav.ebook': 'کتێبی ئەلیکترۆنی',
@@ -1614,7 +1618,8 @@
     fa: {
       brand: 'Almost Swedish',
       'meta.title': 'Almost Swedish — مطالعه و تمرین.',
-      'meta.description': 'تمرین غیررسمی دانش مدنی سوئد با پرسش‌های دارای منبع، فصل‌های کوتاه و ابزارهای مرور آرام.',
+      'meta.description':
+        'تمرین غیررسمی دانش مدنی سوئد با پرسش‌های دارای منبع، فصل‌های کوتاه و ابزارهای مرور آرام.',
       'nav.home': 'خانه',
       'nav.practice': 'تمرین',
       'nav.ebook': 'کتاب الکترونیکی',
@@ -2027,7 +2032,8 @@
     pl: {
       brand: 'Almost Swedish',
       'meta.title': 'Almost Swedish — nauka i ćwiczenia.',
-      'meta.description': 'Nieoficjalne ćwiczenia z wiedzy obywatelskiej o Szwecji: pytania ze źródłami, krótkie rozdziały i spokojne narzędzia powtórkowe.',
+      'meta.description':
+        'Nieoficjalne ćwiczenia z wiedzy obywatelskiej o Szwecji: pytania ze źródłami, krótkie rozdziały i spokojne narzędzia powtórkowe.',
       'nav.home': 'Strona główna',
       'nav.practice': 'Ćwiczenia',
       'nav.ebook': 'E-book',
@@ -2454,7 +2460,8 @@
     so: {
       brand: 'Almost Swedish',
       'meta.title': 'Almost Swedish — barasho iyo tababar.',
-      'meta.description': 'Tababar aan rasmi ahayn oo aqoonta bulshada Iswiidhan ah, leh su’aalo ilo leh, cutubyo gaagaaban iyo qalab dib-u-eegis deggan.',
+      'meta.description':
+        'Tababar aan rasmi ahayn oo aqoonta bulshada Iswiidhan ah, leh su’aalo ilo leh, cutubyo gaagaaban iyo qalab dib-u-eegis deggan.',
       'nav.home': 'Bogga Hore',
       'nav.practice': 'Tababar',
       'nav.ebook': 'Buug',
@@ -2874,7 +2881,8 @@
     ti: {
       brand: 'Almost Swedish',
       'meta.title': 'Almost Swedish — መጽናዕቲን ልምምድን.',
-      'meta.description': 'ዘይወግዓዊ ልምምድ ንሽወደናዊ ሲቪክ ፍልጠት፣ ብምንጪ ዝተደገፉ ሕቶታት፣ ሓጸርቲ ምዕራፋትን ህዱእ መከለሲ መሳርሕታትን።',
+      'meta.description':
+        'ዘይወግዓዊ ልምምድ ንሽወደናዊ ሲቪክ ፍልጠት፣ ብምንጪ ዝተደገፉ ሕቶታት፣ ሓጸርቲ ምዕራፋትን ህዱእ መከለሲ መሳርሕታትን።',
       'nav.home': 'መበገሲ ገጽ',
       'nav.practice': 'ልምምድ',
       'nav.ebook': 'ኢ-መጽሓፍ',
@@ -3267,7 +3275,8 @@
     tr: {
       brand: 'Almost Swedish',
       'meta.title': 'Almost Swedish — çalış ve pratik yap.',
-      'meta.description': 'Kaynaklı sorular, kısa bölümler ve sakin tekrar araçlarıyla İsveç yurttaşlık bilgisi için resmi olmayan pratik.',
+      'meta.description':
+        'Kaynaklı sorular, kısa bölümler ve sakin tekrar araçlarıyla İsveç yurttaşlık bilgisi için resmi olmayan pratik.',
       'nav.home': 'Ana sayfa',
       'nav.practice': 'Alıştırma',
       'nav.ebook': 'E-kitap',
@@ -3682,7 +3691,8 @@
     uk: {
       brand: 'Almost Swedish',
       'meta.title': 'Almost Swedish — навчання і практика.',
-      'meta.description': 'Неофіційна практика зі шведських громадянських знань із питаннями з джерелами, короткими розділами та спокійними інструментами повторення.',
+      'meta.description':
+        'Неофіційна практика зі шведських громадянських знань із питаннями з джерелами, короткими розділами та спокійними інструментами повторення.',
       'nav.home': 'Головна',
       'nav.practice': 'Тренування',
       'nav.ebook': 'Електронна книга',
