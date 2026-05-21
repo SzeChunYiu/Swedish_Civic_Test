@@ -45,14 +45,17 @@ test('countdown banner keeps citizenship rules and civic test dates separate', (
   );
   assert.doesNotMatch(countdownBanner, /The new civic knowledge test takes effect/i);
   assert.doesNotMatch(countdownBanner, /Det nya samhällskunskapstestet träder i kraft/i);
+  assert.doesNotMatch(countdownBanner, /The civic-knowledge test is expected in August 2026/i);
+  assert.doesNotMatch(countdownBanner, /Samhällskunskapsprovet väntas starta i augusti 2026/i);
+  assert.doesNotMatch(countdownBanner, /government deadline for the first step/i);
+  assert.doesNotMatch(countdownBanner, /Regeringens tidsgräns för första steget/i);
   assert.match(countdownBanner, /New citizenship rules apply from/);
-  assert.match(countdownBanner, /The civic-knowledge test is expected in August 2026/);
-  assert.match(countdownBanner, /The new citizenship rules now apply from/);
-  assert.match(countdownBanner, /until first test/);
+  assert.match(countdownBanner, /UHR has confirmed that the first civic-knowledge sitting/);
+  assert.match(countdownBanner, /until new rules/);
   assert.match(countdownBanner, /Nya medborgarskapsregler gäller från/);
-  assert.match(countdownBanner, /Samhällskunskapsprovet väntas starta i augusti 2026/);
-  assert.match(countdownBanner, /De nya medborgarskapsreglerna gäller nu sedan/);
-  assert.match(countdownBanner, /till första provet/);
+  assert.match(countdownBanner, /UHR har bekräftat att den första provomgången/);
+  assert.match(countdownBanner, /tills nya reglerna/);
+  assert.match(countdownBanner, /CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE/);
   assert.match(countdownBanner, /CITIZENSHIP_TIMELINE_SOURCE_URLS/);
   assert.doesNotMatch(
     countdownBanner,
@@ -64,7 +67,7 @@ test('countdown banner keeps citizenship rules and civic test dates separate', (
   assert.match(countdownBanner, /Official date sources:/);
   assert.match(countdownBanner, /Migrationsverket/);
   assert.match(countdownBanner, /UHR/);
-  assert.match(countdownBanner, /Regeringen/);
+  assert.doesNotMatch(countdownBanner, /Regeringen/);
   assert.match(countdownBanner, /target="_blank"/);
   assert.match(countdownBanner, /minHeight: space\[6\]/);
   assert.match(countdownBanner, /minWidth: space\[6\]/);
@@ -74,7 +77,7 @@ test('countdown banner keeps citizenship rules and civic test dates separate', (
   assert.match(homeRoute, /<CountdownBanner language=\{language\} \/>/);
 });
 
-test('countdown banner switches from rules phase to civic-test phase after 6 June', () => {
+test('citizenship timeline helper switches from rules phase to civic-test phase after 6 June', () => {
   const { getCitizenshipTimelineCountdown } = loadTs('lib/learning/examDate.ts');
 
   assert.deepEqual(getCitizenshipTimelineCountdown(new Date('2026-06-05T00:00:00.000Z')), {

@@ -15,10 +15,6 @@ const expectedSources = [
     label: 'UHR',
     url: CITIZENSHIP_TIMELINE_SOURCE_URLS.civicKnowledgeTestFirstSitting,
   },
-  {
-    label: 'Regeringen',
-    url: CITIZENSHIP_TIMELINE_SOURCE_URLS.civicKnowledgeTestDeadline,
-  },
 ] as const;
 
 async function expectTargetSize(locator: Locator, label: string) {
