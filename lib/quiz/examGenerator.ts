@@ -62,20 +62,31 @@ export type BuildMockExamQuizSessionInput = {
   startedAt: string;
 };
 
-export function formatExamTime(remainingSeconds: number): string {
-  const safeSeconds = Math.max(0, Math.floor(remainingSeconds));
+function normalizeRemainingSeconds(value: unknown): number {
+  if (typeof value !== 'number' || !Number.isFinite(value)) return 0;
+  return Math.max(0, Math.floor(value));
+}
+
+function isFiniteNumber(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value);
+}
+
+export function formatExamTime(remainingSeconds: unknown): string {
+  const safeSeconds = normalizeRemainingSeconds(remainingSeconds);
   const minutes = Math.floor(safeSeconds / 60);
   const seconds = safeSeconds % 60;
   return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 }
 
 export function shouldAutoSubmitExam({
-  examActive = true,
+  examActive,
   remainingSeconds,
   submitted,
   questionCount,
 }: ExamAutoSubmitState): boolean {
-  return examActive && !submitted && questionCount > 0 && remainingSeconds <= 0;
+  if (examActive !== true || submitted !== false) return false;
+  if (!isFiniteNumber(remainingSeconds) || !isFiniteNumber(questionCount)) return false;
+  return questionCount > 0 && remainingSeconds <= 0;
 }
 
 function normalizeTimeSpentSeconds(value: unknown): number {
