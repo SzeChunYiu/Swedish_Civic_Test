@@ -1,12 +1,13 @@
 const assert = require('node:assert/strict');
 const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
-const Module = require('node:module');
 const path = require('node:path');
 const test = require('node:test');
-const ts = require('typescript');
 
-const { createThrowingReadMMKV } = require('./helpers/storageStoreHarness.cjs');
+const {
+  createThrowingReadMMKV,
+  loadTsWithStorage,
+} = require('./helpers/storageStoreHarness.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -74,72 +75,9 @@ function createDailyGoalStorage(storedValue) {
 }
 
 function loadSettingsModuleFromStorage(storage) {
-  const settingsStorePath = path.join(repoRoot, 'lib/storage/settingsStore.ts');
-  const originalResolve = Module._resolveFilename;
-  const originalLoad = Module._load;
-  const originalTsExtension = require.extensions['.ts'];
-
-  Module._resolveFilename = function patchedResolve(request, parent, ...args) {
-    if (request === 'react-native-mmkv' || request === 'zustand' || request === 'expo-speech') {
-      return `__stub__:${request}`;
-    }
-    return originalResolve.call(this, request, parent, ...args);
-  };
-  Module._load = function patchedLoad(request, parent, isMain) {
-    if (request === 'react-native-mmkv') {
-      return {
-        createMMKV: () => storage,
-      };
-    }
-
-    if (request === 'zustand') {
-      return {
-        create: (factory) => {
-          let state;
-          const setState = (partial) => {
-            const next = typeof partial === 'function' ? partial(state) : partial;
-            if (next == null) return;
-            state = { ...state, ...next };
-          };
-          state = factory(setState, () => state);
-          const useStore = (selector) => (selector ? selector(state) : state);
-          useStore.getState = () => state;
-          useStore.setState = setState;
-          return useStore;
-        },
-      };
-    }
-    if (request === 'expo-speech') {
-      return {
-        speak() {},
-        stop() {},
-      };
-    }
-
-    return originalLoad.call(this, request, parent, isMain);
-  };
-  require.extensions['.ts'] = function tsLoader(module, filename) {
-    const source = fs.readFileSync(filename, 'utf8');
-    const transpiled = ts.transpileModule(source, {
-      compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
-      fileName: filename,
-    }).outputText;
-    module._compile(transpiled, filename);
-  };
-
-  try {
-    delete require.cache[settingsStorePath];
-    return require(settingsStorePath);
-  } finally {
-    delete require.cache[settingsStorePath];
-    Module._resolveFilename = originalResolve;
-    Module._load = originalLoad;
-    if (originalTsExtension) {
-      require.extensions['.ts'] = originalTsExtension;
-    } else {
-      delete require.extensions['.ts'];
-    }
-  }
+  return loadTsWithStorage(repoRoot, 'lib/storage/settingsStore.ts', {
+    settings: storage,
+  });
 }
 
 function loadSettingsStoreFromStorage(storage) {

@@ -110,6 +110,41 @@ function clearModuleCache(modulePath) {
   }
 }
 
+function compileTypeScriptModule(module, filename) {
+  const source = fs.readFileSync(filename, 'utf8');
+  const transpiled = ts.transpileModule(source, {
+    compilerOptions: {
+      jsx: ts.JsxEmit.React,
+      module: ts.ModuleKind.CommonJS,
+      target: ts.ScriptTarget.ES2020,
+    },
+    fileName: filename,
+  }).outputText;
+  module._compile(transpiled, filename);
+}
+
+function installTypeScriptLoaders() {
+  const originalTsExtension = require.extensions['.ts'];
+  const originalTsxExtension = require.extensions['.tsx'];
+
+  require.extensions['.ts'] = compileTypeScriptModule;
+  require.extensions['.tsx'] = compileTypeScriptModule;
+
+  return () => {
+    if (originalTsExtension) {
+      require.extensions['.ts'] = originalTsExtension;
+    } else {
+      delete require.extensions['.ts'];
+    }
+
+    if (originalTsxExtension) {
+      require.extensions['.tsx'] = originalTsxExtension;
+    } else {
+      delete require.extensions['.tsx'];
+    }
+  };
+}
+
 function loadTsWithStorage(repoRoot, relativePath, storageById, moduleStubs = {}) {
   const targetPath = path.join(repoRoot, relativePath);
   clearModuleCache(targetPath);
@@ -122,17 +157,9 @@ function loadTsWithStorage(repoRoot, relativePath, storageById, moduleStubs = {}
 
   const originalResolve = Module._resolveFilename;
   const originalLoad = Module._load;
-  const originalTsExtension = require.extensions['.ts'];
+  const restoreTypeScriptLoaders = installTypeScriptLoaders();
   const stubs = createStorageModuleStubs(storageById, moduleStubs);
 
-  require.extensions['.ts'] = function tsLoader(module, filename) {
-    const source = fs.readFileSync(filename, 'utf8');
-    const transpiled = ts.transpileModule(source, {
-      compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
-      fileName: filename,
-    }).outputText;
-    module._compile(transpiled, filename);
-  };
   Module._resolveFilename = function patchedResolve(request, ...args) {
     if (stubs[request]) return `__storage_store_stub__:${request}`;
     return originalResolve.call(this, request, ...args);
@@ -147,12 +174,12 @@ function loadTsWithStorage(repoRoot, relativePath, storageById, moduleStubs = {}
   } finally {
     Module._resolveFilename = originalResolve;
     Module._load = originalLoad;
-    if (originalTsExtension) {
-      require.extensions['.ts'] = originalTsExtension;
-    } else {
-      delete require.extensions['.ts'];
-    }
+    restoreTypeScriptLoaders();
   }
+}
+
+function loadTsModule(repoRoot, relativePath, moduleStubs = {}) {
+  return loadTsWithStorage(repoRoot, relativePath, {}, moduleStubs);
 }
 
 module.exports = {
@@ -160,5 +187,6 @@ module.exports = {
   createStorageModuleStubs,
   createThrowingReadMMKV,
   createThrowingSetMMKV,
+  loadTsModule,
   loadTsWithStorage,
 };
