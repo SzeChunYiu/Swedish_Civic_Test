@@ -108,7 +108,7 @@ function extractHtmlAttribute(tag, attributeName) {
 }
 
 function listHtmlAssetAttributeReferences(indexHtml) {
-  return Array.from(indexHtml.matchAll(/\b(?:src|href)\s*=\s*(["'])(.*?)\1/gi), (match) =>
+  return Array.from(indexHtml.matchAll(/\b(?:src|href|poster)\s*=\s*(["'])(.*?)\1/gi), (match) =>
     normalizeAssetReference(match[2]),
   ).filter(Boolean);
 }
@@ -117,6 +117,16 @@ function listInlineStyleAssetReferences(indexHtml) {
   return Array.from(indexHtml.matchAll(/\bstyle\s*=\s*(["'])([\s\S]*?)\1/gi)).flatMap((match) =>
     extractCssUrlReferences(match[2]),
   );
+}
+
+
+function listSrcSetReferences(value) {
+  return value
+    .replace(/data:[^\s]+(?:\s+[-+]?(?:\d*\.)?\d+[wx])?/gi, '')
+    .split(',')
+    .map((candidate) => candidate.trim().split(/\s+/)[0])
+    .map((candidate) => normalizeAssetReference(candidate))
+    .filter((reference) => reference && path.posix.extname(reference));
 }
 
 function listStylesheetAssetReferences(siteDir, indexHtml) {
@@ -180,6 +190,9 @@ function listIndexAssetReferences(siteDir) {
   const indexHtml = fs.readFileSync(indexPath, 'utf8');
   const references = [
     ...listHtmlAssetAttributeReferences(indexHtml),
+    ...Array.from(indexHtml.matchAll(/\b(?:srcset|imagesrcset)\s*=\s*(["'])(.*?)\1/gi)).flatMap(
+      (match) => listSrcSetReferences(match[2]),
+    ),
     ...listInlineStyleAssetReferences(indexHtml),
     ...listStylesheetAssetReferences(siteDir, indexHtml),
   ];

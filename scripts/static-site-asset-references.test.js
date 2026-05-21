@@ -53,25 +53,60 @@ test('asset manifest check rejects referenced assets omitted by manifest scope',
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'site-asset-reference-'));
   const tempSiteDir = path.join(tempDir, 'site');
   const tempManifestPath = path.join(tempSiteDir, 'asset-manifest.json');
-  const omitReferencedScript = (assetPath) => assetPath !== 'app.js';
+  const omittedReferencedAssets = new Set(['app.js', 'hero@2x.png', 'preload-large.png']);
+  const omitReferencedAssets = (assetPath) => !omittedReferencedAssets.has(assetPath);
 
   try {
     fs.mkdirSync(tempSiteDir, { recursive: true });
     fs.writeFileSync(
       path.join(tempSiteDir, 'index.html'),
-      '<!doctype html><link rel="stylesheet" href="styles.css"><script src="app.js"></script><script src=\'extras.js\'></script><a href="#/practice">Practice</a>',
+      [
+        '<!doctype html>',
+        '<link rel="stylesheet" href="styles.css">',
+        '<link rel="preload" as="image" imagesrcset="preload-small.png 1x, preload-large.png 2x">',
+        '<script src="app.js"></script>',
+        "<script src='extras.js'></script>",
+        '<img src="fallback.png" srcset="hero.png 1x, ./hero@2x.png 2x, https://cdn.example.test/hero.png 3x, data:image/png;base64,AAAA 4x" alt="">',
+        '<video poster="intro-poster.png"></video>',
+        '<a href="#/practice">Practice</a>',
+        '<a href="mailto:support@example.test">Support</a>',
+        '<a href="tel:+460000000">Call</a>',
+      ].join(''),
     );
-    fs.writeFileSync(path.join(tempSiteDir, 'styles.css'), 'body { color: #111; }\n');
-    fs.writeFileSync(path.join(tempSiteDir, 'app.js'), 'console.log("ready");\n');
-    fs.writeFileSync(path.join(tempSiteDir, 'extras.js'), 'console.log("extras");\n');
+    for (const assetPath of [
+      'app.js',
+      'extras.js',
+      'fallback.png',
+      'hero.png',
+      'hero@2x.png',
+      'intro-poster.png',
+      'preload-large.png',
+      'preload-small.png',
+      'styles.css',
+    ]) {
+      fs.writeFileSync(path.join(tempSiteDir, assetPath), `${assetPath}\n`);
+    }
+
+    assert.deepEqual(listIndexAssetReferences(tempSiteDir), [
+      'app.js',
+      'extras.js',
+      'fallback.png',
+      'hero.png',
+      'hero@2x.png',
+      'intro-poster.png',
+      'preload-large.png',
+      'preload-small.png',
+      'styles.css',
+    ]);
+
     writeAssetManifest({
-      includeAsset: omitReferencedScript,
+      includeAsset: omitReferencedAssets,
       manifestPath: tempManifestPath,
       siteDir: tempSiteDir,
     });
 
     const result = checkAssetManifest({
-      includeAsset: omitReferencedScript,
+      includeAsset: omitReferencedAssets,
       manifestPath: tempManifestPath,
       siteDir: tempSiteDir,
     });
@@ -80,6 +115,14 @@ test('asset manifest check rejects referenced assets omitted by manifest scope',
     assert.match(
       result.mismatches.join('\n'),
       /app\.js: referenced by index\.html but missing from committed manifest/,
+    );
+    assert.match(
+      result.mismatches.join('\n'),
+      /hero@2x\.png: referenced by index\.html but missing from committed manifest/,
+    );
+    assert.match(
+      result.mismatches.join('\n'),
+      /preload-large\.png: referenced by index\.html but missing from committed manifest/,
     );
   } finally {
     fs.rmSync(tempDir, { force: true, recursive: true });
