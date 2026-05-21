@@ -9977,6 +9977,28 @@ function validateAdPlacementRouteParity() {
     'utf8',
   );
 
+  function validateAdBannerStatusCopyContract(source, surfaceLabel) {
+    if (!source.includes('getAdBannerStatusLabel')) {
+      reject(`AdBanner ${surfaceLabel} placement must use the shared live/test status selector`);
+    }
+    if (!source.includes('const unit = getAdUnit(placement);')) {
+      reject(`AdBanner ${surfaceLabel} placement must read the active configured ad unit`);
+    }
+    if (!source.includes('const adStatusLabel = getAdBannerStatusLabel(copy, unit);')) {
+      reject(`AdBanner ${surfaceLabel} placement must derive status copy from unit.testOnly`);
+    }
+    if (
+      !source.includes(
+        'const accessibilityLabel = copy.accessibilityLabel(placementLabel, adStatusLabel);',
+      )
+    ) {
+      reject(`AdBanner ${surfaceLabel} placement must announce the derived live/test status`);
+    }
+    if (source.includes('copy.accessibilityLabel(placementLabel, copy.liveStatus)')) {
+      reject(`AdBanner ${surfaceLabel} placement must not hardcode live status copy`);
+    }
+  }
+
   if (!nativeAdBannerSource.includes('getPlatformAdUnitId(placement, Platform.OS)')) {
     reject('AdBanner native placement must resolve banner units by Platform.OS');
   }
@@ -9994,6 +10016,8 @@ function validateAdPlacementRouteParity() {
   ) {
     reject('AdBanner web fallback must use the shared web fallback consent decision');
   }
+  validateAdBannerStatusCopyContract(webAdBannerSource, 'web');
+  validateAdBannerStatusCopyContract(nativeAdBannerSource, 'native');
 
   for (const spec of EXPECTED_ROUTE_AD_PLACEMENTS) {
     let source = '';
