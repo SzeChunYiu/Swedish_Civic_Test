@@ -182,6 +182,14 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     summaryKeys: ['readinessAdapterRulesValidated', 'readinessAdapterRuntimeParityValidated'],
   },
   {
+    id: 'adaptivePracticeDifficulty',
+    flags: ['--focus-adaptive-practice-difficulty'],
+    summaryKeys: [
+      'adaptivePracticeDifficultyRuntimeCasesValidated',
+      'adaptivePracticeDifficultyRuntimeParityValidated',
+    ],
+  },
+  {
     id: 'questionReportLinkParity',
     flags: ['--focus-question-report-link-parity'],
     summaryKeys: ['questionReportLinkRulesValidated', 'questionReportLinkParityValidated'],
@@ -210,6 +218,18 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
       'aboutTheTestSeenEffectRulesValidated',
       'aboutTheTestSeenEffectParityValidated',
       'citizenshipRequirementsLimitedSeatCopyValidated',
+    ],
+  },
+  {
+    id: 'onboardingRouteCopy',
+    flags: ['--focus-onboarding-route-copy'],
+    summaryKeys: [
+      'onboardingRouteHeadersValidated',
+      'onboardingRouteHeaderParityValidated',
+      'onboardingRouteCopyLabelsValidated',
+      'onboardingRouteCopyParityValidated',
+      'firstRunAboutModalSuppressedRoutesValidated',
+      'firstRunAboutModalSuppressionParityValidated',
     ],
   },
   {

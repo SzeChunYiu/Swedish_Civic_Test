@@ -142,7 +142,7 @@ test('privacy and consent copy describe unconfigured AdSense slots in both langu
   page,
 }) => {
   await seedStaticPrivacyRun(page);
-  await trapExternalRequests(page, new URL(staticSite.baseUrl).origin, []);
+  await trapExternalRequests(page, new URL(staticSite.baseUrl).origin);
 
   await page.goto(`${staticSite.baseUrl}/#/privacy`, { waitUntil: 'domcontentloaded' });
   await expect(page.locator('[data-page="/privacy"].is-active')).toBeVisible();

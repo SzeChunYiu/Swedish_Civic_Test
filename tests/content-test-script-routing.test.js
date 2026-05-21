@@ -398,6 +398,30 @@ test('readiness adapter focused content validation runs only its runtime summary
   assert.equal(Object.prototype.hasOwnProperty.call(summary, 'xpRulesParityValidated'), false);
 });
 
+test('adaptive difficulty focused content validation runs only its runtime summary', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-adaptive-practice-difficulty'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused adaptive difficulty validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.equal(summary.adaptivePracticeDifficultyRuntimeCasesValidated, 3);
+  assert.equal(summary.adaptivePracticeDifficultyRuntimeParityValidated, true);
+  assert.equal(
+    Object.prototype.hasOwnProperty.call(summary, 'readinessAdapterRuntimeParityValidated'),
+    false,
+  );
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
+});
+
 test('exam submission finality focused validation runs only its parity summary', () => {
   const result = spawnSync(
     process.execPath,
