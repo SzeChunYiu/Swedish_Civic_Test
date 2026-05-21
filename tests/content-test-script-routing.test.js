@@ -75,6 +75,27 @@ test('QuestionCard accessibility parity uses focused content validation routing'
   );
 });
 
+test('LegalSection rendering guard is wired into content validation routing', () => {
+  const pkg = readPackageJson();
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const legalSectionTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-legal-section-rendering.test.js'),
+    'utf8',
+  );
+
+  const routedOccurrences =
+    pkg.scripts['test:content'].match(/tests\/content-legal-section-rendering\.test\.js/g) ?? [];
+
+  assert.equal(routedOccurrences.length, 1);
+  assert.match(validatorSource, /--focus-legal-section-rendering/);
+  assert.match(validatorSource, /validateLegalSectionRenderingParity\(\);/);
+  assert.match(legalSectionTestSource, /--focus-legal-section-rendering/);
+  assert.match(legalSectionTestSource, /legalSectionRenderingParityValidated/);
+});
+
 test('answer feedback parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),

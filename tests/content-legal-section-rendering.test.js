@@ -1,145 +1,71 @@
 const assert = require('node:assert/strict');
-const Module = require('node:module');
+const { execFileSync } = require('node:child_process');
 const path = require('node:path');
 const test = require('node:test');
-const ts = require('typescript');
+const { runLegalSectionRenderingGuard } = require('../scripts/legal-section-rendering-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
 
-function loadLegalPageModule() {
-  const originalLoad = Module._load;
-  const originalTsxExtension = require.extensions['.tsx'];
-
-  Module._load = function loadWithStubs(request, parent, isMain) {
-    if (request === 'expo-router') {
-      return { Link: 'Link' };
-    }
-
-    if (request === 'react-native') {
-      return {
-        ScrollView: 'ScrollView',
-        StyleSheet: { create: (styles) => styles },
-        Text: 'Text',
-        View: 'View',
-      };
-    }
-
-    if (
-      request === '../../lib/storage/settingsStore' ||
-      request.endsWith('/lib/storage/settingsStore')
-    ) {
-      return { useSettingsStore: () => 'sv' };
-    }
-
-    if (request === '../../lib/theme' || request.endsWith('/lib/theme')) {
-      return {
-        colors: {
-          accent: '#006aa7',
-          border: '#d5dce3',
-          surface: '#f5f7fa',
-          surfaceWarm: '#ffffff',
-          text: '#17202a',
-          textMuted: '#4b5563',
-        },
-        radius: { card: 8 },
-        space: {
-          1: 8,
-          1.25: 10,
-          1.75: 14,
-          2: 16,
-          2.25: 18,
-          3: 24,
-          6: 48,
-          hairline: 1,
-        },
-        typography: {
-          bodyBold: { fontWeight: '700' },
-          bodyTight: { lineHeight: 22 },
-          navButton: { fontSize: 15, fontWeight: '600' },
-          sectionTitle: { fontSize: 18 },
-          subHeading: { fontSize: 24, letterSpacing: 0 },
-        },
-      };
-    }
-
-    if (
-      request === './ComplianceActionLink' ||
-      request.endsWith('/components/compliance/ComplianceActionLink')
-    ) {
-      return { ComplianceActionLink: 'ComplianceActionLink' };
-    }
-
-    return originalLoad.call(this, request, parent, isMain);
-  };
-
-  require.extensions['.tsx'] = function tsxLoader(module, filename) {
-    const source = require('node:fs').readFileSync(filename, 'utf8');
-    const transpiled = ts.transpileModule(source, {
-      compilerOptions: {
-        esModuleInterop: true,
-        jsx: ts.JsxEmit.ReactJSX,
-        module: ts.ModuleKind.CommonJS,
-        target: ts.ScriptTarget.ES2020,
-      },
-    });
-    module._compile(transpiled.outputText, filename);
-  };
-
-  try {
-    const legalPagePath = path.join(repoRoot, 'components/compliance/LegalPage.tsx');
-    delete require.cache[legalPagePath];
-    return require(legalPagePath);
-  } finally {
-    Module._load = originalLoad;
-    if (originalTsxExtension) {
-      require.extensions['.tsx'] = originalTsxExtension;
-    } else {
-      delete require.extensions['.tsx'];
-    }
-  }
-}
-
-function flattenChildren(children) {
-  if (children == null || typeof children === 'boolean') return [];
-  if (Array.isArray(children)) return children.flatMap(flattenChildren);
-  return [children];
-}
-
-function assertNoRawTextUnderView(node) {
-  if (node == null || typeof node === 'boolean') return;
-  if (typeof node === 'string' || typeof node === 'number') return;
-
-  const children = flattenChildren(node.props?.children);
-  if (node.type === 'View' || node.type === 'ScrollView') {
-    const rawChild = children.find(
-      (child) => typeof child === 'string' || typeof child === 'number',
-    );
-    assert.equal(rawChild, undefined, `${node.type} must not contain direct raw text children`);
-  }
-
-  for (const child of children) {
-    assertNoRawTextUnderView(child);
-  }
-}
-
-test('LegalSection groups mixed text and external links into native-safe children', () => {
-  const { LegalExternalLink, LegalSection } = loadLegalPageModule();
-  const link = LegalExternalLink({
-    accessibilityLabel: 'Open UHR source',
-    destination: 'https://www.uhr.se/medborgarskapsprovet/',
-    href: 'https://www.uhr.se/medborgarskapsprovet/',
-    label: 'UHR source',
-  });
-
-  const section = LegalSection({
-    title: 'Sources',
-    children: ['Read the source from ', link, ' accessed ', 2026],
-  });
-  const directChildren = flattenChildren(section.props.children);
-
-  assert.deepEqual(
-    directChildren.map((child) => child?.type ?? typeof child),
-    ['Text', 'Text', 'Link', 'Text'],
+function parseFocusedValidationSummary() {
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-legal-section-rendering'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
   );
-  assertNoRawTextUnderView(section);
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused legal-section validation should print JSON summary');
+  return JSON.parse(match[0]);
+}
+
+test('LegalSection runtime rendering keeps mixed legal copy native-safe', () => {
+  const result = runLegalSectionRenderingGuard({ repoRoot });
+
+  assert.deepEqual(result.failures, []);
+  assert.equal(result.summary.legalSectionRenderingCasesValidated, 3);
+  assert.equal(result.summary.legalSectionWhitespaceTextValidated, true);
+  assert.equal(result.summary.legalSectionFragmentChildrenValidated, true);
+  assert.equal(result.summary.legalSectionRawTextUnderViewValidated, true);
+  assert.equal(result.summary.legalSectionRenderingParityValidated, true);
+});
+
+test('LegalSection rendering guard is available through focused content validation', () => {
+  const summary = parseFocusedValidationSummary();
+
+  assert.equal(summary.legalSectionRenderingTestsRoutedValidated, true);
+  assert.equal(summary.legalSectionRenderingCasesValidated, 3);
+  assert.equal(summary.legalSectionWhitespaceTextValidated, true);
+  assert.equal(summary.legalSectionFragmentChildrenValidated, true);
+  assert.equal(summary.legalSectionRawTextUnderViewValidated, true);
+  assert.equal(summary.legalSectionRenderingParityValidated, true);
+});
+
+test('LegalSection rendering guard rejects whitespace-only paragraph regressions', () => {
+  const result = runLegalSectionRenderingGuard({
+    repoRoot,
+    transformLegalPageSource: (source) =>
+      source
+        .replace("if (typeof child === 'string' && child.trim().length === 0) return;", '')
+        .replace(
+          "const paragraph = paragraphChildren.join('').trim();\n  if (!paragraph) return;",
+          "const paragraph = paragraphChildren.join('');\n  if (paragraph.length === 0) return;",
+        ),
+  });
+
+  assert.notDeepEqual(result.failures, []);
+  assert.match(result.failures.join('\n'), /whitespace-only text children/);
+});
+
+test('LegalSection rendering guard rejects unflattened Fragment raw text under View', () => {
+  const result = runLegalSectionRenderingGuard({
+    repoRoot,
+    transformLegalPageSource: (source) =>
+      source.replace('if (isFragmentChild(child)) {', 'if (false && isFragmentChild(child)) {'),
+  });
+
+  assert.notDeepEqual(result.failures, []);
+  assert.match(result.failures.join('\n'), /fragment-wrapped mixed children/);
+  assert.match(result.failures.join('\n'), /View contains direct raw text child/);
 });
