@@ -2517,7 +2517,7 @@
         `,
         tr: `<h2>Dört büyük bayram</h2>
           <ul>
-            <li><b>Midsommar</b> (yaz ortası) — haziranın üçüncü cuması. Mayıs direği, ringa balığı, schnapps, kurbağa gibi dans etmek. İsveç'in yıl boyu iple çektiği asıl tatil günü.</li>
+            <li><b>Midsommar</b> (yaz ortası) — haziranın üçüncü cuması. Mayıs direği, ringa balığı, şnaps, kurbağa gibi dans etmek. İsveç'in yıl boyu iple çektiği asıl tatil günü.</li>
             <li><b>Påsk</b> (Paskalya) — yumurtalar ve tüylü süslemeler, Paskalya cadıları (<em>påskkärringar</em>) kılığına giren çocuklar çizimlerini şekerle takas eder.</li>
             <li><b>Lucia</b> (13 Aralık) — beyaz cüppeli çocuklar, mumlar ve "Sankta Lucia" şarkısı. Karanlığa karşı ışıklar.</li>
             <li><b>Jul</b> (Noel Arifesi) — yemek 25'inde değil, 24'ünde. Her yıl saat 15.00'te televizyonda Donald Duck çizgi filmleri. Sorma.</li>
