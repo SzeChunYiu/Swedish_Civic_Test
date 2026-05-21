@@ -50,6 +50,7 @@ type SettingsCopy = {
   importSectionSubtitle: string;
   importSuccess: string;
   importSummaryBookmarks: (count: number) => string;
+  importSummaryCitizenshipRequirements: (count: number) => string;
   importSummaryCompletedQuestions: (count: number) => string;
   importSummaryFsrsDays: (count: number) => string;
   importSummaryFsrsCards: (count: number) => string;
@@ -117,6 +118,7 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     importSectionSubtitle: `Klistra in en lokal studiedataexport i JSON-format (högst ${localStudyDataImportMaxLabel}). Du får en sammanfattning innan något skrivs.`,
     importSuccess: 'Importen är klar.',
     importSummaryBookmarks: (count) => `${count} bokmärken`,
+    importSummaryCitizenshipRequirements: (count) => `${count} markerade kravområden`,
     importSummaryCompletedQuestions: (count) => `${count} frågor med sparad progression`,
     importSummaryFsrsDays: (count) => `${count} repetitionsdagar`,
     importSummaryFsrsCards: (count) => `${count} repetitionskort`,
@@ -181,6 +183,7 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     importSectionSubtitle: `Paste a local study data export in JSON format (under ${localStudyDataImportMaxLabel}). You will see a summary before anything is written.`,
     importSuccess: 'Import complete.',
     importSummaryBookmarks: (count) => `${count} bookmarks`,
+    importSummaryCitizenshipRequirements: (count) => `${count} marked requirements checklist items`,
     importSummaryCompletedQuestions: (count) => `${count} questions with saved progress`,
     importSummaryFsrsDays: (count) => `${count} FSRS review days`,
     importSummaryFsrsCards: (count) => `${count} FSRS review cards`,
@@ -221,6 +224,7 @@ function buildImportSummaryLines(
     copy.importSummaryFsrsCards(summary.fsrsReviewCardCount),
     copy.importSummaryFsrsDays(summary.gradedReviewDayCount),
     copy.importSummarySettings(summary.settingCount),
+    copy.importSummaryCitizenshipRequirements(summary.citizenshipRequirementChecklistCount),
   ];
   if (summary.streakFreezeStateIncluded) lines.push(copy.importSummaryStreakFreeze);
   return lines;

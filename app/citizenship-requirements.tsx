@@ -1,8 +1,9 @@
 import { Link } from 'expo-router';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Linking, Pressable, StyleSheet, Text, useColorScheme, View } from 'react-native';
 
 import { QuestionDisclaimer } from '../components/quiz/QuestionDisclaimer';
+import { PersistenceWarningNotice } from '../components/storage/PersistenceWarningNotice';
 import { Badge } from '../components/ui/Badge';
 import { Card } from '../components/ui/Card';
 import { ScreenShell, SectionHeader } from '../components/ui/ScreenShell';
@@ -16,6 +17,7 @@ import {
   type CitizenshipRequirementSourceId,
 } from '../data/citizenshipRequirements';
 import { useAccessibilityStore } from '../lib/storage/accessibilityStore';
+import { useCitizenshipRequirementsStore } from '../lib/storage/citizenshipRequirementsStore';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colorsForThemeMode, radius, space, typography } from '../lib/theme';
 import type { ThemeColors } from '../lib/theme';
@@ -175,8 +177,17 @@ export default function CitizenshipRequirementsScreen() {
   const themeColors = colorsForThemeMode(themeMode, systemColorScheme);
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const copy = copyByLanguage[language];
-  const [checkedIds, setCheckedIds] = useState<ReadonlySet<CitizenshipRequirementAreaId>>(
-    () => new Set(),
+  const checkedAreaIds = useCitizenshipRequirementsStore((state) => state.checkedAreaIds);
+  const checklistPersistenceWarning = useCitizenshipRequirementsStore(
+    (state) => state.persistenceWarning,
+  );
+  const clearChecklistPersistenceWarning = useCitizenshipRequirementsStore(
+    (state) => state.clearPersistenceWarning,
+  );
+  const toggleArea = useCitizenshipRequirementsStore((state) => state.toggleArea);
+  const checkedIds = useMemo<ReadonlySet<CitizenshipRequirementAreaId>>(
+    () => new Set(checkedAreaIds),
+    [checkedAreaIds],
   );
 
   const missingAreas = useMemo(
@@ -189,20 +200,6 @@ export default function CitizenshipRequirementsScreen() {
     checkedCount,
     missingAreas.map((area) => area.title[language]),
   );
-
-  function toggleArea(areaId: CitizenshipRequirementAreaId) {
-    setCheckedIds((current) => {
-      const next = new Set(current);
-
-      if (next.has(areaId)) {
-        next.delete(areaId);
-      } else {
-        next.add(areaId);
-      }
-
-      return next;
-    });
-  }
 
   return (
     <ScreenShell
@@ -221,6 +218,11 @@ export default function CitizenshipRequirementsScreen() {
         </View>
       }
     >
+      <PersistenceWarningNotice
+        language={language}
+        onDismiss={clearChecklistPersistenceWarning}
+        warning={checklistPersistenceWarning}
+      />
       <Card style={styles.summaryCard} themeColors={themeColors}>
         <Text accessibilityRole="header" style={styles.summaryTitle}>
           {copy.summaryTitle}

@@ -9,6 +9,7 @@ const repoRoot = path.resolve(__dirname, '..');
 
 function createStorageById() {
   return {
+    'citizenship-requirements': createMemoryMMKV(),
     progress: createMemoryMMKV(),
     'mistake-review': createMemoryMMKV(),
     reviews: createMemoryMMKV(),
@@ -31,6 +32,10 @@ function validReviewCard(questionId = 'q001') {
 
 function loadImportModule(storageById) {
   return loadTsWithStorage(repoRoot, 'lib/storage/localStudyDataImport.ts', storageById);
+}
+
+function loadExportModule(storageById) {
+  return loadTsWithStorage(repoRoot, 'lib/storage/localStudyDataExport.ts', storageById);
 }
 
 test('storage-backed tests share the storage harness TypeScript loader and native stubs', () => {
@@ -86,6 +91,7 @@ test('local study data import summary keeps Swedish copy learner-facing', () => 
   assert.ok(englishCopyMatch, 'Settings must keep an English import summary copy block');
   assert.match(swedishCopyMatch[0], /\$\{count\} repetitionsdagar/);
   assert.match(swedishCopyMatch[0], /\$\{count\} repetitionskort/);
+  assert.match(swedishCopyMatch[0], /\$\{count\} markerade kravområden/);
   assert.match(swedishCopyMatch[0], /Studiesvit och svitskydd ingår/);
   assert.match(swedishCopyMatch[0], /högst \$\{localStudyDataImportMaxLabel\}/);
   assert.match(
@@ -97,6 +103,7 @@ test('local study data import summary keeps Swedish copy learner-facing', () => 
   assert.doesNotMatch(swedishCopyMatch[0], /\bFSRS\b|frysstatus|\bIAP\b/);
   assert.match(englishCopyMatch[0], /\$\{count\} FSRS review days/);
   assert.match(englishCopyMatch[0], /\$\{count\} FSRS review cards/);
+  assert.match(englishCopyMatch[0], /\$\{count\} marked requirements checklist items/);
   assert.match(englishCopyMatch[0], /under \$\{localStudyDataImportMaxLabel\}/);
   assert.match(
     englishCopyMatch[0],
@@ -174,6 +181,9 @@ test('local study data import previews and applies all learner snapshot sections
       hasSeenAboutTheTest: true,
       ignoredSetting: 'skip',
     },
+    citizenshipRequirements: {
+      checkedAreaIds: ['civicKnowledge', 'unknown', 'identity', 'identity'],
+    },
   });
 
   const previewResult = previewLocalStudyDataImport(rawPayload);
@@ -187,6 +197,7 @@ test('local study data import previews and applies all learner snapshot sections
     fsrsReviewCardCount: 1,
     gradedReviewDayCount: 1,
     settingCount: 5,
+    citizenshipRequirementChecklistCount: 2,
   });
 
   const appliedSummary = applyLocalStudyDataImport(previewResult.preview);
@@ -210,6 +221,60 @@ test('local study data import previews and applies all learner snapshot sections
   assert.equal(storageById.settings.values.get('dailyGoalAnswers'), 20);
   assert.equal(storageById.settings.values.get('includeSupplementaryQuestions'), true);
   assert.equal(storageById.settings.values.get('hasSeenAboutTheTest'), true);
+
+  const citizenshipRequirements = JSON.parse(
+    storageById['citizenship-requirements'].values.get('citizenshipRequirementsChecklistState'),
+  );
+  assert.deepEqual(citizenshipRequirements.checkedAreaIds, ['identity', 'civicKnowledge']);
+});
+
+test('local study data export round-trips citizenship requirements without purchase fields', () => {
+  const sourceStorageById = createStorageById();
+  sourceStorageById['citizenship-requirements'].set(
+    'citizenshipRequirementsChecklistState',
+    JSON.stringify({
+      checkedAreaIds: ['selfSupport', 'identity', 'prototype', 'swedishLanguage', 'identity'],
+    }),
+  );
+  sourceStorageById.settings.set('language', 'en');
+  sourceStorageById.settings.set('dailyGoalAnswers', 20);
+
+  const { buildLocalStudyDataExportSnapshot, serializeLocalStudyDataExport } =
+    loadExportModule(sourceStorageById);
+  const snapshot = buildLocalStudyDataExportSnapshot('2026-05-21T08:00:00.000Z');
+  assert.equal(snapshot.version, 1);
+  assert.equal(snapshot.source, 'almost-swedish-local-study-data');
+  assert.deepEqual(snapshot.citizenshipRequirements.checkedAreaIds, [
+    'identity',
+    'selfSupport',
+    'swedishLanguage',
+  ]);
+  assert.equal(snapshot.settings.language, 'en');
+  assert.equal(snapshot.settings.dailyGoalAnswers, 20);
+  assert.doesNotMatch(JSON.stringify(snapshot), /purchase|receipt|entitlement|removeAds/i);
+
+  const targetStorageById = createStorageById();
+  const { applyLocalStudyDataImport, previewLocalStudyDataImport } =
+    loadImportModule(targetStorageById);
+  const previewResult = previewLocalStudyDataImport(
+    serializeLocalStudyDataExport('2026-05-21T08:00:00.000Z'),
+  );
+
+  assert.equal(previewResult.ok, true);
+  assert.equal(previewResult.preview.summary.citizenshipRequirementChecklistCount, 3);
+  assert.equal(previewResult.preview.summary.settingCount, 5);
+  applyLocalStudyDataImport(previewResult.preview);
+
+  const restoredChecklist = JSON.parse(
+    targetStorageById['citizenship-requirements'].values.get(
+      'citizenshipRequirementsChecklistState',
+    ),
+  );
+  assert.deepEqual(restoredChecklist.checkedAreaIds, [
+    'identity',
+    'selfSupport',
+    'swedishLanguage',
+  ]);
 });
 
 test('local study data import rejects purchase fields before any snapshot writes', () => {
@@ -236,6 +301,7 @@ test('local study data import rejects purchase fields before any snapshot writes
   assert.equal(storageById['mistake-review'].values.size, 0);
   assert.equal(storageById.reviews.values.size, 0);
   assert.equal(storageById.settings.values.size, 0);
+  assert.equal(storageById['citizenship-requirements'].values.size, 0);
 });
 
 test('local study data import rejects oversized payloads before parsing', () => {
@@ -259,6 +325,7 @@ test('local study data import rejects oversized payloads before parsing', () => 
     assert.equal(storageById['mistake-review'].values.size, 0);
     assert.equal(storageById.reviews.values.size, 0);
     assert.equal(storageById.settings.values.size, 0);
+    assert.equal(storageById['citizenship-requirements'].values.size, 0);
   } finally {
     JSON.parse = originalParse;
   }
@@ -328,6 +395,7 @@ test('local study data import ignores unsafe imported map keys with the shared g
   assert.equal(summary.wrongAnswerReviewCount, 1);
   assert.equal(summary.fsrsReviewCardCount, 1);
   assert.equal(summary.gradedReviewDayCount, 1);
+  assert.equal(summary.citizenshipRequirementChecklistCount, 0);
 
   for (const map of [
     progress.questionProgress,
@@ -356,6 +424,7 @@ test('local study data import map-key safety is shared by all storage normalizer
     'lib/storage/progressStore.ts',
     'lib/storage/mistakeReviewStore.ts',
     'lib/storage/reviewStore.ts',
+    'lib/storage/citizenshipRequirementsStore.ts',
   ]) {
     const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
     assert.match(source, /isSafeImportedMapKey/);
