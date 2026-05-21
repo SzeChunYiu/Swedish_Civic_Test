@@ -74,6 +74,10 @@ test('quiz QuestionCard keeps question text and accessibility summary in parity'
     provenanceSource,
     /useEffect\(\(\) =>\s*\{[\s\S]*setSourceNoteVisible\(false\);[\s\S]*\},\s*\[\s*question\?\.id,\s*language\s*\]\s*\);/,
   );
+  assert.match(
+    provenanceSource,
+    /sourceNote:\s*\{[\s\S]*backgroundColor: themeColors\.surfaceWarm,[\s\S]*borderColor: themeColors\.border,[\s\S]*borderRadius: radius\.small,[\s\S]*color: themeColors\.textSecondary,[\s\S]*\}/,
+  );
   assert.match(helperSource, /const QUESTION_DISPLAY_FALLBACKS/);
   assert.match(helperSource, /sv: 'Fråga saknas'/);
   assert.match(helperSource, /en: 'Question unavailable'/);

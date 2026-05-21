@@ -490,6 +490,74 @@ test('exam route keeps flag-for-review state local to the current attempt', () =
   assert.match(navigatorSource, /if \(flaggedSet\.has\(index\)\) return 'flagged';/);
 });
 
+test('exam route separates reload-safe attempt ids from deterministic shuffle seeds', () => {
+  const examRouteSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+  const generateExamCall =
+    examRouteSource.match(/generateExam\(questions, \{[\s\S]*?\n\s*\}\),/)?.[0] ?? '';
+  const sessionBuilderCall =
+    examRouteSource.match(/buildMockExamQuizSession\(\{[\s\S]*?\n\s*\}\)/)?.[0] ?? '';
+  const progressRecordCall =
+    examRouteSource.match(/recordMockExamSession\(\{[\s\S]*?\n\s*\}\);/)?.[0] ?? '';
+
+  assert.ok(examRouteSource.includes('function createMockExamAttemptId('));
+  assert.ok(
+    examRouteSource.includes(
+      'const [examAttemptId, setExamAttemptId] = useState(createMockExamAttemptId);',
+    ),
+  );
+  assert.ok(
+    examRouteSource.includes(
+      'const [examShuffleSeedIndex, setExamShuffleSeedIndex] = useState(0);',
+    ),
+  );
+  assert.ok(
+    examRouteSource.includes(
+      'const examShuffleSeed = `mock-exam-shuffle-${examShuffleSeedIndex}`;',
+    ),
+  );
+  assert.ok(examRouteSource.includes('setExamAttemptId(createMockExamAttemptId());'));
+  assert.ok(examRouteSource.includes('setExamShuffleSeedIndex((current) => current + 1);'));
+  assert.match(generateExamCall, /sessionId: examShuffleSeed,/);
+  assert.doesNotMatch(generateExamCall, /examAttemptId/);
+  assert.match(sessionBuilderCall, /sessionId: examAttemptId,/);
+  assert.match(progressRecordCall, /sessionId: examAttemptId,/);
+  assert.match(examRouteSource, /recordExamCompletion\(examAttemptId\)/);
+  assert.doesNotMatch(examRouteSource, /examAttemptIndex/);
+  assert.doesNotMatch(examRouteSource, /examSessionId/);
+  assert.doesNotMatch(examRouteSource, /const examSessionId = `mock-exam-\$\{examAttemptIndex\}`;/);
+});
+
+test('mock exam access counts unique durable attempt ids while deduping completion retries', async () => {
+  const { createMemoryMockExamAccessStorage, recordStoredMockExamCompletion } = loadTs(
+    'lib/monetization/rewardedExam.ts',
+  );
+  const storage = createMemoryMockExamAccessStorage();
+
+  const firstCompletion = await recordStoredMockExamCompletion({
+    date: '2026-05-21T10:00:00.000Z',
+    sessionId: 'mock-exam-attempt-a',
+    storage,
+  });
+  const duplicateCompletion = await recordStoredMockExamCompletion({
+    date: '2026-05-21T10:05:00.000Z',
+    sessionId: 'mock-exam-attempt-a',
+    storage,
+  });
+  const secondCompletion = await recordStoredMockExamCompletion({
+    date: '2026-05-21T12:00:00.000Z',
+    sessionId: 'mock-exam-attempt-b',
+    storage,
+  });
+
+  assert.equal(firstCompletion.completedMockExamsToday, 1);
+  assert.equal(duplicateCompletion.completedMockExamsToday, 1);
+  assert.equal(secondCompletion.completedMockExamsToday, 2);
+  assert.deepEqual(secondCompletion.completedMockExamSessionIdsByDate['2026-05-21'], [
+    'mock-exam-attempt-a',
+    'mock-exam-attempt-b',
+  ]);
+});
+
 test('formatExamTime renders remaining seconds as mm:ss', () => {
   const { formatExamTime } = loadTs('lib/quiz/examGenerator.ts');
 

@@ -207,9 +207,14 @@ test('NativeAdCard native summary and CTA are separate accessibility elements', 
   const copySource = fs.readFileSync(path.join(ROOT, 'lib', 'monetization', 'adCopy.ts'), 'utf8');
 
   assert.match(source, /<NativeAdView accessible=\{false\}/);
+  assert.match(source, /getNativeAdSummaryAccessibilityLabel/);
+  assert.match(source, /const summaryAccessibilityLabel = getNativeAdSummaryAccessibilityLabel/);
+  assert.match(source, /headline: nativeAd\.headline/);
+  assert.match(source, /advertiser: nativeAd\.advertiser/);
+  assert.match(source, /body: nativeAd\.body/);
   assert.match(
     source,
-    /<View\s+accessible\s+accessibilityHint=\{copy\.hint\}\s+accessibilityLabel=\{copy\.accessibilityLabel\}\s+accessibilityRole="summary"[\s\S]*?style=\{styles\.summary\}/,
+    /<View\s+accessible\s+accessibilityHint=\{copy\.hint\}\s+accessibilityLabel=\{summaryAccessibilityLabel\}\s+accessibilityRole="summary"[\s\S]*?style=\{styles\.summary\}/,
   );
   assert.match(
     source,
@@ -226,6 +231,7 @@ test('NativeAdCard native summary and CTA are separate accessibility elements', 
     /ctaAccessibilityLabel: \(callToAction\) => `Ad action: \$\{callToAction\}`/,
   );
   assert.match(copySource, /getNativeAdCardCopy/);
+  assert.match(copySource, /getNativeAdSummaryAccessibilityLabel/);
   assert.match(copySource, /live:\s*\{[\s\S]*?accessibilityLabel:\s*'Ad:/);
   assert.match(copySource, /test:\s*\{[\s\S]*?accessibilityLabel:\s*'Test native ad:/);
   assert.doesNotMatch(copySource, new RegExp(['Sponsrad', 'studieplacering'].join('\\s+'), 'i'));

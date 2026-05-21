@@ -310,6 +310,11 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'onboardingRouteScroll',
+    flags: ['--focus-onboarding-route-scroll'],
+    summaryKeys: ['onboardingRouteScrollRulesValidated', 'onboardingRouteScrollParityValidated'],
+  },
+  {
     id: 'mockExamRuntimeParity',
     flags: ['--focus-mock-exam-runtime-parity'],
     summaryKeys: [
@@ -399,6 +404,15 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     summaryKeys: [
       'uhrReferenceCardAccessibilityRulesValidated',
       'uhrReferenceCardAccessibilityParityValidated',
+    ],
+  },
+  {
+    id: 'flashcardAccessibility',
+    flags: ['--focus-flashcard-accessibility'],
+    summaryKeys: [
+      'flashcardAccessibilityRulesValidated',
+      'flashcardAccessibilityParityValidated',
+      'swedishFlashcardCopyNaturalnessValidated',
     ],
   },
   {
