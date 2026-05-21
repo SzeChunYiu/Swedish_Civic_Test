@@ -58,8 +58,8 @@ function assertSearchRouteQuestionResults(source) {
     [/provenanceLabel,/, 'provenance label included in accessible summary'],
     [/provenanceDescription,/, 'provenance description included in accessible summary'],
     [
-      /<ProvenanceBadge language=\{language\} question=\{result\.question\} \/>/,
-      'visible provenance badge',
+      /<ProvenanceBadge[\s\S]*language=\{language\}[\s\S]*question=\{result\.question\}[\s\S]*themeColors=\{themeColors\}[\s\S]*\/>/,
+      'visible themed provenance badge',
     ],
     [/href=\{`\/quiz\/\$\{result\.question\.id\}`\}/, 'routed quiz question link'],
     [/questionSectionTitle: 'Övningsfrågor'/, 'Swedish question section copy'],
@@ -324,9 +324,12 @@ test('Search route question results reject dropping ranked helper usage', () => 
 
 test('Search route question results reject dropping provenance badges', () => {
   const mutatedSource = readSearchRouteSource().replace(
-    '<ProvenanceBadge language={language} question={result.question} />',
+    /<ProvenanceBadge[\s\S]*?themeColors=\{themeColors\}[\s\S]*?\/>/,
     '',
   );
 
-  assert.throws(() => assertSearchRouteQuestionResults(mutatedSource), /visible provenance badge/);
+  assert.throws(
+    () => assertSearchRouteQuestionResults(mutatedSource),
+    /visible themed provenance badge/,
+  );
 });

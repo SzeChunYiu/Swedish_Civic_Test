@@ -3,9 +3,10 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { getProvenanceDescription, getQuestionProvenance } from '../../lib/content/provenance';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, motion, radius, space, typography } from '../../lib/theme';
+import { motion, radius, space, typography } from '../../lib/theme';
 import type { ThemeColors } from '../../lib/theme';
 import type { PracticeQuestion } from '../../types/content';
+import { useResolvedThemeColors } from '../useResolvedThemeColors';
 
 type ProvenanceBadgeCopy = {
   accessibilityPrefix: string;
@@ -48,10 +49,11 @@ export interface ProvenanceBadgeProps {
 }
 
 export function ProvenanceBadge({ question, language = 'sv', themeColors }: ProvenanceBadgeProps) {
+  const resolvedThemeColors = useResolvedThemeColors(themeColors);
+  const styles = useMemo(() => createStyles(resolvedThemeColors), [resolvedThemeColors]);
   const focusShowTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pointerPressStarted = useRef(false);
   const [sourceNoteVisible, setSourceNoteVisible] = useState(false);
-  const styles = useMemo(() => createStyles(themeColors ?? colors), [themeColors]);
 
   const clearFocusShowTimeout = () => {
     if (focusShowTimeout.current === null) return;

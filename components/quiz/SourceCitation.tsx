@@ -1,10 +1,13 @@
 import type { ComponentProps, ReactNode } from 'react';
+import { useMemo } from 'react';
 import { StyleSheet, Text as NativeText, View } from 'react-native';
 import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
 
 import type { AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, radius, space, typography } from '../../lib/theme';
+import { radius, space, typography } from '../../lib/theme';
+import type { ThemeColors } from '../../lib/theme';
 import type { UHRReference } from '../../types/content';
+import { useResolvedThemeColors } from '../useResolvedThemeColors';
 
 type SourceCitationCopy = {
   label: string;
@@ -45,6 +48,7 @@ export interface SourceCitationProps extends Omit<
   showLabel?: boolean;
   sourceTitle?: string;
   style?: StyleProp<ViewStyle>;
+  themeColors?: ThemeColors;
   unavailableLabel?: string;
 }
 
@@ -80,9 +84,12 @@ export function SourceCitation({
   showLabel = true,
   sourceTitle = 'Sverige i fokus',
   style,
+  themeColors,
   unavailableLabel,
   ...viewProps
 }: SourceCitationProps) {
+  const resolvedThemeColors = useResolvedThemeColors(themeColors);
+  const styles = useMemo(() => createStyles(resolvedThemeColors), [resolvedThemeColors]);
   const copy = sourceCitationCopy[language];
   const resolvedLabel = label ?? copy.label;
   const citationText = getCitationText({ copy, reference, sourceTitle, unavailableLabel });
@@ -116,27 +123,29 @@ export function SourceCitation({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.surfaceWarm,
-    borderColor: colors.border,
-    borderRadius: radius.small,
-    borderWidth: space.hairline,
-    gap: space[0.5],
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[1],
-  },
-  label: {
-    ...typography.badge,
-    color: colors.textDisclaimer,
-    textTransform: 'uppercase',
-  },
-  body: {
-    ...typography.captionLight,
-    color: colors.textSecondary,
-  },
-  meta: {
-    ...typography.micro,
-    color: colors.textMuted,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    container: {
+      backgroundColor: themeColors.surfaceWarm,
+      borderColor: themeColors.border,
+      borderRadius: radius.small,
+      borderWidth: space.hairline,
+      gap: space[0.5],
+      paddingHorizontal: space[1.5],
+      paddingVertical: space[1],
+    },
+    label: {
+      ...typography.badge,
+      color: themeColors.textDisclaimer,
+      textTransform: 'uppercase',
+    },
+    body: {
+      ...typography.captionLight,
+      color: themeColors.textSecondary,
+    },
+    meta: {
+      ...typography.micro,
+      color: themeColors.textMuted,
+    },
+  });
+}

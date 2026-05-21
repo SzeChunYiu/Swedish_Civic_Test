@@ -265,13 +265,76 @@ test('search and citizenship utility routes resolve colors from persisted theme 
   );
 });
 
-test('ProvenanceBadge accepts route theme colors for nested source affordances', () => {
-  const source = read('components/quiz/ProvenanceBadge.tsx');
+function assertSourceAffordanceThemeContract(relativePath, componentLabel) {
+  const source = read(relativePath);
 
-  assert.match(source, /themeColors\?: ThemeColors/);
-  assert.match(source, /createStyles\(themeColors \?\? colors\)/);
-  assert.match(source, /function createStyles\(themeColors: ThemeColors\)/);
-  assert.doesNotMatch(source, /(color|backgroundColor|borderColor):\s*colors\./);
+  assert.match(
+    source,
+    /themeColors\?: ThemeColors/,
+    `${componentLabel} should expose a typed themeColors override`,
+  );
+  assert.match(
+    source,
+    /useResolvedThemeColors\(themeColors\)/,
+    `${componentLabel} should resolve persisted theme colors through the shared hook`,
+  );
+  assert.match(
+    source,
+    /createStyles\(resolvedThemeColors\)/,
+    `${componentLabel} should build styles from resolved theme colors`,
+  );
+  assert.doesNotMatch(
+    source,
+    /import \{[^}]*\bcolors\b[^}]*\} from ['"][^'"]*lib\/theme['"]/,
+    `${componentLabel} should not import static light color tokens`,
+  );
+  assert.doesNotMatch(
+    source,
+    /\bcolors\./,
+    `${componentLabel} should not reference static light color tokens`,
+  );
+}
+
+test('source-boundary affordances resolve persisted dark theme colors', () => {
+  assertSourceAffordanceThemeContract('components/DisclaimerBanner.tsx', 'DisclaimerBanner');
+  assertSourceAffordanceThemeContract('components/quiz/SourceCitation.tsx', 'SourceCitation');
+  assertSourceAffordanceThemeContract(
+    'components/quiz/QuestionSourceCitation.tsx',
+    'QuestionSourceCitation',
+  );
+  assertSourceAffordanceThemeContract('components/quiz/ProvenanceBadge.tsx', 'ProvenanceBadge');
+
+  const hookSource = read('components/useResolvedThemeColors.ts');
+  assert.match(hookSource, /useAccessibilityStore/, 'theme hook should read persisted theme mode');
+  assert.match(hookSource, /useColorScheme/, 'theme hook should honor system color scheme');
+  assert.match(
+    hookSource,
+    /colorsForThemeMode\(themeMode, systemColorScheme\)/,
+    'theme hook should use shared theme token resolver',
+  );
+
+  const questionDisclaimerSource = read('components/quiz/QuestionDisclaimer.tsx');
+  assert.match(
+    questionDisclaimerSource,
+    /themeColors\?: ThemeColors/,
+    'QuestionDisclaimer should accept a typed themeColors prop',
+  );
+  assert.match(
+    questionDisclaimerSource,
+    /<DisclaimerBanner[\s\S]*themeColors=\{themeColors\}/,
+    'QuestionDisclaimer should forward route theme colors to DisclaimerBanner',
+  );
+
+  assert.match(
+    read('app/search.tsx'),
+    /<ProvenanceBadge[\s\S]*themeColors=\{themeColors\}/,
+    'Search should pass resolved route colors to the provenance badge',
+  );
+  assert.match(
+    read('app/citizenship-requirements.tsx'),
+    /<QuestionDisclaimer themeColors=\{themeColors\}/,
+    'Citizenship requirements should pass resolved route colors to the disclaimer',
+  );
 });
 
 test('utility route theme contract rejects static route-local colors', () => {
