@@ -60,6 +60,28 @@ test('practice route shell copy follows the persisted settings language', () => 
   assert.match(source, /\{copy\.scoreLabel\}: \{currentScore\.correct\}\/\{currentScore\.total\}/);
 });
 
+test('web aria false-state e2e covers localized Practice control labels', () => {
+  const source = fs.readFileSync(
+    path.join(repoRoot, 'tests/e2e/web-aria-false-state.spec.ts'),
+    'utf8',
+  );
+
+  assert.match(source, /const localeCases: PracticeAriaLocaleCase\[\] = \[/);
+  assert.match(source, /for \(const labels of localeCases\)/);
+  assert.match(source, /seedSettingsLanguage\(page, labels\.language\)/);
+  assert.match(source, /page\.getByText\(labels\.questionTitle, \{ exact: true \}\)/);
+  assert.match(source, /page\.getByRole\('switch', \{ name: labels\.supplementaryOff \}\)/);
+  assert.match(source, /page\.getByRole\('button', \{ name: labels\.aboutSourcesOpen \}\)/);
+  assert.match(
+    source,
+    /aboutSourcesOpen: 'About the sources'[\s\S]*audioEnabled: 'Audio enabled, tap to mute'[\s\S]*language: 'en'[\s\S]*questionTitle: 'Question 1'[\s\S]*supplementaryOff: 'UHR questions only'/,
+  );
+  assert.match(
+    source,
+    /aboutSourcesOpen: 'Om källorna'[\s\S]*audioEnabled: 'Ljud är på, tryck för att stänga av'[\s\S]*language: 'sv'[\s\S]*questionTitle: 'Fråga 1'[\s\S]*supplementaryOff: 'Bara UHR-frågor'/,
+  );
+});
+
 test('practice route copy parity rejects bypassing the settings language', () => {
   const result = spawnSync(
     process.execPath,

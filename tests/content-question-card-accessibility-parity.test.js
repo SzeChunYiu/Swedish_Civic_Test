@@ -68,6 +68,32 @@ test('quiz QuestionCard keeps question text and accessibility summary in parity'
   assert.match(helperSource, /resolveLocalizedText\(question\?\.questionText, language/);
 });
 
+test('web aria false-state e2e covers localized ProvenanceBadge source-note states', () => {
+  const badgeSource = fs.readFileSync(
+    path.join(repoRoot, 'components/quiz/ProvenanceBadge.tsx'),
+    'utf8',
+  );
+  const e2eSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/e2e/web-aria-false-state.spec.ts'),
+    'utf8',
+  );
+
+  assert.match(badgeSource, /accessibilityPrefix: 'Källtyp'/);
+  assert.match(badgeSource, /sourceNotePrefix: 'Källanteckning'/);
+  assert.match(badgeSource, /accessibilityPrefix: 'Provenance'/);
+  assert.match(badgeSource, /sourceNotePrefix: 'Source note'/);
+  assert.match(e2eSource, /page\.getByRole\('button', \{ name: labels\.provenanceButtonName \}\)/);
+  assert.match(e2eSource, /page\.getByText\(new RegExp\(`\^\$\{labels\.sourceNotePrefix\}:`\)\)/);
+  assert.match(
+    e2eSource,
+    /language: 'en'[\s\S]*provenanceButtonName: \/Provenance: UHR source\\\. Source note:\/[\s\S]*sourceNotePrefix: 'Source note'/,
+  );
+  assert.match(
+    e2eSource,
+    /language: 'sv'[\s\S]*provenanceButtonName: \/Källtyp: UHR-källa\\\. Källanteckning:\/[\s\S]*sourceNotePrefix: 'Källanteckning'/,
+  );
+});
+
 test('QuestionCard accessibility parity rejects English-only missing-question fallback', () => {
   const result = spawnSync(
     process.execPath,
