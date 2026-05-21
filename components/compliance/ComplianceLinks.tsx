@@ -1,6 +1,7 @@
 import { Link } from 'expo-router';
 import type { ComponentProps } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { useEffect } from 'react';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
@@ -20,6 +21,8 @@ type ComplianceLinksCopy = {
 };
 
 const linkKeys = ['aboutTheTest', 'disclaimer', 'privacy', 'terms', 'sources', 'support'] as const;
+const complianceLinksClassName = 'compliance-footer-link';
+const complianceLinksStyleElementId = 'compliance-footer-link-style';
 
 const linkHrefs: Record<ComplianceLinkKey, ComplianceHref> = {
   disclaimer: '/disclaimer',
@@ -57,9 +60,44 @@ const complianceLinksCopy: Record<AppLanguage, ComplianceLinksCopy> = {
   },
 };
 
+function useComplianceLinksWebStyles() {
+  useEffect(() => {
+    if (Platform.OS !== 'web' || typeof document === 'undefined') return;
+    if (document.getElementById(complianceLinksStyleElementId)) return;
+
+    const styleElement = document.createElement('style');
+    styleElement.id = complianceLinksStyleElementId;
+    styleElement.textContent = `
+.${complianceLinksClassName} {
+  align-items: center;
+  box-sizing: border-box;
+  display: inline-flex;
+  justify-content: center;
+  min-height: ${space[6]}px;
+  min-width: ${space[6]}px;
+  padding: ${space[1]}px ${space[1.5]}px;
+}
+
+.${complianceLinksClassName}:hover,
+.${complianceLinksClassName}:focus-visible {
+  background-color: ${colors.focusSoft};
+}
+`;
+    document.head.appendChild(styleElement);
+  }, []);
+}
+
 export function ComplianceLinks({ language }: { language?: AppLanguage } = {}) {
+  useComplianceLinksWebStyles();
+
   const settingsLanguage = useSettingsStore((state) => state.language);
   const copy = complianceLinksCopy[language ?? settingsLanguage];
+  const webClassName =
+    Platform.OS === 'web'
+      ? {
+          className: complianceLinksClassName,
+        }
+      : {};
 
   const links = linkKeys.map((key) => ({
     href: linkHrefs[key],
@@ -74,6 +112,7 @@ export function ComplianceLinks({ language }: { language?: AppLanguage } = {}) {
       <View style={styles.links}>
         {links.map((link) => (
           <Link
+            {...webClassName}
             key={String(link.href)}
             accessibilityLabel={copy.openLabel(link.label)}
             accessibilityRole="link"
