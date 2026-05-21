@@ -2,6 +2,7 @@ import { Link } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, Text } from 'react-native';
 
+import { useReducedMotion } from '../../lib/motion/useReducedMotion';
 import { colors, motion, radius, space, typography } from '../../lib/theme';
 
 type SocialProofLanguage = 'sv' | 'en';
@@ -34,6 +35,7 @@ export function SocialProofRow({ accessibilityLabel, language }: SocialProofRowP
   const [isFocused, setIsFocused] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
+  const reduceMotion = useReducedMotion();
   const interactionHandlers = {
     onBlur: () => {
       setIsFocused(false);
@@ -58,8 +60,12 @@ export function SocialProofRow({ accessibilityLabel, language }: SocialProofRowP
       onPressOut={() => setIsPressed(false)}
       style={[
         styles.row,
-        isFocused || isHovered ? styles.rowInteractive : null,
-        isPressed ? styles.rowPressed : null,
+        isFocused || isHovered
+          ? reduceMotion
+            ? styles.rowInteractiveReducedMotion
+            : styles.rowInteractive
+          : null,
+        isPressed ? (reduceMotion ? styles.rowPressedReducedMotion : styles.rowPressed) : null,
       ]}
     >
       <Text style={styles.label}>{t.label}</Text>
@@ -85,9 +91,15 @@ const styles = StyleSheet.create({
     backgroundColor: colors.focusSoft,
     transform: [{ scale: motion.hoverScale }],
   },
+  rowInteractiveReducedMotion: {
+    backgroundColor: colors.focusSoft,
+  },
   rowPressed: {
     backgroundColor: colors.focusSoft,
     transform: [{ scale: motion.pressedScale }],
+  },
+  rowPressedReducedMotion: {
+    backgroundColor: colors.focusSoft,
   },
   label: {
     color: colors.text,

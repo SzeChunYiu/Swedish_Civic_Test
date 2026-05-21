@@ -20,7 +20,7 @@ test('shared Button mirrors native accessibility state to web aria attributes', 
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'components/ui/Button.tsx'), 'utf8');
 
-  assert.equal(summary.buttonAccessibilityRulesValidated, 20);
+  assert.equal(summary.buttonAccessibilityRulesValidated, 22);
   assert.equal(summary.buttonAccessibilityParityValidated, true);
   assert.match(source, /accessibilityRole = 'button'/);
   assert.match(source, /const mergedAccessibilityState =/);
@@ -33,6 +33,8 @@ test('shared Button mirrors native accessibility state to web aria attributes', 
   assert.match(source, /accessibilityState=\{mergedAccessibilityState\}/);
   assert.match(source, /borderWidth:\s*space\.hairline/);
   assert.match(source, /minHeight:\s*space\[6\]/);
+  assert.match(source, /const reduceMotion = useReducedMotion\(\);/);
+  assert.match(source, /pressed && !disabled && !reduceMotion \? styles\.pressedMotion : null/);
   assert.match(source, /transform:\s*\[\{ scale: motion\.pressedScale \}\]/);
 });
 

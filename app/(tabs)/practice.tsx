@@ -28,6 +28,7 @@ import {
   getPracticeQuestionForSession,
 } from '../../lib/quiz/practiceFlow';
 import { useProLifetimeEntitlements } from '../../lib/monetization/useProLifetimeEntitlements';
+import { useReducedMotion } from '../../lib/motion/useReducedMotion';
 import {
   getPracticeAnswerXpAwardKey,
   getPracticeInterstitialShowKey,
@@ -170,6 +171,7 @@ export default function Screen() {
   const setIncludeSupplementary = useSettingsStore(
     (state) => state.setIncludeSupplementaryQuestions,
   );
+  const reduceMotion = useReducedMotion();
   const [aboutSourcesOpen, setAboutSourcesOpen] = useState(false);
   const [focusedHeaderControl, setFocusedHeaderControl] = useState<PracticeHeaderControl | null>(
     null,
@@ -287,7 +289,11 @@ export default function Screen() {
               styles.bookmarkButton,
               isBookmarked ? styles.bookmarkButtonActive : null,
               focusedHeaderControl === 'bookmark' ? styles.headerControlFocused : null,
-              pressed ? styles.headerControlPressed : null,
+              pressed
+                ? reduceMotion
+                  ? styles.headerControlPressedReducedMotion
+                  : styles.headerControlPressed
+                : null,
             ]}
           >
             <Text style={[styles.bookmarkText, isBookmarked ? styles.bookmarkTextActive : null]}>
@@ -310,7 +316,11 @@ export default function Screen() {
               styles.bookmarkButton,
               includeSupplementary ? styles.bookmarkButtonActive : null,
               focusedHeaderControl === 'supplementary' ? styles.headerControlFocused : null,
-              pressed ? styles.headerControlPressed : null,
+              pressed
+                ? reduceMotion
+                  ? styles.headerControlPressedReducedMotion
+                  : styles.headerControlPressed
+                : null,
             ]}
           >
             <Text
@@ -332,7 +342,11 @@ export default function Screen() {
             style={({ pressed }) => [
               styles.aboutSourcesTrigger,
               focusedHeaderControl === 'sources' ? styles.headerControlFocused : null,
-              pressed ? styles.headerControlPressed : null,
+              pressed
+                ? reduceMotion
+                  ? styles.headerControlPressedReducedMotion
+                  : styles.headerControlPressed
+                : null,
             ]}
           >
             <Text style={styles.aboutSourcesTriggerText}>
@@ -576,6 +590,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.focusSoft,
     borderColor: colors.focusSoft,
     transform: [{ scale: motion.pressedScale }],
+  },
+  headerControlPressedReducedMotion: {
+    backgroundColor: colors.focusSoft,
+    borderColor: colors.focusSoft,
   },
   bookmarkButton: {
     alignSelf: 'flex-start',

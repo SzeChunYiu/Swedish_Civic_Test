@@ -13,6 +13,7 @@ import { ComplianceActionLink } from '../components/compliance/ComplianceActionL
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
 import { CompanionPicker } from '../components/mascot/CompanionPicker';
 import { PersistenceWarningNotice } from '../components/storage/PersistenceWarningNotice';
+import { useReducedMotion } from '../lib/motion/useReducedMotion';
 import {
   applyLocalStudyDataImport,
   previewLocalStudyDataImport,
@@ -248,11 +249,13 @@ export default function Screen() {
     (state) => state.clearPersistenceWarning,
   );
   const copy = settingsCopy[language];
+  const reduceMotion = useReducedMotion();
   const themeColors = colorsForThemeMode(themeMode, systemColorScheme);
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const [importText, setImportText] = useState('');
   const [importPreview, setImportPreview] = useState<LocalStudyDataImportPreview | null>(null);
   const [importFeedback, setImportFeedback] = useState<ImportFeedback | null>(null);
+  const [focusedControl, setFocusedControl] = useState<string | null>(null);
   const themeOptions: { value: ThemeMode; label: string }[] = [
     { value: 'system', label: copy.themeSystemLabel },
     { value: 'light', label: copy.themeLightLabel },
@@ -263,6 +266,7 @@ export default function Screen() {
 
   const renderLanguageButton = (value: AppLanguage, labelEn: string, labelSv: string) => {
     const label = language === 'sv' ? labelSv : labelEn;
+    const focusKey = `language-${value}`;
 
     return (
       <Pressable
@@ -272,11 +276,18 @@ export default function Screen() {
         accessibilityRole="radio"
         accessibilityState={{ checked: language === value }}
         hitSlop={space[1]}
+        onBlur={() => setFocusedControl(null)}
+        onFocus={() => setFocusedControl(focusKey)}
         onPress={() => setLanguage(value)}
         style={({ pressed }) => [
           styles.pill,
           language === value ? styles.pillActive : null,
-          pressed ? styles.controlPressed : null,
+          focusedControl === focusKey ? styles.controlFocused : null,
+          pressed
+            ? reduceMotion
+              ? styles.controlPressedReducedMotion
+              : styles.controlPressed
+            : null,
         ]}
       >
         <Text style={[styles.pillText, language === value ? styles.pillTextActive : null]}>
@@ -288,6 +299,7 @@ export default function Screen() {
 
   const renderThemeButton = (value: ThemeMode, label: string) => {
     const selected = themeMode === value;
+    const focusKey = `theme-${value}`;
 
     return (
       <Pressable
@@ -297,11 +309,18 @@ export default function Screen() {
         accessibilityRole="button"
         accessibilityState={{ selected }}
         hitSlop={space[1]}
+        onBlur={() => setFocusedControl(null)}
+        onFocus={() => setFocusedControl(focusKey)}
         onPress={() => setThemeMode(value)}
         style={({ pressed }) => [
           styles.pill,
           selected ? styles.pillActive : null,
-          pressed ? styles.controlPressed : null,
+          focusedControl === focusKey ? styles.controlFocused : null,
+          pressed
+            ? reduceMotion
+              ? styles.controlPressedReducedMotion
+              : styles.controlPressed
+            : null,
         ]}
       >
         <Text style={[styles.pillText, selected ? styles.pillTextActive : null]}>{label}</Text>
@@ -387,10 +406,17 @@ export default function Screen() {
           accessibilityRole="switch"
           accessibilityState={{ checked: audioEnabled }}
           hitSlop={space[1]}
+          onBlur={() => setFocusedControl(null)}
+          onFocus={() => setFocusedControl('audio')}
           onPress={() => setAudioEnabled(!audioEnabled)}
           style={({ pressed }) => [
             styles.secondaryButton,
-            pressed ? styles.secondaryButtonPressed : null,
+            focusedControl === 'audio' ? styles.secondaryButtonFocused : null,
+            pressed
+              ? reduceMotion
+                ? styles.secondaryButtonPressedReducedMotion
+                : styles.secondaryButtonPressed
+              : null,
           ]}
         >
           <Text style={styles.secondaryButtonText}>
@@ -439,6 +465,7 @@ export default function Screen() {
         >
           {[5, 10, 20, 40].map((goal) => {
             const selected = dailyGoalAnswers === goal;
+            const focusKey = `daily-goal-${goal}`;
 
             return (
               <Pressable
@@ -448,12 +475,19 @@ export default function Screen() {
                 accessibilityRole="radio"
                 accessibilityState={{ checked: dailyGoalAnswers === goal }}
                 hitSlop={space[1]}
+                onBlur={() => setFocusedControl(null)}
+                onFocus={() => setFocusedControl(focusKey)}
                 onPress={() => setDailyGoalAnswers(goal)}
                 style={({ pressed }) => [
                   styles.pill,
                   styles.goalPill,
                   selected ? styles.pillActive : null,
-                  pressed ? styles.controlPressed : null,
+                  focusedControl === focusKey ? styles.controlFocused : null,
+                  pressed
+                    ? reduceMotion
+                      ? styles.controlPressedReducedMotion
+                      : styles.controlPressed
+                    : null,
                 ]}
               >
                 <Text style={[styles.goalNumberText, selected ? styles.pillTextActive : null]}>
@@ -492,7 +526,11 @@ export default function Screen() {
             onPress={handlePreviewImport}
             style={({ pressed }) => [
               styles.secondaryButton,
-              pressed ? styles.secondaryButtonPressed : null,
+              pressed
+                ? reduceMotion
+                  ? styles.secondaryButtonPressedReducedMotion
+                  : styles.secondaryButtonPressed
+                : null,
             ]}
           >
             <Text style={styles.secondaryButtonText}>{copy.importPreview}</Text>
@@ -504,7 +542,11 @@ export default function Screen() {
             onPress={handleResetImport}
             style={({ pressed }) => [
               styles.outlineButton,
-              pressed ? styles.outlineButtonPressed : null,
+              pressed
+                ? reduceMotion
+                  ? styles.outlineButtonPressedReducedMotion
+                  : styles.outlineButtonPressed
+                : null,
             ]}
           >
             <Text style={styles.outlineButtonText}>{copy.importReset}</Text>
@@ -527,7 +569,11 @@ export default function Screen() {
               onPress={handleConfirmImport}
               style={({ pressed }) => [
                 styles.secondaryButton,
-                pressed ? styles.secondaryButtonPressed : null,
+                pressed
+                  ? reduceMotion
+                    ? styles.secondaryButtonPressedReducedMotion
+                    : styles.secondaryButtonPressed
+                  : null,
               ]}
             >
               <Text style={styles.secondaryButtonText}>{copy.confirmImport}</Text>
@@ -623,9 +669,15 @@ function createStyles(themeColors: ThemeColors) {
     pillTextActive: {
       color: themeColors.badgeBlueText,
     },
+    controlFocused: {
+      borderColor: themeColors.focus,
+    },
     controlPressed: {
       backgroundColor: themeColors.focusSoft,
       transform: [{ scale: motion.pressedScale }],
+    },
+    controlPressedReducedMotion: {
+      backgroundColor: themeColors.focusSoft,
     },
     goalPill: {
       alignItems: 'flex-start',
@@ -648,15 +700,23 @@ function createStyles(themeColors: ThemeColors) {
       alignItems: 'center',
       alignSelf: 'flex-start',
       backgroundColor: themeColors.accent,
+      borderColor: themeColors.accent,
+      borderWidth: StyleSheet.hairlineWidth,
       borderRadius: radius.button,
       justifyContent: 'center',
       minHeight: space[5] + space[0.5],
       paddingHorizontal: space[2],
       paddingVertical: space[1.25],
     },
+    secondaryButtonFocused: {
+      borderColor: themeColors.focus,
+    },
     secondaryButtonPressed: {
       backgroundColor: themeColors.accentActive,
       transform: [{ scale: motion.pressedScale }],
+    },
+    secondaryButtonPressedReducedMotion: {
+      backgroundColor: themeColors.accentActive,
     },
     secondaryButtonText: {
       color: themeColors.surface,
@@ -699,6 +759,9 @@ function createStyles(themeColors: ThemeColors) {
     outlineButtonPressed: {
       backgroundColor: themeColors.focusSoft,
       transform: [{ scale: motion.pressedScale }],
+    },
+    outlineButtonPressedReducedMotion: {
+      backgroundColor: themeColors.focusSoft,
     },
     outlineButtonText: {
       color: themeColors.text,

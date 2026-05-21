@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text as NativeText } from 'react-native';
 import type { PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native';
 
+import { useReducedMotion } from '../lib/motion/useReducedMotion';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { motion, radius, space, typography, type ThemeColors } from '../lib/theme';
 import { useThemeColors } from '../lib/theme/ThemeProvider';
@@ -62,6 +63,7 @@ export function Button({
   ...pressableProps
 }: ButtonProps) {
   const themeColors = useThemeColors();
+  const reduceMotion = useReducedMotion();
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const settingsLanguage = useSettingsStore((state) => state.language);
   const language = languageOverride ?? settingsLanguage;
@@ -87,7 +89,7 @@ export function Button({
         styles.base,
         styles[size],
         styles[variant],
-        pressed && !isPressDisabled ? styles.pressed : null,
+        pressed && !isPressDisabled && !reduceMotion ? styles.pressed : null,
         pressed && !isPressDisabled ? styles[`${variant}Pressed`] : null,
         isExplicitlyDisabled ? styles.disabled : null,
         style,

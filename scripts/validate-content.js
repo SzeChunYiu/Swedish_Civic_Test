@@ -2458,6 +2458,14 @@ const EXPECTED_BUTTON_ACCESSIBILITY_RULES = [
     label: 'token pressed feedback',
     pattern: /transform:\s*\[\{ scale: motion\.pressedScale \}\]/,
   },
+  {
+    label: 'reduced-motion hook',
+    pattern: /const reduceMotion = useReducedMotion\(\);/,
+  },
+  {
+    label: 'pressed scale disabled under reduced motion',
+    pattern: /pressed && !disabled && !reduceMotion \? styles\.pressedMotion : null/,
+  },
 ];
 const EXPECTED_CARD_ACCESSIBILITY_RULES = [
   {

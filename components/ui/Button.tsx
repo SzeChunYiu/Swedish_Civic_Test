@@ -1,6 +1,7 @@
 import { Platform, Pressable, StyleSheet, Text } from 'react-native';
 import type { PressableProps, StyleProp, ViewStyle } from 'react-native';
 import { useId, useMemo, type PropsWithChildren } from 'react';
+import { useReducedMotion } from '../../lib/motion/useReducedMotion';
 import { motion, radius, space, typography, type ThemeColors } from '../../lib/theme';
 import { useThemeColors } from '../../lib/theme/ThemeProvider';
 
@@ -31,6 +32,7 @@ export function Button({
 }: ButtonProps) {
   const fallbackThemeColors = useThemeColors();
   const themeColors = providedThemeColors ?? fallbackThemeColors;
+  const reduceMotion = useReducedMotion();
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const mergedAccessibilityState = {
     ...accessibilityState,
@@ -65,6 +67,7 @@ export function Button({
         styles.button,
         styles[variant],
         pressed && !disabled ? styles.pressed : null,
+        pressed && !disabled && !reduceMotion ? styles.pressedMotion : null,
         pressed && !disabled && variant === 'primary' ? styles.primaryPressed : null,
         disabled ? styles.disabled : null,
         style,
@@ -138,6 +141,8 @@ function createStyles(themeColors: ThemeColors) {
     },
     pressed: {
       opacity: 0.86,
+    },
+    pressedMotion: {
       transform: [{ scale: motion.pressedScale }],
     },
     label: {

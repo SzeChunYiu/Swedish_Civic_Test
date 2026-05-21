@@ -96,6 +96,7 @@ function readScale(transform: string): number {
 }
 
 async function expectStableMobileTarget(target: ControlTarget): Promise<Box> {
+  await target.locator.scrollIntoViewIfNeeded();
   await expect(target.locator, `${target.label} should be visible`).toBeVisible();
   const box = await getBox(target.locator, target.label);
 
@@ -141,6 +142,26 @@ async function expectPressFeedback(page: Page, target: ControlTarget, idleBox: B
   await page.mouse.up();
 }
 
+async function expectReducedMotionPressFeedback(page: Page, target: ControlTarget, idleBox: Box) {
+  const idleCenter = centerOf(idleBox);
+  const idleLayout = await getLayoutSnapshot(page);
+
+  await page.mouse.move(idleCenter.x, idleCenter.y);
+  await page.mouse.down();
+  await expect
+    .poll(async () => readScale((await getTargetStyle(target.locator)).transform))
+    .toBe(1);
+
+  const pressedBox = await getBox(target.locator, `${target.label} reduced-motion pressed`);
+  const pressedLayout = await getLayoutSnapshot(page);
+
+  expectSameCenter(idleCenter, centerOf(pressedBox), `${target.label} reduced-motion press`);
+  expectSameLayout(idleLayout, pressedLayout, `${target.label} reduced-motion press`);
+
+  await page.mouse.move(1, 1);
+  await page.mouse.up();
+}
+
 test.use({ viewport: mobileViewport });
 
 test('settings language, audio, and daily goal controls keep token focus and press feedback', async ({
@@ -172,6 +193,41 @@ test('settings language, audio, and daily goal controls keep token focus and pre
 
     await expectFocusFeedback(page, control, idleBox);
     await expectPressFeedback(page, control, idleBox);
+  }
+
+  expect(errors.get()).toEqual([]);
+});
+
+test('settings controls suppress token scale feedback when reduced motion is active', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await markAboutTheTestSeen(page);
+  const errors = collectConsoleAndPageErrors(page);
+
+  await page.goto('/settings', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  const controls: ControlTarget[] = [
+    {
+      label: 'English support language control',
+      locator: page.getByRole('radio', { name: 'Byt studiespråk till Engelskt stöd' }),
+    },
+    {
+      label: 'Audio switch',
+      locator: page.getByRole('switch', { name: 'Stäng av ljud' }),
+    },
+    {
+      label: '20-answer daily goal control',
+      locator: page.getByRole('radio', { name: 'Ställ in dagligt mål till 20 svar' }),
+    },
+  ];
+
+  for (const control of controls) {
+    const idleBox = await expectStableMobileTarget(control);
+
+    await expectFocusFeedback(page, control, idleBox);
+    await expectReducedMotionPressFeedback(page, control, idleBox);
   }
 
   expect(errors.get()).toEqual([]);

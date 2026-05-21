@@ -2,6 +2,7 @@ import type { ComponentProps } from 'react';
 import { Pressable, StyleSheet, Text as NativeText, View } from 'react-native';
 import type { AccessibilityRole, StyleProp, TextStyle, ViewStyle } from 'react-native';
 
+import { useReducedMotion } from '../lib/motion/useReducedMotion';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, motion, radius, space, typography } from '../lib/theme';
 
@@ -117,6 +118,7 @@ export function QuestionNavigator({
   totalCount,
   ...viewProps
 }: QuestionNavigatorProps) {
+  const reduceMotion = useReducedMotion();
   const settingsLanguage = useSettingsStore((state) => state.language);
   const language = languageOverride ?? settingsLanguage;
   const copy = questionNavigatorCopy[language];
@@ -174,7 +176,7 @@ export function QuestionNavigator({
             style={({ pressed }) => [
               styles.item,
               styles[state],
-              pressed && !isDisabled ? styles.pressed : null,
+              pressed && !isDisabled && !reduceMotion ? styles.pressed : null,
               isDisabled ? styles.disabled : null,
               itemStyle,
             ]}
