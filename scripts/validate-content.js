@@ -772,7 +772,7 @@ const GENERATED_TRUE_FALSE_EXPLANATION_META_PATTERNS = [
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
 const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
 const EXPECTED_STREAK_RULE_COUNT = 10;
-const EXPECTED_XP_RULE_COUNT = 20;
+const EXPECTED_XP_RULE_COUNT = 24;
 const EXPECTED_MASTERY_RULE_COUNT = 7;
 const EXPECTED_READINESS_ADAPTER_RULE_COUNT = 6;
 const EXPECTED_SUPPORTED_LANGUAGES = ['sv', 'en'];
@@ -8361,6 +8361,8 @@ let themeMotionTokensValidated = 0;
 let themeTokenSchemaValidated = false;
 let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
+let badgeRuntimeInputCasesValidated = 0;
+let badgeRuntimeInputParityValidated = false;
 let citizenshipRulesEffectiveDateValidated = '';
 let civicKnowledgeTestFirstSittingDateValidated = '';
 let civicKnowledgeTestDeadlineDateValidated = '';
@@ -15564,7 +15566,16 @@ function validateBadgeCatalog() {
         reject(`${label} id must use lowercase snake_case`);
       }
 
-      for (const field of ['title', 'description']) {
+      for (const field of [
+        'title',
+        'description',
+        'titleSv',
+        'titleEn',
+        'descriptionSv',
+        'descriptionEn',
+        'lockedHintSv',
+        'lockedHintEn',
+      ]) {
         if (!hasText(badge[field])) {
           reject(`${label} missing ${field}`);
         } else if (!textIsTrimmedSingleSpaced(badge[field])) {
@@ -15638,6 +15649,71 @@ function validateBadgeCatalog() {
       );
     } else {
       badgeMilestoneParityValidated = true;
+    }
+
+    const invalidBadgeInputCases = [
+      {
+        label: 'string badge counters',
+        input: {
+          completedQuestionCount: '1',
+          currentStreak: '3',
+          level: '2',
+          wrongAnswerCount: '1',
+        },
+      },
+      {
+        label: 'infinite badge counters',
+        input: {
+          completedQuestionCount: Infinity,
+          currentStreak: Infinity,
+          level: Infinity,
+          wrongAnswerCount: Infinity,
+        },
+      },
+      {
+        label: 'fractional badge counters',
+        input: {
+          completedQuestionCount: 1.5,
+          currentStreak: 3.5,
+          level: 2.5,
+          wrongAnswerCount: 1.5,
+        },
+      },
+      {
+        label: 'negative badge counters',
+        input: {
+          completedQuestionCount: -1,
+          currentStreak: -3,
+          level: -2,
+          wrongAnswerCount: -1,
+        },
+      },
+    ];
+    let badgeRuntimeInputIsValid = true;
+
+    invalidBadgeInputCases.forEach(({ label, input }) => {
+      let badgeIds;
+      try {
+        badgeIds = deriveBadges(input).map((badge) => badge.id);
+      } catch (error) {
+        badgeRuntimeInputIsValid = false;
+        fail(`deriveBadges ${label} threw ${error.message}`);
+        return;
+      }
+
+      if (badgeIds.length) {
+        badgeRuntimeInputIsValid = false;
+        fail(`deriveBadges ${label} returned badges: ${badgeIds.join(', ')}`);
+      } else {
+        badgeRuntimeInputCasesValidated += 1;
+      }
+    });
+
+    if (
+      badgeRuntimeInputIsValid &&
+      badgeRuntimeInputCasesValidated === invalidBadgeInputCases.length
+    ) {
+      badgeRuntimeInputParityValidated = true;
     }
   }
 }
@@ -16779,6 +16855,11 @@ function validateXpRules() {
       expected: 0,
     },
     {
+      label: 'string correctness answer XP',
+      actual: () => calculateAnswerXp({ isCorrect: 'false', explanationRead: 'yes' }),
+      expected: 0,
+    },
+    {
       label: 'non-boolean explanation read flag',
       actual: () => calculateAnswerXp({ isCorrect: true, explanationRead: 'yes' }),
       expected: 10,
@@ -16801,6 +16882,11 @@ function validateXpRules() {
     {
       label: 'NaN quiz completion counts',
       actual: () => calculateQuizCompletionXp({ answeredCount: NaN, correctCount: 0 }),
+      expected: 0,
+    },
+    {
+      label: 'string quiz completion counters',
+      actual: () => calculateQuizCompletionXp({ answeredCount: '10', correctCount: '10' }),
       expected: 0,
     },
     {
@@ -16829,9 +16915,16 @@ function validateXpRules() {
     { label: 'level below first threshold', actual: () => calculateLevel(99), expected: 1 },
     { label: 'level at 100 XP', actual: () => calculateLevel(100), expected: 2 },
     { label: 'level at 400 XP', actual: () => calculateLevel(400), expected: 3 },
+    { label: 'level for string XP', actual: () => calculateLevel('10000'), expected: 1 },
+    { label: 'level for negative XP', actual: () => calculateLevel(-100), expected: 1 },
   ];
 
   let rulesAreValid = true;
+
+  if (cases.length !== EXPECTED_XP_RULE_COUNT) {
+    rulesAreValid = false;
+    fail(`XP rule catalog validates ${cases.length} cases, expected ${EXPECTED_XP_RULE_COUNT}`);
+  }
 
   cases.forEach(({ label, actual, expected }) => {
     let actualValue;
@@ -16854,6 +16947,21 @@ function validateXpRules() {
   if (rulesAreValid && xpRulesValidated === EXPECTED_XP_RULE_COUNT) {
     xpRulesParityValidated = true;
   }
+}
+
+if (process.argv.includes('--focus-badge-xp-runtime')) {
+  validateBadgeCatalog();
+  validateXpRules();
+  exitWithValidationFailures();
+  printValidationSummary({
+    badgesValidated,
+    badgeMilestoneParityValidated,
+    badgeRuntimeInputCasesValidated,
+    badgeRuntimeInputParityValidated,
+    xpRulesValidated,
+    xpRulesParityValidated,
+  });
+  process.exit(0);
 }
 
 function validateMasteryRules() {
@@ -19109,6 +19217,8 @@ console.log(
       progressStoreSchemaParityValidated,
       badgesValidated,
       badgeMilestoneParityValidated,
+      badgeRuntimeInputCasesValidated,
+      badgeRuntimeInputParityValidated,
       citizenshipRulesEffectiveDateValidated,
       civicKnowledgeTestFirstSittingDateValidated,
       civicKnowledgeTestDeadlineDateValidated,

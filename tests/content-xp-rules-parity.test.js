@@ -20,7 +20,7 @@ function loadTs(relativePath) {
 function runFocusedXpRulesValidation() {
   const output = execFileSync(
     process.execPath,
-    ['scripts/validate-content.js', '--focus-xp-rules'],
+    ['scripts/validate-content.js', '--focus-badge-xp-runtime'],
     {
       cwd: repoRoot,
       encoding: 'utf8',
@@ -36,19 +36,28 @@ test('XP progression parity validates answer, completion, and level rules', () =
   const { calculateAnswerXp, calculateQuizCompletionXp, calculateLevel } =
     loadTs('lib/learning/xp.ts');
 
-  assert.equal(summary.xpRulesValidated, 20);
+  assert.equal(summary.xpRulesValidated, 24);
   assert.equal(summary.xpRulesParityValidated, true);
   assert.equal(calculateAnswerXp({ isCorrect: true, explanationRead: true }), 12);
   assert.equal(calculateAnswerXp({ isCorrect: true, explanationRead: false }), 10);
   assert.equal(calculateAnswerXp({ isCorrect: false, explanationRead: true }), 4);
   assert.equal(calculateAnswerXp({ isCorrect: false, explanationRead: false }), 2);
+  assert.equal(calculateAnswerXp({ isCorrect: 'false', explanationRead: 'yes' }), 0);
+  assert.equal(calculateAnswerXp({ isCorrect: true, explanationRead: 'yes' }), 10);
   assert.equal(calculateQuizCompletionXp({ answeredCount: 0, correctCount: 0 }), 0);
   assert.equal(calculateQuizCompletionXp({ answeredCount: 10, correctCount: 9 }), 20);
   assert.equal(calculateQuizCompletionXp({ answeredCount: 10, correctCount: 10 }), 70);
+  assert.equal(calculateQuizCompletionXp({ answeredCount: '10', correctCount: '10' }), 0);
+  assert.equal(calculateQuizCompletionXp({ answeredCount: Infinity, correctCount: Infinity }), 0);
+  assert.equal(calculateQuizCompletionXp({ answeredCount: 10.5, correctCount: 10 }), 0);
+  assert.equal(calculateQuizCompletionXp({ answeredCount: -1, correctCount: 0 }), 0);
   assert.equal(calculateLevel(0), 1);
   assert.equal(calculateLevel(99), 1);
   assert.equal(calculateLevel(100), 2);
   assert.equal(calculateLevel(400), 3);
+  assert.equal(calculateLevel('10000'), 1);
+  assert.equal(calculateLevel(Infinity), 1);
+  assert.equal(calculateLevel(-100), 1);
 });
 
 test('XP progression parity rejects level threshold drift', () => {
@@ -67,7 +76,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-process.argv.push('--focus-xp-rules');
+process.argv.push('--focus-badge-xp-runtime');
 require('./scripts/validate-content.js');
 `,
     ],
