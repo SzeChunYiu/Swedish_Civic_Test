@@ -164,6 +164,7 @@ const GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /^They can have policies only for their own municipality or region\.?$/i,
   /^De måste alltid vara partier i riksdagen\.?$/i,
   /^They must always be parties in the Riksdag\.?$/i,
+  /\bpublic sector(?: in Sweden)? means (?:activities for which|all privately owned companies)\b/i,
 ];
 
 function generatedTrueFalseNaturalnessCategory(pattern) {

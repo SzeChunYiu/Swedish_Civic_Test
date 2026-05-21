@@ -1000,6 +1000,8 @@ test('generated true/false naturalness patterns allow direct media and web propo
     'On the web and in social media, anyone can create content, and it is not always checked the same way as in other media.',
     'På webben och i sociala medier får bara ansvariga utgivare skriva inlägg.',
     'On the web and in social media, only responsible publishers may write posts.',
+    'The public sector in Sweden consists of services and activities that the state, regions, and municipalities are responsible for and fund through taxes.',
+    'The public sector in Sweden consists only of privately owned companies.',
   ];
   const residualFragments = [
     'De drivs ofta av privata företag och får inkomster genom reklam.',
@@ -1008,6 +1010,8 @@ test('generated true/false naturalness patterns allow direct media and web propo
     'They are also available online and updated with news several times per day.',
     'Vem som helst kan skapa innehåll där, och det kontrolleras inte alltid som i andra medier.',
     'Anyone can create content there, and it is not always checked the same way as in other media.',
+    'The public sector in Sweden means activities for which the state, regions, and municipalities are responsible.',
+    'The public sector in Sweden means all privately owned companies.',
   ];
 
   assert.deepEqual(
@@ -1406,6 +1410,47 @@ test('derivePublishedQuestions renders q050 source-criticism true/false as direc
     .map((question) => `${question?.questionSv} ${question?.questionEn}`)
     .join('\n');
   assert.doesNotMatch(text, /^(?:Att vara källkritisk betyder|To be source-critical means)\b/im);
+});
+
+test('derivePublishedQuestions renders q062 public-sector English as direct propositions', () => {
+  const { questions, sourceQuestions } = loadTs('data/questions.ts');
+  const byId = new Map(questions.map((question) => [question.id, question]));
+  const source = byId.get('q062');
+  const trueStatementId = generatedQuestionId(sourceQuestions, 'q062', 'trueStatement');
+  const falseStatementId = generatedQuestionId(sourceQuestions, 'q062', 'falseStatement');
+
+  assert.equal(source?.questionSv, 'Vad menas med offentlig sektor i Sverige?');
+  assert.equal(source?.questionEn, "What does Sweden's public sector consist of?");
+  assert.equal(
+    source?.explanationEn,
+    'The public sector consists of services and activities that the state, regions, and municipalities are responsible for and fund through taxes. Examples include health-care staff, teachers, childcare workers, police, and firefighters; private companies, banks, and non-profit associations are therefore wrong answers.',
+  );
+  assert.equal(
+    byId.get(trueStatementId)?.questionSv,
+    'Offentlig sektor i Sverige är verksamheter som staten, regionerna och kommunerna ansvarar för.',
+  );
+  assert.equal(
+    byId.get(trueStatementId)?.questionEn,
+    'The public sector in Sweden consists of services and activities that the state, regions, and municipalities are responsible for and fund through taxes.',
+  );
+  assert.equal(byId.get(trueStatementId)?.correctOptionId, 'true');
+  assert.equal(
+    byId.get(falseStatementId)?.questionSv,
+    'Offentlig sektor i Sverige är alla privatägda företag.',
+  );
+  assert.equal(
+    byId.get(falseStatementId)?.questionEn,
+    'The public sector in Sweden consists only of privately owned companies.',
+  );
+  assert.equal(byId.get(falseStatementId)?.correctOptionId, 'false');
+
+  const text = [source, byId.get(trueStatementId), byId.get(falseStatementId)]
+    .map((question) => `${question?.questionEn} ${question?.explanationEn}`)
+    .join('\n');
+  assert.doesNotMatch(
+    text,
+    /What is meant by the public sector|public sector(?: in Sweden)? means/i,
+  );
 });
 
 test('derivePublishedQuestions renders q146 political-rights true/false as direct propositions', () => {
