@@ -7836,6 +7836,8 @@ let appConfigPluginsValidated = 0;
 let appConfigSchemaValidated = false;
 let launchAdSuppressedRoutesValidated = 0;
 let launchAdRouteSuppressionParityValidated = false;
+let launchAdNativeLoadTimeoutCleanupParityValidated = false;
+let launchAdFirstRunDeferralParityValidated = false;
 let tabNavigationRulesValidated = 0;
 let tabNavigationRoutesValidated = 0;
 let tabNavigationParityValidated = false;
@@ -8307,6 +8309,19 @@ if (process.argv.includes('--focus-content-exec-cwd')) {
     contentTestValidateContentExecCallsValidated,
     contentTestValidateContentExecCwdPinnedValidated,
     contentTestValidateContentExecCwdParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-launch-ad-deferral')) {
+  validateLaunchAdRouteSuppressionParity();
+  validateLaunchAdNativeRuntimeParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    launchAdSuppressedRoutesValidated,
+    launchAdRouteSuppressionParityValidated,
+    launchAdNativeLoadTimeoutCleanupParityValidated,
+    launchAdFirstRunDeferralParityValidated,
   });
   process.exit(0);
 }
@@ -8867,6 +8882,73 @@ function validateLaunchAdRouteSuppressionParity() {
     launchAdSuppressedRoutesValidated === EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTES.length
   ) {
     launchAdRouteSuppressionParityValidated = true;
+  }
+}
+
+function validateLaunchAdNativeRuntimeParity() {
+  let valid = true;
+  let nativeSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    nativeSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/LaunchPopupAd.native.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`components/monetization/LaunchPopupAd.native.tsx could not be read: ${error.message}`);
+    return;
+  }
+
+  const timeoutCleanupPattern =
+    /loadTimeout = setTimeout\(\(\) => \{[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*finishLoadAttempt\(\);[\s\S]*\}, LAUNCH_POPUP_AD_LOAD_TIMEOUT_MS\);/;
+  const loadedListenerIndex = nativeSource.indexOf('AdEventType.LOADED');
+  const timeoutIndex = nativeSource.indexOf('loadTimeout = setTimeout(() => {');
+  const loadIndex = nativeSource.indexOf('appOpenAd.load();');
+  const runtimeCapIndex = nativeSource.indexOf(
+    'launchPopupShownThisRuntime = true;',
+    loadedListenerIndex,
+  );
+
+  if (
+    !nativeSource.includes('const LAUNCH_POPUP_AD_LOAD_TIMEOUT_MS = 15_000;') ||
+    !nativeSource.includes('clearTimeout(loadTimeout);') ||
+    !timeoutCleanupPattern.test(nativeSource) ||
+    timeoutIndex <= loadedListenerIndex ||
+    loadIndex <= timeoutIndex ||
+    runtimeCapIndex <= loadedListenerIndex ||
+    /launchPopupShownThisRuntime = true;/.test(nativeSource.slice(timeoutIndex, loadIndex))
+  ) {
+    reject('native LaunchPopupAd must clear the in-flight flag when load callbacks stall');
+  } else {
+    launchAdNativeLoadTimeoutCleanupParityValidated = true;
+  }
+
+  if (
+    !nativeSource.includes(
+      "import { deferFirstRunAboutModalForLaunchSession } from './launchPopupSession';",
+    ) ||
+    !/const nativeLaunchPopupMayShow =[\s\S]*adsConfig\.googleMobileAdsEnabled[\s\S]*!launchPopupShownThisRuntime[\s\S]*!launchPopupLoadInFlight[\s\S]*!entitlements\.adsDisabled[\s\S]*Boolean\(nativeLaunchPopupUnitId\);/.test(
+      nativeSource,
+    )
+  ) {
+    reject('native launch ad must defer the first-run About modal when eligible');
+  }
+
+  if (
+    !/if \(nativeLaunchPopupMayShow\) \{[\s\S]*deferFirstRunAboutModalForLaunchSession\(\);[\s\S]*\}/.test(
+      nativeSource,
+    )
+  ) {
+    reject('native launch ad must set first-run deferral during the eligible render pass');
+  }
+
+  if (valid) {
+    launchAdFirstRunDeferralParityValidated = true;
   }
 }
 
@@ -17758,6 +17840,7 @@ validateMockExamConfig(
 validateValidationScriptSyntax();
 validateAppConfigSchema();
 validateLaunchAdRouteSuppressionParity();
+validateLaunchAdNativeRuntimeParity();
 validateTabNavigationParity();
 validateAdPlacementRouteParity();
 validateReleaseMonetizationPolicyParity();
@@ -17878,6 +17961,8 @@ console.log(
       appConfigSchemaValidated,
       launchAdSuppressedRoutesValidated,
       launchAdRouteSuppressionParityValidated,
+      launchAdNativeLoadTimeoutCleanupParityValidated,
+      launchAdFirstRunDeferralParityValidated,
       tabNavigationRulesValidated,
       tabNavigationRoutesValidated,
       tabNavigationParityValidated,

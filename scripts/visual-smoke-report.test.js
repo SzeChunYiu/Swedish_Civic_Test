@@ -9,6 +9,7 @@ const repoRoot = path.resolve(__dirname, '..');
 const gitignorePath = path.join(repoRoot, '.gitignore');
 const screenshotDir = path.join(repoRoot, 'reports/2026-05-15-uiux-screenshots');
 const manifestPath = path.join(screenshotDir, 'manifest.json');
+const moduleCache = new Map();
 
 function readManifest() {
   return JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
@@ -22,15 +23,37 @@ function sha256File(filePath) {
   return crypto.createHash('sha256').update(fs.readFileSync(filePath)).digest('hex');
 }
 
+function resolveLocalModule(fromFilePath, request) {
+  const base = path.resolve(path.dirname(fromFilePath), request);
+  const candidates = [base, `${base}.ts`, `${base}.tsx`, `${base}.js`, path.join(base, 'index.ts')];
+  const found = candidates.find(
+    (candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isFile(),
+  );
+  if (!found) throw new Error(`Cannot resolve ${request} from ${fromFilePath}`);
+  return found;
+}
+
 function loadTs(relativePath) {
   const filePath = path.join(repoRoot, relativePath);
+  if (moduleCache.has(filePath)) return moduleCache.get(filePath);
+
   const source = fs.readFileSync(filePath, 'utf8');
   const output = ts.transpileModule(source, {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
   }).outputText;
   const mod = { exports: {} };
+  moduleCache.set(filePath, mod.exports);
 
-  new Function('module', 'exports', 'require', output)(mod, mod.exports, require);
+  function localRequire(request) {
+    if (request.startsWith('.')) {
+      const resolvedPath = resolveLocalModule(filePath, request);
+      return loadTs(path.relative(repoRoot, resolvedPath));
+    }
+    return require(request);
+  }
+
+  new Function('module', 'exports', 'require', output)(mod, mod.exports, localRequire);
+  moduleCache.set(filePath, mod.exports);
   return mod.exports;
 }
 
@@ -52,6 +75,12 @@ function visualSmokeDuplicateContract() {
     visualSmokeDuplicateExplanationKey,
     visualSmokeDuplicateExplanations,
   };
+}
+
+function loadLaunchAdSuppressionPolicy() {
+  const { shouldSuppressLaunchPopupAdForPath } = loadTs('lib/monetization/ads.ts');
+
+  return shouldSuppressLaunchPopupAdForPath;
 }
 
 test('visual smoke uses the shared route filename contract and blocking modal overlay locator', () => {
@@ -94,6 +123,7 @@ test('visual smoke manifest matches the shared route list and screenshot filenam
     visualSmokeDuplicateExplanationKey,
     visualSmokeDuplicateExplanations,
   } = visualSmokeDuplicateContract();
+  const shouldSuppressLaunchPopupAdForPath = loadLaunchAdSuppressionPolicy();
   const { resolveVisualSmokeOutput } = loadTs('tests/e2e/visualSmokeOutput.ts');
   const committedBaselineOutput = resolveVisualSmokeOutput({
     cwd: repoRoot,
@@ -131,16 +161,7 @@ test('visual smoke manifest matches the shared route list and screenshot filenam
     assert.equal(route.route, expectedRoute.route);
     assert.equal(route.launchOverlayVisibleAfterDismissal, false);
     assert.ok(
-      route.launchOverlayDismissed ||
-        [
-          '/practice',
-          '/exam',
-          '/disclaimer',
-          '/privacy',
-          '/terms',
-          '/sources',
-          '/support',
-        ].includes(route.route),
+      route.launchOverlayDismissed || shouldSuppressLaunchPopupAdForPath(route.route),
       `${route.name} should either dismiss or suppress the launch overlay`,
     );
 
