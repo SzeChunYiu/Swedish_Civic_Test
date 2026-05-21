@@ -3717,6 +3717,65 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('published question schema rejects generated variants that drop Sweden scope in English', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q070SingleChoiceId = generatedQuestionId(sourceQuestions, 'q070', 'singleChoice');
+  const q070JudgementId = generatedQuestionId(sourceQuestions, 'q070', 'judgement');
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "const generatedScopeResiduals = {",
+        "  [generatedFixtureId('q070', 0)]: { questionSv: 'Vilka betalar skatt i Sverige?', questionEn: 'Who pays tax?' },",
+        "  [generatedFixtureId('q070', 3)]: { questionSv: 'Vilket svar stämmer bäst? Vilka betalar skatt i Sverige?', questionEn: 'Which answer best matches? Who pays tax?' },",
+        "};",
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  generatedScopeResiduals[question.id]",
+        "    ? {",
+        "        ...question,",
+        "        ...generatedScopeResiduals[question.id],",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+process.argv.push('--focus-generated-sweden-scope-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.match(
+    output,
+    new RegExp(`${q070SingleChoiceId} drops Sweden scope from generated English question`),
+  );
+  assert.match(
+    output,
+    new RegExp(`${q070JudgementId} drops Sweden scope from generated English question`),
+  );
+});
+
 test('published question schema rejects civil-defence contextless true/false stems', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const sourceQuestions = generatedSiteBank.filter(

@@ -979,6 +979,24 @@ function policyGoalStatementEn(subject: string, answer: string): string | null {
 }
 
 function appliesStatementEn(subject: string, answer: string): string {
+  if (/^buying sex in Sweden$/i.test(subject.trim())) {
+    if (
+      /^It is illegal to buy sex, but the person who sells it is not punished$/i.test(answer.trim())
+    ) {
+      return 'Buying sex is illegal in Sweden, but the person who sells sex is not punished';
+    }
+    if (/^It is always legal to buy sex$/i.test(answer.trim())) {
+      return 'Buying sex is always legal in Sweden';
+    }
+  }
+  if (/^marriage between people of the same sex in Sweden$/i.test(subject.trim())) {
+    if (/^It is permitted to marry a person of the same sex$/i.test(answer.trim())) {
+      return 'Marriage between people of the same sex is permitted in Sweden';
+    }
+    if (/^It is prohibited to marry a person of the same sex$/i.test(answer.trim())) {
+      return 'Marriage between people of the same sex is prohibited in Sweden';
+    }
+  }
   if (/^They are\s+/i.test(answer)) {
     return replaceLeadingEnglishSubject(subject, answer);
   }
