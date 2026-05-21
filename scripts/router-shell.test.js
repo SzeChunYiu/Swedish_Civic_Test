@@ -72,23 +72,15 @@ function readRouterShellManifest() {
   return {
     files: Array.from(manifest.expoRouterShellFiles, (entry) => entry.file),
     roles: Array.from(manifest.expoRouterShellFiles, (entry) => entry.role),
-    rootStackScreenNames: Array.from(
-      manifest.expoRouterRootStackScreens,
-      (entry) => entry.name,
-    ),
-    rootStackScreenFiles: Array.from(
-      manifest.expoRouterRootStackScreens,
-      (entry) => entry.file,
-    ),
+    rootStackScreenNames: Array.from(manifest.expoRouterRootStackScreens, (entry) => entry.name),
+    rootStackScreenFiles: Array.from(manifest.expoRouterRootStackScreens, (entry) => entry.file),
     recoveryHrefs: Array.from(manifest.expoRouterShellRecoveryHrefs),
     standaloneHeaderHiddenRoutes: Array.from(manifest.expoRouterStandaloneHeaderHiddenRoutes),
     notFoundRouteNames: [manifest.expoRouterShellContract.notFoundRouteName],
     notFoundHeaderModes: [manifest.expoRouterShellContract.notFoundHeaderMode],
     rootStackHeaderModes: [manifest.expoRouterShellContract.rootStackHeaderMode],
     notFoundRedirectHrefs: [manifest.expoRouterShellContract.notFoundRedirectHref],
-    notFoundFileProtocolFallbacks: [
-      manifest.expoRouterShellContract.notFoundFileProtocolFallback,
-    ],
+    notFoundFileProtocolFallbacks: [manifest.expoRouterShellContract.notFoundFileProtocolFallback],
     webLanguages: [manifest.expoRouterShellContract.webLanguage],
     webAppShellMarkers: [manifest.expoRouterShellContract.webAppShellMarker],
     themeColorTokens: [manifest.expoRouterShellContract.themeColorToken],
