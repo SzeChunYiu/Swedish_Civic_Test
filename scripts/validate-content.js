@@ -1148,6 +1148,8 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bgained the right to live in the country and practice\b/i,
   /\bnär ett lågt valdeltagande påverkar demokratin\b/i,
   /\bwhen a low voter turnout affects democracy\b/i,
+  /\bnär\s+[^.?!]+?\spåverkar\s+[^.?!]+/i,
+  /\bwhen\s+[^.?!]+?\saffects\s+[^.?!]+/i,
   /^(?:De|They)\s+(?:säljer|drivs|får|finns|kan|måste|sell|are often|may|can|must)\b/i,
   /^(?:Genom|Through)\b/i,
   /\b(?:innehåll där|content there|inlägg där|posts there)\b/i,
@@ -7017,6 +7019,66 @@ function democracyRightStatementEn(subject, answer, isCorrect) {
     : `In a democracy, ${subject} may not ${action}`;
 }
 
+function voterTurnoutImpactStatementSv(answer) {
+  if (/^Människor kan få mindre möjlighet att påverka politiska beslut$/i.test(answer)) {
+    return 'Ett lågt valdeltagande kan minska människors möjlighet att påverka politiska beslut';
+  }
+  if (/^Alla väljare får två röster var i nästa val$/i.test(answer)) {
+    return 'Ett lågt valdeltagande innebär att alla väljare får två röster var i nästa val';
+  }
+  if (/^Domstolarna tar över riksdagens uppgifter$/i.test(answer)) {
+    return 'Ett lågt valdeltagande innebär att domstolarna tar över riksdagens uppgifter';
+  }
+  if (/^Samhället blir automatiskt mer integrerat$/i.test(answer)) {
+    return 'Ett lågt valdeltagande gör automatiskt samhället mer integrerat';
+  }
+  return null;
+}
+
+function voterTurnoutImpactStatementEn(answer) {
+  if (/^People may have fewer opportunities to influence political decisions$/i.test(answer)) {
+    return "Low voter turnout can reduce people's ability to influence political decisions";
+  }
+  if (/^All voters get two votes each in the next election$/i.test(answer)) {
+    return 'Low voter turnout means all voters get two votes each in the next election';
+  }
+  if (/^The courts take over the Riksdag's tasks$/i.test(answer)) {
+    return "Low voter turnout means the courts take over the Riksdag's tasks";
+  }
+  if (/^Society automatically becomes more integrated$/i.test(answer)) {
+    return 'Low voter turnout automatically makes society more integrated';
+  }
+  return null;
+}
+
+function affectStatementSv(subject, target, answer) {
+  if (/^Genom att\s+/i.test(answer)) {
+    return `Ett sätt ${subject} kan påverka ${target} är genom att ${lowerFirst(
+      answer.replace(/^Genom att\s+/i, ''),
+    )}`;
+  }
+  if (/^Att\s+/i.test(answer)) {
+    return `Ett sätt ${subject} kan påverka ${target} är att ${lowerFirst(
+      stripLeadingPurposeSv(answer),
+    )}`;
+  }
+  return `En möjlig följd för ${target} är att ${lowerFirst(answer)}`;
+}
+
+function affectStatementEn(subject, target, answer) {
+  if (/^By\s+/i.test(answer)) {
+    return `One way ${subject} can affect ${target} is by ${lowerFirst(
+      answer.replace(/^By\s+/i, ''),
+    )}`;
+  }
+  if (/^To\s+/i.test(answer)) {
+    return `One way ${subject} can affect ${target} is to ${lowerFirst(
+      stripLeadingPurposeEn(answer),
+    )}`;
+  }
+  return `One possible effect on ${target} is that ${lowerFirst(answer)}`;
+}
+
 function civicStatementSv(source, option) {
   if (isTrueFalseSource(source)) {
     return trueFalseSourceStatementSv(source, option.id === source.correctOptionId);
@@ -7054,7 +7116,11 @@ function civicStatementSv(source, option) {
   match = q.match(/^Vad kallas det när (.+)$/i);
   if (match) return `När ${match[1]} kallas det ${lowerFirst(answer)}`;
   match = q.match(/^Hur kan (.+?) påverka (.+)$/i);
-  if (match) return `${upperFirst(answer)} när ${match[1]} påverkar ${match[2]}`;
+  if (match) {
+    const voterTurnoutStatement = voterTurnoutImpactStatementSv(answer);
+    if (voterTurnoutStatement) return voterTurnoutStatement;
+    return affectStatementSv(match[1], match[2], answer);
+  }
   match = q.match(/^Hur kan (.+?) få inkomster$/i);
   if (match) return commercialMediaIncomeStatementSv(match[1], answer);
   match = q.match(/^Hur underlättar (.+?) (.+)$/i);
@@ -7390,7 +7456,11 @@ function civicStatementEn(source, option) {
   match = q.match(/^What is it called when (.+)$/i);
   if (match) return `When ${match[1]}, it is called ${lowerFirst(answer)}`;
   match = q.match(/^How can (.+?) affect (.+)$/i);
-  if (match) return `${upperFirst(answer)} when ${match[1]} affects ${match[2]}`;
+  if (match) {
+    const voterTurnoutStatement = voterTurnoutImpactStatementEn(answer);
+    if (voterTurnoutStatement) return voterTurnoutStatement;
+    return affectStatementEn(match[1], match[2], answer);
+  }
   match = q.match(/^How can (.+?) earn income$/i);
   if (match) return commercialMediaIncomeStatementEn(match[1], answer);
   match = q.match(/^How does (.+?) make it easier to (.+)$/i);

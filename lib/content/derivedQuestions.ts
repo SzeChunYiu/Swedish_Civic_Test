@@ -1232,6 +1232,34 @@ function voterTurnoutImpactStatementEn(answer: string): string | null {
   return null;
 }
 
+function affectStatementSv(subject: string, target: string, answer: string): string {
+  if (/^Genom att\s+/i.test(answer)) {
+    return `Ett sätt ${subject} kan påverka ${target} är genom att ${lowerFirst(
+      answer.replace(/^Genom att\s+/i, ''),
+    )}`;
+  }
+  if (/^Att\s+/i.test(answer)) {
+    return `Ett sätt ${subject} kan påverka ${target} är att ${lowerFirst(
+      stripLeadingPurposeSv(answer),
+    )}`;
+  }
+  return `En möjlig följd för ${target} är att ${lowerFirst(answer)}`;
+}
+
+function affectStatementEn(subject: string, target: string, answer: string): string {
+  if (/^By\s+/i.test(answer)) {
+    return `One way ${subject} can affect ${target} is by ${lowerFirst(
+      answer.replace(/^By\s+/i, ''),
+    )}`;
+  }
+  if (/^To\s+/i.test(answer)) {
+    return `One way ${subject} can affect ${target} is to ${lowerFirst(
+      stripLeadingPurposeEn(answer),
+    )}`;
+  }
+  return `One possible effect on ${target} is that ${lowerFirst(answer)}`;
+}
+
 function civicStatementSv(source: PracticeQuestion, option: QuestionOption): string {
   if (isTrueFalseSource(source)) {
     return trueFalseSourceStatementSv(source, option.id === source.correctOptionId);
@@ -1287,7 +1315,7 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   if (match) {
     const voterTurnoutStatement = voterTurnoutImpactStatementSv(answer);
     if (voterTurnoutStatement) return voterTurnoutStatement;
-    return `${upperFirst(answer)} när ${match[1]} påverkar ${match[2]}`;
+    return affectStatementSv(match[1], match[2], answer);
   }
 
   match = q.match(/^Hur kan (.+?) få inkomster$/i);
@@ -1771,7 +1799,7 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   if (match) {
     const voterTurnoutStatement = voterTurnoutImpactStatementEn(answer);
     if (voterTurnoutStatement) return voterTurnoutStatement;
-    return `${upperFirst(answer)} when ${match[1]} affects ${match[2]}`;
+    return affectStatementEn(match[1], match[2], answer);
   }
 
   match = q.match(/^How can (.+?) earn income$/i);

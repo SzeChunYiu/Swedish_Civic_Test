@@ -2701,7 +2701,7 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('published question schema rejects generated voter-turnout when-splices', () => {
+test('published question schema rejects generated how-can-affect when-splices', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -2716,11 +2716,11 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return String(contents)
       .replace(
         'Sveriges nordligaste del ligger norr om polcirkeln.',
-        'Människor kan få mindre möjlighet att påverka politiska beslut när ett lågt valdeltagande påverkar demokratin.',
+        'Falska uppgifter kan spridas snabbt när falsk information påverkar demokratin.',
       )
       .replace(
         "Sweden's northernmost part lies north of the Arctic Circle.",
-        'People may have fewer opportunities to influence political decisions when a low voter turnout affects democracy.',
+        'False information can spread quickly when false information affects democracy.',
       );
   }
   return contents;
