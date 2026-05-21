@@ -77,8 +77,11 @@ Deno.serve(async (req) => {
       client_reference_id: user.id,
       metadata: { user_id: user.id, plan },
       payment_intent_data: { metadata: { user_id: user.id, plan } },
-      // Stripe Tax computes EU VAT per buyer location (collects billing address).
-      automatic_tax: { enabled: true },
+      // Stripe Tax computes EU VAT per buyer location. OFF by default so the first
+      // test checkout works even before tax setup is complete — set the secret
+      // STRIPE_TAX_ENABLED=true only AFTER you've added your Stripe Tax origin
+      // address + a Swedish tax registration, or session creation errors.
+      automatic_tax: { enabled: Deno.env.get("STRIPE_TAX_ENABLED") === "true" },
       allow_promotion_codes: true,
       success_url: `${SITE}/?purchase=success&plan=${encodeURIComponent(plan)}`,
       cancel_url: `${SITE}/?purchase=cancelled`,

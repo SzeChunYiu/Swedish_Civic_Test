@@ -54,6 +54,12 @@ supabase secrets set \
 (`SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` are injected
 automatically — do not set them.)
 
+**EU VAT toggle:** `automatic_tax` is OFF by default so your first test checkout
+works immediately. Once you've set your Stripe Tax **origin address** and added a
+**Swedish tax registration** (Stripe → Settings → Tax), enable it:
+`supabase secrets set STRIPE_TAX_ENABLED=true`. Turning it on before tax setup is
+complete makes `create-checkout` error.
+
 ### 4. Deploy the functions
 ```bash
 supabase functions deploy create-checkout            # keep JWT verification ON

@@ -1,3 +1,10 @@
+> **SUPERSEDED for purchases — see `stripe-purchase-setup.md`.** The Google Play
+> handoff and `purchase_intents` table described below are no longer the purchase
+> path; the site now uses a Stripe web checkout (`site/purchase.js` →
+> `create-checkout` Edge Function → `entitlements`). The **Auth / Supabase Site
+> URL** section here is still valid and is the #1 blocker (login bounces to
+> `localhost:3000` until it is fixed).
+
 # Live auth and purchase checklist for `almostswedish.se`
 
 Created after the 2026-05-21 Loopia deploy when live Google sign-in redirected
