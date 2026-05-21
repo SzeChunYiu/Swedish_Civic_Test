@@ -7659,6 +7659,16 @@ if (process.argv.includes('--focus-generated-true-false-naturalness')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-mastery-rules')) {
+  validateMasteryRules();
+  exitWithValidationFailures();
+  printValidationSummary({
+    masteryRulesValidated,
+    masteryRulesParityValidated,
+  });
+  process.exit(0);
+}
+
 {
   const timelineValidation = validateCitizenshipTimeline();
   citizenshipRulesEffectiveDateValidated = timelineValidation.rulesDate;
@@ -15126,17 +15136,6 @@ if (process.argv.includes('--focus-exam-generator-schema')) {
   });
   process.exit(0);
 }
-
-if (process.argv.includes('--focus-mastery-rules')) {
-  validateMasteryRules();
-  exitWithValidationFailures();
-  printValidationSummary({
-    masteryRulesValidated,
-    masteryRulesParityValidated,
-  });
-  process.exit(0);
-}
-
 validateCriminalResponsibilityCurrentness();
 
 function validateStaticSiteQuestionBankParity() {

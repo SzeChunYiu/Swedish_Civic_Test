@@ -128,13 +128,6 @@ export default function ChapterScreen() {
       </Text>
     </View>
   );
-  const renderQuestionItem: ListRenderItem<PracticeQuestion> = ({ item: question }) => (
-    <View style={styles.questionBlock}>
-      <QuestionCard question={question} language={language} />
-      <UHRReferenceCard language={language} reference={question.uhrReference} />
-    </View>
-  );
-
   return (
     <FlatList
       contentContainerStyle={styles.content}
