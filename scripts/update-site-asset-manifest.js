@@ -8,9 +8,17 @@ const repoRoot = path.resolve(__dirname, '..');
 const defaultSiteDir = path.join(repoRoot, 'site');
 const defaultManifestPath = path.join(defaultSiteDir, 'asset-manifest.json');
 const manifestFileName = 'asset-manifest.json';
+const cssImportReferencePattern =
+  /@import\s+(?:url\(\s*(?:"([^"]*)"|'([^']*)'|([^'")]*?))\s*\)|"([^"]*)"|'([^']*)')/gi;
+const maxStylesheetImportDepth = 20;
 
 function normalizeRelativePath(filePath) {
   return filePath.split(path.sep).join('/');
+}
+
+function isInsideDirectory(candidatePath, directoryPath) {
+  const relativePath = path.relative(directoryPath, candidatePath);
+  return relativePath === '' || (!relativePath.startsWith('..') && !path.isAbsolute(relativePath));
 }
 
 function listSiteAssetFiles(siteDir, options = {}) {
@@ -73,6 +81,20 @@ function extractCssUrlReferences(cssText, baseDir = '') {
   return references;
 }
 
+function parseCssImportReferences(cssText, baseDir = '') {
+  const references = [];
+
+  for (const match of cssText.matchAll(cssImportReferencePattern)) {
+    const reference = normalizeAssetReference(
+      match[1] ?? match[2] ?? match[3] ?? match[4] ?? match[5] ?? '',
+      baseDir,
+    );
+    if (reference) references.push(reference);
+  }
+
+  return references;
+}
+
 function extractHtmlAttribute(tag, attributeName) {
   const attributePattern = new RegExp(
     `\\b${attributeName}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s>]+))`,
@@ -96,6 +118,7 @@ function listInlineStyleAssetReferences(indexHtml) {
 
 function listStylesheetAssetReferences(siteDir, indexHtml) {
   const references = [];
+  const visitedStylesheets = new Set();
 
   for (const match of indexHtml.matchAll(/<link\b[^>]*>/gi)) {
     const tag = match[0];
@@ -105,14 +128,48 @@ function listStylesheetAssetReferences(siteDir, indexHtml) {
     const stylesheetPath = normalizeAssetReference(extractHtmlAttribute(tag, 'href'));
     if (!stylesheetPath || path.extname(stylesheetPath).toLowerCase() !== '.css') continue;
 
-    const absoluteStylesheetPath = path.join(siteDir, stylesheetPath);
-    if (!fs.existsSync(absoluteStylesheetPath)) continue;
+    references.push(...readStylesheetAssetReferences(siteDir, stylesheetPath, visitedStylesheets));
+  }
 
-    const baseDir = path.posix.dirname(stylesheetPath);
+  return references;
+}
+
+function readStylesheetAssetReferences(siteDir, stylesheetPath, visitedStylesheets, depth = 0) {
+  const references = [];
+  const normalizedStylesheetPath = normalizeRelativePath(path.posix.normalize(stylesheetPath));
+
+  if (depth > maxStylesheetImportDepth || visitedStylesheets.has(normalizedStylesheetPath)) {
+    return references;
+  }
+
+  const resolvedSiteDir = path.resolve(siteDir);
+  const absoluteStylesheetPath = path.resolve(resolvedSiteDir, normalizedStylesheetPath);
+  if (!isInsideDirectory(absoluteStylesheetPath, resolvedSiteDir)) {
+    return references;
+  }
+
+  if (!fs.existsSync(absoluteStylesheetPath) || !fs.statSync(absoluteStylesheetPath).isFile()) {
+    return references;
+  }
+
+  visitedStylesheets.add(normalizedStylesheetPath);
+
+  const baseDir = path.posix.dirname(normalizedStylesheetPath);
+  const stylesheetBaseDir = baseDir === '.' ? '' : baseDir;
+  const cssText = fs.readFileSync(absoluteStylesheetPath, 'utf8');
+
+  references.push(...extractCssUrlReferences(cssText, stylesheetBaseDir));
+
+  for (const importedStylesheetPath of parseCssImportReferences(cssText, stylesheetBaseDir)) {
+    references.push(importedStylesheetPath);
+    if (path.extname(importedStylesheetPath).toLowerCase() !== '.css') continue;
+
     references.push(
-      ...extractCssUrlReferences(
-        fs.readFileSync(absoluteStylesheetPath, 'utf8'),
-        baseDir === '.' ? '' : baseDir,
+      ...readStylesheetAssetReferences(
+        resolvedSiteDir,
+        importedStylesheetPath,
+        visitedStylesheets,
+        depth + 1,
       ),
     );
   }
