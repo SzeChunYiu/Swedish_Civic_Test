@@ -21,6 +21,11 @@ const localizedChapterTwoCivicTerms = {
   tr: /belediyeler ve bölgeler/,
   uk: /муніципалітети й регіони/,
 };
+const localizedChapterSixEducationTerms = {
+  so: /dugsiyada barbaarinta.+jaamacadda/,
+  ti: /መዋእለ ህጻናት.+ዩኒቨርሲቲ/,
+  tr: /Anaokulundan.+üniversiteye/,
+};
 const allowedSharedFragments = [
   /Almost Swedish/,
   /UHR/,
@@ -161,6 +166,26 @@ test('extra locale Home chapter 2 cards localize kommun and region labels', () =
       value,
       /\b(?:kommun|region|regering)\b/i,
       `${locale}.chap.2.d must not render bare Swedish civic-term tokens`,
+    );
+  }
+});
+
+test('Somali Tigrinya and Turkish Home chapter 6 cards localize education labels', () => {
+  const dictionaries = loadDictionaries();
+
+  for (const [locale, localizedTerms] of Object.entries(localizedChapterSixEducationTerms)) {
+    const value = dictionaries[locale]['chap.6.d'];
+    assert.match(
+      value,
+      localizedTerms,
+      `${locale}.chap.6.d should use localized preschool/university nouns`,
+    );
+    assert.match(value, /BVC/, `${locale}.chap.6.d should preserve the BVC acronym`);
+    assert.match(value, /1177/, `${locale}.chap.6.d should preserve the 1177 reference`);
+    assert.doesNotMatch(
+      value,
+      forbiddenStaticHomeEducationTerms,
+      `${locale}.chap.6.d must not render bare Swedish education-term tokens`,
     );
   }
 });

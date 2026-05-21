@@ -131,6 +131,12 @@ const chapterTwoCivicTermSnippets = {
   tr: /belediyeler ve bölgeler/,
   uk: /муніципалітети й регіони/,
 };
+const chapterSixEducationLocales = ['so', 'ti', 'tr'];
+const chapterSixEducationSnippets = {
+  so: /dugsiyada barbaarinta.+jaamacadda/,
+  ti: /መዋእለ ህጻናት.+ዩኒቨርሲቲ/,
+  tr: /Anaokulundan.+üniversiteye/,
+};
 const expectedFooterRoadmapLabels = {
   ckb: 'نەخشەی ڕێگا',
   so: 'Qorshaha horumarinta',
@@ -300,6 +306,31 @@ test('extra locale Home chapter 2 civic terms use localized nouns', () => {
       value,
       /\b(?:kommun|region|regering)\b/i,
       `${locale}.chap.2.d must not keep bare Swedish civic-term tokens`,
+    );
+  }
+});
+
+test('Somali Tigrinya and Turkish Home chapter 6 education terms use localized nouns', () => {
+  const extra = loadExtraI18n();
+
+  for (const locale of chapterSixEducationLocales) {
+    const dictionary = extra?.[locale];
+    assert.equal(typeof dictionary, 'object', `${locale} dictionary must exist`);
+
+    const value = dictionary['chap.6.d'];
+    assert.equal(typeof value, 'string', `${locale}.chap.6.d must be a string`);
+    assert.notEqual(value.trim(), '', `${locale}.chap.6.d must not be empty`);
+    assert.match(
+      value,
+      chapterSixEducationSnippets[locale],
+      `${locale}.chap.6.d should localize preschool/university nouns`,
+    );
+    assert.match(value, /BVC/, `${locale}.chap.6.d should preserve the BVC acronym`);
+    assert.match(value, /1177/, `${locale}.chap.6.d should preserve the 1177 reference`);
+    assert.doesNotMatch(
+      value,
+      forbiddenStaticHomeEducationTerms,
+      `${locale}.chap.6.d must not keep bare Swedish education terms`,
     );
   }
 });
