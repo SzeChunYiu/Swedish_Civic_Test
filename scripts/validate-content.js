@@ -2996,7 +2996,11 @@ const EXPECTED_BADGE_ACCESSIBILITY_RULES = [
     pattern: /accessibilityLabel=\{badgeAccessibilityLabel\}/,
   },
   {
-    label: 'tone style path with caller override',
+    label: 'tone style path',
+    pattern: /style=\{\[styles\.badge, styles\[tone\]/,
+  },
+  {
+    label: 'caller style override',
     pattern: /style=\{\[styles\.badge, styles\[tone\], style\]\}/,
   },
   {
