@@ -6,8 +6,9 @@ import {
   CITIZENSHIP_RULES_EFFECTIVE_DATE,
   CITIZENSHIP_TIMELINE_SOURCE_URLS,
   CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE,
-  daysUntil,
   formatExamDate,
+  getCitizenshipTimelineCountdown,
+  type CitizenshipTimelineCountdownPhase,
 } from '../../lib/learning/examDate';
 import { colors, radius, space, typography } from '../../lib/theme';
 
@@ -20,8 +21,15 @@ type TimelineSourceLink = {
 const copy = {
   sv: {
     label: (d: number) => (d === 1 ? '1 dag kvar' : `${d} dagar kvar`),
-    body: (rulesDate: string, firstSittingDate: string) =>
-      `Nya medborgarskapsregler gäller från ${rulesDate}. UHR har bekräftat att den första provomgången i samhällskunskap är ${firstSittingDate} i Stockholm.`,
+    body: {
+      rules: (rulesDate: string, firstSittingDate: string) =>
+        `Nya medborgarskapsregler gäller från ${rulesDate}. UHR har bekräftat att den första provomgången i samhällskunskap är ${firstSittingDate} i Stockholm.`,
+      civicKnowledgeTest: (rulesDate: string, firstSittingDate: string) =>
+        `De nya medborgarskapsreglerna gäller nu sedan ${rulesDate}. Nästa viktiga fas är samhällskunskapsprovet: UHR har bekräftat första provet ${firstSittingDate} i Stockholm.`,
+    } satisfies Record<
+      CitizenshipTimelineCountdownPhase,
+      (rulesDate: string, firstSittingDate: string) => string
+    >,
     sourceLabel: 'Officiella datumkällor:',
     sources: [
       {
@@ -35,12 +43,22 @@ const copy = {
         sourceKey: 'civicKnowledgeTestFirstSitting',
       },
     ] satisfies TimelineSourceLink[],
-    untilLabel: 'tills nya reglerna',
+    untilLabel: {
+      rules: 'tills nya reglerna',
+      civicKnowledgeTest: 'till första provet',
+    } satisfies Record<CitizenshipTimelineCountdownPhase, string>,
   },
   en: {
     label: (d: number) => (d === 1 ? '1 day left' : `${d} days left`),
-    body: (rulesDate: string, firstSittingDate: string) =>
-      `New citizenship rules apply from ${rulesDate}. UHR has confirmed that the first civic-knowledge test sitting is ${firstSittingDate} in Stockholm.`,
+    body: {
+      rules: (rulesDate: string, firstSittingDate: string) =>
+        `New citizenship rules apply from ${rulesDate}. UHR has confirmed that the first civic-knowledge test sitting is ${firstSittingDate} in Stockholm.`,
+      civicKnowledgeTest: (rulesDate: string, firstSittingDate: string) =>
+        `The new citizenship rules have applied since ${rulesDate}. The next key phase is the civic-knowledge test: UHR has confirmed the first sitting on ${firstSittingDate} in Stockholm.`,
+    } satisfies Record<
+      CitizenshipTimelineCountdownPhase,
+      (rulesDate: string, firstSittingDate: string) => string
+    >,
     sourceLabel: 'Official date sources:',
     sources: [
       {
@@ -54,7 +72,10 @@ const copy = {
         sourceKey: 'civicKnowledgeTestFirstSitting',
       },
     ] satisfies TimelineSourceLink[],
-    untilLabel: 'until new rules',
+    untilLabel: {
+      rules: 'until new rules',
+      civicKnowledgeTest: 'until first test',
+    } satisfies Record<CitizenshipTimelineCountdownPhase, string>,
   },
 } as const;
 
@@ -69,25 +90,25 @@ export interface CountdownBannerProps {
 }
 
 export function CountdownBanner({ accessibilityLabel, language }: CountdownBannerProps) {
-  const [days, setDays] = useState<number>(() => daysUntil(CITIZENSHIP_RULES_EFFECTIVE_DATE));
+  const [countdown, setCountdown] = useState(() => getCitizenshipTimelineCountdown());
 
   useEffect(() => {
     const interval = setInterval(
-      () => setDays(daysUntil(CITIZENSHIP_RULES_EFFECTIVE_DATE)),
+      () => setCountdown(getCitizenshipTimelineCountdown()),
       60 * 60 * 1000,
     );
     return () => clearInterval(interval);
   }, []);
 
-  if (days <= 0) return null;
+  if (!countdown) return null;
 
   const t = copy[language];
+  const days = countdown.daysRemaining;
   const rulesDateString = formatExamDate(CITIZENSHIP_RULES_EFFECTIVE_DATE, language);
   const firstSittingDateString = formatExamDate(CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE, language);
-  const accessibilitySummary = `${t.label(days)} ${t.untilLabel}. ${t.body(
-    rulesDateString,
-    firstSittingDateString,
-  )}`;
+  const untilLabel = t.untilLabel[countdown.phase];
+  const body = t.body[countdown.phase](rulesDateString, firstSittingDateString);
+  const accessibilitySummary = `${t.label(days)} ${untilLabel}. ${body}`;
 
   return (
     <View
@@ -97,10 +118,10 @@ export function CountdownBanner({ accessibilityLabel, language }: CountdownBanne
     >
       <View style={styles.daysBlock}>
         <Text style={styles.daysNumber}>{days}</Text>
-        <Text style={styles.daysLabel}>{t.untilLabel}</Text>
+        <Text style={styles.daysLabel}>{untilLabel}</Text>
       </View>
       <View style={styles.contentBlock}>
-        <Text style={styles.body}>{t.body(rulesDateString, firstSittingDateString)}</Text>
+        <Text style={styles.body}>{body}</Text>
         <View style={styles.sourceRow}>
           <Text style={styles.sourceLabel}>{t.sourceLabel}</Text>
           {t.sources.map((source) => (
