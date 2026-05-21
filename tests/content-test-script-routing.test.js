@@ -112,10 +112,10 @@ test('answer feedback focused content validation runs only its parity summary', 
   );
 });
 
-test('explanation panel focused content validation runs only its accessibility summary', () => {
+test('question card focused content validation runs only its accessibility summary', () => {
   const result = spawnSync(
     process.execPath,
-    ['scripts/validate-content.js', '--focus-explanation-panel-accessibility'],
+    ['scripts/validate-content.js', '--focus-question-card-accessibility'],
     {
       cwd: repoRoot,
       encoding: 'utf8',
@@ -124,17 +124,17 @@ test('explanation panel focused content validation runs only its accessibility s
 
   assert.equal(result.status, 0, result.stderr || result.stdout);
   const match = result.stdout.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'focused ExplanationPanel validation should print JSON summary');
+  assert.ok(match, 'focused QuestionCard validation should print JSON summary');
   const summary = JSON.parse(match[0]);
 
-  assert.equal(summary.explanationPanelAccessibilityRulesValidated, 10);
-  assert.equal(summary.explanationPanelAccessibilityParityValidated, true);
+  assert.equal(summary.questionCardAccessibilityRulesValidated, 20);
+  assert.equal(summary.questionCardAccessibilityParityValidated, true);
   assert.equal(
-    Object.prototype.hasOwnProperty.call(summary, 'answerFeedbackQuestionsValidated'),
+    Object.prototype.hasOwnProperty.call(summary, 'answerFeedbackRuntimeParityValidated'),
     false,
   );
   assert.equal(
-    Object.prototype.hasOwnProperty.call(summary, 'questionCardAccessibilityParityValidated'),
+    Object.prototype.hasOwnProperty.call(summary, 'publishedSourceParityValidated'),
     false,
   );
 });
