@@ -69,7 +69,7 @@ test('release preflight npm wrapper forwards test filters before files', () => {
       'test:release-preflight',
       '--',
       '--test-name-pattern',
-      'text output preserves|classifier-discovered',
+      'blocks v1.1 surfaces|labels v1.1 source-marker',
     ],
     {
       cwd: repoRoot,
@@ -80,10 +80,13 @@ test('release preflight npm wrapper forwards test filters before files', () => {
   const output = `${result.stdout}\n${result.stderr}`;
 
   assert.equal(result.status, 0, output);
-  assert.match(output, /release preflight detects classifier-discovered v1\.1 runtime surfaces/);
   assert.match(
     output,
-    /release preflight text output preserves v1\.1 scope reasons and custom-root redaction/,
+    /release preflight blocks v1\.1 surfaces while v1\.0 Remove Ads acceptance is red/,
+  );
+  assert.match(
+    output,
+    /release preflight labels v1\.1 source-marker surfaces without temp-root noise/,
   );
   assert.match(output, /tests 2/);
   assert.doesNotMatch(output, /release preflight fails closed on external launch blockers/);
