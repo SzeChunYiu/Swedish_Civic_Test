@@ -142,6 +142,35 @@ test('mock exam copy parity keeps Swedish övningsprov labels and English Mock E
   assert.doesNotMatch(`${librarySource}\n${tierSource}`, /\bprovexamen\b|\bprovexamina\b/i);
 });
 
+test('active mock exam keeps full UHR reference cards out of pre-submit questions', () => {
+  const examRouteSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+  const reviewSectionStart = examRouteSource.indexOf('{filteredReviewItems.map((item) => {');
+  const activeQuestionSectionStart = examRouteSource.indexOf(
+    '{examQuestions.map((question, index) => (',
+  );
+
+  assert.notEqual(reviewSectionStart, -1, 'submitted review section should be present');
+  assert.notEqual(activeQuestionSectionStart, -1, 'active question section should be present');
+  assert.ok(
+    reviewSectionStart < activeQuestionSectionStart,
+    'submitted review section should stay separate from active questions',
+  );
+
+  const reviewSection = examRouteSource.slice(reviewSectionStart, activeQuestionSectionStart);
+  const activeQuestionSection = examRouteSource.slice(activeQuestionSectionStart);
+
+  assert.match(
+    reviewSection,
+    /<UHRReferenceCard language=\{language\} reference=\{item\.uhrReference\} \/>/,
+  );
+  assert.match(activeQuestionSection, /<QuestionSourceCitation/);
+  assert.match(
+    activeQuestionSection,
+    /<ProvenanceBadge language=\{language\} question=\{question\} \/>/,
+  );
+  assert.doesNotMatch(activeQuestionSection, /UHRReferenceCard/);
+});
+
 test('mock exam timer and auto-submit runtime guards reject malformed state', () => {
   const output = execFileSync(
     process.execPath,
