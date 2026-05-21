@@ -19,6 +19,8 @@ const {
 
 const repoRoot = path.resolve(__dirname, '..');
 const SOMALI_ENGLISH_GEOGRAPHY_TERM_PATTERN = /\b(?:Mediterranean|Baltic|Atlantic|Gulf Stream)\b/;
+const PUBLIC_SERVICE_LOANWORD_LOCALES = ['pl', 'so', 'tr', 'uk'];
+const PUBLIC_SERVICE_LOANWORD_PATTERN = /\bpublic service\b/i;
 
 function withSvEn(localizedText, sv, en) {
   return localizedText ? { ...localizedText, sv, en } : localizedText;
@@ -55,6 +57,21 @@ function staticSomaliSegments(question) {
     [`${question.id}.why.so`, question.why?.so],
     ...(question.opts || []).map((option, index) => [`${question.id}.opts.${index}.so`, option.so]),
   ];
+}
+
+function staticPublicServiceSegments(question) {
+  const segments = [];
+
+  for (const locale of PUBLIC_SERVICE_LOANWORD_LOCALES) {
+    segments.push([`${question.id}.q.${locale}`, question.q?.[locale]]);
+    segments.push([`${question.id}.why.${locale}`, question.why?.[locale]]);
+
+    for (const [index, option] of (question.opts || []).entries()) {
+      segments.push([`${question.id}.opts.${index}.${locale}`, option[locale]]);
+    }
+  }
+
+  return segments;
 }
 
 test('static site question bank is semantically generated from canonical content', () => {
@@ -114,6 +131,22 @@ test('static site question bank avoids English geography common terms in Somali 
   for (const question of context.window.SMT_QUESTIONS) {
     for (const [segment, value] of staticSomaliSegments(question)) {
       if (typeof value === 'string' && SOMALI_ENGLISH_GEOGRAPHY_TERM_PATTERN.test(value)) {
+        offenders.push(segment);
+      }
+    }
+  }
+
+  assert.deepEqual(offenders, []);
+});
+
+test('static site question bank avoids English public service loanwords in target-language media text', () => {
+  const context = { window: {} };
+  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
+
+  const offenders = [];
+  for (const question of context.window.SMT_QUESTIONS) {
+    for (const [segment, value] of staticPublicServiceSegments(question)) {
+      if (typeof value === 'string' && PUBLIC_SERVICE_LOANWORD_PATTERN.test(value)) {
         offenders.push(segment);
       }
     }

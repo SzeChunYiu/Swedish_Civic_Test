@@ -5,10 +5,13 @@ const test = require('node:test');
 const {
   checkQuestions,
   checkLocalizationSourceShape,
+  checkPublicServiceLoanwordNaturalness,
   checkSomaliGeographyNaturalness,
   checkReviewMetadata,
+  PUBLIC_SERVICE_LOANWORD_IDS,
   REQUIRED_LOCALES,
   SOMALI_GEOGRAPHY_NATURALNESS_IDS,
+  summarizePublicServiceLoanwordNaturalness,
   summarizeSomaliGeographyNaturalness,
 } = require('../scripts/check-question-i18n-v8');
 
@@ -217,6 +220,72 @@ test('question localization v8 summarizes Somali geography naturalness cases', (
   assert.deepEqual(summary.errors, []);
   assert.equal(summary.casesValidated, 3);
   assert.equal(summary.expectedCases, 3);
+  assert.equal(summary.parityValidated, true);
+});
+
+test('question localization v8 rejects English public service loanwords in target media text', () => {
+  const errors = checkPublicServiceLoanwordNaturalness(
+    [
+      {
+        id: 'q048',
+        questionText: {
+          pl: 'Firmy public service w Szwecji',
+          so: 'Shirkadaha public service ee Iswiidhan',
+          tr: 'Kamu hizmeti yayıncıları',
+          uk: 'Компанії суспільного мовлення',
+        },
+        explanationText: {
+          pl: 'Media publiczne',
+          so: 'Warbaahinta adeegga dadweynaha',
+          tr: 'Public service şirketleri',
+          uk: 'Компанії public service',
+        },
+        options: [
+          {
+            id: 'a',
+            text: {
+              pl: 'Sveriges Radio',
+              so: 'Sveriges Radio',
+              tr: 'Sveriges Radio',
+              uk: 'Sveriges Radio',
+            },
+          },
+        ],
+      },
+    ],
+    ['q048'],
+  );
+
+  assert.deepEqual(errors, [
+    'q048.questionText.pl contains English public service loanword',
+    'q048.questionText.so contains English public service loanword',
+    'q048.explanationText.tr contains English public service loanword',
+    'q048.explanationText.uk contains English public service loanword',
+  ]);
+});
+
+test('question localization v8 summarizes public service loanword naturalness cases', () => {
+  const cleanMediaMaps = {
+    pl: 'Media publiczne powinny być niezależne.',
+    so: 'Warbaahinta adeegga dadweynaha waa inay madax-bannaanaataa.',
+    tr: 'Kamu hizmeti yayıncılığı bağımsız olmalıdır.',
+    uk: 'Суспільне мовлення має бути незалежним.',
+  };
+  const questions = PUBLIC_SERVICE_LOANWORD_IDS.map((id) => ({
+    id,
+    questionText: cleanMediaMaps,
+    explanationText: cleanMediaMaps,
+    options: [{ id: 'a', text: cleanMediaMaps }],
+  }));
+
+  const summary = summarizePublicServiceLoanwordNaturalness(
+    questions,
+    PUBLIC_SERVICE_LOANWORD_IDS,
+  );
+
+  assert.deepEqual(summary.errors, []);
+  assert.equal(summary.casesValidated, 8);
+  assert.equal(summary.expectedCases, 8);
   assert.equal(summary.parityValidated, true);
 });
 
