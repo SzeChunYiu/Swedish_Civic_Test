@@ -20,7 +20,20 @@ async function openLanguagePicker(page: Page) {
   await expect(trigger).toHaveAttribute('aria-expanded', 'false');
   await trigger.click();
   await expect(trigger).toHaveAttribute('aria-expanded', 'true');
-  await expect(page.getByRole('menu', { name: 'Språkväljare' })).toBeVisible();
+  const menu = page.getByRole('menu', { name: 'Språkväljare' });
+  await expect(menu).toBeVisible();
+  await expect(menu).toHaveAttribute('aria-modal', 'true');
+  await expect(menu).toHaveAttribute('aria-labelledby', /language-picker-title-/);
+  await expect(menu).toHaveAttribute('aria-describedby', /language-picker-description-/);
+
+  const titleId = await menu.getAttribute('aria-labelledby');
+  const descriptionId = await menu.getAttribute('aria-describedby');
+  expect(titleId).toBeTruthy();
+  expect(descriptionId).toBeTruthy();
+  await expect(page.locator(`[id="${titleId}"]`)).toHaveText('Språkväljare');
+  await expect(page.locator(`[id="${descriptionId}"]`)).toContainText(
+    'Gränssnittet översätts stegvis',
+  );
 
   return trigger;
 }
@@ -124,7 +137,10 @@ test('topbar language picker supports keyboard menu navigation', async ({ page }
   await expect(englishTrigger).toHaveAttribute('aria-expanded', 'false');
 
   await englishTrigger.click();
-  await expect(page.getByRole('menu', { name: 'Language picker' })).toBeVisible();
+  await expect(page.getByRole('menu', { name: 'Language picker' })).toHaveAttribute(
+    'aria-modal',
+    'true',
+  );
   await expect(page.getByRole('menuitem', { name: 'English' })).toBeFocused();
 
   await page.keyboard.press('Home');
