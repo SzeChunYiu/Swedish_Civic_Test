@@ -72,6 +72,10 @@ test('npm test keeps selector routing in the project dispatcher', () => {
     path.join(repoRoot, 'tests/content-study-reminder-runtime-parity.test.js'),
     'utf8',
   );
+  const weeklyRecapParitySource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-weekly-recap-runtime-parity.test.js'),
+    'utf8',
+  );
 
   assert.equal(pkg.scripts.test, 'node scripts/test-dispatch.js');
   assert.doesNotMatch(pkg.scripts.test, /&&/);
@@ -81,6 +85,12 @@ test('npm test keeps selector routing in the project dispatcher', () => {
       .length,
     1,
     'test:content must include the study reminder runtime parity guard exactly once',
+  );
+  assert.equal(
+    (testContentScript.match(/tests\/content-weekly-recap-runtime-parity\.test\.js/g) ?? [])
+      .length,
+    1,
+    'test:content must include the weekly recap runtime parity guard exactly once',
   );
   assert.equal(
     (testContentScript.match(/tests\/content-route-link-accessibility-parity\.test\.js/g) ?? [])
@@ -115,6 +125,16 @@ test('npm test keeps selector routing in the project dispatcher', () => {
     studyReminderParitySource,
     /lib\/notifications\/studyReminderRouting\.ts/,
     'study reminder content parity must cover notification tap routing helpers',
+  );
+  assert.match(
+    weeklyRecapParitySource,
+    /--focus-weekly-recap-runtime/,
+    'weekly recap content parity must execute the focused weekly recap runtime validator',
+  );
+  assert.doesNotMatch(
+    weeklyRecapParitySource,
+    /\['scripts\/validate-content\.js'\]/,
+    'weekly recap content parity must not route through full content validation',
   );
 });
 
