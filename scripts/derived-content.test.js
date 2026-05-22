@@ -1538,6 +1538,29 @@ test('derivePublishedQuestions renders q048 public-service broadcasters in natur
   );
 });
 
+test('derivePublishedQuestions renders q058 national-minorities judgement naturally', () => {
+  const { questions, sourceQuestions } = loadTs('data/questions.ts');
+  const byId = new Map(questions.map((question) => [question.id, question]));
+  const source = byId.get('q058');
+  const judgementId = generatedQuestionId(sourceQuestions, 'q058', 'judgement');
+  const judgement = byId.get(judgementId);
+
+  assert.equal(source?.questionSv, 'Vilka är Sveriges fem nationella minoriteter?');
+  assert.equal(source?.questionEn, "Which groups are Sweden's five national minorities?");
+  assert.equal(
+    judgement?.questionSv,
+    'Vilken uppgift stämmer om Sveriges fem nationella minoriteter?',
+  );
+  assert.equal(
+    judgement?.questionEn,
+    "Which fact is correct about Sweden's five national minorities?",
+  );
+  assert.doesNotMatch(
+    `${judgement?.questionSv}\n${judgement?.questionEn}`,
+    /när det gäller vilka|regarding which groups/i,
+  );
+});
+
 test('derivePublishedQuestions renders q146 political-rights true/false as direct propositions', () => {
   const { questions, sourceQuestions } = loadTs('data/questions.ts');
   const byId = new Map(questions.map((question) => [question.id, question]));

@@ -4762,6 +4762,41 @@ test('q062 public-sector exports natural English in canonical and static banks',
   );
 });
 
+test('national-minorities generated judgement exports natural English in canonical and static banks', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const judgementId = generatedQuestionId(sourceQuestions, 'q058', 'judgement');
+  const byId = new Map(generatedSiteBank.map((question) => [question.id, question]));
+  const actualById = new Map(Array.from(actualSiteBank).map((question) => [question.id, question]));
+  const stalePattern =
+    /Which fact is correct regarding which groups are Sweden's five national minorities/i;
+
+  assert.equal(
+    byId.get(judgementId)?.q.sv,
+    'Vilken uppgift stämmer om Sveriges fem nationella minoriteter?',
+  );
+  assert.equal(
+    byId.get(judgementId)?.q.en,
+    "Which fact is correct about Sweden's five national minorities?",
+  );
+  assert.equal(
+    actualById.get(judgementId)?.q.en,
+    "Which fact is correct about Sweden's five national minorities?",
+  );
+  assert.doesNotMatch(`${byId.get(judgementId)?.q.en}`, stalePattern);
+  assert.doesNotMatch(`${actualById.get(judgementId)?.q.en}`, stalePattern);
+
+  const csvRows = contentQuestionBankCsvRowsById([judgementId]);
+  const csvColumns = csvRows.get(judgementId);
+  assert.ok(csvColumns, 'national-minorities generated judgement should be exported to CSV');
+  assert.equal(csvColumns[3], 'Vilken uppgift stämmer om Sveriges fem nationella minoriteter?');
+  assert.equal(csvColumns[4], "Which fact is correct about Sweden's five national minorities?");
+  assert.doesNotMatch(`${csvColumns[3]}\n${csvColumns[4]}`, stalePattern);
+});
+
 test('published question schema rejects generated true/false bare answer phrases', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const sourceQuestions = generatedSiteBank.filter(
