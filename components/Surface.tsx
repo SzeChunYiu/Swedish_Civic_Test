@@ -1,8 +1,9 @@
-import type { ComponentProps, PropsWithChildren } from 'react';
+import { useMemo, type ComponentProps, type PropsWithChildren } from 'react';
 import { StyleSheet, View } from 'react-native';
 import type { StyleProp, ViewStyle } from 'react-native';
 
-import { colors, radius, shadows, space } from '../lib/theme';
+import { radius, shadows, space, type ThemeColors } from '../lib/theme';
+import { useThemeColors } from '../lib/theme/ThemeProvider';
 
 export type SurfaceTone = 'canvas' | 'surface' | 'warm';
 export type SurfaceElevation = 'none' | 'card' | 'elevated';
@@ -31,6 +32,9 @@ export function Surface({
   tone = 'surface',
   ...viewProps
 }: SurfaceProps) {
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
+
   return (
     <View
       accessibilityRole={accessibilityRole}
@@ -49,29 +53,31 @@ export function Surface({
   );
 }
 
-const styles = StyleSheet.create({
-  base: {
-    borderRadius: radius.card,
-    gap: space[1],
-    padding: space[2],
-  },
-  canvas: {
-    backgroundColor: colors.canvas,
-  },
-  surface: {
-    backgroundColor: colors.surface,
-  },
-  warm: {
-    backgroundColor: colors.surfaceWarm,
-  },
-  bordered: {
-    borderColor: colors.border,
-    borderWidth: space.hairline,
-  },
-  cardElevation: {
-    ...shadows.card,
-  },
-  elevated: {
-    ...shadows.deep,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    base: {
+      borderRadius: radius.card,
+      gap: space[1],
+      padding: space[2],
+    },
+    canvas: {
+      backgroundColor: themeColors.canvas,
+    },
+    surface: {
+      backgroundColor: themeColors.surface,
+    },
+    warm: {
+      backgroundColor: themeColors.surfaceWarm,
+    },
+    bordered: {
+      borderColor: themeColors.border,
+      borderWidth: space.hairline,
+    },
+    cardElevation: {
+      ...shadows.card,
+    },
+    elevated: {
+      ...shadows.deep,
+    },
+  });
+}

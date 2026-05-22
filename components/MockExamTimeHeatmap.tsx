@@ -1,6 +1,8 @@
+import { useMemo } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { colors, radius, space, typography } from '../lib/theme';
+import { radius, space, typography, type ThemeColors } from '../lib/theme';
+import { useThemeColors } from '../lib/theme/ThemeProvider';
 import {
   isStrictlyCorrectAnswer,
   normalizeHeatmapSeconds,
@@ -105,6 +107,8 @@ export function MockExamTimeHeatmap({
   medianMs,
   onSelectQuestion,
 }: MockExamTimeHeatmapProps) {
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const copy = timeHeatmapCopy[language];
   const medianSeconds = normalizeMedianSecondsFromMs(medianMs);
   const timedAnswers = answers
@@ -192,81 +196,83 @@ export function MockExamTimeHeatmap({
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    gap: space[1.5],
-  },
-  header: {
-    alignItems: 'flex-start',
-    gap: space[1],
-  },
-  title: {
-    color: colors.text,
-  },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-  },
-  cell: {
-    alignItems: 'center',
-    borderColor: colors.border,
-    borderRadius: radius.small,
-    borderWidth: space.hairline,
-    gap: space[0.5],
-    justifyContent: 'center',
-    minHeight: space[6],
-    minWidth: space[7],
-    paddingHorizontal: space[1],
-    paddingVertical: space[0.75],
-  },
-  rushed: {
-    backgroundColor: colors.badgeBlueBg,
-    borderColor: colors.badgeBlueText,
-  },
-  median: {
-    backgroundColor: colors.correctBg,
-    borderColor: colors.success,
-  },
-  overthought: {
-    backgroundColor: colors.warningSoft,
-    borderColor: colors.warning,
-  },
-  stuck: {
-    backgroundColor: colors.incorrectBg,
-    borderColor: colors.warning,
-  },
-  reviewCell: {
-    borderColor: colors.warning,
-  },
-  pressed: {
-    opacity: 0.82,
-  },
-  cellNumber: {
-    color: colors.text,
-    fontWeight: typography.bodyBold.fontWeight,
-  },
-  cellTime: {
-    color: colors.textSecondary,
-  },
-  cellResult: {
-    color: colors.textMuted,
-    textTransform: 'uppercase',
-  },
-  legend: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-  },
-  legendItem: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: space[0.5],
-  },
-  legendSwatch: {
-    borderRadius: radius.micro,
-    borderWidth: space.hairline,
-    height: space[1.25],
-    width: space[1.25],
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    card: {
+      gap: space[1.5],
+    },
+    header: {
+      alignItems: 'flex-start',
+      gap: space[1],
+    },
+    title: {
+      color: themeColors.text,
+    },
+    grid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1],
+    },
+    cell: {
+      alignItems: 'center',
+      borderColor: themeColors.border,
+      borderRadius: radius.small,
+      borderWidth: space.hairline,
+      gap: space[0.5],
+      justifyContent: 'center',
+      minHeight: space[6],
+      minWidth: space[7],
+      paddingHorizontal: space[1],
+      paddingVertical: space[0.75],
+    },
+    rushed: {
+      backgroundColor: themeColors.badgeBlueBg,
+      borderColor: themeColors.badgeBlueText,
+    },
+    median: {
+      backgroundColor: themeColors.correctBg,
+      borderColor: themeColors.success,
+    },
+    overthought: {
+      backgroundColor: themeColors.warningSoft,
+      borderColor: themeColors.warning,
+    },
+    stuck: {
+      backgroundColor: themeColors.incorrectBg,
+      borderColor: themeColors.warning,
+    },
+    reviewCell: {
+      borderColor: themeColors.warning,
+    },
+    pressed: {
+      opacity: 0.82,
+    },
+    cellNumber: {
+      color: themeColors.text,
+      fontWeight: typography.bodyBold.fontWeight,
+    },
+    cellTime: {
+      color: themeColors.textSecondary,
+    },
+    cellResult: {
+      color: themeColors.textMuted,
+      textTransform: 'uppercase',
+    },
+    legend: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1],
+    },
+    legendItem: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      gap: space[0.5],
+    },
+    legendSwatch: {
+      borderRadius: radius.micro,
+      borderWidth: space.hairline,
+      height: space[1.25],
+      width: space[1.25],
+    },
+  });
+}
