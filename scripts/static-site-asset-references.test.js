@@ -55,6 +55,64 @@ test('committed static site asset manifest includes every local index reference'
   assert.deepEqual(missingReferences, []);
 });
 
+test('static PWA shell is installable and covered by the asset manifest', () => {
+  const indexHtml = readSiteIndex();
+  const assetManifest = JSON.parse(
+    fs.readFileSync(path.join(siteRoot, 'asset-manifest.json'), 'utf8'),
+  );
+  const webManifest = JSON.parse(
+    fs.readFileSync(path.join(siteRoot, 'manifest.webmanifest'), 'utf8'),
+  );
+  const serviceWorker = fs.readFileSync(path.join(siteRoot, 'sw.js'), 'utf8');
+
+  assert.match(indexHtml, /\brel=["']manifest["']\s+href=["']manifest\.webmanifest["']/);
+  assert.match(indexHtml, /\bname=["']theme-color["']\s+content=["']#f5f7fa["']/);
+  assert.match(
+    indexHtml,
+    /\brel=["']apple-touch-icon["'][^>]+href=["']icons\/pwa-icon-192\.png["']/,
+  );
+  assert.match(indexHtml, /navigator\.serviceWorker[\s\S]*\.register\(["']\.\/sw\.js["']/);
+  assert.match(indexHtml, /updateViaCache:\s*["']none["']/);
+
+  assert.equal(webManifest.name, 'Almost Swedish');
+  assert.equal(webManifest.display, 'standalone');
+  assert.equal(webManifest.start_url, '.');
+  assert.equal(webManifest.scope, '.');
+  assert.equal(webManifest.background_color, '#f5f7fa');
+  assert.equal(webManifest.theme_color, '#f5f7fa');
+  assert.deepEqual(
+    webManifest.icons.map((icon) => `${icon.src}:${icon.sizes}:${icon.purpose}`),
+    [
+      'icons/pwa-icon-192.png:192x192:any',
+      'icons/pwa-icon-512.png:512x512:any',
+      'icons/pwa-maskable-512.png:512x512:maskable',
+    ],
+  );
+
+  for (const assetPath of [
+    'manifest.webmanifest',
+    'icons/pwa-icon-192.png',
+    'icons/pwa-icon-512.png',
+    'icons/pwa-maskable-512.png',
+    'sw.js',
+  ]) {
+    assert.ok(assetManifest.assets?.[assetPath], `${assetPath} missing from asset-manifest.json`);
+    assert.equal(fs.existsSync(path.join(siteRoot, assetPath)), true);
+  }
+
+  assert.match(serviceWorker, /asset-manifest\.json/);
+  assert.match(serviceWorker, /cacheNameForManifestText/);
+  assert.match(serviceWorker, /crypto\.subtle\.digest\(["']SHA-256["']/);
+  assert.match(serviceWorker, /cache\.addAll\(resolvePrecacheUrls\(manifest\)\)/);
+  assert.match(serviceWorker, /caches\.keys\(\)/);
+  assert.match(serviceWorker, /caches\.delete\(cacheName\)/);
+  assert.match(
+    serviceWorker,
+    /event\.respondWith\(networkFirstWithCacheFallback\(event\.request\)\)/,
+  );
+  assert.doesNotMatch(serviceWorker, /https?:\/\//);
+});
+
 test('asset manifest check rejects referenced assets omitted by manifest scope', () => {
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'site-asset-reference-'));
   const tempSiteDir = path.join(tempDir, 'site');

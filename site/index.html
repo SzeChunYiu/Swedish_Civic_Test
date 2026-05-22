@@ -9,7 +9,9 @@
       content="A friendly, unofficial study app for the Swedish citizenship test. Quiz, learn, mock-exam — all in lagom-sized chapters."
     />
     <link rel="icon" type="image/png" href="icon.png" />
-    <link rel="apple-touch-icon" href="icon.png" />
+    <link rel="apple-touch-icon" sizes="192x192" href="icons/pwa-icon-192.png" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#f5f7fa" />
 
     <link rel="stylesheet" href="styles.css" />
   </head>
@@ -1543,6 +1545,23 @@
     <script src="v11.js"></script>
     <script src="signin.js"></script>
     <script src="purchase.js"></script>
+    <script>
+      (function () {
+        if (
+          !('serviceWorker' in navigator) ||
+          !window.isSecureContext ||
+          window.location.protocol === 'file:'
+        ) {
+          return;
+        }
+
+        window.addEventListener('load', function () {
+          navigator.serviceWorker
+            .register('./sw.js', { scope: './', updateViaCache: 'none' })
+            .catch(function () {});
+        });
+      })();
+    </script>
     <script>
       // Show dashboard wrapper once v11 has content.
       (function () {

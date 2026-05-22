@@ -95,9 +95,25 @@
       "bytes": 362794,
       "sha256": "401ff142bcdf5c40570f8eb7673fc979d7f2ba8d646d26d34b27feb4f4115054"
     },
+    "icons/pwa-icon-192.png": {
+      "bytes": 40258,
+      "sha256": "cbc024c155dbbfc8ad98a5e9e465534deaafc937fd2f7e375928703233c68f65"
+    },
+    "icons/pwa-icon-512.png": {
+      "bytes": 227321,
+      "sha256": "56c549a35d6dfa3a7f9bc9f1425fd94775ad0f9c5b72c0ac500e6bb80775cf57"
+    },
+    "icons/pwa-maskable-512.png": {
+      "bytes": 139113,
+      "sha256": "c70dfeacdb677177592f67a5a943e04c56d84506332615bd1c4c4427740b343c"
+    },
     "index.html": {
-      "bytes": 72947,
-      "sha256": "8b4e39811312f45dafeb4ae49bc65bc8f9ec54154df5c7fc5221694ae808b0ba"
+      "bytes": 73536,
+      "sha256": "2bc5e6ea2134bfc0b74c1a3f56f79363c0c7c5b295285e115128bd070d9b47b1"
+    },
+    "manifest.webmanifest": {
+      "bytes": 752,
+      "sha256": "449d620d867ac89d7f54c571927c4753f025ef182dafb9afda331ce68a55b05f"
     },
     "practice.js": {
       "bytes": 69197,
@@ -108,8 +124,8 @@
       "sha256": "7c73ab63e08a89f3dde77b2eba53fcb32477fee7a899467742c7029020f0ef74"
     },
     "questions.js": {
-      "bytes": 3775635,
-      "sha256": "ec14bfc0e301581aff78a6aca8779afa64d9243f14857064765653d758026790"
+      "bytes": 3775722,
+      "sha256": "665f3f8e00701c46bfc613f42448d3672145fca5699e20a02873e8f0f5427f24"
     },
     "settings.js": {
       "bytes": 12903,
@@ -126,6 +142,10 @@
     "styles.css": {
       "bytes": 243855,
       "sha256": "bd438610dc210764124dd73a47b98132f0d82627cb3dae56541660f7032f29cf"
+    },
+    "sw.js": {
+      "bytes": 4589,
+      "sha256": "8a723df9544ab5581b66031172349b4e51cbdd4abaef310522204ed3b8154f82"
     },
     "tweaks-panel.jsx": {
       "bytes": 25802,

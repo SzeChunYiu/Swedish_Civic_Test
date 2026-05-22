@@ -310,6 +310,92 @@ function findStaticSigninAssetIssues(indexSource, manifestSource, signinSource) 
   return issues;
 }
 
+function parseJsonForStaticCheck(source, label, issues) {
+  try {
+    return JSON.parse(String(source || ''));
+  } catch (error) {
+    issues.push(`${label} could not be parsed: ${error.message}`);
+    return null;
+  }
+}
+
+function findStaticPwaAssetIssues(indexSource, assetManifestSource, pwaManifestSource, swSource) {
+  const index = String(indexSource || '');
+  const serviceWorker = String(swSource || '');
+  const issues = [];
+
+  if (!/\brel=["']manifest["']\s+href=["']manifest\.webmanifest["']/.test(index)) {
+    issues.push('index.html does not link manifest.webmanifest');
+  }
+  if (!/\bname=["']theme-color["']\s+content=["']#f5f7fa["']/.test(index)) {
+    issues.push('index.html does not expose the static PWA theme color');
+  }
+  if (!/navigator\.serviceWorker[\s\S]*\.register\(["']\.\/sw\.js["']/.test(index)) {
+    issues.push('index.html does not register ./sw.js');
+  }
+  if (!/updateViaCache:\s*["']none["']/.test(index)) {
+    issues.push('service worker registration does not bypass update cache');
+  }
+
+  const assetManifest = parseJsonForStaticCheck(assetManifestSource, 'asset-manifest.json', issues);
+  if (assetManifest) {
+    for (const assetPath of [
+      'manifest.webmanifest',
+      'icons/pwa-icon-192.png',
+      'icons/pwa-icon-512.png',
+      'icons/pwa-maskable-512.png',
+      'sw.js',
+    ]) {
+      if (!assetManifest.assets?.[assetPath]) {
+        issues.push(`${assetPath} missing from asset-manifest.json`);
+      }
+    }
+  }
+
+  const pwaManifest = parseJsonForStaticCheck(pwaManifestSource, 'manifest.webmanifest', issues);
+  if (pwaManifest) {
+    if (pwaManifest.display !== 'standalone') {
+      issues.push(`manifest.webmanifest display expected standalone, found ${pwaManifest.display}`);
+    }
+    if (pwaManifest.start_url !== '.' || pwaManifest.scope !== '.') {
+      issues.push('manifest.webmanifest must keep root-relative start_url and scope');
+    }
+
+    const iconSources = new Set((pwaManifest.icons || []).map((icon) => icon.src));
+    for (const iconPath of [
+      'icons/pwa-icon-192.png',
+      'icons/pwa-icon-512.png',
+      'icons/pwa-maskable-512.png',
+    ]) {
+      if (!iconSources.has(iconPath)) {
+        issues.push(`manifest.webmanifest does not list ${iconPath}`);
+      }
+    }
+  }
+
+  for (const [label, pattern] of [
+    ['asset-manifest-driven precache', /asset-manifest\.json/],
+    ['revisioned cache name', /cacheNameForManifestText/],
+    ['manifest hash cache revision', /crypto\.subtle\.digest\(["']SHA-256["']/],
+    ['app-shell precache', /cache\.addAll\(resolvePrecacheUrls\(manifest\)\)/],
+    ['stale cache cleanup', /caches\.delete\(cacheName\)/],
+    [
+      'same-origin fetch handler',
+      /event\.respondWith\(networkFirstWithCacheFallback\(event\.request\)\)/,
+    ],
+  ]) {
+    if (!pattern.test(serviceWorker)) {
+      issues.push(`sw.js missing ${label}`);
+    }
+  }
+
+  if (/https?:\/\//.test(serviceWorker)) {
+    issues.push('sw.js must not hardcode external cache URLs');
+  }
+
+  return issues;
+}
+
 async function fetchTextForCheck(baseUrl, assetPath) {
   try {
     return await fetchText(baseUrl, assetPath);
@@ -484,6 +570,23 @@ async function checkLiveSite(inputUrl, options = {}) {
   } else {
     checks.push(pass('static sign-in assets', 'signin.js not referenced'));
   }
+
+  const [pwaAssetManifest, pwaManifest, serviceWorker] = await Promise.all([
+    fetchTextForCheck(baseUrl, 'asset-manifest.json'),
+    fetchTextForCheck(baseUrl, 'manifest.webmanifest'),
+    fetchTextForCheck(baseUrl, 'sw.js'),
+  ]);
+  const staticPwaAssetIssues = findStaticPwaAssetIssues(
+    index,
+    pwaAssetManifest,
+    pwaManifest,
+    serviceWorker,
+  );
+  checks.push(
+    staticPwaAssetIssues.length === 0
+      ? pass('static PWA offline shell')
+      : fail('static PWA offline shell', staticPwaAssetIssues.join('; ')),
+  );
 
   checks.push(
     containsAll(styles, [
