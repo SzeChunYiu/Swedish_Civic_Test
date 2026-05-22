@@ -71,9 +71,77 @@ window.smtEnsureQuestionBank = smtEnsureQuestionBank;
 
 function smtEnsureQuestionBankForRoute(path) {
   if (!smtRouteNeedsQuestionBank(path)) return null;
-  return smtEnsureQuestionBank().catch(() => null);
+  smtRenderQuestionBankRouteStatus(path, 'loading');
+  return smtEnsureQuestionBank().then(
+    () => {
+      smtRenderQuestionBankRouteStatus(path, 'ready');
+      return window.SMT_QUESTIONS || [];
+    },
+    () => {
+      smtRenderQuestionBankRouteStatus(path, 'error');
+      return null;
+    },
+  );
 }
 window.smtEnsureQuestionBankForRoute = smtEnsureQuestionBankForRoute;
+
+function smtQuestionBankRouteStatusCopy(kind) {
+  if (kind === 'error') {
+    return smtTr({
+      sv: 'Frågorna kunde inte laddas. Uppdatera sidan och försök igen.',
+      en: 'Questions could not be loaded. Refresh the page and try again.',
+      'zh-Hans': '题库无法加载。请刷新页面后重试。',
+      'zh-Hant': '題庫無法載入。請重新整理頁面後再試。',
+      ar: 'تعذر تحميل الأسئلة. حدّث الصفحة وحاول مرة أخرى.',
+      ckb: 'پرسیارەکان بار نەبوون. پەڕەکە نوێ بکەرەوە و دووبارە هەوڵ بدە.',
+      fa: 'پرسش‌ها بارگیری نشدند. صفحه را تازه‌سازی و دوباره تلاش کنید.',
+      pl: 'Nie udało się załadować pytań. Odśwież stronę i spróbuj ponownie.',
+      so: "Su'aalaha lama rarin. Cusbooneysii bogga oo mar kale isku day.",
+      ti: 'ሕቶታት ክጽዓና ኣይከኣላን። ገጹ ኣሐድስ እሞ እንደገና ፈትን።',
+      tr: 'Sorular yüklenemedi. Sayfayı yenileyip tekrar dene.',
+      uk: 'Не вдалося завантажити запитання. Оновіть сторінку й спробуйте ще раз.',
+    });
+  }
+
+  return smtTr({
+    sv: 'Laddar frågor...',
+    en: 'Loading questions...',
+    'zh-Hans': '正在加载题库...',
+    'zh-Hant': '正在載入題庫...',
+    ar: 'جارٍ تحميل الأسئلة...',
+    ckb: 'پرسیارەکان دادەگیرێن...',
+    fa: 'در حال بارگذاری پرسش‌ها...',
+    pl: 'Ładowanie pytań...',
+    so: "Su'aalaha ayaa la rarayaa...",
+    ti: 'ሕቶታት ይጽዓና ኣለዋ...',
+    tr: 'Sorular yükleniyor...',
+    uk: 'Завантаження запитань...',
+  });
+}
+
+function smtRenderQuestionBankRouteStatus(path, kind) {
+  if (path !== '/sources') return;
+  const sourceClaims = document.querySelector('[data-source-claims="current-question-bank"]');
+  if (!sourceClaims) return;
+  const statusId = 'smt-source-question-bank-status';
+  const existing = document.getElementById(statusId);
+
+  if (kind === 'ready') {
+    if (existing) existing.remove();
+    sourceClaims.hidden = false;
+    return;
+  }
+
+  sourceClaims.hidden = kind === 'error';
+  const status = existing || document.createElement('div');
+  status.id = statusId;
+  status.className = 'doc__callout';
+  status.setAttribute('role', kind === 'error' ? 'alert' : 'status');
+  status.textContent = smtQuestionBankRouteStatusCopy(kind);
+  if (!existing) {
+    sourceClaims.insertAdjacentElement('beforebegin', status);
+  }
+}
 
 const SMT_EBOOK_SCRIPT_SOURCES = Object.freeze(['ebook-tools.js', 'ebook.js']);
 const SMT_EBOOK_LOAD_STATE = {

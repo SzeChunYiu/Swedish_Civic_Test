@@ -310,6 +310,97 @@ function findStaticSigninAssetIssues(indexSource, manifestSource, signinSource) 
   return issues;
 }
 
+function findStaticPwaAssetIssues(
+  indexSource,
+  manifestSource,
+  pwaManifestSource,
+  serviceWorkerSource,
+) {
+  const index = String(indexSource || '');
+  const pwaManifestText = String(pwaManifestSource || '');
+  const serviceWorker = String(serviceWorkerSource || '');
+  const issues = [];
+
+  if (!/<link\b[^>]*\brel=["']manifest["'][^>]*\bhref=["']manifest\.webmanifest["']/i.test(index)) {
+    issues.push('index.html does not link manifest.webmanifest');
+  }
+  if (!/serviceWorker[\s\S]*register\(["']\.\/sw\.js["']/.test(index)) {
+    issues.push('index.html does not register ./sw.js');
+  }
+
+  let assetManifest = null;
+  try {
+    assetManifest = JSON.parse(String(manifestSource || ''));
+  } catch (error) {
+    issues.push(`asset-manifest.json could not be parsed for PWA assets: ${error.message}`);
+  }
+
+  let pwaManifest = null;
+  try {
+    pwaManifest = JSON.parse(pwaManifestText);
+  } catch (error) {
+    issues.push(`manifest.webmanifest could not be parsed: ${error.message}`);
+  }
+
+  const assetPaths = assetManifest?.assets || {};
+  for (const assetPath of [
+    'manifest.webmanifest',
+    'sw.js',
+    'icons/pwa-icon-192.png',
+    'icons/pwa-icon-512.png',
+    'icons/pwa-maskable-512.png',
+  ]) {
+    if (!assetPaths[assetPath]) {
+      issues.push(`${assetPath} is missing from asset-manifest.json`);
+    }
+  }
+
+  if (pwaManifest) {
+    if (pwaManifest.display !== 'standalone') {
+      issues.push('manifest.webmanifest display is not standalone');
+    }
+    if (pwaManifest.start_url !== '.' || pwaManifest.scope !== '.') {
+      issues.push('manifest.webmanifest start_url and scope must both be "."');
+    }
+
+    const icons = Array.isArray(pwaManifest.icons) ? pwaManifest.icons : [];
+    const hasIcon = (src, sizes, purpose) =>
+      icons.some(
+        (icon) =>
+          icon?.src === src &&
+          icon?.sizes === sizes &&
+          String(icon?.purpose || '')
+            .split(/\s+/)
+            .includes(purpose),
+      );
+    if (!hasIcon('icons/pwa-icon-192.png', '192x192', 'any')) {
+      issues.push('manifest.webmanifest is missing the 192x192 any icon');
+    }
+    if (!hasIcon('icons/pwa-icon-512.png', '512x512', 'any')) {
+      issues.push('manifest.webmanifest is missing the 512x512 any icon');
+    }
+    if (!hasIcon('icons/pwa-maskable-512.png', '512x512', 'maskable')) {
+      issues.push('manifest.webmanifest is missing the 512x512 maskable icon');
+    }
+  }
+
+  for (const pattern of [
+    { label: 'static cache prefix', pattern: /CACHE_PREFIX\s*=\s*["']almost-swedish-static["']/ },
+    { label: 'asset manifest fetch', pattern: /asset-manifest\.json/ },
+    { label: 'manifest-based cache name', pattern: /cacheNameForManifestText/ },
+    { label: 'precache URL resolver', pattern: /resolvePrecacheUrls/ },
+    { label: 'cache addAll install path', pattern: /\.addAll\(/ },
+    { label: 'network-first cache fallback', pattern: /networkFirstWithCacheFallback/ },
+    { label: 'fetch event handler', pattern: /addEventListener\(["']fetch["']/ },
+  ]) {
+    if (!pattern.pattern.test(serviceWorker)) {
+      issues.push(`sw.js is missing ${pattern.label}`);
+    }
+  }
+
+  return issues;
+}
+
 function indexReferencesQuestionBankScript(indexSource) {
   return /<script\b[^>]*\bsrc=["'][^"']*questions\.js(?:[?#][^"']*)?["']/i.test(
     String(indexSource || ''),
@@ -375,16 +466,25 @@ async function checkLiveSite(inputUrl, options = {}) {
   const requiredHeadMetadata = resolveRequiredHeadMetadata(options);
   const requiredQuestionCount = resolveRequiredQuestionCount(options);
   const requiredQuestionBankHash = resolveRequiredQuestionBankHash(options);
-  const [indexAsset, stylesAsset, appAsset, practiceAsset, ebookAsset, v11Asset, questionsAsset] =
-    await Promise.all([
-      fetchAsset(baseUrl, 'index.html'),
-      fetchAsset(baseUrl, 'styles.css'),
-      fetchAsset(baseUrl, 'app.js'),
-      fetchAsset(baseUrl, 'practice.js'),
-      fetchAsset(baseUrl, 'ebook.js'),
-      fetchAsset(baseUrl, 'v11.js'),
-      fetchAsset(baseUrl, 'questions.js'),
-    ]);
+  const [
+    indexAsset,
+    stylesAsset,
+    appAsset,
+    practiceAsset,
+    ebookToolsAsset,
+    ebookAsset,
+    v11Asset,
+    questionsAsset,
+  ] = await Promise.all([
+    fetchAsset(baseUrl, 'index.html'),
+    fetchAsset(baseUrl, 'styles.css'),
+    fetchAsset(baseUrl, 'app.js'),
+    fetchAsset(baseUrl, 'practice.js'),
+    fetchAsset(baseUrl, 'ebook-tools.js'),
+    fetchAsset(baseUrl, 'ebook.js'),
+    fetchAsset(baseUrl, 'v11.js'),
+    fetchAsset(baseUrl, 'questions.js'),
+  ]);
   const index = indexAsset.text;
   const styles = stylesAsset.text;
   const app = appAsset.text;
@@ -616,6 +716,7 @@ module.exports = {
   findStaticAdSenseSlotConfigIssues,
   findStaticAdSenseSlotStateCopyIssues,
   findStaticNoTrackingClaimIssues,
+  findStaticPwaAssetIssues,
   findStaticQuestionBankLazyLoadIssues,
   findStaticSigninAssetIssues,
   hashStaticQuestionBank,

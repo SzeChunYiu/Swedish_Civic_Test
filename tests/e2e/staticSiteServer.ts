@@ -24,6 +24,7 @@ export type StaticSite = {
 export type StaticSiteLanguage = 'en' | 'sv';
 
 export type StaticSiteServerOptions = {
+  failAssetPaths?: string[];
   stripExternalScripts?: boolean;
   stripGoogleFonts?: boolean;
 };
@@ -52,8 +53,22 @@ function sanitizedIndexHtml(options: StaticSiteServerOptions = {}) {
 export async function startStaticSiteServer(
   options: StaticSiteServerOptions = {},
 ): Promise<StaticSite> {
+  const failAssetPaths = new Set(
+    (options.failAssetPaths ?? []).map((assetPath) =>
+      assetPath.startsWith('/') ? assetPath : `/${assetPath}`,
+    ),
+  );
+
   const server = http.createServer((request, response) => {
     const url = new URL(request.url ?? '/', 'http://127.0.0.1');
+    if (failAssetPaths.has(url.pathname)) {
+      response.writeHead(404, {
+        'content-type': 'text/plain; charset=utf-8',
+      });
+      response.end('not found');
+      return;
+    }
+
     const safePath = path.normalize(decodeURIComponent(url.pathname)).replace(/^\.\.(?:\/|$)/, '');
     const requestedPath = path.join(siteRoot, safePath === '/' ? 'index.html' : safePath);
     const filePath =

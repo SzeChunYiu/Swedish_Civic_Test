@@ -88,6 +88,81 @@ test('static site lazy-loads the question bank only on study-data routes', async
   }
 });
 
+test('static question-data routes fail closed when the lazy question bank is unavailable', async ({
+  browser,
+}) => {
+  const failedStaticSite = await startStaticSiteServer({
+    failAssetPaths: ['/questions.js'],
+    stripExternalScripts: false,
+  });
+  const routeCases = [
+    {
+      hash: '#/practice?c=mix',
+      missingSelector: '#quiz-stage .qopt',
+      message: 'Questions could not be loaded. Refresh the page and try again.',
+    },
+    {
+      hash: '#/mock',
+      missingText: 'Start timed practice',
+      message: 'Questions could not be loaded. Refresh the page and try again.',
+    },
+    {
+      hash: '#/sources',
+      missingSelector: '[data-source-claims="current-question-bank"]:visible',
+      message: 'Questions could not be loaded. Refresh the page and try again.',
+    },
+    {
+      hash: '#/dashboard',
+      missingText: 'Answer more questions for a steadier local signal',
+      message: 'Dashboard data could not be loaded. Refresh the page and try again.',
+    },
+  ];
+
+  try {
+    for (const { hash, message, missingSelector, missingText } of routeCases) {
+      const page = await browser.newPage();
+      const pageErrors: string[] = [];
+      const questionBankRequests: string[] = [];
+
+      try {
+        page.on('pageerror', (error) => pageErrors.push(error.message));
+        await seedStaticNetworkRun(page);
+        await trapExternalRequests(page, new URL(failedStaticSite.baseUrl).origin, []);
+        page.on('request', (request) => {
+          if (new URL(request.url()).pathname.endsWith('/questions.js')) {
+            questionBankRequests.push(request.url());
+          }
+        });
+
+        await page.goto(`${failedStaticSite.baseUrl}/${hash}`, { waitUntil: 'domcontentloaded' });
+        await expect(page.getByText(message, { exact: true })).toBeVisible();
+        expect(questionBankRequests.length, `${hash} should request questions.js`).toBeGreaterThan(
+          0,
+        );
+        expect(pageErrors, `${hash} should not emit page errors`).toEqual([]);
+        await expect
+          .poll(() =>
+            page.evaluate(() =>
+              Array.isArray((window as unknown as { SMT_QUESTIONS?: unknown }).SMT_QUESTIONS),
+            ),
+          )
+          .toBe(false);
+
+        if (missingSelector) {
+          await expect(page.locator(missingSelector)).toHaveCount(0);
+        }
+        if (missingText) {
+          await expect(page.getByText(missingText, { exact: true })).toHaveCount(0);
+        }
+      } finally {
+        await page.close();
+      }
+    }
+  } finally {
+    await failedStaticSite.close();
+  }
+});
+
 test('static system font fallback keeps primary routes inside mobile and desktop viewports', async ({
   page,
 }) => {
