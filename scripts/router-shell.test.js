@@ -324,6 +324,11 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
     'native intent static route allowlist should include the native ebook route',
   );
   assert.equal(
+    manifest.nativeIntentStaticRoutes.includes('/recap'),
+    true,
+    'native intent static route allowlist should include the weekly recap route',
+  );
+  assert.equal(
     manifest.nativeIntentStaticRoutes.includes('/citizenship-requirements'),
     true,
     'native intent static route allowlist should include the citizenship requirements guide',
@@ -521,6 +526,29 @@ test('native intent resolves ebook deep links before the Home fallback', () => {
     '/ebook?c=1',
   );
   assert.equal(redirectSystemPath({ initial: true, path: '/ebook/intro' }), '/home');
+});
+
+test('native intent resolves weekly recap deep links before the Home fallback', () => {
+  const appScheme = readAppScheme();
+  const { redirectSystemPath } = loadNativeIntentRuntime();
+
+  assert.equal(redirectSystemPath({ initial: true, path: '/recap' }), '/recap');
+  assert.equal(
+    redirectSystemPath({ initial: true, path: '/recap?week=current' }),
+    '/recap?week=current',
+  );
+  assert.equal(
+    redirectSystemPath({
+      initial: true,
+      path: `${appScheme}://app/recap`,
+    }),
+    '/recap',
+  );
+  assert.equal(
+    redirectSystemPath({ initial: true, path: `${appScheme}://recap` }),
+    '/recap',
+  );
+  assert.equal(redirectSystemPath({ initial: true, path: '/recap/archive' }), '/home');
 });
 
 test('native intent rejects foreign absolute URL schemes before route allowlisting', () => {
