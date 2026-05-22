@@ -2519,7 +2519,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     [
       ['Vid vårdagjämningen den 21 mars', 'At the spring equinox on 21 March'],
       ['På midsommarafton mellan 19 och 25 juni', 'On Midsummer Eve between 19 and 25 June'],
-      ['På nyårsafton den 31 december', "On New Year's Eve on 31 December"],
+      ['På nyårsafton den 31 december', "On New Year's Eve, 31 December"],
       ['På luciadagen den 13 december', 'On Lucia Day on 13 December'],
     ],
     0,

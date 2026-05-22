@@ -13301,7 +13301,7 @@
         "uk": "У переддень Мідсоммара між 19 і 25 червня"
       },
       {
-        "en": "On New Year's Eve on 31 December",
+        "en": "On New Year's Eve, 31 December",
         "sv": "På nyårsafton den 31 december",
         "zh-Hant": "12 月 31 日除夕",
         "zh-Hans": "12 月 31 日除夕",
@@ -50847,7 +50847,7 @@
         "uk": "У переддень Мідсоммара між 19 і 25 червня"
       },
       {
-        "en": "On New Year's Eve on 31 December",
+        "en": "On New Year's Eve, 31 December",
         "sv": "På nyårsafton den 31 december",
         "zh-Hant": "12 月 31 日除夕",
         "zh-Hans": "12 月 31 日除夕",
@@ -51018,7 +51018,7 @@
         "uk": "У переддень Мідсоммара між 19 і 25 червня"
       },
       {
-        "en": "On New Year's Eve on 31 December",
+        "en": "On New Year's Eve, 31 December",
         "sv": "På nyårsafton den 31 december",
         "zh-Hant": "12 月 31 日除夕",
         "zh-Hans": "12 月 31 日除夕",

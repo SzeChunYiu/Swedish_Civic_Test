@@ -1561,6 +1561,45 @@ test('derivePublishedQuestions renders q058 national-minorities judgement natura
   );
 });
 
+test("derivePublishedQuestions keeps q128 New Year's Eve option date appositive", () => {
+  const { questions, sourceQuestions } = loadTs('data/questions.ts');
+  const byId = new Map(questions.map((question) => [question.id, question]));
+  const source = byId.get('q128');
+  const singleChoiceId = generatedQuestionId(sourceQuestions, 'q128', 'singleChoice');
+  const trueStatementId = generatedQuestionId(sourceQuestions, 'q128', 'trueStatement');
+  const falseStatementId = generatedQuestionId(sourceQuestions, 'q128', 'falseStatement');
+  const judgementId = generatedQuestionId(sourceQuestions, 'q128', 'judgement');
+
+  assert.equal(source?.questionEn, 'When are Nouruz and Newroz celebrated?');
+  assert.equal(
+    source?.options.find((option) => option.id === 'a')?.textEn,
+    'At the spring equinox on 21 March',
+  );
+  assert.equal(
+    source?.options.find((option) => option.id === 'c')?.textEn,
+    "On New Year's Eve, 31 December",
+  );
+  assert.equal(byId.get(trueStatementId)?.correctOptionId, 'true');
+  assert.equal(byId.get(falseStatementId)?.correctOptionId, 'false');
+
+  for (const id of ['q128', singleChoiceId, judgementId]) {
+    const question = byId.get(id);
+    assert.ok(question, `${id} should exist`);
+    assert.equal(
+      question.options.find((option) => option.id === 'c')?.textEn,
+      "On New Year's Eve, 31 December",
+    );
+  }
+
+  const text = [source, byId.get(singleChoiceId), byId.get(judgementId)]
+    .map(
+      (question) =>
+        `${question?.questionEn} ${question?.explanationEn} ${JSON.stringify(question?.options)}`,
+    )
+    .join('\n');
+  assert.doesNotMatch(text, /New Year(?:’|')s Eve on 31 December/i);
+});
+
 test('derivePublishedQuestions renders q146 political-rights true/false as direct propositions', () => {
   const { questions, sourceQuestions } = loadTs('data/questions.ts');
   const byId = new Map(questions.map((question) => [question.id, question]));

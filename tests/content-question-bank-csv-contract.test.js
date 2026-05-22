@@ -19,6 +19,17 @@ function parseExportedCsvLine(line) {
   );
 }
 
+function loadQuestionBankRowsById() {
+  const csv = fs.readFileSync(path.join(repoRoot, 'content', 'question-bank.csv'), 'utf8');
+  const lines = csv.trimEnd().split('\n');
+  const header = parseExportedCsvLine(lines[0]);
+  const rows = lines.slice(1).map((line) => {
+    const fields = parseExportedCsvLine(line);
+    return Object.fromEntries(header.map((field, index) => [field, fields[index]]));
+  });
+  return new Map(rows.map((row) => [row.id, row]));
+}
+
 function runQuestionBankCsvValidation() {
   return execFileSync(
     process.execPath,
@@ -54,6 +65,33 @@ test('question-bank CSV keeps its public row contract', () => {
   assert.equal(summary.questionBankCsvUhrSourcePublisherParityValidated, true);
   assert.equal(summary.questionBankCsvSupplementalSourceRowsValidated, 15);
   assert.equal(summary.questionBankCsvVotingRightsSupplementalSourceParityValidated, true);
+});
+
+test("question-bank CSV keeps q128 New Year's Eve option date appositive", () => {
+  const rowsById = loadQuestionBankRowsById();
+  const relevantIds = ['q128', 'q688', 'q689', 'q690', 'q691'];
+  const relevantRows = relevantIds.map((id) => rowsById.get(id));
+  relevantRows.forEach((row, index) => assert.ok(row, `${relevantIds[index]} should exist`));
+
+  const optionRows = ['q128', 'q688', 'q691'].map((id) => rowsById.get(id));
+  for (const row of optionRows) {
+    const optionEn = JSON.parse(row.optionEn);
+    assert.equal(
+      optionEn.find((option) => option.id === 'c')?.text,
+      "On New Year's Eve, 31 December",
+    );
+    assert.doesNotMatch(row.optionEn, /New Year(?:’|')s Eve on 31 December/i);
+  }
+
+  assert.equal(rowsById.get('q128').correctOptionId, 'a');
+  assert.equal(rowsById.get('q128').uhrSection, 'Nya traditioner');
+  assert.equal(rowsById.get('q128').uhrPageApprox, '47');
+  assert.equal(rowsById.get('q689').correctOptionId, 'true');
+  assert.equal(rowsById.get('q690').correctOptionId, 'false');
+  assert.doesNotMatch(
+    relevantRows.map((row) => JSON.stringify(row)).join('\n'),
+    /New Year(?:’|')s Eve on 31 December/i,
+  );
 });
 
 test('question provenance runtime guard validates invalid tags and provenance fallbacks', () => {
