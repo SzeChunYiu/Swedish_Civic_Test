@@ -52,6 +52,19 @@ async function dispatchRapidClicks(action: Locator) {
   });
 }
 
+async function dispatchRapidKeyboardActivations(
+  page: Page,
+  action: Locator,
+  key: 'Enter' | 'Space',
+) {
+  await action.scrollIntoViewIfNeeded();
+  await expect(action).toBeVisible();
+  await action.focus();
+  await expect(action).toBeFocused();
+  await page.keyboard.press(key);
+  await page.keyboard.press(key);
+}
+
 async function purchaseCallCount(page: Page, key: PurchaseCallKey): Promise<number> {
   return page.evaluate((callKey) => {
     const runtime = window as typeof window & {
@@ -89,6 +102,25 @@ test('PremiumBanner buy suppresses rapid duplicate Remove Ads store calls', asyn
   expect(consoleErrors.get()).toEqual([]);
 });
 
+test('PremiumBanner buy suppresses rapid Enter keyboard purchase in-flight calls', async ({
+  page,
+}) => {
+  const consoleErrors = collectConsoleAndPageErrors(page);
+  await seedPurchaseHarness(page, { removeAdsOwned: false });
+  await openProfile(page);
+
+  const buyButton = page.getByRole('button', { name: 'Buy Remove Ads for 29 SEK' });
+  await dispatchRapidKeyboardActivations(page, buyButton, 'Enter');
+
+  await expectSingleStoreCall(page, 'removeAds.buy');
+  await expectBusyButton(buyButton);
+  await expect(page.getByLabel('Remove Ads status: Ads are disabled on this device.')).toBeVisible({
+    timeout: purchaseDelayMs + 5000,
+  });
+  await expectSingleStoreCall(page, 'removeAds.buy');
+  expect(consoleErrors.get()).toEqual([]);
+});
+
 test('PremiumBanner restore suppresses rapid duplicate Remove Ads store calls', async ({
   page,
 }) => {
@@ -98,6 +130,25 @@ test('PremiumBanner restore suppresses rapid duplicate Remove Ads store calls', 
 
   const restoreButton = page.getByRole('button', { name: 'Restore Remove Ads purchase' });
   await dispatchRapidClicks(restoreButton);
+
+  await expectSingleStoreCall(page, 'removeAds.restore');
+  await expectBusyButton(restoreButton);
+  await expect(page.getByLabel('Remove Ads status: Ads are disabled on this device.')).toBeVisible({
+    timeout: purchaseDelayMs + 5000,
+  });
+  await expectSingleStoreCall(page, 'removeAds.restore');
+  expect(consoleErrors.get()).toEqual([]);
+});
+
+test('PremiumBanner restore suppresses rapid Space keyboard purchase in-flight calls', async ({
+  page,
+}) => {
+  const consoleErrors = collectConsoleAndPageErrors(page);
+  await seedPurchaseHarness(page, { removeAdsOwned: true });
+  await openProfile(page);
+
+  const restoreButton = page.getByRole('button', { name: 'Restore Remove Ads purchase' });
+  await dispatchRapidKeyboardActivations(page, restoreButton, 'Space');
 
   await expectSingleStoreCall(page, 'removeAds.restore');
   await expectBusyButton(restoreButton);
@@ -125,6 +176,25 @@ test('ProPaywall buy suppresses rapid duplicate Pro Lifetime store calls', async
   expect(consoleErrors.get()).toEqual([]);
 });
 
+test('ProPaywall buy suppresses rapid Enter keyboard purchase in-flight calls', async ({
+  page,
+}) => {
+  const consoleErrors = collectConsoleAndPageErrors(page);
+  await seedPurchaseHarness(page, { proOwned: false, removeAdsOwned: false });
+  await openProfile(page);
+
+  const buyButton = page.getByRole('button', { name: /Buy Pro.*59 SEK/ });
+  await dispatchRapidKeyboardActivations(page, buyButton, 'Enter');
+
+  await expectSingleStoreCall(page, 'proLifetime.buy');
+  await expectBusyButton(buyButton);
+  await expect(page.getByLabel('Pro status: Pro is active on this device.')).toBeVisible({
+    timeout: purchaseDelayMs + 5000,
+  });
+  await expectSingleStoreCall(page, 'proLifetime.buy');
+  expect(consoleErrors.get()).toEqual([]);
+});
+
 test('ProPaywall restore suppresses rapid duplicate Pro Lifetime store calls', async ({ page }) => {
   const consoleErrors = collectConsoleAndPageErrors(page);
   await seedPurchaseHarness(page, { proOwned: true, removeAdsOwned: false });
@@ -132,6 +202,25 @@ test('ProPaywall restore suppresses rapid duplicate Pro Lifetime store calls', a
 
   const restoreButton = page.getByRole('button', { name: 'Restore Pro purchase' });
   await dispatchRapidClicks(restoreButton);
+
+  await expectSingleStoreCall(page, 'proLifetime.restore');
+  await expectBusyButton(restoreButton);
+  await expect(page.getByLabel('Pro status: Pro has been restored on this device.')).toBeVisible({
+    timeout: purchaseDelayMs + 5000,
+  });
+  await expectSingleStoreCall(page, 'proLifetime.restore');
+  expect(consoleErrors.get()).toEqual([]);
+});
+
+test('ProPaywall restore suppresses rapid Space keyboard purchase in-flight calls', async ({
+  page,
+}) => {
+  const consoleErrors = collectConsoleAndPageErrors(page);
+  await seedPurchaseHarness(page, { proOwned: true, removeAdsOwned: false });
+  await openProfile(page);
+
+  const restoreButton = page.getByRole('button', { name: 'Restore Pro purchase' });
+  await dispatchRapidKeyboardActivations(page, restoreButton, 'Space');
 
   await expectSingleStoreCall(page, 'proLifetime.restore');
   await expectBusyButton(restoreButton);
