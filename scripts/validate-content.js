@@ -1853,7 +1853,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 15;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 26;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 29;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_RUNTIME_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
@@ -17617,6 +17617,33 @@ function validateRemoveAdsPurchaseRuntimeParity() {
           'Ta bort annonser kan köpas eller återställas i mobilappen.',
         ),
       'RemoveAdsPlacementCta must show mobile-app-only status copy for unavailable web purchase runtime',
+    ],
+    [
+      normalizedPlacementCtaSource.includes(
+        'statusMessages: Record<PlacementPurchaseStatus, string>;',
+      ) &&
+        !normalizedPlacementCtaSource.includes(
+          'statusMessages: Partial<Record<PlacementPurchaseStatus, string>>;',
+        ),
+      'RemoveAdsPlacementCta must keep a total status-message map for every purchase status',
+    ],
+    [
+      normalizedPlacementCtaSource.includes('persistence_failed:') &&
+        normalizedPlacementCtaSource.includes(
+          'Köpet bekräftades, men annonsfri status kunde inte sparas på den här enheten. Försök återställa köpet.',
+        ) &&
+        normalizedPlacementCtaSource.includes(
+          'Purchase was confirmed, but ad-free status could not be saved on this device. Try restoring the purchase.',
+        ),
+      'RemoveAdsPlacementCta must render localized persistence_failed recovery copy',
+    ],
+    [
+      normalizedPlacementCtaSource.includes('statusAccessibilityLabel: (message) =>') &&
+        normalizedPlacementCtaSource.includes(
+          'accessibilityLabel={copy.statusAccessibilityLabel(statusMessage)}',
+        ) &&
+        normalizedPlacementCtaSource.includes('accessibilityLiveRegion="polite"'),
+      'RemoveAdsPlacementCta must expose status updates through an accessible live region label',
     ],
     [
       normalizedPlacementCtaSource.includes(
