@@ -33,6 +33,18 @@ type LegalSourceMaterialLinkLayoutFixture = {
   visibleLabel: string;
 };
 
+type SourcesAuthorityBoundaryFixture = {
+  actionLabel: string;
+  educationMaterialActionLabel: string;
+  educationMaterialVisibleLabel: string;
+  language: AppLanguage;
+  neutralBodyText: string;
+  staleAuthorityPattern: RegExp;
+  sectionTitle: string;
+  title: string;
+  visibleLabel: string;
+};
+
 type LegalSourceMaterialViewport = {
   label: 'desktop' | 'mobile';
   size: {
@@ -235,6 +247,31 @@ const legalSourceMaterialLinkLayoutFixtures: LegalSourceMaterialLinkLayoutFixtur
     title: 'Terms of use',
     urlLabel: 'URL',
     visibleLabel: 'UHR: Study material about Swedish society',
+  },
+];
+
+const sourcesAuthorityBoundaryFixtures: SourcesAuthorityBoundaryFixture[] = [
+  {
+    actionLabel: 'Öppna UHR:s sida Om medborgarskapsprovet',
+    educationMaterialActionLabel: 'Öppna UHR:s utbildningsmaterial',
+    educationMaterialVisibleLabel: 'UHR: Utbildningsmaterial om det svenska samhället',
+    language: 'sv',
+    neutralBodyText: 'det här är oberoende övningsinnehåll',
+    staleAuthorityPattern: /UHR:s sida[^.?!]{0,120}säger/iu,
+    sectionTitle: 'Myndighetsgräns',
+    title: 'Källor',
+    visibleLabel: 'UHR: Om medborgarskapsprovet',
+  },
+  {
+    actionLabel: 'Open UHR About the citizenship test page',
+    educationMaterialActionLabel: 'Open UHR education material',
+    educationMaterialVisibleLabel: 'UHR: Study material about Swedish society',
+    language: 'en',
+    neutralBodyText: 'it is independent practice content',
+    staleAuthorityPattern: /UHR(?:'s)?[^.?!]{0,120}page says/iu,
+    sectionTitle: 'Authority boundaries',
+    title: 'Sources',
+    visibleLabel: 'UHR: About the citizenship test',
   },
 ];
 
@@ -653,6 +690,53 @@ for (const fixture of legalExternalLinkFixtures) {
     const popup = await popupPromise;
     await expect.poll(() => popup.url()).toBe(fixture.url);
     await popup.close();
+
+    expect(pageErrors).toEqual([]);
+  });
+}
+
+for (const fixture of sourcesAuthorityBoundaryFixtures) {
+  test(`/sources renders ${fixture.language} authority boundary copy without source-authority wording`, async ({
+    page,
+  }) => {
+    const pageErrors = collectPageErrors(page);
+    await stubExternalDestinations(page);
+    await seedCleanLanguage(page, fixture.language);
+
+    await page.goto('/sources', { waitUntil: 'networkidle' });
+    await dismissBlockingModals(page);
+
+    await expect(page.getByRole('heading', { name: fixture.title }).last()).toBeVisible();
+    await expect(page.getByRole('heading', { name: fixture.sectionTitle }).last()).toBeVisible();
+    await expect(page.getByText(fixture.neutralBodyText, { exact: false }).first()).toBeVisible();
+    await expect(page.locator('body')).not.toContainText(fixture.staleAuthorityPattern);
+
+    const authorityBoundaryLink = page.getByRole('link', { name: fixture.actionLabel }).first();
+    await expect(authorityBoundaryLink).toBeVisible();
+    await expect(authorityBoundaryLink).toContainText(fixture.visibleLabel);
+    await expect(authorityBoundaryLink).toContainText(UHR_AUTHORITY_BOUNDARY_URL);
+    await expect(authorityBoundaryLink).toHaveAttribute('href', UHR_AUTHORITY_BOUNDARY_URL);
+    await expect(authorityBoundaryLink).toHaveAttribute('target', '_blank');
+    await expect(authorityBoundaryLink).toHaveAttribute('rel', 'noreferrer');
+
+    const educationMaterialLink = page
+      .getByRole('link', { name: fixture.educationMaterialActionLabel })
+      .first();
+    await expect(educationMaterialLink).toBeVisible();
+    await expect(educationMaterialLink).toContainText(fixture.educationMaterialVisibleLabel);
+    await expect(educationMaterialLink).toHaveAttribute('href', UHR_EDUCATION_MATERIAL_URL);
+    await expect(educationMaterialLink).toHaveAttribute('target', '_blank');
+    await expect(educationMaterialLink).toHaveAttribute('rel', 'noreferrer');
+
+    const authorityBoundaryBox = await expectRenderedBox(
+      authorityBoundaryLink,
+      `/sources ${fixture.language} authority-boundary source link`,
+    );
+    expect(authorityBoundaryBox.width, `${fixture.actionLabel} width`).toBeGreaterThanOrEqual(44);
+    expect(authorityBoundaryBox.height, `${fixture.actionLabel} height`).toBeGreaterThanOrEqual(44);
+
+    await expectExternalLinksAreTouchSafe(page);
+    await expectNoHorizontalOverflow(page);
 
     expect(pageErrors).toEqual([]);
   });

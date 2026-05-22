@@ -733,6 +733,51 @@ test('static q050 source-criticism rendered e2e keeps a focused grep target', ()
   );
 });
 
+test('sources route authority-boundary e2e keeps a focused grep target', () => {
+  const source = readRelative('legal-external-links.spec.ts');
+
+  assert.match(
+    source,
+    /\/sources renders \$\{fixture\.language\} authority boundary copy without source-authority wording/,
+    'sources authority-boundary e2e should have a focused grep title',
+  );
+  assert.match(
+    source,
+    /sourcesAuthorityBoundaryFixtures/,
+    'sources authority-boundary e2e should use dedicated Swedish and English fixtures',
+  );
+  assert.match(
+    source,
+    /det här är oberoende övningsinnehåll/,
+    'sources authority-boundary e2e should assert the neutral Swedish independent-practice copy',
+  );
+  assert.match(
+    source,
+    /it is independent practice content/,
+    'sources authority-boundary e2e should assert the neutral English independent-practice copy',
+  );
+  assert.match(
+    source,
+    /staleAuthorityPattern/,
+    'sources authority-boundary e2e should reject old source-authority phrasing',
+  );
+  assert.match(
+    source,
+    /UHR_AUTHORITY_BOUNDARY_URL[\s\S]*target'[\s\S]*_blank[\s\S]*rel'[\s\S]*noreferrer/,
+    'sources authority-boundary e2e should verify safe external-link attributes',
+  );
+  assert.match(
+    source,
+    /UHR_EDUCATION_MATERIAL_URL/,
+    'sources authority-boundary e2e should preserve the primary study-material link',
+  );
+  assert.match(
+    source,
+    /authorityBoundaryBox\.height[\s\S]*toBeGreaterThanOrEqual\(\s*44/,
+    'sources authority-boundary e2e should require a stable 44px target',
+  );
+});
+
 test('static site network specs share one external request trap helper', () => {
   const helperSource = readRelative('staticSiteNetworkGuards.ts');
   const privacySource = readRelative('static-site-network-privacy.spec.ts');
