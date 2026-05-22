@@ -11975,3 +11975,73 @@ img.ebook__brand-mark {
     padding: 15px 16px 17px 20px;
   }
 }
+
+/* ======================================================================
+   DOC CALLOUT TEXT BOX OPTIMIZATION ROUND
+   ====================================================================== */
+
+.callout p {
+  background: rgba(255, 255, 255, 0.42);
+  border: 1px solid rgba(217, 169, 0, 0.2);
+  border-radius: 16px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.36);
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 14px 15px;
+}
+
+.callout b {
+  align-items: center;
+  background: rgba(254, 204, 0, 0.2);
+  border: 1px solid rgba(217, 169, 0, 0.28);
+  border-radius: 999px;
+  color: var(--blue-ink);
+  display: inline-flex;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  line-height: 1.1;
+  padding: 5px 9px;
+  width: fit-content;
+}
+
+.callout span {
+  line-height: 1.58;
+}
+
+.callout--blue p {
+  border-color: rgba(0, 106, 167, 0.16);
+}
+
+.callout--blue b {
+  background: rgba(0, 106, 167, 0.08);
+  border-color: rgba(0, 106, 167, 0.18);
+}
+
+:root[data-theme='dark'] .callout p {
+  background: rgba(255, 255, 255, 0.045);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme='dark'] .callout b {
+  background: rgba(254, 204, 0, 0.14);
+  border-color: rgba(254, 204, 0, 0.24);
+  color: var(--gold);
+}
+
+:root[data-theme='dark'] .callout--blue b {
+  background: rgba(45, 168, 255, 0.12);
+  border-color: rgba(45, 168, 255, 0.22);
+  color: var(--blue-soft);
+}
+
+@media (max-width: 620px) {
+  .callout {
+    padding: 14px 15px;
+  }
+  .callout p {
+    border-radius: 14px;
+    padding: 12px 13px;
+  }
+}
