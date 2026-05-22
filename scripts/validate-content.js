@@ -11,7 +11,10 @@ const {
   parseStaticSiteQuestionBank,
   summarizeStaticQuestionBankDrift,
 } = require('./export-site-question-bank');
-const { generatedQuestionId } = require('./generated-question-fixture-ids');
+const {
+  generatedQuestionId,
+  generatedQuestionIdLiteralFindingsForSource,
+} = require('./generated-question-fixture-ids');
 const { findSourceAuthorityStemPattern } = require('./sourceAuthorityStemPatterns');
 const {
   UNSUPPORTED_STATIC_HEAD_TITLE_PATTERNS,
@@ -10298,6 +10301,9 @@ let criminalResponsibilityCurrentnessParityValidated = false;
 let staticSiteQuestionBankQuestionsValidated = 0;
 let staticSiteQuestionBankChaptersValidated = 0;
 let staticSiteQuestionBankParityValidated = false;
+let staticQuestionBankGeneratedIdFixtureFilesValidated = 0;
+let staticQuestionBankGeneratedIdFixtureFindingsValidated = 0;
+let staticQuestionBankGeneratedIdFixtureParityValidated = false;
 let staticEbookOutcomeClaimPatternsValidated = 0;
 let staticEbookOutcomeClaimParityValidated = false;
 let staticEbookPracticalTestClaimPatternsValidated = 0;
@@ -10698,6 +10704,51 @@ if (process.argv.includes('--focus-static-head-metadata')) {
     staticValidationSyntaxFilesValidated,
     staticValidationImportChecksValidated,
     staticValidationSyntaxGateValidated,
+  });
+  process.exit(0);
+}
+
+function validateStaticQuestionBankGeneratedIdFixtureParity() {
+  const fixtureFiles = ['tests/content-static-site-question-bank-parity.test.js'];
+  const firstGeneratedQuestionNumber = Array.isArray(sourceQuestions)
+    ? sourceQuestions.length + 1
+    : 0;
+  const findings = [];
+
+  if (!Number.isInteger(firstGeneratedQuestionNumber) || firstGeneratedQuestionNumber < 1) {
+    fail('static question-bank generated-id fixture guard could not resolve source question count');
+    return;
+  }
+
+  for (const relativePath of fixtureFiles) {
+    const source = loadText(relativePath);
+    staticQuestionBankGeneratedIdFixtureFilesValidated += 1;
+    findings.push(
+      ...generatedQuestionIdLiteralFindingsForSource(
+        relativePath,
+        source,
+        firstGeneratedQuestionNumber,
+      ),
+    );
+  }
+
+  staticQuestionBankGeneratedIdFixtureFindingsValidated = findings.length;
+  staticQuestionBankGeneratedIdFixtureParityValidated =
+    staticQuestionBankGeneratedIdFixtureFilesValidated === fixtureFiles.length &&
+    findings.length === 0;
+
+  if (findings.length > 0) {
+    fail(`static question-bank drift fixtures hardcode generated ids: ${findings.join('; ')}`);
+  }
+}
+
+if (process.argv.includes('--focus-static-question-bank-generated-id-fixtures')) {
+  validateStaticQuestionBankGeneratedIdFixtureParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    staticQuestionBankGeneratedIdFixtureFilesValidated,
+    staticQuestionBankGeneratedIdFixtureFindingsValidated,
+    staticQuestionBankGeneratedIdFixtureParityValidated,
   });
   process.exit(0);
 }

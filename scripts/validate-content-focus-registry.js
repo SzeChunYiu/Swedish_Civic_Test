@@ -186,6 +186,15 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'staticQuestionBankGeneratedIdFixtures',
+    flags: ['--focus-static-question-bank-generated-id-fixtures'],
+    summaryKeys: [
+      'staticQuestionBankGeneratedIdFixtureFilesValidated',
+      'staticQuestionBankGeneratedIdFixtureFindingsValidated',
+      'staticQuestionBankGeneratedIdFixtureParityValidated',
+    ],
+  },
+  {
     id: 'dashboardProgressSnapshot',
     flags: ['--focus-dashboard-progress-snapshot'],
     summaryKeys: [

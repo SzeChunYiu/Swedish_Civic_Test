@@ -1,4 +1,5 @@
 const assert = require('node:assert/strict');
+const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
@@ -142,6 +143,12 @@ function staticQuestionToI18nQuestion(question) {
 
 function staticQuestionVisibleText(question) {
   return JSON.stringify([question.q, question.why, question.opts]);
+}
+
+function parseFocusedValidationSummary(output, label) {
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, `${label} should print a JSON summary`);
+  return JSON.parse(match[0]);
 }
 
 function chapterLocalizationWelfareGlossOffenders(chapters, scope) {
@@ -583,6 +590,21 @@ test('static question-bank drift fixture derives generated ids from source ids',
   assert.deepEqual(findings, []);
   assert.match(source, /generatedQuestionId\(canonical\.sourceQuestions, 'q020', variantOffset\)/);
   assert.match(source, /assert\.equal\(drift\.questionIds\[0\], 'q020'\)/);
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-static-question-bank-generated-id-fixtures'],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const summary = parseFocusedValidationSummary(
+    result.stdout,
+    'static question-bank generated-id fixture validation',
+  );
+  assert.equal(summary.staticQuestionBankGeneratedIdFixtureFilesValidated, 1);
+  assert.equal(summary.staticQuestionBankGeneratedIdFixtureFindingsValidated, 0);
+  assert.equal(summary.staticQuestionBankGeneratedIdFixtureParityValidated, true);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
 });
 
 test('static generated-id fixture guard rejects literal generated ids but allows source ids', () => {
