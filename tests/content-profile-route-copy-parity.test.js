@@ -135,6 +135,9 @@ test('profile route keeps Pro comparison separate from the Remove Ads purchase f
   assert.match(proPaywallSource, /<View style=\{styles\.table\}>/);
   assert.match(proPaywallSource, /<View style=\{styles\.actions\}>/);
   assert.match(proPaywallSource, /aria-live="polite"/);
+  assert.match(proPaywallSource, /styles\.proTierHeaderCell/);
+  assert.match(proPaywallSource, /styles\.proTierCell/);
+  assert.doesNotMatch(proPaywallSource, /best value|bäst värde|limited time|begränsad tid/i);
   assert.doesNotMatch(proPaywallSource, /comparisonVisible|setComparisonVisible/);
   assert.doesNotMatch(proPaywallSource, /Compare Pro features|Jämför Pro-funktioner/);
   assert.doesNotMatch(proPaywallSource, /accessibilityState=\{\{ expanded:/);
