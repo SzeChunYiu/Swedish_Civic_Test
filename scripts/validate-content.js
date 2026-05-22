@@ -2940,6 +2940,7 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     '← Tillbaka till profil',
     'Tillbaka till profil',
     'Välj en studiekompis för övningen. Valet är gratis och sparas bara på enheten.',
+    'Studiekompisen från övningen är markerad här.',
     'Studiekompis',
     '${answerCount} svar per dag',
     'Dagligt mål',
@@ -3004,6 +3005,7 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     '← Back to Profile',
     'Back to profile',
     'Choose a study companion for practice. It is free and saved only on this device.',
+    'The study companion picker from Practice is highlighted here.',
     'Study companion',
     '${answerCount} answers per day',
     'Daily goal',
@@ -3288,7 +3290,7 @@ const EXPECTED_SCREEN_SHELL_LAYOUT_RULES = [
   {
     label: 'scroll root container',
     pattern:
-      /<ScrollView\s+style=\{styles\.container\}\s+contentContainerStyle=\{styles\.content\}>/,
+      /<ScrollView[\s\S]*\bstyle=\{styles\.container\}[\s\S]*\bcontentContainerStyle=\{styles\.content\}[\s\S]*>/,
   },
   {
     label: 'scroll root closing tag',
@@ -3319,7 +3321,7 @@ const EXPECTED_SETTINGS_ROUTE_SCROLL_RULES = [
   {
     label: 'scroll root container',
     pattern:
-      /<ScrollView\s+style=\{styles\.container\}\s+contentContainerStyle=\{styles\.content\}>/,
+      /<ScrollView[\s\S]*\bstyle=\{styles\.container\}[\s\S]*\bcontentContainerStyle=\{styles\.content\}[\s\S]*>/,
   },
   {
     label: 'scroll root closing tag',

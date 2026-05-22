@@ -144,7 +144,7 @@ test('study companion card localizes answer states and links back to Settings', 
   assert.match(source, /correctBody: \(label\) =>/);
   assert.match(source, /incorrectBody: \(label\) =>/);
   assert.match(source, /neutralBody: \(label, anchor\) =>/);
-  assert.match(source, /href="\/settings"/);
+  assert.match(source, /href="\/settings\?focus=companion"/);
   assert.match(source, /accessibilityRole="link"/);
   assert.match(source, /accessibilityLabel=\{copy\.accessibilityLabel\(label, body\)\}/);
   assert.match(source, /getMascot\(mascotId\) \?\? getMascot\(DEFAULT_COMPANION_ID\)!/);
