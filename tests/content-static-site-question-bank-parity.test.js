@@ -19,12 +19,15 @@ const {
 const {
   Q050_SOURCE_CRITICISM_NATURALNESS_IDS,
   Q062_PUBLIC_SECTOR_NATURALNESS_IDS,
+  SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS,
   summarizeQ050SourceCriticismNaturalness,
   summarizeQ062PublicSectorNaturalness,
+  summarizeSomaliHolidayFoodNaturalness,
 } = require('../scripts/check-question-i18n-v8');
 
 const repoRoot = path.resolve(__dirname, '..');
 const SOMALI_ENGLISH_GEOGRAPHY_TERM_PATTERN = /\b(?:Mediterranean|Baltic|Atlantic|Gulf Stream)\b/;
+const SOMALI_HOLIDAY_FOOD_ENGLISH_TOKEN_PATTERN = /\b(?:herring|strawberries|Easter)\b/i;
 const CHAPTER_LOCALIZATION_ENGLISH_WELFARE_GLOSS_PATTERN = /\(welfare\)/i;
 const PUBLIC_SERVICE_LOANWORD_PATTERN = /\bpublic service\b|\(welfare\)/i;
 const PUBLIC_SECTOR_STALE_STATIC_PATTERN =
@@ -187,6 +190,34 @@ test('static site question bank avoids English geography common terms in Somali 
   for (const question of context.window.SMT_QUESTIONS) {
     for (const [segment, value] of staticSomaliSegments(question)) {
       if (typeof value === 'string' && SOMALI_ENGLISH_GEOGRAPHY_TERM_PATTERN.test(value)) {
+        offenders.push(segment);
+      }
+    }
+  }
+
+  assert.deepEqual(offenders, []);
+});
+
+test('static site question bank avoids English holiday-food tokens in Somali text', () => {
+  const context = { window: {} };
+  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
+  const questionsById = new Map(
+    context.window.SMT_QUESTIONS.map((question) => [question.id, question]),
+  );
+
+  const sourceQuestions = SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS.map((id) =>
+    staticQuestionToI18nQuestion(questionsById.get(id)),
+  );
+  assert.deepEqual(
+    summarizeSomaliHolidayFoodNaturalness(sourceQuestions, SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS)
+      .errors,
+    [],
+  );
+
+  const offenders = [];
+  for (const question of context.window.SMT_QUESTIONS) {
+    for (const [segment, value] of staticSomaliSegments(question)) {
+      if (typeof value === 'string' && SOMALI_HOLIDAY_FOOD_ENGLISH_TOKEN_PATTERN.test(value)) {
         offenders.push(segment);
       }
     }

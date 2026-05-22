@@ -10,13 +10,16 @@ const {
   checkQ050SourceCriticismNaturalness,
   checkQ062PublicSectorNaturalness,
   checkSomaliGeographyNaturalness,
+  checkSomaliHolidayFoodNaturalness,
   checkReviewMetadata,
   PUBLIC_SERVICE_LOANWORD_IDS,
   REQUIRED_LOCALES,
   SOMALI_GEOGRAPHY_NATURALNESS_IDS,
+  SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS,
   summarizeQ050SourceCriticismNaturalness,
   summarizeQ062PublicSectorNaturalness,
   summarizeSomaliGeographyNaturalness,
+  summarizeSomaliHolidayFoodNaturalness,
 } = require('../scripts/check-question-i18n-v8');
 
 function completeMap(value = 'x') {
@@ -224,6 +227,56 @@ test('question localization v8 summarizes Somali geography naturalness cases', (
   assert.deepEqual(summary.errors, []);
   assert.equal(summary.casesValidated, 3);
   assert.equal(summary.expectedCases, 3);
+  assert.equal(summary.parityValidated, true);
+});
+
+test('question localization v8 rejects English holiday-food tokens in Somali text', () => {
+  const errors = checkSomaliHolidayFoodNaturalness(
+    [
+      {
+        id: 'q099',
+        questionText: { so: 'Goorma ayaa Habeenka Midsommar la xusaa?' },
+        explanationText: {
+          so: 'Cuntada Midsommar waxaa ka mid ah herring, baradho cusub iyo strawberries.',
+        },
+        options: [],
+      },
+      {
+        id: 'q101',
+        questionText: { so: 'Ciiddee ayaa la xiriirta Easter?' },
+        explanationText: { so: 'Easter waxaa lagu dabaaldegaa Maarso ama Abriil.' },
+        options: [{ id: 'a', text: { so: 'Easter' } }],
+      },
+    ],
+    ['q099', 'q101'],
+  );
+
+  assert.deepEqual(errors, [
+    'q099.explanationText.so contains English holiday-food token',
+    'q101.questionText.so contains English holiday-food token',
+    'q101.explanationText.so contains English holiday-food token',
+    'q101.options.a.text.so contains English holiday-food token',
+  ]);
+});
+
+test('question localization v8 summarizes Somali holiday-food naturalness cases', () => {
+  const questions = SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS.map((id) => ({
+    id,
+    questionText: { so: 'Su’aal ku saabsan ciidaha Iswiidhan.' },
+    explanationText: {
+      so: 'Qoraalku wuxuu isticmaalaa Iistar, sill iyo istarooberi halkii uu ka isticmaali lahaa erayo Ingiriisi ah.',
+    },
+    options: [{ id: 'a', text: { so: 'Iistar iyo sill' } }],
+  }));
+
+  const summary = summarizeSomaliHolidayFoodNaturalness(
+    questions,
+    SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS,
+  );
+
+  assert.deepEqual(summary.errors, []);
+  assert.equal(summary.casesValidated, 6);
+  assert.equal(summary.expectedCases, 6);
   assert.equal(summary.parityValidated, true);
 });
 

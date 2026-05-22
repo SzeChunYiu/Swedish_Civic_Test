@@ -10213,7 +10213,7 @@
       "ckb": "شەوی مێدسۆمەر هەمیشە لە ڕۆژی هەینییەک لەنێوان 19 و 25ی حوزەیراندا ئاهەنگ دەگیرێت. ئەم ئاهەنگە پێشوازی لە هاوین و ڕووناکی دەکات و ڕەگ و ڕیشەی کۆنی هەیە لە پێش مەسیحییەت، بە ئاهەنگی دەرەوە، تاجی گوڵ، هەڵپەڕکێ و یاری دەوری ستوونی مێدسۆمەر و خواردنی وەک هەرینگ، پەتاتەی تازە و تووتفرەنگی.",
       "fa": "شب میدسامر همیشه در یک جمعه بین ۱۹ تا ۲۵ ژوئن جشن گرفته می‌شود. این جشن به تابستان و روشنایی خوشامد می‌گوید و ریشه‌های قدیمی پیش از مسیحیت دارد، با مهمانی‌های بیرونی، تاج‌های گل، رقص و بازی دور تیر میدسامر و غذاهایی مانند شاه‌ماهی، سیب‌زمینی تازه و توت‌فرنگی.",
       "pl": "Midsommarafton obchodzi się zawsze w piątek między 19 a 25 czerwca. Święto wita lato i światło oraz ma starsze korzenie sprzed chrześcijaństwa, z przyjęciami na świeżym powietrzu, wiankami, tańcem i zabawą wokół słupa midsommar oraz jedzeniem takim jak śledź, młode ziemniaki i truskawki.",
-      "so": "Habeenka Midsommar had iyo jeer waxaa lagu dabaaldegaa Jimce u dhexeysa 19 iyo 25 Juun. Dabaaldegga wuxuu soo dhaweeyaa xagaaga iyo iftiinka wuxuuna leeyahay xididdo hore oo ka horreeya Kiristaanka, oo leh xaflado bannaanka ah, taajyo ubax, qoob-ka-ciyaar iyo ciyaar agagaarka tiirka Midsommar iyo cunto sida herring, baradho cusub iyo strawberries.",
+      "so": "Habeenka Midsommar had iyo jeer waxaa lagu dabaaldegaa Jimce u dhexeysa 19 iyo 25 Juun. Dabaaldegga wuxuu soo dhaweeyaa xagaaga iyo iftiinka wuxuuna leeyahay xididdo hore oo ka horreeya Kiristaanka, oo leh xaflado bannaanka ah, taajyo ubax, qoob-ka-ciyaar iyo ciyaar agagaarka tiirka Midsommar iyo cunto sida sill, baradho cusub iyo istarooberi.",
       "ti": "ምሸት ሚድሶማር ሓዋሩ ኣብ ዓርቢ ካብ 19 ክሳብ 25 ሰነ ይበዓል። እቲ በዓል ንሓጋይን ብርሃንን ይቕበል እና ካብ ቅድሚ ክርስትና ዘሎ ኣረጊት ሱራት ኣለዎ፣ ብናይ ደገ ፓርቲታት፣ ኣኽሊል ዕምባባ፣ ዳንስን ጸወታን ኣብ ዙርያ ምልክት ሚድሶማር፣ ከም ሄሪንግ፣ ሓድሽ ድንሽን ስትሮበሪን ዝኣመሰለ መግቢ።",
       "tr": "Midsommar arifesi her zaman 19 ile 25 Haziran arasındaki bir cuma günü kutlanır. Kutlama yazı ve ışığı karşılar ve Hristiyanlık öncesinden gelen eski köklere sahiptir; açık hava partileri, çiçek taçları, midsommar direği etrafında dans ve oyun ile ringa balığı, taze patates ve çilek gibi yiyecekleri içerir.",
       "uk": "Переддень Мідсоммара завжди святкують у п’ятницю між 19 і 25 червня. Свято вітає літо й світло та має давні корені з дохристиянських часів: вечірки надворі, квіткові вінки, танці й ігри навколо мідсоммарського стовпа, а також їжа, як-от оселедець, молода картопля та полуниця."
@@ -10354,7 +10354,7 @@
       "ckb": "کام جەژن لە کاتێک لە ئادار یان نیساندا ئاهەنگ دەگیرێت و پەیوەندی بە هەینی باش و ڕۆژی پاشکەوە هەیە؟",
       "fa": "کدام عید در زمانی در مارس یا آوریل جشن گرفته می‌شود و با جمعه نیک و یکشنبه عید پاک ارتباط دارد؟",
       "pl": "Które święto obchodzi się czasem w marcu lub kwietniu i które wiąże się z Wielkim Piątkiem oraz Niedzielą Wielkanocną?",
-      "so": "Ciidee ayaa mararka qaar lagu dabaaldegaa Maarso ama Abriil, kuna xiran Jimcaha Wanaagsan iyo Axadda Easter-ka?",
+      "so": "Ciidee ayaa mararka qaar lagu dabaaldegaa Maarso ama Abriil, kuna xiran Jimcaha Wanaagsan iyo Axadda Iistar?",
       "ti": "ኣየናይ በዓል ኣብ መጋቢት ወይ ሚያዝያ እዩ ዝበዓል እና ምስ ዓርቢ ስቕለትን ሰንበት ትንሳኤን ዝተተሓሓዘ?",
       "tr": "Hangi bayram mart veya nisan ayının bir zamanında kutlanır ve Kutsal Cuma ile Paskalya Pazarıyla bağlantılıdır?",
       "uk": "Яке свято відзначають колись у березні або квітні, і воно пов’язане зі Страсною п’ятницею та Великодньою неділею?"
@@ -10369,7 +10369,7 @@
         "ckb": "پاشک",
         "fa": "عید پاک",
         "pl": "Wielkanoc",
-        "so": "Easter",
+        "so": "Iistar",
         "ti": "ትንሳኤ",
         "tr": "Paskalya",
         "uk": "Великдень"
@@ -10427,7 +10427,7 @@
       "ckb": "پاشک لە کاتێک لە ئادار یان نیساندا ئاهەنگ دەگیرێت و پەیوەندی بە هەینی باش و ڕۆژی پاشکەوە هەیە. هەینی باش مردنی عیسا بەبیر دەهێنێتەوە و ڕۆژی پاشک هەستانەوەی، بەڵام ئەدفێنت، یەکی ئایار و ڕۆژی هەموو پیرۆزان هی بەشەکانی تری ساڵن.",
       "fa": "عید پاک در زمانی در مارس یا آوریل جشن گرفته می‌شود و با جمعه نیک و یکشنبه عید پاک ارتباط دارد. جمعه نیک مرگ عیسی را یادآوری می‌کند و یکشنبه عید پاک رستاخیز او را، در حالی که ادونت، اول ماه مه و روز همه قدیسان به بخش‌های دیگر سال مربوط‌اند.",
       "pl": "Wielkanoc obchodzi się czasem w marcu lub kwietniu i wiąże się ona z Wielkim Piątkiem oraz Niedzielą Wielkanocną. Wielki Piątek upamiętnia śmierć Jezusa, a Niedziela Wielkanocna jego zmartwychwstanie, natomiast Adwent, pierwszy maja i Wszystkich Świętych należą do innych części roku.",
-      "so": "Easter waxaa lagu dabaaldegaa mararka qaar Maarso ama Abriil, wuxuuna la xiriiraa Jimcaha Wanaagsan iyo Axadda Easter-ka. Jimcaha Wanaagsan wuxuu xusuusiyaa dhimashadii Ciise, Axadda Easter-kuna sarakiciddiisa, halka Advent, Maalinta Koowaad ee Maajo iyo Maalinta Quduusiinta oo dhan ay ka tirsan yihiin qaybo kale oo sanadka ah.",
+      "so": "Iistar waxaa lagu dabaaldegaa mararka qaar Maarso ama Abriil, wuxuuna la xiriiraa Jimcaha Wanaagsan iyo Axadda Iistar. Jimcaha Wanaagsan wuxuu xusuusiyaa dhimashadii Ciise, Axadda Iistar-na sarakiciddiisa, halka Advent, Maalinta Koowaad ee Maajo iyo Maalinta Quduusiinta oo dhan ay ka tirsan yihiin qaybo kale oo sanadka ah.",
       "ti": "ትንሳኤ ኣብ መጋቢት ወይ ሚያዝያ በዓል እዩ እና ምስ ዓርቢ ስቕለትን ሰንበት ትንሳኤን ይተሓሓዝ። ዓርቢ ስቕለት ሞት ኢየሱስ ይዝክር፣ ሰንበት ትንሳኤ ድማ ትንሳኤኡ፣ ኣድቬንት፣ ቀዳማይ ግንቦትን መዓልቲ ኩሎም ቅዱሳንን ግና ናይ ካልኦት ክፋላት ዓመት እዮም።",
       "tr": "Paskalya mart veya nisan ayının bir zamanında kutlanır ve Kutsal Cuma ile Paskalya Pazarıyla bağlantılıdır. Kutsal Cuma İsa’nın ölümünü, Paskalya Pazarı ise dirilişini anar; Advent, Bir Mayıs ve Azizler Günü yılın başka bölümlerine aittir.",
       "uk": "Великдень відзначають колись у березні або квітні, і він пов’язаний зі Страсною п’ятницею та Великодньою неділею. Страсна п’ятниця вшановує смерть Ісуса, а Великодня неділя — його воскресіння, тоді як Адвент, Перше травня та День усіх святих належать до інших частин року."
@@ -12999,7 +12999,7 @@
       "ckb": "ئاهەنگی ناوەڕاستی هاوین بۆ بەخێرهێنانی هاوین و ڕووناکییە. زۆر کەس لە دەرەوە ئاهەنگ دەگێڕن، تاجی گوڵ دەبەستن و دەوری ستوونی ناوەڕاستی هاوین دەسەمایەن، و خواردنی باو بریتییە لە هێرینگ، پەتاتەی تازە و تووت فرنگی؛ بژاردەکانی تر هی ساڵی نوێ، یەکی ئایار یان ئەدڤێنت و کریسمەسن.",
       "fa": "جشن نیمه تابستان درباره خوشامدگویی به تابستان و نور است. بسیاری بیرون جشن می‌گیرند، تاج گل می‌بافند و دور تیرک نیمه تابستان می‌رقصند، و غذاهای رایج شامل شاه‌ماهی، سیب‌زمینی نو و توت‌فرنگی است؛ گزینه‌های دیگر مربوط به سال نو، اول ماه مه یا ادونت و کریسمس هستند.",
       "pl": "Obchody midsommar dotyczą powitania lata i światła. Wiele osób świętuje na zewnątrz, robi wianki i tańczy wokół słupa midsommar, a typowe jedzenie to śledź, młode ziemniaki i truskawki; pozostałe odpowiedzi należą do Nowego Roku, pierwszego maja albo adwentu i Bożego Narodzenia.",
-      "so": "Dabaaldegyada Midsommar waxay ku saabsan yihiin soo dhaweynta xagaaga iyo iftiinka. Dad badan waxay ku dabaaldegaan bannaanka, sameeyaan taajyo ubax oo ku ciyaaraan hareeraha tiirka Midsommar, cuntada caadiga ahna waxaa ka mid ah herring, baradho cusub iyo strawberries; xulashooyinka kale waxay ka tirsan yihiin Sannadka Cusub, Koowaad ee Maajo ama Advent iyo Kirismas.",
+      "so": "Dabaaldegyada Midsommar waxay ku saabsan yihiin soo dhaweynta xagaaga iyo iftiinka. Dad badan waxay ku dabaaldegaan bannaanka, sameeyaan taajyo ubax oo ku ciyaaraan hareeraha tiirka Midsommar, cuntada caadiga ahna waxaa ka mid ah sill, baradho cusub iyo istarooberi; xulashooyinka kale waxay ka tirsan yihiin Sannadka Cusub, Koowaad ee Maajo ama Advent iyo Kirismas.",
       "ti": "በዓል ሚድሶማር ንሓጋይን ብርሃንን ንምቕባል እዩ። ብዙሓት ኣብ ደገ ይበዓሉ፣ ዕንባባ ክራንሳት ይኣስሩን ኣብ ዙርያ ዓምዲ ሚድሶማር ይስዕስዑን፣ ዝተለመደ መግቢ ድማ ሄሪንግ፣ ሓድሽ ድንሽን ስትሮበሪን የጠቓልል፤ ካልኦት ኣማራጺታት ናይ ሓድሽ ዓመት፣ ቀዳማይ ግንቦት ወይ ኣድቨንትን ልደትን እዮም።",
       "tr": "Midsommar kutlamaları yazı ve ışığı karşılamakla ilgilidir. Birçok kişi dışarıda kutlar, çiçek taçları yapar ve midsommar direğinin etrafında dans eder; yaygın yiyecekler arasında ringa balığı, yeni patates ve çilek vardır. Diğer seçenekler yılbaşı, Bir Mayıs veya Advent ve Noel’e aittir.",
       "uk": "Святкування Мідсоммара пов’язане з привітанням літа і світла. Багато людей святкують надворі, плетуть квіткові вінки й танцюють навколо мідсоммарського стовпа, а звична їжа включає оселедець, молоду картоплю та полуницю; інші варіанти належать до Нового року, Першого травня або Адвенту і Різдва."
@@ -13584,7 +13584,7 @@
         "ckb": "خواردنی هێلکە، گۆشتی بەرخ، سالمۆن و هێرینگ، و ئەوەی منداڵان شیرینی لە هێلکەی هەستانەوەدا وەربگرن",
         "fa": "خوردن تخم‌مرغ، گوشت بره، سالمون و شاه‌ماهی و گرفتن شیرینی در تخم‌مرغ عید پاک برای کودکان",
         "pl": "Jedzenie jajek, jagnięciny, łososia i śledzia oraz słodycze w jajkach wielkanocnych dla dzieci",
-        "so": "Cunista ukun, hilib wan, salmon iyo herring, carruurtuna nacnac ka helaan ukunta Iistar",
+        "so": "Cunista ukun, hilib wan, salmon iyo sill, carruurtuna nacnac ka helaan ukunta Iistar",
         "ti": "እንቋቑሖ፣ ስጋ በጊዕ፣ ሳልሞንን ሄሪንግን ምብላዕ፣ ቆልዑ ድማ ጣዕሚ ኣብ እንቋቑሖ ፋሲካ ምርካብ",
         "tr": "Yumurta, kuzu eti, somon ve ringa yemek; çocukların Paskalya yumurtalarında şeker alması",
         "uk": "Їсти яйця, ягнятину, лосось і оселедець, а дітям отримувати цукерки у великодніх яйцях"
@@ -13642,7 +13642,7 @@
       "ckb": "لە شەممەی هەستانەوەدا خواردنی هێلکە، گۆشتی بەرخ، سالمۆن و هێرینگ باوە، و منداڵان زۆرجار شیرینی لە هێلکەی هەستانەوەدا وەردەگرن. مۆمەکانی ئەدڤێنت، مۆمی گۆڕ و خۆپیشاندان بە ئەدڤێنت، ڕۆژی هەموو پیرۆزان و یەکی ئایار پەیوەستن.",
       "fa": "در شنبه عید پاک خوردن تخم‌مرغ، گوشت بره، سالمون و شاه‌ماهی رایج است و کودکان اغلب در تخم‌مرغ‌های عید پاک شیرینی می‌گیرند. شمع‌های ادونت، شمع‌های قبر و تظاهرات به ادونت، روز همه قدیسان و اول ماه مه تعلق دارند.",
       "pl": "W Wielką Sobotę zwykle je się jajka, jagnięcinę, łososia i śledzia, a dzieci często dostają słodycze w jajkach wielkanocnych. Świece adwentowe, znicze i demonstracje należą natomiast do adwentu, Wszystkich Świętych i pierwszego maja.",
-      "so": "Sabtida Iistar waxaa caadi ah in la cuno ukun, hilib wan, salmon iyo herring, carruurtuna badanaa waxay nacnac ka helaan ukunta Iistar. Shumacyada Advent, shumacyada qabuuraha iyo bannaanbaxyadu waxay halkii ka tirsan yihiin Advent, Maalinta Dhammaan Quduusiinta iyo Koowaad ee Maajo.",
+      "so": "Sabtida Iistar waxaa caadi ah in la cuno ukun, hilib wan, salmon iyo sill, carruurtuna badanaa waxay nacnac ka helaan ukunta Iistar. Shumacyada Advent, shumacyada qabuuraha iyo bannaanbaxyadu waxay halkii ka tirsan yihiin Advent, Maalinta Dhammaan Quduusiinta iyo Koowaad ee Maajo.",
       "ti": "ኣብ ቀዳም ፋሲካ እንቋቑሖ፣ ስጋ በጊዕ፣ ሳልሞንን ሄሪንግን ምብላዕ ዝተለመደ እዩ፣ ቆልዑ ድማ ብዙሕ ግዜ ጣዕሚ ኣብ እንቋቑሖ ፋሲካ ይረኽቡ። ሽምዓታት ኣድቨንት፣ ሽምዓታት መቓብርን ሰልፍታትን ናይ ኣድቨንት፣ መዓልቲ ኩሎም ቅዱሳንን ቀዳማይ ግንቦትን እዮም።",
       "tr": "Paskalya Cumartesi günü yumurta, kuzu eti, somon ve ringa yemek yaygındır; çocuklar da sık sık Paskalya yumurtalarında şeker alır. Advent mumları, mezar mumları ve gösteriler ise Advent, Azizler Günü ve Bir Mayıs’a aittir.",
       "uk": "У Великодню суботу звично їсти яйця, ягнятину, лосось і оселедець, а діти часто отримують цукерки у великодніх яйцях. Адвентські свічки, свічки на могилах і демонстрації належать відповідно до Адвенту, Дня всіх святих і Першого травня."
@@ -14028,7 +14028,7 @@
         "ckb": "ستوونی ناوەڕاستی هاوین لە ژووری دانیشتن و هێرینگ لەسەر مێز",
         "fa": "تیرک نیمه تابستان در اتاق نشیمن و شاه‌ماهی روی میز",
         "pl": "Słup midsommar w salonie i śledź na stole",
-        "so": "Tiir Midsommar ah oo qolka fadhiga ku jira iyo herring miiska saaran",
+        "so": "Tiir Midsommar ah oo qolka fadhiga ku jira iyo sill miiska saaran",
         "ti": "ዓምዲ ሚድሶማር ኣብ ክፍሊ መቐመጢን ሄሪንግ ኣብ መኣዲን",
         "tr": "Oturma odasında midsommar direği ve masada ringa balığı",
         "uk": "Мідсоммарський стовп у вітальні та оселедець на столі"
@@ -14671,7 +14671,7 @@
         "ckb": "ماسی هێرینگ، پەتاتەی نوێ و فرەنگی",
         "fa": "شاه‌ماهی، سیب‌زمینی نو و توت‌فرنگی",
         "pl": "Śledź, młode ziemniaki i truskawki",
-        "so": "Kalluun herring ah, baradho cusub iyo strawberries",
+        "so": "Sill, baradho cusub iyo istarooberi",
         "ti": "ሄሪንግ፣ ሓድሽ ድንሽን ስትሮበሪን",
         "tr": "Ringa balığı, taze patates ve çilek",
         "uk": "Оселедець, молода картопля та полуниці"
@@ -14685,7 +14685,7 @@
         "ckb": "هێلکە، گۆشتی بەرخ، سالمۆن و هێرینگ",
         "fa": "تخم‌مرغ، گوشت بره، سالمون و شاه‌ماهی",
         "pl": "Jajka, jagnięcina, łosoś i śledź",
-        "so": "Ukun, hilib wan, salmon iyo herring",
+        "so": "Ukun, hilib wan, salmon iyo sill",
         "ti": "እንቋቝሖ፣ ስጋ በጊዕ፣ ሳልሞንን ሄሪንግን",
         "tr": "Yumurta, kuzu eti, somon ve ringa balığı",
         "uk": "Яйця, ягнятина, лосось та оселедець"
@@ -14699,7 +14699,7 @@
         "ckb": "شیرینی ناو هێلکەی جەژنی پاک",
         "fa": "شیرینی داخل تخم‌مرغ‌های عید پاک",
         "pl": "Słodycze w jajkach wielkanocnych",
-        "so": "Nacnac ku jira ukunta Easter-ka",
+        "so": "Nacnac ku jira ukunta Iistar",
         "ti": "ሽኮርያት ኣብ እንቋቝሖ ፋሲካ",
         "tr": "Paskalya yumurtalarında şekerleme",
         "uk": "Цукерки у великодніх яйцях"
@@ -14715,7 +14715,7 @@
       "ckb": "لە ڕۆژی لوسیا، ١٣ی کانوونی یەکەم، بە زۆری کولێچەی تایبەتی لوسیا بە زەعفەران پێشکەش دەکرێت. هێرینگ، پەتاتەی نوێ و فرەنگی سەر بە ناوەڕاستی هاوینن، بەڵام هێلکە، گۆشتی بەرخ، سالمۆن، هێرینگ و شیرینی ناو هێلکەی پاک سەر بە جەژنی پاکن.",
       "fa": "در روز لوسیا، ۱۳ دسامبر، معمولاً نان‌های ویژه لوسیا با زعفران پذیرایی می‌شود. شاه‌ماهی، سیب‌زمینی نو و توت‌فرنگی به نیمه تابستان مربوط‌اند، در حالی که تخم‌مرغ، گوشت بره، سالمون، شاه‌ماهی و شیرینی در تخم‌مرغ عید پاک به عید پاک مربوط‌اند.",
       "pl": "W dniu Lucii, 13 grudnia, zwykle podaje się specjalne szafranowe bułeczki lucia. Śledź, młode ziemniaki i truskawki należą do midsommar, a jajka, jagnięcina, łosoś, śledź i słodycze w jajkach do Wielkanocy.",
-      "so": "Maalinta Lucia, 13 Diseembar, badanaa waxaa la bixiyaa rootiyo Lucia oo gaar ah oo sacfaraan leh. Herring, baradho cusub iyo strawberries waxay ka tirsan yihiin Midsommar, halka ukun, hilib wan, salmon, herring iyo nacnac ku jira ukunta Easter-ka ay ka tirsan yihiin Easter.",
+      "so": "Maalinta Lucia, 13 Diseembar, badanaa waxaa la bixiyaa rootiyo Lucia oo gaar ah oo sacfaraan leh. Sill, baradho cusub iyo istarooberi waxay ka tirsan yihiin Midsommar, halka ukun, hilib wan, salmon, sill iyo nacnac ku jira ukunta Iistar ay ka tirsan yihiin Iistar.",
       "ti": "ኣብ መዓልቲ ሉሲያ፣ 13 ታሕሳስ፣ ብተለምዶ ፍሉያት ቡን ሉሲያ ብሳፍሮን ይቐርብ። ሄሪንግ፣ ሓድሽ ድንሽን ስትሮበሪን ናይ ሚድሶማር እዮም፣ እንቋቝሖ፣ ስጋ በጊዕ፣ ሳልሞን፣ ሄሪንግን ሽኮርያት ኣብ እንቋቝሖ ፋሲካን ድማ ናይ ፋሲካ እዮም።",
       "tr": "Lucia Günü olan 13 Aralık’ta genellikle özel safranlı Lucia çörekleri ikram edilir. Ringa balığı, taze patates ve çilek Midsommar’a; yumurta, kuzu eti, somon, ringa balığı ve Paskalya yumurtalarındaki şekerler Paskalya’ya aittir.",
       "uk": "У день Люсії, 13 грудня, зазвичай подають спеціальні шафранові булочки Люсії. Оселедець, молода картопля та полуниці належать до Мідсоммара, а яйця, ягнятина, лосось, оселедець і цукерки у великодніх яйцях — до Великодня."
@@ -43688,7 +43688,7 @@
         "ckb": "پاشک",
         "fa": "عید پاک",
         "pl": "Wielkanoc",
-        "so": "Easter",
+        "so": "Iistar",
         "ti": "ትንሳኤ",
         "tr": "Paskalya",
         "uk": "Великдень"
@@ -43856,7 +43856,7 @@
         "ckb": "پاشک",
         "fa": "عید پاک",
         "pl": "Wielkanoc",
-        "so": "Easter",
+        "so": "Iistar",
         "ti": "ትንሳኤ",
         "tr": "Paskalya",
         "uk": "Великдень"
@@ -51508,7 +51508,7 @@
         "ckb": "خواردنی هێلکە، گۆشتی بەرخ، سالمۆن و هێرینگ، و ئەوەی منداڵان شیرینی لە هێلکەی هەستانەوەدا وەربگرن",
         "fa": "خوردن تخم‌مرغ، گوشت بره، سالمون و شاه‌ماهی و گرفتن شیرینی در تخم‌مرغ عید پاک برای کودکان",
         "pl": "Jedzenie jajek, jagnięciny, łososia i śledzia oraz słodycze w jajkach wielkanocnych dla dzieci",
-        "so": "Cunista ukun, hilib wan, salmon iyo herring, carruurtuna nacnac ka helaan ukunta Iistar",
+        "so": "Cunista ukun, hilib wan, salmon iyo sill, carruurtuna nacnac ka helaan ukunta Iistar",
         "ti": "እንቋቑሖ፣ ስጋ በጊዕ፣ ሳልሞንን ሄሪንግን ምብላዕ፣ ቆልዑ ድማ ጣዕሚ ኣብ እንቋቑሖ ፋሲካ ምርካብ",
         "tr": "Yumurta, kuzu eti, somon ve ringa yemek; çocukların Paskalya yumurtalarında şeker alması",
         "uk": "Їсти яйця, ягнятину, лосось і оселедець, а дітям отримувати цукерки у великодніх яйцях"
@@ -51682,7 +51682,7 @@
         "ckb": "خواردنی هێلکە، گۆشتی بەرخ، سالمۆن و هێرینگ، و ئەوەی منداڵان شیرینی لە هێلکەی هەستانەوەدا وەربگرن",
         "fa": "خوردن تخم‌مرغ، گوشت بره، سالمون و شاه‌ماهی و گرفتن شیرینی در تخم‌مرغ عید پاک برای کودکان",
         "pl": "Jedzenie jajek, jagnięciny, łososia i śledzia oraz słodycze w jajkach wielkanocnych dla dzieci",
-        "so": "Cunista ukun, hilib wan, salmon iyo herring, carruurtuna nacnac ka helaan ukunta Iistar",
+        "so": "Cunista ukun, hilib wan, salmon iyo sill, carruurtuna nacnac ka helaan ukunta Iistar",
         "ti": "እንቋቑሖ፣ ስጋ በጊዕ፣ ሳልሞንን ሄሪንግን ምብላዕ፣ ቆልዑ ድማ ጣዕሚ ኣብ እንቋቑሖ ፋሲካ ምርካብ",
         "tr": "Yumurta, kuzu eti, somon ve ringa yemek; çocukların Paskalya yumurtalarında şeker alması",
         "uk": "Їсти яйця, ягнятину, лосось і оселедець, а дітям отримувати цукерки у великодніх яйцях"
@@ -52570,7 +52570,7 @@
         "ckb": "ستوونی ناوەڕاستی هاوین لە ژووری دانیشتن و هێرینگ لەسەر مێز",
         "fa": "تیرک نیمه تابستان در اتاق نشیمن و شاه‌ماهی روی میز",
         "pl": "Słup midsommar w salonie i śledź na stole",
-        "so": "Tiir Midsommar ah oo qolka fadhiga ku jira iyo herring miiska saaran",
+        "so": "Tiir Midsommar ah oo qolka fadhiga ku jira iyo sill miiska saaran",
         "ti": "ዓምዲ ሚድሶማር ኣብ ክፍሊ መቐመጢን ሄሪንግ ኣብ መኣዲን",
         "tr": "Oturma odasında midsommar direği ve masada ringa balığı",
         "uk": "Мідсоммарський стовп у вітальні та оселедець на столі"
@@ -52741,7 +52741,7 @@
         "ckb": "ستوونی ناوەڕاستی هاوین لە ژووری دانیشتن و هێرینگ لەسەر مێز",
         "fa": "تیرک نیمه تابستان در اتاق نشیمن و شاه‌ماهی روی میز",
         "pl": "Słup midsommar w salonie i śledź na stole",
-        "so": "Tiir Midsommar ah oo qolka fadhiga ku jira iyo herring miiska saaran",
+        "so": "Tiir Midsommar ah oo qolka fadhiga ku jira iyo sill miiska saaran",
         "ti": "ዓምዲ ሚድሶማር ኣብ ክፍሊ መቐመጢን ሄሪንግ ኣብ መኣዲን",
         "tr": "Oturma odasında midsommar direği ve masada ringa balığı",
         "uk": "Мідсоммарський стовп у вітальні та оселедець на столі"
@@ -54134,7 +54134,7 @@
         "ckb": "ماسی هێرینگ، پەتاتەی نوێ و فرەنگی",
         "fa": "شاه‌ماهی، سیب‌زمینی نو و توت‌فرنگی",
         "pl": "Śledź, młode ziemniaki i truskawki",
-        "so": "Kalluun herring ah, baradho cusub iyo strawberries",
+        "so": "Sill, baradho cusub iyo istarooberi",
         "ti": "ሄሪንግ፣ ሓድሽ ድንሽን ስትሮበሪን",
         "tr": "Ringa balığı, taze patates ve çilek",
         "uk": "Оселедець, молода картопля та полуниці"
@@ -54148,7 +54148,7 @@
         "ckb": "هێلکە، گۆشتی بەرخ، سالمۆن و هێرینگ",
         "fa": "تخم‌مرغ، گوشت بره، سالمون و شاه‌ماهی",
         "pl": "Jajka, jagnięcina, łosoś i śledź",
-        "so": "Ukun, hilib wan, salmon iyo herring",
+        "so": "Ukun, hilib wan, salmon iyo sill",
         "ti": "እንቋቝሖ፣ ስጋ በጊዕ፣ ሳልሞንን ሄሪንግን",
         "tr": "Yumurta, kuzu eti, somon ve ringa balığı",
         "uk": "Яйця, ягнятина, лосось та оселедець"
@@ -54162,7 +54162,7 @@
         "ckb": "شیرینی ناو هێلکەی جەژنی پاک",
         "fa": "شیرینی داخل تخم‌مرغ‌های عید پاک",
         "pl": "Słodycze w jajkach wielkanocnych",
-        "so": "Nacnac ku jira ukunta Easter-ka",
+        "so": "Nacnac ku jira ukunta Iistar",
         "ti": "ሽኮርያት ኣብ እንቋቝሖ ፋሲካ",
         "tr": "Paskalya yumurtalarında şekerleme",
         "uk": "Цукерки у великодніх яйцях"
@@ -54305,7 +54305,7 @@
         "ckb": "ماسی هێرینگ، پەتاتەی نوێ و فرەنگی",
         "fa": "شاه‌ماهی، سیب‌زمینی نو و توت‌فرنگی",
         "pl": "Śledź, młode ziemniaki i truskawki",
-        "so": "Kalluun herring ah, baradho cusub iyo strawberries",
+        "so": "Sill, baradho cusub iyo istarooberi",
         "ti": "ሄሪንግ፣ ሓድሽ ድንሽን ስትሮበሪን",
         "tr": "Ringa balığı, taze patates ve çilek",
         "uk": "Оселедець, молода картопля та полуниці"
@@ -54319,7 +54319,7 @@
         "ckb": "هێلکە، گۆشتی بەرخ، سالمۆن و هێرینگ",
         "fa": "تخم‌مرغ، گوشت بره، سالمون و شاه‌ماهی",
         "pl": "Jajka, jagnięcina, łosoś i śledź",
-        "so": "Ukun, hilib wan, salmon iyo herring",
+        "so": "Ukun, hilib wan, salmon iyo sill",
         "ti": "እንቋቝሖ፣ ስጋ በጊዕ፣ ሳልሞንን ሄሪንግን",
         "tr": "Yumurta, kuzu eti, somon ve ringa balığı",
         "uk": "Яйця, ягнятина, лосось та оселедець"
@@ -54333,7 +54333,7 @@
         "ckb": "شیرینی ناو هێلکەی جەژنی پاک",
         "fa": "شیرینی داخل تخم‌مرغ‌های عید پاک",
         "pl": "Słodycze w jajkach wielkanocnych",
-        "so": "Nacnac ku jira ukunta Easter-ka",
+        "so": "Nacnac ku jira ukunta Iistar",
         "ti": "ሽኮርያት ኣብ እንቋቝሖ ፋሲካ",
         "tr": "Paskalya yumurtalarında şekerleme",
         "uk": "Цукерки у великодніх яйцях"

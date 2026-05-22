@@ -102,6 +102,8 @@ const TRUE_FALSE_LABELS = {
 
 const SOMALI_GEOGRAPHY_NATURALNESS_IDS = ['q004', 'q006', 'q008'];
 const SOMALI_ENGLISH_GEOGRAPHY_TERM_PATTERN = /\b(?:Mediterranean|Baltic|Atlantic|Gulf Stream)\b/;
+const SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS = ['q099', 'q101', 'q125', 'q131', 'q135', 'q141'];
+const SOMALI_HOLIDAY_FOOD_ENGLISH_TOKEN_PATTERN = /\b(?:herring|strawberries|Easter)\b/i;
 const Q062_PUBLIC_SECTOR_NATURALNESS_IDS = ['q062'];
 const Q062_PUBLIC_SECTOR_REQUIREMENTS = {
   en: {
@@ -506,6 +508,47 @@ function checkSomaliGeographyNaturalness(questions, ids = SOMALI_GEOGRAPHY_NATUR
   return errors;
 }
 
+function summarizeSomaliHolidayFoodNaturalness(
+  questions,
+  ids = SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS,
+) {
+  const errors = [];
+  const questionById = new Map(questions.map((question) => [question.id, question]));
+  let casesValidated = 0;
+
+  for (const id of ids) {
+    const question = questionById.get(id);
+    const errorCountBefore = errors.length;
+
+    if (!question) {
+      errors.push(`${id}.somaliHolidayFoodNaturalness missing`);
+      continue;
+    }
+
+    for (const [path, value] of somaliLocalizedSegments(question)) {
+      if (typeof value === 'string' && SOMALI_HOLIDAY_FOOD_ENGLISH_TOKEN_PATTERN.test(value)) {
+        errors.push(`${id}.${path} contains English holiday-food token`);
+      }
+    }
+
+    if (errors.length === errorCountBefore) {
+      casesValidated += 1;
+    }
+  }
+
+  return {
+    errors,
+    casesValidated,
+    expectedCases: ids.length,
+    parityValidated: errors.length === 0 && casesValidated === ids.length,
+  };
+}
+
+function checkSomaliHolidayFoodNaturalness(questions, ids = SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS) {
+  const { errors } = summarizeSomaliHolidayFoodNaturalness(questions, ids);
+  return errors;
+}
+
 function localizedQuestionMap(question) {
   return Object.assign(
     { sv: question.questionSv, en: question.questionEn },
@@ -690,6 +733,10 @@ function isSomaliGeographyNaturalnessId(id) {
   return SOMALI_GEOGRAPHY_NATURALNESS_IDS.includes(id);
 }
 
+function isSomaliHolidayFoodNaturalnessId(id) {
+  return SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS.includes(id);
+}
+
 function isQ062PublicSectorNaturalnessId(id) {
   return Q062_PUBLIC_SECTOR_NATURALNESS_IDS.includes(id);
 }
@@ -739,6 +786,11 @@ function checkQuestions(questions, ids = QUESTION_LOCALIZATION_PILOT_IDS) {
   const somaliGeographyIds = ids.filter(isSomaliGeographyNaturalnessId);
   if (somaliGeographyIds.length > 0) {
     errors.push(...checkSomaliGeographyNaturalness(questions, somaliGeographyIds));
+  }
+
+  const somaliHolidayFoodIds = ids.filter(isSomaliHolidayFoodNaturalnessId);
+  if (somaliHolidayFoodIds.length > 0) {
+    errors.push(...checkSomaliHolidayFoodNaturalness(questions, somaliHolidayFoodIds));
   }
 
   const q062PublicSectorIds = ids.filter(isQ062PublicSectorNaturalnessId);
@@ -874,15 +926,18 @@ module.exports = {
   Q050_SOURCE_CRITICISM_NATURALNESS_IDS,
   Q062_PUBLIC_SECTOR_NATURALNESS_IDS,
   SOMALI_GEOGRAPHY_NATURALNESS_IDS,
+  SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS,
   checkQuestions,
   checkLocalizationSourceShape,
   checkQ050SourceCriticismNaturalness,
   checkQ062PublicSectorNaturalness,
   checkSomaliGeographyNaturalness,
+  checkSomaliHolidayFoodNaturalness,
   checkReviewMetadata,
   REQUIRED_LOCALES,
   REQUIRED_REVIEW_LOCALES,
   summarizeQ050SourceCriticismNaturalness,
   summarizeQ062PublicSectorNaturalness,
   summarizeSomaliGeographyNaturalness,
+  summarizeSomaliHolidayFoodNaturalness,
 };
