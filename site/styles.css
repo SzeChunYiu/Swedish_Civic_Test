@@ -6302,7 +6302,8 @@ html[dir='rtl'] .lang-menu {
 .consent .btn--ghost,
 .consent .btn--gold {
   box-shadow: 0 12px 30px -22px rgba(0, 0, 0, 0.88);
-  min-height: 38px;
+  min-height: 44px;
+  min-width: 44px;
 }
 
 .consent .btn--gold:hover {
