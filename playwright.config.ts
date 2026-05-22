@@ -6,6 +6,7 @@ const DEFAULT_E2E_PORT = 4173;
 const e2ePort = Number(process.env.E2E_PORT ?? DEFAULT_E2E_PORT);
 const e2eBaseURL = `http://127.0.0.1:${e2ePort}`;
 const chromiumLaunchOptions = getChromiumLaunchOptions();
+const reuseExistingServer = process.env.E2E_REUSE_EXISTING_SERVER === '1' && !process.env.CI;
 
 if (!Number.isInteger(e2ePort) || e2ePort < 1 || e2ePort > 65535) {
   throw new Error(`E2E_PORT must be an integer TCP port, received ${process.env.E2E_PORT}`);
@@ -26,7 +27,9 @@ export default defineConfig({
   webServer: {
     command: `PORT=${e2ePort} node tests/e2e/serve-dist-web.cjs`,
     url: e2eBaseURL,
-    reuseExistingServer: !process.env.CI,
+    // Default local runs must start this worktree's dist-web server. Use a unique
+    // E2E_PORT or explicitly set E2E_REUSE_EXISTING_SERVER=1 when reusing one.
+    reuseExistingServer,
     timeout: 10_000,
   },
 });
