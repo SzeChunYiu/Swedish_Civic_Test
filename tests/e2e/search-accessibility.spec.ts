@@ -12,6 +12,7 @@ const copy = {
     initialSummary: /\d+ samhällsbegrepp i referensen/,
     inputName: 'Sök samhällsbegrepp och övningsfrågor',
     punctuatedQuery: 'kommun,',
+    questionShown: /8 av \d+ källbaserade övningsfrågor visas/,
     provenanceBadge: /Källtyp: (UHR-källa|Tilläggsfråga|Redaktionell)/,
     questionLink: /Öppna övningsfrågan:/,
     query: 'riksdag',
@@ -25,6 +26,7 @@ const copy = {
     initialSummary: /\d+ civic reference terms/,
     inputName: 'Search civic terms and practice questions',
     punctuatedQuery: 'riksdag?',
+    questionShown: /8 of \d+ source-backed practice questions shown/,
     provenanceBadge: /Provenance: (UHR source|Supplementary|Editorial)/,
     questionLink: /Open practice question:/,
     query: 'municipality',
@@ -124,6 +126,7 @@ for (const language of ['sv', 'en'] as const satisfies readonly Language[]) {
 
     await page.getByRole('textbox', { name: t.inputName }).fill(t.query);
     await expect(liveSummary).toHaveText(t.filteredSummary);
+    await expect(page.getByText(t.questionShown)).toBeVisible();
     await expect(
       page.getByRole('link', { name: /Öppna kapitlet|Open the chapter/ }).first(),
     ).toBeVisible();
@@ -135,6 +138,7 @@ for (const language of ['sv', 'en'] as const satisfies readonly Language[]) {
 
     await page.getByRole('textbox', { name: t.inputName }).fill(t.punctuatedQuery);
     await expect(liveSummary).toHaveText(t.filteredSummary);
+    await expect(page.getByText(t.questionShown)).toBeVisible();
     await expect(page.getByText(t.termName, { exact: true }).first()).toBeVisible();
     await expect(
       page.getByRole('link', { name: /Öppna kapitlet|Open the chapter/ }).first(),

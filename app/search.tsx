@@ -21,7 +21,7 @@ import {
   getQuestionSearchChapterName,
   getQuestionSearchExcerpt,
   getQuestionSearchTitle,
-  searchQuestions,
+  searchQuestionsWithTotal,
 } from '../lib/search/questionSearch';
 import { useAccessibilityStore } from '../lib/storage/accessibilityStore';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
@@ -87,19 +87,21 @@ export default function SearchScreen() {
       })),
     [language, trimmedQuery],
   );
-  const questionResults = useMemo(() => {
-    if (!trimmedQuery) return [];
+  const questionSearchResults = useMemo(() => {
+    if (!trimmedQuery) return { results: [], totalCount: 0 };
 
-    return searchQuestions({
+    return searchQuestionsWithTotal({
       chapters,
       limit: 8,
       query: trimmedQuery,
       questions,
     });
   }, [trimmedQuery]);
+  const questionResults = questionSearchResults.results;
+  const totalQuestionMatches = questionSearchResults.totalCount;
   const resultSummary =
     trimmedQuery.length > 0
-      ? copy.filteredSummary(filteredTerms.length, glossaryTerms.length, questionResults.length)
+      ? copy.filteredSummary(filteredTerms.length, glossaryTerms.length, totalQuestionMatches)
       : copy.allTermsSummary(glossaryTerms.length);
   const searchDescriptionId = 'search-route-glossary-description';
 
@@ -223,7 +225,7 @@ export default function SearchScreen() {
               {copy.questionSectionTitle}
             </Text>
             <Text style={styles.questionSectionSubtitle}>
-              {copy.questionSectionSubtitle(questionResults.length)}
+              {copy.questionSectionSubtitle(questionResults.length, totalQuestionMatches)}
             </Text>
           </View>
 
@@ -356,7 +358,7 @@ type SearchRouteCopy = {
     sourceReference: string;
     title: string;
   }) => string;
-  questionSectionSubtitle: (count: number) => string;
+  questionSectionSubtitle: (visibleCount: number, totalCount: number) => string;
   questionSectionTitle: string;
   searchCardAccessibilityLabel: string;
   searchInputAccessibilityLabel: string;
@@ -413,10 +415,14 @@ const searchRouteCopy: Record<AppLanguage, SearchRouteCopy> = {
       ]
         .filter(Boolean)
         .join('. '),
-    questionSectionSubtitle: (count) =>
-      count === 1
-        ? '1 källbaserad övningsfråga matchar'
-        : `${count} källbaserade övningsfrågor matchar`,
+    questionSectionSubtitle: (visibleCount, totalCount) =>
+      totalCount === 0
+        ? '0 källbaserade övningsfrågor matchar'
+        : totalCount === 1
+          ? '1 källbaserad övningsfråga matchar'
+          : visibleCount === totalCount
+            ? `${totalCount} källbaserade övningsfrågor matchar`
+            : `${visibleCount} av ${totalCount} källbaserade övningsfrågor visas`,
     questionSectionTitle: 'Övningsfrågor',
     searchCardAccessibilityLabel: 'Sök bland samhällsbegrepp, frågor och kapitelkopplingar',
     searchInputAccessibilityLabel: 'Sök samhällsbegrepp och övningsfrågor',
@@ -468,10 +474,14 @@ const searchRouteCopy: Record<AppLanguage, SearchRouteCopy> = {
       ]
         .filter(Boolean)
         .join('. '),
-    questionSectionSubtitle: (count) =>
-      count === 1
-        ? '1 source-backed practice question matches'
-        : `${count} source-backed practice questions match`,
+    questionSectionSubtitle: (visibleCount, totalCount) =>
+      totalCount === 0
+        ? '0 source-backed practice questions match'
+        : totalCount === 1
+          ? '1 source-backed practice question matches'
+          : visibleCount === totalCount
+            ? `${totalCount} source-backed practice questions match`
+            : `${visibleCount} of ${totalCount} source-backed practice questions shown`,
     questionSectionTitle: 'Practice questions',
     searchCardAccessibilityLabel: 'Search civic reference terms, questions, and chapter links',
     searchInputAccessibilityLabel: 'Search civic terms and practice questions',

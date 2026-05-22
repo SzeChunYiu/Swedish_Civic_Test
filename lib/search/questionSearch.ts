@@ -8,6 +8,11 @@ export type QuestionSearchResult = {
   score: number;
 };
 
+export type QuestionSearchResults = {
+  results: QuestionSearchResult[];
+  totalCount: number;
+};
+
 function searchableFields(question: PracticeQuestion, chapter: Chapter | undefined): string[] {
   return [
     question.id,
@@ -67,6 +72,50 @@ function scoreQuestion(
   return score;
 }
 
+function getQuestionSearchMatches({
+  chapters,
+  query,
+  questions,
+}: {
+  chapters: Chapter[];
+  query: string;
+  questions: PracticeQuestion[];
+}): QuestionSearchResult[] {
+  const chapterById = new Map(chapters.map((chapter) => [chapter.id, chapter]));
+
+  return questions
+    .map((question) => {
+      const chapter = chapterById.get(question.chapterId);
+      return { chapter, question, score: scoreQuestion(question, chapter, query) };
+    })
+    .filter((result) => result.score > 0)
+    .sort(
+      (left, right) =>
+        right.score - left.score || left.question.id.localeCompare(right.question.id),
+    );
+}
+
+export function searchQuestionsWithTotal({
+  chapters,
+  limit = 12,
+  query,
+  questions,
+}: {
+  chapters: Chapter[];
+  limit?: number;
+  query: string;
+  questions: PracticeQuestion[];
+}): QuestionSearchResults {
+  const normalizedLimit = normalizeSearchResultLimit(limit, 12);
+  const matches = getQuestionSearchMatches({ chapters, query, questions });
+  const results = normalizedLimit === undefined ? matches : matches.slice(0, normalizedLimit);
+
+  return {
+    results,
+    totalCount: matches.length,
+  };
+}
+
 export function searchQuestions({
   chapters,
   limit = 12,
@@ -78,21 +127,7 @@ export function searchQuestions({
   query: string;
   questions: PracticeQuestion[];
 }): QuestionSearchResult[] {
-  const chapterById = new Map(chapters.map((chapter) => [chapter.id, chapter]));
-  const normalizedLimit = normalizeSearchResultLimit(limit, 12);
-
-  const results = questions
-    .map((question) => {
-      const chapter = chapterById.get(question.chapterId);
-      return { chapter, question, score: scoreQuestion(question, chapter, query) };
-    })
-    .filter((result) => result.score > 0)
-    .sort(
-      (left, right) =>
-        right.score - left.score || left.question.id.localeCompare(right.question.id),
-    );
-
-  return normalizedLimit === undefined ? results : results.slice(0, normalizedLimit);
+  return searchQuestionsWithTotal({ chapters, limit, query, questions }).results;
 }
 
 export function getQuestionSearchTitle(question: PracticeQuestion, language: AppLanguage): string {
