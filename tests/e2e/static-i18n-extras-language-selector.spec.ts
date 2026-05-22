@@ -143,6 +143,15 @@ const localizedHomeChapterThreeFundamentalLawSnippets: Record<
   tr: /Temel yasalar\s*\(Grundlagarna\)/i,
   uk: /Основні закони\s*\(Grundlagarna\)/i,
 };
+const chapterSixEducationLocales = ['so', 'ti', 'tr'] as const;
+const localizedHomeChapterSixEducationSnippets: Record<
+  (typeof chapterSixEducationLocales)[number],
+  RegExp
+> = {
+  so: /dugsiyada barbaarinta.+jaamacadda/i,
+  ti: /መዋእለ ህጻናት.+ዩኒቨርሲቲ/,
+  tr: /Anaokulundan.+üniversiteye/i,
+};
 const localizedHomeChapterElevenCitizenshipSnippets: Record<ExtraLocale, RegExp> = {
   'zh-Hans': /公民身份（medborgarskap）/,
   'zh-Hant': /公民身分（medborgarskap）/,
@@ -567,6 +576,23 @@ async function assertHomeChapterThreeFundamentalLawTerms(
   expect(text).not.toMatch(/^Grundlagarna\b/);
 }
 
+async function assertHomeChapterSixEducationTerms(
+  page: Page,
+  locale: (typeof chapterSixEducationLocales)[number],
+) {
+  const expectedDescription = await dictionaryText(page, locale, 'chap.6.d');
+  const chapterDescription = page.locator(i18nSelector('chap.6.d'));
+
+  await expect(chapterDescription).toBeVisible();
+  await expect(chapterDescription).toHaveText(expectedDescription);
+
+  const text = await chapterDescription.innerText();
+  expect(text).toMatch(localizedHomeChapterSixEducationSnippets[locale]);
+  expect(text).toMatch(/\bBVC\b/);
+  expect(text).toMatch(/\b1177\b/);
+  expect(text).not.toMatch(/\b(?:Förskola|förskola|universitet)\b/iu);
+}
+
 async function assertHomeChapterElevenCitizenshipTerms(page: Page, locale: ExtraLocale) {
   const expectedDescription = await dictionaryText(page, locale, 'chap.11.d');
   const chapterDescription = page.locator(i18nSelector('chap.11.d'));
@@ -873,6 +899,30 @@ test('static Home chapter 3 fundamental laws render localized card descriptions 
 
     await expectRootLocale(page, locale);
     await assertHomeChapterThreeFundamentalLawTerms(page, locale);
+    await expect(page.locator('.list-quiet > li')).toHaveCount(13);
+  }
+
+  expect(pageErrors).toEqual([]);
+});
+
+test('static Home chapter 6 education terms render localized card descriptions without Förskola universitet', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const pageErrors = collectPageErrors(page);
+  await openStaticHome(page, staticSite.baseUrl);
+
+  for (const locale of chapterSixEducationLocales) {
+    await page.locator('#settings-open').click();
+    await expect(page.locator('#settings-modal')).toBeVisible();
+    await page
+      .locator(`#settings-modal [data-set="language"] button[data-val="${locale}"]`)
+      .click();
+    await page.locator('#settings-modal button[data-close="settings"]').last().click();
+    await expect(page.locator('#settings-modal')).toBeHidden();
+
+    await expectRootLocale(page, locale);
+    await assertHomeChapterSixEducationTerms(page, locale);
     await expect(page.locator('.list-quiet > li')).toHaveCount(13);
   }
 

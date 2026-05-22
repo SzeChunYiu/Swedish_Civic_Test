@@ -684,6 +684,36 @@ test('static Home chapter 2 civic-term e2e keeps a focused grep target', () => {
   );
 });
 
+test('static Home chapter 6 education-term e2e keeps a focused grep target', () => {
+  const source = readRelative('static-i18n-extras-language-selector.spec.ts');
+
+  assert.match(
+    source,
+    /static Home chapter 6 education terms render localized card descriptions without Förskola universitet/,
+    'static Home education-term e2e should have a focused grep title',
+  );
+  assert.match(
+    source,
+    /localizedHomeChapterSixEducationSnippets/,
+    'static Home education-term e2e should assert the reviewed localized terms, not just absence',
+  );
+  assert.match(
+    source,
+    /BVC/,
+    'static Home education-term e2e should keep BVC visible in rendered card copy',
+  );
+  assert.match(
+    source,
+    /1177/,
+    'static Home education-term e2e should keep 1177 visible in rendered card copy',
+  );
+  assert.match(
+    source,
+    /i18nSelector\('chap\.6\.d'\)/,
+    'static Home education-term e2e should inspect the rendered chapter 6 description element',
+  );
+});
+
 test('static q050 source-criticism rendered e2e keeps a focused grep target', () => {
   const source = readRelative('static-i18n-extras-language-selector.spec.ts');
   const paritySource = fs.readFileSync(
