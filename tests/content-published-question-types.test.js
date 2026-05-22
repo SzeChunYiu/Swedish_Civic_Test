@@ -1182,6 +1182,47 @@ test('referendum advisory Swedish copy stays natural across source and exports',
   );
 });
 
+test('generated meaning-clause single-choice prompts use direct English questions', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = Array.from(actualStaticQuestions());
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const expectedPrompts = new Map([
+    [
+      generatedQuestionId(sourceQuestions, 'q020', 'judgement'),
+      'What is correct about advisory referendums in Sweden?',
+    ],
+    [
+      generatedQuestionId(sourceQuestions, 'q027', 'judgement'),
+      "What is correct about Sweden's constitutional monarchy?",
+    ],
+    [
+      generatedQuestionId(sourceQuestions, 'q092', 'judgement'),
+      "What is correct about Sweden's secular state?",
+    ],
+    [
+      generatedQuestionId(sourceQuestions, 'q145', 'judgement'),
+      'What is correct about secret elections in a democracy?',
+    ],
+    [
+      generatedQuestionId(sourceQuestions, 'q175', 'judgement'),
+      'What is correct about human rights applying to everyone?',
+    ],
+  ]);
+
+  for (const [id, expectedPrompt] of expectedPrompts) {
+    const generated = generatedSiteBank.find((question) => question.id === id);
+    const actual = actualSiteBank.find((question) => question.id === id);
+    assert.ok(generated, `${id} generated variant should be present`);
+    assert.ok(actual, `${id} static variant should be present`);
+    assert.equal(generated.q.en, expectedPrompt);
+    assert.equal(actual.q.en, expectedPrompt);
+    assert.doesNotMatch(generated.q.en, /^Which meaning is correct for\b/i);
+    assert.doesNotMatch(actual.q.en, /^Which meaning is correct for\b/i);
+  }
+});
+
 test('referendum advisory Swedish naturalness guard rejects old måste inte wording', () => {
   const result = spawnSync(
     process.execPath,
@@ -6515,8 +6556,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "  question.id === generatedFixtureId('q001', 0)",
         "    ? {",
         "        ...question,",
-        "        questionSv: 'Sverige ligger ...?',",
-        "        questionEn: 'Sweden is located ...?',",
+        "        questionSv: 'Vad stämmer om Sveriges läge?',",
+        "        questionEn: 'Which meaning is correct for Sweden is in the Nordic region?',",
         "      }",
         "    : question.id === generatedFixtureId('q001', 3)",
         "      ? {",

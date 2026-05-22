@@ -945,6 +945,8 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
       'In Sweden, referendums are binding, so politicians are required to follow the result.',
     ),
   );
+  assert.ok(allText.includes('What is correct about advisory referendums in Sweden?'));
+  assert.doesNotMatch(allText, /Which meaning is correct for/i);
   assert.ok(text.includes("The main responsibility of Sweden's regions is health care."));
   assert.ok(
     text.includes(

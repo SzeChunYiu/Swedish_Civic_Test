@@ -23610,7 +23610,7 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "What is meant when referendums in Sweden are advisory?",
+      "en": "What is meant by advisory referendums in Sweden?",
       "sv": "Vad innebär det att folkomröstningar i Sverige är rådgivande?"
     },
     "opts": [
@@ -23778,7 +23778,7 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Which meaning is correct for referendums in Sweden are advisory?",
+      "en": "What is correct about advisory referendums in Sweden?",
       "sv": "Vad stämmer om att folkomröstningar i Sverige är rådgivande?"
     },
     "opts": [
@@ -25322,7 +25322,7 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "What is meant when Sweden is a constitutional monarchy?",
+      "en": "What is meant by Sweden's constitutional monarchy?",
       "sv": "Vad innebär det att Sverige är en konstitutionell monarki?"
     },
     "opts": [
@@ -25490,7 +25490,7 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which meaning is correct for Sweden is a constitutional monarchy?",
+      "en": "What is correct about Sweden's constitutional monarchy?",
       "sv": "Vad stämmer om att Sverige är en konstitutionell monarki?"
     },
     "opts": [
@@ -41538,7 +41538,7 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "What is meant when Sweden is a secular state?",
+      "en": "What is meant by Sweden's secular state?",
       "sv": "Vad innebär det att Sverige är en sekulär stat?"
     },
     "opts": [
@@ -41706,7 +41706,7 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which meaning is correct for Sweden is a secular state?",
+      "en": "What is correct about Sweden's secular state?",
       "sv": "Vad stämmer om att Sverige är en sekulär stat?"
     },
     "opts": [
@@ -55170,7 +55170,7 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "What is meant when elections in a democracy are secret?",
+      "en": "What is meant by secret elections in a democracy?",
       "sv": "Vad innebär det att val i en demokrati är hemliga?"
     },
     "opts": [
@@ -55338,7 +55338,7 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Which meaning is correct for elections in a democracy are secret?",
+      "en": "What is correct about secret elections in a democracy?",
       "sv": "Vad stämmer om att val i en demokrati är hemliga?"
     },
     "opts": [
@@ -62958,7 +62958,7 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "What is meant when human rights apply to everyone?",
+      "en": "What is meant by human rights applying to everyone?",
       "sv": "Vad innebär det att mänskliga rättigheter gäller alla?"
     },
     "opts": [
@@ -63126,7 +63126,7 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which meaning is correct for human rights apply to everyone?",
+      "en": "What is correct about human rights applying to everyone?",
       "sv": "Vad stämmer om att mänskliga rättigheter gäller alla?"
     },
     "opts": [
