@@ -3243,8 +3243,7 @@ const EXPECTED_SCREEN_SHELL_LAYOUT_RULES = [
 const EXPECTED_SETTINGS_ROUTE_SCROLL_RULES = [
   {
     label: 'ScrollView import',
-    pattern:
-      /import\s+\{[\s\S]*Pressable,[\s\S]*ScrollView,[\s\S]*StyleSheet,[\s\S]*Text,[\s\S]*TextInput,[\s\S]*View,?[\s\S]*\}\s+from 'react-native';/,
+    pattern: /import\s+\{[\s\S]*\bScrollView\b[\s\S]*\}\s+from 'react-native';/,
   },
   {
     label: 'scroll root container',
@@ -10636,6 +10635,16 @@ if (process.argv.includes('--focus-settings-route-copy')) {
   printValidationSummary({
     settingsRouteCopyLabelsValidated,
     settingsRouteCopyParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-settings-route-scroll')) {
+  validateSettingsRouteScrollParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    settingsRouteScrollRulesValidated,
+    settingsRouteScrollParityValidated,
   });
   process.exit(0);
 }
