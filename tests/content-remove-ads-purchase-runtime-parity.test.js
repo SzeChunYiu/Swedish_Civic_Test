@@ -35,14 +35,18 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
     path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
     'utf8',
   );
+  const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
   const nativeReceiptValidationBlock =
     purchaseSource.match(
       /async validateRemoveAdsReceipt\(purchase, productId\) \{([\s\S]*?)\n    \},\n    async requestRemoveAdsPurchase/,
     )?.[1] ?? '';
 
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 32);
+  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 35);
   assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
   assert.match(purchaseSource, /REMOVE_ADS_RECORD_SCHEMA_VERSION = 1/);
+  assert.match(purchaseSource, /interface RemoveAdsProductMetadata/);
+  assert.match(purchaseSource, /displayPrice: string/);
+  assert.match(purchaseSource, /localizedPrice\?: string \| null/);
   assert.match(purchaseSource, /REMOVE_ADS_IOS_PRODUCT_ID = REMOVE_ADS_PRODUCT_ID/);
   assert.match(purchaseSource, /REMOVE_ADS_ANDROID_PRODUCT_ID = 'removeads'/);
   assert.match(purchaseSource, /REMOVE_ADS_STORE_PRODUCT_IDS = \{/);
@@ -59,6 +63,11 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.match(purchaseSource, /function normalizeRemoveAdsStorePlatform\(platform/);
   assert.match(purchaseSource, /export function getRemoveAdsStoreProductId/);
   assert.match(purchaseSource, /const storeProductId = getPurchaseStoreProductId/);
+  assert.match(purchaseSource, /fetchRemoveAdsProductMetadata/);
+  assert.match(
+    purchaseSource,
+    /fetchProducts\(\{[\s\S]*skus:\s*\[\s*storeProductId\s*\],[\s\S]*type:\s*'in-app'/,
+  );
   assert.match(purchaseSource, /apple: \{ sku: storeProductId \}/);
   assert.match(purchaseSource, /google: \{ skus: \[storeProductId\] \}/);
   assert.match(purchaseSource, /validateRemoveAdsReceipt\?\(/);
@@ -127,6 +136,18 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.match(paywallSource, /status === 'finish_failed'/);
   assert.match(paywallSource, /The store could not mark the purchase as finished/);
   assert.match(paywallSource, /Butiken kunde inte markera köpet som slutfört/);
+  assert.match(paywallSource, /useRemoveAdsPriceLabel\(purchaseRuntime, priceLabel\)/);
+  assert.match(paywallSource, /resolvedPriceLabel/);
+  assert.match(paywallSource, /copy\.webUnavailableBody\(resolvedPriceLabel\)/);
+  assert.match(paywallSource, /copy\.body\(resolvedPriceLabel\)/);
+  assert.match(paywallSource, /copy\.buyAccessibilityLabel\(resolvedPriceLabel\)/);
+  assert.match(paywallSource, /copy\.buyIdle\(resolvedPriceLabel\)/);
+  assert.match(
+    homeSource,
+    /const removeAdsPriceLabel = useRemoveAdsPriceLabel\(purchaseRuntime\);/,
+  );
+  assert.match(homeSource, /<PricingWedge[\s\S]*priceLabel=\{removeAdsPriceLabel\}/);
+  assert.match(homeSource, /<PremiumBanner[\s\S]*priceLabel=\{removeAdsPriceLabel\}/);
   assert.match(
     paywallSource,
     /const actionsDisabled = activeAction !== null \|\| adsDisabled \|\| purchaseUnavailable;/,

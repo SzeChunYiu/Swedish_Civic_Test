@@ -64,8 +64,9 @@ process.stdout.write(JSON.stringify(plugin && plugin[1]));
   return JSON.parse(output);
 }
 
-function makeNativeIapProductFixture({ availablePurchases = [] } = {}) {
+function makeNativeIapProductFixture({ availablePurchases = [], products = [] } = {}) {
   const state = {
+    fetchedProducts: [],
     requestedGoogleProductIds: [],
     requestedProductIds: [],
     restored: false,
@@ -75,6 +76,10 @@ function makeNativeIapProductFixture({ availablePurchases = [] } = {}) {
     async initConnection() {},
     async endConnection() {},
     async finishTransaction() {},
+    async fetchProducts(request) {
+      state.fetchedProducts.push(request);
+      return products;
+    },
     async getAvailablePurchases() {
       return availablePurchases;
     },
@@ -1494,6 +1499,7 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
     createMemoryPurchaseStorage,
     createMockPurchaseProvider,
     createWebPurchaseStorage,
+    fetchRemoveAdsProductMetadata,
     getPurchaseEntitlements,
     restoreRemoveAdsPurchase,
   } = purchaseExports;
@@ -1524,6 +1530,23 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
   assert.match(purchasesSource, /validateRemoveAdsReceipt/);
   assert.match(purchasesSource, /receiptValidationStatus: 'valid'/);
   assert.match(purchasesSource, /receiptValidatedAt/);
+  assert.match(purchasesSource, /fetchRemoveAdsProductMetadata/);
+  assert.match(
+    purchasesSource,
+    /fetchProducts\(\{[\s\S]*skus: \[storeProductId\],[\s\S]*type: 'in-app'/,
+  );
+  assert.match(purchasesSource, /displayPrice/);
+
+  const fallbackMetadata = await fetchRemoveAdsProductMetadata({
+    purchaseUnavailableReason: 'web_store_unavailable',
+    provider: createMockPurchaseProvider(),
+  });
+  assert.deepEqual(fallbackMetadata, {
+    displayPrice: REMOVE_ADS_PRICE_LABEL,
+    localizedPrice: REMOVE_ADS_PRICE_LABEL,
+    productId: REMOVE_ADS_PRODUCT_ID,
+    storeProductId: REMOVE_ADS_IOS_PRODUCT_ID,
+  });
 
   const storage = createMemoryPurchaseStorage();
   assert.deepEqual(await getPurchaseEntitlements({ storage }), {
@@ -2107,6 +2130,44 @@ test('native Remove Ads requests platform store ids while storing canonical enti
   }
 });
 
+test('native Remove Ads product metadata fetches platform store display price', async () => {
+  const {
+    REMOVE_ADS_ANDROID_PRODUCT_ID,
+    REMOVE_ADS_PRODUCT_ID,
+    createNativePurchaseProvider,
+    fetchRemoveAdsProductMetadata,
+  } = loadTs('lib/monetization/purchases.ts');
+  const { iap, state } = makeNativeIapProductFixture({
+    products: [
+      {
+        displayPrice: '29,00 kr',
+        id: REMOVE_ADS_ANDROID_PRODUCT_ID,
+        localizedPrice: '29,00 kr',
+      },
+    ],
+  });
+
+  const metadata = await fetchRemoveAdsProductMetadata({
+    provider: createNativePurchaseProvider({
+      loadIap: async () => iap,
+      platform: 'android',
+    }),
+  });
+
+  assert.deepEqual(state.fetchedProducts, [
+    {
+      skus: [REMOVE_ADS_ANDROID_PRODUCT_ID],
+      type: 'in-app',
+    },
+  ]);
+  assert.deepEqual(metadata, {
+    displayPrice: '29,00 kr',
+    localizedPrice: '29,00 kr',
+    productId: REMOVE_ADS_PRODUCT_ID,
+    storeProductId: REMOVE_ADS_ANDROID_PRODUCT_ID,
+  });
+});
+
 test('Pro Lifetime entitlement storage and receipts require canonical UTC timestamps', async () => {
   const { createMemoryPurchaseStorage } = loadTs('lib/monetization/purchases.ts');
   const {
@@ -2509,7 +2570,8 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
   const profileSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
 
-  assert.match(paywallSource, /REMOVE_ADS_PRICE_LABEL/);
+  assert.match(paywallSource, /useRemoveAdsPriceLabel/);
+  assert.match(paywallSource, /resolvedPriceLabel/);
   assert.match(paywallSource, /buyRemoveAds/);
   assert.match(paywallSource, /restoreRemoveAdsPurchase/);
   assert.match(paywallSource, /createDefaultPurchaseRuntimeOptions/);
@@ -2518,7 +2580,8 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(paywallSource, /onEntitlementsChange/);
   assert.match(paywallSource, /adsDisabled/);
   assert.match(paywallSource, /purchaseUnavailableReason === 'web_store_unavailable'/);
-  assert.match(paywallSource, /copy\.webUnavailableBody\(REMOVE_ADS_PRICE_LABEL\)/);
+  assert.match(paywallSource, /copy\.webUnavailableBody\(resolvedPriceLabel\)/);
+  assert.match(paywallSource, /copy\.body\(resolvedPriceLabel\)/);
   assert.match(paywallSource, /copy\.webUnavailableAccessibilityHint/);
   assert.match(paywallSource, /Buy in mobile app/);
   assert.match(paywallSource, /Köp i mobilappen/);
@@ -2591,7 +2654,7 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(placementCtaSource, /disabled=\{actionsDisabled\}/);
 });
 
-test('home remove-ads pricing copy uses the canonical purchase price label', () => {
+test('home remove-ads pricing copy uses store price label with canonical fallback', () => {
   const { REMOVE_ADS_PRICE_LABEL } = loadTs('lib/monetization/purchases.ts');
   const pricingWedgeSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/PricingWedge.tsx'),
@@ -2609,12 +2672,25 @@ test('home remove-ads pricing copy uses the canonical purchase price label', () 
 
   assert.equal(REMOVE_ADS_PRICE_LABEL, '29 SEK');
   assert.match(pricingWedgeSource, /import \{ REMOVE_ADS_PRICE_LABEL \}/);
-  assert.match(pricingWedgeSource, /t\.pitch\(REMOVE_ADS_PRICE_LABEL\)/);
+  assert.match(pricingWedgeSource, /priceLabel = REMOVE_ADS_PRICE_LABEL/);
+  assert.match(pricingWedgeSource, /t\.pitch\(priceLabel\)/);
   assert.match(pricingWedgeSource, /tidsatta övningsprov är alltid annonsfria/);
   assert.match(placementCtaSource, /Tidsatta övningsprov är redan annonsfria/);
-  assert.match(paywallSource, /REMOVE_ADS_PRICE_LABEL/);
+  assert.match(paywallSource, /useRemoveAdsPriceLabel/);
+  assert.match(paywallSource, /resolvedPriceLabel/);
   assert.match(paywallSource, /tidsatta övningsprov i appen redan är annonsfria/);
-  assert.match(homeSource, /<PricingWedge[\s\S]*language=\{language\}[\s\S]*\/>/);
+  assert.match(
+    homeSource,
+    /const removeAdsPriceLabel = useRemoveAdsPriceLabel\(purchaseRuntime\);/,
+  );
+  assert.match(
+    homeSource,
+    /<PricingWedge[\s\S]*language=\{language\}[\s\S]*priceLabel=\{removeAdsPriceLabel\}[\s\S]*\/>/,
+  );
+  assert.match(
+    homeSource,
+    /<PremiumBanner[\s\S]*priceLabel=\{removeAdsPriceLabel\}[\s\S]*runtimeOptions=\{purchaseRuntime\}/,
+  );
   assert.doesNotMatch(pricingWedgeSource, /29 kr/);
   assert.doesNotMatch(paywallSource, /29 kr/);
   assert.doesNotMatch(
