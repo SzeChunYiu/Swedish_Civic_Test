@@ -89,3 +89,26 @@ test('account route never requires sign-in for anonymous learners', async ({ pag
 
   expect(errors.get().filter((message) => !message.includes('[auth]'))).toEqual([]);
 });
+
+test('referral deep link stores a pending code before optional sign in', async ({ page }) => {
+  const errors = collectConsoleAndPageErrors(page);
+
+  await seedFreshSettingsLanguageAndAboutSeen(page, 'en');
+  await page.goto('/r/abcd-12ef', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  await expect(page.getByRole('heading', { name: 'Referral invite' })).toBeVisible();
+  await expect(page.getByText('Referral code saved: ABCD12EF')).toBeVisible();
+  await expect
+    .poll(() => page.evaluate(() => localStorage.getItem('referral.pendingCode.v1')))
+    .toBe('ABCD12EF');
+  await expectNoHorizontalOverflow(page);
+
+  await page.getByRole('button', { name: 'Continue to sign-in' }).click();
+  await expect(page).toHaveURL(/\/\(auth\)\/sign-in$/);
+  await expect(
+    page.getByRole('heading', { name: 'Sign in or keep studying locally' }),
+  ).toBeVisible();
+
+  expect(errors.get().filter((message) => !message.includes('[auth]'))).toEqual([]);
+});

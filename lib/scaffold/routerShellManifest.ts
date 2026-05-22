@@ -122,6 +122,11 @@ export const expoRouterRootStackScreens = [
     purpose: 'Authentication callback route registered in the root stack',
   },
   {
+    name: 'r/[code]',
+    file: 'app/r/[code].tsx',
+    purpose: 'Referral invite deep-link route registered in the root stack',
+  },
+  {
     name: 'search',
     file: 'app/search.tsx',
     purpose: 'Search route registered in the root stack',
@@ -195,6 +200,12 @@ export const expoRouterDynamicRoutes = [
     hrefSample: '/quiz/q001',
     purpose: 'Routed quiz session registered by Expo Router file routing',
   },
+  {
+    name: 'r/[code]',
+    file: 'app/r/[code].tsx',
+    hrefSample: '/r/ABCD12EF',
+    purpose: 'Referral invite route stores a pending referral before sign-in',
+  },
 ] as const satisfies readonly ExpoRouterDynamicRoute[];
 
 export const expoRouterRootLayoutGlobalPlacements = [
@@ -256,6 +267,12 @@ export const expoRouterNativeIntentDynamicRoutes = [
     routeFile: 'app/quiz/[sessionId].tsx',
     patternName: 'quizRoutePattern',
     samplePath: '/quiz/q001',
+  },
+  {
+    route: '/r/[code]',
+    routeFile: 'app/r/[code].tsx',
+    patternName: 'referralRoutePattern',
+    samplePath: '/r/ABCD12EF',
   },
 ] as const satisfies readonly ExpoRouterNativeIntentDynamicRoute[];
 
@@ -335,6 +352,18 @@ export const expoRouterNativeIntentRuntimeSamples = [
   {
     input: `${expoRouterShellAppScheme}://quiz/q001`,
     expectedPath: '/quiz/q001',
+  },
+  {
+    input: '/r/ABCD12EF',
+    expectedPath: '/r/ABCD12EF',
+  },
+  {
+    input: `${expoRouterShellAppScheme}://r/ABCD12EF`,
+    expectedPath: '/r/ABCD12EF',
+  },
+  {
+    input: `${expoRouterShellAppScheme}://app/r/ABCD12EF`,
+    expectedPath: '/r/ABCD12EF',
   },
   {
     input: `${expoRouterShellAppScheme}://app/not-real`,

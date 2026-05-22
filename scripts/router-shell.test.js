@@ -266,6 +266,10 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
   assert.deepEqual(manifest.rootStackScreenNames, [
     'index',
     '(tabs)',
+    '(auth)',
+    'account',
+    'auth/callback',
+    'r/[code]',
     'search',
     'dashboard',
     'citizenship-requirements',
@@ -274,6 +278,10 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
   assert.deepEqual(manifest.rootStackScreenFiles, [
     'app/index.tsx',
     'app/(tabs)/_layout.tsx',
+    'app/(auth)/_layout.tsx',
+    'app/account.tsx',
+    'app/auth/callback.tsx',
+    'app/r/[code].tsx',
     'app/search.tsx',
     'app/dashboard.tsx',
     'app/citizenship-requirements.tsx',
@@ -546,6 +554,23 @@ test('native intent resolves weekly recap deep links before the Home fallback', 
   );
   assert.equal(redirectSystemPath({ initial: true, path: `${appScheme}://recap` }), '/recap');
   assert.equal(redirectSystemPath({ initial: true, path: '/recap/archive' }), '/home');
+});
+
+test('native intent resolves referral deep links before the Home fallback', () => {
+  const appScheme = readAppScheme();
+  const { redirectSystemPath } = loadNativeIntentRuntime();
+
+  assert.equal(redirectSystemPath({ initial: true, path: '/r/ABCD12EF' }), '/r/ABCD12EF');
+  assert.equal(
+    redirectSystemPath({ initial: true, path: `${appScheme}://r/ABCD12EF` }),
+    '/r/ABCD12EF',
+  );
+  assert.equal(
+    redirectSystemPath({ initial: true, path: `${appScheme}://app/r/ABCD12EF` }),
+    '/r/ABCD12EF',
+  );
+  assert.equal(redirectSystemPath({ initial: true, path: '/r/ABC' }), '/home');
+  assert.equal(redirectSystemPath({ initial: true, path: '/r/ABCD12E!' }), '/home');
 });
 
 test('native intent rejects foreign absolute URL schemes before route allowlisting', () => {

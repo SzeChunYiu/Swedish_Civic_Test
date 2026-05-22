@@ -162,6 +162,40 @@ test('temporary Pro expiry parsing stays on the shared canonical timestamp helpe
   assert.doesNotMatch(effectiveSource, /Date\.parse\(/);
 });
 
+test('referral grant store persists the canonical server grant consumed by effective entitlements', async () => {
+  const { REFERRAL_PRO_GRANT_EXPIRES_AT_STORAGE_KEY, resolveEffectiveEntitlement } = loadTs(
+    'lib/monetization/effectiveEntitlements.ts',
+  );
+  const { getReferralGrantSnapshot, persistReferralGrantSnapshot } = loadTs(
+    'lib/monetization/referralGrantStore.ts',
+  );
+  const values = new Map();
+  const storage = {
+    async deleteItemAsync(key) {
+      values.delete(key);
+    },
+    async getItemAsync(key) {
+      return values.get(key) ?? null;
+    },
+    async setItemAsync(key, value) {
+      values.set(key, value);
+    },
+  };
+  const now = new Date('2026-05-19T12:00:00.000Z');
+
+  assert.deepEqual(await persistReferralGrantSnapshot('2026-05-26T12:00:00.000Z', { storage }), {
+    expiresAtIso: '2026-05-26T12:00:00.000Z',
+  });
+  assert.equal(values.get(REFERRAL_PRO_GRANT_EXPIRES_AT_STORAGE_KEY), '2026-05-26T12:00:00.000Z');
+
+  const resolved = resolveEffectiveEntitlement({
+    referralGrant: await getReferralGrantSnapshot({ storage }),
+    now,
+  });
+  assert.equal(resolved.primarySource, 'referral-grant-active');
+  assert.equal(resolved.entitlements.spacedRepetition, true);
+});
+
 test('monetization schema parity rejects entitlement optionality drift', () => {
   const result = spawnSync(
     process.execPath,

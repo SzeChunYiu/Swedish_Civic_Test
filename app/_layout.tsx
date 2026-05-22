@@ -67,6 +67,7 @@ function RootLayoutContent() {
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen name="account" />
         <Stack.Screen name="auth/callback" options={{ headerShown: false }} />
+        <Stack.Screen name="r/[code]" options={{ headerShown: false }} />
         <Stack.Screen name="search" />
         <Stack.Screen name="dashboard" />
         <Stack.Screen name="citizenship-requirements" />
