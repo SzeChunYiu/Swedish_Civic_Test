@@ -72,7 +72,10 @@ function loadTs(relativePath) {
 }
 
 function loadCitizenshipRequirementsStore(initialStorageValues) {
-  const storage = createMemoryMMKV(initialStorageValues);
+  return loadCitizenshipRequirementsStoreWithStorage(createMemoryMMKV(initialStorageValues));
+}
+
+function loadCitizenshipRequirementsStoreWithStorage(storage) {
   const storeModule = loadTsWithStorage(repoRoot, 'lib/storage/citizenshipRequirementsStore.ts', {
     [citizenshipRequirementsStorageId]: storage,
   });
@@ -387,7 +390,7 @@ test('citizenship requirements checklist reads valid primary state before legacy
 });
 
 test('citizenship requirements checklist recovers legacy state when primary JSON is corrupt', () => {
-  const { store } = loadCitizenshipRequirementsStore({
+  const { storage, store } = loadCitizenshipRequirementsStore({
     [checkedAreaIdsKey]: '{not-json',
     [legacyChecklistStateKey]: JSON.stringify({
       checkedAreaIds: ['selfSupport', 'identity', 'prototype', 'swedishLanguage', 'identity'],
@@ -401,4 +404,34 @@ test('citizenship requirements checklist recovers legacy state when primary JSON
   assert.equal(state.persistenceWarning?.key, checkedAreaIdsKey);
   assert.equal(state.persistenceWarning?.operation, 'read');
   assert.match(state.persistenceWarning?.errorMessage || '', /JSON|Unexpected|position/i);
+  assert.equal(
+    storage.getString(checkedAreaIdsKey),
+    JSON.stringify(['identity', 'selfSupport', 'swedishLanguage']),
+  );
+  assert.equal(
+    storage.getString(legacyChecklistStateKey),
+    JSON.stringify({ checkedAreaIds: ['identity', 'selfSupport', 'swedishLanguage'] }),
+  );
+});
+
+test('citizenship requirements checklist keeps recovered legacy state if writeback fails', () => {
+  const storage = createMemoryMMKV({
+    [checkedAreaIdsKey]: '{not-json',
+    [legacyChecklistStateKey]: JSON.stringify({
+      checkedAreaIds: ['conduct', 'identity', 'unknown', 'conduct'],
+    }),
+  });
+  storage.set = () => {
+    throw new Error('citizenship writeback failed');
+  };
+  const { store } = loadCitizenshipRequirementsStoreWithStorage(storage);
+
+  const state = store.getState();
+
+  assert.deepEqual(state.checkedAreaIds, ['identity', 'conduct']);
+  assert.equal(state.persistenceWarning?.storageId, citizenshipRequirementsStorageId);
+  assert.equal(state.persistenceWarning?.key, checkedAreaIdsKey);
+  assert.equal(state.persistenceWarning?.operation, 'read');
+  assert.match(state.persistenceWarning?.errorMessage || '', /JSON|Unexpected|position/i);
+  assert.equal(storage.getString(checkedAreaIdsKey), '{not-json');
 });

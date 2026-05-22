@@ -70,6 +70,26 @@ function readCheckedAreaIds(): {
   checkedAreaIds: CitizenshipRequirementAreaId[];
   persistenceWarning: RecoverablePersistenceWarning | null;
 } {
+  const writeRecoveredLegacyCheckedAreaIds = (
+    checkedAreaIds: readonly CitizenshipRequirementAreaId[],
+  ): RecoverablePersistenceWarning | null => {
+    const normalizedCheckedAreaIds = normalizeCitizenshipRequirementAreaIds(checkedAreaIds);
+    const primaryWriteWarning = writeRecoverably(
+      citizenshipRequirementsStorage,
+      citizenshipRequirementsStorageId,
+      checkedAreaIdsKey,
+      JSON.stringify(normalizedCheckedAreaIds),
+    );
+    const legacyWriteWarning = writeRecoverably(
+      citizenshipRequirementsStorage,
+      citizenshipRequirementsStorageId,
+      legacyChecklistStateKey,
+      JSON.stringify({ checkedAreaIds: normalizedCheckedAreaIds }),
+    );
+
+    return primaryWriteWarning ?? legacyWriteWarning;
+  };
+
   const readLegacyCheckedAreaIds = (
     primaryPersistenceWarning: RecoverablePersistenceWarning | null,
   ) => {
@@ -99,11 +119,18 @@ function readCheckedAreaIds(): {
       },
       [],
     );
+    const writebackWarning =
+      primaryPersistenceWarning && legacyParseResult.value.length > 0
+        ? writeRecoveredLegacyCheckedAreaIds(legacyParseResult.value)
+        : null;
 
     return {
       checkedAreaIds: legacyParseResult.value,
       persistenceWarning:
-        primaryPersistenceWarning ?? legacyParseResult.warning ?? legacyReadResult.warning,
+        primaryPersistenceWarning ??
+        writebackWarning ??
+        legacyParseResult.warning ??
+        legacyReadResult.warning,
     };
   };
 
