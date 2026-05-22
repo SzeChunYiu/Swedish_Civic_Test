@@ -178,6 +178,16 @@ const expectedFooterRoadmapLabels = {
   so: 'Qorshaha horumarinta',
   ti: 'መደብ ምዕባለ',
 };
+const unusedStaticFooterAppKeyAllowlist = {
+  'footer.app.1':
+    'Retained for legacy marketing-footer dictionaries; the current static footer renders nav.home instead.',
+  'footer.app.2':
+    'Retained for legacy marketing-footer dictionaries; the current static footer renders nav.practice instead.',
+  'footer.app.3':
+    'Retained for legacy marketing-footer dictionaries; the current static footer links to the ebook instead of the old Chapters label.',
+  'footer.app.5':
+    'Retained for legacy marketing-footer dictionaries; Roadmap is not part of the current static footer link set.',
+};
 const expectedCentralKurdishLegalReadingTimes = {
   'privacy.meta3.v': '~3 خولەک',
   'terms.meta3.v': '~2 خولەک خوێندنەوە',
@@ -239,6 +249,53 @@ function loadExtraI18n() {
   vm.createContext(sandbox);
   vm.runInContext(source, sandbox, { timeout: 3000 });
   return sandbox.window.__i18n_extra;
+}
+
+function loadBaseI18n() {
+  const source = fs.readFileSync(path.join(repoRoot, 'site/app.js'), 'utf8');
+  const start = source.indexOf('const i18n = (window.i18n = {');
+  const endMarker = '\n});\n\nfunction smtMergePreloadedExtraI18n';
+  const end = source.indexOf(endMarker, start);
+
+  assert.notEqual(start, -1, 'site/app.js should define the base i18n dictionary');
+  assert.notEqual(end, -1, 'base i18n dictionary should end before merge helper');
+
+  const sandbox = { window: {} };
+  const dictionarySource = source.slice(start, end + '\n});'.length);
+  vm.createContext(sandbox);
+  vm.runInContext(`${dictionarySource}\nwindow.i18n;`, sandbox, { timeout: 3000 });
+  return sandbox.window.i18n;
+}
+
+function staticFooterHtml() {
+  const html = fs.readFileSync(path.join(repoRoot, 'site/index.html'), 'utf8');
+  const start = html.indexOf('<footer class="footer">');
+  const end = html.indexOf('</footer>', start);
+
+  assert.notEqual(start, -1, 'site/index.html should render the static footer');
+  assert.notEqual(end, -1, 'static footer should have a closing footer tag');
+
+  return html.slice(start, end + '</footer>'.length);
+}
+
+function collectRenderedStaticFooterAppLinkKeys() {
+  const keys = new Set();
+  const footer = staticFooterHtml();
+  const anchorPattern = /<a\b[^>]*>/g;
+  let match;
+
+  while ((match = anchorPattern.exec(footer))) {
+    const anchor = match[0];
+    const href = anchor.match(/\bhref="([^"]+)"/)?.[1];
+    const key = anchor.match(/\bdata-i18n="(footer\.app\.\d+)"/)?.[1];
+    if (!key) continue;
+
+    assert.equal(typeof href, 'string', `${key} footer link must include an href`);
+    assert.match(href, /^#\//, `${key} footer link should target a static hash route`);
+    keys.add(key);
+  }
+
+  return keys;
 }
 
 function assertMedborgarskapOnlyAsParentheticalGloss(value, label) {
@@ -388,6 +445,46 @@ test('extra locale footer.app.5 Roadmap English fallback guard covers Central Ku
   for (const [locale, expected] of Object.entries(expectedFooterRoadmapLabels)) {
     assert.equal(extra[locale]['footer.app.5'], expected, `${locale}.footer.app.5`);
   }
+});
+
+test('static footer app dictionary keys are rendered links or explicit legacy unused keys', () => {
+  const base = loadBaseI18n();
+  const extra = loadExtraI18n();
+  const renderedLinkKeys = collectRenderedStaticFooterAppLinkKeys();
+  const dictionaries = { en: base.en, sv: base.sv, ...extra };
+  const footerAppKeyPattern = /^footer\.app\.\d+$/;
+  const unusedKeys = new Set();
+
+  assert.deepEqual(
+    [...renderedLinkKeys].sort(),
+    ['footer.app.4'],
+    'the current static footer should render only the Mock exam footer.app link',
+  );
+
+  for (const [locale, dictionary] of Object.entries(dictionaries)) {
+    assert.equal(typeof dictionary, 'object', `${locale} dictionary must exist`);
+    const footerAppKeys = Object.keys(dictionary).filter((key) => footerAppKeyPattern.test(key));
+    assert.ok(footerAppKeys.length > 0, `${locale} should define footer.app.* keys`);
+
+    for (const key of footerAppKeys) {
+      if (renderedLinkKeys.has(key)) continue;
+
+      const rationale = unusedStaticFooterAppKeyAllowlist[key];
+      assert.equal(
+        typeof rationale,
+        'string',
+        `${locale}.${key} is kept in dictionaries but is neither rendered as a footer link nor allowlisted`,
+      );
+      assert.notEqual(rationale.trim(), '', `${key} allowlist entry should explain why it is kept`);
+      unusedKeys.add(key);
+    }
+  }
+
+  assert.deepEqual(
+    [...unusedKeys].sort(),
+    Object.keys(unusedStaticFooterAppKeyAllowlist).sort(),
+    'unused footer.app.* dictionary keys should be intentionally allowlisted with rationale',
+  );
 });
 
 test('Central Kurdish legal reading-time metadata uses localized minutes', () => {

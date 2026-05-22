@@ -300,6 +300,21 @@ async function expectDictionaryRenderedText(
   await expect(page.locator(selector).first()).toHaveText(expected);
 }
 
+async function expectStaticFooterAppLinkCoverage(page: Page, locale: ExtraLocale) {
+  await expectDictionaryText(
+    page,
+    locale,
+    'footer.app.4',
+    'footer.footer a[data-i18n="footer.app.4"]',
+  );
+  await expect(page.locator('footer.footer [data-i18n="footer.app.5"]')).toHaveCount(0);
+  await expect(
+    page.locator('footer.footer a[data-i18n^="footer.app."]'),
+    'only the current Mock exam footer.app key should render as a static footer link',
+  ).toHaveAttribute('data-i18n', 'footer.app.4');
+  expect(await dictionaryText(page, locale, 'footer.app.5')).not.toMatch(/Roadmap/i);
+}
+
 async function expectRootLocale(page: Page, locale: ExtraLocale) {
   await expect
     .poll(() =>
@@ -631,12 +646,29 @@ test('static Settings selects extra languages with localized legal and Support m
     await expectDictionaryText(page, locale, 'consent.title');
     await expectDictionaryText(page, locale, 'consent.min');
     await expectDictionaryText(page, locale, 'footer.t1');
-    expect(await dictionaryText(page, locale, 'footer.app.5')).not.toMatch(/Roadmap/i);
+    await expectStaticFooterAppLinkCoverage(page, locale);
     await expectDictionaryText(page, locale, 'footer.honest.p');
     await assertLongFormRouteCopy(page, locale);
     await assertSupportRouteCopy(page, locale);
     await expectRootLocale(page, locale);
     await expectNoOutcomeSlogans(page);
+    await expectNoHorizontalOverflow(page);
+  }
+
+  expect(pageErrors).toEqual([]);
+});
+
+test('static footer extra languages render footer.app links without Roadmap dictionary-only coverage', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const pageErrors = collectPageErrors(page);
+  await openStaticHome(page, staticSite.baseUrl);
+
+  for (const locale of extraLocales) {
+    await switchStaticSiteLanguage(page, locale);
+    await expectRootLocale(page, locale);
+    await expectStaticFooterAppLinkCoverage(page, locale);
     await expectNoHorizontalOverflow(page);
   }
 
