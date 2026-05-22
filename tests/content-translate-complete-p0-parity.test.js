@@ -1,5 +1,5 @@
 const assert = require('node:assert/strict');
-const { execFileSync } = require('node:child_process');
+const { execFileSync, spawnSync } = require('node:child_process');
 const path = require('node:path');
 const test = require('node:test');
 
@@ -63,6 +63,10 @@ test('TRANSLATE-COMPLETE P0 has explicit SV/EN completeness and naturalness clos
     summary.questionSourceCriticismEnglishNaturalnessValidated,
     summary.publishedQuestions,
   );
+  assert.equal(
+    summary.questionRuleOfLawEnglishNaturalnessValidated,
+    summary.publishedQuestions * 3,
+  );
   assert.equal(summary.somaliGeographyNaturalnessParityValidated, true);
   assert.equal(summary.somaliHolidayFoodNaturalnessParityValidated, true);
 });
@@ -73,6 +77,41 @@ test("TRANSLATE-COMPLETE q128 New Year's Eve date naturalness guard is summarize
   assert.equal(
     summary.questionNewYearsEveDateEnglishNaturalnessValidated,
     summary.publishedQuestions,
+  );
+});
+
+test('TRANSLATE-COMPLETE rejects literal legal certainty in learner-facing English', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const source = String(contents);
+    const mutated = source.replace("textEn: 'The rule of law'", "textEn: 'Legal certainty'");
+    if (mutated === source) {
+      throw new Error('rule-of-law mutation target not found');
+    }
+    return mutated;
+  }
+  return contents;
+};
+process.argv.push('--focus-translate-complete');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q014 uses literal legal certainty English for rättssäkerhet/i,
   );
 });
 
