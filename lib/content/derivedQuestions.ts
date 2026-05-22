@@ -2577,6 +2577,26 @@ function generatedSingleChoiceGenericPromptEn(
     : `What is correct about ${topic}?`;
 }
 
+function meaningClauseTopicEn(clause: string): string {
+  const normalized = clause.trim();
+  if (/^referendums in Sweden are advisory$/i.test(normalized)) {
+    return 'advisory referendums in Sweden';
+  }
+  if (/^Sweden is a constitutional monarchy$/i.test(normalized)) {
+    return "Sweden's constitutional monarchy";
+  }
+  if (/^Sweden is a secular state$/i.test(normalized)) {
+    return "Sweden's secular state";
+  }
+  if (/^elections in a democracy are secret$/i.test(normalized)) {
+    return 'secret elections in a democracy';
+  }
+  if (/^human rights apply to everyone$/i.test(normalized)) {
+    return 'human rights applying to everyone';
+  }
+  return `the meaning of ${lowerFirst(normalized)}`;
+}
+
 function judgementPromptSv(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
     return `Vilken uppgift stämmer om ${statementTopicSv(source)}?`;
@@ -2825,9 +2845,10 @@ function generatedSingleChoicePromptFromSourceEn(
 
   match = q.match(/^What does it mean that (.+)$/i);
   if (match) {
+    const topic = meaningClauseTopicEn(match[1]);
     return variant === 'judgement'
-      ? `Which meaning is correct for ${match[1]}?`
-      : `What is meant when ${match[1]}?`;
+      ? `What is correct about ${topic}?`
+      : `What is meant by ${topic}?`;
   }
 
   match = q.match(/^What does (.+) mean$/i);
