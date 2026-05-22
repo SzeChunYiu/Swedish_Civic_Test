@@ -450,6 +450,40 @@ test('Search route e2e covers mounted query-param navigation without reload', ()
   assert.match(source, /await input\.fill\('lokal text'\)/);
 });
 
+test('Search route e2e covers English query URL clearing', () => {
+  const source = readSearchQueryHydrationE2eSource();
+
+  assert.match(
+    source,
+    /English search route hydrates and clears q\/query URL parameters before typing/,
+  );
+  assert.match(source, /type SearchStateCopy = \{/);
+  assert.match(source, /inputName: 'Search civic terms and practice questions'/);
+  assert.match(source, /clearButtonName: 'Clear the search field'/);
+  assert.match(source, /allTermsSummaryPattern: \/\\d\+ civic reference terms\//);
+  assert.match(source, /questionLinkName: \/Open practice question:\//);
+  assert.match(source, /await seedSettingsLanguage\(page, 'en'\)/);
+  assert.match(
+    source,
+    /expectHydratedSearch\([\s\S]*?'\/search\?q=democracy'[\s\S]*?'democracy'[\s\S]*?searchStateCopy\.en/,
+  );
+  assert.match(
+    source,
+    /expectHydratedSearch\([\s\S]*?'\/search\?query=municipality'[\s\S]*?'municipality'[\s\S]*?searchStateCopy\.en/,
+  );
+  assert.match(source, /name: searchStateCopy\.sv\.inputName[\s\S]*?toHaveCount\(0\)/);
+  assert.match(source, /name: searchStateCopy\.sv\.clearButtonName[\s\S]*?toHaveCount\(\s*0/);
+  assert.match(
+    source,
+    /page\.getByRole\('button', \{ name: searchStateCopy\.en\.clearButtonName \}\)\.click\(\)/,
+  );
+  assert.match(source, /await page\.reload\(\{ waitUntil: 'networkidle' \}\)/);
+  assert.match(
+    source,
+    /await municipalityInput\.fill\('parliament'\)[\s\S]*?expectSearchUrlWithoutQueryParams\(page\)/,
+  );
+});
+
 test('Search dark source-affordance e2e covers Swedish and English locale names', () => {
   const source = readThemeModeUtilityE2eSource();
 
