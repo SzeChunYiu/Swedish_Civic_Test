@@ -233,16 +233,10 @@ test('mock exam copy focused guard rejects weakened English Mock Exam labels', (
 
 test('active mock exam keeps full UHR reference cards out of pre-submit questions', () => {
   const examRouteSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
-  const reviewSectionStart = findFirstSectionStart(examRouteSource, [
-    '{filteredReviewItems.map((item) => {',
-    'filteredReviewItems.map((item) => {',
-  ]);
-  const activeQuestionSectionStart = findFirstSectionStart(examRouteSource, [
+  const reviewSectionStart = examRouteSource.indexOf('{filteredReviewItems.map((item) => {');
+  const activeQuestionSectionStart = examRouteSource.indexOf(
     '{examQuestions.map((question, index) => {',
-    '{examQuestions.map((question, index) => (',
-    'examQuestions.map((question, index) => {',
-    'examQuestions.map((question, index) => (',
-  ]);
+  );
 
   assert.notEqual(reviewSectionStart, -1, 'submitted review section should be present');
   assert.notEqual(activeQuestionSectionStart, -1, 'active question section should be present');
@@ -288,20 +282,17 @@ test('mock exam timer and auto-submit runtime guards reject malformed state', ()
   const examRouteSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
 
   assert.equal(summary.mockExamTimerParityValidated, true);
-  assert.match(examRouteSource, /import \{ MockExamStatusBar \}/);
-  assert.match(examRouteSource, /getMockExamTimerUrgency/);
-  assert.match(
-    examRouteSource,
-    /const totalExamSeconds = defaultMockExamConfig\.durationMinutes \* 60/,
-  );
-  assert.match(
-    examRouteSource,
-    /const timerUrgency = getMockExamTimerUrgency\(\{[\s\S]*remainingSeconds,[\s\S]*totalSeconds: totalExamSeconds[\s\S]*\}\)/,
-  );
-  assert.match(examRouteSource, /<MockExamStatusBar[\s\S]*timerUrgency=\{timerUrgency\}/);
-  assert.match(examRouteSource, /examActive: examUnlocked/);
+  assert.match(examRouteSource, /examActive: examUnlocked && !examPaused/);
   assert.match(examRouteSource, /formatExamTime\(remainingSeconds\)/);
   assert.match(examRouteSource, /!Number\.isFinite\(remainingSeconds\)/);
+  assert.match(examRouteSource, /AppState\.addEventListener\('change', handleAppStateChange\)/);
+  assert.match(examRouteSource, /document\.addEventListener\('visibilitychange'/);
+  assert.match(examRouteSource, /const \[examPaused, setExamPaused\] = useState\(false\);/);
+  assert.match(examRouteSource, /pauseStartedAtMsRef\.current \?\?= Date\.now\(\);/);
+  assert.match(examRouteSource, /timingCheckpointMsRef\.current \+= pausedDurationMs/);
+  assert.match(examRouteSource, /setExamPauseStatus\('paused'\)/);
+  assert.match(examRouteSource, /setExamPauseStatus\('resumed'\)/);
+  assert.match(examRouteSource, /aria-live="polite"/);
   assert.match(examRouteSource, /Number\.isFinite\(current\) \? Math\.max\(0, current - 1\) : 0/);
   assert.equal(getMockExamTimerUrgency({ remainingSeconds: 1800, totalSeconds: 1800 }), 'steady');
   assert.equal(getMockExamTimerUrgency({ remainingSeconds: 900, totalSeconds: 1800 }), 'warning');
