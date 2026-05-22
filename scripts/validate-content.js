@@ -12636,6 +12636,7 @@ function validateLaunchAdFirstRunDeferralParity() {
   let nativeLaunchPopupAd = '';
   let firstRunModal = '';
   let launchPopupSession = '';
+  let launchAdRouteParityTest = '';
 
   function reject(message) {
     valid = false;
@@ -12653,6 +12654,10 @@ function validateLaunchAdFirstRunDeferralParity() {
     );
     launchPopupSession = fs.readFileSync(
       path.join(repoRoot, 'components/monetization/launchPopupSession.ts'),
+      'utf8',
+    );
+    launchAdRouteParityTest = fs.readFileSync(
+      path.join(repoRoot, 'tests/content-launch-ad-route-parity.test.js'),
       'utf8',
     );
   } catch (error) {
@@ -12727,6 +12732,12 @@ function validateLaunchAdFirstRunDeferralParity() {
       source: firstRunModal,
       pattern:
         /useState\(\(\) =>[\s\S]*shouldDeferFirstRunAboutModalForLaunchSession\(\),[\s\S]*subscribeToFirstRunAboutModalDeferralForLaunchSession[\s\S]*deferWhenLaunchPopupAdShown && launchPopupAdDeferred/,
+    },
+    {
+      label: 'launch popup session helper must have runtime clear and subscriber coverage',
+      source: launchAdRouteParityTest,
+      pattern:
+        /loadLaunchPopupSessionModule\(\)[\s\S]*createSessionStorageStub\(\)[\s\S]*subscribeToFirstRunAboutModalDeferralForLaunchSession[\s\S]*deferFirstRunAboutModalForLaunchSession\(\)[\s\S]*sct_launch_popup_first_run_deferred[\s\S]*clearFirstRunAboutModalDeferralForLaunchSession\(\)/,
     },
   ];
 
