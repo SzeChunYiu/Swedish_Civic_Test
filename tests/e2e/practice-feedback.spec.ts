@@ -62,6 +62,10 @@ async function expectPrimaryPrompt(page: Page, primaryText: string, secondaryTex
   expect(primaryBox!.y).toBeLessThan(secondaryBox!.y);
 }
 
+function answerRadio(page: Page, name: string) {
+  return page.getByRole('radio', { name, exact: true });
+}
+
 async function openPracticeQuestion(page: Page, language: PracticeHubLanguage) {
   await page.goto('/practice', { waitUntil: 'networkidle' });
   await closeLaunchAdIfPresent(page);
@@ -154,7 +158,7 @@ test('listen-first speech synthesis autoplay starts from Settings and stays out 
   const cancelCountBeforeAnswer = (await speechEvents(page)).filter(
     (event) => event.type === 'cancel',
   ).length;
-  await page.getByLabel('Select answer In southern Europe').click();
+  await answerRadio(page, 'Select answer In southern Europe').click();
 
   await expect
     .poll(async () => (await speechEvents(page)).filter((event) => event.type === 'cancel').length)
@@ -216,7 +220,7 @@ test('practice shows the selected study companion and answer-state guidance', as
 
   await enableEnglishSupport(page);
   await page
-    .getByRole('button', {
+    .getByRole('radio', {
       name: /Choose Dala horse as study companion\. Folk symbol from Dalarna\./,
     })
     .click();
@@ -233,7 +237,7 @@ test('practice shows the selected study companion and answer-state guidance', as
   ).toBeVisible();
   await expect(page.getByText('Ready', { exact: true })).toBeVisible();
 
-  await page.getByLabel('Select answer In southern Europe').click();
+  await answerRadio(page, 'Select answer In southern Europe').click();
 
   await expect(page.getByText('Review', { exact: true })).toBeVisible();
   const oopsArtwork = page.getByTestId('study-companion-artwork-dala-horse-oops');
@@ -263,26 +267,26 @@ test('practice and routed quiz answer option labels follow the selected language
   await enableSwedish(page);
   await openPracticeQuestion(page, 'sv');
 
-  await expect(page.getByLabel('Välj svaret I södra Europa')).toBeVisible();
-  await expect(page.getByLabel('Select answer I södra Europa')).toHaveCount(0);
+  await expect(answerRadio(page, 'Välj svaret I södra Europa')).toBeVisible();
+  await expect(answerRadio(page, 'Select answer I södra Europa')).toHaveCount(0);
 
   await page.goto('/quiz/q001', { waitUntil: 'networkidle' });
   await closeLaunchAdIfPresent(page);
 
-  await expect(page.getByLabel('Välj svaret I södra Europa')).toBeVisible();
-  await expect(page.getByLabel('Select answer I södra Europa')).toHaveCount(0);
+  await expect(answerRadio(page, 'Välj svaret I södra Europa')).toBeVisible();
+  await expect(answerRadio(page, 'Select answer I södra Europa')).toHaveCount(0);
 
   await enableEnglishSupport(page);
   await openPracticeQuestion(page, 'en');
 
-  await expect(page.getByLabel('Select answer In southern Europe')).toBeVisible();
-  await expect(page.getByLabel('Välj svaret In southern Europe')).toHaveCount(0);
+  await expect(answerRadio(page, 'Select answer In southern Europe')).toBeVisible();
+  await expect(answerRadio(page, 'Välj svaret In southern Europe')).toHaveCount(0);
 
   await page.goto('/quiz/q001', { waitUntil: 'networkidle' });
   await closeLaunchAdIfPresent(page);
 
-  await expect(page.getByLabel('Select answer In southern Europe')).toBeVisible();
-  await expect(page.getByLabel('Välj svaret In southern Europe')).toHaveCount(0);
+  await expect(answerRadio(page, 'Select answer In southern Europe')).toBeVisible();
+  await expect(answerRadio(page, 'Välj svaret In southern Europe')).toHaveCount(0);
 
   expect(consoleErrors).toEqual([]);
 });
@@ -322,7 +326,7 @@ test('routed quiz Back to Practice and Tillbaka till övning return without reta
     await dismissBlockingModals(page);
 
     await expect(page.getByRole('heading', { name: scenario.sessionHeading })).toBeVisible();
-    await page.getByLabel(scenario.answerLabel).click();
+    await answerRadio(page, scenario.answerLabel).click();
 
     const backToPractice = page.getByRole('link', { name: scenario.backLabel });
     await expect(backToPractice).toBeVisible();
@@ -353,7 +357,7 @@ test('practice answer choices can be eliminated and restored before submission',
   await closeLaunchAdIfPresent(page);
   await startAllVisiblePractice(page, 'en');
 
-  const eliminatedAnswer = page.getByLabel('In North America, Eliminated');
+  const eliminatedAnswer = answerRadio(page, 'In North America, Eliminated');
   const eliminateWrongAnswer = page.getByRole('button', {
     name: 'Eliminate answer In North America',
   });
@@ -372,8 +376,8 @@ test('practice answer choices can be eliminated and restored before submission',
   await expect(eliminateWrongAnswer).toBeVisible();
 
   await eliminateWrongAnswer.click();
-  await page.getByLabel('Select answer In the Nordic region in northern Europe').click();
-  await expect(page.getByLabel('In the Nordic region in northern Europe, Correct')).toBeVisible();
+  await answerRadio(page, 'Select answer In the Nordic region in northern Europe').click();
+  await expect(answerRadio(page, 'In the Nordic region in northern Europe, Correct')).toBeVisible();
   await expect(page.getByRole('button', { name: /Eliminate answer|Restore answer/ })).toHaveCount(
     0,
   );
@@ -406,7 +410,7 @@ test('practice question source citation prefix follows the selected language', a
       'Källhänvisning: Källa: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, s. 5',
       { exact: true },
     ),
-  ).toBeVisible();
+  ).toHaveCount(1);
   await expect(page.getByText(/Källa\/Source:/)).toHaveCount(0);
 
   await enableEnglishSupport(page);
@@ -422,7 +426,7 @@ test('practice question source citation prefix follows the selected language', a
       'Source citation: Source: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, p. 5',
       { exact: true },
     ),
-  ).toBeVisible();
+  ).toHaveCount(1);
   await expect(page.getByText(/Källa\/Source:/)).toHaveCount(0);
 
   expect(consoleErrors).toEqual([]);
@@ -449,7 +453,7 @@ test('practice provenance source note collapses when advancing to a new question
   await expect(provenance).toHaveAttribute('aria-expanded', 'true');
   await expect(sourceNote).toBeVisible();
 
-  await page.getByLabel('Select answer In the Nordic region in northern Europe').click();
+  await answerRadio(page, 'Select answer In the Nordic region in northern Europe').click();
   await page.getByLabel('Move to the next practice question').click();
 
   await expect(page.getByText('Question 2')).toBeVisible();
@@ -475,11 +479,11 @@ test('practice flow answers a question, shows source feedback, and advances', as
   await expectPrimaryPrompt(page, 'Where is Sweden located?', 'Var ligger Sverige?');
   await expect(page.getByText('Completed questions: 0')).toBeVisible();
 
-  const correctAnswer = page.getByLabel('Select answer In the Nordic region in northern Europe');
+  const correctAnswer = answerRadio(page, 'Select answer In the Nordic region in northern Europe');
   await expect(correctAnswer).toBeVisible();
   await correctAnswer.click();
 
-  await expect(page.getByLabel('In the Nordic region in northern Europe, Correct')).toBeVisible();
+  await expect(answerRadio(page, 'In the Nordic region in northern Europe, Correct')).toBeVisible();
   await expect(page.getByText('Score: 1/1')).toBeVisible();
   await expect(page.getByText('Completed questions: 1')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Explanation' })).toBeVisible();
@@ -514,14 +518,14 @@ test('practice feedback reveals the correct option after a wrong answer', async 
   await openPracticeQuestion(page, 'en');
 
   await expectPrimaryPrompt(page, 'Where is Sweden located?', 'Var ligger Sverige?');
-  await page.getByLabel('Select answer In southern Europe').click();
+  await answerRadio(page, 'Select answer In southern Europe').click();
 
-  await expect(page.getByLabel('In southern Europe, Wrong')).toBeVisible();
+  await expect(answerRadio(page, 'In southern Europe, Wrong')).toBeVisible();
   await expect(
-    page.getByLabel('In the Nordic region in northern Europe, Correct answer'),
+    answerRadio(page, 'In the Nordic region in northern Europe, Correct answer'),
   ).toBeVisible();
-  await expect(page.getByLabel('I södra Europa, Fel')).toHaveCount(0);
-  await expect(page.getByLabel('I Norden i norra Europa, Rätt svar')).toHaveCount(0);
+  await expect(answerRadio(page, 'I södra Europa, Fel')).toHaveCount(0);
+  await expect(answerRadio(page, 'I Norden i norra Europa, Rätt svar')).toHaveCount(0);
   await expect(page.getByText('Score: 0/1')).toBeVisible();
   await expect(page.getByText(/Sweden is in the Nordic region/)).toBeVisible();
 
@@ -540,10 +544,10 @@ test('wrong practice answer appears in Mistakes with answer review context', asy
   await openPracticeQuestion(page, 'sv');
 
   await expectPrimaryPrompt(page, 'Var ligger Sverige?', 'Where is Sweden located?');
-  await page.getByLabel('Välj svaret I södra Europa').click();
+  await answerRadio(page, 'Välj svaret I södra Europa').click();
 
-  await expect(page.getByLabel('I södra Europa, Fel')).toBeVisible();
-  await expect(page.getByLabel('I Norden i norra Europa, Rätt svar')).toBeVisible();
+  await expect(answerRadio(page, 'I södra Europa, Fel')).toBeVisible();
+  await expect(answerRadio(page, 'I Norden i norra Europa, Rätt svar')).toBeVisible();
 
   await page.getByText('Repetition', { exact: true }).click();
   await closeLaunchAdIfPresent(page);
@@ -578,11 +582,11 @@ test('wrong practice answer appears in Mistakes with English answer review conte
   await openPracticeQuestion(page, 'en');
 
   await expectPrimaryPrompt(page, 'Where is Sweden located?', 'Var ligger Sverige?');
-  await page.getByLabel('Select answer In southern Europe').click();
+  await answerRadio(page, 'Select answer In southern Europe').click();
 
-  await expect(page.getByLabel('In southern Europe, Wrong')).toBeVisible();
+  await expect(answerRadio(page, 'In southern Europe, Wrong')).toBeVisible();
   await expect(
-    page.getByLabel('In the Nordic region in northern Europe, Correct answer'),
+    answerRadio(page, 'In the Nordic region in northern Europe, Correct answer'),
   ).toBeVisible();
 
   await page.getByText('Mistakes', { exact: true }).click();
@@ -621,14 +625,14 @@ test('routed quiz uses English question headings and answer feedback in English 
   await closeLaunchAdIfPresent(page);
 
   await expectPrimaryPrompt(page, 'Where is Sweden located?', 'Var ligger Sverige?');
-  await page.getByLabel('Select answer In southern Europe').click();
+  await answerRadio(page, 'Select answer In southern Europe').click();
 
-  await expect(page.getByLabel('In southern Europe, Wrong')).toBeVisible();
+  await expect(answerRadio(page, 'In southern Europe, Wrong')).toBeVisible();
   await expect(
-    page.getByLabel('In the Nordic region in northern Europe, Correct answer'),
+    answerRadio(page, 'In the Nordic region in northern Europe, Correct answer'),
   ).toBeVisible();
-  await expect(page.getByLabel('I södra Europa, Fel')).toHaveCount(0);
-  await expect(page.getByLabel('I Norden i norra Europa, Rätt svar')).toHaveCount(0);
+  await expect(answerRadio(page, 'I södra Europa, Fel')).toHaveCount(0);
+  await expect(answerRadio(page, 'I Norden i norra Europa, Rätt svar')).toHaveCount(0);
   await expect(page.getByText('Score: 0/1')).toBeVisible();
   await expect(page.getByText(/Sweden is in the Nordic region/)).toBeVisible();
 

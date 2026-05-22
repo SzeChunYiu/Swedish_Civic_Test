@@ -3913,8 +3913,8 @@ const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
       /questionTranslation \? `\$\{copy\.secondaryLabel\}: \$\{questionTranslation\}` : null/,
   },
   {
-    label: 'source citation in accessibility summary',
-    pattern: /\$\{copy\.sourceCitationLabel\}: \$\{sourceCitation\}/,
+    label: 'source citation has a dedicated accessibility label',
+    pattern: /accessibilityLabel=\{`\$\{copy\.sourceCitationLabel\}: \$\{sourceCitation\}`\}/,
   },
   {
     label: 'Card receives accessibility summary',
