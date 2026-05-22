@@ -9,6 +9,10 @@ const repoRoot = path.resolve(__dirname, '..');
 const searchRoutePath = path.join(repoRoot, 'app/search.tsx');
 const searchQueryHydrationE2ePath = path.join(repoRoot, 'tests/e2e/search-query-hydration.spec.ts');
 const themeModeUtilityE2ePath = path.join(repoRoot, 'tests/e2e/theme-mode-utility-routes.spec.ts');
+const themeModeUtilitySourceAffordanceCasesPath = path.join(
+  repoRoot,
+  'tests/e2e/themeModeUtilitySourceAffordanceCases.ts',
+);
 const glossarySearchPath = path.join(repoRoot, 'lib/learning/glossarySearch.ts');
 const questionSearchPath = path.join(repoRoot, 'lib/search/questionSearch.ts');
 const searchTextNormalizationPath = path.join(repoRoot, 'lib/search/textNormalization.ts');
@@ -37,6 +41,10 @@ function readSearchQueryHydrationE2eSource() {
 
 function readThemeModeUtilityE2eSource() {
   return fs.readFileSync(themeModeUtilityE2ePath, 'utf8');
+}
+
+function readThemeModeUtilitySourceAffordanceCasesSource() {
+  return fs.readFileSync(themeModeUtilitySourceAffordanceCasesPath, 'utf8');
 }
 
 function resolveLocalModule(fromFilePath, request) {
@@ -554,22 +562,26 @@ test('Search route e2e covers manual Enter submit URL state', () => {
 });
 
 test('Search dark source-affordance e2e covers Swedish and English locale names', () => {
-  const source = readThemeModeUtilityE2eSource();
+  const specSource = readThemeModeUtilityE2eSource();
+  const caseSource = readThemeModeUtilitySourceAffordanceCasesSource();
 
-  assert.match(source, /const searchSourceAffordanceCases = \[/);
-  assert.match(source, /for \(const testCase of searchSourceAffordanceCases\)/);
+  assert.match(specSource, /from '\.\/themeModeUtilitySourceAffordanceCases';/);
+  assert.match(specSource, /for \(const testCase of searchSourceAffordanceCases\)/);
+  assert.match(caseSource, /export const searchSourceAffordanceCases = \[/);
   assert.match(
-    source,
+    caseSource,
     /language: 'sv'[\s\S]*inputName: 'Sök samhällsbegrepp och övningsfrågor'[\s\S]*provenanceBadgeName: \/Källtyp: UHR-källa\/[\s\S]*provenanceLabel: 'UHR-källa'[\s\S]*sourceNoteName: \/\^Källanteckning:\//,
   );
   assert.match(
-    source,
+    caseSource,
     /language: 'en'[\s\S]*inputName: 'Search civic terms and practice questions'[\s\S]*provenanceBadgeName: \/Provenance: UHR source\/[\s\S]*provenanceLabel: 'UHR source'[\s\S]*sourceNoteName: \/\^Source note:\//,
   );
-  assert.match(source, /darkColors\.badgeBlueBg/);
-  assert.match(source, /darkColors\.badgeBlueText/);
-  assert.match(source, /darkColors\.surfaceWarm/);
-  assert.match(source, /await expectNoHorizontalOverflow\(page\);/);
+  assert.match(specSource, /testCase\.provenanceBadgeName/);
+  assert.match(specSource, /testCase\.sourceNoteName/);
+  assert.match(specSource, /darkColors\.badgeBlueBg/);
+  assert.match(specSource, /darkColors\.badgeBlueText/);
+  assert.match(specSource, /darkColors\.surfaceWarm/);
+  assert.match(specSource, /await expectNoHorizontalOverflow\(page\);/);
 });
 
 test('validate-content reports Search route query hydration parity', () => {

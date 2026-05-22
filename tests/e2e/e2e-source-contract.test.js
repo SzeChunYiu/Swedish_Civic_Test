@@ -5,6 +5,7 @@ const net = require('node:net');
 const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
+const ts = require('typescript');
 
 const e2eDir = __dirname;
 const repoRoot = path.resolve(e2eDir, '../..');
@@ -16,6 +17,22 @@ const browserSpecPaths = fs
 
 function readRelative(relativePath) {
   return fs.readFileSync(path.join(e2eDir, relativePath), 'utf8');
+}
+
+function loadRelativeTs(relativePath) {
+  const filePath = path.join(e2eDir, relativePath);
+  const source = fs.readFileSync(filePath, 'utf8');
+  const output = ts.transpileModule(source, {
+    compilerOptions: {
+      module: ts.ModuleKind.CommonJS,
+      target: ts.ScriptTarget.ES2020,
+    },
+    fileName: filePath,
+  }).outputText;
+  const mod = { exports: {} };
+
+  new Function('module', 'exports', 'require', output)(mod, mod.exports, require);
+  return mod.exports;
 }
 
 function createPreparedDistWebFixture() {
@@ -106,6 +123,50 @@ function collectMatches({ pattern, source, filePath }) {
 
 function escapeRegExp(literal) {
   return literal.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function sourceAffordanceValueText(value) {
+  if (value instanceof RegExp) return value.source;
+  return typeof value === 'string' ? value : '';
+}
+
+function assertSourceAffordanceMatrix({ cases, localizedFields, matrixName, requiredFields }) {
+  assert.equal(cases.length, 2, `${matrixName} should cover exactly the native app locales`);
+
+  const languages = cases.map((testCase) => testCase.language);
+  assert.deepEqual(
+    [...languages].sort(),
+    ['en', 'sv'],
+    `${matrixName} should cover sv and en exactly once`,
+  );
+  assert.equal(
+    new Set(languages).size,
+    languages.length,
+    `${matrixName} should not duplicate locales`,
+  );
+
+  for (const testCase of cases) {
+    for (const field of requiredFields) {
+      assert.ok(
+        Object.prototype.hasOwnProperty.call(testCase, field),
+        `${matrixName} ${testCase.language} case must include ${field}`,
+      );
+    }
+
+    for (const field of localizedFields) {
+      const value = sourceAffordanceValueText(testCase[field]).trim();
+      assert.ok(value.length > 0, `${matrixName} ${testCase.language} ${field} must not be blank`);
+    }
+  }
+
+  const byLanguage = Object.fromEntries(cases.map((testCase) => [testCase.language, testCase]));
+  for (const field of localizedFields) {
+    assert.notEqual(
+      sourceAffordanceValueText(byLanguage.sv[field]),
+      sourceAffordanceValueText(byLanguage.en[field]),
+      `${matrixName} ${field} should be localized per language`,
+    );
+  }
 }
 
 function topLevelArgumentCount(args) {
@@ -523,6 +584,145 @@ test('countdown browser date coverage uses the shared clock helper', () => {
     /await mockBrowserDate\(page, '2026-05-21T12:00:00\.000Z'\);/,
     'countdown e2e coverage should pin the browser before route navigation',
   );
+});
+
+test('theme utility source-affordance locale cases use a shared complete matrix', () => {
+  const specSource = readRelative('theme-mode-utility-routes.spec.ts');
+  const fixtureSource = readRelative('themeModeUtilitySourceAffordanceCases.ts');
+  const { citizenshipSourceAffordanceCases, searchSourceAffordanceCases } = loadRelativeTs(
+    'themeModeUtilitySourceAffordanceCases.ts',
+  );
+
+  assert.match(
+    specSource,
+    /from '\.\/themeModeUtilitySourceAffordanceCases';/,
+    'theme utility source-affordance e2e should import the shared case matrix',
+  );
+  assert.doesNotMatch(
+    specSource,
+    /const searchSourceAffordanceCases = \[/,
+    'Search source-affordance cases should not be duplicated inside the Playwright spec',
+  );
+  assert.doesNotMatch(
+    specSource,
+    /const citizenshipSourceAffordanceCases = \[/,
+    'Citizenship source-affordance cases should not be duplicated inside the Playwright spec',
+  );
+  assert.match(
+    fixtureSource,
+    /satisfies readonly SearchSourceAffordanceCase\[\]/,
+    'Search source-affordance cases should keep typed fixture coverage',
+  );
+  assert.match(
+    fixtureSource,
+    /satisfies readonly CitizenshipSourceAffordanceCase\[\]/,
+    'Citizenship source-affordance cases should keep typed fixture coverage',
+  );
+
+  assertSourceAffordanceMatrix({
+    cases: searchSourceAffordanceCases,
+    localizedFields: ['chapterLinkName', 'inputName', 'provenanceBadgeName', 'sourceNoteName'],
+    matrixName: 'Search source-affordance',
+    requiredFields: [
+      'chapterLinkName',
+      'chapterQuery',
+      'inputName',
+      'language',
+      'provenanceBadgeName',
+      'provenanceLabel',
+      'provenanceQuery',
+      'sourceNoteName',
+    ],
+  });
+  assertSourceAffordanceMatrix({
+    cases: citizenshipSourceAffordanceCases,
+    localizedFields: [
+      'checkedCheckboxName',
+      'checkboxName',
+      'disclaimerBodyName',
+      'disclaimerLabel',
+      'disclaimerTitle',
+      'practiceLinkName',
+      'sourceLinkName',
+      'sourceTitle',
+    ],
+    matrixName: 'Citizenship source-affordance',
+    requiredFields: [
+      'checkedCheckboxName',
+      'checkboxName',
+      'disclaimerBodyName',
+      'disclaimerLabel',
+      'disclaimerTitle',
+      'language',
+      'practiceLinkName',
+      'sourceLinkName',
+      'sourcePublisher',
+      'sourceTitle',
+      'sourceUrlName',
+    ],
+  });
+
+  const searchSvCase = searchSourceAffordanceCases.find((testCase) => testCase.language === 'sv');
+  const citizenshipSvCase = citizenshipSourceAffordanceCases.find(
+    (testCase) => testCase.language === 'sv',
+  );
+  assert.ok(searchSvCase, 'Search source-affordance matrix must include a Swedish case');
+  assert.ok(citizenshipSvCase, 'Citizenship source-affordance matrix must include a Swedish case');
+  for (const field of ['chapterLinkName', 'inputName', 'provenanceBadgeName', 'sourceNoteName']) {
+    assert.doesNotMatch(
+      sourceAffordanceValueText(searchSvCase[field]),
+      /\b(?:Open the chapter|Search civic terms|Provenance|Source note)\b/i,
+      `Search Swedish ${field} must not keep English-only accessible copy`,
+    );
+  }
+  for (const field of [
+    'checkedCheckboxName',
+    'checkboxName',
+    'disclaimerBodyName',
+    'disclaimerLabel',
+    'disclaimerTitle',
+    'practiceLinkName',
+    'sourceLinkName',
+    'sourceTitle',
+  ]) {
+    assert.doesNotMatch(
+      sourceAffordanceValueText(citizenshipSvCase[field]),
+      /\b(?:Marked|Not marked|Independent study tool|Study disclaimer|Open civic knowledge|Apply for Swedish citizenship)\b/i,
+      `Citizenship Swedish ${field} must not keep English-only accessible copy`,
+    );
+  }
+
+  for (const field of [
+    'chapterLinkName',
+    'inputName',
+    'provenanceBadgeName',
+    'provenanceLabel',
+    'sourceNoteName',
+  ]) {
+    assert.match(
+      specSource,
+      new RegExp(`testCase\\.${field}\\b`),
+      `Search source-affordance e2e should assert ${field} from the shared matrix`,
+    );
+  }
+  for (const field of [
+    'checkedCheckboxName',
+    'checkboxName',
+    'disclaimerBodyName',
+    'disclaimerLabel',
+    'disclaimerTitle',
+    'practiceLinkName',
+    'sourceLinkName',
+    'sourcePublisher',
+    'sourceTitle',
+    'sourceUrlName',
+  ]) {
+    assert.match(
+      specSource,
+      new RegExp(`testCase\\.${field}\\b`),
+      `Citizenship source-affordance e2e should assert ${field} from the shared matrix`,
+    );
+  }
 });
 
 test('static site privacy grep focus stays isolated to privacy assertions', () => {
