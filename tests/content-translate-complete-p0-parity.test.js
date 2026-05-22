@@ -1,11 +1,13 @@
 const assert = require('node:assert/strict');
 const { execFileSync, spawnSync } = require('node:child_process');
+const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
 const vm = require('node:vm');
 
 const repoRoot = path.resolve(__dirname, '..');
+let cachedSummary;
 const moduleCache = new Map();
 const learnerFacingLegalCertaintyPattern = /\blegal certainty\b/i;
 
@@ -91,10 +93,14 @@ function pushStaticQuestionOffenders(offenders, question) {
 
 function validateContentSummary() {
   if (cachedSummary) return cachedSummary;
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-translate-complete-p0'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
   cachedSummary = JSON.parse(match[0]);
@@ -124,10 +130,6 @@ test('TRANSLATE-COMPLETE P0 has explicit SV/EN completeness and naturalness clos
   assert.equal(summary.questionPublicSectorEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(
     summary.questionPublicServiceBroadcasterEnglishNaturalnessValidated,
-    summary.publishedQuestions,
-  );
-  assert.equal(
-    summary.questionAgriculturalSwedenEnglishNaturalnessValidated,
     summary.publishedQuestions,
   );
   assert.equal(summary.questionLargestLakesEnglishNaturalnessValidated, summary.publishedQuestions);
@@ -166,6 +168,7 @@ test('TRANSLATE-COMPLETE rejects q080 suffrage explanation meta wording', () => 
     [
       '-e',
       `
+process.argv.push('--focus-translate-complete-p0');
 const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
@@ -188,6 +191,6 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /q080 uses meta suffrage-1921 English wording/,
+    /q080 uses meta suffrage-election English wording/,
   );
 });

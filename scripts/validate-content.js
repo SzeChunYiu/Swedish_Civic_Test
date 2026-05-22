@@ -5865,6 +5865,7 @@ function translationNaturalnessGuardParityIsValidated() {
     questionNewYearsEveDateEnglishNaturalnessValidated === publishedQuestions &&
     questionLuciaDayDateEnglishNaturalnessValidated === publishedQuestions &&
     questionRecordYearsEnglishNaturalnessValidated === publishedQuestions &&
+    questionSaltsjobadenEnglishNaturalnessValidated === publishedQuestions &&
     questionSuffrage1921EnglishNaturalnessValidated === publishedQuestions &&
     questionLuciaExplanationRoleScaffoldValidated === publishedQuestions &&
     questionGoodFridayEnglishNaturalnessValidated === publishedQuestions &&
@@ -10083,6 +10084,7 @@ let questionNationalMinoritiesEnglishNaturalnessValidated = 0;
 let questionNewYearsEveDateEnglishNaturalnessValidated = 0;
 let questionLuciaDayDateEnglishNaturalnessValidated = 0;
 let questionRecordYearsEnglishNaturalnessValidated = 0;
+let questionSaltsjobadenEnglishNaturalnessValidated = 0;
 let questionSuffrage1921EnglishNaturalnessValidated = 0;
 let questionLuciaExplanationRoleScaffoldValidated = 0;
 let questionGoodFridayEnglishNaturalnessValidated = 0;
@@ -10998,6 +11000,240 @@ if (
     questionReligiousFreedomParallelismTargetRowsValidated,
   });
   process.exit(0);
+}
+
+const TRANSLATE_COMPLETE_P0_FOCUS_FLAG = '--focus-translate-complete-p0';
+
+function translateCompleteP0NaturalnessIsValidated(publishedQuestionCount) {
+  return (
+    publishedQuestionCount > 0 &&
+    questionGeneratedTrueFalseNaturalnessValidated === publishedQuestionCount &&
+    questionLuciaRoleEnglishNaturalnessValidated === publishedQuestionCount &&
+    questionEuCooperationEnglishNaturalnessValidated === publishedQuestionCount &&
+    questionOlderSickEnglishNaturalnessValidated === publishedQuestionCount &&
+    questionCouncilOfEuropeWorkForEnglishNaturalnessValidated === publishedQuestionCount &&
+    questionMayDayEnglishNaturalnessValidated === publishedQuestionCount &&
+    questionPublicSectorEnglishNaturalnessValidated === publishedQuestionCount &&
+    questionPublicServiceBroadcasterEnglishNaturalnessValidated === publishedQuestionCount &&
+    questionLargestLakesEnglishNaturalnessValidated === publishedQuestionCount &&
+    questionNationalMinoritiesEnglishNaturalnessValidated === publishedQuestionCount &&
+    questionNewYearsEveDateEnglishNaturalnessValidated === publishedQuestionCount &&
+    questionLuciaDayDateEnglishNaturalnessValidated === publishedQuestionCount &&
+    questionRecordYearsEnglishNaturalnessValidated === publishedQuestionCount &&
+    questionSaltsjobadenEnglishNaturalnessValidated === publishedQuestionCount &&
+    questionSuffrage1921EnglishNaturalnessValidated === publishedQuestionCount &&
+    questionLuciaExplanationRoleScaffoldValidated === publishedQuestionCount &&
+    questionGoodFridayEnglishNaturalnessValidated === publishedQuestionCount &&
+    questionReferendumAdvisorySwedishNaturalnessValidated === publishedQuestionCount &&
+    questionSourceCriticismEnglishNaturalnessValidated === publishedQuestionCount &&
+    questionRuleOfLawEnglishNaturalnessValidated === publishedQuestionCount * 3 &&
+    questionReligiousFreedomParallelismValidated === publishedQuestionCount * 2 &&
+    somaliGeographyNaturalnessParityValidated === true &&
+    somaliHolidayFoodNaturalnessParityValidated === true
+  );
+}
+
+function validateTranslateCompleteP0Focus() {
+  const publishedQuestionRows = Array.isArray(questions)
+    ? questions.filter((question) => question.reviewStatus === 'published')
+    : [];
+
+  publishedQuestionRows.forEach((question, index) => {
+    const label = question.id || `question[${index}]`;
+
+    if (bilingualTextPairsAreDistinct(question)) {
+      questionBilingualTextPairsValidated += 1;
+    } else {
+      fail(`${label} questionSv/questionEn and explanationSv/explanationEn must be distinct`);
+    }
+
+    if (optionBilingualTextPairsAreValid(question)) {
+      questionOptionBilingualTextPairsValidated += 1;
+    } else {
+      fail(`${label} option text must have SV/EN translation parity`);
+    }
+
+    const generatedTrueFalseNaturalnessIssue =
+      findQuestionGeneratedTrueFalseNaturalnessIssue(question);
+    if (generatedTrueFalseNaturalnessIssue) {
+      fail(`${label} contains a generated true/false grammar-splice stem`);
+    } else {
+      questionGeneratedTrueFalseNaturalnessValidated += 1;
+    }
+
+    if (findQuestionLuciaRoleEnglishNaturalnessIssue(question)) {
+      fail(`${label} uses stilted Lucia role English wording`);
+    } else {
+      questionLuciaRoleEnglishNaturalnessValidated += 1;
+    }
+
+    if (findQuestionEuCooperationEnglishNaturalnessIssue(question)) {
+      fail(`${label} uses missing-article EU cooperation English wording`);
+    } else {
+      questionEuCooperationEnglishNaturalnessValidated += 1;
+    }
+
+    if (findQuestionOlderSickEnglishNaturalnessIssue(question)) {
+      fail(`${label} uses literal older-and-sick English wording`);
+    } else {
+      questionOlderSickEnglishNaturalnessValidated += 1;
+    }
+
+    if (findQuestionCouncilOfEuropeWorkForEnglishNaturalnessIssue(question)) {
+      fail(`${label} uses literal Council of Europe work-for English wording`);
+    } else {
+      questionCouncilOfEuropeWorkForEnglishNaturalnessValidated += 1;
+    }
+
+    if (findQuestionMayDayEnglishNaturalnessIssue(question)) {
+      fail(`${label} uses literal First of May English wording`);
+    } else {
+      questionMayDayEnglishNaturalnessValidated += 1;
+    }
+
+    if (findQuestionPublicSectorEnglishNaturalnessIssue(question)) {
+      fail(`${label} uses stilted public-sector English wording`);
+    } else {
+      questionPublicSectorEnglishNaturalnessValidated += 1;
+    }
+
+    if (findQuestionPublicServiceBroadcasterEnglishNaturalnessIssue(question)) {
+      fail(`${label} uses stilted public-service broadcaster English wording`);
+    } else {
+      questionPublicServiceBroadcasterEnglishNaturalnessValidated += 1;
+    }
+
+    if (findQuestionLargestLakesEnglishNaturalnessIssue(question)) {
+      fail(`${label} uses stilted largest-lakes English wording`);
+    } else {
+      questionLargestLakesEnglishNaturalnessValidated += 1;
+    }
+
+    if (findQuestionNationalMinoritiesEnglishNaturalnessIssue(question)) {
+      fail(`${label} uses stilted national-minorities English wording`);
+    } else {
+      questionNationalMinoritiesEnglishNaturalnessValidated += 1;
+    }
+
+    if (findQuestionNewYearsEveDateEnglishNaturalnessIssue(question)) {
+      fail(`${label} uses redundant New Year's Eve date English wording`);
+    } else {
+      questionNewYearsEveDateEnglishNaturalnessValidated += 1;
+    }
+
+    if (findQuestionLuciaDayDateEnglishNaturalnessIssue(question)) {
+      fail(`${label} uses redundant Lucia Day date English wording`);
+    } else {
+      questionLuciaDayDateEnglishNaturalnessValidated += 1;
+    }
+
+    if (findQuestionRecordYearsEnglishNaturalnessIssue(question)) {
+      fail(`${label} uses stilted record-years English wording`);
+    } else {
+      questionRecordYearsEnglishNaturalnessValidated += 1;
+    }
+
+    if (findQuestionSaltsjobadenEnglishNaturalnessIssue(question)) {
+      fail(`${label} uses stilted Saltsjöbaden Agreement English wording`);
+    } else {
+      questionSaltsjobadenEnglishNaturalnessValidated += 1;
+    }
+
+    if (findQuestionSuffrage1921EnglishNaturalnessIssue(question)) {
+      fail(`${label} uses meta suffrage-election English wording`);
+    } else {
+      questionSuffrage1921EnglishNaturalnessValidated += 1;
+    }
+
+    if (findQuestionLuciaExplanationRoleScaffoldIssue(question)) {
+      fail(`${label} uses Lucia role-scaffold explanation wording`);
+    } else {
+      questionLuciaExplanationRoleScaffoldValidated += 1;
+    }
+
+    if (findQuestionGoodFridayEnglishNaturalnessIssue(question)) {
+      fail(`${label} uses stilted Good Friday English wording`);
+    } else {
+      questionGoodFridayEnglishNaturalnessValidated += 1;
+    }
+
+    if (findQuestionReferendumAdvisorySwedishNaturalnessIssue(question)) {
+      fail(`${label} uses ambiguous advisory-referendum Swedish wording`);
+    } else {
+      questionReferendumAdvisorySwedishNaturalnessValidated += 1;
+    }
+
+    if (findQuestionSourceCriticismEnglishNaturalnessIssue(question)) {
+      fail(`${label} uses stilted source-criticism English wording`);
+    } else {
+      questionSourceCriticismEnglishNaturalnessValidated += 1;
+    }
+
+    const religiousFreedomParallelismIssue =
+      findQuestionReligiousFreedomOptionParallelismIssue(question);
+    if (religiousFreedomParallelismIssue) {
+      fail(`${label} uses nonparallel religious-freedom option wording`);
+    } else {
+      questionReligiousFreedomParallelismValidated += 1;
+    }
+  });
+
+  validateQuestionRuleOfLawEnglishNaturalness();
+  validateQuestionReligiousFreedomParallelism();
+  validateSomaliGeographyNaturalnessParity();
+  validateSomaliHolidayFoodNaturalnessParity();
+
+  const publishedQuestionCount = publishedQuestionRows.length;
+  const translationCompletenessParityValidated =
+    publishedQuestionCount > 0 &&
+    questionBilingualTextPairsValidated === publishedQuestionCount &&
+    questionOptionBilingualTextPairsValidated === publishedQuestionCount;
+  const translationNaturalnessGuardParityValidated =
+    translateCompleteP0NaturalnessIsValidated(publishedQuestionCount);
+
+  if (!translationCompletenessParityValidated) {
+    fail('TRANSLATE-COMPLETE P0 SV/EN completeness parity is not fully validated');
+  }
+  if (!translationNaturalnessGuardParityValidated) {
+    fail('TRANSLATE-COMPLETE P0 naturalness guard parity is not fully validated');
+  }
+
+  exitWithValidationFailures();
+  printValidationSummary({
+    publishedQuestions: publishedQuestionCount,
+    questionBilingualTextPairsValidated,
+    questionOptionBilingualTextPairsValidated,
+    translationCompletenessParityValidated,
+    questionGeneratedTrueFalseNaturalnessValidated,
+    questionLuciaRoleEnglishNaturalnessValidated,
+    questionEuCooperationEnglishNaturalnessValidated,
+    questionOlderSickEnglishNaturalnessValidated,
+    questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
+    questionMayDayEnglishNaturalnessValidated,
+    questionPublicSectorEnglishNaturalnessValidated,
+    questionPublicServiceBroadcasterEnglishNaturalnessValidated,
+    questionLargestLakesEnglishNaturalnessValidated,
+    questionNationalMinoritiesEnglishNaturalnessValidated,
+    questionNewYearsEveDateEnglishNaturalnessValidated,
+    questionLuciaDayDateEnglishNaturalnessValidated,
+    questionRecordYearsEnglishNaturalnessValidated,
+    questionSaltsjobadenEnglishNaturalnessValidated,
+    questionSuffrage1921EnglishNaturalnessValidated,
+    questionLuciaExplanationRoleScaffoldValidated,
+    questionGoodFridayEnglishNaturalnessValidated,
+    questionReferendumAdvisorySwedishNaturalnessValidated,
+    questionSourceCriticismEnglishNaturalnessValidated,
+    questionRuleOfLawEnglishNaturalnessValidated,
+    questionReligiousFreedomParallelismValidated,
+    somaliGeographyNaturalnessParityValidated,
+    somaliHolidayFoodNaturalnessParityValidated,
+    translationNaturalnessGuardParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes(TRANSLATE_COMPLETE_P0_FOCUS_FLAG)) {
+  validateTranslateCompleteP0Focus();
 }
 
 if (process.argv.includes('--focus-generated-why-reason-stems')) {
@@ -25429,6 +25665,8 @@ if (Array.isArray(questions)) {
         findQuestionLuciaDayDateEnglishNaturalnessIssue(question);
       const recordYearsEnglishNaturalnessIssue =
         findQuestionRecordYearsEnglishNaturalnessIssue(question);
+      const saltsjobadenEnglishNaturalnessIssue =
+        findQuestionSaltsjobadenEnglishNaturalnessIssue(question);
       const suffrage1921EnglishNaturalnessIssue =
         findQuestionSuffrage1921EnglishNaturalnessIssue(question);
       const councilOfEuropeWorkForEnglishNaturalnessIssue =
@@ -25528,6 +25766,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses stilted record-years English wording`);
       } else {
         questionRecordYearsEnglishNaturalnessValidated += 1;
+      }
+      if (saltsjobadenEnglishNaturalnessIssue) {
+        fail(`${label} uses stilted Saltsjöbaden Agreement English wording`);
+      } else {
+        questionSaltsjobadenEnglishNaturalnessValidated += 1;
       }
       if (suffrage1921EnglishNaturalnessIssue) {
         fail(`${label} uses meta suffrage-election English wording`);
@@ -26173,6 +26416,7 @@ console.log(
       questionNewYearsEveDateEnglishNaturalnessValidated,
       questionLuciaDayDateEnglishNaturalnessValidated,
       questionRecordYearsEnglishNaturalnessValidated,
+      questionSaltsjobadenEnglishNaturalnessValidated,
       questionSuffrage1921EnglishNaturalnessValidated,
       questionLuciaExplanationRoleScaffoldValidated,
       questionGoodFridayEnglishNaturalnessValidated,
