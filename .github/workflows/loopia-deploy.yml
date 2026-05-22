@@ -1,17 +1,13 @@
 name: Deploy site to Loopia
 
-# Uploads the static site in `site/` to Loopia shared hosting (classic
-# Apache, FTP/FTPS) whenever `main` changes, or run manually via the Actions tab.
+# Publishes the static site in `site/` to Loopia (almostswedish.se) over SSH+rsync
+# on every push to `main` that touches site/, or on manual dispatch. Replaces the
+# old FTPS path (which failed with 530). The pre-deploy gate is intentionally
+# light and decoupled from the chronically-red app-level `release-validation`, so
+# the site actually ships while still catching broken/missing files.
 #
-# Required repo secrets (Settings → Secrets and variables → Actions):
-#   LOOPIA_FTP_HOST       e.g. almostswedish.se   (the FTP server Loopia shows)
-#   LOOPIA_FTP_USER       the FTP account username you created
-#   LOOPIA_FTP_PASSWORD   that account's password
-#   LOOPIA_REMOTE_DIR     web root for the domain, e.g. /public_html
-#
-# Connection uses FTPS (explicit TLS over port 21). Until the secrets are set,
-# this workflow runs green and skips. Only repo secrets are used (never
-# untrusted event input), so there is no workflow-injection risk.
+# Required repo secret:
+#   LOOPIA_SSH_KEY  - private deploy key for wfcasb@ssh.loopia.se (web root below).
 
 on:
   push:
@@ -21,11 +17,10 @@ on:
       - '.github/workflows/loopia-deploy.yml'
   workflow_dispatch:
     inputs:
-      mode:
-        description: 'deploy = upload site/  |  list = just list the remote tree (to find the web root)'
-        type: choice
-        options: [deploy, list]
-        default: deploy
+      skip_gate:
+        description: 'Skip the static-site checks (emergency deploy)'
+        type: boolean
+        default: false
 
 concurrency:
   group: loopia-deploy
@@ -34,77 +29,75 @@ concurrency:
 permissions:
   contents: read
 
+env:
+  SSH_USER: wfcasb
+  SSH_HOST: ssh.loopia.se
+  REMOTE_DIR: almostswedish.se/public_html
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Check Loopia secrets are configured
-        id: check
-        env:
-          HOST: ${{ secrets.LOOPIA_FTP_HOST }}
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Static-site gate (syntax + required files)
+        if: ${{ github.event.inputs.skip_gate != 'true' }}
         run: |
-          if [ -z "$HOST" ]; then
-            echo "::notice::Loopia secrets not set yet - skipping. Add LOOPIA_FTP_HOST / LOOPIA_FTP_USER / LOOPIA_FTP_PASSWORD / LOOPIA_REMOTE_DIR under Settings -> Secrets and variables -> Actions."
+          set -e
+          node --check site/app.js
+          node --check site/purchase.js
+          node --check site/v11.js
+          for f in index.html app.js purchase.js questions.js styles.css ads.txt; do
+            test -f "site/$f" || { echo "::error::missing site/$f"; exit 1; }
+          done
+          echo "static-site gate passed"
+
+      - name: Refresh asset manifest (keeps the deployed copy consistent)
+        run: node scripts/update-site-asset-manifest.js
+
+      - name: Check deploy key is configured
+        id: gate
+        env:
+          KEY: ${{ secrets.LOOPIA_SSH_KEY }}
+        run: |
+          if [ -z "$KEY" ]; then
+            echo "::warning::LOOPIA_SSH_KEY not set - skipping deploy."
             echo "ready=false" >> "$GITHUB_OUTPUT"
           else
             echo "ready=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Install lftp
-        if: steps.check.outputs.ready == 'true'
-        run: sudo apt-get update && sudo apt-get install -y lftp
-
-      - name: List remote tree (diagnostic / mode=list)
-        if: steps.check.outputs.ready == 'true' && github.event.inputs.mode == 'list'
+      - name: Configure SSH
+        if: steps.gate.outputs.ready == 'true'
         env:
-          HOST: ${{ secrets.LOOPIA_FTP_HOST }}
-          USERNAME: ${{ secrets.LOOPIA_FTP_USER }}
-          LFTP_PASSWORD: ${{ secrets.LOOPIA_FTP_PASSWORD }}
+          KEY: ${{ secrets.LOOPIA_SSH_KEY }}
         run: |
-          lftp -u "$USERNAME" --env-password -e "
-            set ftp:ssl-force true;
-            set ftp:ssl-protect-data true;
-            set ssl:verify-certificate no;
-            set ftp:passive-mode true;
-            set net:max-retries 2;
-            set net:timeout 25;
-            open ftp://$HOST;
-            echo '=== login dir ==='; pwd; ls;
-            echo '=== /public_html ==='; ls /public_html;
-            bye
-          " || true
+          mkdir -p ~/.ssh
+          printf '%s\n' "$KEY" > ~/.ssh/loopia_deploy
+          chmod 600 ~/.ssh/loopia_deploy
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
 
-      - name: Upload site/ to Loopia over FTPS
-        if: steps.check.outputs.ready == 'true' && github.event.inputs.mode != 'list'
-        env:
-          HOST: ${{ secrets.LOOPIA_FTP_HOST }}
-          USERNAME: ${{ secrets.LOOPIA_FTP_USER }}
-          LFTP_PASSWORD: ${{ secrets.LOOPIA_FTP_PASSWORD }}
-          REMOTE_DIR: ${{ secrets.LOOPIA_REMOTE_DIR }}
+      - name: Deploy site/ via rsync over SSH
+        if: steps.gate.outputs.ready == 'true'
         run: |
-          # FTPS (explicit TLS over port 21). --env-password keeps the password
-          # out of the command line / logs. We log the remote root first for
-          # diagnostics, then mirror local site/ -> REMOTE_DIR.
-          #
-          # No --delete by default: that would remove every remote file not in
-          # site/, which is destructive if REMOTE_DIR is wrong. Add it once
-          # REMOTE_DIR is confirmed to point only at the site's web root.
-          lftp -u "$USERNAME" --env-password -e "
-            set ftp:ssl-force true;
-            set ftp:ssl-protect-data true;
-            set ssl:verify-certificate no;
-            set ftp:passive-mode true;
-            set net:max-retries 2;
-            set net:timeout 25;
-            set mirror:parallel-transfer-count 4;
-            open ftp://$HOST;
-            echo '=== remote login dir ==='; pwd; ls;
-            mirror --reverse --verbose --no-perms \
-              --exclude-glob .git* \
-              ./site/ '$REMOTE_DIR';
-            bye
-          "
-          echo "Deploy complete: site/ -> $REMOTE_DIR on $HOST"
+          # Non-destructive (no --delete): unattended auto-deploy never removes
+          # remote files, so a wrong path cannot wipe the site. Overwrites/adds only.
+          rsync -rlptz --no-perms \
+            -e "ssh -i ~/.ssh/loopia_deploy -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20" \
+            site/ "$SSH_USER@$SSH_HOST:$REMOTE_DIR/"
+          echo "deployed site/ -> $SSH_USER@$SSH_HOST:$REMOTE_DIR"
+
+      - name: Verify production responds
+        if: steps.gate.outputs.ready == 'true'
+        run: |
+          sleep 3
+          code=$(curl -s -o /tmp/live.html -w '%{http_code}' --max-time 25 "https://almostswedish.se/?ci=${GITHUB_SHA}")
+          echo "https://almostswedish.se/ -> HTTP $code"
+          grep -q '<title' /tmp/live.html && echo "live site responding" || { echo "::error::live site did not return HTML"; exit 1; }
