@@ -312,7 +312,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /exam UHR references must receive settings language|submitted exam review must render localized UHR reference cards/,
+    /submitted exam review must render localized UHR reference cards/,
   );
 });
 

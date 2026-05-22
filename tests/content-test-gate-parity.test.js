@@ -220,6 +220,28 @@ test('test:content script includes every content test file exactly once', () => 
   );
 });
 
+test('full test script keeps ui-effects release gate wired', () => {
+  const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
+  const testScript = packageJson.scripts?.test;
+  const testAllScript = packageJson.scripts?.['test:all'];
+  const uiEffectsScript = packageJson.scripts?.['test:ui-effects'];
+  const dispatcherSource = fs.readFileSync(path.join(repoRoot, 'scripts/test-dispatch.js'), 'utf8');
+  const runnerSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/run-ui-effects-test.js'),
+    'utf8',
+  );
+
+  assert.equal(typeof testScript, 'string');
+  assert.equal(typeof testAllScript, 'string');
+  assert.equal(typeof uiEffectsScript, 'string');
+  assert.match(testScript, /node scripts\/test-dispatch\.js/);
+  assert.match(testAllScript, /npm run test:ui-effects/);
+  assert.match(uiEffectsScript, /node scripts\/run-ui-effects-test\.js/);
+  assert.match(dispatcherSource, /runNpmScript\('test:all'\)/);
+  assert.match(runnerSource, /scripts\/ui-effects\.test\.js/);
+  assert.match(runnerSource, /process\.exit\(result\.status \?\? 1\)/);
+});
+
 test('published-question negative fixtures stay covered', () => {
   const source = fs.readFileSync(
     path.join(repoRoot, 'tests/content-published-question-types.test.js'),
