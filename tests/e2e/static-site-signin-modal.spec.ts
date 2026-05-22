@@ -1,60 +1,74 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { collectPageErrors, startStaticSiteServer, type StaticSite } from './staticSiteServer';
-
-async function openStaticHome(page: Page, baseUrl: string) {
-  await page.addInitScript(() => {
-    localStorage.setItem('smt_buddy_hidden', '1');
-    localStorage.setItem('smt_consent', 'min');
-    localStorage.setItem('smt_lang', 'en');
-    sessionStorage.setItem('smt_buddy_greeted', '1');
-  });
-  await page.goto(baseUrl, { waitUntil: 'load' });
-  await page.locator('#consent').evaluate((node) => {
-    (node as HTMLElement).hidden = true;
-  });
-  await expect(page.locator('#signin-open')).toBeVisible();
-}
-
-async function setStaticLanguage(page: Page, language: string) {
-  await page.evaluate((nextLanguage) => {
-    const staticWindow = window as typeof window & {
-      smtSetLanguage?: (language: string) => void;
-    };
-    staticWindow.smtSetLanguage?.(nextLanguage);
-  }, language);
-  await expect(page.locator('html')).toHaveAttribute('lang', language);
-}
 
 let staticSite: StaticSite;
 
 test.beforeAll(async () => {
-  staticSite = await startStaticSiteServer({ stripGoogleFonts: true });
+  staticSite = await startStaticSiteServer();
 });
 
 test.afterAll(async () => {
   await staticSite.close();
 });
 
-test('static sign-in email field localizes label and placeholder while open', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
+test('static sign-in preserves a sanitized hash return route outside the Supabase redirect URL', async ({
+  page,
+}) => {
   const pageErrors = collectPageErrors(page);
-  await openStaticHome(page, staticSite.baseUrl);
+  await page.goto(`${staticSite.baseUrl}/#/ebook?c=ch04`, { waitUntil: 'domcontentloaded' });
 
-  await page.locator('#signin-open').click();
-  const modal = page.locator('#signin-modal');
-  const emailInput = modal.locator('.signin__input');
+  const result = await page.evaluate(() => {
+    const staticWindow = window as typeof window & {
+      smtNormalizeSigninReturnRoute: (route: string) => string;
+      smtSigninCaptureReturnRoute: () => string;
+      smtSigninRedirectTarget: () => string | undefined;
+    };
+    const redirectTarget = staticWindow.smtSigninRedirectTarget();
+    const capturedRoute = staticWindow.smtSigninCaptureReturnRoute();
+    return {
+      capturedRoute,
+      invalidExternal: staticWindow.smtNormalizeSigninReturnRoute('https://evil.test/#/ebook'),
+      invalidMarkup: staticWindow.smtNormalizeSigninReturnRoute('#/ebook?c=<script>'),
+      invalidPath: staticWindow.smtNormalizeSigninReturnRoute('#/admin'),
+      redirectedWithoutHash: redirectTarget,
+      validDashboard: staticWindow.smtNormalizeSigninReturnRoute('#/dashboard'),
+      validPractice: staticWindow.smtNormalizeSigninReturnRoute('#/practice?c=4'),
+      validPurchaseAnchor: staticWindow.smtNormalizeSigninReturnRoute('#/#purchase-account-gate'),
+    };
+  });
 
-  await expect(modal).toBeVisible();
-  await expect(emailInput).toHaveAttribute('aria-label', 'Email address');
-  await expect(emailInput).toHaveAttribute('placeholder', 'you@example.com');
+  const returnPage = await page.context().newPage();
+  const returnPageErrors = collectPageErrors(returnPage);
+  await returnPage.goto(
+    `${staticSite.baseUrl}/#access_token=fake-token&refresh_token=fake-refresh`,
+    {
+      waitUntil: 'domcontentloaded',
+    },
+  );
+  const restored = await returnPage.evaluate(() => {
+    const staticWindow = window as typeof window & {
+      smtSigninRestoreReturnRoute: () => string;
+    };
+    const restoredRoute = staticWindow.smtSigninRestoreReturnRoute();
+    return {
+      restoredHash: window.location.hash,
+      restoredRoute,
+      storedRouteAfterRestore: localStorage.getItem('smt_signin_return_route'),
+    };
+  });
+  await returnPage.close();
 
-  await setStaticLanguage(page, 'sv');
-  await expect(emailInput).toHaveAttribute('aria-label', 'E-postadress');
-  await expect(emailInput).toHaveAttribute('placeholder', 'namn@example.com');
-
-  await setStaticLanguage(page, 'pl');
-  await expect(emailInput).toHaveAttribute('aria-label', 'Adres e-mail');
-  await expect(emailInput).toHaveAttribute('placeholder', 'imie@example.com');
-
+  expect(result.redirectedWithoutHash).toBe(`${staticSite.baseUrl}/`);
+  expect(result.capturedRoute).toBe('#/ebook?c=ch04');
+  expect(restored.restoredRoute).toBe('#/ebook?c=ch04');
+  expect(restored.restoredHash).toBe('#/ebook?c=ch04');
+  expect(restored.storedRouteAfterRestore).toBeNull();
+  expect(result.validDashboard).toBe('#/dashboard');
+  expect(result.validPractice).toBe('#/practice?c=4');
+  expect(result.validPurchaseAnchor).toBe('#/#purchase-account-gate');
+  expect(result.invalidPath).toBe('#/');
+  expect(result.invalidExternal).toBe('#/');
+  expect(result.invalidMarkup).toBe('#/');
   expect(pageErrors).toEqual([]);
+  expect(returnPageErrors).toEqual([]);
 });
