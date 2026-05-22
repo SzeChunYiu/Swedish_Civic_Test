@@ -65,7 +65,7 @@ const sourceRecallPromptPattern =
   /\b(?:nämns som exempel|mentioned as examples?|nämns som en anledning|mentioned as a reason|Vad nämns som exempel|What is mentioned as an example|Vilken händelse från[^?!.]*nämns|Which event from[^?!.]*mentioned)\b/i;
 const sourceCriticismStiltedEnglishPattern = /\bsource-critical\b/i;
 const publicSectorStiltedEnglishPattern =
-  /\b(?:What is meant by the public sector in Sweden|Activities for which the state, regions, and municipalities are responsible|The public sector(?: in Sweden)? means (?:activities|all privately owned companies))\b/i;
+  /\b(?:What is meant by the public sector in Sweden|Which fact is correct regarding what the public sector in Sweden is|Activities for which the state, regions, and municipalities are responsible|The public sector(?: in Sweden)? means (?:activities|all privately owned companies))\b/i;
 const generatedIdLiteralPatterns = [
   {
     label: 'question.id equality',
@@ -2268,7 +2268,7 @@ test('public-sector source and generated exports use direct English propositions
     },
     {
       id: generatedQuestionId(sourceQuestions, 'q062', 'judgement'),
-      q: 'Which fact is correct regarding what the public sector in Sweden is?',
+      q: "Which statement about Sweden's public sector is correct?",
       why: expectedExplanation,
     },
   ];
@@ -4720,7 +4720,7 @@ test('q062 public-sector exports natural English in canonical and static banks',
   const byId = new Map(generatedSiteBank.map((question) => [question.id, question]));
   const actualById = new Map(Array.from(actualSiteBank).map((question) => [question.id, question]));
   const stalePattern =
-    /What is meant by the public sector|public sector(?: in Sweden)? means (?:activities for which|all privately owned companies)|Activities for which the state, regions, and municipalities are responsible/i;
+    /What is meant by the public sector|Which fact is correct regarding what the public sector in Sweden is|public sector(?: in Sweden)? means (?:activities for which|all privately owned companies)|Activities for which the state, regions, and municipalities are responsible/i;
 
   assert.equal(byId.get('q062')?.q.en, 'What is the public sector in Sweden?');
   assert.equal(
@@ -4730,6 +4730,10 @@ test('q062 public-sector exports natural English in canonical and static banks',
   assert.equal(
     byId.get(generatedQuestionId(sourceQuestions, 'q062', 'falseStatement'))?.q.en,
     'The public sector in Sweden consists only of privately owned companies.',
+  );
+  assert.equal(
+    byId.get(generatedQuestionId(sourceQuestions, 'q062', 'judgement'))?.q.en,
+    "Which statement about Sweden's public sector is correct?",
   );
   assert.ok(
     rowIds.every((id) => byId.has(id)),

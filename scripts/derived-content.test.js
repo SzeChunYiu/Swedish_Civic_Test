@@ -1477,8 +1477,21 @@ test('derivePublishedQuestions renders q062 public-sector English as direct prop
     'The public sector in Sweden consists only of privately owned companies.',
   );
   assert.equal(byId.get(falseStatementId)?.correctOptionId, 'false');
+  assert.equal(
+    byId.get(generatedQuestionId(sourceQuestions, 'q062', 'judgement'))?.questionSv,
+    'Vilken uppgift om offentlig sektor i Sverige stämmer?',
+  );
+  assert.equal(
+    byId.get(generatedQuestionId(sourceQuestions, 'q062', 'judgement'))?.questionEn,
+    "Which statement about Sweden's public sector is correct?",
+  );
 
-  const text = [source, byId.get(trueStatementId), byId.get(falseStatementId)]
+  const text = [
+    source,
+    byId.get(trueStatementId),
+    byId.get(falseStatementId),
+    byId.get(generatedQuestionId(sourceQuestions, 'q062', 'judgement')),
+  ]
     .map((question) => `${question?.questionEn} ${question?.explanationEn}`)
     .join('\n');
   assert.doesNotMatch(

@@ -31,7 +31,7 @@ const SOMALI_HOLIDAY_FOOD_ENGLISH_TOKEN_PATTERN = /\b(?:herring|strawberries|Eas
 const CHAPTER_LOCALIZATION_ENGLISH_WELFARE_GLOSS_PATTERN = /\(welfare\)/i;
 const PUBLIC_SERVICE_LOANWORD_PATTERN = /\bpublic service\b|\(welfare\)/i;
 const PUBLIC_SECTOR_STALE_STATIC_PATTERN =
-  /\bWhat is meant by the public sector in Sweden\b|\bActivities for which the state, regions, and municipalities are responsible\b|\bThe public sector(?: in Sweden)? means\b/i;
+  /\bWhat is meant by the public sector in Sweden\b|\bWhich fact is correct regarding what the public sector in Sweden is\b|\bActivities for which the state, regions, and municipalities are responsible\b|\bThe public sector(?: in Sweden)? means\b/i;
 const SUFFRAGE_1921_STALE_STATIC_PATTERN =
   /\b1921 is the year of the election asked about here\b|\bthe year of the election asked about here\b/i;
 const SUFFRAGE_1921_EXPECTED_STATIC_EXPLANATION =

@@ -34174,8 +34174,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what the public sector in Sweden is?",
-      "sv": "Vilken uppgift stämmer när det gäller vad som menas med offentlig sektor i Sverige?"
+      "en": "Which statement about Sweden's public sector is correct?",
+      "sv": "Vilken uppgift om offentlig sektor i Sverige stämmer?"
     },
     "opts": [
       {
