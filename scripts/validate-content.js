@@ -6477,12 +6477,17 @@ function staticEbookRenderedFootnoteItems(html) {
   );
 }
 
+function staticEbookHasNonUhrSource(counts) {
+  return Object.keys(counts || {}).some((key) => !key.startsWith('uhr'));
+}
+
 function validateStaticEbookFootnoteHashParity() {
   const chapterIds = readStaticEbookChapterIds();
   const languages = ['en', 'sv'];
   const languageValid = new Map(languages.map((language) => [language, true]));
   const harness = createStaticEbookValidationHarness(chapterIds);
   let chaptersValidated = 0;
+  let heterogeneousChaptersValidated = 0;
   let valid = true;
 
   function reject(language, chapterId, message) {
@@ -6529,6 +6534,9 @@ function validateStaticEbookFootnoteHashParity() {
           `data-source-counts ${renderedCountJson} does not match annotated prose ${expectedCountJson}`,
         );
       }
+      if (!staticEbookHasNonUhrSource(renderedCounts)) {
+        rejectCase('source mix must include at least one non-UHR citation or editorial note');
+      }
 
       referenceLinks.forEach((reference, index) => {
         const footnote = footnoteItems[index];
@@ -6574,15 +6582,20 @@ function validateStaticEbookFootnoteHashParity() {
       }
     });
 
-    if (chapterValid) chaptersValidated += 1;
+    if (chapterValid) {
+      chaptersValidated += 1;
+      heterogeneousChaptersValidated += 1;
+    }
   });
 
   return {
     chaptersValidated,
+    heterogeneousChaptersValidated,
     languagesValidated: Array.from(languageValid.values()).filter(Boolean).length,
     parityValidated:
       valid &&
       chaptersValidated === chapterIds.length &&
+      heterogeneousChaptersValidated === chapterIds.length &&
       Array.from(languageValid.values()).every(Boolean),
   };
 }
@@ -10297,6 +10310,7 @@ let staticEbookFoodBeverageSourceParityValidated = false;
 let staticEbookCivicTermGlossesChecksValidated = 0;
 let staticEbookCivicTermGlossesParityValidated = false;
 let staticEbookFootnoteHashChaptersValidated = 0;
+let staticEbookFootnoteHeterogeneousChaptersValidated = 0;
 let staticEbookFootnoteHashLanguagesValidated = 0;
 let staticEbookFootnoteHashParityValidated = false;
 let staticEbookProvenanceParityValidated = false;
@@ -10668,11 +10682,14 @@ if (process.argv.includes('--focus-static-head-metadata')) {
 if (process.argv.includes('--focus-static-ebook-footnote-hash-parity')) {
   const footnoteHashValidation = validateStaticEbookFootnoteHashParity();
   staticEbookFootnoteHashChaptersValidated = footnoteHashValidation.chaptersValidated;
+  staticEbookFootnoteHeterogeneousChaptersValidated =
+    footnoteHashValidation.heterogeneousChaptersValidated;
   staticEbookFootnoteHashLanguagesValidated = footnoteHashValidation.languagesValidated;
   staticEbookFootnoteHashParityValidated = footnoteHashValidation.parityValidated;
   exitWithValidationFailures();
   printValidationSummary({
     staticEbookFootnoteHashChaptersValidated,
+    staticEbookFootnoteHeterogeneousChaptersValidated,
     staticEbookFootnoteHashLanguagesValidated,
     staticEbookFootnoteHashParityValidated,
   });
@@ -10710,6 +10727,8 @@ if (process.argv.includes('--focus-static-ebook-provenance')) {
     staticEbookFactboxSourceUrlsValidated === STATIC_EBOOK_FACTBOX_SOURCE_URLS.length;
   const footnoteHashValidation = validateStaticEbookFootnoteHashParity();
   staticEbookFootnoteHashChaptersValidated = footnoteHashValidation.chaptersValidated;
+  staticEbookFootnoteHeterogeneousChaptersValidated =
+    footnoteHashValidation.heterogeneousChaptersValidated;
   staticEbookFootnoteHashLanguagesValidated = footnoteHashValidation.languagesValidated;
   staticEbookFootnoteHashParityValidated = footnoteHashValidation.parityValidated;
   const proseValidation = validateStaticEbookProseSourceMetadata();
@@ -10761,6 +10780,7 @@ if (process.argv.includes('--focus-static-ebook-provenance')) {
     staticEbookFactboxSourceUrlsValidated,
     staticEbookFactboxProvenanceValidated,
     staticEbookFootnoteHashChaptersValidated,
+    staticEbookFootnoteHeterogeneousChaptersValidated,
     staticEbookFootnoteHashLanguagesValidated,
     staticEbookFootnoteHashParityValidated,
     staticEbookProseSourceMetadataRulesValidated,
@@ -11929,6 +11949,8 @@ staticEbookSourceAuthorityCopyParityValidated =
 {
   const footnoteHashValidation = validateStaticEbookFootnoteHashParity();
   staticEbookFootnoteHashChaptersValidated = footnoteHashValidation.chaptersValidated;
+  staticEbookFootnoteHeterogeneousChaptersValidated =
+    footnoteHashValidation.heterogeneousChaptersValidated;
   staticEbookFootnoteHashLanguagesValidated = footnoteHashValidation.languagesValidated;
   staticEbookFootnoteHashParityValidated = footnoteHashValidation.parityValidated;
 }
@@ -26855,6 +26877,7 @@ console.log(
       staticEbookExtraLocaleHolidayGlossLanguagesValidated,
       staticEbookExtraLocaleHolidayGlossParityValidated,
       staticEbookFootnoteHashChaptersValidated,
+      staticEbookFootnoteHeterogeneousChaptersValidated,
       staticEbookFootnoteHashLanguagesValidated,
       staticEbookFootnoteHashParityValidated,
       staticEbookProvenanceParityValidated,
