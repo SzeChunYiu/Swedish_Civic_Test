@@ -2048,7 +2048,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 15;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 35;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 36;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_RUNTIME_CASES = 9;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
@@ -19343,6 +19343,7 @@ function validatePurchaseTypeSchemaParity() {
 }
 
 function validateRemoveAdsPurchaseRuntimeParity() {
+  let canonicalTimestampSource = '';
   let homeSource = '';
   let valid = true;
   let paywallSource = '';
@@ -19357,6 +19358,10 @@ function validateRemoveAdsPurchaseRuntimeParity() {
 
   try {
     purchaseSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/purchases.ts'), 'utf8');
+    canonicalTimestampSource = fs.readFileSync(
+      path.join(repoRoot, 'lib/time/canonicalTimestamp.ts'),
+      'utf8',
+    );
     homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
     placementCtaSource = fs.readFileSync(
       path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
@@ -19377,6 +19382,7 @@ function validateRemoveAdsPurchaseRuntimeParity() {
 
   const normalizedHomeSource = homeSource.replace(/\s+/g, ' ');
   const normalizedPurchaseSource = purchaseSource.replace(/\s+/g, ' ');
+  const normalizedCanonicalTimestampSource = canonicalTimestampSource.replace(/\s+/g, ' ');
   const normalizedPaywallSource = paywallSource.replace(/\s+/g, ' ');
   const normalizedPlacementCtaSource = placementCtaSource.replace(/\s+/g, ' ');
   const normalizedPricingWedgeSource = pricingWedgeSource.replace(/\s+/g, ' ');
@@ -19512,6 +19518,24 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       normalizedPurchaseSource.includes('receiptValidationStatus:') &&
         normalizedPurchaseSource.includes('receiptValidatedAt:'),
       'Remove Ads entitlement records must persist receipt validation status and timestamp',
+    ],
+    [
+      /import\s+\{\s*isCanonicalUtcIsoTimestamp\s*\}\s+from\s+'\.\.\/time\/canonicalTimestamp';/.test(
+        purchaseSource,
+      ) &&
+        normalizedPurchaseSource.includes('export { isCanonicalUtcIsoTimestamp };') &&
+        !/\b(?:function|const|let)\s+isCanonicalUtcIsoTimestamp\b/.test(purchaseSource) &&
+        !/\b(?:function|const|let)\s+parseCanonicalUtcIsoTimestamp\b/.test(purchaseSource) &&
+        !purchaseSource.includes('^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$') &&
+        !/new Date\(\s*value\s*\)/.test(purchaseSource) &&
+        normalizedCanonicalTimestampSource.includes(
+          'export function parseCanonicalUtcIsoTimestamp(value: unknown): CanonicalUtcTimestamp | null',
+        ) &&
+        normalizedCanonicalTimestampSource.includes(
+          'export function isCanonicalUtcIsoTimestamp(value: unknown): value is string',
+        ) &&
+        canonicalTimestampSource.includes('parsed.toISOString() !== value'),
+      'Remove Ads timestamp validation must use the shared canonical UTC helper instead of a purchases.ts-private parser',
     ],
     [
       normalizedPurchaseSource.includes('validateRemoveAdsReceipt?(') &&
