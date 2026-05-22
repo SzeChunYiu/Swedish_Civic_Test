@@ -10807,3 +10807,74 @@ button.quiz__dot.is-nav:hover {
     width: 3px;
   }
 }
+
+/* ======================================================================
+   EBOOK SIDEBAR BRAND BOX OPTIMIZATION ROUND
+   ====================================================================== */
+
+.ebook__brand {
+  align-items: center;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.68), rgba(0, 106, 167, 0.06)),
+    rgba(255, 255, 255, 0.48);
+  border: 1px solid rgba(0, 106, 167, 0.12);
+  border-radius: 18px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 12px 28px -24px rgba(11, 31, 51, 0.72);
+  min-height: 46px;
+  padding: 8px 10px;
+}
+.ebook__brand-mark {
+  border-radius: 8px;
+  box-shadow:
+    0 0 0 3px rgba(0, 106, 167, 0.08),
+    0 8px 18px -14px rgba(11, 31, 51, 0.8);
+  flex: 0 0 auto;
+  overflow: hidden;
+}
+.ebook__sub {
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(0, 106, 167, 0.09);
+  border-radius: 16px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42);
+  margin: 10px 0 14px;
+  padding: 10px 12px;
+}
+
+:root[data-theme='dark'] .ebook__brand,
+:root[data-theme='dark'] .ebook__sub {
+  background: rgba(255, 255, 255, 0.045);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+:root[data-theme='dark'] .ebook__brand-mark {
+  box-shadow:
+    0 0 0 3px rgba(45, 168, 255, 0.12),
+    0 8px 18px -14px rgba(0, 0, 0, 0.9);
+}
+
+@media (max-width: 560px) {
+  .ebook__brand {
+    border-radius: 16px;
+    min-height: 44px;
+    padding: 8px 9px;
+  }
+  .ebook__sub {
+    border-radius: 14px;
+    margin: 8px 0 12px;
+    padding: 9px 10px;
+  }
+}
+
+img.ebook__brand-mark {
+  border-radius: 8px;
+  box-shadow:
+    0 0 0 3px rgba(0, 106, 167, 0.08),
+    0 8px 18px -14px rgba(11, 31, 51, 0.8);
+  overflow: hidden;
+}
+:root[data-theme='dark'] img.ebook__brand-mark {
+  box-shadow:
+    0 0 0 3px rgba(45, 168, 255, 0.12),
+    0 8px 18px -14px rgba(0, 0, 0, 0.9);
+}
