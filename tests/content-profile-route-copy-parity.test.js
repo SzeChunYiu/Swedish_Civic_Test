@@ -21,6 +21,10 @@ function parseValidationSummary() {
   return JSON.parse(match[0]);
 }
 
+function assertIncludes(source, text, context) {
+  assert.ok(source.includes(text), `${context} must include ${text}`);
+}
+
 test('profile route shell copy stays keyed by the settings language', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
@@ -221,6 +225,60 @@ test('profile study setup card owns the localized settings shortcut', () => {
   assert.doesNotMatch(studySetupCard, /\{copy\.openSettings\}/);
   assert.doesNotMatch(source.slice(badgesStart), /pathname: '\/settings'/);
   assert.match(source, /settingsLink: \{[\s\S]*minHeight: space\[6\]/);
+});
+
+test('profile settings shortcut e2e keeps desktop coverage and adds mobile focus handoff', () => {
+  const e2eSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/e2e/profile-settings-shortcut.spec.ts'),
+    'utf8',
+  );
+
+  assertIncludes(
+    e2eSource,
+    'const desktopViewport = { width: 1024, height: 768 };',
+    'profile shortcut E2E',
+  );
+  assertIncludes(
+    e2eSource,
+    'const phoneViewport = { width: 390, height: 844 };',
+    'profile shortcut E2E',
+  );
+  assertIncludes(
+    e2eSource,
+    "test.describe('desktop Profile to Settings shortcut'",
+    'profile shortcut E2E',
+  );
+  assertIncludes(
+    e2eSource,
+    "test.describe('mobile Profile to Settings shortcut'",
+    'profile shortcut E2E',
+  );
+  assertIncludes(
+    e2eSource,
+    'Profile study setup shortcut opens Settings controls in ${language}',
+    'profile shortcut E2E',
+  );
+  assertIncludes(
+    e2eSource,
+    'Profile study setup shortcut keeps focused Settings controls visible on mobile in ${language}',
+    'profile shortcut E2E',
+  );
+  assertIncludes(
+    e2eSource,
+    'await expectMinimumTargetSize(settingsShortcut',
+    'profile shortcut E2E',
+  );
+  assertIncludes(e2eSource, '/\\/settings\\?focus=study$/', 'profile shortcut E2E');
+  assertIncludes(
+    e2eSource,
+    "settingsCtaName: 'Öppna inställningar för dagligt mål, språk och ljud'",
+    'profile shortcut E2E',
+  );
+  assertIncludes(
+    e2eSource,
+    "settingsCtaName: 'Open settings for daily goal, language, and audio'",
+    'profile shortcut E2E',
+  );
 });
 
 test('profile weekly recap card owns the localized recap shortcut', () => {

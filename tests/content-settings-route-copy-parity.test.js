@@ -264,6 +264,46 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('settings focus handoff e2e guards mobile viewport visibility and overflow', () => {
+  const e2eSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/e2e/profile-settings-shortcut.spec.ts'),
+    'utf8',
+  );
+
+  assertIncludes(
+    e2eSource,
+    'const phoneViewport = { width: 390, height: 844 };',
+    'settings focus E2E',
+  );
+  assertIncludes(e2eSource, 'async function expectNoHorizontalOverflow', 'settings focus E2E');
+  assertIncludes(e2eSource, 'async function expectWithinViewport', 'settings focus E2E');
+  assertIncludes(
+    e2eSource,
+    'async function expectHorizontallyWithinViewport',
+    'settings focus E2E',
+  );
+  assertIncludes(e2eSource, 'async function expectBefore', 'settings focus E2E');
+  assertIncludes(
+    e2eSource,
+    "const studyControls = page.getByTestId('study-settings-controls');",
+    'settings focus E2E',
+  );
+  assertIncludes(e2eSource, 'const dailyGoalGroup = page.getByRole', 'settings focus E2E');
+  assertIncludes(e2eSource, 'const languageGroup = page.getByRole', 'settings focus E2E');
+  assertIncludes(e2eSource, 'const audioSwitch = page.getByRole', 'settings focus E2E');
+  assertIncludes(e2eSource, 'await expectHorizontallyWithinViewport(', 'settings focus E2E');
+  assertIncludes(
+    e2eSource,
+    'await expectWithinViewport(page, dailyGoalGroup',
+    'settings focus E2E',
+  );
+  assertIncludes(e2eSource, 'await expectWithinViewport(page, languageGroup', 'settings focus E2E');
+  assertIncludes(e2eSource, 'await expectWithinViewport(page, audioSwitch', 'settings focus E2E');
+  assertIncludes(e2eSource, 'await expectBefore(audioSwitch, themeHeading', 'settings focus E2E');
+  assertIncludes(e2eSource, "themeHeading: 'Tema'", 'settings focus E2E');
+  assertIncludes(e2eSource, "themeHeading: 'Theme'", 'settings focus E2E');
+});
+
 test('settings import summary copy keeps singular and plural labels for bookmark wrong-answer mock exam FSRS and citizenship rows', () => {
   const settingsSource = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
   const e2eSource = fs.readFileSync(
