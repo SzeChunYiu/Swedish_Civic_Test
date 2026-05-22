@@ -1,10 +1,12 @@
+import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import type { Chapter } from '../../types/content';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
 import { Badge } from '../ui/Badge';
 import { Card } from '../ui/Card';
 import { ProgressBar } from '../ui/ProgressBar';
-import { colors, space, typography } from '../../lib/theme';
+import { space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 
 type ChapterCardCopy = {
   accessibilityLabel: {
@@ -58,6 +60,8 @@ export function ChapterCard({
   completedCount?: number;
   language?: AppLanguage;
 }) {
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const copy = chapterCardCopy[language];
   const progress = questionCount > 0 ? completedCount / questionCount : 0;
   const status =
@@ -91,9 +95,12 @@ export function ChapterCard({
       elevated
       importantForAccessibility={shouldHideNestedAccessibility ? 'no-hide-descendants' : undefined}
       style={styles.card}
+      themeColors={themeColors}
     >
       <View style={styles.headerRow}>
-        <Badge tone={questionCount > 0 ? 'blue' : 'warm'}>{status}</Badge>
+        <Badge themeColors={themeColors} tone={questionCount > 0 ? 'blue' : 'warm'}>
+          {status}
+        </Badge>
       </View>
       <Text style={styles.title}>{title}</Text>
       {secondaryName ? <Text style={styles.subtitle}>{secondaryName}</Text> : null}
@@ -103,28 +110,30 @@ export function ChapterCard({
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    gap: space[1],
-  },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  title: {
-    color: colors.text,
-    fontSize: typography.sectionTitle.fontSize,
-    fontWeight: typography.sectionTitle.fontWeight,
-    lineHeight: typography.sectionTitle.lineHeight,
-  },
-  subtitle: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  description: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    card: {
+      gap: space[1],
+    },
+    headerRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    title: {
+      color: themeColors.text,
+      fontSize: typography.sectionTitle.fontSize,
+      fontWeight: typography.sectionTitle.fontWeight,
+      lineHeight: typography.sectionTitle.lineHeight,
+    },
+    subtitle: {
+      color: themeColors.textMuted,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+    description: {
+      color: themeColors.textSecondary,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+  });
+}

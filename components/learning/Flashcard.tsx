@@ -1,7 +1,9 @@
+import { useMemo } from 'react';
 import { StyleSheet, Text } from 'react-native';
 import { getQuestionSourceCitation } from '../../lib/quiz/questionText';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, space, typography } from '../../lib/theme';
+import { space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 import type { PracticeQuestion } from '../../types/content';
 import { QuestionSourceCitation } from '../quiz/QuestionSourceCitation';
 import { Badge } from '../ui/Badge';
@@ -50,6 +52,8 @@ type FlashcardProps = {
 };
 
 export function Flashcard({ front, back, language, question }: FlashcardProps) {
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const settingsLanguage = useSettingsStore((state) => state.language);
   const resolvedLanguage = language ?? settingsLanguage;
   const copy = flashcardCopy[resolvedLanguage];
@@ -63,8 +67,11 @@ export function Flashcard({ front, back, language, question }: FlashcardProps) {
       accessibilityLabel={flashcardAccessibilityLabel}
       accessibilityRole="summary"
       style={styles.card}
+      themeColors={themeColors}
     >
-      <Badge tone="warm">{copy.badgeLabel}</Badge>
+      <Badge themeColors={themeColors} tone="warm">
+        {copy.badgeLabel}
+      </Badge>
       <Text accessibilityRole="header" style={styles.label}>
         {copy.promptHeader}
       </Text>
@@ -78,34 +85,37 @@ export function Flashcard({ front, back, language, question }: FlashcardProps) {
         language={resolvedLanguage}
         question={question}
         style={styles.sourceCitationSurface}
+        themeColors={themeColors}
       />
     </Card>
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    gap: space[1],
-  },
-  label: {
-    color: colors.textMuted,
-    fontSize: typography.badge.fontSize,
-    fontWeight: typography.badge.fontWeight,
-    letterSpacing: typography.badge.letterSpacing,
-    textTransform: 'uppercase',
-  },
-  prompt: {
-    color: colors.text,
-    fontSize: typography.sectionTitle.fontSize,
-    fontWeight: typography.sectionTitle.fontWeight,
-    lineHeight: typography.sectionTitle.lineHeight,
-  },
-  answer: {
-    color: colors.textSecondary,
-    fontSize: typography.body.fontSize,
-    lineHeight: typography.body.lineHeight,
-  },
-  sourceCitationSurface: {
-    marginTop: space[0.5],
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    card: {
+      gap: space[1],
+    },
+    label: {
+      color: themeColors.textMuted,
+      fontSize: typography.badge.fontSize,
+      fontWeight: typography.badge.fontWeight,
+      letterSpacing: typography.badge.letterSpacing,
+      textTransform: 'uppercase',
+    },
+    prompt: {
+      color: themeColors.text,
+      fontSize: typography.sectionTitle.fontSize,
+      fontWeight: typography.sectionTitle.fontWeight,
+      lineHeight: typography.sectionTitle.lineHeight,
+    },
+    answer: {
+      color: themeColors.textSecondary,
+      fontSize: typography.body.fontSize,
+      lineHeight: typography.body.lineHeight,
+    },
+    sourceCitationSurface: {
+      marginTop: space[0.5],
+    },
+  });
+}
