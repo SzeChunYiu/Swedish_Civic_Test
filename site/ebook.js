@@ -13,10 +13,28 @@
       url: 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
       retrievedDate: '2026-05-19',
     },
-    uhrOfficialTestSources: {
-      label: 'UHR current medborgarskapsprovet source pages',
-      mixLabel: 'UHR test status',
+    uhrOfficialTestAbout: {
+      label: 'UHR: Om medborgarskapsprovet',
+      mixLabel: 'UHR test overview',
       url: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
+      retrievedDate: '2026-05-19',
+    },
+    uhrOfficialTestFaq: {
+      label: 'UHR: Frågor och svar',
+      mixLabel: 'UHR test FAQ',
+      url: 'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
+      retrievedDate: '2026-05-19',
+    },
+    uhrOfficialTestSignup: {
+      label: 'UHR: Anmälan',
+      mixLabel: 'UHR sign-up',
+      url: 'https://www.uhr.se/medborgarskapsprovet/anmalan/',
+      retrievedDate: '2026-05-19',
+    },
+    uhrOfficialTestStudyMaterial: {
+      label: 'UHR: Utbildningsmaterial',
+      mixLabel: 'UHR study material',
+      url: 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
       retrievedDate: '2026-05-19',
     },
     scbLandUse: {
@@ -55,7 +73,26 @@
     },
   });
 
-  const OFFICIAL_TEST_SOURCE_KEYS = Object.freeze(['uhrOfficialTestSources']);
+  const OFFICIAL_TEST_SOURCE_KEYS = Object.freeze([
+    'uhrOfficialTestAbout',
+    'uhrOfficialTestFaq',
+    'uhrOfficialTestSignup',
+    'uhrOfficialTestStudyMaterial',
+  ]);
+  const OFFICIAL_TEST_SIGNUP_SOURCE_KEYS = Object.freeze([
+    'uhrOfficialTestAbout',
+    'uhrOfficialTestSignup',
+  ]);
+  const OFFICIAL_TEST_LANGUAGE_SOURCE_KEYS = Object.freeze(['uhrOfficialTestFaq']);
+  const OFFICIAL_TEST_SEATS_SOURCE_KEYS = Object.freeze([
+    'uhrOfficialTestAbout',
+    'uhrOfficialTestFaq',
+  ]);
+  const OFFICIAL_TEST_PENDING_SOURCE_KEYS = Object.freeze([
+    'uhrOfficialTestAbout',
+    'uhrOfficialTestStudyMaterial',
+    'editorialCommentary',
+  ]);
 
   const OFFICIAL_TEST_SOURCE_NOTES = Object.freeze([
     {
@@ -175,7 +212,7 @@
     9: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
     10: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
     11: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
-    12: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
+    12: OFFICIAL_TEST_PENDING_SOURCE_KEYS,
     13: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
   });
   const EBOOK_LEDE_SOURCE_KEYS = Object.freeze({
@@ -3337,11 +3374,11 @@
       body: {
         en: `
           <h2>Current official status</h2>
-          <p>The first civic-knowledge sitting will be held on 15 August 2026 in Stockholm. A Migrationsverket letter is required: only people who receive a letter from Migrationsverket can sign up.</p>
-          <p>The civic-knowledge test itself can only be taken in Swedish. That is separate from the Swedish-language tests that are introduced later.</p>
-          <p>Seats are limited. The August sitting is free of charge, and participants will have generous time.</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SIGNUP_SOURCE_KEYS)}>The first civic-knowledge sitting will be held on 15 August 2026 in Stockholm. A Migrationsverket letter is required: only people who receive a letter from Migrationsverket can sign up.</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_LANGUAGE_SOURCE_KEYS)}>The civic-knowledge test itself can only be taken in Swedish. That is separate from the Swedish-language tests that are introduced later.</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SEATS_SOURCE_KEYS)}>Seats are limited. The August sitting is free of charge, and participants will have generous time.</p>
           <h2>Practical details pending from UHR</h2>
-          <p>UHR has not yet published the exact time and place. Use this app for unofficial practice, and use UHR and Migrationsverket for instructions that affect your own case.</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_PENDING_SOURCE_KEYS)}>UHR has not yet published the exact time and place. Use this app for unofficial practice, and use UHR and Migrationsverket for instructions that affect your own case.</p>
           <h2>How to study now</h2>
           <ol>
             <li>Read this ebook end-to-end at least once. Use the Practice tab to drill what you forget.</li>
@@ -3353,11 +3390,11 @@
         `,
         sv: `
           <h2>Aktuell officiell status</h2>
-          <p>Det första samhällskunskapsprovet inom medborgarskapsprovet hålls den 15 augusti 2026 i Stockholm. Anmälan kräver brev från Migrationsverket.</p>
-          <p>Själva samhällskunskapsprovet kan bara göras på svenska. Det är skilt från de prov i svenska som införs senare.</p>
-          <p>Antalet platser är begränsat. Augustiprovet är kostnadsfritt, och deltagarna får generöst med tid.</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SIGNUP_SOURCE_KEYS)}>Det första samhällskunskapsprovet inom medborgarskapsprovet hålls den 15 augusti 2026 i Stockholm. Anmälan kräver brev från Migrationsverket.</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_LANGUAGE_SOURCE_KEYS)}>Själva samhällskunskapsprovet kan bara göras på svenska. Det är skilt från de prov i svenska som införs senare.</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SEATS_SOURCE_KEYS)}>Antalet platser är begränsat. Augustiprovet är kostnadsfritt, och deltagarna får generöst med tid.</p>
           <h2>Praktiska detaljer väntar hos UHR</h2>
-          <p>UHR har ännu inte publicerat exakt tid och plats. Använd appen som inofficiell övning, och använd UHR och Migrationsverket för instruktioner som påverkar ditt eget ärende.</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_PENDING_SOURCE_KEYS)}>UHR har ännu inte publicerat exakt tid och plats. Använd appen som inofficiell övning, och använd UHR och Migrationsverket för instruktioner som påverkar ditt eget ärende.</p>
           <h2>Plugga nu</h2>
           <ol>
             <li>Läs boken en gång från början till slut och öppna sedan Öva för det du glömmer.</li>
@@ -3369,10 +3406,10 @@
         `,
         'zh-Hans': `
           <h2>当前的官方状态</h2>
-          <p>第一次公民知识考试定于 2026 年 8 月 15 日在斯德哥尔摩举行。报名需要 Migrationsverket（瑞典移民局）的信函：只有收到 Migrationsverket 信函的人才能报名。</p>
-          <p>名额有限。8 月这场考试免费，参加者将有充裕的时间。</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SIGNUP_SOURCE_KEYS)}>第一次公民知识考试定于 2026 年 8 月 15 日在斯德哥尔摩举行。报名需要 Migrationsverket（瑞典移民局）的信函：只有收到 Migrationsverket 信函的人才能报名。</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SEATS_SOURCE_KEYS)}>名额有限。8 月这场考试免费，参加者将有充裕的时间。</p>
           <h2>实际细节仍待 UHR 公布</h2>
-          <p>UHR 尚未公布确切的时间和地点。请把本应用用于非官方练习，而涉及你自身情况的具体指引，请以 UHR 和 Migrationsverket 为准。</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_PENDING_SOURCE_KEYS)}>UHR 尚未公布确切的时间和地点。请把本应用用于非官方练习，而涉及你自身情况的具体指引，请以 UHR 和 Migrationsverket 为准。</p>
           <h2>现在如何学习</h2>
           <ol>
             <li>把这本电子书至少完整读一遍。用“练习”标签页反复操练你忘记的内容。</li>
@@ -3384,10 +3421,10 @@
         `,
         'zh-Hant': `
           <h2>當前的官方狀態</h2>
-          <p>第一次公民知識考試定於 2026 年 8 月 15 日在斯德哥爾摩舉行。報名需要 Migrationsverket（瑞典移民局）的信函：只有收到 Migrationsverket 信函的人才能報名。</p>
-          <p>名額有限。8 月這場考試免費，參加者將有充裕的時間。</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SIGNUP_SOURCE_KEYS)}>第一次公民知識考試定於 2026 年 8 月 15 日在斯德哥爾摩舉行。報名需要 Migrationsverket（瑞典移民局）的信函：只有收到 Migrationsverket 信函的人才能報名。</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SEATS_SOURCE_KEYS)}>名額有限。8 月這場考試免費，參加者將有充裕的時間。</p>
           <h2>實際細節仍待 UHR 公布</h2>
-          <p>UHR 尚未公布確切的時間和地點。請把本應用用於非官方練習，而涉及你自身情況的具體指引，請以 UHR 和 Migrationsverket 為準。</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_PENDING_SOURCE_KEYS)}>UHR 尚未公布確切的時間和地點。請把本應用用於非官方練習，而涉及你自身情況的具體指引，請以 UHR 和 Migrationsverket 為準。</p>
           <h2>現在如何學習</h2>
           <ol>
             <li>把這本電子書至少完整讀一遍。用「練習」標籤頁反覆操練你忘記的內容。</li>
@@ -3399,10 +3436,10 @@
         `,
         ar: `
           <h2>الوضع الرسمي الراهن</h2>
-          <p>ستُعقد أول جلسة لاختبار المعرفة المدنية في 15 أغسطس 2026 في ستوكهولم. ويُشترط وجود خطاب من Migrationsverket: لا يمكن التسجيل إلا لمن يتلقّى خطابًا من Migrationsverket.</p>
-          <p>عدد المقاعد محدود. وجلسة أغسطس مجانية، وسيتوفّر للمشاركين وقت وافٍ.</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SIGNUP_SOURCE_KEYS)}>ستُعقد أول جلسة لاختبار المعرفة المدنية في 15 أغسطس 2026 في ستوكهولم. ويُشترط وجود خطاب من Migrationsverket: لا يمكن التسجيل إلا لمن يتلقّى خطابًا من Migrationsverket.</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SEATS_SOURCE_KEYS)}>عدد المقاعد محدود. وجلسة أغسطس مجانية، وسيتوفّر للمشاركين وقت وافٍ.</p>
           <h2>تفاصيل عملية لم تنشرها UHR بعد</h2>
-          <p>لم تنشر UHR بعد الزمان والمكان بالضبط. استخدم هذا التطبيق للتدرّب غير الرسمي، واستخدم UHR وMigrationsverket للإرشادات التي تخصّ حالتك أنت.</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_PENDING_SOURCE_KEYS)}>لم تنشر UHR بعد الزمان والمكان بالضبط. استخدم هذا التطبيق للتدرّب غير الرسمي، واستخدم UHR وMigrationsverket للإرشادات التي تخصّ حالتك أنت.</p>
           <h2>كيف تدرس الآن</h2>
           <ol>
             <li>اقرأ هذا الكتاب الإلكتروني من أوله إلى آخره مرة واحدة على الأقل. استخدم تبويب التدريب للتمرّن على ما تنساه.</li>
@@ -3414,10 +3451,10 @@
         `,
         ckb: `
           <h2>دۆخی فەرمیی ئێستا</h2>
-          <p>یەکەم دانیشتنی تاقیکردنەوەی زانیاری شارستانی لە 15ی ئاگوستی 2026 لە ستۆکهۆڵم بەڕێوەدەچێت. نامەیەکی Migrationsverket پێویستە: تەنها ئەو کەسانە دەتوانن خۆیان تۆمار بکەن کە نامەیەک لە Migrationsverket وەردەگرن.</p>
-          <p>ژمارەی شوێنەکان سنووردارە. دانیشتنی ئاگوست بێبەرامبەرە، و بەشداربووان کاتێکی بەفراوانیان دەبێت.</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SIGNUP_SOURCE_KEYS)}>یەکەم دانیشتنی تاقیکردنەوەی زانیاری شارستانی لە 15ی ئاگوستی 2026 لە ستۆکهۆڵم بەڕێوەدەچێت. نامەیەکی Migrationsverket پێویستە: تەنها ئەو کەسانە دەتوانن خۆیان تۆمار بکەن کە نامەیەک لە Migrationsverket وەردەگرن.</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SEATS_SOURCE_KEYS)}>ژمارەی شوێنەکان سنووردارە. دانیشتنی ئاگوست بێبەرامبەرە، و بەشداربووان کاتێکی بەفراوانیان دەبێت.</p>
           <h2>وردەکارییە کردارییەکان چاوەڕێی UHRن</h2>
-          <p>UHR هێشتا کات و شوێنی ورد بڵاو نەکردووەتەوە. ئەم ئەپە بۆ مەشقی نافەرمی بەکاربهێنە، و بۆ ئەو ڕێنماییانەی کە کاریگەری لەسەر کەیسی خۆت دەکەن UHR و Migrationsverket بەکاربهێنە.</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_PENDING_SOURCE_KEYS)}>UHR هێشتا کات و شوێنی ورد بڵاو نەکردووەتەوە. ئەم ئەپە بۆ مەشقی نافەرمی بەکاربهێنە، و بۆ ئەو ڕێنماییانەی کە کاریگەری لەسەر کەیسی خۆت دەکەن UHR و Migrationsverket بەکاربهێنە.</p>
           <h2>چۆن ئێستا بخوێنیت</h2>
           <ol>
             <li>ئەم کتێبە ئەلیکترۆنییە بەلایەنی کەمەوە جارێک لە سەرەتاوە بۆ کۆتایی بخوێنەوە. بۆ مەشقکردن لەسەر ئەوەی لەبیری دەکەیت خشتەی مەشق بەکاربهێنە.</li>
@@ -3429,10 +3466,10 @@
         `,
         fa: `
           <h2>وضعیت رسمی کنونی</h2>
-          <p>نخستین جلسهٔ آزمون دانش مدنی در 15 اوت 2026 در استکهلم برگزار می‌شود. داشتن نامه‌ای از Migrationsverket لازم است: فقط کسانی می‌توانند ثبت‌نام کنند که از Migrationsverket نامه دریافت کنند.</p>
-          <p>تعداد صندلی‌ها محدود است. جلسهٔ اوت رایگان است و شرکت‌کنندگان زمان کافی خواهند داشت.</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SIGNUP_SOURCE_KEYS)}>نخستین جلسهٔ آزمون دانش مدنی در 15 اوت 2026 در استکهلم برگزار می‌شود. داشتن نامه‌ای از Migrationsverket لازم است: فقط کسانی می‌توانند ثبت‌نام کنند که از Migrationsverket نامه دریافت کنند.</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SEATS_SOURCE_KEYS)}>تعداد صندلی‌ها محدود است. جلسهٔ اوت رایگان است و شرکت‌کنندگان زمان کافی خواهند داشت.</p>
           <h2>جزئیات عملی که هنوز از سوی UHR منتشر نشده</h2>
-          <p>UHR هنوز زمان و مکان دقیق را منتشر نکرده است. از این برنامه برای تمرین غیررسمی استفاده کنید، و برای دستورالعمل‌هایی که بر پروندهٔ خودتان اثر می‌گذارد به UHR و Migrationsverket مراجعه کنید.</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_PENDING_SOURCE_KEYS)}>UHR هنوز زمان و مکان دقیق را منتشر نکرده است. از این برنامه برای تمرین غیررسمی استفاده کنید، و برای دستورالعمل‌هایی که بر پروندهٔ خودتان اثر می‌گذارد به UHR و Migrationsverket مراجعه کنید.</p>
           <h2>اکنون چگونه مطالعه کنید</h2>
           <ol>
             <li>این کتاب الکترونیکی را دست‌کم یک بار از ابتدا تا انتها بخوانید. برای تمرین آنچه فراموش می‌کنید از زبانهٔ تمرین استفاده کنید.</li>
@@ -3444,10 +3481,10 @@
         `,
         pl: `
           <h2>Aktualny status oficjalny</h2>
-          <p>Pierwsza sesja egzaminu z wiedzy obywatelskiej odbędzie się 15 sierpnia 2026 roku w Sztokholmie. Wymagane jest pismo z Migrationsverket: zapisać się mogą tylko osoby, które otrzymają pismo z Migrationsverket.</p>
-          <p>Liczba miejsc jest ograniczona. Sesja sierpniowa jest bezpłatna, a uczestnicy będą mieli dużo czasu.</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SIGNUP_SOURCE_KEYS)}>Pierwsza sesja egzaminu z wiedzy obywatelskiej odbędzie się 15 sierpnia 2026 roku w Sztokholmie. Wymagane jest pismo z Migrationsverket: zapisać się mogą tylko osoby, które otrzymają pismo z Migrationsverket.</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SEATS_SOURCE_KEYS)}>Liczba miejsc jest ograniczona. Sesja sierpniowa jest bezpłatna, a uczestnicy będą mieli dużo czasu.</p>
           <h2>Szczegóły praktyczne — wciąż oczekiwane od UHR</h2>
-          <p>UHR nie opublikował jeszcze dokładnego czasu i miejsca. Korzystaj z tej aplikacji do nieoficjalnych ćwiczeń, a w sprawie wskazówek dotyczących Twojej własnej sytuacji zwracaj się do UHR i Migrationsverket.</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_PENDING_SOURCE_KEYS)}>UHR nie opublikował jeszcze dokładnego czasu i miejsca. Korzystaj z tej aplikacji do nieoficjalnych ćwiczeń, a w sprawie wskazówek dotyczących Twojej własnej sytuacji zwracaj się do UHR i Migrationsverket.</p>
           <h2>Jak uczyć się teraz</h2>
           <ol>
             <li>Przeczytaj tego e-booka przynajmniej raz od początku do końca. Korzystaj z zakładki Ćwiczenie, by przerabiać to, co zapominasz.</li>
@@ -3459,10 +3496,10 @@
         `,
         so: `
           <h2>Xaaladda rasmiga ah ee hadda</h2>
-          <p>Fadhiga ugu horreeya ee imtixaanka aqoonta bulshada wuxuu dhici doonaa 15 Ogosto 2026 magaalada Stockholm. Waxaa loo baahan yahay warqad ka timid Migrationsverket: kaliya dadka hela warqad ka timid Migrationsverket ayaa is-diiwaangelin kara.</p>
-          <p>Kuraasta way xaddidan yihiin. Fadhiga Ogosto waa bilaash, oo ka-qaybgalayaashu waxay heli doonaan waqti badan.</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SIGNUP_SOURCE_KEYS)}>Fadhiga ugu horreeya ee imtixaanka aqoonta bulshada wuxuu dhici doonaa 15 Ogosto 2026 magaalada Stockholm. Waxaa loo baahan yahay warqad ka timid Migrationsverket: kaliya dadka hela warqad ka timid Migrationsverket ayaa is-diiwaangelin kara.</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SEATS_SOURCE_KEYS)}>Kuraasta way xaddidan yihiin. Fadhiga Ogosto waa bilaash, oo ka-qaybgalayaashu waxay heli doonaan waqti badan.</p>
           <h2>Faahfaahin wax-ku-ool ah oo weli laga sugayo UHR</h2>
-          <p>UHR weli ma soo saarin waqtiga iyo goobta saxda ah. U isticmaal barnaamijkan tababar aan rasmi ahayn, oo u isticmaal UHR iyo Migrationsverket tilmaamaha saameeya kiiskaaga gaarka ah.</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_PENDING_SOURCE_KEYS)}>UHR weli ma soo saarin waqtiga iyo goobta saxda ah. U isticmaal barnaamijkan tababar aan rasmi ahayn, oo u isticmaal UHR iyo Migrationsverket tilmaamaha saameeya kiiskaaga gaarka ah.</p>
           <h2>Sida loo barto hadda</h2>
           <ol>
             <li>Akhri buuggan elektaroonigga ah ugu yaraan hal mar bilow ilaa dhammaad. U isticmaal tabka Tababarka si aad u celcelisid waxa aad ilowdo.</li>
@@ -3474,10 +3511,10 @@
         `,
         ti: `
           <h2>ህሉው ወግዓዊ ኩነታት</h2>
-          <p>እታ ቐዳመይቲ ናይ ሲቪካዊ ፍልጠት ፈተና ኣብ 15 ነሓሰ 2026 ኣብ ስቶክሆልም ክትካየድ እያ። ካብ Migrationsverket ዝመጸ ደብዳበ የድሊ፦ ካብ Migrationsverket ደብዳበ ዝተቐበሉ ሰባት ጥራይ እዮም ክምዝገቡ ዝኽእሉ።</p>
-          <p>ብዝሒ መናብር ድሩት እዩ። እታ ናይ ነሓሰ ፈተና ብናጻ እያ፣ ተሳተፍቲ ድማ እኹል ግዜ ይረኽቡ።</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SIGNUP_SOURCE_KEYS)}>እታ ቐዳመይቲ ናይ ሲቪካዊ ፍልጠት ፈተና ኣብ 15 ነሓሰ 2026 ኣብ ስቶክሆልም ክትካየድ እያ። ካብ Migrationsverket ዝመጸ ደብዳበ የድሊ፦ ካብ Migrationsverket ደብዳበ ዝተቐበሉ ሰባት ጥራይ እዮም ክምዝገቡ ዝኽእሉ።</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SEATS_SOURCE_KEYS)}>ብዝሒ መናብር ድሩት እዩ። እታ ናይ ነሓሰ ፈተና ብናጻ እያ፣ ተሳተፍቲ ድማ እኹል ግዜ ይረኽቡ።</p>
           <h2>ግብራዊ ዝርዝራት ካብ UHR ይጽበ ኣሎ</h2>
-          <p>UHR ክሳብ ሕጂ ነቲ ልክዕ ግዜን ቦታን ኣይዘርግሐን። ነዚ መተግበሪ ንዘይወግዓዊ ልምምድ ተጠቐመሉ፣ ንዓኻ ንዝምልከት ጉዳይ ዝትንክፍ መምርሒታት ድማ ንUHR ከምኡ’ውን Migrationsverket ተጠቐም።</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_PENDING_SOURCE_KEYS)}>UHR ክሳብ ሕጂ ነቲ ልክዕ ግዜን ቦታን ኣይዘርግሐን። ነዚ መተግበሪ ንዘይወግዓዊ ልምምድ ተጠቐመሉ፣ ንዓኻ ንዝምልከት ጉዳይ ዝትንክፍ መምርሒታት ድማ ንUHR ከምኡ’ውን Migrationsverket ተጠቐም።</p>
           <h2>ሕጂ ብኸመይ ከም እትመሃር</h2>
           <ol>
             <li>ነዚ ኢ-መጽሓፍ ብውሕዱ ሓደ ግዜ ካብ መጀመርታ ክሳብ መወዳእታ ኣንብቦ። ነቲ እትርስዖ ንምልምማድ ነቲ ናይ ልምምድ ታብ ተጠቐም።</li>
@@ -3489,10 +3526,10 @@
         `,
         tr: `
           <h2>Güncel resmî durum</h2>
-          <p>İlk yurttaşlık bilgisi oturumu 15 Ağustos 2026'da Stockholm'de yapılacak. Migrationsverket'ten bir mektup gereklidir: yalnızca Migrationsverket'ten mektup alan kişiler kayıt yaptırabilir.</p>
-          <p>Kontenjan sınırlıdır. Ağustos oturumu ücretsizdir ve katılımcıların bol zamanı olacaktır.</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SIGNUP_SOURCE_KEYS)}>İlk yurttaşlık bilgisi oturumu 15 Ağustos 2026'da Stockholm'de yapılacak. Migrationsverket'ten bir mektup gereklidir: yalnızca Migrationsverket'ten mektup alan kişiler kayıt yaptırabilir.</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SEATS_SOURCE_KEYS)}>Kontenjan sınırlıdır. Ağustos oturumu ücretsizdir ve katılımcıların bol zamanı olacaktır.</p>
           <h2>UHR'den beklenen pratik ayrıntılar</h2>
-          <p>UHR henüz kesin zaman ve yeri yayımlamadı. Bu uygulamayı gayriresmî alıştırma için kullanın; kendi durumunuzu etkileyen yönergeler için UHR ve Migrationsverket'i kullanın.</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_PENDING_SOURCE_KEYS)}>UHR henüz kesin zaman ve yeri yayımlamadı. Bu uygulamayı gayriresmî alıştırma için kullanın; kendi durumunuzu etkileyen yönergeler için UHR ve Migrationsverket'i kullanın.</p>
           <h2>Şimdi nasıl çalışılır</h2>
           <ol>
             <li>Bu e-kitabı en az bir kez baştan sona okuyun. Unuttuklarınızı çalışmak için Alıştırma sekmesini kullanın.</li>
@@ -3504,10 +3541,10 @@
         `,
         uk: `
           <h2>Поточний офіційний статус</h2>
-          <p>Перша сесія іспиту на знання громадянознавства відбудеться 15 серпня 2026 року в Стокгольмі. Потрібен лист від Migrationsverket: зареєструватися можуть лише ті, хто отримує лист від Migrationsverket.</p>
-          <p>Кількість місць обмежена. Серпнева сесія безкоштовна, і учасники матимуть достатньо часу.</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SIGNUP_SOURCE_KEYS)}>Перша сесія іспиту на знання громадянознавства відбудеться 15 серпня 2026 року в Стокгольмі. Потрібен лист від Migrationsverket: зареєструватися можуть лише ті, хто отримує лист від Migrationsverket.</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SEATS_SOURCE_KEYS)}>Кількість місць обмежена. Серпнева сесія безкоштовна, і учасники матимуть достатньо часу.</p>
           <h2>Практичні деталі ще очікуються від UHR</h2>
-          <p>UHR ще не оприлюднив точний час і місце. Використовуйте цей застосунок для неофіційного тренування, а для вказівок, що стосуються вашого власного випадку, звертайтеся до UHR та Migrationsverket.</p>
+          <p${ebookSourceKeyDataAttr(OFFICIAL_TEST_PENDING_SOURCE_KEYS)}>UHR ще не оприлюднив точний час і місце. Використовуйте цей застосунок для неофіційного тренування, а для вказівок, що стосуються вашого власного випадку, звертайтеся до UHR та Migrationsverket.</p>
           <h2>Як вчитися зараз</h2>
           <ol>
             <li>Прочитайте цю електронну книжку щонайменше один раз від початку до кінця. Користуйтеся вкладкою «Тренування», щоб опрацьовувати те, що забуваєте.</li>

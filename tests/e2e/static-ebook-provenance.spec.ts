@@ -27,7 +27,12 @@ const safeExternalSourceLinkCases = [
   },
   {
     chapterId: '12',
-    labels: ['UHR: Om medborgarskapsprovet'],
+    labels: [
+      'UHR: Om medborgarskapsprovet',
+      'UHR: Frågor och svar',
+      'UHR: Anmälan',
+      'UHR: Utbildningsmaterial',
+    ],
   },
 ] as const;
 const officialTestSourceLinkLabels = [
@@ -44,7 +49,10 @@ const badgeLabels: Record<StaticSiteLanguage, Record<string, string>> = {
     migrationsverketCitizenshipRules: 'Migrationsverket citizenship rules',
     riksbankHistory: 'Riksbank',
     scbLandUse: 'SCB',
-    uhrOfficialTestSources: 'UHR test status',
+    uhrOfficialTestAbout: 'UHR test overview',
+    uhrOfficialTestFaq: 'UHR test FAQ',
+    uhrOfficialTestSignup: 'UHR sign-up',
+    uhrOfficialTestStudyMaterial: 'UHR study material',
     uhrStudyMaterial: 'UHR',
   },
   sv: {
@@ -53,7 +61,10 @@ const badgeLabels: Record<StaticSiteLanguage, Record<string, string>> = {
     migrationsverketCitizenshipRules: 'Migrationsverket citizenship rules',
     riksbankHistory: 'Riksbank',
     scbLandUse: 'SCB',
-    uhrOfficialTestSources: 'UHR test status',
+    uhrOfficialTestAbout: 'UHR test overview',
+    uhrOfficialTestFaq: 'UHR test FAQ',
+    uhrOfficialTestSignup: 'UHR sign-up',
+    uhrOfficialTestStudyMaterial: 'UHR study material',
     uhrStudyMaterial: 'UHR',
   },
 };
