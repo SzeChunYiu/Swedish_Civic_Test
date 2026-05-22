@@ -1,7 +1,9 @@
+import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import type { StyleProp, ViewStyle } from 'react-native';
 
-import { colors, radius, space, typography } from '../../lib/theme';
+import { radius, space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 import { Badge } from '../ui/Badge';
 
 /**
@@ -26,6 +28,8 @@ export function BadgeRow({
   title,
   unlocked,
 }: BadgeRowProps) {
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const accessibilityLabel = `${title}. ${statusLabel}. ${description}. ${progressHint}.`;
 
   return (
@@ -40,56 +44,62 @@ export function BadgeRow({
         <Text style={[styles.description, unlocked ? null : styles.lockedText]}>{description}</Text>
         <Text style={styles.progress}>{progressHint}</Text>
       </View>
-      <Badge accessibilityLabel={statusLabel} tone={unlocked ? 'green' : 'warm'}>
+      <Badge
+        accessibilityLabel={statusLabel}
+        themeColors={themeColors}
+        tone={unlocked ? 'green' : 'warm'}
+      >
         {statusLabel}
       </Badge>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  row: {
-    alignItems: 'flex-start',
-    borderColor: colors.border,
-    borderRadius: radius.small,
-    borderWidth: space.hairline,
-    flexDirection: 'row',
-    gap: space[1.25],
-    justifyContent: 'space-between',
-    minHeight: space[7],
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[1.25],
-  },
-  unlocked: {
-    backgroundColor: colors.surface,
-  },
-  locked: {
-    backgroundColor: colors.surfaceWarm,
-  },
-  copy: {
-    flex: 1,
-    gap: space[0.5],
-  },
-  title: {
-    color: colors.text,
-    fontSize: typography.bodyBold.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    lineHeight: typography.bodyBold.lineHeight,
-  },
-  lockedText: {
-    color: colors.textSecondary,
-  },
-  description: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  progress: {
-    color: colors.textMuted,
-    fontSize: typography.disclaimer.fontSize,
-    lineHeight: typography.disclaimer.lineHeight,
-  },
-  statusBadge: {
-    flexShrink: 0,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    row: {
+      alignItems: 'flex-start',
+      borderColor: themeColors.border,
+      borderRadius: radius.small,
+      borderWidth: space.hairline,
+      flexDirection: 'row',
+      gap: space[1.25],
+      justifyContent: 'space-between',
+      minHeight: space[7],
+      paddingHorizontal: space[1.5],
+      paddingVertical: space[1.25],
+    },
+    unlocked: {
+      backgroundColor: themeColors.surface,
+    },
+    locked: {
+      backgroundColor: themeColors.surfaceWarm,
+    },
+    copy: {
+      flex: 1,
+      gap: space[0.5],
+    },
+    title: {
+      color: themeColors.text,
+      fontSize: typography.bodyBold.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      lineHeight: typography.bodyBold.lineHeight,
+    },
+    lockedText: {
+      color: themeColors.textSecondary,
+    },
+    description: {
+      color: themeColors.textSecondary,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+    progress: {
+      color: themeColors.textMuted,
+      fontSize: typography.disclaimer.fontSize,
+      lineHeight: typography.disclaimer.lineHeight,
+    },
+    statusBadge: {
+      flexShrink: 0,
+    },
+  });
+}

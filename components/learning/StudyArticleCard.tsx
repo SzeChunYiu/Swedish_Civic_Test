@@ -1,6 +1,8 @@
+import { useMemo } from 'react';
 import { StyleSheet, Text } from 'react-native';
 
-import { colors, space, typography } from '../../lib/theme';
+import { space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 import { Badge } from '../ui/Badge';
 import { Card } from '../ui/Card';
 
@@ -21,6 +23,8 @@ export function StudyArticleCard({
   subtitle,
   title,
 }: StudyArticleCardProps) {
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const shouldGroupForAccessibility = accessibilityMode === 'summary';
   const shouldHideNestedAccessibility = accessibilityMode === 'presentation';
   const accessibilityLabel = `${eyebrow}. ${title}. ${subtitle}. ${meta}. ${ctaLabel}.`;
@@ -32,8 +36,11 @@ export function StudyArticleCard({
       elevated
       importantForAccessibility={shouldHideNestedAccessibility ? 'no-hide-descendants' : undefined}
       style={styles.card}
+      themeColors={themeColors}
     >
-      <Badge tone="green">{eyebrow}</Badge>
+      <Badge themeColors={themeColors} tone="green">
+        {eyebrow}
+      </Badge>
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.subtitle}>{subtitle}</Text>
       <Text style={styles.meta}>{meta}</Text>
@@ -42,30 +49,32 @@ export function StudyArticleCard({
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    gap: space[1],
-  },
-  title: {
-    color: colors.text,
-    fontSize: typography.sectionTitle.fontSize,
-    fontWeight: typography.sectionTitle.fontWeight,
-    lineHeight: typography.sectionTitle.lineHeight,
-  },
-  subtitle: {
-    color: colors.textSecondary,
-    fontSize: typography.body.fontSize,
-    lineHeight: typography.body.lineHeight,
-  },
-  meta: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  cta: {
-    color: colors.accent,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    lineHeight: typography.bodyTight.lineHeight,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    card: {
+      gap: space[1],
+    },
+    title: {
+      color: themeColors.text,
+      fontSize: typography.sectionTitle.fontSize,
+      fontWeight: typography.sectionTitle.fontWeight,
+      lineHeight: typography.sectionTitle.lineHeight,
+    },
+    subtitle: {
+      color: themeColors.textSecondary,
+      fontSize: typography.body.fontSize,
+      lineHeight: typography.body.lineHeight,
+    },
+    meta: {
+      color: themeColors.textMuted,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+    cta: {
+      color: themeColors.accent,
+      fontSize: typography.navButton.fontSize,
+      fontWeight: typography.navButton.fontWeight,
+      lineHeight: typography.bodyTight.lineHeight,
+    },
+  });
+}
