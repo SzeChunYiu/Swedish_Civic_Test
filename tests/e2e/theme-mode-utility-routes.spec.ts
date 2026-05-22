@@ -112,7 +112,43 @@ const firstRunAboutModalCases = [
   title: string;
 }[];
 
+const onboardingDarkThemeCases = [
+  {
+    adjustSettingsLabel: 'Öppna inställningar',
+    dailyGoalTitle: 'Välj ett mjukt dagligt mål',
+    goalLabel: 'Välj regelbundet dagligt mål med 20 svar',
+    language: 'sv',
+    startStudyingLabel: 'Börja studera',
+    subtitle:
+      'En liten, fristående studiekompis för daglig övning, provträning och genomgång av frågor du missat.',
+    testDateInputLabel: 'Ange provdatum som ÅÅÅÅ-MM-DD',
+    title: 'Förbered dig lugnt för samhällskunskapsprovet',
+  },
+  {
+    adjustSettingsLabel: 'Adjust settings',
+    dailyGoalTitle: 'Choose a gentle daily goal',
+    goalLabel: 'Choose regular daily goal with 20 answers',
+    language: 'en',
+    startStudyingLabel: 'Start studying',
+    subtitle:
+      'A small, independent study companion for daily practice, mock exams, and mistake review.',
+    testDateInputLabel: 'Enter test date as YYYY-MM-DD',
+    title: 'Prepare calmly for the civic test',
+  },
+] as const satisfies readonly {
+  adjustSettingsLabel: string;
+  dailyGoalTitle: string;
+  goalLabel: string;
+  language: SourceAffordanceLanguage;
+  startStudyingLabel: string;
+  subtitle: string;
+  testDateInputLabel: string;
+  title: string;
+}[];
+
 function hexToRgb(hexColor: string) {
+  if (hexColor.startsWith('rgb')) return hexColor;
+
   const hex = hexColor.replace('#', '');
   const red = Number.parseInt(hex.slice(0, 2), 16);
   const green = Number.parseInt(hex.slice(2, 4), 16);
@@ -238,6 +274,152 @@ for (const testCase of firstRunAboutModalCases) {
       'color',
       darkColors.textMuted,
       `First-run About modal secondary action labels should use the dark muted text token in ${testCase.language}`,
+    );
+    await expectNoHorizontalOverflow(page);
+  });
+}
+
+for (const testCase of onboardingDarkThemeCases) {
+  test(`onboarding route uses dark theme tokens in ${testCase.language}`, async ({ page }) => {
+    await seedSettingsLanguage(page, testCase.language);
+    await markAboutTheTestSeen(page);
+    await seedDarkTheme(page);
+
+    await page.goto('/onboarding', { waitUntil: 'networkidle' });
+    await dismissBlockingModals(page);
+
+    await expect(page.locator('[role="dialog"][aria-modal="true"]')).toHaveCount(0);
+
+    const hero = page.getByTestId('onboarding-hero');
+    await expect(hero).toBeVisible();
+    await expectComputedColor(
+      hero,
+      'backgroundColor',
+      darkColors.surface,
+      `Onboarding hero should use the dark surface token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      hero,
+      'borderColor',
+      darkColors.border,
+      `Onboarding hero should use the dark border token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      page.getByRole('heading', { name: testCase.title }),
+      'color',
+      darkColors.text,
+      `Onboarding title should use the dark text token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      page.getByText(testCase.subtitle),
+      'color',
+      darkColors.textMuted,
+      `Onboarding subtitle should use the dark muted text token in ${testCase.language}`,
+    );
+
+    const goalSection = page.getByTestId('onboarding-goal-section');
+    await expect(goalSection).toBeVisible();
+    await expectComputedColor(
+      goalSection,
+      'backgroundColor',
+      darkColors.surfaceWarm,
+      `Onboarding daily-goal section should use the dark warm surface token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      goalSection,
+      'borderColor',
+      darkColors.border,
+      `Onboarding daily-goal section should use the dark border token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      page.getByRole('heading', { name: testCase.dailyGoalTitle }),
+      'color',
+      darkColors.text,
+      `Onboarding daily-goal heading should use the dark text token in ${testCase.language}`,
+    );
+
+    const goalRadio = page.getByRole('radio', { exact: true, name: testCase.goalLabel });
+    await expect(goalRadio).toBeVisible();
+    await expectComputedColor(
+      goalRadio,
+      'backgroundColor',
+      darkColors.surface,
+      `Unselected onboarding daily-goal radio should use the dark surface token in ${testCase.language}`,
+    );
+    await goalRadio.click();
+    await expect(goalRadio).toHaveAttribute('aria-checked', 'true');
+    await expectComputedColor(
+      goalRadio,
+      'backgroundColor',
+      darkColors.badgeBlueBg,
+      `Selected onboarding daily-goal radio should use the dark badge background token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      goalRadio,
+      'borderColor',
+      darkColors.badgeBlueText,
+      `Selected onboarding daily-goal radio should use the dark badge border token in ${testCase.language}`,
+    );
+
+    const testDateInput = page.getByRole('textbox', { name: testCase.testDateInputLabel });
+    await expect(testDateInput).toBeVisible();
+    await expectComputedColor(
+      testDateInput,
+      'backgroundColor',
+      darkColors.surfaceWarm,
+      `Onboarding test-date input should use the dark warm surface token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      testDateInput,
+      'borderColor',
+      darkColors.border,
+      `Onboarding test-date input should use the dark border token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      testDateInput,
+      'color',
+      darkColors.text,
+      `Onboarding test-date input should use the dark text token in ${testCase.language}`,
+    );
+
+    const startStudying = page.getByRole('link', {
+      exact: true,
+      name: testCase.startStudyingLabel,
+    });
+    await expectComputedColor(
+      startStudying,
+      'backgroundColor',
+      darkColors.accent,
+      `Onboarding primary action should use the dark accent token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      startStudying,
+      'color',
+      darkColors.surface,
+      `Onboarding primary action label should use the dark surface token in ${testCase.language}`,
+    );
+
+    const adjustSettings = page.getByRole('link', {
+      exact: true,
+      name: testCase.adjustSettingsLabel,
+    });
+    await expectComputedColor(
+      adjustSettings,
+      'backgroundColor',
+      darkColors.surfaceMuted,
+      `Onboarding secondary action should use the dark muted surface token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      adjustSettings,
+      'borderColor',
+      darkColors.border,
+      `Onboarding secondary action should use the dark border token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      adjustSettings,
+      'color',
+      darkColors.text,
+      `Onboarding secondary action label should use the dark text token in ${testCase.language}`,
     );
     await expectNoHorizontalOverflow(page);
   });

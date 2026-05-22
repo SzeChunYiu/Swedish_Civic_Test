@@ -252,6 +252,36 @@ test('first-run about modal resolves styles from active ThemeColors', () => {
   assert.doesNotMatch(source, /import \{[^}]*\bcolors\b/);
 });
 
+test('onboarding route resolves styles from active ThemeColors', () => {
+  const source = fs.readFileSync(path.join(repoRoot, 'app/onboarding.tsx'), 'utf8');
+
+  assert.match(source, /type ThemeColors/);
+  assert.match(source, /useThemeColors/);
+  assert.match(source, /const themeColors = useThemeColors\(\);/);
+  assert.match(
+    source,
+    /const styles = useMemo\(\(\) => createStyles\(themeColors\), \[themeColors\]\);/,
+  );
+  assert.match(source, /function createStyles\(themeColors: ThemeColors\)/);
+  assert.match(source, /testID="onboarding-hero"/);
+  assert.match(source, /testID="onboarding-goal-section"/);
+  assert.match(source, /testID="onboarding-test-date-section"/);
+  assert.match(source, /backgroundColor: themeColors\.surface/);
+  assert.match(source, /backgroundColor: themeColors\.surfaceWarm/);
+  assert.match(source, /backgroundColor: themeColors\.badgeBlueBg/);
+  assert.match(source, /borderColor: themeColors\.border/);
+  assert.match(source, /borderColor: themeColors\.badgeBlueText/);
+  assert.match(source, /borderColor: themeColors\.focus/);
+  assert.match(source, /color: themeColors\.badgeBlueText/);
+  assert.match(source, /color: themeColors\.text/);
+  assert.match(source, /color: themeColors\.textSecondary/);
+  assert.match(source, /color: themeColors\.textMuted/);
+  assert.match(source, /placeholderTextColor=\{themeColors\.textMuted\}/);
+  assert.match(source, /<QuestionDisclaimer themeColors=\{themeColors\}/);
+  assert.doesNotMatch(source, /\bcolors\./);
+  assert.doesNotMatch(source, /import \{[^}]*\bcolors\b/);
+});
+
 test('about-the-test first-run guide copy rejects mockprov wording', () => {
   const result = spawnSync(
     process.execPath,
