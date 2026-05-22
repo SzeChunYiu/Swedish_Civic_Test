@@ -1,9 +1,12 @@
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
 import { QuestionDisclaimer } from '../components/quiz/QuestionDisclaimer';
 import { RouteLink } from '../components/ui/RouteLink';
+import { formatExamDate, type StudyIntensity } from '../lib/learning/examDate';
 import {
+  normalizeStudyPlanTestDateIso,
   supportedDailyGoalAnswerOptions,
   useSettingsStore,
   type AppLanguage,
@@ -41,6 +44,14 @@ type OnboardingCopy = {
   startStudyingAccessibilityLabel: string;
   steps: readonly string[];
   subtitle: string;
+  testDateInputAccessibilityLabel: string;
+  testDateInputPlaceholder: string;
+  testDateInvalid: string;
+  testDateSaved: (formattedDate: string) => string;
+  testDateSkip: string;
+  testDateSkipAccessibilityLabel: string;
+  testDateSubtitle: string;
+  testDateTitle: string;
   title: string;
 };
 
@@ -83,6 +94,15 @@ const onboardingCopy: Record<AppLanguage, OnboardingCopy> = {
     ],
     subtitle:
       'En liten, fristående studiekompis för daglig övning, provträning och genomgång av frågor du missat.',
+    testDateInputAccessibilityLabel: 'Ange provdatum som ÅÅÅÅ-MM-DD',
+    testDateInputPlaceholder: '2026-08-15',
+    testDateInvalid: 'Använd formatet ÅÅÅÅ-MM-DD eller hoppa över tills du har bokat.',
+    testDateSaved: (formattedDate) => `Sparat provdatum: ${formattedDate}.`,
+    testDateSkip: 'Jag har inte bokat än',
+    testDateSkipAccessibilityLabel: 'Fortsätt utan bokat provdatum',
+    testDateSubtitle:
+      'Lägg till datumet om du redan har bokat. Det sparas bara på den här enheten och kan ändras senare.',
+    testDateTitle: 'När är ditt prov?',
     title: 'Förbered dig lugnt för samhällskunskapsprovet',
   },
   en: {
@@ -122,15 +142,83 @@ const onboardingCopy: Record<AppLanguage, OnboardingCopy> = {
     ],
     subtitle:
       'A small, independent study companion for daily practice, mock exams, and mistake review.',
+    testDateInputAccessibilityLabel: 'Enter test date as YYYY-MM-DD',
+    testDateInputPlaceholder: '2026-08-15',
+    testDateInvalid: "Use YYYY-MM-DD, or skip until you've booked.",
+    testDateSaved: (formattedDate) => `Test date saved: ${formattedDate}.`,
+    testDateSkip: "I haven't booked it yet",
+    testDateSkipAccessibilityLabel: 'Continue without a booked test date',
+    testDateSubtitle:
+      'Add the date if you have booked it. It stays only on this device and can be changed later.',
+    testDateTitle: 'When is your test?',
     title: 'Prepare calmly for the civic test',
   },
 };
+
+function studyIntensityForDailyGoal(goal: DailyGoalPresetValue): StudyIntensity {
+  if (goal === 10) return 'casual';
+  if (goal === 40) return 'serious';
+  return 'regular';
+}
 
 export default function Screen() {
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const language = useSettingsStore((state) => state.language);
   const setDailyGoalAnswers = useSettingsStore((state) => state.setDailyGoalAnswers);
+  const setStudyPlanIntensity = useSettingsStore((state) => state.setStudyPlanIntensity);
+  const setStudyPlanTestDateIso = useSettingsStore((state) => state.setStudyPlanTestDateIso);
+  const studyPlanTestDateIso = useSettingsStore((state) => state.studyPlanTestDateIso);
+  const [testDateInput, setTestDateInput] = useState(() =>
+    studyPlanTestDateIso ? studyPlanTestDateIso.slice(0, 10) : '',
+  );
+  const [testDateFeedback, setTestDateFeedback] = useState<'idle' | 'invalid' | 'saved'>(
+    studyPlanTestDateIso ? 'saved' : 'idle',
+  );
   const copy = onboardingCopy[language];
+  const testDateFeedbackText =
+    testDateFeedback === 'invalid'
+      ? copy.testDateInvalid
+      : testDateFeedback === 'saved' && studyPlanTestDateIso
+        ? copy.testDateSaved(formatExamDate(new Date(studyPlanTestDateIso), language))
+        : null;
+
+  useEffect(() => {
+    if (!studyPlanTestDateIso) return;
+
+    setTestDateInput(studyPlanTestDateIso.slice(0, 10));
+    setTestDateFeedback('saved');
+  }, [studyPlanTestDateIso]);
+
+  const handleDailyGoalPress = (goal: DailyGoalPresetValue) => {
+    setDailyGoalAnswers(goal);
+    setStudyPlanIntensity(studyIntensityForDailyGoal(goal));
+  };
+
+  const handleTestDateChange = (value: string) => {
+    const nextValue = value.replace(/[^\d-]/g, '').slice(0, 10);
+    setTestDateInput(nextValue);
+
+    if (!nextValue) {
+      setStudyPlanTestDateIso(null);
+      setTestDateFeedback('idle');
+      return;
+    }
+
+    const normalizedDate = normalizeStudyPlanTestDateIso(nextValue);
+    if (normalizedDate) {
+      setStudyPlanTestDateIso(normalizedDate);
+      setTestDateFeedback('saved');
+      return;
+    }
+
+    setTestDateFeedback(nextValue.length >= 10 ? 'invalid' : 'idle');
+  };
+
+  const handleSkipTestDate = () => {
+    setTestDateInput('');
+    setStudyPlanTestDateIso(null);
+    setTestDateFeedback('idle');
+  };
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -174,7 +262,7 @@ export default function Screen() {
                 accessibilityRole="radio"
                 accessibilityState={{ checked: selected }}
                 hitSlop={space[1]}
-                onPress={() => setDailyGoalAnswers(goal)}
+                onPress={() => handleDailyGoalPress(goal)}
                 style={({ pressed }) => [
                   styles.goalPreset,
                   selected ? styles.goalPresetActive : null,
@@ -208,6 +296,39 @@ export default function Screen() {
         >
           {copy.decideLater}
         </RouteLink>
+      </View>
+
+      <View style={styles.testDateSection}>
+        <Text accessibilityRole="header" style={styles.goalTitle}>
+          {copy.testDateTitle}
+        </Text>
+        <Text style={styles.goalSubtitle}>{copy.testDateSubtitle}</Text>
+        <TextInput
+          accessibilityLabel={copy.testDateInputAccessibilityLabel}
+          inputMode="numeric"
+          keyboardType="numbers-and-punctuation"
+          maxLength={10}
+          onChangeText={handleTestDateChange}
+          placeholder={copy.testDateInputPlaceholder}
+          placeholderTextColor={colors.textMuted}
+          style={styles.testDateInput}
+          value={testDateInput}
+        />
+        {testDateFeedbackText ? (
+          <Text style={styles.goalSubtitle}>{testDateFeedbackText}</Text>
+        ) : null}
+        <Pressable
+          accessibilityLabel={copy.testDateSkipAccessibilityLabel}
+          accessibilityRole="button"
+          hitSlop={space[1]}
+          onPress={handleSkipTestDate}
+          style={({ pressed }) => [
+            styles.testDateSkipButton,
+            pressed ? styles.goalPresetPressed : null,
+          ]}
+        >
+          <Text style={styles.testDateSkipText}>{copy.testDateSkip}</Text>
+        </Pressable>
       </View>
 
       <QuestionDisclaimer />
@@ -306,6 +427,14 @@ const styles = StyleSheet.create({
     gap: space[1.5],
     padding: space[2],
   },
+  testDateSection: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.card,
+    borderWidth: space.hairline,
+    gap: space[1.5],
+    padding: space[2],
+  },
   goalTitle: {
     color: colors.text,
     fontSize: typography.cardTitle.fontSize,
@@ -367,6 +496,33 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     minHeight: space[6],
+  },
+  testDateInput: {
+    backgroundColor: colors.surfaceWarm,
+    borderColor: colors.border,
+    borderRadius: radius.micro,
+    borderWidth: space.hairline,
+    color: colors.text,
+    fontSize: typography.body.fontSize,
+    minHeight: space[6],
+    paddingHorizontal: space[1.5],
+    paddingVertical: space[1],
+  },
+  testDateSkipButton: {
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    borderColor: colors.border,
+    borderRadius: radius.micro,
+    borderWidth: space.hairline,
+    minHeight: space[6],
+    paddingHorizontal: space[1.5],
+    paddingVertical: space[1],
+  },
+  testDateSkipText: {
+    color: colors.textSecondary,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    lineHeight: typography.navButton.lineHeight,
   },
   actions: {
     flexDirection: 'row',

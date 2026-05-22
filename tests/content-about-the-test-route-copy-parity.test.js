@@ -36,7 +36,7 @@ test('about-the-test route uses cautious current official-detail copy', () => {
     'utf8',
   );
 
-  assert.equal(summary.aboutTheTestRouteCopyLabelsValidated, 42);
+  assert.equal(summary.aboutTheTestRouteCopyLabelsValidated, 54);
   assert.equal(summary.aboutTheTestRouteCopyParityValidated, true);
   assert.equal(summary.aboutTheTestSourceAuthorityCopyPatternsValidated, 6);
   assert.equal(summary.aboutTheTestSourceAuthorityCopyParityValidated, true);
@@ -51,20 +51,25 @@ test('about-the-test route uses cautious current official-detail copy', () => {
   assert.match(source, /const copy = aboutTheTestCopy\[language\];/);
   assert.match(source, /15 augusti 2026 i Stockholm/);
   assert.match(source, /15 August 2026 in Stockholm/);
+  assert.match(source, /registrationSummaryTitle: 'Anmälan i korthet'/);
+  assert.match(source, /registrationSummaryTitle: 'Registration at a glance'/);
+  assert.match(source, /Första provtillfället är den 15 augusti 2026 i Stockholm/);
+  assert.match(source, /The first sitting is on 15 August 2026 in Stockholm/);
   assert.doesNotMatch(source, /UHR har bekräftat|UHR has confirmed|UHR skriver|UHR says/);
   assert.doesNotMatch(source, /UHR beskriver|UHR describes|described by UHR/);
   assert.match(source, /Anmälan öppnar i början av juni 2026/);
   assert.match(source, /Registration opens in early June 2026/);
-  assert.match(source, /samhällskunskapsprovet kan bara göras på svenska/);
-  assert.match(source, /civic-knowledge test itself can only be taken in Swedish/);
-  assert.match(source, /skilt från de prov i svenska som införs senare/);
-  assert.match(source, /separate from the Swedish-language tests introduced later/);
+  assert.match(source, /Du kan bara anmäla dig efter ett brev från Migrationsverket/);
+  assert.match(source, /You can only sign up after receiving a letter from Migrationsverket/);
   assert.match(source, /brev från Migrationsverket/);
   assert.match(source, /letter from Migrationsverket/);
   assert.match(source, /Antalet platser är begränsat/);
+  assert.match(source, /när platserna är fyllda stänger anmälan/);
   assert.match(source, /när platserna är fyllda går det inte längre att anmäla sig/);
   assert.match(source, /Seats are limited/);
   assert.match(source, /when the seats are filled, registration closes/);
+  assert.match(source, /Du kan uppfylla kunskapskravet på andra sätt än genom provet/);
+  assert.match(source, /You may meet the knowledge requirement in ways other than the test/);
   assert.match(source, /kostnadsfritt och ges som ett utprövningsprov med generös tid/);
   assert.match(source, /free of charge and is a trial sitting with generous time/);
   assert.match(

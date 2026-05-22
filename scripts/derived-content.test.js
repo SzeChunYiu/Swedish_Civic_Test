@@ -90,14 +90,14 @@ test('derivePublishedQuestions creates four published UHR-referenced variants pe
   assert.ok(derived.every((question) => question.uhrReference.section === 'Geografi'));
   assert.ok(derived.some((question) => question.type === 'true_false'));
   assert.ok(derived.every((question) => question.tags.length === new Set(question.tags).size));
-  assert.equal(derived[0].questionSv, 'Sverige ligger ...?');
-  assert.equal(derived[0].questionEn, 'Sweden is located ...?');
+  assert.equal(derived[0].questionSv, 'Vad stämmer om Sveriges läge?');
+  assert.equal(derived[0].questionEn, "What is correct about Sweden's location?");
   assert.equal(derived[1].questionSv, 'Sverige ligger i Norden.');
   assert.equal(derived[1].questionEn, 'Sweden is located in the Nordic region.');
   assert.equal(derived[2].questionSv, 'Sverige ligger i Asien.');
   assert.equal(derived[2].questionEn, 'Sweden is located in Asia.');
-  assert.equal(derived[3].questionSv, 'Vilken uppgift stämmer när det gäller var Sverige ligger?');
-  assert.equal(derived[3].questionEn, 'Which fact is correct regarding where Sweden is located?');
+  assert.equal(derived[3].questionSv, 'Vilken uppgift stämmer om Sveriges läge?');
+  assert.equal(derived[3].questionEn, "Which fact is correct about Sweden's location?");
   assert.deepEqual(
     derived[3].options.map((option) => option.textEn),
     ['In the Nordic region', 'In Asia', 'In Africa', 'In South America'],
@@ -150,10 +150,14 @@ test('derivePublishedQuestions keeps generated single-choice variants at four op
   assert.equal(derived[0].options[0].textEn, 'Sweden is in the Nordic region.');
   assert.equal(derived[0].options[1].textSv, 'Sverige ligger inte i Norden.');
   assert.equal(derived[0].options[1].textEn, 'Sweden is not in the Nordic region.');
+  assert.equal(derived[0].options[2].textSv, 'Sveriges nordligaste del ligger i Skåne.');
+  assert.equal(derived[0].options[2].textEn, "Sweden's northernmost part is in Skåne.");
+  assert.equal(derived[0].options[3].textSv, 'Sveriges nordligaste del ligger på Gotland.');
+  assert.equal(derived[0].options[3].textEn, "Sweden's northernmost part is on Gotland.");
   assert.ok(
     singleChoiceVariants.every(
       (question) =>
-        !/materialet|from the material|None of the options is correct|Only sometimes|Inget av alternativen stämmer|Endast ibland/i.test(
+        !/Both statements are correct|Neither statement is correct|Båda påståendena är korrekta|Inget av påståendena är korrekt|None of the options is correct|Only sometimes|Inget av alternativen stämmer|Endast ibland/i.test(
           JSON.stringify(question.options),
         ),
     ),
@@ -537,8 +541,8 @@ test('derivePublishedQuestions renders how-can-affect true/false as standalone p
   };
 
   const derived = derivePublishedQuestions([source], 901);
-  const trueStatement = derived.find((question) => question.id === 'q902');
-  const falseStatement = derived.find((question) => question.id === 'q903');
+  const trueStatement = derived[1];
+  const falseStatement = derived[2];
   const staleSplicePattern = /\b(?:när\s+[^.?!]+?\spåverkar|when\s+[^.?!]+?\saffects)\b/i;
 
   assert.equal(
@@ -603,7 +607,7 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
       chapterId: 'ch03',
       type: 'single_choice',
       questionSv: 'Vilken är regionernas främsta uppgift i Sverige?',
-      questionEn: "What is the foremost task of Sweden's regions?",
+      questionEn: "What is the main responsibility of Sweden's regions?",
       options: [
         {
           id: 'a',
@@ -923,22 +927,25 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
   assert.doesNotMatch(text, /are The/);
   assert.ok(
     text.includes(
-      'Att folkomröstningar i Sverige är rådgivande betyder att politikerna inte behöver följa resultatet.',
+      'I Sverige är folkomröstningar rådgivande, så politiker behöver inte följa resultatet.',
     ),
   );
   assert.ok(
     text.includes(
-      'Att folkomröstningar i Sverige är rådgivande betyder att politikerna alltid måste följa resultatet.',
+      'I Sverige är folkomröstningar bindande, så politiker är skyldiga att följa resultatet.',
     ),
   );
   assert.ok(
     text.includes(
-      'That referendums in Sweden are advisory means politicians do not have to follow the result.',
+      'In Sweden, referendums are advisory, so politicians do not have to follow the result.',
     ),
   );
   assert.ok(
-    text.includes("The foremost task of Sweden's regions is to be responsible for health care."),
+    text.includes(
+      'In Sweden, referendums are binding, so politicians are required to follow the result.',
+    ),
   );
+  assert.ok(text.includes("The main responsibility of Sweden's regions is health care."));
   assert.ok(
     text.includes(
       'Water and sewage, care services, snow removal, park maintenance, and adult education belong among municipal responsibilities.',
@@ -1010,6 +1017,8 @@ test('generated true/false naturalness patterns allow direct media and web propo
     'On the web and in social media, only responsible publishers may write posts.',
     'The public sector in Sweden consists of services and activities that the state, regions, and municipalities are responsible for and fund through taxes.',
     'The public sector in Sweden consists only of privately owned companies.',
+    'One aim of disability rights work is that society should be accessible so people can participate on equal terms.',
+    'One aim of disability rights work is that people with disabilities should not be able to study or work.',
   ];
   const residualFragments = [
     'De drivs ofta av privata företag och får inkomster genom reklam.',
@@ -1020,6 +1029,8 @@ test('generated true/false naturalness patterns allow direct media and web propo
     'Anyone can create content there, and it is not always checked the same way as in other media.',
     'The public sector in Sweden means activities for which the state, regions, and municipalities are responsible.',
     'The public sector in Sweden means all privately owned companies.',
+    'Society should be accessible so people can participate on equal terms.',
+    'People with disabilities should not be able to study or work.',
   ];
 
   assert.deepEqual(
@@ -1265,6 +1276,14 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
       'Oppositionen ska inte granska regeringens arbete och föreslå annan politik.',
       'The opposition should not scrutinize the government’s work and propose alternative policies.',
     ],
+    [generatedQuestionId(sourceQuestions, 'q020', 'trueStatement')]: [
+      'I Sverige är folkomröstningar rådgivande, så politiker behöver inte följa resultatet.',
+      'In Sweden, referendums are advisory, so politicians do not have to follow the result.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q020', 'falseStatement')]: [
+      'I Sverige är folkomröstningar bindande, så politiker är skyldiga att följa resultatet.',
+      'In Sweden, referendums are binding, so politicians are required to follow the result.',
+    ],
     [generatedQuestionId(sourceQuestions, 'q031', 'trueStatement')]: [
       'Politiker i Sverige behöver inte följa resultatet av en folkomröstning.',
       'Politicians in Sweden do not have to follow the result of a referendum.',
@@ -1500,6 +1519,33 @@ test('derivePublishedQuestions renders q062 public-sector English as direct prop
   );
 });
 
+test('derivePublishedQuestions keeps q080/q496-q499 suffrage explanation learner-facing', () => {
+  const { questions, sourceQuestions } = loadTs('data/questions.ts');
+  const byId = new Map(questions.map((question) => [question.id, question]));
+  const expectedIds = [
+    'q080',
+    generatedQuestionId(sourceQuestions, 'q080', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q080', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q080', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q080', 'judgement'),
+  ];
+
+  assert.deepEqual(expectedIds, ['q080', 'q496', 'q497', 'q498', 'q499']);
+
+  for (const id of expectedIds) {
+    const question = byId.get(id);
+    assert.ok(question, `${id} should be published`);
+    assert.doesNotMatch(
+      question.explanationEn,
+      /(?:the election asked about here|asked about here)/i,
+    );
+    assert.match(
+      question.explanationEn,
+      /the first Riksdag election held after those reforms was in 1921/i,
+    );
+  }
+});
+
 test('derivePublishedQuestions renders q048 public-service broadcasters in natural English', () => {
   const { questions, sourceQuestions } = loadTs('data/questions.ts');
   const byId = new Map(questions.map((question) => [question.id, question]));
@@ -1653,6 +1699,50 @@ test('derivePublishedQuestions renders q146 political-rights true/false as direc
   assert.doesNotMatch(text, /^(?:Försöka övertyga|Hindra andra|Try to persuade|Stop others)/im);
 });
 
+test('derivePublishedQuestions renders task-question true/false variants as direct propositions', () => {
+  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
+  const { sourceQuestions } = loadTs('data/questions.ts');
+  const generated = derivePublishedQuestions(sourceQuestions, sourceQuestions.length + 1);
+  const byId = new Map(generated.map((question) => [question.id, question]));
+  const expectedRows = [
+    {
+      id: generatedQuestionId(sourceQuestions, 'q022', 'trueStatement'),
+      sv: 'Riksdagen beslutar om lagar och hur statens pengar ska användas.',
+      en: 'The Riksdag passes laws and decides how state funds are used.',
+      correctOptionId: 'true',
+    },
+    {
+      id: generatedQuestionId(sourceQuestions, 'q022', 'falseStatement'),
+      sv: 'Riksdagen sköter regionernas kollektivtrafik.',
+      en: 'The Riksdag manages regional public transport.',
+      correctOptionId: 'false',
+    },
+    {
+      id: generatedQuestionId(sourceQuestions, 'q059', 'trueStatement'),
+      sv: 'Sametinget representerar den samiska befolkningen i frågor om språk, kultur och identitet.',
+      en: 'The Sami Parliament represents the Sami population on questions of language, culture, and identity.',
+      correctOptionId: 'true',
+    },
+    {
+      id: generatedQuestionId(sourceQuestions, 'q059', 'falseStatement'),
+      sv: 'Sametinget beslutar statens budget.',
+      en: 'The Sami Parliament decides the state budget.',
+      correctOptionId: 'false',
+    },
+  ];
+  const residualPattern = /\b(?:har uppgiften att|has the task to|One task of .+? is to)\b/i;
+
+  for (const expected of expectedRows) {
+    const question = byId.get(expected.id);
+    assert.ok(question, `${expected.id} should be generated from source data`);
+    assert.equal(question.type, 'true_false');
+    assert.equal(question.questionSv, expected.sv);
+    assert.equal(question.questionEn, expected.en);
+    assert.equal(question.correctOptionId, expected.correctOptionId);
+    assert.doesNotMatch(`${question.questionSv}\n${question.questionEn}`, residualPattern);
+  }
+});
+
 test('derivePublishedQuestions cleans residual generated true/false splice rows', () => {
   const { questions, sourceQuestions } = loadTs('data/questions.ts');
   const byId = new Map(questions.map((question) => [question.id, question]));
@@ -1747,8 +1837,12 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'Sweden’s population grew during the 19th century because of EU membership.',
     ],
     [generatedQuestionId(sourceQuestions, 'q078', 'trueStatement')]: [
-      'Förändringen genom den nya grundlagen år 1809 var att kungens makt begränsades.',
-      'The change through the new constitution in 1809 was that the king’s power was limited.',
+      '1809 års nya grundlag begränsade kungens makt.',
+      "The 1809 constitution limited the king's power.",
+    ],
+    [generatedQuestionId(sourceQuestions, 'q078', 'falseStatement')]: [
+      '1809 års nya grundlag innebar inte att Sverige gick med i EU.',
+      'The 1809 constitution did not make Sweden join the EU.',
     ],
     [generatedQuestionId(sourceQuestions, 'q081', 'trueStatement')]: [
       'Saltsjöbadsavtalet från 1938 blev viktigt för samarbetet mellan fackföreningar och arbetsgivare.',

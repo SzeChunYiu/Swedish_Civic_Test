@@ -1,6 +1,6 @@
 import type { Href } from 'expo-router';
 import { Link, useLocalSearchParams } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AudioButton } from '../../components/learning/AudioButton';
@@ -9,6 +9,7 @@ import { AnswerOption } from '../../components/quiz/AnswerOption';
 import { CelebrationBurst } from '../../components/quiz/CelebrationBurst';
 import { ConfidenceRatingPicker } from '../../components/quiz/ConfidenceRatingPicker';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
+import { PostAnswerRewardPanel } from '../../components/quiz/PostAnswerRewardPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { QuestionReportLink } from '../../components/quiz/QuestionReportLink';
@@ -24,6 +25,8 @@ import {
   buildQuestionSpeechText,
   stopSpeech,
 } from '../../lib/audio/speak';
+import { calculateStreak } from '../../lib/learning/streaks';
+import { calculateAnswerXp, calculateLevel } from '../../lib/learning/xp';
 import { useProLifetimeEntitlements } from '../../lib/monetization/useProLifetimeEntitlements';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
@@ -102,6 +105,7 @@ const quizSessionCopy: Record<AppLanguage, QuizSessionCopy> = {
 };
 
 const maxSearchReturnQueryLength = 120;
+let routedQuizShuffleAttemptSequence = 0;
 
 function normalizeSessionId(sessionId: string | string[] | undefined): string {
   if (Array.isArray(sessionId)) return sessionId[0] ?? 'practice';
@@ -131,6 +135,31 @@ function pickSessionQuestion(sessionId: string) {
   return exactMatch;
 }
 
+function createRoutedQuizShuffleSessionId(
+  routeSessionId: string,
+  now = Date.now(),
+  random = Math.random(),
+): string {
+  routedQuizShuffleAttemptSequence += 1;
+  const randomPart = Math.floor(random * Number.MAX_SAFE_INTEGER).toString(36) || '0';
+  return `routed-quiz:${routeSessionId}:${now.toString(36)}:${routedQuizShuffleAttemptSequence.toString(
+    36,
+  )}:${randomPart}`;
+}
+
+function useRoutedQuizShuffleSessionId(routeSessionId: string): string {
+  const attemptRef = useRef<{ routeSessionId: string; shuffleSessionId: string } | null>(null);
+
+  if (attemptRef.current?.routeSessionId !== routeSessionId) {
+    attemptRef.current = {
+      routeSessionId,
+      shuffleSessionId: createRoutedQuizShuffleSessionId(routeSessionId),
+    };
+  }
+
+  return attemptRef.current.shuffleSessionId;
+}
+
 export default function QuizSessionScreen() {
   const { chapterId, q, query, sessionId } = useLocalSearchParams<{
     chapterId?: string | string[];
@@ -139,6 +168,7 @@ export default function QuizSessionScreen() {
     sessionId: string | string[];
   }>();
   const normalizedSessionId = normalizeSessionId(sessionId);
+  const routedQuizShuffleSessionId = useRoutedQuizShuffleSessionId(normalizedSessionId);
   const normalizedChapterId = normalizeOptionalRouteParam(chapterId);
   const returnSearchQuery = normalizeSearchQueryParam(q) ?? normalizeSearchQueryParam(query);
   const backToSearchHref = getBackToSearchHref(returnSearchQuery);
@@ -149,9 +179,9 @@ export default function QuizSessionScreen() {
   const question = useMemo(
     () =>
       pickedQuestion
-        ? shuffleQuestionOptionsForSession(pickedQuestion, normalizedSessionId)
+        ? shuffleQuestionOptionsForSession(pickedQuestion, routedQuizShuffleSessionId)
         : undefined,
-    [normalizedSessionId, pickedQuestion],
+    [routedQuizShuffleSessionId, pickedQuestion],
   );
   const chapterContext = useMemo(
     () => getChapterContextForQuizSession(chapters, pickedQuestion, normalizedChapterId),
@@ -164,6 +194,8 @@ export default function QuizSessionScreen() {
   const recordWrongAnswerReview = useMistakeReviewStore((state) => state.recordWrongAnswerReview);
   const recordAnswer = useProgressStore((state) => state.recordAnswer);
   const questionProgress = useProgressStore((state) => state.questionProgress);
+  const totalXp = useProgressStore((state) => state.totalXp);
+  const answerDates = useProgressStore((state) => state.answerDates);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
   const audioPlaybackRate = useAccessibilityStore((state) => state.audioPlaybackRate);
@@ -172,6 +204,8 @@ export default function QuizSessionScreen() {
     useProLifetimeEntitlements();
   const confidenceRatingEnabled = proEntitlementsReady && proEntitlements.confidenceSlider === true;
   const copy = quizSessionCopy[language];
+  const level = calculateLevel(totalXp);
+  const streakDays = useMemo(() => calculateStreak(answerDates), [answerDates]);
   const chapterContextTitle = chapterContext ? copy.chapterTitle(chapterContext) : null;
   const sessionTitle = chapterContextTitle
     ? copy.chapterSessionTitle(chapterContextTitle)
@@ -188,7 +222,7 @@ export default function QuizSessionScreen() {
   useQuestionAudioAutoplay({
     audioEnabled,
     listenFirstAudioEnabled,
-    questionKey: question ? `${normalizedSessionId}:${question.id}` : null,
+    questionKey: question ? `quiz:${question.id}:${routedQuizShuffleSessionId}` : null,
     rate: audioPlaybackRate,
     speechText: questionSpeechText,
     stopSignal: hasSelectedAnswer,
@@ -197,7 +231,7 @@ export default function QuizSessionScreen() {
   useEffect(() => {
     setSelectedOptionId(null);
     setSelectedConfidenceRating(null);
-  }, [normalizedSessionId, question?.id]);
+  }, [routedQuizShuffleSessionId, question?.id]);
 
   if (!question) {
     const unknownSessionId = questions.length > 0;
@@ -265,6 +299,9 @@ export default function QuizSessionScreen() {
   const score = hasSelectedAnswer ? scoreAnswers([selectedIsCorrect]) : null;
   const celebrationStreak = selectedIsCorrect
     ? (questionProgress[question.id]?.correctStreak ?? 1)
+    : 0;
+  const answerXp = hasSelectedAnswer
+    ? calculateAnswerXp({ isCorrect: selectedIsCorrect, explanationRead: true })
     : 0;
 
   const handleSelectOption = (optionId: string) => {
@@ -366,6 +403,16 @@ export default function QuizSessionScreen() {
               {copy.scoreLabel}: {score.correct}/{score.total}
             </Text>
           ) : null}
+          <PostAnswerRewardPanel
+            answerXp={answerXp}
+            correctStreak={celebrationStreak}
+            isCorrect={selectedIsCorrect}
+            language={language}
+            level={level}
+            question={question}
+            streakDays={streakDays}
+            totalXp={totalXp}
+          />
           <ExplanationPanel
             explanationEn={question.explanationEn}
             explanationSv={question.explanationSv}

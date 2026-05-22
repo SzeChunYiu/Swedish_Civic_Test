@@ -99,10 +99,23 @@ test('interactive elements expose explicit accessibility labels, roles, and stat
   assert.deepEqual(offenders, []);
 });
 
-test('QuestionNavigator tabs keep token-sized touch targets', () => {
+test('QuestionNavigator keeps interactive tabs and status-only dots distinct', () => {
   const source = fs.readFileSync(QUESTION_NAVIGATOR_SOURCE, 'utf8');
 
+  assert.match(
+    source,
+    /const isInteractive = disabled !== true && typeof onSelect === 'function';/,
+  );
+  assert.match(source, /isInteractive \? copy\.navigationLabel : copy\.statusLabel/);
+  assert.match(source, /isInteractive[\s\S]*\?\s*\(requestedAccessibilityRole \?\? 'tablist'\)/);
+  assert.match(source, /requestedAccessibilityRole === 'tablist'[\s\S]*\?\s*'list'/);
+  assert.match(
+    source,
+    /<View[\s\S]*accessible[\s\S]*accessibilityLabel=\{itemLabel\}[\s\S]*accessibilityRole="text"/,
+  );
   assert.match(source, /accessibilityRole="tab"/);
+  assert.match(source, /accessibilityState=\{\{ selected \}\}/);
+  assert.doesNotMatch(source, /accessibilityState=\{\{ disabled: isDisabled, selected \}\}/);
   assert.match(source, /hitSlop=\{space\[1\]\}/);
   assert.match(source, /minHeight:\s*space\[6\]/);
   assert.match(source, /minWidth:\s*space\[6\]/);

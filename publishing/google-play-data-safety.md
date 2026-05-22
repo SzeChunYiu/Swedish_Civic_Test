@@ -43,7 +43,11 @@ fraud prevention.
   app set ID, and, where applicable, other device/account identifiers.
 - **Financial info / purchase history** — Google Play Billing and the app runtime
   process the Remove Ads purchase/restore state for app functionality. The app
-  stores only the local `adsDisabled` entitlement flag.
+  stores a local, versioned Remove Ads entitlement record on the device; when
+  needed for restore or revalidation, that record can include the store product
+  ID, purchase token or transaction ID, receipt validation status,
+  receipt-validation timestamp, and whether the grant came from purchase or
+  restore.
 
 ## Purposes
 

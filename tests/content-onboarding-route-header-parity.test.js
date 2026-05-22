@@ -22,9 +22,11 @@ test('onboarding route title stays accessible as a header', () => {
 
   assert.equal(summary.onboardingRouteHeadersValidated, 1);
   assert.equal(summary.onboardingRouteHeaderParityValidated, true);
-  assert.equal(summary.onboardingRouteCopyLabelsValidated, 17);
+  assert.equal(summary.onboardingRouteCopyLabelsValidated, 29);
   assert.equal(summary.onboardingRouteCopyParityValidated, true);
   assert.match(source, /type OnboardingCopy =/);
+  assert.match(source, /import \{ formatExamDate, type StudyIntensity \}/);
+  assert.match(source, /normalizeStudyPlanTestDateIso/);
   assert.match(source, /supportedDailyGoalAnswerOptions,/);
   assert.match(
     source,
@@ -45,13 +47,42 @@ test('onboarding route title stays accessible as a header', () => {
     source,
     /const setDailyGoalAnswers = useSettingsStore\(\(state\) => state\.setDailyGoalAnswers\);/,
   );
+  assert.match(
+    source,
+    /const setStudyPlanIntensity = useSettingsStore\(\(state\) => state\.setStudyPlanIntensity\);/,
+  );
+  assert.match(
+    source,
+    /const setStudyPlanTestDateIso = useSettingsStore\(\(state\) => state\.setStudyPlanTestDateIso\);/,
+  );
+  assert.match(
+    source,
+    /const studyPlanTestDateIso = useSettingsStore\(\(state\) => state\.studyPlanTestDateIso\);/,
+  );
   assert.match(source, /const copy = onboardingCopy\[language\];/);
+  assert.match(source, /function studyIntensityForDailyGoal\(goal: DailyGoalPresetValue\)/);
+  assert.match(source, /if \(goal === 10\) return 'casual';/);
+  assert.match(source, /if \(goal === 40\) return 'serious';/);
+  assert.match(source, /const handleDailyGoalPress = \(goal: DailyGoalPresetValue\) => \{/);
+  assert.match(source, /setStudyPlanIntensity\(studyIntensityForDailyGoal\(goal\)\);/);
+  assert.match(source, /const handleTestDateChange = \(value: string\) => \{/);
+  assert.match(source, /const normalizedDate = normalizeStudyPlanTestDateIso\(nextValue\);/);
+  assert.match(source, /setStudyPlanTestDateIso\(normalizedDate\);/);
+  assert.match(source, /const handleSkipTestDate = \(\) => \{/);
+  assert.match(source, /setStudyPlanTestDateIso\(null\);/);
   assert.match(source, /Förbered dig lugnt för samhällskunskapsprovet/);
   assert.match(source, /genomgång av frågor du missat/);
   assert.doesNotMatch(source, /repetition av misstag|upprepning av misstag/i);
   assert.match(source, /Prepare calmly for the civic test/);
   assert.match(source, /Välj ett mjukt dagligt mål/);
   assert.match(source, /Choose a gentle daily goal/);
+  assert.match(source, /När är ditt prov\?/);
+  assert.match(source, /When is your test\?/);
+  assert.match(source, /Ange provdatum som ÅÅÅÅ-MM-DD/);
+  assert.match(source, /Enter test date as YYYY-MM-DD/);
+  assert.match(source, /Jag har inte bokat än/);
+  assert.match(source, /I haven't booked it yet/);
+  assert.doesNotMatch(source, /Get a daily plan|questions\/day|mocks this week|59 kr/);
   assert.match(source, /Lugn/);
   assert.match(source, /Regular/);
   assert.match(source, /40 svar per dag/);
@@ -64,7 +95,13 @@ test('onboarding route title stays accessible as a header', () => {
   assert.match(source, /accessibilityState=\{\{ checked: selected \}\}/);
   assert.doesNotMatch(source, /aria-selected=\{selected\}/);
   assert.doesNotMatch(source, /accessibilityState=\{\{ selected \}\}/);
-  assert.match(source, /onPress=\{\(\) => setDailyGoalAnswers\(goal\)\}/);
+  assert.match(source, /onPress=\{\(\) => handleDailyGoalPress\(goal\)\}/);
+  assert.match(source, /<TextInput/);
+  assert.match(source, /accessibilityLabel=\{copy\.testDateInputAccessibilityLabel\}/);
+  assert.match(source, /placeholder=\{copy\.testDateInputPlaceholder\}/);
+  assert.match(source, /keyboardType="numbers-and-punctuation"/);
+  assert.match(source, /maxLength=\{10\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.testDateSkipAccessibilityLabel\}/);
   assert.match(source, /accessibilityLabel=\{copy\.decideLaterAccessibilityLabel\}/);
   assert.match(
     source,

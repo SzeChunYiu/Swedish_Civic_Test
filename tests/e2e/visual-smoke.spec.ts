@@ -7,10 +7,10 @@ import {
   blockingModalOverlayLocator,
   dismissBlockingModals,
   seedFreshFirstRunSettingsLanguage,
-  seedFreshSettingsLanguageAndAboutSeen,
 } from './browserLaunch';
 import { resolveVisualSmokeOutput } from './visualSmokeOutput';
 import {
+  assertValidVisualSmokeRouteEntries,
   findUnexplainedVisualSmokeDuplicateReports,
   visualSmokeDuplicateExplanations,
   visualSmokeRouteManifestEntries,
@@ -80,13 +80,16 @@ test('primary routes render and capture UI/UX screenshots', async ({ page }) => 
   fs.mkdirSync(screenshotDir, { recursive: true });
   const consoleErrors: string[] = [];
   const manifest: RouteCapture[] = [];
+  const routeEntries = visualSmokeRouteManifestEntries();
+
+  assertValidVisualSmokeRouteEntries(routeEntries);
 
   page.on('console', (message) => {
     if (message.type() === 'error') consoleErrors.push(message.text());
   });
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
-  for (const { file, name, route } of visualSmokeRouteManifestEntries()) {
+  for (const { file, name, route } of routeEntries) {
     await page.goto(route, { waitUntil: 'networkidle' });
     const dismissal = await dismissBlockingModals(page);
     const bodyText = await page.locator('body').innerText();
@@ -148,35 +151,7 @@ test('primary routes render and capture UI/UX screenshots', async ({ page }) => 
   expect(consoleErrors).toEqual([]);
 });
 
-test('dismissBlockingModals clears forced first-run and language picker overlays', async ({
-  page,
-}) => {
-  await seedFreshFirstRunSettingsLanguage(page, 'en');
-  await page.goto('/practice', { waitUntil: 'networkidle' });
-  await expect(page.getByRole('dialog', { name: 'What is the Swedish civic test?' })).toBeVisible();
-
-  const firstRunDismissal = await dismissBlockingModals(page);
-
-  expect(firstRunDismissal.firstRunAboutDismissed).toBe(true);
-  await expect(page.locator(blockingModalOverlayLocator)).toHaveCount(0);
-
-  const languagePage = await page.context().newPage();
-  await seedFreshSettingsLanguageAndAboutSeen(languagePage, 'en');
-  await languagePage.goto('/home', { waitUntil: 'networkidle' });
-  await dismissBlockingModals(languagePage);
-  await languagePage
-    .getByRole('button', { name: /Current language EN\. Open language picker\./ })
-    .click();
-  await expect(languagePage.getByRole('menu', { name: 'Language picker' })).toBeVisible();
-
-  const languageDismissal = await dismissBlockingModals(languagePage);
-
-  expect(languageDismissal.languagePickerDismissed).toBe(true);
-  await expect(languagePage.locator(blockingModalOverlayLocator)).toHaveCount(0);
-  await languagePage.close();
-});
-
-test('visual smoke dismissal helper closes forced first-run guide and language picker blockers', async ({
+test('shared modal dismissal helper closes forced first-run guide and language picker', async ({
   page,
 }) => {
   const consoleErrors: string[] = [];
@@ -186,21 +161,35 @@ test('visual smoke dismissal helper closes forced first-run guide and language p
   });
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
-  await seedFreshFirstRunSettingsLanguage(page, 'en');
-  await page.goto('/settings', { waitUntil: 'networkidle' });
-  await expect(page.getByRole('dialog', { name: 'What is the Swedish civic test?' })).toBeVisible();
+  await seedFreshFirstRunSettingsLanguage(page, 'sv');
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await expect(page.getByRole('dialog', { name: 'Vad är medborgarskapsprovet?' })).toBeVisible();
+
+  const firstRunDismissal = await dismissBlockingModals(page);
+  expect(firstRunDismissal.firstRunAboutDismissed).toBe(true);
+  await expect(page.locator(blockingModalOverlayLocator)).toHaveCount(0);
 
   await page
-    .getByRole('button', { name: /Current language EN\. Open language picker\./ })
-    .dispatchEvent('click');
-  const languagePickerMenu = page.getByRole('menu', { name: 'Language picker' });
-  await expect(languagePickerMenu).toBeVisible();
-  await expect(page.getByRole('dialog', { name: 'What is the Swedish civic test?' })).toBeVisible();
+    .getByRole('button', {
+      name: /Nuvarande språk SV\. Öppna språkväljaren\.|Current language SV\. Open language picker\./,
+    })
+    .click();
+  await expect(page.getByRole('menu', { name: /Språkväljare|Language picker/ })).toBeVisible();
 
-  const dismissal = await dismissBlockingModals(page);
+  const languagePickerDismissal = await dismissBlockingModals(page);
+  const forcedDismissal = {
+    firstRunAboutDismissed:
+      firstRunDismissal.firstRunAboutDismissed || languagePickerDismissal.firstRunAboutDismissed,
+    languagePickerDismissed:
+      firstRunDismissal.languagePickerDismissed || languagePickerDismissal.languagePickerDismissed,
+  };
 
-  expect(dismissal.firstRunAboutDismissed).toBe(true);
-  expect(dismissal.languagePickerDismissed).toBe(true);
+  expect(forcedDismissal).toEqual({
+    firstRunAboutDismissed: true,
+    languagePickerDismissed: true,
+  });
   await expect(page.locator(blockingModalOverlayLocator)).toHaveCount(0);
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(page.getByRole('menu', { name: /Språkväljare|Language picker/ })).toHaveCount(0);
   expect(consoleErrors).toEqual([]);
 });

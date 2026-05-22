@@ -242,12 +242,46 @@ test('question delivery surfaces keep answer options behind the session shuffle'
   );
   assert.match(
     routedQuiz,
+    /function createRoutedQuizShuffleSessionId\(\s*routeSessionId: string,\s*now = Date\.now\(\),\s*random = Math\.random\(\),\s*\): string \{/,
+    'Routed quiz should create a fresh route-entry attempt seed',
+  );
+  assert.match(
+    routedQuiz,
+    /const routedQuizShuffleSessionId = useRoutedQuizShuffleSessionId\(normalizedSessionId\);/,
+    'Routed quiz should derive a route-entry shuffle seed from the exact question route id',
+  );
+  assert.match(
+    routedQuiz,
+    /shuffleQuestionOptionsForSession\(\s*pickedQuestion,\s*routedQuizShuffleSessionId\s*\)/,
+    'Routed quiz sessions should shuffle with the route-entry attempt seed',
+  );
+  assert.doesNotMatch(
+    routedQuiz,
     /shuffleQuestionOptionsForSession\(\s*pickedQuestion,\s*normalizedSessionId\s*\)/,
-    'Routed quiz sessions should key option order to the route session id',
+    'Routed quiz must not use the stable question id as the shuffle seed',
+  );
+  assert.match(
+    routedQuiz,
+    /questionKey: question \? `quiz:\$\{question\.id\}:\$\{routedQuizShuffleSessionId\}` : null/,
+    'Routed quiz listen-first audio should be keyed to the same route-entry attempt',
   );
   assert.match(
     examGenerator,
     /selected\.map\(\(question\)\s*=>\s*shuffleQuestionOptionsForSession\(question,\s*sessionId\)\)/,
     'Mock exams should shuffle generated questions with the exam session id',
+  );
+});
+
+test('routed quiz Try Again keeps the current route-entry answer order', () => {
+  const routedQuiz = read('app/quiz/[sessionId].tsx');
+  const handleTryAgain =
+    routedQuiz.match(/const handleTryAgain = \(\) => \{[\s\S]*?\n\s+\};/)?.[0] ?? '';
+
+  assert.match(handleTryAgain, /setSelectedOptionId\(null\);/);
+  assert.match(handleTryAgain, /setSelectedConfidenceRating\(null\);/);
+  assert.doesNotMatch(
+    handleTryAgain,
+    /createRoutedQuizShuffleSessionId|routedQuizShuffleAttemptSequence|routedQuizShuffleSessionId|setRoutedQuizShuffleSessionId/,
+    'Try Again should reset answer state without reseeding the current routed quiz visit',
   );
 });

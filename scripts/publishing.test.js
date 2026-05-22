@@ -105,6 +105,16 @@ function assertCurrentPublicPrivacyPosture(source, options = {}) {
   assertNoStalePublicPrivacyPosture(source);
 }
 
+function assertRemoveAdsReceiptMetadataDisclosure(source) {
+  assert.match(source, /Remove Ads/i);
+  assert.match(source, /local/i);
+  assert.match(source, /purchase token/i);
+  assert.match(source, /transaction\s+ID/i);
+  assert.match(source, /receipt[- ]validation timestamp/i);
+  assert.doesNotMatch(source, /stores only the local `?adsDisabled`? entitlement flag/i);
+  assert.doesNotMatch(source, /only the local `?adsDisabled`?/i);
+}
+
 function parseExternalBlockerRows(markdown) {
   return markdown
     .split('\n')
@@ -215,6 +225,7 @@ test('privacy labels and data safety answers match ad-supported release practice
   assert.match(privacyLabels, /Diagnostics/i);
   assert.match(privacyLabels, /Purchases/i);
   assert.match(privacyLabels, /local device/i);
+  assertRemoveAdsReceiptMetadataDisclosure(privacyLabels);
   assert.doesNotMatch(privacyLabels, staleWords('Data', 'Not', 'Collected'));
   assert.doesNotMatch(privacyLabels, staleToken('REAL_ADS', 'ENABLED_FOR_V1'));
   assert.doesNotMatch(privacyLabels, staleWords('real', 'ads', 'disabled'));
@@ -238,6 +249,7 @@ test('privacy labels and data safety answers match ad-supported release practice
   assert.match(dataSafety, /Analytics/i);
   assert.match(dataSafety, /Fraud prevention/i);
   assert.match(dataSafety, /encrypted in transit/i);
+  assertRemoveAdsReceiptMetadataDisclosure(dataSafety);
   assert.doesNotMatch(dataSafety, staleWords('No', 'user', 'data', 'collected'));
   assert.doesNotMatch(dataSafety, staleWords('No', 'user', 'data', 'shared'));
   assert.doesNotMatch(dataSafety, staleToken('REAL_ADS', 'ENABLED_FOR_V1'));
@@ -307,6 +319,7 @@ test('public support and privacy URL copy is ready for hosting', () => {
   );
   assert.match(publicCopy, /not affiliated/i);
   assertCurrentPublicPrivacyPosture(publicCopy);
+  assertRemoveAdsReceiptMetadataDisclosure(publicCopy);
 });
 
 test('hostable public support, privacy, and app-ads files are prepared', () => {
@@ -330,6 +343,7 @@ test('hostable public support, privacy, and app-ads files are prepared', () => {
   );
   assert.match(privacy, /stored locally on the device/i);
   assertCurrentPublicPrivacyPosture(privacy);
+  assertRemoveAdsReceiptMetadataDisclosure(privacy);
   assert.match(privacy, /<html lang="en">/i);
 
   assert.equal(appAds.trim(), 'google.com, pub-2451892671779738, DIRECT, f08c47fec0942fa0');

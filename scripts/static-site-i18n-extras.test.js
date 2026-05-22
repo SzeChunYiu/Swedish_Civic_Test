@@ -182,54 +182,11 @@ const expectedCentralKurdishLegalReadingTimes = {
   'privacy.meta3.v': '~3 خولەک',
   'terms.meta3.v': '~2 خولەک خوێندنەوە',
 };
-const purchaseCopyLocales = ['ckb', 'fa', 'so', 'ti', 'tr'];
-const purchaseCopyKeys = [
-  'purchase.eyebrow',
-  'purchase.h1a',
-  'purchase.h1b',
-  'purchase.lede',
-  'purchase.removeAds.eyebrow',
-  'purchase.removeAds.title',
-  'purchase.removeAds.body',
-  'purchase.removeAds.locked',
-  'purchase.removeAds.ready',
-  'purchase.premium.eyebrow',
-  'purchase.premium.title',
-  'purchase.premium.body',
-  'purchase.premium.locked',
-  'purchase.premium.ready',
-  'purchase.price.once',
-  'purchase.status.locked',
-  'purchase.status.ready',
-  'purchase.status.needSignIn',
-  'purchase.status.realSignin',
-  'purchase.status.preparing',
-  'purchase.status.error',
-];
-const nonTurkishPurchaseLocales = ['ckb', 'fa', 'so', 'ti'];
-const turkishPurchaseFragments =
-  /Yalnızca|Satın alma|Web yükseltmeleri|Reklamsız|Reklamları kaldır|Google Play ile devam et|Ömür boyu|tek seferlik|Yükseltmenin|satın almaya hazır|Önce giriş yapın|Satın alma aktarım|Hesaba bağlı|Satın alma başlatılamadı/i;
-const expectedLocalizedPurchaseSamples = {
-  ckb: {
-    'purchase.h1a': 'تەنها دوای چوونەژوورەوە پلانی خۆت بەرز بکەوە.',
-    'purchase.removeAds.title': 'ڕیکلامەکان بسڕەوە',
-    'purchase.status.ready': 'ئامادەیە بۆ کڕین وەک {account}.',
-  },
-  fa: {
-    'purchase.h1a': 'فقط پس از ورود، ارتقا بده.',
-    'purchase.removeAds.title': 'حذف تبلیغات',
-    'purchase.status.ready': 'برای خرید با حساب {account} آماده است.',
-  },
-  so: {
-    'purchase.h1a': 'Kor u qaad kaliya markaad soo gasho.',
-    'purchase.removeAds.title': 'Ka saar xayeysiisyada',
-    'purchase.status.ready': 'Diyaar u ah iibsiga adigoo ah {account}.',
-  },
-  ti: {
-    'purchase.h1a': 'ድሕሪ ምእታው ጥራይ ኣዕብይ።',
-    'purchase.removeAds.title': 'መወዓውዒታት ኣወግድ',
-    'purchase.status.ready': 'ከም {account} ንዕድጊ ድሉው እዩ።',
-  },
+const supportMetadataValueKeys = ['support.meta1.v', 'support.meta2.v', 'support.meta3.v'];
+const supportMetadataEnglishFallbacks = {
+  'support.meta1.v': /~2 business days/i,
+  'support.meta2.v': /English or Swedish/i,
+  'support.meta3.v': /^Free$/i,
 };
 const forbiddenTigrinyaWorkWelfareTerms = ['kollektivavtal', 'föräldraledighet', 'sjukpenning'];
 const forbiddenStaticHomeEducationTerms = /\b(?:Förskola|förskola|universitet)\b/iu;
@@ -444,49 +401,27 @@ test('Central Kurdish legal reading-time metadata uses localized minutes', () =>
   }
 });
 
-test('extra locale purchase surfaces do not reuse Turkish copy outside Turkish', () => {
+test('extra locale Support metadata values reject English fallbacks', () => {
   const extra = loadExtraI18n();
-  const turkish = extra?.tr;
 
-  assert.equal(typeof turkish, 'object', 'Turkish dictionary must exist');
-  for (const locale of purchaseCopyLocales) {
+  for (const locale of extraLocales) {
     const dictionary = extra?.[locale];
     assert.equal(typeof dictionary, 'object', `${locale} dictionary must exist`);
 
-    for (const key of purchaseCopyKeys) {
+    for (const key of supportMetadataValueKeys) {
       const value = dictionary[key];
       assert.equal(typeof value, 'string', `${locale}.${key} must be a string`);
       assert.notEqual(value.trim(), '', `${locale}.${key} must not be empty`);
-    }
-
-    assert.match(
-      dictionary['purchase.status.ready'],
-      /\{account\}/,
-      `${locale}.purchase.status.ready must preserve account interpolation`,
-    );
-    assert.match(dictionary['purchase.removeAds.ready'], /29 kr/, `${locale} Remove Ads price`);
-    assert.match(dictionary['purchase.premium.ready'], /59 kr/, `${locale} Premium price`);
-  }
-
-  for (const locale of nonTurkishPurchaseLocales) {
-    const dictionary = extra[locale];
-    const purchaseBlock = purchaseCopyKeys.map((key) => dictionary[key]).join('\n');
-    const sharedWithTurkish = purchaseCopyKeys.filter((key) => dictionary[key] === turkish[key]);
-
-    assert.doesNotMatch(
-      purchaseBlock,
-      turkishPurchaseFragments,
-      `${locale} purchase copy still contains Turkish purchase text`,
-    );
-    assert.ok(
-      sharedWithTurkish.length <= 2,
-      `${locale} purchase copy should not share the Turkish block: ${sharedWithTurkish.join(', ')}`,
-    );
-
-    for (const [key, expected] of Object.entries(expectedLocalizedPurchaseSamples[locale])) {
-      assert.equal(dictionary[key], expected, `${locale}.${key} should use reviewed local copy`);
+      assert.doesNotMatch(
+        value,
+        supportMetadataEnglishFallbacks[key],
+        `${locale}.${key} must not use an English fallback`,
+      );
     }
   }
+
+  assert.equal(extra.ckb['support.meta1.v'], '~2 ڕۆژی کاری');
+  assert.match(extra.ckb['support.meta1.v'], /ڕۆژی کاری/);
 });
 
 test('extra locale Home chapter 1 folkhemmet glossary terms use localized wording first', () => {

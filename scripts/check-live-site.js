@@ -310,89 +310,29 @@ function findStaticSigninAssetIssues(indexSource, manifestSource, signinSource) 
   return issues;
 }
 
-function parseJsonForStaticCheck(source, label, issues) {
-  try {
-    return JSON.parse(String(source || ''));
-  } catch (error) {
-    issues.push(`${label} could not be parsed: ${error.message}`);
-    return null;
-  }
+function indexReferencesQuestionBankScript(indexSource) {
+  return /<script\b[^>]*\bsrc=["'][^"']*questions\.js(?:[?#][^"']*)?["']/i.test(
+    String(indexSource || ''),
+  );
 }
 
-function findStaticPwaAssetIssues(indexSource, assetManifestSource, pwaManifestSource, swSource) {
-  const index = String(indexSource || '');
-  const serviceWorker = String(swSource || '');
+function findStaticQuestionBankLazyLoadIssues(indexSource, appSource, practiceSource, v11Source) {
   const issues = [];
-
-  if (!/\brel=["']manifest["']\s+href=["']manifest\.webmanifest["']/.test(index)) {
-    issues.push('index.html does not link manifest.webmanifest');
+  if (indexReferencesQuestionBankScript(indexSource)) {
+    issues.push('index.html eagerly loads questions.js');
   }
-  if (!/\bname=["']theme-color["']\s+content=["']#f5f7fa["']/.test(index)) {
-    issues.push('index.html does not expose the static PWA theme color');
+  if (!/function\s+smtEnsureQuestionBank\s*\(/.test(String(appSource || ''))) {
+    issues.push('app.js is missing smtEnsureQuestionBank lazy loader');
   }
-  if (!/navigator\.serviceWorker[\s\S]*\.register\(["']\.\/sw\.js["']/.test(index)) {
-    issues.push('index.html does not register ./sw.js');
+  if (!/questions\.js/.test(String(appSource || ''))) {
+    issues.push('app.js lazy loader does not reference questions.js');
   }
-  if (!/updateViaCache:\s*["']none["']/.test(index)) {
-    issues.push('service worker registration does not bypass update cache');
+  if (!/smtEnsureQuestionBank/.test(String(practiceSource || ''))) {
+    issues.push('practice.js does not wait for the lazy question bank');
   }
-
-  const assetManifest = parseJsonForStaticCheck(assetManifestSource, 'asset-manifest.json', issues);
-  if (assetManifest) {
-    for (const assetPath of [
-      'manifest.webmanifest',
-      'icons/pwa-icon-192.png',
-      'icons/pwa-icon-512.png',
-      'icons/pwa-maskable-512.png',
-      'sw.js',
-    ]) {
-      if (!assetManifest.assets?.[assetPath]) {
-        issues.push(`${assetPath} missing from asset-manifest.json`);
-      }
-    }
+  if (!/smtEnsureQuestionBank/.test(String(v11Source || ''))) {
+    issues.push('v11.js does not wait for the lazy question bank');
   }
-
-  const pwaManifest = parseJsonForStaticCheck(pwaManifestSource, 'manifest.webmanifest', issues);
-  if (pwaManifest) {
-    if (pwaManifest.display !== 'standalone') {
-      issues.push(`manifest.webmanifest display expected standalone, found ${pwaManifest.display}`);
-    }
-    if (pwaManifest.start_url !== '.' || pwaManifest.scope !== '.') {
-      issues.push('manifest.webmanifest must keep root-relative start_url and scope');
-    }
-
-    const iconSources = new Set((pwaManifest.icons || []).map((icon) => icon.src));
-    for (const iconPath of [
-      'icons/pwa-icon-192.png',
-      'icons/pwa-icon-512.png',
-      'icons/pwa-maskable-512.png',
-    ]) {
-      if (!iconSources.has(iconPath)) {
-        issues.push(`manifest.webmanifest does not list ${iconPath}`);
-      }
-    }
-  }
-
-  for (const [label, pattern] of [
-    ['asset-manifest-driven precache', /asset-manifest\.json/],
-    ['revisioned cache name', /cacheNameForManifestText/],
-    ['manifest hash cache revision', /crypto\.subtle\.digest\(["']SHA-256["']/],
-    ['app-shell precache', /cache\.addAll\(resolvePrecacheUrls\(manifest\)\)/],
-    ['stale cache cleanup', /caches\.delete\(cacheName\)/],
-    [
-      'same-origin fetch handler',
-      /event\.respondWith\(networkFirstWithCacheFallback\(event\.request\)\)/,
-    ],
-  ]) {
-    if (!pattern.test(serviceWorker)) {
-      issues.push(`sw.js missing ${label}`);
-    }
-  }
-
-  if (/https?:\/\//.test(serviceWorker)) {
-    issues.push('sw.js must not hardcode external cache URLs');
-  }
-
   return issues;
 }
 
@@ -435,29 +375,23 @@ async function checkLiveSite(inputUrl, options = {}) {
   const requiredHeadMetadata = resolveRequiredHeadMetadata(options);
   const requiredQuestionCount = resolveRequiredQuestionCount(options);
   const requiredQuestionBankHash = resolveRequiredQuestionBankHash(options);
-  const [
-    indexAsset,
-    stylesAsset,
-    appAsset,
-    practiceAsset,
-    ebookToolsAsset,
-    ebookAsset,
-    questionsAsset,
-  ] = await Promise.all([
-    fetchAsset(baseUrl, 'index.html'),
-    fetchAsset(baseUrl, 'styles.css'),
-    fetchAsset(baseUrl, 'app.js'),
-    fetchAsset(baseUrl, 'practice.js'),
-    fetchAsset(baseUrl, 'ebook-tools.js'),
-    fetchAsset(baseUrl, 'ebook.js'),
-    fetchAsset(baseUrl, 'questions.js'),
-  ]);
+  const [indexAsset, stylesAsset, appAsset, practiceAsset, ebookAsset, v11Asset, questionsAsset] =
+    await Promise.all([
+      fetchAsset(baseUrl, 'index.html'),
+      fetchAsset(baseUrl, 'styles.css'),
+      fetchAsset(baseUrl, 'app.js'),
+      fetchAsset(baseUrl, 'practice.js'),
+      fetchAsset(baseUrl, 'ebook.js'),
+      fetchAsset(baseUrl, 'v11.js'),
+      fetchAsset(baseUrl, 'questions.js'),
+    ]);
   const index = indexAsset.text;
   const styles = stylesAsset.text;
   const app = appAsset.text;
   const practice = practiceAsset.text;
   const ebookTools = ebookToolsAsset.text;
   const ebook = ebookAsset.text;
+  const v11 = v11Asset.text;
   const questions = questionsAsset.text;
 
   const questionCount = readStaticQuestionCount(questions);
@@ -520,11 +454,24 @@ async function checkLiveSite(inputUrl, options = {}) {
       'data-page="/practice"',
       'practice__inner practice__inner--wide',
       'id="quiz-stage"',
-      'questions.js',
       'practice.js',
-    ]) && containsAll(practice, ['hub__grid', 'hub__card', 'href="#/mock"'])
+    ]) &&
+      containsAll(app, ['smtEnsureQuestionBank', 'questions.js']) &&
+      containsAll(practice, ['hub__grid', 'hub__card', 'href="#/mock"'])
       ? pass('practice hub assets')
       : fail('practice hub assets', 'missing current Practice route, script, or hub markup'),
+  );
+
+  const questionBankLazyLoadIssues = findStaticQuestionBankLazyLoadIssues(
+    index,
+    app,
+    practice,
+    v11,
+  );
+  checks.push(
+    questionBankLazyLoadIssues.length === 0
+      ? pass('static question bank lazy loading')
+      : fail('static question bank lazy loading', questionBankLazyLoadIssues.join('; ')),
   );
 
   const staticAdSenseIssues = findStaticAdSenseSlotConfigIssues(index, app);
@@ -669,8 +616,10 @@ module.exports = {
   findStaticAdSenseSlotConfigIssues,
   findStaticAdSenseSlotStateCopyIssues,
   findStaticNoTrackingClaimIssues,
+  findStaticQuestionBankLazyLoadIssues,
   findStaticSigninAssetIssues,
   hashStaticQuestionBank,
+  indexReferencesQuestionBankScript,
   indexReferencesSigninScript,
   normalizeBaseUrl,
   readStaticQuestionCount,

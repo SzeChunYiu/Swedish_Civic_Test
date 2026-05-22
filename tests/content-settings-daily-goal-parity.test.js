@@ -71,6 +71,23 @@ function createDailyGoalStorage(storedValue) {
   };
 }
 
+function createStudyPlanSettingsStorage(initialValues = {}) {
+  const values = new Map(Object.entries(initialValues));
+  const writes = [];
+
+  return {
+    values,
+    writes,
+    getBoolean: (key) => values.get(key),
+    getNumber: (key) => values.get(key),
+    getString: (key) => values.get(key),
+    set: (key, nextValue) => {
+      writes.push({ key, value: nextValue });
+      values.set(key, nextValue);
+    },
+  };
+}
+
 function loadSettingsModuleFromStorage(storage) {
   return loadTsWithStorage(repoRoot, 'lib/storage/settingsStore.ts', {
     settings: storage,
@@ -118,7 +135,27 @@ test('daily goal settings stay in parity between storage and settings controls',
   assert.match(settingsStore, /return normalizeDailyGoalAnswers\(storedValue\);/);
   assert.match(
     settingsStore,
-    /function readStorageNumber\(key: string\): number \| undefined \{[\s\S]*settingsStorage\?\.getNumber\(key\),[\s\S]*return result\.value;/,
+    /function readStorageNumber\(key: string\): number \| undefined \{[\s\S]*settingsStorage\?\.getNumber\(key\),[\s\S]*rememberInitialReadWarning\(result\.warning\);[\s\S]*return result\.value;/,
+  );
+  assert.match(settingsStore, /const studyPlanTestDateIsoKey = 'studyPlanTestDateIso';/);
+  assert.match(settingsStore, /const studyPlanIntensityKey = 'studyPlanIntensity';/);
+  assert.match(settingsStore, /const defaultStudyPlanIntensity: StudyIntensity = 'regular';/);
+  assert.match(settingsStore, /export function normalizeStudyPlanTestDateIso/);
+  assert.match(settingsStore, /function normalizeStudyPlanIntensity/);
+  assert.match(settingsStore, /function normalizeImportedStudyPlanIntensity/);
+  assert.match(settingsStore, /function readStudyPlanTestDateIso/);
+  assert.match(settingsStore, /function readStudyPlanIntensity/);
+  assert.match(settingsStore, /studyPlanTestDateIso: string \| null;/);
+  assert.match(settingsStore, /studyPlanIntensity: StudyIntensity;/);
+  assert.match(settingsStore, /setStudyPlanTestDateIso: \(testDateIso: string \| null\) => void;/);
+  assert.match(settingsStore, /setStudyPlanIntensity: \(intensity: StudyIntensity\) => void;/);
+  assert.match(
+    settingsStore,
+    /const studyPlanTestDateIso = normalizeStudyPlanTestDateIso\(candidate\.studyPlanTestDateIso\);/,
+  );
+  assert.match(
+    settingsStore,
+    /const studyPlanIntensity = normalizeImportedStudyPlanIntensity\(candidate\.studyPlanIntensity\);/,
   );
   assert.doesNotMatch(settingsStore, /storedValue && storedValue > 0 \? storedValue : 10/);
   assert.match(settingsStore, /Number\.isFinite\(answerCount\)/);
@@ -239,6 +276,72 @@ test('imported daily goal settings omit malformed snapshot values before persist
   });
 });
 
+test('study plan date settings normalize optional test date and intensity before persisting', () => {
+  const storage = createStudyPlanSettingsStorage({
+    studyPlanIntensity: 'serious',
+    studyPlanTestDateIso: '2026-08-15',
+  });
+  const {
+    importSettingsSnapshot,
+    normalizeImportedSettings,
+    normalizeStudyPlanTestDateIso,
+    useSettingsStore,
+  } = loadSettingsModuleFromStorage(storage);
+
+  assert.equal(normalizeStudyPlanTestDateIso('2026-08-15'), '2026-08-15T00:00:00.000Z');
+  assert.equal(
+    normalizeStudyPlanTestDateIso('2026-08-15T10:30:00.000Z'),
+    '2026-08-15T00:00:00.000Z',
+  );
+  assert.equal(normalizeStudyPlanTestDateIso('2026-02-31'), null);
+  assert.equal(normalizeStudyPlanTestDateIso('not-a-date'), null);
+  assert.equal(useSettingsStore.getState().studyPlanTestDateIso, '2026-08-15T00:00:00.000Z');
+  assert.equal(useSettingsStore.getState().studyPlanIntensity, 'serious');
+
+  useSettingsStore.getState().setStudyPlanTestDateIso('2026-09-02');
+  assert.equal(useSettingsStore.getState().studyPlanTestDateIso, '2026-09-02T00:00:00.000Z');
+  assert.deepEqual(storage.writes.at(-1), {
+    key: 'studyPlanTestDateIso',
+    value: '2026-09-02T00:00:00.000Z',
+  });
+
+  useSettingsStore.getState().setStudyPlanTestDateIso('2026-02-31');
+  assert.equal(useSettingsStore.getState().studyPlanTestDateIso, null);
+  assert.deepEqual(storage.writes.at(-1), { key: 'studyPlanTestDateIso', value: '' });
+
+  useSettingsStore.getState().setStudyPlanIntensity('casual');
+  assert.equal(useSettingsStore.getState().studyPlanIntensity, 'casual');
+  assert.deepEqual(storage.writes.at(-1), { key: 'studyPlanIntensity', value: 'casual' });
+
+  useSettingsStore.getState().setStudyPlanIntensity('invalid');
+  assert.equal(useSettingsStore.getState().studyPlanIntensity, 'regular');
+  assert.deepEqual(storage.writes.at(-1), { key: 'studyPlanIntensity', value: 'regular' });
+
+  assert.deepEqual(normalizeImportedSettings({ studyPlanTestDateIso: 'bad-date' }), {});
+  assert.deepEqual(normalizeImportedSettings({ studyPlanIntensity: 'too-much' }), {});
+  assert.equal(
+    normalizeImportedSettings({ studyPlanTestDateIso: '2026-10-01' }).studyPlanTestDateIso,
+    '2026-10-01T00:00:00.000Z',
+  );
+  assert.equal(normalizeImportedSettings({ studyPlanTestDateIso: '' }).studyPlanTestDateIso, null);
+  assert.equal(
+    normalizeImportedSettings({ studyPlanIntensity: 'regular' }).studyPlanIntensity,
+    'regular',
+  );
+
+  importSettingsSnapshot({ studyPlanTestDateIso: '2026-12-24', studyPlanIntensity: 'serious' });
+  assert.equal(useSettingsStore.getState().studyPlanTestDateIso, '2026-12-24T00:00:00.000Z');
+  assert.equal(useSettingsStore.getState().studyPlanIntensity, 'serious');
+  assert.deepEqual(storage.writes.slice(-2), [
+    { key: 'studyPlanTestDateIso', value: '2026-12-24T00:00:00.000Z' },
+    { key: 'studyPlanIntensity', value: 'serious' },
+  ]);
+
+  importSettingsSnapshot({ studyPlanTestDateIso: null });
+  assert.equal(useSettingsStore.getState().studyPlanTestDateIso, null);
+  assert.deepEqual(storage.writes.at(-1), { key: 'studyPlanTestDateIso', value: '' });
+});
+
 test('settings hydration falls back when MMKV reads throw', () => {
   const state = loadSettingsFromStorage(createThrowingReadMMKV('settings read failed'));
 
@@ -247,6 +350,8 @@ test('settings hydration falls back when MMKV reads throw', () => {
   assert.equal(state.dailyGoalAnswers, 10);
   assert.equal(state.includeSupplementaryQuestions, false);
   assert.equal(state.hasSeenAboutTheTest, false);
+  assert.equal(state.studyPlanTestDateIso, null);
+  assert.equal(state.studyPlanIntensity, 'regular');
 });
 
 test('daily goal settings parity rejects option-set drift', () => {

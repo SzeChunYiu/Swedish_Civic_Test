@@ -14,6 +14,7 @@ import {
   type RemoveAdsStorePlatform,
 } from './purchases';
 import { createInstrumentedE2EPurchaseRuntimeOptions } from './e2ePurchaseRuntime';
+import { createNativeRemoveAdsReceiptValidator } from './removeAdsReceiptValidator.native';
 
 const AD_BLOCKED_PENDING_ENTITLEMENTS: PremiumEntitlements = {
   ...FREE_ENTITLEMENTS,
@@ -127,8 +128,16 @@ export function createDefaultPurchaseRuntimeOptions(
     return defaultWebPurchaseRuntimeOptions;
   }
 
+  const nativePlatform = getNativePurchasePlatform();
+  const receiptValidator = createNativeRemoveAdsReceiptValidator({ platform: nativePlatform });
   defaultNativePurchaseRuntimeOptions ??= {
-    provider: createNativePurchaseProvider({ platform: getNativePurchasePlatform() }),
+    provider: createNativePurchaseProvider({
+      platform: nativePlatform,
+      receiptValidator,
+    }),
+    purchaseUnavailableReason: receiptValidator
+      ? undefined
+      : 'native_receipt_validator_unavailable',
     storage: createSecureStorePurchaseStorage(),
   };
 

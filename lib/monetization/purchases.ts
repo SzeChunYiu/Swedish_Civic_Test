@@ -68,11 +68,13 @@ export interface RemoveAdsPurchaseProvider {
 }
 
 export type RemoveAdsPurchaseStatus =
+  | 'unavailable'
   | 'purchased'
   | 'pending'
   | 'restored'
   | 'not_found'
-  | 'persistence_failed';
+  | 'persistence_failed'
+  | 'finish_failed';
 
 export interface RemoveAdsPurchaseResult {
   entitlements: PremiumEntitlements;
@@ -84,7 +86,7 @@ export interface RemoveAdsPurchaseResult {
 }
 
 export interface PurchaseRuntimeOptions {
-  purchaseUnavailableReason?: 'web_store_unavailable';
+  purchaseUnavailableReason?: 'web_store_unavailable' | 'native_receipt_validator_unavailable';
   provider?: RemoveAdsPurchaseProvider;
   storage?: PurchaseStorage;
 }
@@ -873,10 +875,20 @@ async function validateRemoveAdsReceipt(
   return isValidatedRemoveAdsReceipt(receiptValidation) ? receiptValidation : null;
 }
 
-export async function buyRemoveAds({
-  provider = createNativePurchaseProvider(),
-  storage = createSecureStorePurchaseStorage(),
-}: PurchaseRuntimeOptions = {}): Promise<RemoveAdsPurchaseResult> {
+export async function buyRemoveAds(
+  runtimeOptions: PurchaseRuntimeOptions = {},
+): Promise<RemoveAdsPurchaseResult> {
+  const { purchaseUnavailableReason, storage = createSecureStorePurchaseStorage() } =
+    runtimeOptions;
+  const provider = runtimeOptions.provider ?? createNativePurchaseProvider();
+
+  if (purchaseUnavailableReason) {
+    return createResult(
+      'unavailable',
+      await getFailClosedPurchaseEntitlements({ provider, storage }),
+    );
+  }
+
   await provider.connect();
 
   try {
@@ -907,17 +919,32 @@ export async function buyRemoveAds({
       return createResult('persistence_failed', persistenceResult.entitlements, purchase);
     }
 
-    await provider.finishPurchase?.(purchase);
+    try {
+      await provider.finishPurchase?.(purchase);
+    } catch {
+      return createResult('finish_failed', persistenceResult.entitlements, purchase);
+    }
+
     return createResult('purchased', persistenceResult.entitlements, purchase);
   } finally {
     await provider.disconnect?.();
   }
 }
 
-export async function restoreRemoveAdsPurchase({
-  provider = createNativePurchaseProvider(),
-  storage = createSecureStorePurchaseStorage(),
-}: PurchaseRuntimeOptions = {}): Promise<RemoveAdsPurchaseResult> {
+export async function restoreRemoveAdsPurchase(
+  runtimeOptions: PurchaseRuntimeOptions = {},
+): Promise<RemoveAdsPurchaseResult> {
+  const { purchaseUnavailableReason, storage = createSecureStorePurchaseStorage() } =
+    runtimeOptions;
+  const provider = runtimeOptions.provider ?? createNativePurchaseProvider();
+
+  if (purchaseUnavailableReason) {
+    return createResult(
+      'unavailable',
+      await getFailClosedPurchaseEntitlements({ provider, storage }),
+    );
+  }
+
   await provider.connect();
 
   try {

@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { adBannerCopy } from '../../lib/monetization/adCopy';
+import { isStrictEntitlementFlag } from '../../lib/monetization/premium';
 import {
   REMOVE_ADS_PRICE_LABEL,
   buyRemoveAds,
@@ -58,6 +59,8 @@ const removeAdsPlacementCtaCopy: Record<AppLanguage, RemoveAdsPlacementCtaCopy> 
     statusAccessibilityLabel: (message) => `Status för Ta bort annonser: ${message}`,
     statusMessages: {
       error: 'Köp är inte tillgängligt. Försök igen senare.',
+      finish_failed:
+        'Annonser är avstängda. Butiken kunde inte markera köpet som slutfört, så återställ köpet om det visas igen.',
       not_found: 'Inget tidigare köp av Ta bort annonser hittades.',
       pending: 'Väntar på butikens bekräftelse innan annonser tas bort.',
       persistence_failed:
@@ -88,6 +91,8 @@ const removeAdsPlacementCtaCopy: Record<AppLanguage, RemoveAdsPlacementCtaCopy> 
     statusAccessibilityLabel: (message) => `Remove Ads status: ${message}`,
     statusMessages: {
       error: 'Purchase is unavailable. Try again later.',
+      finish_failed:
+        'Ads are disabled. The store could not mark the purchase as finished, so restore the purchase if it appears again.',
       not_found: 'No previous Remove Ads purchase was found.',
       pending: 'Waiting for store confirmation before removing ads.',
       persistence_failed:
@@ -116,7 +121,7 @@ export function RemoveAdsPlacementCta({ placement }: { placement: AdPlacement })
   const [status, setStatus] = useState<PlacementPurchaseStatus | null>(null);
   const purchaseActionInFlightRef = useRef(false);
 
-  if (!entitlementsReady || entitlements.adsDisabled === true) return null;
+  if (!entitlementsReady || isStrictEntitlementFlag(entitlements.adsDisabled)) return null;
   const purchaseUnavailable =
     purchaseRuntime?.purchaseUnavailableReason === 'web_store_unavailable';
 

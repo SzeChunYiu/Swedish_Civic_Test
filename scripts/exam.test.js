@@ -432,8 +432,8 @@ test('exam route wires timed quiz-session diagnostics to the review heatmap', ()
   assert.match(examRouteSource, /buildExamDiagnostic/);
   assert.match(examRouteSource, /MockExamTimeHeatmap/);
   assert.match(examRouteSource, /recordQuestionAnswer/);
-  assert.match(examRouteSource, /examActive: examUnlocked/);
-  assert.match(examRouteSource, /!examUnlocked \|\| submitted/);
+  assert.match(examRouteSource, /examActive: examUnlocked && !examPaused/);
+  assert.match(examRouteSource, /!examUnlocked \|\|[\s\S]*submitted \|\|[\s\S]*examPaused/);
   assert.match(examRouteSource, /questionTimings:/);
   assert.match(examRouteSource, /scrollTo\(\{ animated: true/);
   assert.match(progressStoreSource, /export type MockExamQuestionTiming = \{/);
@@ -449,6 +449,43 @@ test('exam route wires timed quiz-session diagnostics to the review heatmap', ()
   assert.doesNotMatch(heatmapSource, /Math\.round\(medianMs \/ 1000\)/);
 });
 
+test('exam route pauses active timer and answer timing while hidden or backgrounded', () => {
+  const examRouteSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+  const autoSubmitCall =
+    examRouteSource.match(/shouldAutoSubmitExam\(\{[\s\S]*?\n\s*\}\)/)?.[0] ?? '';
+
+  assert.match(examRouteSource, /import \{[\s\S]*AppState[\s\S]*\} from 'react-native';/);
+  assert.match(examRouteSource, /import type \{ AppStateStatus \} from 'react-native';/);
+  assert.match(examRouteSource, /function isActiveAppState/);
+  assert.match(examRouteSource, /function isDocumentHidden/);
+  assert.match(examRouteSource, /const pauseStartedAtMsRef = useRef<number \| null>\(null\);/);
+  assert.match(examRouteSource, /const appStateActiveRef = useRef/);
+  assert.match(examRouteSource, /const documentVisibleRef = useRef/);
+  assert.match(examRouteSource, /const \[examPaused, setExamPaused\] = useState\(false\);/);
+  assert.match(
+    examRouteSource,
+    /const \[examPauseStatus, setExamPauseStatus\] = useState<'paused' \| 'resumed' \| null>\(null\);/,
+  );
+  assert.match(examRouteSource, /AppState\.addEventListener\('change', handleAppStateChange\)/);
+  assert.match(examRouteSource, /document\.addEventListener\('visibilitychange'/);
+  assert.match(examRouteSource, /document\.removeEventListener\('visibilitychange'/);
+  assert.match(examRouteSource, /examPaused \|\|/);
+  assert.match(examRouteSource, /pauseStartedAtMsRef\.current \?\?= Date\.now\(\);/);
+  assert.match(
+    examRouteSource,
+    /const pausedDurationMs = Math\.max\(0, Date\.now\(\) - pauseStartedAt\);/,
+  );
+  assert.match(examRouteSource, /timingCheckpointMsRef\.current \+= pausedDurationMs;/);
+  assert.match(examRouteSource, /setExamPauseStatus\('paused'\);/);
+  assert.match(examRouteSource, /setExamPauseStatus\('resumed'\);/);
+  assert.match(examRouteSource, /Paused while the app is in the background/);
+  assert.match(examRouteSource, /Pausad medan appen är i bakgrunden/);
+  assert.match(examRouteSource, /Timer resumed\. Hidden time was not counted\./);
+  assert.match(examRouteSource, /Tiden fortsätter nu\. Paustiden räknades inte\./);
+  assert.match(examRouteSource, /aria-live="polite"/);
+  assert.match(autoSubmitCall, /examActive: examUnlocked && !examPaused/);
+});
+
 test('exam route keeps flag-for-review state local to the current attempt', () => {
   const examRouteSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
   const navigatorSource = fs.readFileSync(
@@ -459,6 +496,7 @@ test('exam route keeps flag-for-review state local to the current attempt', () =
     examRouteSource.match(/buildMockExamQuizSession\(\{[\s\S]*?\n\s*\}\)/)?.[0] ?? '';
   const progressRecordCall =
     examRouteSource.match(/recordMockExamSession\(\{[\s\S]*?\n\s*\}\);/)?.[0] ?? '';
+  const activeNavigatorCall = examRouteSource.match(/<QuestionNavigator[\s\S]*?\/>/)?.[0] ?? '';
 
   assert.match(
     examRouteSource,
@@ -500,6 +538,8 @@ test('exam route keeps flag-for-review state local to the current attempt', () =
   assert.match(examRouteSource, /copy\.unflagQuestionAccessibilityLabel\(questionNumber\)/);
   assert.match(examRouteSource, /\{flaggedQuestionIds\[item\.questionId\] \? \(/);
   assert.match(examRouteSource, /<Badge tone="warm">\{copy\.flaggedQuestionLabel\}<\/Badge>/);
+  assert.match(activeNavigatorCall, /currentIndex=\{null\}/);
+  assert.doesNotMatch(activeNavigatorCall, /onSelect=/);
   assert.doesNotMatch(
     sessionBuilderCall,
     /flaggedQuestionIds/,
@@ -516,6 +556,18 @@ test('exam route keeps flag-for-review state local to the current attempt', () =
   );
   assert.match(navigatorSource, /flaggedIndexes\?: readonly number\[\];/);
   assert.match(navigatorSource, /if \(flaggedSet\.has\(index\)\) return 'flagged';/);
+  assert.match(
+    navigatorSource,
+    /const isInteractive = disabled !== true && typeof onSelect === 'function';/,
+  );
+  assert.match(navigatorSource, /isInteractive \? copy\.navigationLabel : copy\.statusLabel/);
+  assert.match(navigatorSource, /accessibilityRole="tab"/);
+  assert.match(navigatorSource, /accessibilityRole="text"/);
+  assert.match(navigatorSource, /accessibilityState=\{\{ selected \}\}/);
+  assert.doesNotMatch(
+    navigatorSource,
+    /accessibilityState=\{\{ disabled: isDisabled, selected \}\}/,
+  );
 });
 
 test('exam route separates reload-safe attempt ids from deterministic shuffle seeds', () => {

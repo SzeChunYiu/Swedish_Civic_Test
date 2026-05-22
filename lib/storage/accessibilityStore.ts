@@ -64,10 +64,20 @@ function normalizeFontSizeStep(value: unknown): FontSizeStep {
   return value === 0 || value === 1 || value === 2 || value === 3 ? value : 1;
 }
 
+function normalizeImportedFontSizeStep(value: unknown): FontSizeStep | undefined {
+  return value === 0 || value === 1 || value === 2 || value === 3 ? value : undefined;
+}
+
 function normalizeAudioPlaybackRate(value: unknown): AudioPlaybackRate {
   return AUDIO_PLAYBACK_RATES.includes(value as AudioPlaybackRate)
     ? (value as AudioPlaybackRate)
     : 1.0;
+}
+
+function normalizeImportedAudioPlaybackRate(value: unknown): AudioPlaybackRate | undefined {
+  return AUDIO_PLAYBACK_RATES.includes(value as AudioPlaybackRate)
+    ? (value as AudioPlaybackRate)
+    : undefined;
 }
 
 function normalizeListenFirstAudio(value: unknown): boolean {
@@ -179,6 +189,41 @@ type AccessibilityState = {
   clearPersistenceWarning: () => void;
 };
 
+export type ImportableAccessibilityPreferences = Partial<
+  Pick<
+    AccessibilityState,
+    'easyReadFont' | 'fontSizeStep' | 'audioPlaybackRate' | 'listenFirstAudioEnabled' | 'themeMode'
+  >
+>;
+
+export function normalizeImportedAccessibilityPreferences(
+  value: unknown,
+): ImportableAccessibilityPreferences {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
+
+  const candidate = value as Partial<AccessibilityState>;
+  const preferences: ImportableAccessibilityPreferences = {};
+  if (typeof candidate.easyReadFont === 'boolean') {
+    preferences.easyReadFont = candidate.easyReadFont;
+  }
+  if (Object.prototype.hasOwnProperty.call(candidate, 'fontSizeStep')) {
+    const fontSizeStep = normalizeImportedFontSizeStep(candidate.fontSizeStep);
+    if (fontSizeStep !== undefined) preferences.fontSizeStep = fontSizeStep;
+  }
+  if (Object.prototype.hasOwnProperty.call(candidate, 'audioPlaybackRate')) {
+    const audioPlaybackRate = normalizeImportedAudioPlaybackRate(candidate.audioPlaybackRate);
+    if (audioPlaybackRate !== undefined) preferences.audioPlaybackRate = audioPlaybackRate;
+  }
+  if (typeof candidate.listenFirstAudioEnabled === 'boolean') {
+    preferences.listenFirstAudioEnabled = candidate.listenFirstAudioEnabled;
+  }
+  if (isThemeMode(candidate.themeMode)) {
+    preferences.themeMode = candidate.themeMode;
+  }
+
+  return preferences;
+}
+
 const initialAccessibilityState = readInitialAccessibilityState();
 
 export const useAccessibilityStore = create<AccessibilityState>((set) => ({
@@ -244,4 +289,58 @@ export const useAccessibilityStore = create<AccessibilityState>((set) => ({
 /** Pure selector for the active font scale multiplier. */
 export function fontScaleFor(step: unknown): number {
   return FONT_SIZE_MULTIPLIERS[normalizeFontSizeStep(step)];
+}
+
+export function importAccessibilityPreferencesSnapshot(
+  preferences: ImportableAccessibilityPreferences,
+): void {
+  const normalizedPreferences = normalizeImportedAccessibilityPreferences(preferences);
+  let persistenceWarning: RecoverablePersistenceWarning | null = null;
+  if (normalizedPreferences.easyReadFont !== undefined) {
+    persistenceWarning =
+      writeRecoverably(
+        accessibilityStorage,
+        accessibilityStorageId,
+        easyReadFontKey,
+        normalizedPreferences.easyReadFont,
+      ) ?? persistenceWarning;
+  }
+  if (normalizedPreferences.fontSizeStep !== undefined) {
+    persistenceWarning =
+      writeRecoverably(
+        accessibilityStorage,
+        accessibilityStorageId,
+        fontSizeStepKey,
+        normalizedPreferences.fontSizeStep,
+      ) ?? persistenceWarning;
+  }
+  if (normalizedPreferences.audioPlaybackRate !== undefined) {
+    persistenceWarning =
+      writeRecoverably(
+        accessibilityStorage,
+        accessibilityStorageId,
+        audioPlaybackRateKey,
+        normalizedPreferences.audioPlaybackRate,
+      ) ?? persistenceWarning;
+  }
+  if (normalizedPreferences.listenFirstAudioEnabled !== undefined) {
+    persistenceWarning =
+      writeRecoverably(
+        accessibilityStorage,
+        accessibilityStorageId,
+        listenFirstAudioKey,
+        normalizedPreferences.listenFirstAudioEnabled,
+      ) ?? persistenceWarning;
+  }
+  if (normalizedPreferences.themeMode !== undefined) {
+    persistenceWarning =
+      writeRecoverably(
+        accessibilityStorage,
+        accessibilityStorageId,
+        themeModeKey,
+        normalizedPreferences.themeMode,
+      ) ?? persistenceWarning;
+  }
+
+  useAccessibilityStore.setState({ ...normalizedPreferences, persistenceWarning });
 }

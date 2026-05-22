@@ -6,6 +6,21 @@ import path from 'node:path';
 declare global {
   interface Window {
     i18n?: Record<string, Record<string, string>>;
+    smtSetLanguage?: (lang: string) => void;
+    SMT_QUESTIONS?: Array<{
+      id?: string;
+      chapterId?: number;
+      q?: Record<string, string>;
+      why?: Record<string, string>;
+      opts?: Array<Record<string, string>>;
+      answer?: number;
+      source?: {
+        title?: string;
+        chapter?: string;
+        section?: string;
+        page?: number;
+      };
+    }>;
   }
 }
 
@@ -140,10 +155,41 @@ const localizedHomeChapterElevenCitizenshipSnippets: Record<ExtraLocale, RegExp>
   tr: /vatandaşlık\s*\(medborgarskap\)/i,
   uk: /громадянством\s*\(medborgarskap\)/i,
 };
+const q050RenderedSourceCriticismLocales = ['zh-Hans', 'ar', 'pl', 'so', 'tr', 'uk'] as const;
+type Q050RenderedSourceCriticismLocale = (typeof q050RenderedSourceCriticismLocales)[number];
+const localizedQ050SourceCriticismTerms: Record<Q050RenderedSourceCriticismLocale, RegExp> = {
+  'zh-Hans': /来源批判/,
+  ar: /نقد المصادر/,
+  pl: /krytyka źródeł/i,
+  so: /qiimeynta ilaha/i,
+  tr: /kaynak eleştirisi/i,
+  uk: /критика джерел/i,
+};
+const forbiddenQ050SourceCriticismStaleTerms =
+  /具有(?:來|来)源批判意識|أن تكون ناقدًا للمصادر|krytyczne podejście do źródeł|si naqdineed loo eego ilaha|kaynaklara eleştirel yaklaşmak|критично ставитися до джерел/i;
+
+type StaticQ050RenderedCopy = {
+  question: string;
+  explanation: string;
+  answer: number;
+  chapterIndex: number;
+  source: {
+    title?: string;
+    chapter?: string;
+    section?: string;
+    page?: number;
+  };
+};
+
 const copiedTurkishPurchaseText =
   /Yalnızca|Satın alma|Web yükseltmeleri|Reklamsız|Reklamları kaldır|Google Play ile devam et|Ömür boyu|tek seferlik|Yükseltmenin|satın almaya hazır|Önce giriş yapın|Satın alma aktarım|Hesaba bağlı|Satın alma başlatılamadı/i;
-const reviewedSomaliAccountSyncFragment =
-  /calaamadahaaga, qoraalladaada iyo dashboard-kaaga ayaa la isku waafajinayaa dhammaan qalabkaaga/i;
+
+const supportMetadataValueKeys = ['support.meta1.v', 'support.meta2.v', 'support.meta3.v'] as const;
+const supportMetadataEnglishFallbacks: Record<(typeof supportMetadataValueKeys)[number], RegExp> = {
+  'support.meta1.v': /~2 business days/i,
+  'support.meta2.v': /English or Swedish/i,
+  'support.meta3.v': /^Free$/i,
+};
 
 type StaticSite = {
   baseUrl: string;
@@ -269,6 +315,43 @@ async function expectRootLocale(page: Page, locale: ExtraLocale) {
     });
 }
 
+async function switchStaticSiteLanguage(page: Page, locale: ExtraLocale) {
+  await page.evaluate((nextLocale) => {
+    if (typeof window.smtSetLanguage !== 'function') {
+      throw new Error('window.smtSetLanguage is not available');
+    }
+    window.smtSetLanguage(nextLocale);
+  }, locale);
+  await expectRootLocale(page, locale);
+}
+
+async function staticQ050RenderedCopy(
+  page: Page,
+  locale: Q050RenderedSourceCriticismLocale,
+): Promise<StaticQ050RenderedCopy> {
+  return page.evaluate((nextLocale) => {
+    const questions = window.SMT_QUESTIONS ?? [];
+    const chapterQuestions = questions.filter((question) => question.chapterId === 6);
+    const chapterIndex = chapterQuestions.findIndex((question) => question.id === 'q050');
+    const question = chapterQuestions[chapterIndex];
+
+    if (!question) throw new Error('q050 is missing from static chapter 6 practice questions');
+    const renderedQuestion = question.q?.[nextLocale];
+    const explanation = question.why?.[nextLocale];
+    if (!renderedQuestion || !explanation || typeof question.answer !== 'number') {
+      throw new Error(`q050 is missing rendered ${nextLocale} question, explanation, or answer`);
+    }
+
+    return {
+      question: renderedQuestion,
+      explanation,
+      answer: question.answer,
+      chapterIndex,
+      source: question.source ?? {},
+    };
+  }, locale);
+}
+
 async function expectNoHorizontalOverflow(page: Page) {
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
@@ -319,11 +402,30 @@ async function switchToSourcesRoute(page: Page) {
   await expect(page.locator('[data-page="/sources"]')).toHaveClass(/is-active/);
 }
 
+async function switchToSupportRoute(page: Page) {
+  await page.evaluate(() => {
+    window.location.hash = '#/support';
+  });
+  await expect(page.locator('[data-page="/support"]')).toHaveClass(/is-active/);
+}
+
 async function switchToHomeRoute(page: Page) {
   await page.evaluate(() => {
     window.location.hash = '#/';
   });
   await expect(page.locator('[data-page="/"]')).toHaveClass(/is-active/);
+}
+
+async function switchToPracticeChapter(page: Page, chapter: number | 'mix') {
+  await page.evaluate((nextHash) => {
+    if (window.location.hash === nextHash) return Promise.resolve();
+    return new Promise<void>((resolve) => {
+      window.addEventListener('hashchange', () => resolve(), { once: true });
+      window.location.hash = nextHash;
+    });
+  }, `#/practice?c=${chapter}`);
+  await expect(page.locator('[data-page="/practice"]')).toHaveClass(/is-active/);
+  await expect(page.locator('#quiz-stage .quiz__q')).toBeVisible();
 }
 
 async function expectLegalReadingTime(page: Page, locale: ExtraLocale, key: string) {
@@ -345,10 +447,13 @@ async function assertLongFormRouteCopy(page: Page, locale: ExtraLocale) {
   await expectLegalReadingTime(page, locale, 'privacy.meta3.v');
   await switchToTermsRoute(page);
   await expectDictionaryText(page, locale, 'terms.kicker');
+  await expectDictionaryText(page, locale, 'terms.h1a');
+  await expectDictionaryText(page, locale, 'terms.h1b');
   await expect(page.locator(i18nSelector('terms.lede'))).toContainText(
     await dictionaryText(page, locale, 'terms.lede'),
   );
   await expectLegalReadingTime(page, locale, 'terms.meta3.v');
+  await expect(page.locator('[data-page="/terms"] h1')).not.toContainText(/Plain rules/i);
   await switchToHomeRoute(page);
 }
 
@@ -373,6 +478,29 @@ async function assertSourcesRouteCopy(page: Page, locale: ExtraLocale, settingsS
   for (const staleFragment of staleExtraSourceFragments[locale]) {
     expect(sourceCopySurface).not.toMatch(new RegExp(escapeRegExp(staleFragment)));
   }
+}
+
+async function assertSupportRouteCopy(page: Page, locale: ExtraLocale) {
+  await switchToSupportRoute(page);
+  await expectDictionaryText(page, locale, 'support.kicker');
+  await expect(page.locator(i18nSelector('support.lede'))).toContainText(
+    await dictionaryText(page, locale, 'support.lede'),
+  );
+
+  for (const key of supportMetadataValueKeys) {
+    const value = await dictionaryText(page, locale, key);
+
+    await expectDictionaryText(page, locale, key);
+    expect(value).not.toMatch(supportMetadataEnglishFallbacks[key]);
+    if (locale === 'ckb' && key === 'support.meta1.v') {
+      expect(value).toBe('~2 ڕۆژی کاری');
+      expect(value).toMatch(/ڕۆژی کاری/);
+    }
+  }
+
+  await expectRootLocale(page, locale);
+  await expectNoHorizontalOverflow(page);
+  await switchToHomeRoute(page);
 }
 
 async function assertHomeChapterOneFolkhemmetGlossary(page: Page, locale: ExtraLocale) {
@@ -435,6 +563,24 @@ async function assertHomeChapterElevenCitizenshipTerms(page: Page, locale: Extra
   expect(['(', '（']).toContain(text[glossaryIndex - 1]);
 }
 
+async function openRenderedQ050Practice(page: Page, locale: Q050RenderedSourceCriticismLocale) {
+  await switchToHomeRoute(page);
+  await switchStaticSiteLanguage(page, locale);
+  const q050 = await staticQ050RenderedCopy(page, locale);
+
+  await switchToPracticeChapter(page, 'mix');
+  await switchToPracticeChapter(page, 6);
+  await switchStaticSiteLanguage(page, locale);
+
+  for (let skipped = 0; skipped < q050.chapterIndex; skipped += 1) {
+    await page.locator('#quiz-skip').dispatchEvent('click');
+    await switchStaticSiteLanguage(page, locale);
+  }
+
+  await expect(page.locator('#quiz-stage .quiz__q')).toHaveText(q050.question);
+  return q050;
+}
+
 let staticSite: StaticSite;
 
 test.beforeAll(async () => {
@@ -445,7 +591,7 @@ test.afterAll(async () => {
   await staticSite.close();
 });
 
-test('static Settings selects extra languages with localized legal metadata without overflow or outcome slogans', async ({
+test('static Settings selects extra languages with localized legal and Support metadata without overflow or outcome slogans', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
@@ -482,6 +628,7 @@ test('static Settings selects extra languages with localized legal metadata with
     expect(await dictionaryText(page, locale, 'footer.app.5')).not.toMatch(/Roadmap/i);
     await expectDictionaryText(page, locale, 'footer.honest.p');
     await assertLongFormRouteCopy(page, locale);
+    await assertSupportRouteCopy(page, locale);
     await expectRootLocale(page, locale);
     await expectNoOutcomeSlogans(page);
     await expectNoHorizontalOverflow(page);
@@ -718,39 +865,45 @@ test('static Home chapter 11 citizenship terms render localized glossary before 
   expect(pageErrors).toEqual([]);
 });
 
-test('Somali static sign-in and FAQ dashboard sync copy render without dhban typo', async ({
+test('static q050 source criticism extra languages render noun-based question and explanation', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   const pageErrors = collectPageErrors(page);
   await openStaticHome(page, staticSite.baseUrl);
+  await page.locator('#consent-min').click();
+  await expect(page.locator('#consent')).toBeHidden();
 
-  await page.locator('#settings-open').click();
-  await expect(page.locator('#settings-modal')).toBeVisible();
-  await page.locator('#settings-modal [data-set="language"] button[data-val="so"]').click();
-  await page.locator('#settings-modal button[data-close="settings"]').last().click();
-  await expect(page.locator('#settings-modal')).toBeHidden();
+  for (const locale of q050RenderedSourceCriticismLocales) {
+    const q050 = await openRenderedQ050Practice(page, locale);
+    expect(q050.source).toMatchObject({
+      title: 'Sverige i fokus',
+      chapter: 'Mediernas roll',
+      section: 'Källkritik',
+      page: 21,
+    });
 
-  await expectRootLocale(page, 'so');
-  await expect(page.locator(i18nSelector('faq.3.a'))).toContainText(
-    'dashboard-kaaga ayaa la isku waafajinayaa dhammaan qalabkaaga',
-  );
-  const faqText = await page.locator(i18nSelector('faq.3.a')).innerText();
-  expect(faqText).toMatch(reviewedSomaliAccountSyncFragment);
-  expect(faqText).not.toMatch(/\bdhban\b/i);
+    const questionText = await page.locator('#quiz-stage .quiz__q').innerText();
+    expect(questionText).toMatch(localizedQ050SourceCriticismTerms[locale]);
+    expect(questionText).not.toMatch(forbiddenQ050SourceCriticismStaleTerms);
 
-  await page.evaluate(() => {
-    window.localStorage.setItem('smt_signed_in', '1');
-    window.localStorage.setItem('smt_account_id', 'somali-sync-e2e');
-    window.localStorage.setItem('smt_account_email', 'somali@example.test');
-  });
-  await page.locator('#signin-open').click();
-  await expect(page.locator('#signin-modal')).toBeVisible();
-  await expect(page.locator('#signin-modal .signin__account')).toBeVisible();
+    const sourceText = await page.locator('#quiz-stage .quiz__source').innerText();
+    expect(sourceText).toContain('Sverige i fokus');
+    expect(sourceText).toContain('Mediernas roll');
+    expect(sourceText).toContain('Källkritik');
+    expect(sourceText).toContain('21');
 
-  const signedInText = await page.locator('#signin-modal [data-sk="signin.signedin"]').innerText();
-  expect(signedInText).toMatch(reviewedSomaliAccountSyncFragment);
-  expect(signedInText).not.toMatch(/\bdhban\b/i);
-  await expectNoHorizontalOverflow(page);
+    await page.locator(`#quiz-stage .quiz__opt[data-i="${q050.answer}"]`).dispatchEvent('click');
+    await switchStaticSiteLanguage(page, locale);
+    const feedback = page.locator('#quiz-stage .quiz__feedback');
+    await expect(feedback).toBeVisible();
+    await expect(feedback).toContainText(q050.explanation);
+
+    const explanationText = await feedback.innerText();
+    expect(explanationText).toMatch(localizedQ050SourceCriticismTerms[locale]);
+    expect(explanationText).not.toMatch(forbiddenQ050SourceCriticismStaleTerms);
+    await expect(page.locator('#quiz-stage .quiz__feedback-source')).toContainText('Källkritik');
+  }
+
   expect(pageErrors).toEqual([]);
 });

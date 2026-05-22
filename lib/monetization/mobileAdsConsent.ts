@@ -10,6 +10,7 @@ import {
   type AppTrackingTransparencyStatus,
   type UmpConsentStatus,
 } from './consent';
+import { isStrictEntitlementFlag } from './premium';
 import type { PremiumEntitlements } from '../../types/monetization';
 
 type TrackingTransparencyModule = typeof import('expo-tracking-transparency');
@@ -148,7 +149,7 @@ export async function collectMobileAdsConsentState({
   const platform = normalizeAdConsentPlatform(runtime.platform);
   const normalizedRegion = normalizeAdConsentRegion(region);
   const shouldCollectConsent =
-    googleMobileAdsEnabled && entitlements.adsDisabled !== true && realAdsEnabled;
+    googleMobileAdsEnabled && !isStrictEntitlementFlag(entitlements.adsDisabled) && realAdsEnabled;
   const currentTrackingTransparencyStatus = await getCurrentTrackingTransparencyStatus(
     runtime,
     platform,

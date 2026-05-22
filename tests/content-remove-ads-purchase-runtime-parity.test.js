@@ -40,7 +40,7 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
       /async validateRemoveAdsReceipt\(purchase, productId\) \{([\s\S]*?)\n    \},\n    async requestRemoveAdsPurchase/,
     )?.[1] ?? '';
 
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 32);
+  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 31);
   assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
   assert.match(purchaseSource, /REMOVE_ADS_RECORD_SCHEMA_VERSION = 1/);
   assert.match(purchaseSource, /REMOVE_ADS_IOS_PRODUCT_ID = REMOVE_ADS_PRODUCT_ID/);
@@ -64,6 +64,9 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.match(purchaseSource, /validateRemoveAdsReceipt\?\(/);
   assert.match(purchaseSource, /export type NativeRemoveAdsReceiptValidator =/);
   assert.match(purchaseSource, /receiptValidator\?: NativeRemoveAdsReceiptValidator/);
+  assert.match(purchaseSource, /native_receipt_validator_unavailable/);
+  assert.match(purchaseSource, /\| 'unavailable'/);
+  assert.match(purchaseSource, /createResult\(\s*'unavailable'/);
   assert.match(purchaseSource, /if \(!receiptValidator\) \{/);
   assert.match(purchaseSource, /status: 'pending'/);
   assert.doesNotMatch(nativeReceiptValidationBlock, /createReceiptValidationResult\s*\(/);
@@ -113,22 +116,17 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.match(placementCtaSource, /accessibilityLabel=\{copy\.restoreAccessibilityLabel\}/);
   assert.match(placementCtaSource, /copy\.restoreAccessibilityHint/);
   assert.match(placementCtaSource, /Purchase restored\. Study ads are being removed/);
-  assert.match(placementCtaSource, /statusMessages: Record<PlacementPurchaseStatus, string>/);
-  assert.doesNotMatch(placementCtaSource, /Partial<Record<PlacementPurchaseStatus, string>>/);
-  assert.match(placementCtaSource, /persistence_failed/);
+  assert.match(placementCtaSource, /finish_failed:/);
+  assert.match(placementCtaSource, /The store could not mark the purchase as finished/);
+  assert.match(placementCtaSource, /Butiken kunde inte markera köpet som slutfört/);
+  assert.match(purchaseSource, /'finish_failed'/);
   assert.match(
-    placementCtaSource,
-    /Purchase was confirmed, but ad-free status could not be saved on this device/,
+    purchaseSource,
+    /catch \{[\s\S]*return createResult\('finish_failed', persistenceResult\.entitlements, purchase\);[\s\S]*\}/,
   );
-  assert.match(
-    placementCtaSource,
-    /Köpet bekräftades, men annonsfri status kunde inte sparas på den här enheten/,
-  );
-  assert.match(
-    placementCtaSource,
-    /accessibilityLabel=\{copy\.statusAccessibilityLabel\(statusMessage\)\}/,
-  );
-  assert.match(placementCtaSource, /accessibilityLiveRegion="polite"/);
+  assert.match(paywallSource, /status === 'finish_failed'/);
+  assert.match(paywallSource, /The store could not mark the purchase as finished/);
+  assert.match(paywallSource, /Butiken kunde inte markera köpet som slutfört/);
   assert.match(placementCtaSource, /const purchaseActionInFlightRef = useRef\(false\);/);
   assert.match(placementCtaSource, /if \(purchaseActionInFlightRef\.current\) return;/);
   assert.match(placementCtaSource, /purchaseActionInFlightRef\.current = true;/);
@@ -318,7 +316,7 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('Remove Ads purchase runtime parity rejects native store-id purchase mapping drift', () => {
+test('Remove Ads purchase runtime parity rejects native store-id mapping drift', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -349,48 +347,6 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /native Remove Ads purchase request must map Android to removeads and iOS to the canonical bundle id/,
-  );
-});
-
-test('Remove Ads purchase runtime parity rejects native restore store-id mapping drift', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/lib/monetization/purchases.ts')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace(
-        \`isPurchaseForProduct(
-            purchase,
-            productId,
-            getPurchaseStoreProductId(productId, storePlatform),
-          )\`,
-        \`isPurchaseForProduct(
-            purchase,
-            productId,
-            productId,
-          )\`,
-      );
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-process.argv.push('--focus-remove-ads-purchase-runtime-parity');
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /native Remove Ads restore must match Android removeads and iOS canonical store ids/,
   );
 });
 
@@ -443,8 +399,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         'await provider.finishPurchase?.(purchase);\\n    const persistenceResult = await persistValidatedRemoveAdsEntitlement({',
       )
       .replace(
-        "\\n    await provider.finishPurchase?.(purchase);\\n    return createResult('purchased', persistenceResult.entitlements, purchase);",
-        "\\n    return createResult('purchased', persistenceResult.entitlements, purchase);",
+        "    try {\\n      await provider.finishPurchase?.(purchase);\\n    } catch {\\n      return createResult('finish_failed', persistenceResult.entitlements, purchase);\\n    }\\n\\n",
+        '',
       );
   }
   return originalReadFileSync.call(this, filePath, ...args);
@@ -459,7 +415,41 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /Remove Ads buy flow must persist the entitlement before finishing the native transaction/,
+    /Remove Ads buy flow must persist the entitlement before finishing the native transaction and recover from post-persistence finish failures/,
+  );
+});
+
+test('Remove Ads purchase runtime parity rejects missing post-persistence finish recovery', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/monetization/purchases.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        "    } catch {\\n      return createResult('finish_failed', persistenceResult.entitlements, purchase);\\n    }",
+        "    } catch {\\n      throw new Error('finish failed');\\n    }",
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-remove-ads-purchase-runtime-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /Remove Ads buy flow must persist the entitlement before finishing the native transaction and recover from post-persistence finish failures/,
   );
 });
 

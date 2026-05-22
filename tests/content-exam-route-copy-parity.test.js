@@ -116,6 +116,15 @@ test('exam route shell and review copy follows the persisted settings language',
   assert.match(source, /copy\.reviewFilterFlagged\(flaggedReviewCount\)/);
   assert.match(source, /\{copy\.reviewFilterAll\}/);
   assert.match(source, /filteredReviewItems\.map/);
+  assert.match(
+    source,
+    /<QuestionNavigator[\s\S]*currentIndex=\{null\}[\s\S]*flaggedIndexes=\{flaggedIndexes\}/,
+  );
+  assert.doesNotMatch(
+    source.match(/<QuestionNavigator[\s\S]*?\/>/)?.[0] ?? '',
+    /onSelect=/,
+    'active mock exam question status grid should not expose disabled tab navigation',
+  );
   assert.match(source, /const examQuestionNumberById = useMemo\(/);
   assert.match(source, /copy\.questionNumber\(questionNumber\)/);
   assert.match(source, /language === 'en' \? chapter\.chapterNameEn : chapter\.chapterNameSv/);
@@ -312,7 +321,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /exam UHR references must receive settings language|submitted exam review must render localized UHR reference cards/,
+    /submitted exam review must render localized UHR reference cards/,
   );
 });
 

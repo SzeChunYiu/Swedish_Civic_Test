@@ -2487,7 +2487,7 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "What is the foremost task of Sweden's regions?",
+      "en": "What is the main responsibility of Sweden's regions?",
       "sv": "Vilken är regionernas främsta uppgift i Sverige?",
       "zh-Hant": "瑞典區域的主要任務是什麼？",
       "zh-Hans": "瑞典区域的主要任务是什么？",
@@ -7733,7 +7733,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Two hundred years ago, Sweden was a typical agricultural country. Almost the whole population lived in the countryside and worked by farming and caring for animals, cities were small, and Sweden was poor compared with other European countries.",
+      "en": "Two hundred years ago, Sweden was a typical agricultural country. Almost the whole population lived in the countryside and worked on farms, growing crops and caring for animals. Cities were small, and Sweden was poor compared with other European countries.",
       "sv": "För tvåhundra år sedan var Sverige ett typiskt jordbruksland. Nästan hela befolkningen bodde på landet och arbetade med att odla jorden och sköta djur, städerna var små och Sverige var fattigt jämfört med andra länder i Europa.",
       "zh-Hant": "兩百年前，瑞典是一個典型的農業國家。幾乎所有人口都住在鄉村，從事耕種和照料動物；城市很小，瑞典與歐洲其他國家相比很貧窮。",
       "zh-Hans": "两百年前，瑞典是一个典型的农业国家。几乎所有人口都住在乡村，从事耕种和照料动物；城市很小，瑞典与欧洲其他国家相比很贫穷。",
@@ -8264,7 +8264,7 @@
     ],
     "answer": 2,
     "why": {
-      "en": "The first Riksdag election in which both women and men could vote and women could become members of the Riksdag was held in 1921. Almost all men had gained suffrage in 1909 and the decision on universal suffrage came in 1918, but the first Riksdag election with both women's and men's voting rights and women's eligibility was held in 1921.",
+      "en": "The first Riksdag election in which both women and men could vote and women could become members of the Riksdag was held in 1921. Almost all men had gained suffrage in 1909, and the decision on universal suffrage came in 1918, but the first Riksdag election held after those reforms was in 1921.",
       "sv": "År 1921 hölls det första riksdagsvalet där både kvinnor och män fick rösta och där kvinnor kunde bli riksdagsledamöter. Nästan alla män hade fått rösträtt 1909 och beslutet om allmän rösträtt kom 1918, men 1921 är året för valet som frågan syftar på.",
       "zh-Hant": "1921 年舉行了第一次女性和男性都可以投票、且女性可以成為國會議員的國會選舉。幾乎所有男性在 1909 年已獲得投票權，普選決定在 1918 年作出，但本題所問的選舉年份是 1921 年。",
       "zh-Hans": "1921 年举行了第一次女性和男性都可以投票、且女性可以成为国会议员的国会选举。几乎所有男性在 1909 年已获得投票权，普选决定在 1918 年作出，但本题所问的选举年份是 1921 年。",
@@ -8370,7 +8370,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Saltsjöbaden Agreement was made in 1938 between employers and trade unions. It was important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
+      "en": "The Saltsjöbaden Agreement was concluded in 1938 between employers and trade unions. It was important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
       "sv": "Saltsjöbadsavtalet slöts 1938 mellan arbetsgivare och fackförbund. Det blev viktigt för samarbetet mellan dem och lade grunden för den svenska modellen, där arbetsgivare och fackförbund kommer överens om arbetsmarknadens villkor i kollektivavtal.",
       "zh-Hant": "薩爾特舍巴登協議於 1938 年由雇主和工會締結。它對雙方合作很重要，並為瑞典模式奠定基礎；在瑞典模式中，雇主和工會透過集體協議就勞動市場條件達成一致。",
       "zh-Hans": "萨尔特舍巴登协议于 1938 年由雇主和工会缔结。它对双方合作很重要，并为瑞典模式奠定基础；在瑞典模式中，雇主和工会通过集体协议就劳动力市场条件达成一致。",
@@ -17293,16 +17293,16 @@
     "q": {
       "en": "What rules apply to voting rights in municipal and regional elections for people who are not Swedish citizens?",
       "sv": "Vilka regler gäller för rösträtt i kommun- och regionval för personer som inte är svenska medborgare?",
-      "zh-Hant": "對於非瑞典公民，哪項說法描述了他們在市鎮（kommun）和大區（region）選舉中的投票權？",
-      "zh-Hans": "对于非瑞典公民，哪项说法描述了他们在市镇（kommun）和大区（region）选举中的投票权？",
+      "zh-Hant": "對於非瑞典公民，哪項說法描述了他們在市鎮和大區選舉中的投票權？",
+      "zh-Hans": "对于非瑞典公民，哪项说法描述了他们在市镇和大区选举中的投票权？",
       "ar": "أيُّ إجابةٍ تصف حقّ التصويت في انتخابات البلديات (kommun) والأقاليم (region) لمن ليسوا مواطنين سويديين؟",
       "ckb": "کام وەڵام مافی دەنگدان لە هەڵبژاردنی شارەوانی (kommun) و هەرێم (region) بۆ ئەو کەسانەی هاووڵاتی سوید نین دەخاتە ڕوو؟",
-      "fa": "کدام پاسخ حق رأی در انتخابات شهرداری (kommun) و منطقه (region) را برای کسانی که شهروند سوئد نیستند توصیف می‌کند؟",
+      "fa": "کدام پاسخ حق رأی در انتخابات کمون (kommun) و منطقه (region) را برای کسانی که شهروند سوئد نیستند توصیف می‌کند؟",
       "pl": "Która odpowiedź opisuje prawo do głosowania w wyborach gminnych i regionalnych dla osób, które nie są obywatelami Szwecji?",
       "so": "Jawaabtee qeexaysa xaqa codbixinta ee doorashooyinka degmooyinka iyo gobollada ee dadka aan ahayn muwaadiniinta Iswiidhan?",
-      "ti": "ኣየናይ መልሲ ንዜጋታት ሽወደን ዘይኮኑ ሰባት ኣብ ምርጫታት ምምሕዳር ከባቢ (kommun) ከምኡ’ውን ዞባ (region) ዘሎ መሰል ምድማጽ ይገልጽ?",
-      "tr": "Hangi cevap, İsveç vatandaşı olmayan kişiler için belediye (kommun) ve bölge (region) seçimlerindeki oy kullanma hakkını tanımlar?",
-      "uk": "Який варіант відповіді описує право голосу на муніципальних (kommun) і регіональних (region) виборах для людей, які не є громадянами Швеції?"
+      "ti": "ኣየናይ መልሲ ንዜጋታት ሽወደን ዘይኮኑ ሰባት ኣብ ምርጫታት ምምሕዳር ከባቢን ክልልን ዘሎ መሰል ምድማጽ ይገልጽ?",
+      "tr": "Hangi cevap, İsveç vatandaşı olmayan kişiler için belediye ve bölge seçimlerindeki oy kullanma hakkını tanımlar?",
+      "uk": "Який варіант відповіді описує право голосу на муніципальних і регіональних виборах для людей, які не є громадянами Швеції?"
     },
     "opts": [
       {
@@ -17322,16 +17322,16 @@
       {
         "en": "No one without Swedish citizenship may vote in municipal or regional elections",
         "sv": "Ingen utan svenskt medborgarskap får rösta i kommun- eller regionval",
-        "zh-Hant": "沒有瑞典公民身分的人一律不得在市鎮（kommun）或大區（region）選舉中投票",
-        "zh-Hans": "没有瑞典公民身份的人一律不得在市镇（kommun）或大区（region）选举中投票",
+        "zh-Hant": "沒有瑞典公民身分的人一律不得在市鎮或大區選舉中投票",
+        "zh-Hans": "没有瑞典公民身份的人一律不得在市镇或大区选举中投票",
         "ar": "لا يحقّ لأحدٍ بلا جنسية سويدية التصويت في انتخابات البلديات (kommun) أو الأقاليم (region)",
         "ckb": "هیچ کەسێک بەبێ هاووڵاتیبوونی سوید بۆی نییە لە هەڵبژاردنی شارەوانی (kommun) یان هەرێم (region) دەنگ بدات",
-        "fa": "هیچ‌کس بدون شهروندی سوئد اجازهٔ رأی‌دادن در انتخابات شهرداری (kommun) یا منطقه (region) را ندارد",
+        "fa": "هیچ‌کس بدون شهروندی سوئد اجازهٔ رأی‌دادن در انتخابات کمون (kommun) یا منطقه (region) را ندارد",
         "pl": "Nikt bez obywatelstwa szwedzkiego nie może głosować w wyborach gminnych ani regionalnych",
         "so": "Cidna aan lahayn muwaadinimada Iswiidhan kuma codayn karto doorashooyinka degmooyinka ama gobollada",
-        "ti": "ዜግነት ሽወደን ዘይብሉ ዝኾነ ሰብ ኣብ ምርጫታት ምምሕዳር ከባቢ (kommun) ወይ ዞባ (region) ክመርጽ ኣይክእልን",
-        "tr": "İsveç vatandaşlığı olmayan hiç kimse belediye (kommun) veya bölge (region) seçimlerinde oy kullanamaz",
-        "uk": "Ніхто без шведського громадянства не може голосувати на муніципальних (kommun) чи регіональних (region) виборах"
+        "ti": "ዜግነት ሽወደን ዘይብሉ ዝኾነ ሰብ ኣብ ምርጫታት ምምሕዳር ከባቢ ወይ ክልል ክመርጽ ኣይክእልን",
+        "tr": "İsveç vatandaşlığı olmayan hiç kimse belediye veya bölge seçimlerinde oy kullanamaz",
+        "uk": "Ніхто без шведського громадянства не може голосувати на муніципальних чи регіональних виборах"
       },
       {
         "en": "All tourists may vote if they are in Sweden on election day",
@@ -17366,16 +17366,16 @@
     "why": {
       "en": "Swedish citizenship is not always required for municipal and regional elections. People who are not Swedish citizens may have the right to vote if they are registered as living in Sweden and meet the rules, such as three years of registration or special rules for EU and Nordic citizens.",
       "sv": "För kommun- och regionval krävs inte alltid svenskt medborgarskap. Personer som inte är svenska medborgare kan ha rösträtt om de är folkbokförda i Sverige och uppfyller reglerna, till exempel tre års folkbokföring eller särskilda regler för EU- och nordiska medborgare.",
-      "zh-Hant": "市鎮（kommun）和大區（region）選舉並不總是要求具有瑞典公民身分。非瑞典公民如果在瑞典登記戶籍（folkbokförd）並符合相關規定，就可能擁有投票權，例如登記戶籍滿三年，或適用於 EU 公民和北歐公民的特殊規定。",
-      "zh-Hans": "市镇（kommun）和大区（region）选举并不总是要求具有瑞典公民身份。非瑞典公民如果在瑞典登记户籍（folkbokförd）并符合相关规定，就可能拥有投票权，例如登记户籍满三年，或适用于 EU 公民和北欧公民的特殊规定。",
+      "zh-Hant": "市鎮和大區選舉並不總是要求具有瑞典公民身分。非瑞典公民如果在瑞典登記戶籍（folkbokförd）並符合相關規定，就可能擁有投票權，例如登記戶籍滿三年，或適用於 EU 公民和北歐公民的特殊規定。",
+      "zh-Hans": "市镇和大区选举并不总是要求具有瑞典公民身份。非瑞典公民如果在瑞典登记户籍（folkbokförd）并符合相关规定，就可能拥有投票权，例如登记户籍满三年，或适用于 EU 公民和北欧公民的特殊规定。",
       "ar": "لا تُشترَط دائمًا الجنسية السويدية لانتخابات البلديات (kommun) والأقاليم (region). فالأشخاص الذين ليسوا مواطنين سويديين قد يكون لهم حقّ التصويت إذا كانوا مسجّلين كمقيمين في السويد ويستوفون الشروط، مثل ثلاث سنوات من التسجيل أو قواعد خاصة لمواطني الاتحاد الأوروبي (EU) ومواطني دول الشمال.",
       "ckb": "بۆ هەڵبژاردنی شارەوانی (kommun) و هەرێم (region) هەمیشە هاووڵاتیبوونی سوید پێویست نییە. ئەو کەسانەی هاووڵاتی سوید نین لەوانەیە مافی دەنگدانیان هەبێت ئەگەر لە سوید وەک نیشتەجێ تۆمارکرابن و مەرجەکان بهێننە دی، وەک سێ ساڵ تۆمارکردن یان ڕێسای تایبەت بۆ هاووڵاتیانی EU و وڵاتانی باکووری ئەورووپا.",
-      "fa": "برای انتخابات شهرداری (kommun) و منطقه (region) همیشه شهروندی سوئد لازم نیست. کسانی که شهروند سوئد نیستند ممکن است حق رأی داشته باشند اگر در سوئد به‌عنوان مقیم ثبت شده باشند و شرایط را برآورده کنند، مانند سه سال ثبت اقامت یا قواعد ویژه برای شهروندان EU و کشورهای شمال اروپا.",
+      "fa": "برای انتخابات کمون (kommun) و منطقه (region) همیشه شهروندی سوئد لازم نیست. کسانی که شهروند سوئد نیستند ممکن است حق رأی داشته باشند اگر در سوئد به‌عنوان مقیم ثبت شده باشند و شرایط را برآورده کنند، مانند سه سال ثبت اقامت یا قواعد ویژه برای شهروندان EU و کشورهای شمال اروپا.",
       "pl": "W wyborach gminnych i regionalnych nie zawsze wymagane jest obywatelstwo szwedzkie. Osoby, które nie są obywatelami Szwecji, mogą mieć prawo do głosowania, jeśli są zameldowane (folkbokförda) w Szwecji i spełniają zasady, na przykład trzy lata zameldowania lub szczególne zasady dla obywateli EU i krajów nordyckich.",
       "so": "Doorashooyinka degmooyinka iyo gobollada had iyo jeer looma baahna muwaadinimada Iswiidhan. Dadka aan ahayn muwaadiniinta Iswiidhan waxay yeelan karaan xaqa codbixinta haddii ay ku diiwaangashan yihiin (folkbokförda) Iswiidhan oo ay buuxiyaan xeerarka, sida saddex sano oo diiwaangelin ah ama xeerar gaar ah oo loogu talagalay muwaadiniinta EU iyo kuwa waqooyiga Yurub.",
-      "ti": "ንምርጫታት ምምሕዳር ከባቢ (kommun) ከምኡ’ውን ዞባ (region) ኩሉ ግዜ ዜግነት ሽወደን ኣየድልን። ዜጋታት ሽወደን ዘይኮኑ ሰባት ኣብ ሽወደን ተመዝጊቦም (folkbokförda) እንተ ኣልዮምን ነቶም ሕግታት እንተ ኣማሊኦምን፣ ንኣብነት ሰለስተ ዓመት ምዝገባ ወይ ንዜጋታት EU ከምኡ’ውን ኖርዲክ ፍሉያት ሕግታት፣ መሰል ምድማጽ ክህልዎም ይኽእል።",
-      "tr": "Belediye (kommun) ve bölge (region) seçimleri için İsveç vatandaşlığı her zaman gerekli değildir. İsveç vatandaşı olmayan kişiler, İsveç'te kayıtlı (folkbokförda) iseler ve kuralları karşılıyorlarsa oy kullanma hakkına sahip olabilir; örneğin üç yıllık kayıt ya da EU ve İskandinav vatandaşları için özel kurallar.",
-      "uk": "Для муніципальних (kommun) і регіональних (region) виборів не завжди потрібне шведське громадянство. Особи, які не є громадянами Швеції, можуть мати право голосу, якщо вони зареєстровані за місцем проживання (folkbokförda) у Швеції та відповідають правилам, наприклад три роки реєстрації або особливі правила для громадян EU та країн Північної Європи."
+      "ti": "ንምርጫታት ምምሕዳር ከባቢን ክልልን ኩሉ ግዜ ዜግነት ሽወደን ኣየድልን። ዜጋታት ሽወደን ዘይኮኑ ሰባት ኣብ ሽወደን ተመዝጊቦም (folkbokförda) እንተ ኣልዮምን ነቶም ሕግታት እንተ ኣማሊኦምን፣ ንኣብነት ሰለስተ ዓመት ምዝገባ ወይ ንዜጋታት EU ከምኡ’ውን ኖርዲክ ፍሉያት ሕግታት፣ መሰል ምድማጽ ክህልዎም ይኽእል።",
+      "tr": "Belediye ve bölge seçimleri için İsveç vatandaşlığı her zaman gerekli değildir. İsveç vatandaşı olmayan kişiler, İsveç'te kayıtlı (folkbokförda) iseler ve kuralları karşılıyorlarsa oy kullanma hakkına sahip olabilir; örneğin üç yıllık kayıt ya da EU ve İskandinav vatandaşları için özel kurallar.",
+      "uk": "Для муніципальних і регіональних виборів не завжди потрібне шведське громадянство. Особи, які не є громадянами Швеції, можуть мати право голосу, якщо вони зареєстровані за місцем проживання (folkbokförda) у Швеції та відповідають правилам, наприклад три роки реєстрації або особливі правила для громадян EU та країн Північної Європи."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -17622,31 +17622,31 @@
     "q": {
       "en": "Which statement about special parties in municipal and regional elections is correct?",
       "sv": "Vilket påstående om särskilda partier i kommun- och regionval är korrekt?",
-      "zh-Hant": "關於市鎮（kommun）和大區（region）選舉中的特殊政黨，哪項說法是正確的？",
-      "zh-Hans": "关于市镇（kommun）和大区（region）选举中的特殊政党，哪项说法是正确的？",
+      "zh-Hant": "關於市鎮和大區選舉中的特殊政黨，哪項說法是正確的？",
+      "zh-Hans": "关于市镇和大区选举中的特殊政党，哪项说法是正确的？",
       "ar": "ما العبارة الصحيحة بشأن الأحزاب الخاصة في انتخابات البلديات (kommun) والأقاليم (region)؟",
       "ckb": "کام لێدوان دەربارەی پارتە تایبەتەکان لە هەڵبژاردنی شارەوانی (kommun) و هەرێم (region) ڕاستە؟",
-      "fa": "کدام گزاره دربارهٔ احزاب ویژه در انتخابات شهرداری (kommun) و منطقه (region) درست است؟",
+      "fa": "کدام گزاره دربارهٔ احزاب ویژه در انتخابات کمون (kommun) و منطقه (region) درست است؟",
       "pl": "Które stwierdzenie o lokalnych partiach w wyborach gminnych i regionalnych jest prawidłowe?",
       "so": "Hadalkee ku saabsan xisbiyada gaarka ah ee doorashooyinka degmooyinka iyo gobollada ayaa sax ah?",
-      "ti": "ኣብ ምርጫታት ምምሕዳር ከባቢ (kommun) ከምኡ’ውን ዞባ (region) ብዛዕባ ፍሉያት ሰልፍታት ኣየናይ ኣበሃህላ ቅኑዕ እዩ?",
-      "tr": "Belediye (kommun) ve bölge (region) seçimlerindeki özel partiler hakkında hangi ifade doğrudur?",
-      "uk": "Яке твердження про особливі партії на муніципальних (kommun) і регіональних (region) виборах є правильним?"
+      "ti": "ኣብ ምርጫታት ምምሕዳር ከባቢን ክልልን ብዛዕባ ፍሉያት ሰልፍታት ኣየናይ ኣበሃህላ ቅኑዕ እዩ?",
+      "tr": "Belediye ve bölge seçimlerindeki özel partiler hakkında hangi ifade doğrudur?",
+      "uk": "Яке твердження про особливі партії на муніципальних і регіональних виборах є правильним?"
     },
     "opts": [
       {
         "en": "They can have policies only for their own municipality or region",
         "sv": "De kan ha politik bara för den egna kommunen eller regionen",
-        "zh-Hant": "它們可以只針對本市鎮（kommun）或本大區（region）制定政策",
-        "zh-Hans": "它们可以只针对本市镇（kommun）或本大区（region）制定政策",
+        "zh-Hant": "它們可以只針對本市鎮或本大區制定政策",
+        "zh-Hans": "它们可以只针对本市镇或本大区制定政策",
         "ar": "يمكن أن تكون لها سياسات تخصّ بلديتها (kommun) أو إقليمها (region) وحده فقط",
         "ckb": "دەتوانن تەنها سیاسەتیان بۆ شارەوانی یان هەرێمی خۆیان هەبێت",
-        "fa": "می‌توانند سیاست‌هایی داشته باشند که تنها مربوط به شهرداری خودشان (kommun) یا منطقهٔ خودشان (region) است",
+        "fa": "می‌توانند سیاست‌هایی داشته باشند که تنها مربوط به کمون یا منطقهٔ خودشان است",
         "pl": "Mogą prowadzić politykę tylko dla własnej gminy lub własnego regionu",
-        "so": "Waxay siyaasad u yeelan karaan kaliya degmadooda ama gobolkooda",
-        "ti": "ንናይ ገዛእ ርእሶም ምምሕዳር ከባቢ (kommun) ወይ ዞባ (region) ጥራይ ፖሊሲ ክህልዎም ይኽእል",
-        "tr": "Yalnızca kendi belediyeleri (kommun) veya bölgeleri (region) için politikaları olabilir",
-        "uk": "Вони можуть мати політику лише для власного муніципалітету (kommun) чи власного регіону (region)"
+        "so": "Waxay siyaasad u yeelan karaan kaliya degmadooda ama gobolkooda gaarka ah",
+        "ti": "ንናይ ገዛእ ርእሶም ምምሕዳር ከባቢ ወይ ክልል ጥራይ ፖሊሲ ክህልዎም ይኽእል",
+        "tr": "Yalnızca kendi belediyeleri veya bölgeleri için politikaları olabilir",
+        "uk": "Вони можуть мати політику лише для власного муніципалітету чи регіону"
       },
       {
         "en": "They must always be parties in the Riksdag",
@@ -17695,16 +17695,16 @@
     "why": {
       "en": "Municipal and regional elections can include special parties with policies for their own municipality or region, not for the national level. Before elections, parties try to persuade voters through debates, meetings, political advertising, and campaigns.",
       "sv": "I kommun- och regionval kan det finnas särskilda partier som har politik för just sin kommun eller region, inte på riksnivå. Inför valen försöker partier övertyga väljare genom debatter, möten, politisk reklam och kampanjer.",
-      "zh-Hant": "在市鎮（kommun）和大區（region）選舉中，可能存在只針對本市鎮或本大區制定政策、而不在全國層面活動的特殊政黨。選舉前，各政黨透過辯論、集會、政治廣告和競選活動來爭取選民。",
-      "zh-Hans": "在市镇（kommun）和大区（region）选举中，可能存在只针对本市镇或本大区制定政策、而不在全国层面活动的特殊政党。选举前，各政党通过辩论、集会、政治广告和竞选活动来争取选民。",
+      "zh-Hant": "在市鎮和大區選舉中，可能存在只針對本市鎮或本大區制定政策、而不在全國層面活動的特殊政黨。選舉前，各政黨透過辯論、集會、政治廣告和競選活動來爭取選民。",
+      "zh-Hans": "在市镇和大区选举中，可能存在只针对本市镇或本大区制定政策、而不在全国层面活动的特殊政党。选举前，各政党通过辩论、集会、政治广告和竞选活动来争取选民。",
       "ar": "في انتخابات البلديات (kommun) والأقاليم (region) قد توجد أحزاب خاصة لها سياسات تخصّ بلديتها أو إقليمها وحده، لا على المستوى الوطني. وقبل الانتخابات تحاول الأحزاب إقناع الناخبين عبر المناظرات والاجتماعات والدعاية السياسية والحملات.",
       "ckb": "لە هەڵبژاردنی شارەوانی (kommun) و هەرێم (region) دەکرێت پارتە تایبەتەکان هەبن کە تەنها سیاسەتیان بۆ شارەوانی یان هەرێمی خۆیان هەیە، نەک لە ئاستی نیشتمانیدا. پێش هەڵبژاردنەکان پارتەکان هەوڵ دەدەن لە ڕێگەی گفتوگۆ، کۆبوونەوە، ڕیکلامی سیاسی و کەمپەینەوە دەنگدەران ڕازی بکەن.",
-      "fa": "در انتخابات شهرداری (kommun) و منطقه (region) ممکن است احزاب ویژه‌ای وجود داشته باشند که سیاست‌هایشان تنها مربوط به همان شهرداری یا منطقه است، نه در سطح ملی. پیش از انتخابات احزاب می‌کوشند با مناظره‌ها، نشست‌ها، تبلیغات سیاسی و کارزارها رأی‌دهندگان را متقاعد کنند.",
+      "fa": "در انتخابات کمون (kommun) و منطقه (region) ممکن است احزاب ویژه‌ای وجود داشته باشند که سیاست‌هایشان تنها مربوط به همان کمون یا منطقه است، نه در سطح ملی. پیش از انتخابات احزاب می‌کوشند با مناظره‌ها، نشست‌ها، تبلیغات سیاسی و کارزارها رأی‌دهندگان را متقاعد کنند.",
       "pl": "W wyborach gminnych i regionalnych mogą istnieć lokalne partie, które prowadzą politykę tylko dla swojej gminy lub swojego regionu, a nie na poziomie krajowym. Przed wyborami partie starają się przekonać wyborców za pomocą debat, spotkań, reklamy politycznej i kampanii.",
       "so": "Doorashooyinka degmooyinka iyo gobollada waxaa ku jiri kara xisbiyo gaar ah oo siyaasad u leh kaliya degmadooda ama gobolkooda, ee aan ahayn heer qaran. Doorashooyinka ka hor, xisbiyadu waxay isku dayaan inay codbixiyayaasha ku qanciyaan doodo, kulamo, xayeysiis siyaasadeed iyo ololeyaal.",
-      "ti": "ኣብ ምርጫታት ምምሕዳር ከባቢ (kommun) ከምኡ’ውን ዞባ (region)፣ ኣብ ሃገራዊ ደረጃ ዘይኮነ ንናይ ገዛእ ርእሶም ምምሕዳር ከባቢ ወይ ዞባ ጥራይ ፖሊሲ ዘለዎም ፍሉያት ሰልፍታት ክህልዉ ይኽእሉ። ቅድሚ ምርጫታት ሰልፍታት ንመረጽቲ ብክትዕ፣ ኣኼባታት፣ ፖለቲካዊ ምልክታን ወፍርታትን ከእምንዎም ይፍትኑ።",
-      "tr": "Belediye (kommun) ve bölge (region) seçimlerinde, ulusal düzeyde değil yalnızca kendi belediyesi veya bölgesi için politikası olan özel partiler bulunabilir. Seçimlerden önce partiler tartışmalar, toplantılar, siyasi reklamlar ve kampanyalarla seçmenleri ikna etmeye çalışır.",
-      "uk": "На муніципальних (kommun) і регіональних (region) виборах можуть існувати особливі партії, які мають політику лише для свого муніципалітету чи регіону, а не на загальнодержавному рівні. Перед виборами партії намагаються переконати виборців через дебати, зустрічі, політичну рекламу та кампанії."
+      "ti": "ኣብ ምርጫታት ምምሕዳር ከባቢን ክልልን፣ ኣብ ሃገራዊ ደረጃ ዘይኮነ ንናይ ገዛእ ርእሶም ምምሕዳር ከባቢ ወይ ክልል ጥራይ ፖሊሲ ዘለዎም ፍሉያት ሰልፍታት ክህልዉ ይኽእሉ። ቅድሚ ምርጫታት ሰልፍታት ንመረጽቲ ብክትዕ፣ ኣኼባታት፣ ፖለቲካዊ ምልክታን ወፍርታትን ከእምንዎም ይፍትኑ።",
+      "tr": "Belediye ve bölge seçimlerinde, ulusal düzeyde değil yalnızca kendi belediyesi veya bölgesi için politikası olan özel partiler bulunabilir. Seçimlerden önce partiler tartışmalar, toplantılar, siyasi reklamlar ve kampanyalarla seçmenleri ikna etmeye çalışır.",
+      "uk": "На муніципальних і регіональних виборах можуть існувати особливі партії, які мають політику лише для свого муніципалітету чи регіону, а не на загальнодержавному рівні. Перед виборами партії намагаються переконати виборців через дебати, зустрічі, політичну рекламу та кампанії."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -18792,8 +18792,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Sweden is located ...?",
-      "sv": "Sverige ligger ...?",
+      "en": "What is correct about Sweden's location?",
+      "sv": "Vad stämmer om Sveriges läge?",
       "zh-Hant": "哪個答案最符合？瑞典位於哪裡？",
       "zh-Hans": "哪个答案最符合？瑞典位于哪里？",
       "ar": "أي إجابة هي الأنسب؟ أين تقع السويد؟",
@@ -19020,8 +19020,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding where Sweden is located?",
-      "sv": "Vilken uppgift stämmer när det gäller var Sverige ligger?"
+      "en": "Which fact is correct about Sweden's location?",
+      "sv": "Vilken uppgift stämmer om Sveriges läge?"
     },
     "opts": [
       {
@@ -19121,12 +19121,12 @@
         "sv": "Sveriges nordligaste del ligger inte norr om polcirkeln."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "Sweden's northernmost part is in Skåne.",
+        "sv": "Sveriges nordligaste del ligger i Skåne."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Sweden's northernmost part is on Gotland.",
+        "sv": "Sveriges nordligaste del ligger på Gotland."
       }
     ],
     "answer": 0,
@@ -19248,12 +19248,12 @@
         "sv": "Sveriges nordligaste del ligger inte norr om polcirkeln."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "Sweden's northernmost part is in Skåne.",
+        "sv": "Sveriges nordligaste del ligger i Skåne."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Sweden's northernmost part is on Gotland.",
+        "sv": "Sveriges nordligaste del ligger på Gotland."
       }
     ],
     "answer": 0,
@@ -19283,8 +19283,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Sweden stretches ... from Treriksröset to Smygehuk?",
-      "sv": "Sverige sträcker sig ... från Treriksröset till Smygehuk?"
+      "en": "What is correct about Sweden's distance from Treriksröset to Smygehuk?",
+      "sv": "Vad stämmer om Sveriges sträckning från Treriksröset till Smygehuk?"
     },
     "opts": [
       {
@@ -19454,8 +19454,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding approximately how far does Sweden stretch from Treriksröset to Smygehuk?",
-      "sv": "Vilken uppgift stämmer när det gäller ungefär hur långt sträcker sig Sverige från Treriksröset till Smygehuk?"
+      "en": "Which fact is correct about Sweden's distance from Treriksröset to Smygehuk?",
+      "sv": "Vilken uppgift stämmer om Sveriges sträckning från Treriksröset till Smygehuk?"
     },
     "opts": [
       {
@@ -19543,8 +19543,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "The sea along Sweden's eastern coast is called ...?",
-      "sv": "Havet vid Sveriges östra kust heter ...?"
+      "en": "What is correct about the name of the sea along Sweden's eastern coast?",
+      "sv": "Vad stämmer om namnet på havet vid Sveriges östra kust?"
     },
     "opts": [
       {
@@ -19711,8 +19711,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what the sea along Sweden's eastern coast is called?",
-      "sv": "Vilken uppgift stämmer när det gäller vad havet vid Sveriges östra kust heter?"
+      "en": "Which fact is correct about the name of the sea along Sweden's eastern coast?",
+      "sv": "Vilken uppgift stämmer om namnet på havet vid Sveriges östra kust?"
     },
     "opts": [
       {
@@ -19799,8 +19799,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Sweden's two largest islands are ...?",
-      "sv": "Sveriges två största öar är ...?"
+      "en": "What is correct about Sweden's largest islands?",
+      "sv": "Vad stämmer om Sveriges största öar?"
     },
     "opts": [
       {
@@ -19970,8 +19970,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding which islands are Sweden's two largest?",
-      "sv": "Vilken uppgift stämmer när det gäller vilka öar är Sveriges två största?"
+      "en": "Which fact is correct about Sweden's largest islands?",
+      "sv": "Vilken uppgift stämmer om Sveriges största öar?"
     },
     "opts": [
       {
@@ -20072,12 +20072,12 @@
         "sv": "Golfströmmen och den Nordatlantiska strömmen bidrar inte till Sveriges milda klimat."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "Cold ocean currents make Sweden's climate arctic.",
+        "sv": "Kalla havsströmmar gör Sveriges klimat arktiskt."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "The Gulf Stream cools Sweden's climate.",
+        "sv": "Golfströmmen kyler ner Sveriges klimat."
       }
     ],
     "answer": 0,
@@ -20199,12 +20199,12 @@
         "sv": "Golfströmmen och den Nordatlantiska strömmen bidrar inte till Sveriges milda klimat."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "Cold ocean currents make Sweden's climate arctic.",
+        "sv": "Kalla havsströmmar gör Sveriges klimat arktiskt."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "The Gulf Stream cools Sweden's climate.",
+        "sv": "Golfströmmen kyler ner Sveriges klimat."
       }
     ],
     "answer": 0,
@@ -20234,8 +20234,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Sweden's highest mountain is called ...?",
-      "sv": "Sveriges högsta berg heter ...?"
+      "en": "What is correct about the name of Sweden's highest mountain?",
+      "sv": "Vad stämmer om namnet på sveriges högsta berg?"
     },
     "opts": [
       {
@@ -20402,8 +20402,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what the name of Sweden's highest mountain is?",
-      "sv": "Vilken uppgift stämmer när det gäller vad Sveriges högsta berg heter?"
+      "en": "Which fact is correct about the name of Sweden's highest mountain?",
+      "sv": "Vilken uppgift stämmer om namnet på sveriges högsta berg?"
     },
     "opts": [
       {
@@ -20490,8 +20490,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Sweden's three largest lakes are ...?",
-      "sv": "Sveriges tre största sjöar är ...?"
+      "en": "What is correct about Sweden's largest lakes?",
+      "sv": "Vad stämmer om Sveriges största sjöar?"
     },
     "opts": [
       {
@@ -20664,8 +20664,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct about Sweden's three largest lakes?",
-      "sv": "Vilken uppgift stämmer om Sveriges tre största sjöar?"
+      "en": "Which fact is correct about Sweden's largest lakes?",
+      "sv": "Vilken uppgift stämmer om Sveriges största sjöar?"
     },
     "opts": [
       {
@@ -20754,8 +20754,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "... people live in Sweden?",
-      "sv": "... människor bor i Sverige?"
+      "en": "What is correct about Sweden's population?",
+      "sv": "Vad stämmer om Sveriges befolkning?"
     },
     "opts": [
       {
@@ -20922,8 +20922,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding approximately how many people live in Sweden?",
-      "sv": "Vilken uppgift stämmer när det gäller ungefär hur många människor bor i Sverige?"
+      "en": "Which fact is correct about Sweden's population?",
+      "sv": "Vilken uppgift stämmer om Sveriges befolkning?"
     },
     "opts": [
       {
@@ -21010,8 +21010,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "... are important natural resources in Sweden?",
-      "sv": "... är viktiga naturresurser i Sverige?"
+      "en": "What is correct about Sweden's natural resources?",
+      "sv": "Vad stämmer om Sveriges naturresurser?"
     },
     "opts": [
       {
@@ -21181,8 +21181,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding which natural resources are important in Sweden?",
-      "sv": "Vilken uppgift stämmer när det gäller vilka naturresurser är viktiga i Sverige?"
+      "en": "Which fact is correct about Sweden's natural resources?",
+      "sv": "Vilken uppgift stämmer om Sveriges naturresurser?"
     },
     "opts": [
       {
@@ -21438,8 +21438,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Which description is correct for democracy?",
-      "sv": "Vilken beskrivning stämmer för demokrati?"
+      "en": "What is correct about democracy?",
+      "sv": "Vad stämmer om demokrati?"
     },
     "opts": [
       {
@@ -21526,8 +21526,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "A feature of free elections in a democracy is that ...?",
-      "sv": "Ett inslag i fria val i en demokrati är att ...?"
+      "en": "What is correct about free elections in a democracy?",
+      "sv": "Vad stämmer om fria val i en demokrati?"
     },
     "opts": [
       {
@@ -21694,8 +21694,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding which of the following is part of free elections in a democracy?",
-      "sv": "Vilken uppgift stämmer när det gäller vilket av följande ingår i fria val i en demokrati?"
+      "en": "Which fact is correct about free elections in a democracy?",
+      "sv": "Vilken uppgift stämmer om fria val i en demokrati?"
     },
     "opts": [
       {
@@ -21782,7 +21782,7 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "What is correct regarding how people can influence society and participate in democracy?",
+      "en": "What is correct about democratic participation?",
       "sv": "Vilken följd kan människor få för samhället och delta i demokratin?"
     },
     "opts": [
@@ -21950,7 +21950,7 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding how people can influence society and participate in democracy?",
+      "en": "Which fact is correct about democratic participation?",
       "sv": "Vilken följd stämmer för människor och samhället och delta i demokratin?"
     },
     "opts": [
@@ -22038,8 +22038,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "When laws apply equally to everyone and no one can be convicted without a fair trial, it is called ...?",
-      "sv": "När lagarna gäller lika för alla och ingen får dömas utan en rättvis rättegång kallas det ...?"
+      "en": "What is correct about the term for laws apply equally to everyone and no one can be convicted without a fair trial?",
+      "sv": "Vad stämmer om begreppet för att lagarna gäller lika för alla och ingen får dömas utan en rättvis rättegång?"
     },
     "opts": [
       {
@@ -22206,8 +22206,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what is it called when laws apply equally to everyone and no one can be convicted without a fair trial?",
-      "sv": "Vilken uppgift stämmer när det gäller vad kallas det när lagarna gäller lika för alla och ingen får dömas utan en rättvis rättegång?"
+      "en": "Which fact is correct about the term for laws apply equally to everyone and no one can be convicted without a fair trial?",
+      "sv": "Vilken uppgift stämmer om begreppet för att lagarna gäller lika för alla och ingen får dömas utan en rättvis rättegång?"
     },
     "opts": [
       {
@@ -22550,8 +22550,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Citizens choose members of the Riksdag in Sweden's parliamentary representative democracy ...?",
-      "sv": "Medborgarna väljer ledamöter till riksdagen i Sveriges parlamentariska representativa demokrati ...?"
+      "en": "What is correct about citizens' choice of members of the Riksdag in Sweden's parliamentary representative democracy?",
+      "sv": "Vad stämmer om medborgarnas val av ledamöter till riksdagen i Sveriges parlamentariska representativa demokrati?"
     },
     "opts": [
       {
@@ -22718,8 +22718,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding how do citizens choose members of the Riksdag in Sweden's parliamentary representative democracy?",
-      "sv": "Vilken uppgift stämmer när det gäller hur väljer medborgarna ledamöter till riksdagen i Sveriges parlamentariska representativa demokrati?"
+      "en": "Which fact is correct about citizens' choice of members of the Riksdag in Sweden's parliamentary representative democracy?",
+      "sv": "Vilken uppgift stämmer om medborgarnas val av ledamöter till riksdagen i Sveriges parlamentariska representativa demokrati?"
     },
     "opts": [
       {
@@ -22806,8 +22806,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "The Riksdag has ... members?",
-      "sv": "Riksdagen har ... ledamöter?"
+      "en": "What is correct about the number of members in the Riksdag?",
+      "sv": "Vad stämmer om antalet ledamöter i riksdagen?"
     },
     "opts": [
       {
@@ -22974,8 +22974,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding how many members does the Riksdag have?",
-      "sv": "Vilken uppgift stämmer när det gäller hur många ledamöter har riksdagen?"
+      "en": "Which fact is correct about the number of members in the Riksdag?",
+      "sv": "Vilken uppgift stämmer om antalet ledamöter i riksdagen?"
     },
     "opts": [
       {
@@ -23062,8 +23062,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "The prime minister is chosen by ...?",
-      "sv": "Statsministern väljs av ...?"
+      "en": "What is correct about the choice of the prime minister?",
+      "sv": "Vad stämmer om valet av statsministern?"
     },
     "opts": [
       {
@@ -23230,8 +23230,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding who chooses the prime minister?",
-      "sv": "Vilken uppgift stämmer när det gäller vem som väljer statsministern?"
+      "en": "Which fact is correct about the choice of the prime minister?",
+      "sv": "Vilken uppgift stämmer om valet av statsministern?"
     },
     "opts": [
       {
@@ -23318,8 +23318,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "A person must be ... to have the right to vote?",
-      "sv": "Man måste ha fyllt ... för att ha rösträtt?"
+      "en": "What is correct about the voting-age requirement?",
+      "sv": "Vad stämmer om ålderskravet för rösträtt?"
     },
     "opts": [
       {
@@ -23513,8 +23513,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding how old must a person be to have the right to vote?",
-      "sv": "Vilken uppgift stämmer när det gäller hur gammal måste man ha fyllt för att ha rösträtt?"
+      "en": "Which fact is correct about the voting-age requirement?",
+      "sv": "Vilken uppgift stämmer om ålderskravet för rösträtt?"
     },
     "opts": [
       {
@@ -23698,8 +23698,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "That referendums in Sweden are advisory means politicians do not have to follow the result.",
-      "sv": "Att folkomröstningar i Sverige är rådgivande betyder att politikerna inte behöver följa resultatet."
+      "en": "In Sweden, referendums are advisory, so politicians do not have to follow the result.",
+      "sv": "I Sverige är folkomröstningar rådgivande, så politiker behöver inte följa resultatet."
     },
     "opts": [
       {
@@ -23738,8 +23738,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "That referendums in Sweden are advisory means politicians must always follow the result.",
-      "sv": "Att folkomröstningar i Sverige är rådgivande betyder att politikerna alltid måste följa resultatet."
+      "en": "In Sweden, referendums are binding, so politicians are required to follow the result.",
+      "sv": "I Sverige är folkomröstningar bindande, så politiker är skyldiga att följa resultatet."
     },
     "opts": [
       {
@@ -23779,7 +23779,7 @@
     "type": "single_choice",
     "q": {
       "en": "Which meaning is correct for referendums in Sweden are advisory?",
-      "sv": "Vilken innebörd stämmer för folkomröstningar i Sverige är rådgivande?"
+      "sv": "Vad stämmer om att folkomröstningar i Sverige är rådgivande?"
     },
     "opts": [
       {
@@ -23866,8 +23866,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "... share political responsibility in Sweden?",
-      "sv": "... delar det politiska ansvaret i Sverige?"
+      "en": "What is correct about Sweden's political responsibility levels?",
+      "sv": "Vad stämmer om Sveriges politiska ansvarsnivåer?"
     },
     "opts": [
       {
@@ -24034,8 +24034,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding which three levels share political responsibility in Sweden?",
-      "sv": "Vilken uppgift stämmer när det gäller vilka tre nivåer delar det politiska ansvaret i Sverige?"
+      "en": "Which fact is correct about Sweden's political responsibility levels?",
+      "sv": "Vilken uppgift stämmer om Sveriges politiska ansvarsnivåer?"
     },
     "opts": [
       {
@@ -24391,12 +24391,12 @@
         "sv": "Riksdagen väljer inte statsminister."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "The King chooses Sweden's prime minister.",
+        "sv": "Kungen väljer Sveriges statsminister."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Municipalities choose Sweden's prime minister.",
+        "sv": "Kommunerna väljer Sveriges statsminister."
       }
     ],
     "answer": 0,
@@ -24519,12 +24519,12 @@
         "sv": "Riksdagen väljer inte statsminister."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "The King chooses Sweden's prime minister.",
+        "sv": "Kungen väljer Sveriges statsminister."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Municipalities choose Sweden's prime minister.",
+        "sv": "Kommunerna väljer Sveriges statsminister."
       }
     ],
     "answer": 0,
@@ -24722,8 +24722,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which description is correct for government agencies?",
-      "sv": "Vilken beskrivning stämmer för statliga myndigheter?"
+      "en": "Which fact is correct about government agencies?",
+      "sv": "Vilken uppgift stämmer om statliga myndigheter?"
     },
     "opts": [
       {
@@ -24810,8 +24810,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "The foremost task of Sweden's regions is ...?",
-      "sv": "Regionernas främsta uppgift i Sverige är ...?"
+      "en": "What is correct about the foremost task of Sweden's regions?",
+      "sv": "Vad stämmer om regionernas främsta uppgift i Sverige?"
     },
     "opts": [
       {
@@ -24898,7 +24898,7 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "The foremost task of Sweden's regions is to be responsible for health care.",
+      "en": "The main responsibility of Sweden's regions is health care.",
       "sv": "Regionernas främsta uppgift i Sverige är att ansvara för hälso- och sjukvården."
     },
     "opts": [
@@ -24938,7 +24938,7 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "The foremost task of Sweden's regions is to judge criminal cases.",
+      "en": "The main responsibility of Sweden's regions is judging criminal cases.",
       "sv": "Regionernas främsta uppgift i Sverige är att döma i brottmål."
     },
     "opts": [
@@ -24978,8 +24978,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what is the foremost task of Sweden's regions?",
-      "sv": "Vilken uppgift stämmer när det gäller vilken är regionernas främsta uppgift i Sverige?"
+      "en": "Which fact is correct about the foremost task of Sweden's regions?",
+      "sv": "Vilken uppgift stämmer om regionernas främsta uppgift i Sverige?"
     },
     "opts": [
       {
@@ -25066,8 +25066,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Municipalities are responsible for ...?",
-      "sv": "Kommuner ansvarar för ...?"
+      "en": "What is correct about the everyday services municipalities are responsible for?",
+      "sv": "Vad stämmer om vardagstjänster som kommuner ansvarar för?"
     },
     "opts": [
       {
@@ -25234,8 +25234,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding which everyday services municipalities are responsible for?",
-      "sv": "Vilken uppgift stämmer när det gäller vilka vardagstjänster kommuner ansvarar för?"
+      "en": "Which fact is correct about the everyday services municipalities are responsible for?",
+      "sv": "Vilken uppgift stämmer om vardagstjänster som kommuner ansvarar för?"
     },
     "opts": [
       {
@@ -25491,7 +25491,7 @@
     "type": "single_choice",
     "q": {
       "en": "Which meaning is correct for Sweden is a constitutional monarchy?",
-      "sv": "Vilken innebörd stämmer för Sverige är en konstitutionell monarki?"
+      "sv": "Vad stämmer om att Sverige är en konstitutionell monarki?"
     },
     "opts": [
       {
@@ -25591,12 +25591,12 @@
         "sv": "Oppositionen ska inte granska regeringens arbete och föreslå annan politik."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "The opposition appoints the government ministers.",
+        "sv": "Oppositionen utser regeringens ministrar."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "The opposition decides the budget without a Riksdag decision.",
+        "sv": "Oppositionen beslutar om budgeten utan riksdagsbeslut."
       }
     ],
     "answer": 0,
@@ -25719,12 +25719,12 @@
         "sv": "Oppositionen ska inte granska regeringens arbete och föreslå annan politik."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "The opposition appoints the government ministers.",
+        "sv": "Oppositionen utser regeringens ministrar."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "The opposition decides the budget without a Riksdag decision.",
+        "sv": "Oppositionen beslutar om budgeten utan riksdagsbeslut."
       }
     ],
     "answer": 0,
@@ -25754,8 +25754,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Elections to the Riksdag, regional councils, and municipal councils are held ... in Sweden?",
-      "sv": "Val till riksdag, regionfullmäktige och kommunfullmäktige i Sverige hålls ...?"
+      "en": "What is correct about the interval for elections to the Riksdag, regional councils, and municipal councils in Sweden?",
+      "sv": "Vad stämmer om tidsintervallet för val till riksdag, regionfullmäktige och kommunfullmäktige i Sverige?"
     },
     "opts": [
       {
@@ -25922,8 +25922,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding how often are elections to the Riksdag, regional councils, and municipal councils held in Sweden?",
-      "sv": "Vilken uppgift stämmer när det gäller hur ofta hålls val till riksdag, regionfullmäktige och kommunfullmäktige i Sverige?"
+      "en": "Which fact is correct about the interval for elections to the Riksdag, regional councils, and municipal councils in Sweden?",
+      "sv": "Vilken uppgift stämmer om tidsintervallet för val till riksdag, regionfullmäktige och kommunfullmäktige i Sverige?"
     },
     "opts": [
       {
@@ -26010,8 +26010,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "To vote in Sweden’s Riksdag election, ...?",
-      "sv": "Vad stämmer när det gäller vilka krav gäller för att rösta i Sveriges riksdagsval?"
+      "en": "What is correct about the requirements for voting in Sweden’s Riksdag election?",
+      "sv": "Vad stämmer om kraven för att rösta i Sveriges riksdagsval?"
     },
     "opts": [
       {
@@ -26205,8 +26205,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding which requirements apply to voting in Sweden’s Riksdag election?",
-      "sv": "Vilken uppgift stämmer när det gäller vilka krav gäller för att rösta i Sveriges riksdagsval?"
+      "en": "Which fact is correct about the requirements for voting in Sweden’s Riksdag election?",
+      "sv": "Vilken uppgift stämmer om kraven för att rösta i Sveriges riksdagsval?"
     },
     "opts": [
       {
@@ -26315,12 +26315,12 @@
         "sv": "Politiker i Sverige är skyldiga att följa resultatet av en folkomröstning."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "Referendums in Sweden are always binding.",
+        "sv": "Folkomröstningar i Sverige är alltid bindande."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Only the government may vote in referendums.",
+        "sv": "Bara regeringen får rösta i folkomröstningar."
       }
     ],
     "answer": 0,
@@ -26443,12 +26443,12 @@
         "sv": "Politiker i Sverige är skyldiga att följa resultatet av en folkomröstning."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "Referendums in Sweden are always binding.",
+        "sv": "Folkomröstningar i Sverige är alltid bindande."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Only the government may vote in referendums.",
+        "sv": "Bara regeringen får rösta i folkomröstningar."
       }
     ],
     "answer": 0,
@@ -26478,8 +26478,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "One reason voters vote behind a screen at the polling station is that ...?",
-      "sv": "En anledning till att väljare röstar bakom en skärm i vallokalen är att ...?"
+      "en": "What is correct about the reason voters vote behind a screen at the polling station?",
+      "sv": "Vad stämmer om skälet till att väljare röstar bakom en skärm i vallokalen?"
     },
     "opts": [
       {
@@ -26646,8 +26646,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding why do voters vote behind a screen at the polling station?",
-      "sv": "Vilken uppgift stämmer när det gäller varför röstar väljare bakom en skärm i vallokalen?"
+      "en": "Which fact is correct about the reason voters vote behind a screen at the polling station?",
+      "sv": "Vilken uppgift stämmer om skälet till att väljare röstar bakom en skärm i vallokalen?"
     },
     "opts": [
       {
@@ -26734,8 +26734,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "People in a political party have ...?",
-      "sv": "Människor i ett politiskt parti har ...?"
+      "en": "What is correct about common features of people in a political party?",
+      "sv": "Vad stämmer om gemensamma drag hos människor i ett politiskt parti?"
     },
     "opts": [
       {
@@ -26902,8 +26902,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what do people in a political party have in common?",
-      "sv": "Vilken uppgift stämmer när det gäller vad har människor i ett politiskt parti gemensamt?"
+      "en": "Which fact is correct about common features of people in a political party?",
+      "sv": "Vilken uppgift stämmer om gemensamma drag hos människor i ett politiskt parti?"
     },
     "opts": [
       {
@@ -27246,8 +27246,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "A party must receive ... to enter the Riksdag?",
-      "sv": "Ett parti måste få ... för att komma in i riksdagen?"
+      "en": "What is correct about the vote threshold to enter the Riksdag?",
+      "sv": "Vad stämmer om röstspärren för att komma in i riksdagen?"
     },
     "opts": [
       {
@@ -27414,8 +27414,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what minimum share of votes must a party receive to enter the Riksdag?",
-      "sv": "Vilken uppgift stämmer när det gäller hur stor andel av rösterna måste ett parti minst få för att komma in i riksdagen?"
+      "en": "Which fact is correct about the vote threshold to enter the Riksdag?",
+      "sv": "Vilken uppgift stämmer om röstspärren för att komma in i riksdagen?"
     },
     "opts": [
       {
@@ -27502,8 +27502,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "The list with ... contains only Sweden's four constitutional laws?",
-      "sv": "Listan med ... innehåller bara Sveriges fyra grundlagar?"
+      "en": "What is correct about the list of only Sweden's four constitutional laws?",
+      "sv": "Vad stämmer om listan över bara Sveriges fyra grundlagar?"
     },
     "opts": [
       {
@@ -27670,8 +27670,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding which list contains only Sweden's four constitutional laws?",
-      "sv": "Vilken uppgift stämmer när det gäller vilken lista innehåller bara Sveriges fyra grundlagar?"
+      "en": "Which fact is correct about the list of only Sweden's four constitutional laws?",
+      "sv": "Vilken uppgift stämmer om listan över bara Sveriges fyra grundlagar?"
     },
     "opts": [
       {
@@ -27758,8 +27758,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "The Instrument of Government says that ...?",
-      "sv": "Regeringsformen säger att ...?"
+      "en": "What is correct about the Instrument of Government and public power in Sweden?",
+      "sv": "Vad stämmer om regeringsformen och offentlig makt i Sverige?"
     },
     "opts": [
       {
@@ -27926,8 +27926,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what does the Instrument of Government say about public power in Sweden?",
-      "sv": "Vilken uppgift stämmer när det gäller vad säger regeringsformen om offentlig makt i Sverige?"
+      "en": "Which fact is correct about the Instrument of Government and public power in Sweden?",
+      "sv": "Vilken uppgift stämmer om regeringsformen och offentlig makt i Sverige?"
     },
     "opts": [
       {
@@ -28014,8 +28014,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "The Act of Succession regulates ...?",
-      "sv": "Successionsordningen reglerar ...?"
+      "en": "What is correct about the Act of Succession?",
+      "sv": "Vad stämmer om successionsordningen?"
     },
     "opts": [
       {
@@ -28182,8 +28182,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what does the Act of Succession regulate?",
-      "sv": "Vilken uppgift stämmer när det gäller vad reglerar successionsordningen?"
+      "en": "Which fact is correct about the Act of Succession?",
+      "sv": "Vilken uppgift stämmer om successionsordningen?"
     },
     "opts": [
       {
@@ -28438,8 +28438,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which description is correct for the right of public access?",
-      "sv": "Vilken beskrivning stämmer för allemansrätten?"
+      "en": "What is correct about the right of public access?",
+      "sv": "Vad stämmer om allemansrätten?"
     },
     "opts": [
       {
@@ -28526,8 +28526,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "... are part of the Swedish justice system?",
-      "sv": "... ingår i det svenska rättsväsendet?"
+      "en": "What is correct about authorities in the Swedish justice system?",
+      "sv": "Vad stämmer om myndigheter i det svenska rättsväsendet?"
     },
     "opts": [
       {
@@ -28694,8 +28694,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding which authorities are part of the Swedish justice system?",
-      "sv": "Vilken uppgift stämmer när det gäller vilka myndigheter ingår i det svenska rättsväsendet?"
+      "en": "Which fact is correct about authorities in the Swedish justice system?",
+      "sv": "Vilken uppgift stämmer om myndigheter i det svenska rättsväsendet?"
     },
     "opts": [
       {
@@ -28950,8 +28950,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which description is correct for the rule of law in Sweden?",
-      "sv": "Vilken beskrivning stämmer för rättssäkerhet i Sverige?"
+      "en": "Which fact is correct about the rule of law in Sweden?",
+      "sv": "Vilken uppgift stämmer om rättssäkerhet i Sverige?"
     },
     "opts": [
       {
@@ -29462,8 +29462,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which description is correct for the role of the police in Sweden?",
-      "sv": "Vilken beskrivning stämmer för polisens uppgift i Sverige?"
+      "en": "Which fact is correct about the role of the police in Sweden?",
+      "sv": "Vilken uppgift stämmer om polisens uppgift i Sverige?"
     },
     "opts": [
       {
@@ -29550,8 +29550,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "A person in Sweden is criminally responsible and able to be prosecuted for a crime under the main rule from ...?",
-      "sv": "Från ... är en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott?"
+      "en": "What is correct about the age for a person in Sweden criminally responsible and able to be prosecuted for a crime under the main rule?",
+      "sv": "Vad stämmer om åldern för en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott?"
     },
     "opts": [
       {
@@ -29718,8 +29718,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding from what age is a person in Sweden criminally responsible and able to be prosecuted for a crime under the main rule?",
-      "sv": "Vilken uppgift stämmer när det gäller från vilken ålder är en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott?"
+      "en": "Which fact is correct about the age for a person in Sweden criminally responsible and able to be prosecuted for a crime under the main rule?",
+      "sv": "Vilken uppgift stämmer om åldern för en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott?"
     },
     "opts": [
       {
@@ -29806,8 +29806,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "What is correct regarding what important roles do free media play in a democracy?",
-      "sv": "I en demokrati har fria medier viktiga uppgifter: ...?"
+      "en": "What is correct about the important roles of free media in a democracy?",
+      "sv": "Vad stämmer om viktiga uppgifter med fria medier i en demokrati?"
     },
     "opts": [
       {
@@ -29974,8 +29974,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what important roles do free media play in a democracy?",
-      "sv": "Vilken uppgift stämmer när det gäller vilka viktiga uppgifter har fria medier i en demokrati?"
+      "en": "Which fact is correct about the important roles of free media in a democracy?",
+      "sv": "Vilken uppgift stämmer om viktiga uppgifter med fria medier i en demokrati?"
     },
     "opts": [
       {
@@ -30062,8 +30062,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "The principle of public access makes it easier to scrutinize authorities ...?",
-      "sv": "Offentlighetsprincipen underlättar granskning av myndigheter ...?"
+      "en": "What is correct about the principle of public access' role in making it easier to scrutinize authorities?",
+      "sv": "Vad stämmer om offentlighetsprincipens betydelse för granskning av myndigheter?"
     },
     "opts": [
       {
@@ -30230,8 +30230,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding how does the principle of public access make it easier to scrutinize authorities?",
-      "sv": "Vilken uppgift stämmer när det gäller hur underlättar offentlighetsprincipen granskning av myndigheter?"
+      "en": "Which fact is correct about the principle of public access' role in making it easier to scrutinize authorities?",
+      "sv": "Vilken uppgift stämmer om offentlighetsprincipens betydelse för granskning av myndigheter?"
     },
     "opts": [
       {
@@ -30331,12 +30331,12 @@
         "sv": "Den som lämnar uppgifter till tidningar, radio och tv har inte rätt att vara anonym."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "Newsrooms must always disclose their sources to authorities.",
+        "sv": "Redaktioner måste alltid lämna ut sina källor till myndigheter."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Only government employees may provide information anonymously to media.",
+        "sv": "Bara myndighetsanställda får lämna uppgifter anonymt till medier."
       }
     ],
     "answer": 0,
@@ -30459,12 +30459,12 @@
         "sv": "Den som lämnar uppgifter till tidningar, radio och tv har inte rätt att vara anonym."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "Newsrooms must always disclose their sources to authorities.",
+        "sv": "Redaktioner måste alltid lämna ut sina källor till myndigheter."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Only government employees may provide information anonymously to media.",
+        "sv": "Bara myndighetsanställda får lämna uppgifter anonymt till medier."
       }
     ],
     "answer": 0,
@@ -30494,8 +30494,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "What is correct about Sweden's public service broadcasters?",
-      "sv": "... kallas public service i Sverige?"
+      "en": "What is correct about public service companies in Sweden?",
+      "sv": "Vad stämmer om tre företag som kallas public service i Sverige?"
     },
     "opts": [
       {
@@ -30665,8 +30665,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct about Sweden's public service broadcasters?",
-      "sv": "Vilken uppgift stämmer när det gäller vilka tre företag kallas public service i Sverige?"
+      "en": "Which fact is correct about public service companies in Sweden?",
+      "sv": "Vilken uppgift stämmer om tre företag som kallas public service i Sverige?"
     },
     "opts": [
       {
@@ -30767,12 +30767,12 @@
         "sv": "Public service-företag ska inte vara oberoende av politiska och andra intressen."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "Public service companies may be funded with political advertising.",
+        "sv": "Public service-företag får finansieras med politisk reklam."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Public service companies should support the governing parties.",
+        "sv": "Public service-företag ska stödja regeringspartierna."
       }
     ],
     "answer": 0,
@@ -30895,12 +30895,12 @@
         "sv": "Public service-företag ska inte vara oberoende av politiska och andra intressen."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "Public service companies may be funded with political advertising.",
+        "sv": "Public service-företag får finansieras med politisk reklam."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Public service companies should support the governing parties.",
+        "sv": "Public service-företag ska stödja regeringspartierna."
       }
     ],
     "answer": 0,
@@ -31098,8 +31098,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which description is correct for source criticism?",
-      "sv": "Vilken innebörd stämmer för vara källkritisk?"
+      "en": "What is correct about source criticism?",
+      "sv": "Vad stämmer om att vara källkritisk?"
     },
     "opts": [
       {
@@ -31186,8 +31186,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "The United Nations was created after the Second World War ...?",
-      "sv": "Förenta nationerna bildades efter andra världskriget ...?"
+      "en": "What is correct about the reason the United Nations was created after the Second World War?",
+      "sv": "Vad stämmer om skälet till att Förenta nationerna efter andra världskriget bildades?"
     },
     "opts": [
       {
@@ -31354,8 +31354,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding why was the United Nations created after the Second World War?",
-      "sv": "Vilken uppgift stämmer när det gäller varför bildades Förenta nationerna efter andra världskriget?"
+      "en": "Which fact is correct about the reason the United Nations was created after the Second World War?",
+      "sv": "Vilken uppgift stämmer om skälet till att Förenta nationerna efter andra världskriget bildades?"
     },
     "opts": [
       {
@@ -31866,8 +31866,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which description is correct for the goal of Sweden’s gender equality policy?",
-      "sv": "Vilken beskrivning stämmer för målet med Sveriges jämställdhetspolitik?"
+      "en": "What is correct about the goal of Sweden’s gender equality policy?",
+      "sv": "Vad stämmer om målet med Sveriges jämställdhetspolitik?"
     },
     "opts": [
       {
@@ -32470,8 +32470,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "The Convention on the Rights of the Child has been law in Sweden since ...?",
-      "sv": "Barnkonventionen är lag i Sverige sedan ...?"
+      "en": "What is correct about the year when the Convention on the Rights of the Child been law in Sweden?",
+      "sv": "Vad stämmer om året då barnkonventionen lag i Sverige?"
     },
     "opts": [
       {
@@ -32638,8 +32638,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding since what year has the Convention on the Rights of the Child been law in Sweden?",
-      "sv": "Vilken uppgift stämmer när det gäller sedan vilket år är barnkonventionen lag i Sverige?"
+      "en": "Which fact is correct about the year when the Convention on the Rights of the Child been law in Sweden?",
+      "sv": "Vilken uppgift stämmer om året då barnkonventionen lag i Sverige?"
     },
     "opts": [
       {
@@ -32726,8 +32726,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "In 1979, Sweden was the first country in the world to decide ...?",
-      "sv": "År 1979 beslutade Sverige som första land i världen ...?"
+      "en": "What is correct about Sweden's decision in 1979?",
+      "sv": "Vad stämmer om Sveriges beslut 1979?"
     },
     "opts": [
       {
@@ -32894,8 +32894,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what did Sweden decide as the first country in the world in 1979?",
-      "sv": "Vilken uppgift stämmer när det gäller vad beslutade Sverige som första land i världen 1979?"
+      "en": "Which fact is correct about Sweden's decision in 1979?",
+      "sv": "Vilken uppgift stämmer om Sveriges beslut 1979?"
     },
     "opts": [
       {
@@ -32982,8 +32982,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Sweden's five national minorities are ...?",
-      "sv": "Sveriges fem nationella minoriteter är ...?"
+      "en": "What is correct about Sweden's national minorities?",
+      "sv": "Vad stämmer om Sveriges nationella minoriteter?"
     },
     "opts": [
       {
@@ -33150,8 +33150,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct about Sweden's five national minorities?",
-      "sv": "Vilken uppgift stämmer om Sveriges fem nationella minoriteter?"
+      "en": "Which fact is correct about Sweden's national minorities?",
+      "sv": "Vilken uppgift stämmer om Sveriges nationella minoriteter?"
     },
     "opts": [
       {
@@ -33750,8 +33750,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "One role of the Equality Ombudsman (DO) is ...?",
-      "sv": "En uppgift för Diskrimineringsombudsmannen (DO) är ...?"
+      "en": "What is correct about one role of the Equality Ombudsman (DO)?",
+      "sv": "Vad stämmer om Diskrimineringsombudsmannen (DO)s uppgifter?"
     },
     "opts": [
       {
@@ -33918,8 +33918,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what is one role of the Equality Ombudsman (DO)?",
-      "sv": "Vilken uppgift stämmer när det gäller vad en uppgift för Diskrimineringsombudsmannen (DO) är?"
+      "en": "Which fact is correct about one role of the Equality Ombudsman (DO)?",
+      "sv": "Vilken uppgift stämmer om Diskrimineringsombudsmannen (DO)s uppgifter?"
     },
     "opts": [
       {
@@ -34006,8 +34006,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "The public sector in Sweden consists of ...?",
-      "sv": "Offentlig sektor i Sverige är ...?"
+      "en": "What is correct about the public sector in Sweden?",
+      "sv": "Vad stämmer om offentlig sektor i Sverige?"
     },
     "opts": [
       {
@@ -34174,8 +34174,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "Which statement about Sweden's public sector is correct?",
-      "sv": "Vilken uppgift om offentlig sektor i Sverige stämmer?"
+      "en": "Which fact is correct about the public sector in Sweden?",
+      "sv": "Vilken uppgift stämmer om offentlig sektor i Sverige?"
     },
     "opts": [
       {
@@ -34262,8 +34262,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "... of the workforce works in Sweden's private sector?",
-      "sv": "... av arbetskraften jobbar i privat sektor i Sverige?"
+      "en": "What is correct about the workforce share in Sweden's private sector?",
+      "sv": "Vad stämmer om andelen av arbetskraften i privat sektor i Sverige?"
     },
     "opts": [
       {
@@ -34430,8 +34430,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what share of the workforce works in Sweden's private sector?",
-      "sv": "Vilken uppgift stämmer när det gäller hur stor del av arbetskraften jobbar i privat sektor i Sverige?"
+      "en": "Which fact is correct about the workforce share in Sweden's private sector?",
+      "sv": "Vilken uppgift stämmer om andelen av arbetskraften i privat sektor i Sverige?"
     },
     "opts": [
       {
@@ -34774,8 +34774,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "Wages in Sweden are set ...?",
-      "sv": "Löner i Sverige bestäms ...?"
+      "en": "What is correct about wage-setting in Sweden?",
+      "sv": "Vad stämmer om lönebildningen i Sverige?"
     },
     "opts": [
       {
@@ -34942,8 +34942,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding how are wages set in Sweden?",
-      "sv": "Vilken uppgift stämmer när det gäller hur bestäms löner i Sverige?"
+      "en": "Which fact is correct about wage-setting in Sweden?",
+      "sv": "Vilken uppgift stämmer om lönebildningen i Sverige?"
     },
     "opts": [
       {
@@ -35030,8 +35030,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "Sweden has labour-market laws ...?",
-      "sv": "Lagar på arbetsmarknaden i Sverige finns ...?"
+      "en": "What is correct about the reason Sweden has labour-market laws?",
+      "sv": "Vad stämmer om skälet till att lagar på arbetsmarknaden i Sverige finns?"
     },
     "opts": [
       {
@@ -35198,8 +35198,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding why does Sweden have labour-market laws?",
-      "sv": "Vilken uppgift stämmer när det gäller varför finns lagar på arbetsmarknaden i Sverige?"
+      "en": "Which fact is correct about the reason Sweden has labour-market laws?",
+      "sv": "Vilken uppgift stämmer om skälet till att lagar på arbetsmarknaden i Sverige finns?"
     },
     "opts": [
       {
@@ -36058,8 +36058,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "What is correct regarding who pays tax in Sweden?",
-      "sv": "Vad stämmer när det gäller vilka som betalar skatt i Sverige?"
+      "en": "What is correct about tax payment in Sweden?",
+      "sv": "Vad stämmer om skattebetalning i Sverige?"
     },
     "opts": [
       {
@@ -36226,8 +36226,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding who pays tax in Sweden?",
-      "sv": "Vilken uppgift stämmer när det gäller vilka som betalar skatt i Sverige?"
+      "en": "Which fact is correct about tax payment in Sweden?",
+      "sv": "Vilken uppgift stämmer om skattebetalning i Sverige?"
     },
     "opts": [
       {
@@ -36314,8 +36314,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "The state finances ...?",
-      "sv": "Staten finansierar ...?"
+      "en": "What is correct about state financing within higher education and research?",
+      "sv": "Vad stämmer om statens finansiering inom högre utbildning och forskning?"
     },
     "opts": [
       {
@@ -36485,8 +36485,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what does the state finance within higher education and research?",
-      "sv": "Vilken uppgift stämmer när det gäller vad finansierar staten inom högre utbildning och forskning?"
+      "en": "Which fact is correct about state financing within higher education and research?",
+      "sv": "Vilken uppgift stämmer om statens finansiering inom högre utbildning och forskning?"
     },
     "opts": [
       {
@@ -36574,8 +36574,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "What is correct regarding what responsibility do Sweden's regions have within welfare?",
-      "sv": "Sveriges regioner ansvarar för ...?"
+      "en": "What is correct about Sweden's regions' responsibility within welfare?",
+      "sv": "Vad stämmer om Sveriges regioners ansvar inom välfärden?"
     },
     "opts": [
       {
@@ -36742,8 +36742,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what responsibility do Sweden's regions have within welfare?",
-      "sv": "Vilken uppgift stämmer när det gäller vilket ansvar har Sveriges regioner inom välfärden?"
+      "en": "Which fact is correct about Sweden's regions' responsibility within welfare?",
+      "sv": "Vilken uppgift stämmer om Sveriges regioners ansvar inom välfärden?"
     },
     "opts": [
       {
@@ -36830,8 +36830,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "... are examples of municipal welfare?",
-      "sv": "... är exempel på kommunal välfärd?"
+      "en": "What is correct about examples of municipal welfare?",
+      "sv": "Vad stämmer om exempel på kommunal välfärd?"
     },
     "opts": [
       {
@@ -36998,8 +36998,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding which answer gives examples of municipal welfare?",
-      "sv": "Vilken uppgift stämmer när det gäller vilket svar ger exempel på kommunal välfärd?"
+      "en": "Which fact is correct about examples of municipal welfare?",
+      "sv": "Vilken uppgift stämmer om exempel på kommunal välfärd?"
     },
     "opts": [
       {
@@ -37099,12 +37099,12 @@
         "sv": "Sveriges kommuner ska inte erbjuda äldre personer stöd och hjälp."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "Regions alone are responsible for all elderly care.",
+        "sv": "Regionerna ensamma ansvarar för all äldreomsorg."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Municipalities may not offer older people home care services.",
+        "sv": "Kommuner får inte erbjuda äldre personer hemtjänst."
       }
     ],
     "answer": 0,
@@ -37227,12 +37227,12 @@
         "sv": "Sveriges kommuner ska inte erbjuda äldre personer stöd och hjälp."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "Regions alone are responsible for all elderly care.",
+        "sv": "Regionerna ensamma ansvarar för all äldreomsorg."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Municipalities may not offer older people home care services.",
+        "sv": "Kommuner får inte erbjuda äldre personer hemtjänst."
       }
     ],
     "answer": 0,
@@ -37325,7 +37325,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Two hundred years ago, Sweden was a typical agricultural country. Almost the whole population lived in the countryside and worked by farming and caring for animals, cities were small, and Sweden was poor compared with other European countries.",
+      "en": "Two hundred years ago, Sweden was a typical agricultural country. Almost the whole population lived in the countryside and worked on farms, growing crops and caring for animals. Cities were small, and Sweden was poor compared with other European countries.",
       "sv": "För tvåhundra år sedan var Sverige ett typiskt jordbruksland. Nästan hela befolkningen bodde på landet och arbetade med att odla jorden och sköta djur, städerna var små och Sverige var fattigt jämfört med andra länder i Europa."
     },
     "source": {
@@ -37365,7 +37365,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Two hundred years ago, Sweden was a typical agricultural country. Almost the whole population lived in the countryside and worked by farming and caring for animals, cities were small, and Sweden was poor compared with other European countries.",
+      "en": "Two hundred years ago, Sweden was a typical agricultural country. Almost the whole population lived in the countryside and worked on farms, growing crops and caring for animals. Cities were small, and Sweden was poor compared with other European countries.",
       "sv": "För tvåhundra år sedan var Sverige ett typiskt jordbruksland. Nästan hela befolkningen bodde på landet och arbetade med att odla jorden och sköta djur, städerna var små och Sverige var fattigt jämfört med andra länder i Europa."
     },
     "source": {
@@ -37405,7 +37405,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Two hundred years ago, Sweden was a typical agricultural country. Almost the whole population lived in the countryside and worked by farming and caring for animals, cities were small, and Sweden was poor compared with other European countries.",
+      "en": "Two hundred years ago, Sweden was a typical agricultural country. Almost the whole population lived in the countryside and worked on farms, growing crops and caring for animals. Cities were small, and Sweden was poor compared with other European countries.",
       "sv": "För tvåhundra år sedan var Sverige ett typiskt jordbruksland. Nästan hela befolkningen bodde på landet och arbetade med att odla jorden och sköta djur, städerna var små och Sverige var fattigt jämfört med andra länder i Europa."
     },
     "source": {
@@ -37430,8 +37430,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which description is correct for Sweden two hundred years ago?",
-      "sv": "Vilken beskrivning stämmer för Sverige för tvåhundra år sedan?"
+      "en": "Which fact is correct about Sweden two hundred years ago?",
+      "sv": "Vilken uppgift stämmer om Sverige för tvåhundra år sedan?"
     },
     "opts": [
       {
@@ -37493,7 +37493,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Two hundred years ago, Sweden was a typical agricultural country. Almost the whole population lived in the countryside and worked by farming and caring for animals, cities were small, and Sweden was poor compared with other European countries.",
+      "en": "Two hundred years ago, Sweden was a typical agricultural country. Almost the whole population lived in the countryside and worked on farms, growing crops and caring for animals. Cities were small, and Sweden was poor compared with other European countries.",
       "sv": "För tvåhundra år sedan var Sverige ett typiskt jordbruksland. Nästan hela befolkningen bodde på landet och arbetade med att odla jorden och sköta djur, städerna var små och Sverige var fattigt jämfört med andra länder i Europa."
     },
     "source": {
@@ -37518,8 +37518,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Sweden’s population grew during the 19th century because of ...?",
-      "sv": "Sveriges befolkning ökade under 1800-talet på grund av ...?"
+      "en": "What is correct about the reason Sweden’s population grew during the 19th century?",
+      "sv": "Vad stämmer om skälet till att Sveriges befolkning under 1800-talet ökade?"
     },
     "opts": [
       {
@@ -37689,8 +37689,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding why did Sweden’s population grow during the 19th century?",
-      "sv": "Vilken uppgift stämmer när det gäller varför ökade Sveriges befolkning under 1800-talet?"
+      "en": "Which fact is correct about the reason Sweden’s population grew during the 19th century?",
+      "sv": "Vilken uppgift stämmer om skälet till att Sveriges befolkning under 1800-talet ökade?"
     },
     "opts": [
       {
@@ -37778,8 +37778,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "... Swedes emigrated to the United States between 1850 and 1920?",
-      "sv": "... svenskar utvandrade till USA mellan 1850 och 1920?"
+      "en": "What is correct about emigration to the United States between 1850 and 1920?",
+      "sv": "Vad stämmer om utvandringen till USA mellan 1850 och 1920?"
     },
     "opts": [
       {
@@ -37946,8 +37946,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding approximately how many Swedes emigrated to the United States between 1850 and 1920?",
-      "sv": "Vilken uppgift stämmer när det gäller ungefär hur många svenskar utvandrade till USA mellan 1850 och 1920?"
+      "en": "Which fact is correct about emigration to the United States between 1850 and 1920?",
+      "sv": "Vilken uppgift stämmer om utvandringen till USA mellan 1850 och 1920?"
     },
     "opts": [
       {
@@ -38034,8 +38034,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "The change through the new constitution in 1809 was that ...?",
-      "sv": "Förändringen genom den nya grundlagen år 1809 var att ...?"
+      "en": "What is correct about the new constitution in 1809?",
+      "sv": "Vad stämmer om den nya grundlagen år 1809?"
     },
     "opts": [
       {
@@ -38122,8 +38122,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "The change through the new constitution in 1809 was that the king’s power was limited.",
-      "sv": "Förändringen genom den nya grundlagen år 1809 var att kungens makt begränsades."
+      "en": "The 1809 constitution limited the king's power.",
+      "sv": "1809 års nya grundlag begränsade kungens makt."
     },
     "opts": [
       {
@@ -38162,8 +38162,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "The change through the new constitution in 1809 was that Sweden joined the EU.",
-      "sv": "Förändringen genom den nya grundlagen år 1809 var att Sverige gick med i EU."
+      "en": "The 1809 constitution did not make Sweden join the EU.",
+      "sv": "1809 års nya grundlag innebar inte att Sverige gick med i EU."
     },
     "opts": [
       {
@@ -38202,8 +38202,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what changed through the new constitution in 1809?",
-      "sv": "Vilken uppgift stämmer när det gäller vad förändrades genom den nya grundlagen år 1809?"
+      "en": "Which fact is correct about the new constitution in 1809?",
+      "sv": "Vilken uppgift stämmer om den nya grundlagen år 1809?"
     },
     "opts": [
       {
@@ -38290,8 +38290,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "... were among the largest popular movements in Sweden during the 19th century?",
-      "sv": "... var bland de största folkrörelserna i Sverige under 1800-talet?"
+      "en": "What is correct about the popular movements that were among the largest in Sweden during the 19th century?",
+      "sv": "Vad stämmer om folkrörelserna som var bland de största i Sverige under 1800-talet?"
     },
     "opts": [
       {
@@ -38458,8 +38458,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding which four popular movements were among the largest in Sweden during the 19th century?",
-      "sv": "Vilken uppgift stämmer när det gäller vilka fyra folkrörelser var bland de största i Sverige under 1800-talet?"
+      "en": "Which fact is correct about the popular movements that were among the largest in Sweden during the 19th century?",
+      "sv": "Vilken uppgift stämmer om folkrörelserna som var bland de största i Sverige under 1800-talet?"
     },
     "opts": [
       {
@@ -38546,8 +38546,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "The first Riksdag election held in which both women and men could vote and women could become members of the Riksdag was in ...?",
-      "sv": "Det första riksdagsvalet där både kvinnor och män fick rösta och kvinnor kunde bli riksdagsledamöter hölls ...?"
+      "en": "What is correct about the year when the first Riksdag election was held with both women and men could vote and women could become members of the Riksdag?",
+      "sv": "Vad stämmer om året då det första riksdagsvalet där både kvinnor och män fick rösta och kvinnor kunde bli riksdagsledamöter?"
     },
     "opts": [
       {
@@ -38609,7 +38609,7 @@
     ],
     "answer": 2,
     "why": {
-      "en": "The first Riksdag election in which both women and men could vote and women could become members of the Riksdag was held in 1921. Almost all men had gained suffrage in 1909 and the decision on universal suffrage came in 1918, but the first Riksdag election with both women's and men's voting rights and women's eligibility was held in 1921.",
+      "en": "The first Riksdag election in which both women and men could vote and women could become members of the Riksdag was held in 1921. Almost all men had gained suffrage in 1909, and the decision on universal suffrage came in 1918, but the first Riksdag election held after those reforms was in 1921.",
       "sv": "År 1921 hölls det första riksdagsvalet där både kvinnor och män fick rösta och där kvinnor kunde bli riksdagsledamöter. Nästan alla män hade fått rösträtt 1909 och beslutet om allmän rösträtt kom 1918, men 1921 är året för valet som frågan syftar på."
     },
     "source": {
@@ -38649,7 +38649,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The first Riksdag election in which both women and men could vote and women could become members of the Riksdag was held in 1921. Almost all men had gained suffrage in 1909 and the decision on universal suffrage came in 1918, but the first Riksdag election with both women's and men's voting rights and women's eligibility was held in 1921.",
+      "en": "The first Riksdag election in which both women and men could vote and women could become members of the Riksdag was held in 1921. Almost all men had gained suffrage in 1909, and the decision on universal suffrage came in 1918, but the first Riksdag election held after those reforms was in 1921.",
       "sv": "År 1921 hölls det första riksdagsvalet där både kvinnor och män fick rösta och där kvinnor kunde bli riksdagsledamöter. Nästan alla män hade fått rösträtt 1909 och beslutet om allmän rösträtt kom 1918, men 1921 är året för valet som frågan syftar på."
     },
     "source": {
@@ -38689,7 +38689,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The first Riksdag election in which both women and men could vote and women could become members of the Riksdag was held in 1921. Almost all men had gained suffrage in 1909 and the decision on universal suffrage came in 1918, but the first Riksdag election with both women's and men's voting rights and women's eligibility was held in 1921.",
+      "en": "The first Riksdag election in which both women and men could vote and women could become members of the Riksdag was held in 1921. Almost all men had gained suffrage in 1909, and the decision on universal suffrage came in 1918, but the first Riksdag election held after those reforms was in 1921.",
       "sv": "År 1921 hölls det första riksdagsvalet där både kvinnor och män fick rösta och där kvinnor kunde bli riksdagsledamöter. Nästan alla män hade fått rösträtt 1909 och beslutet om allmän rösträtt kom 1918, men 1921 är året för valet som frågan syftar på."
     },
     "source": {
@@ -38714,8 +38714,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding in which year was the first Riksdag election held in which both women and men could vote and women could become members of the Riksdag?",
-      "sv": "Vilken uppgift stämmer när det gäller vilket år hölls det första riksdagsvalet där både kvinnor och män fick rösta och kvinnor kunde bli riksdagsledamöter?"
+      "en": "Which fact is correct about the year when the first Riksdag election was held with both women and men could vote and women could become members of the Riksdag?",
+      "sv": "Vilken uppgift stämmer om året då det första riksdagsvalet där både kvinnor och män fick rösta och kvinnor kunde bli riksdagsledamöter?"
     },
     "opts": [
       {
@@ -38777,7 +38777,7 @@
     ],
     "answer": 2,
     "why": {
-      "en": "The first Riksdag election in which both women and men could vote and women could become members of the Riksdag was held in 1921. Almost all men had gained suffrage in 1909 and the decision on universal suffrage came in 1918, but the first Riksdag election with both women's and men's voting rights and women's eligibility was held in 1921.",
+      "en": "The first Riksdag election in which both women and men could vote and women could become members of the Riksdag was held in 1921. Almost all men had gained suffrage in 1909, and the decision on universal suffrage came in 1918, but the first Riksdag election held after those reforms was in 1921.",
       "sv": "År 1921 hölls det första riksdagsvalet där både kvinnor och män fick rösta och där kvinnor kunde bli riksdagsledamöter. Nästan alla män hade fått rösträtt 1909 och beslutet om allmän rösträtt kom 1918, men 1921 är året för valet som frågan syftar på."
     },
     "source": {
@@ -38802,8 +38802,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "The 1938 Saltsjöbaden Agreement was important for ...?",
-      "sv": "Saltsjöbadsavtalet från 1938 blev viktigt för ...?"
+      "en": "What is correct about the 1938 Saltsjöbaden Agreement's importance?",
+      "sv": "Vad stämmer om Saltsjöbadsavtalet från 1938s betydelse?"
     },
     "opts": [
       {
@@ -38865,7 +38865,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Saltsjöbaden Agreement was made in 1938 between employers and trade unions. It was important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
+      "en": "The Saltsjöbaden Agreement was concluded in 1938 between employers and trade unions. It was important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
       "sv": "Saltsjöbadsavtalet slöts 1938 mellan arbetsgivare och fackförbund. Det blev viktigt för samarbetet mellan dem och lade grunden för den svenska modellen, där arbetsgivare och fackförbund kommer överens om arbetsmarknadens villkor i kollektivavtal."
     },
     "source": {
@@ -38905,7 +38905,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Saltsjöbaden Agreement was made in 1938 between employers and trade unions. It was important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
+      "en": "The Saltsjöbaden Agreement was concluded in 1938 between employers and trade unions. It was important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
       "sv": "Saltsjöbadsavtalet slöts 1938 mellan arbetsgivare och fackförbund. Det blev viktigt för samarbetet mellan dem och lade grunden för den svenska modellen, där arbetsgivare och fackförbund kommer överens om arbetsmarknadens villkor i kollektivavtal."
     },
     "source": {
@@ -38945,7 +38945,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The Saltsjöbaden Agreement was made in 1938 between employers and trade unions. It was important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
+      "en": "The Saltsjöbaden Agreement was concluded in 1938 between employers and trade unions. It was important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
       "sv": "Saltsjöbadsavtalet slöts 1938 mellan arbetsgivare och fackförbund. Det blev viktigt för samarbetet mellan dem och lade grunden för den svenska modellen, där arbetsgivare och fackförbund kommer överens om arbetsmarknadens villkor i kollektivavtal."
     },
     "source": {
@@ -38970,8 +38970,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what was the 1938 Saltsjöbaden Agreement important for?",
-      "sv": "Vilken uppgift stämmer när det gäller vad blev Saltsjöbadsavtalet från 1938 viktigt för?"
+      "en": "Which fact is correct about the 1938 Saltsjöbaden Agreement's importance?",
+      "sv": "Vilken uppgift stämmer om Saltsjöbadsavtalet från 1938s betydelse?"
     },
     "opts": [
       {
@@ -39033,7 +39033,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Saltsjöbaden Agreement was made in 1938 between employers and trade unions. It was important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
+      "en": "The Saltsjöbaden Agreement was concluded in 1938 between employers and trade unions. It was important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.",
       "sv": "Saltsjöbadsavtalet slöts 1938 mellan arbetsgivare och fackförbund. Det blev viktigt för samarbetet mellan dem och lade grunden för den svenska modellen, där arbetsgivare och fackförbund kommer överens om arbetsmarknadens villkor i kollektivavtal."
     },
     "source": {
@@ -39058,8 +39058,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "The period after the Second World War is often called the Swedish record years because ...?",
-      "sv": "Tiden efter andra världskriget kallas ofta de svenska rekordåren eftersom ...?"
+      "en": "What is correct about the name the Swedish record years?",
+      "sv": "Vad stämmer om skälet till namnet tiden efter andra världskriget ofta de svenska rekordåren?"
     },
     "opts": [
       {
@@ -39226,8 +39226,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding why is the period after the Second World War often called the Swedish record years?",
-      "sv": "Vilken uppgift stämmer när det gäller varför kallas tiden efter andra världskriget ofta de svenska rekordåren?"
+      "en": "Which fact is correct about the name the Swedish record years?",
+      "sv": "Vilken uppgift stämmer om skälet till namnet tiden efter andra världskriget ofta de svenska rekordåren?"
     },
     "opts": [
       {
@@ -39314,8 +39314,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "The goal of the Million Programme during the 1960s was ...?",
-      "sv": "Miljonprogrammets mål under 1960-talet var ...?"
+      "en": "What is correct about the Million Programme during the 1960s' goal?",
+      "sv": "Vad stämmer om miljonprogrammets mål under 1960-talet?"
     },
     "opts": [
       {
@@ -39482,8 +39482,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what was the goal of the Million Programme during the 1960s?",
-      "sv": "Vilken uppgift stämmer när det gäller vad var miljonprogrammets mål under 1960-talet?"
+      "en": "Which fact is correct about the Million Programme during the 1960s' goal?",
+      "sv": "Vilken uppgift stämmer om miljonprogrammets mål under 1960-talet?"
     },
     "opts": [
       {
@@ -39570,8 +39570,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "The digital revolution has changed ...?",
-      "sv": "Den digitala revolutionen har förändrat ...?"
+      "en": "What is correct about the digital revolution's changes?",
+      "sv": "Vad stämmer om den digitala revolutionens förändringar?"
     },
     "opts": [
       {
@@ -39738,8 +39738,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what has the digital revolution changed?",
-      "sv": "Vilken uppgift stämmer när det gäller vad har den digitala revolutionen förändrat?"
+      "en": "Which fact is correct about the digital revolution's changes?",
+      "sv": "Vilken uppgift stämmer om den digitala revolutionens förändringar?"
     },
     "opts": [
       {
@@ -39826,8 +39826,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Sweden's Nordic cooperation mainly takes place through ...?",
-      "sv": "Sveriges nordiska samarbete sker främst genom ...?"
+      "en": "What is correct about the bodies for Sweden's Nordic cooperation?",
+      "sv": "Vad stämmer om organen för Sveriges nordiska samarbete?"
     },
     "opts": [
       {
@@ -39994,8 +39994,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding through which two bodies does Sweden's Nordic cooperation mainly take place?",
-      "sv": "Vilken uppgift stämmer när det gäller genom vilka två organ sker Sveriges nordiska samarbete främst?"
+      "en": "Which fact is correct about the bodies for Sweden's Nordic cooperation?",
+      "sv": "Vilken uppgift stämmer om organen för Sveriges nordiska samarbete?"
     },
     "opts": [
       {
@@ -40082,8 +40082,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Sweden became a member of the EU in ...?",
-      "sv": "Sverige blev medlem i EU ...?"
+      "en": "What is correct about the year when sweden become a member of the EU?",
+      "sv": "Vad stämmer om året då Sverige blev medlem i EU?"
     },
     "opts": [
       {
@@ -40250,8 +40250,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding in what year did Sweden become a member of the EU?",
-      "sv": "Vilken uppgift stämmer när det gäller vilket år blev Sverige medlem i EU?"
+      "en": "Which fact is correct about the year when sweden become a member of the EU?",
+      "sv": "Vilken uppgift stämmer om året då Sverige blev medlem i EU?"
     },
     "opts": [
       {
@@ -40338,7 +40338,7 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "The EU's four freedoms mean ...?",
+      "en": "What is correct about the EU's four freedoms?",
       "sv": "Vad betyder EU:s fyra friheter?"
     },
     "opts": [
@@ -40506,8 +40506,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what do the EU's four freedoms mean?",
-      "sv": "Vilken beskrivning stämmer för EU:s fyra friheter?"
+      "en": "Which fact is correct about the EU's four freedoms?",
+      "sv": "Vad stämmer om EU:s fyra friheter?"
     },
     "opts": [
       {
@@ -40594,8 +40594,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "The Council of Europe promotes ...?",
-      "sv": "Europarådet arbetar för ...?"
+      "en": "What is correct about the Council of Europe's work?",
+      "sv": "Vad stämmer om Europarådets arbete?"
     },
     "opts": [
       {
@@ -40762,8 +40762,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what does the Council of Europe promote?",
-      "sv": "Vilken uppgift stämmer när det gäller vad arbetar Europarådet för?"
+      "en": "Which fact is correct about the Council of Europe's work?",
+      "sv": "Vilken uppgift stämmer om Europarådets arbete?"
     },
     "opts": [
       {
@@ -40850,8 +40850,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Sida works ...?",
-      "sv": "Sida arbetar för ...?"
+      "en": "What is correct about Sida's work?",
+      "sv": "Vad stämmer om Sidas arbete?"
     },
     "opts": [
       {
@@ -41018,8 +41018,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what does Sida work to do?",
-      "sv": "Vilken uppgift stämmer när det gäller vad arbetar Sida för?"
+      "en": "Which fact is correct about Sida's work?",
+      "sv": "Vilken uppgift stämmer om Sidas arbete?"
     },
     "opts": [
       {
@@ -41106,8 +41106,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Sweden and Finland chose to ... after Russia's attack on Ukraine in 2022?",
-      "sv": "Sverige och Finland valde att ... efter Rysslands attack mot Ukraina 2022?"
+      "en": "What is correct about Sweden and Finland's choice after Russia's attack on Ukraine in 2022?",
+      "sv": "Vad stämmer om Sverige och Finlands val efter Rysslands attack mot Ukraina 2022?"
     },
     "opts": [
       {
@@ -41274,8 +41274,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what did Sweden and Finland choose to do after Russia's attack on Ukraine in 2022?",
-      "sv": "Vilken uppgift stämmer när det gäller vad valde Sverige och Finland att göra efter Rysslands attack mot Ukraina 2022?"
+      "en": "Which fact is correct about Sweden and Finland's choice after Russia's attack on Ukraine in 2022?",
+      "sv": "Vilken uppgift stämmer om Sverige och Finlands val efter Rysslands attack mot Ukraina 2022?"
     },
     "opts": [
       {
@@ -41375,12 +41375,12 @@
         "sv": "Det svenska totalförsvaret omfattar inte både det militära försvaret och det civila försvaret."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "Swedish total defence consists only of military defence.",
+        "sv": "Svenskt totalförsvar består bara av militärt försvar."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Civil defence is not part of total defence.",
+        "sv": "Det civila försvaret ingår inte i totalförsvaret."
       }
     ],
     "answer": 0,
@@ -41503,12 +41503,12 @@
         "sv": "Det svenska totalförsvaret omfattar inte både det militära försvaret och det civila försvaret."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "Swedish total defence consists only of military defence.",
+        "sv": "Svenskt totalförsvar består bara av militärt försvar."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Civil defence is not part of total defence.",
+        "sv": "Det civila försvaret ingår inte i totalförsvaret."
       }
     ],
     "answer": 0,
@@ -41707,7 +41707,7 @@
     "type": "single_choice",
     "q": {
       "en": "Which meaning is correct for Sweden is a secular state?",
-      "sv": "Vilken innebörd stämmer för Sverige är en sekulär stat?"
+      "sv": "Vad stämmer om att Sverige är en sekulär stat?"
     },
     "opts": [
       {
@@ -41794,8 +41794,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "... marked the final breakthrough for religious freedom in 1951?",
-      "sv": "... markerade religionsfrihetens slutliga genombrott 1951?"
+      "en": "What is correct about the law for the final breakthrough for religious freedom in 1951?",
+      "sv": "Vad stämmer om lagen för religionsfrihetens slutliga genombrott 1951?"
     },
     "opts": [
       {
@@ -41962,8 +41962,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding which law marked the final breakthrough for religious freedom in 1951?",
-      "sv": "Vilken uppgift stämmer när det gäller vilken lag markerade religionsfrihetens slutliga genombrott 1951?"
+      "en": "Which fact is correct about the law for the final breakthrough for religious freedom in 1951?",
+      "sv": "Vilken uppgift stämmer om lagen för religionsfrihetens slutliga genombrott 1951?"
     },
     "opts": [
       {
@@ -42063,12 +42063,12 @@
         "sv": "År 2000 blev inte Svenska kyrkan ett trossamfund bland flera när staten och Svenska kyrkan skildes åt."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "The Church of Sweden became a state authority in 2000.",
+        "sv": "Svenska kyrkan blev en statlig myndighet år 2000."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Only the Church of Sweden may operate as a faith community in Sweden.",
+        "sv": "Bara Svenska kyrkan får verka som trossamfund i Sverige."
       }
     ],
     "answer": 0,
@@ -42191,12 +42191,12 @@
         "sv": "År 2000 blev inte Svenska kyrkan ett trossamfund bland flera när staten och Svenska kyrkan skildes åt."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "The Church of Sweden became a state authority in 2000.",
+        "sv": "Svenska kyrkan blev en statlig myndighet år 2000."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Only the Church of Sweden may operate as a faith community in Sweden.",
+        "sv": "Bara Svenska kyrkan får verka som trossamfund i Sverige."
       }
     ],
     "answer": 0,
@@ -42226,8 +42226,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "The Church of Sweden has historical roots in ...?",
-      "sv": "Svenska kyrkan har historiska rötter i ...?"
+      "en": "What is correct about the Church of Sweden's historical roots?",
+      "sv": "Vad stämmer om Svenska kyrkans historiska rötter?"
     },
     "opts": [
       {
@@ -42394,8 +42394,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding which tradition does the Church of Sweden have historical roots in?",
-      "sv": "Vilken uppgift stämmer när det gäller vilken tradition har Svenska kyrkan historiska rötter i?"
+      "en": "Which fact is correct about the Church of Sweden's historical roots?",
+      "sv": "Vilken uppgift stämmer om Svenska kyrkans historiska rötter?"
     },
     "opts": [
       {
@@ -42482,8 +42482,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "... is described as the second-largest religion in Sweden?",
-      "sv": "... beskrivs som den näst största religionen i Sverige?"
+      "en": "What is correct about the religion described as the second largest in Sweden?",
+      "sv": "Vad stämmer om religionen som beskrivs som den näst största i Sverige?"
     },
     "opts": [
       {
@@ -42650,8 +42650,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding which religion is described as the second largest in Sweden?",
-      "sv": "Vilken uppgift stämmer när det gäller vilken religion beskrivs som den näst största i Sverige?"
+      "en": "Which fact is correct about the religion described as the second largest in Sweden?",
+      "sv": "Vilken uppgift stämmer om religionen som beskrivs som den näst största i Sverige?"
     },
     "opts": [
       {
@@ -42738,8 +42738,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "On New Year’s Eve, 31 December, it is common to ...?",
-      "sv": "På nyårsafton den 31 december är det vanligt att ...?"
+      "en": "What is correct about New Year’s Eve on 31 December traditions in Sweden?",
+      "sv": "Vad stämmer om vanliga traditioner på nyårsafton den 31 december i Sverige?"
     },
     "opts": [
       {
@@ -42906,8 +42906,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding how New Year’s Eve on 31 December is commonly celebrated in Sweden?",
-      "sv": "Vilken uppgift stämmer när det gäller vad som är vanligt att göra på nyårsafton den 31 december i Sverige?"
+      "en": "Which fact is correct about New Year’s Eve on 31 December traditions in Sweden?",
+      "sv": "Vilken uppgift stämmer om vanliga traditioner på nyårsafton den 31 december i Sverige?"
     },
     "opts": [
       {
@@ -42994,8 +42994,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "On Sweden’s National Day, 6 June, ...?",
-      "sv": "På Sveriges nationaldag den 6 juni brukar ...?"
+      "en": "What is correct about traditions on Sweden’s National Day, 6 June?",
+      "sv": "Vad stämmer om traditioner på Sveriges nationaldag den 6 juni?"
     },
     "opts": [
       {
@@ -43165,8 +43165,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what usually happens on Sweden’s National Day, 6 June?",
-      "sv": "Vilken uppgift stämmer när det gäller vad brukar hända på Sveriges nationaldag den 6 juni?"
+      "en": "Which fact is correct about traditions on Sweden’s National Day, 6 June?",
+      "sv": "Vilken uppgift stämmer om traditioner på Sveriges nationaldag den 6 juni?"
     },
     "opts": [
       {
@@ -43254,8 +43254,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Midsummer Eve is observed ...?",
-      "sv": "Midsommarafton firas ...?"
+      "en": "What is correct about the timing of Midsummer Eve in Sweden?",
+      "sv": "Vad stämmer om tidpunkten för midsommarafton i Sverige?"
     },
     "opts": [
       {
@@ -43425,8 +43425,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding when is Midsummer Eve celebrated in Sweden?",
-      "sv": "Vilken uppgift stämmer när det gäller när firas midsommarafton i Sverige?"
+      "en": "Which fact is correct about the timing of Midsummer Eve in Sweden?",
+      "sv": "Vilken uppgift stämmer om tidpunkten för midsommarafton i Sverige?"
     },
     "opts": [
       {
@@ -43514,8 +43514,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "The Lucia celebration is largely about ...?",
-      "sv": "Luciafirandet handlar mycket om ...?"
+      "en": "What is correct about the Lucia celebration in Sweden?",
+      "sv": "Vad stämmer om luciafirandet?"
     },
     "opts": [
       {
@@ -43685,8 +43685,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what is the Lucia celebration largely about in Sweden?",
-      "sv": "Vilken uppgift stämmer när det gäller vad handlar luciafirandet mycket om i Sverige?"
+      "en": "Which fact is correct about the Lucia celebration in Sweden?",
+      "sv": "Vilken uppgift stämmer om luciafirandet?"
     },
     "opts": [
       {
@@ -43774,8 +43774,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "... is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday?",
-      "sv": "... firas någon gång i mars eller april och hör ihop med långfredagen och påskdagen?"
+      "en": "What is correct about the holiday celebrated sometime in March or April and is connected with Good Friday and Easter Sunday?",
+      "sv": "Vad stämmer om högtiden som firas någon gång i mars eller april och hör ihop med långfredagen och påskdagen?"
     },
     "opts": [
       {
@@ -43942,8 +43942,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding which holiday is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday?",
-      "sv": "Vilken uppgift stämmer när det gäller vilken högtid firas någon gång i mars eller april och hör ihop med långfredagen och påskdagen?"
+      "en": "Which fact is correct about the holiday celebrated sometime in March or April and is connected with Good Friday and Easter Sunday?",
+      "sv": "Vilken uppgift stämmer om högtiden som firas någon gång i mars eller april och hör ihop med långfredagen och påskdagen?"
     },
     "opts": [
       {
@@ -44030,8 +44030,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "... are typical of Walpurgis Night, 30 April?",
-      "sv": "Typiskt för valborgsmässoafton den 30 april är ...?"
+      "en": "What is correct about walpurgis Night, 30 April, in Sweden?",
+      "sv": "Vad stämmer om valborgsmässoafton den 30 april i Sverige?"
     },
     "opts": [
       {
@@ -44201,8 +44201,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what is typical of Walpurgis Night, 30 April, in Sweden?",
-      "sv": "Vilken uppgift stämmer när det gäller vad typiskt för valborgsmässoafton den 30 april i Sverige är?"
+      "en": "Which fact is correct about walpurgis Night, 30 April, in Sweden?",
+      "sv": "Vilken uppgift stämmer om valborgsmässoafton den 30 april i Sverige?"
     },
     "opts": [
       {
@@ -44290,8 +44290,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "May Day marks ...?",
-      "sv": "På första maj uppmärksammas ...?"
+      "en": "What is correct about May Day in Sweden in Sweden?",
+      "sv": "Vad stämmer om första maj i Sverige i Sverige?"
     },
     "opts": [
       {
@@ -44461,8 +44461,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what is marked on May Day in Sweden?",
-      "sv": "Vilken uppgift stämmer när det gäller vad uppmärksammas på första maj i Sverige?"
+      "en": "Which fact is correct about May Day in Sweden in Sweden?",
+      "sv": "Vilken uppgift stämmer om första maj i Sverige i Sverige?"
     },
     "opts": [
       {
@@ -44550,8 +44550,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "On All Saints’ Day, it is common to ...?",
-      "sv": "På Alla helgons dag är det vanligt att ...?"
+      "en": "What is correct about All Saints’ Day traditions in Sweden?",
+      "sv": "Vad stämmer om vanliga traditioner på Alla helgons dag i Sverige?"
     },
     "opts": [
       {
@@ -44721,8 +44721,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding how All Saints’ Day is commonly observed in Sweden?",
-      "sv": "Vilken uppgift stämmer när det gäller vad som är vanligt att göra på Alla helgons dag i Sverige?"
+      "en": "Which fact is correct about All Saints’ Day traditions in Sweden?",
+      "sv": "Vilken uppgift stämmer om vanliga traditioner på Alla helgons dag i Sverige?"
     },
     "opts": [
       {
@@ -44810,8 +44810,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Advent occurs on ...?",
-      "sv": "Advent infaller ...?"
+      "en": "What is correct about the timing of Advent in Sweden?",
+      "sv": "Vad stämmer om tidpunkten för advent i Sverige?"
     },
     "opts": [
       {
@@ -44981,8 +44981,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding when does Advent occur in Sweden?",
-      "sv": "Vilken uppgift stämmer när det gäller när infaller advent i Sverige?"
+      "en": "Which fact is correct about the timing of Advent in Sweden?",
+      "sv": "Vilken uppgift stämmer om tidpunkten för advent i Sverige?"
     },
     "opts": [
       {
@@ -45070,8 +45070,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "On Christmas Eve, 24 December, families commonly ...?",
-      "sv": "På julafton den 24 december brukar familjer ...?"
+      "en": "What is correct about family traditions on Christmas Eve, 24 December, in Sweden?",
+      "sv": "Vad stämmer om familjetraditioner på julafton den 24 december i Sverige?"
     },
     "opts": [
       {
@@ -45241,8 +45241,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what do families commonly do on Christmas Eve, 24 December, in Sweden?",
-      "sv": "Vilken uppgift stämmer när det gäller vad vanligt att familjer gör på julafton den 24 december i Sverige är?"
+      "en": "Which fact is correct about family traditions on Christmas Eve, 24 December, in Sweden?",
+      "sv": "Vilken uppgift stämmer om familjetraditioner på julafton den 24 december i Sverige?"
     },
     "opts": [
       {
@@ -45330,8 +45330,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "... are examples of traditions that have come to Sweden with immigrants?",
-      "sv": "... är exempel på traditioner som har kommit till Sverige med invandrare?"
+      "en": "What is correct about examples of traditions that have come to Sweden with immigrants?",
+      "sv": "Vad stämmer om högtider är exempel på traditioner som med kommit till Sverige med invandrare?"
     },
     "opts": [
       {
@@ -45501,8 +45501,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding which holidays are examples of traditions that have come to Sweden with immigrants?",
-      "sv": "Vilken uppgift stämmer när det gäller vilka högtider är exempel på traditioner som har kommit till Sverige med invandrare?"
+      "en": "Which fact is correct about examples of traditions that have come to Sweden with immigrants?",
+      "sv": "Vilken uppgift stämmer om högtider är exempel på traditioner som med kommit till Sverige med invandrare?"
     },
     "opts": [
       {
@@ -45590,8 +45590,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "In different places in Sweden, there are ... for Buddhists and Hindus?",
-      "sv": "På olika platser i Sverige finns ... för buddhister och hinduer?"
+      "en": "What is correct about places in Sweden for Buddhists and Hindus?",
+      "sv": "Vad stämmer om platser i Sverige för buddhister och hinduer?"
     },
     "opts": [
       {
@@ -45761,8 +45761,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what exists in different places in Sweden for Buddhists and Hindus?",
-      "sv": "Vilken uppgift stämmer när det gäller vad finns på olika platser i Sverige för buddhister och hinduer?"
+      "en": "Which fact is correct about places in Sweden for Buddhists and Hindus?",
+      "sv": "Vilken uppgift stämmer om platser i Sverige för buddhister och hinduer?"
     },
     "opts": [
       {
@@ -46370,8 +46370,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "One goal of religion studies in Swedish schools is ...?",
-      "sv": "Ett mål med religionskunskapen i svensk skola är ...?"
+      "en": "What is correct about one goal of religion studies in Swedish schools?",
+      "sv": "Vad stämmer om religionskunskapen i svensk skolas mål?"
     },
     "opts": [
       {
@@ -46541,8 +46541,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what is one goal of religion studies in Swedish schools?",
-      "sv": "Vilken uppgift stämmer när det gäller vad ett mål med religionskunskapen i svensk skola är?"
+      "en": "Which fact is correct about one goal of religion studies in Swedish schools?",
+      "sv": "Vilken uppgift stämmer om religionskunskapen i svensk skolas mål?"
     },
     "opts": [
       {
@@ -46630,8 +46630,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Sweden's first mosques were built ...?",
-      "sv": "Sveriges första moskéer byggdes ...?"
+      "en": "What is correct about the time when Sweden's first mosques were built?",
+      "sv": "Vad stämmer om tidpunkten då Sveriges första moskéer byggdes?"
     },
     "opts": [
       {
@@ -46801,8 +46801,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding when were Sweden's first mosques built?",
-      "sv": "Vilken uppgift stämmer när det gäller när byggdes Sveriges första moskéer?"
+      "en": "Which fact is correct about the time when Sweden's first mosques were built?",
+      "sv": "Vilken uppgift stämmer om tidpunkten då Sveriges första moskéer byggdes?"
     },
     "opts": [
       {
@@ -46890,8 +46890,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "... exist in Sweden today?",
-      "sv": "... finns i dagens Sverige?"
+      "en": "What is correct about Christian churches or communities in Sweden today?",
+      "sv": "Vad stämmer om kristna kyrkor eller samfund i dagens Sverige?"
     },
     "opts": [
       {
@@ -47061,8 +47061,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding which Christian churches or communities exist in Sweden today?",
-      "sv": "Vilken uppgift stämmer när det gäller vilka kristna kyrkor eller samfund finns i dagens Sverige?"
+      "en": "Which fact is correct about Christian churches or communities in Sweden today?",
+      "sv": "Vilken uppgift stämmer om kristna kyrkor eller samfund i dagens Sverige?"
     },
     "opts": [
       {
@@ -47150,8 +47150,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "... contributed to contacts with Hindus and Buddhists in Sweden during the 20th century?",
-      "sv": "... bidrog till kontakter med hinduer och buddhister i Sverige under 1900-talet?"
+      "en": "What is correct about contacts with Hindus and Buddhists in Sweden during the 20th century?",
+      "sv": "Vad stämmer om kontakter med hinduer och buddhister i Sverige under 1900-talet?"
     },
     "opts": [
       {
@@ -47324,8 +47324,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what contributed to contacts with Hindus and Buddhists in Sweden during the 20th century?",
-      "sv": "Vilken uppgift stämmer när det gäller vad bidrog till kontakter med hinduer och buddhister i Sverige under 1900-talet?"
+      "en": "Which fact is correct about contacts with Hindus and Buddhists in Sweden during the 20th century?",
+      "sv": "Vilken uppgift stämmer om kontakter med hinduer och buddhister i Sverige under 1900-talet?"
     },
     "opts": [
       {
@@ -47414,8 +47414,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "In 1860, Swedes were permitted ...?",
-      "sv": "År 1860 blev det tillåtet för svenskar ...?"
+      "en": "What is correct about religious freedom for Swedes in 1860?",
+      "sv": "Vad stämmer om religionsfrihet för svenskar år 1860?"
     },
     "opts": [
       {
@@ -47585,8 +47585,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what became permitted for Swedes in 1860?",
-      "sv": "Vilken uppgift stämmer när det gäller vad blev tillåtet för svenskar år 1860?"
+      "en": "Which fact is correct about religious freedom for Swedes in 1860?",
+      "sv": "Vilken uppgift stämmer om religionsfrihet för svenskar år 1860?"
     },
     "opts": [
       {
@@ -47674,8 +47674,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "The Instrument of Government protects ...?",
-      "sv": "Regeringsformen skyddar ...?"
+      "en": "What is correct about the Instrument of Government and religion?",
+      "sv": "Vad stämmer om regeringsformen när det gäller religion?"
     },
     "opts": [
       {
@@ -47845,8 +47845,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what does the Instrument of Government protect regarding religion?",
-      "sv": "Vilken uppgift stämmer när det gäller vad skyddar regeringsformen när det gäller religion?"
+      "en": "Which fact is correct about the Instrument of Government and religion?",
+      "sv": "Vilken uppgift stämmer om regeringsformen när det gäller religion?"
     },
     "opts": [
       {
@@ -47934,8 +47934,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "... are Christian holidays that many Swedes celebrate even if they do not see themselves as religious?",
-      "sv": "... är kristna högtider som många svenskar firar även om de inte ser sig som religiösa?"
+      "en": "What is correct about Christian holidays many Swedes celebrate even if they do not see themselves as religious?",
+      "sv": "Vad stämmer om kristna högtider som många svenskar även om de inte ser sig som religiösa firar?"
     },
     "opts": [
       {
@@ -48108,8 +48108,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding which Christian holidays do many Swedes celebrate even if they do not see themselves as religious?",
-      "sv": "Vilken uppgift stämmer när det gäller vilka kristna högtider firar många svenskar även om de inte ser sig som religiösa?"
+      "en": "Which fact is correct about Christian holidays many Swedes celebrate even if they do not see themselves as religious?",
+      "sv": "Vilken uppgift stämmer om kristna högtider som många svenskar även om de inte ser sig som religiösa firar?"
     },
     "opts": [
       {
@@ -48198,8 +48198,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "... are still common in Sweden?",
-      "sv": "... är fortfarande vanliga i Sverige?"
+      "en": "What is correct about religious rituals still common in Sweden?",
+      "sv": "Vad stämmer om religiösa ritualer som är fortfarande vanliga i Sverige?"
     },
     "opts": [
       {
@@ -48375,8 +48375,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding which religious rituals are still common in Sweden?",
-      "sv": "Vilken uppgift stämmer när det gäller vilka religiösa ritualer är fortfarande vanliga i Sverige?"
+      "en": "Which fact is correct about religious rituals still common in Sweden?",
+      "sv": "Vilken uppgift stämmer om religiösa ritualer som är fortfarande vanliga i Sverige?"
     },
     "opts": [
       {
@@ -48466,8 +48466,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Sweden was ... during the Middle Ages?",
-      "sv": "Sverige var ... under medeltiden?"
+      "en": "What is correct about sweden during the Middle Ages before the Church of Sweden’s Lutheran tradition developed?",
+      "sv": "Vad stämmer om Sverige under medeltiden innan Svenska kyrkans lutherska tradition växte fram?"
     },
     "opts": [
       {
@@ -48637,8 +48637,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what was Sweden during the Middle Ages before the Church of Sweden’s Lutheran tradition developed?",
-      "sv": "Vilken uppgift stämmer när det gäller vad var Sverige under medeltiden innan Svenska kyrkans lutherska tradition växte fram?"
+      "en": "Which fact is correct about sweden during the Middle Ages before the Church of Sweden’s Lutheran tradition developed?",
+      "sv": "Vilken uppgift stämmer om Sverige under medeltiden innan Svenska kyrkans lutherska tradition växte fram?"
     },
     "opts": [
       {
@@ -48986,8 +48986,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "... are found in Swedish Muslim congregations?",
-      "sv": "... finns i svenska muslimska församlingar?"
+      "en": "What is correct about branches of Islam in Swedish Muslim congregations?",
+      "sv": "Vad stämmer om riktningar inom islam i svenska muslimska församlingar?"
     },
     "opts": [
       {
@@ -49157,8 +49157,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding which branches of Islam are found in Swedish Muslim congregations?",
-      "sv": "Vilken uppgift stämmer när det gäller vilka riktningar inom islam finns i svenska muslimska församlingar?"
+      "en": "Which fact is correct about branches of Islam in Swedish Muslim congregations?",
+      "sv": "Vilken uppgift stämmer om riktningar inom islam i svenska muslimska församlingar?"
     },
     "opts": [
       {
@@ -49246,8 +49246,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Muslim congregations in Sweden offer ...?",
-      "sv": "Muslimska församlingar i Sverige erbjuder ...?"
+      "en": "What is correct about Muslim congregations in Sweden's activities?",
+      "sv": "Vad stämmer om muslimska församlingar i Sveriges verksamhet?"
     },
     "opts": [
       {
@@ -49420,8 +49420,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what do Muslim congregations in Sweden offer?",
-      "sv": "Vilken uppgift stämmer när det gäller vad erbjuder muslimska församlingar i Sverige?"
+      "en": "Which fact is correct about Muslim congregations in Sweden's activities?",
+      "sv": "Vilken uppgift stämmer om muslimska församlingar i Sveriges verksamhet?"
     },
     "opts": [
       {
@@ -49770,8 +49770,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "The event on 6 June 1523 was that ...?",
-      "sv": "Händelsen den 6 juni 1523 var att ...?"
+      "en": "What is correct about the event on 6 June 1523, a date connected with Sweden's National Day?",
+      "sv": "Vad stämmer om händelsen den 6 juni 1523, ett datum som hör ihop med Sveriges nationaldag?"
     },
     "opts": [
       {
@@ -49941,8 +49941,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what happened on 6 June 1523, a date connected with Sweden's National Day?",
-      "sv": "Vilken uppgift stämmer när det gäller vad hände den 6 juni 1523, ett datum som hör ihop med Sveriges nationaldag?"
+      "en": "Which fact is correct about the event on 6 June 1523, a date connected with Sweden's National Day?",
+      "sv": "Vilken uppgift stämmer om händelsen den 6 juni 1523, ett datum som hör ihop med Sveriges nationaldag?"
     },
     "opts": [
       {
@@ -50030,8 +50030,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "... are common during Midsummer celebrations in Sweden?",
-      "sv": "Vid midsommarfirande i Sverige är det vanligt med ...?"
+      "en": "What is correct about common traditions Midsummer celebrations in Sweden?",
+      "sv": "Vad stämmer om midsommarfirande i Sverige?"
     },
     "opts": [
       {
@@ -50204,8 +50204,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what is common during Midsummer celebrations in Sweden?",
-      "sv": "Vilken uppgift stämmer när det gäller vad vanligt vid midsommarfirande i Sverige är?"
+      "en": "Which fact is correct about common traditions Midsummer celebrations in Sweden?",
+      "sv": "Vilken uppgift stämmer om midsommarfirande i Sverige?"
     },
     "opts": [
       {
@@ -50554,8 +50554,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "... ends the fasting month of Ramadan?",
-      "sv": "... avslutar fastemånaden ramadan?"
+      "en": "What is correct about the holiday that ends the fasting month of Ramadan?",
+      "sv": "Vad stämmer om högtiden som avslutar fastemånaden ramadan?"
     },
     "opts": [
       {
@@ -50725,8 +50725,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding which holiday ends the fasting month of Ramadan?",
-      "sv": "Vilken uppgift stämmer när det gäller vilken högtid avslutar fastemånaden ramadan?"
+      "en": "Which fact is correct about the holiday that ends the fasting month of Ramadan?",
+      "sv": "Vilken uppgift stämmer om högtiden som avslutar fastemånaden ramadan?"
     },
     "opts": [
       {
@@ -50814,8 +50814,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Nouruz and Newroz are observed ...?",
-      "sv": "Nouruz och Newroz firas ...?"
+      "en": "What is correct about the timing of Nouruz and Newroz?",
+      "sv": "Vad stämmer om tidpunkten för Nouruz och Newroz?"
     },
     "opts": [
       {
@@ -50985,8 +50985,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding when are Nouruz and Newroz celebrated?",
-      "sv": "Vilken uppgift stämmer när det gäller när firas Nouruz och Newroz?"
+      "en": "Which fact is correct about the timing of Nouruz and Newroz?",
+      "sv": "Vilken uppgift stämmer om tidpunkten för Nouruz och Newroz?"
     },
     "opts": [
       {
@@ -51074,8 +51074,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Lucia usually wears ...?",
-      "sv": "Lucia brukar bära ...?"
+      "en": "What is correct about Lucia's clothing in a Lucia procession?",
+      "sv": "Vad stämmer om Lucias klädsel i ett luciatåg?"
     },
     "opts": [
       {
@@ -51245,8 +51245,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what does Lucia usually wear in a Lucia procession?",
-      "sv": "Vilken uppgift stämmer när det gäller vad brukar Lucia bära i ett luciatåg?"
+      "en": "Which fact is correct about Lucia's clothing in a Lucia procession?",
+      "sv": "Vilken uppgift stämmer om Lucias klädsel i ett luciatåg?"
     },
     "opts": [
       {
@@ -51334,8 +51334,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "The church service early on the morning of 25 December is called ...?",
-      "sv": "Gudstjänsten tidigt på morgonen den 25 december kallas ...?"
+      "en": "What is correct about the name of the church service early on the morning of 25 December?",
+      "sv": "Vad stämmer om namnet på gudstjänsten tidigt på morgonen den 25 december?"
     },
     "opts": [
       {
@@ -51505,8 +51505,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what the church service early on the morning of 25 December is called?",
-      "sv": "Vilken uppgift stämmer när det gäller vad kallas gudstjänsten tidigt på morgonen den 25 december?"
+      "en": "Which fact is correct about the name of the church service early on the morning of 25 December?",
+      "sv": "Vilken uppgift stämmer om namnet på gudstjänsten tidigt på morgonen den 25 december?"
     },
     "opts": [
       {
@@ -51594,8 +51594,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "What is correct regarding what is common on Easter Saturday in Sweden?",
-      "sv": "På påskafton är det vanligt ...?"
+      "en": "What is correct about common traditions Easter Saturday in Sweden?",
+      "sv": "Vad stämmer om vanliga traditioner på påskafton i Sverige?"
     },
     "opts": [
       {
@@ -51768,8 +51768,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what is common on Easter Saturday in Sweden?",
-      "sv": "Vilken uppgift stämmer när det gäller vad vanligt på påskafton i Sverige är?"
+      "en": "Which fact is correct about common traditions Easter Saturday in Sweden?",
+      "sv": "Vilken uppgift stämmer om vanliga traditioner på påskafton i Sverige?"
     },
     "opts": [
       {
@@ -51858,8 +51858,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Children with an Advent calendar at home often ...?",
-      "sv": "Barn med en adventskalender hemma ...?"
+      "en": "What is correct about children's an Advent calendar at home?",
+      "sv": "Vad stämmer om barns en adventskalender hemma?"
     },
     "opts": [
       {
@@ -52029,8 +52029,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what do children often do with an Advent calendar at home?",
-      "sv": "Vilken uppgift stämmer när det gäller vad gör barn ofta med en adventskalender hemma?"
+      "en": "Which fact is correct about children's an Advent calendar at home?",
+      "sv": "Vilken uppgift stämmer om barns en adventskalender hemma?"
     },
     "opts": [
       {
@@ -52118,8 +52118,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Sweden’s National Day became a public holiday through a Riksdag decision in ...?",
-      "sv": "Sveriges nationaldag blev en helgdag genom riksdagsbeslut ...?"
+      "en": "What is correct about the year when Sweden’s National Day became a public holiday through a Riksdag decision?",
+      "sv": "Vad stämmer om året då Sveriges blev nationaldag en helgdag genom riksdagsbeslut?"
     },
     "opts": [
       {
@@ -52292,8 +52292,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding in which year did Sweden’s National Day become a public holiday through a Riksdag decision?",
-      "sv": "Vilken uppgift stämmer när det gäller vilket år blev Sveriges nationaldag en helgdag genom riksdagsbeslut?"
+      "en": "Which fact is correct about the year when Sweden’s National Day became a public holiday through a Riksdag decision?",
+      "sv": "Vilken uppgift stämmer om året då Sveriges blev nationaldag en helgdag genom riksdagsbeslut?"
     },
     "opts": [
       {
@@ -52382,8 +52382,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "All Saints’ Day is observed ...?",
-      "sv": "Alla helgons dag firas ...?"
+      "en": "What is correct about the timing of All Saints’ Day in Sweden?",
+      "sv": "Vad stämmer om tidpunkten för Alla helgons dag i Sverige?"
     },
     "opts": [
       {
@@ -52553,8 +52553,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding when is All Saints’ Day observed in Sweden?",
-      "sv": "Vilken uppgift stämmer när det gäller när firas Alla helgons dag i Sverige?"
+      "en": "Which fact is correct about the timing of All Saints’ Day in Sweden?",
+      "sv": "Vilken uppgift stämmer om tidpunkten för Alla helgons dag i Sverige?"
     },
     "opts": [
       {
@@ -52642,8 +52642,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "... are common in many homes during Advent?",
-      "sv": "Under advent är det vanligt med ... i många hem?"
+      "en": "What is correct about common in many homes during Advent?",
+      "sv": "Vad stämmer om vanligt i många hem under advent?"
     },
     "opts": [
       {
@@ -52813,8 +52813,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what is common in many homes during Advent?",
-      "sv": "Vilken uppgift stämmer när det gäller vad vanligt i många hem under advent är?"
+      "en": "Which fact is correct about common in many homes during Advent?",
+      "sv": "Vilken uppgift stämmer om vanligt i många hem under advent?"
     },
     "opts": [
       {
@@ -52902,8 +52902,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "In Sweden, on All Saints’ Day, many people ...?",
-      "sv": "Vad stämmer när det gäller vad många gör på Alla helgons dag i Sverige?"
+      "en": "What is correct about traditions on All Saints’ Day in Sweden?",
+      "sv": "Vad stämmer om traditioner på Alla helgons dag i Sverige?"
     },
     "opts": [
       {
@@ -53076,8 +53076,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what do many people do on All Saints’ Day in Sweden?",
-      "sv": "Vilken uppgift stämmer när det gäller vad många gör på Alla helgons dag i Sverige?"
+      "en": "Which fact is correct about traditions on All Saints’ Day in Sweden?",
+      "sv": "Vilken uppgift stämmer om traditioner på Alla helgons dag i Sverige?"
     },
     "opts": [
       {
@@ -53426,8 +53426,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "In Sweden, at Christmas, many people ...?",
-      "sv": "Vad stämmer när det gäller vad många gör med en julgran vid jul i Sverige?"
+      "en": "What is correct about a Christmas tree at Christmas in Sweden?",
+      "sv": "Vad stämmer om en julgran vid jul i Sverige?"
     },
     "opts": [
       {
@@ -53597,8 +53597,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what many people do with a Christmas tree at Christmas in Sweden?",
-      "sv": "Vilken uppgift stämmer när det gäller vad många gör med en julgran vid jul i Sverige?"
+      "en": "Which fact is correct about a Christmas tree at Christmas in Sweden?",
+      "sv": "Vilken uppgift stämmer om en julgran vid jul i Sverige?"
     },
     "opts": [
       {
@@ -53686,8 +53686,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Christmas traditionally celebrates ... in Christianity?",
-      "sv": "Julen firar traditionellt ... inom kristendomen?"
+      "en": "What is correct about Christmas in Christianity?",
+      "sv": "Vad stämmer om julen inom kristendomen?"
     },
     "opts": [
       {
@@ -53857,8 +53857,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what does Christmas traditionally celebrate in Christianity?",
-      "sv": "Vilken uppgift stämmer när det gäller vad firar julen traditionellt inom kristendomen?"
+      "en": "Which fact is correct about Christmas in Christianity?",
+      "sv": "Vilken uppgift stämmer om julen inom kristendomen?"
     },
     "opts": [
       {
@@ -53946,8 +53946,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "What is correct regarding how do many people in Sweden celebrate Christmas even when it has no religious meaning for them?",
-      "sv": "Vad stämmer när det gäller hur firar många jul i Sverige även när julen inte har religiös betydelse för dem?"
+      "en": "What is correct about Christmas celebrations in Sweden?",
+      "sv": "Vad stämmer om firandet av jul i Sverige?"
     },
     "opts": [
       {
@@ -54117,8 +54117,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding how do many people in Sweden celebrate Christmas even when it has no religious meaning for them?",
-      "sv": "Vilken uppgift stämmer när det gäller hur firar många jul i Sverige även när julen inte har religiös betydelse för dem?"
+      "en": "Which fact is correct about Christmas celebrations in Sweden?",
+      "sv": "Vilken uppgift stämmer om firandet av jul i Sverige?"
     },
     "opts": [
       {
@@ -54206,8 +54206,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "On 13 December, people commonly serve ...?",
-      "sv": "Den 13 december brukar man bjuda på ...?"
+      "en": "What is correct about foods served on 13 December in connection with Lucia?",
+      "sv": "Vad stämmer om serveringen den 13 december i samband med lucia?"
     },
     "opts": [
       {
@@ -54377,8 +54377,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what is commonly served on 13 December in connection with Lucia?",
-      "sv": "Vilken uppgift stämmer när det gäller vad brukar man bjuda på den 13 december i samband med lucia?"
+      "en": "Which fact is correct about foods served on 13 December in connection with Lucia?",
+      "sv": "Vilken uppgift stämmer om serveringen den 13 december i samband med lucia?"
     },
     "opts": [
       {
@@ -54466,8 +54466,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Sweden has ... islands?",
-      "sv": "Sverige har ... öar?"
+      "en": "What is correct about the number of islands in Sweden?",
+      "sv": "Vad stämmer om antalet öar i Sverige?"
     },
     "opts": [
       {
@@ -54637,8 +54637,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding how many islands does Sweden have?",
-      "sv": "Vilken uppgift stämmer när det gäller hur många öar har Sverige?"
+      "en": "Which fact is correct about the number of islands in Sweden?",
+      "sv": "Vilken uppgift stämmer om antalet öar i Sverige?"
     },
     "opts": [
       {
@@ -54739,12 +54739,12 @@
         "sv": "Sverige brukar inte delas in i Götaland, Svealand och Norrland."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "Götaland, Svealand, and Norrland are Sweden’s three largest counties.",
+        "sv": "Götaland, Svealand och Norrland är Sveriges tre största län."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Norrland is Sweden’s smallest major region.",
+        "sv": "Norrland är Sveriges minsta landsdel."
       }
     ],
     "answer": 0,
@@ -54873,12 +54873,12 @@
         "sv": "Sverige brukar inte delas in i Götaland, Svealand och Norrland."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "Götaland, Svealand, and Norrland are Sweden’s three largest counties.",
+        "sv": "Götaland, Svealand och Norrland är Sveriges tre största län."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Norrland is Sweden’s smallest major region.",
+        "sv": "Norrland är Sveriges minsta landsdel."
       }
     ],
     "answer": 0,
@@ -54910,8 +54910,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Sweden is divided into ...?",
-      "sv": "Sverige är indelat i ...?"
+      "en": "What is correct about the number of historical provinces in Sweden?",
+      "sv": "Vad stämmer om antalet landskap i Sverige?"
     },
     "opts": [
       {
@@ -55081,8 +55081,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding how many historical provinces is Sweden divided into?",
-      "sv": "Vilken uppgift stämmer när det gäller hur många landskap är Sverige indelat i?"
+      "en": "Which fact is correct about the number of historical provinces in Sweden?",
+      "sv": "Vilken uppgift stämmer om antalet landskap i Sverige?"
     },
     "opts": [
       {
@@ -55339,7 +55339,7 @@
     "type": "single_choice",
     "q": {
       "en": "Which meaning is correct for elections in a democracy are secret?",
-      "sv": "Vilken innebörd stämmer för val i en demokrati är hemliga?"
+      "sv": "Vad stämmer om att val i en demokrati är hemliga?"
     },
     "opts": [
       {
@@ -55426,8 +55426,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "In a democracy, people, groups, and parties may ...?",
-      "sv": "I en demokrati får människor, grupper och partier ...?"
+      "en": "What is correct about the right people, groups, and parties have in a democracy?",
+      "sv": "Vad stämmer om rätten för människor, grupper och partier i en demokrati?"
     },
     "opts": [
       {
@@ -55594,8 +55594,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what right do people, groups, and parties have in a democracy?",
-      "sv": "Vilken uppgift stämmer när det gäller vilken rätt har människor, grupper och partier i en demokrati?"
+      "en": "Which fact is correct about the right people, groups, and parties have in a democracy?",
+      "sv": "Vilken uppgift stämmer om rätten för människor, grupper och partier i en demokrati?"
     },
     "opts": [
       {
@@ -55682,8 +55682,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "What is correct regarding what can make democracy stronger?",
-      "sv": "Demokratin blir starkare när ...?"
+      "en": "What is correct about democracy and participation?",
+      "sv": "Vad stämmer om demokratin och deltagande?"
     },
     "opts": [
       {
@@ -55850,8 +55850,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what can make democracy stronger?",
-      "sv": "Vilken uppgift stämmer när det gäller vad kan göra demokratin starkare?"
+      "en": "Which fact is correct about democracy and participation?",
+      "sv": "Vilken uppgift stämmer om demokratin och deltagande?"
     },
     "opts": [
       {
@@ -55938,8 +55938,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "One reason false information and hate can be a threat to democracy is that ...?",
-      "sv": "En anledning till att falsk information och hat kan vara ett hot mot demokratin är att ...?"
+      "en": "What is correct about the reason false can information and hate be a threat to democracy?",
+      "sv": "Vad stämmer om skälet till att falsk kan information och hat vara ett hot mot demokratin?"
     },
     "opts": [
       {
@@ -56109,8 +56109,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding why can false information and hate be a threat to democracy?",
-      "sv": "Vilken uppgift stämmer när det gäller varför kan falsk information och hat vara ett hot mot demokratin?"
+      "en": "Which fact is correct about the reason false can information and hate be a threat to democracy?",
+      "sv": "Vilken uppgift stämmer om skälet till att falsk kan information och hat vara ett hot mot demokratin?"
     },
     "opts": [
       {
@@ -56369,8 +56369,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Which description is correct for integration in a democratic society?",
-      "sv": "Vilken beskrivning stämmer för integration i ett demokratiskt samhälle?"
+      "en": "Which fact is correct about integration in a democratic society?",
+      "sv": "Vilken uppgift stämmer om integration i ett demokratiskt samhälle?"
     },
     "opts": [
       {
@@ -56882,8 +56882,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which description is correct for media financed by advertising?",
-      "sv": "Vilken beskrivning stämmer för medier som finansieras med reklam?"
+      "en": "Which fact is correct about media financed by advertising?",
+      "sv": "Vilken uppgift stämmer om medier som finansieras med reklam?"
     },
     "opts": [
       {
@@ -57482,8 +57482,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "One reason source criticism is needed when using media is that ...?",
-      "sv": "En anledning till att källkritik behövs när man använder medier är att ...?"
+      "en": "What is correct about the reason source criticism is needed when using media?",
+      "sv": "Vad stämmer om skälet till att källkritik när man använder medier behövs?"
     },
     "opts": [
       {
@@ -57650,8 +57650,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding why is source criticism needed when using media?",
-      "sv": "Vilken uppgift stämmer när det gäller varför behövs källkritik när man använder medier?"
+      "en": "Which fact is correct about the reason source criticism is needed when using media?",
+      "sv": "Vilken uppgift stämmer om skälet till att källkritik när man använder medier behövs?"
     },
     "opts": [
       {
@@ -57738,8 +57738,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "What is correct regarding how a can welfare service be provided by a private company but still be funded by tax revenue?",
-      "sv": "Vad stämmer när det gäller hur en kan välfärdstjänst vara privat och ändå skattefinansierad?"
+      "en": "What is correct about a privately run welfare service with public funding?",
+      "sv": "Vad stämmer om en privat utförd välfärdstjänst med offentlig finansiering?"
     },
     "opts": [
       {
@@ -57827,8 +57827,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "A private company can provide the service while tax revenue funds it.",
-      "sv": "Ett privat företag kan utföra tjänsten medan skattepengar betalar den."
+      "en": "A welfare service can be provided by a private company while tax revenue funds it.",
+      "sv": "En välfärdstjänst kan utföras av ett privat företag och ändå finansieras med skattepengar."
     },
     "opts": [
       {
@@ -57868,8 +57868,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "The service must always be paid for entirely with private loans.",
-      "sv": "Tjänsten måste alltid betalas helt med privata lån."
+      "en": "A welfare service must always be paid for entirely with private loans.",
+      "sv": "En välfärdstjänst måste alltid betalas helt med privata lån."
     },
     "opts": [
       {
@@ -57909,8 +57909,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding how a can welfare service be provided by a private company but still be funded by tax revenue?",
-      "sv": "Vilken uppgift stämmer när det gäller hur en kan välfärdstjänst vara privat och ändå skattefinansierad?"
+      "en": "Which fact is correct about a privately run welfare service with public funding?",
+      "sv": "Vilken uppgift stämmer om en privat utförd välfärdstjänst med offentlig finansiering?"
     },
     "opts": [
       {
@@ -57998,8 +57998,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "... can provide financial support during illness, parenthood, or unemployment?",
-      "sv": "... kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet?"
+      "en": "What is correct about state-funded social insurance systems that can provide financial support during illness, parenthood, or unemployment?",
+      "sv": "Vad stämmer om statliga trygghetssystem som kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet?"
     },
     "opts": [
       {
@@ -58169,8 +58169,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding which state-funded social insurance systems can provide financial support during illness, parenthood, or unemployment?",
-      "sv": "Vilken uppgift stämmer när det gäller vilka statliga trygghetssystem kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet?"
+      "en": "Which fact is correct about state-funded social insurance systems that can provide financial support during illness, parenthood, or unemployment?",
+      "sv": "Vilken uppgift stämmer om statliga trygghetssystem som kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet?"
     },
     "opts": [
       {
@@ -58258,8 +58258,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Primary care includes ...?",
-      "sv": "Primärvården omfattar ...?"
+      "en": "What is correct about primary care?",
+      "sv": "Vad stämmer om primärvården?"
     },
     "opts": [
       {
@@ -58429,8 +58429,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what is included in primary care?",
-      "sv": "Vilken uppgift stämmer när det gäller vad ingår i primärvården?"
+      "en": "Which fact is correct about primary care?",
+      "sv": "Vilken uppgift stämmer om primärvården?"
     },
     "opts": [
       {
@@ -58518,8 +58518,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "What is correct regarding what responsibility does the municipality have for children’s everyday life and education?",
-      "sv": "Kommunen ansvarar för ...?"
+      "en": "What is correct about the municipality's responsibility for children’s everyday life and education?",
+      "sv": "Vad stämmer om kommunens ansvar för barns vardag och utbildning?"
     },
     "opts": [
       {
@@ -58689,8 +58689,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what responsibility does the municipality have for children’s everyday life and education?",
-      "sv": "Vilken uppgift stämmer när det gäller vilket ansvar har kommunen för barns vardag och utbildning?"
+      "en": "Which fact is correct about the municipality's responsibility for children’s everyday life and education?",
+      "sv": "Vilken uppgift stämmer om kommunens ansvar för barns vardag och utbildning?"
     },
     "opts": [
       {
@@ -58778,8 +58778,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "The municipality can offer older people ... to manage everyday life?",
-      "sv": "Kommunen kan erbjuda äldre personer ... för att klara vardagen?"
+      "en": "What is correct about the municipality support for older people?",
+      "sv": "Vad stämmer om kommunens stöd till äldre personer?"
     },
     "opts": [
       {
@@ -58949,8 +58949,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what help can older people receive from the municipality to manage everyday life?",
-      "sv": "Vilken uppgift stämmer när det gäller vilken hjälp kan äldre personer få av kommunen för att klara vardagen?"
+      "en": "Which fact is correct about the municipality support for older people?",
+      "sv": "Vilken uppgift stämmer om kommunens stöd till äldre personer?"
     },
     "opts": [
       {
@@ -59209,8 +59209,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Which description is correct for one purpose of the United Nations (UN)?",
-      "sv": "Vilken beskrivning stämmer för ett syfte med Förenta nationerna (FN)?"
+      "en": "Which fact is correct about one purpose of the United Nations (UN)?",
+      "sv": "Vilken uppgift stämmer om ett syfte med Förenta nationerna (FN)?"
     },
     "opts": [
       {
@@ -59469,8 +59469,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Which description is correct for EU cooperation?",
-      "sv": "Vilken beskrivning stämmer för EU-samarbetet?"
+      "en": "Which fact is correct about EU cooperation?",
+      "sv": "Vilken uppgift stämmer om EU-samarbetet?"
     },
     "opts": [
       {
@@ -59558,8 +59558,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "What is correct regarding how did Sweden act toward NATO during the Cold War?",
-      "sv": "Vad stämmer när det gäller hur agerade Sverige under kalla kriget i förhållande till Nato?"
+      "en": "What is correct about Sweden's conduct toward NATO during the Cold War?",
+      "sv": "Vad stämmer om Sveriges agerande under kalla kriget i förhållande till Nato?"
     },
     "opts": [
       {
@@ -59729,8 +59729,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding how did Sweden act toward NATO during the Cold War?",
-      "sv": "Vilken uppgift stämmer när det gäller hur agerade Sverige under kalla kriget i förhållande till Nato?"
+      "en": "Which fact is correct about Sweden's conduct toward NATO during the Cold War?",
+      "sv": "Vilken uppgift stämmer om Sveriges agerande under kalla kriget i förhållande till Nato?"
     },
     "opts": [
       {
@@ -59989,8 +59989,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Which description is correct for total-defence duty in Sweden?",
-      "sv": "Vilken beskrivning stämmer för totalförsvarsplikt i Sverige?"
+      "en": "Which fact is correct about total-defence duty in Sweden?",
+      "sv": "Vilken uppgift stämmer om totalförsvarsplikt i Sverige?"
     },
     "opts": [
       {
@@ -60249,8 +60249,8 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "single_choice",
     "q": {
-      "en": "Which description is correct for civil defence during war or crisis?",
-      "sv": "Vilken beskrivning stämmer för det civila försvaret vid krig eller kris?"
+      "en": "Which fact is correct about civil defence during war or crisis?",
+      "sv": "Vilken uppgift stämmer om det civila försvaret vid krig eller kris?"
     },
     "opts": [
       {
@@ -60338,8 +60338,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Elections to the European Parliament are held ...?",
-      "sv": "Val till EU-parlamentet hålls ...?"
+      "en": "What is correct about the interval for elections to the European Parliament?",
+      "sv": "Vad stämmer om tidsintervallet för val till EU-parlamentet?"
     },
     "opts": [
       {
@@ -60506,8 +60506,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding how often are elections to the European Parliament held?",
-      "sv": "Vilken uppgift stämmer när det gäller hur ofta hålls val till EU-parlamentet?"
+      "en": "Which fact is correct about the interval for elections to the European Parliament?",
+      "sv": "Vilken uppgift stämmer om tidsintervallet för val till EU-parlamentet?"
     },
     "opts": [
       {
@@ -60615,16 +60615,16 @@
       {
         "en": "No one without Swedish citizenship may vote in municipal or regional elections",
         "sv": "Ingen utan svenskt medborgarskap får rösta i kommun- eller regionval",
-        "zh-Hant": "沒有瑞典公民身分的人一律不得在市鎮（kommun）或大區（region）選舉中投票",
-        "zh-Hans": "没有瑞典公民身份的人一律不得在市镇（kommun）或大区（region）选举中投票",
+        "zh-Hant": "沒有瑞典公民身分的人一律不得在市鎮或大區選舉中投票",
+        "zh-Hans": "没有瑞典公民身份的人一律不得在市镇或大区选举中投票",
         "ar": "لا يحقّ لأحدٍ بلا جنسية سويدية التصويت في انتخابات البلديات (kommun) أو الأقاليم (region)",
         "ckb": "هیچ کەسێک بەبێ هاووڵاتیبوونی سوید بۆی نییە لە هەڵبژاردنی شارەوانی (kommun) یان هەرێم (region) دەنگ بدات",
-        "fa": "هیچ‌کس بدون شهروندی سوئد اجازهٔ رأی‌دادن در انتخابات شهرداری (kommun) یا منطقه (region) را ندارد",
+        "fa": "هیچ‌کس بدون شهروندی سوئد اجازهٔ رأی‌دادن در انتخابات کمون (kommun) یا منطقه (region) را ندارد",
         "pl": "Nikt bez obywatelstwa szwedzkiego nie może głosować w wyborach gminnych ani regionalnych",
         "so": "Cidna aan lahayn muwaadinimada Iswiidhan kuma codayn karto doorashooyinka degmooyinka ama gobollada",
-        "ti": "ዜግነት ሽወደን ዘይብሉ ዝኾነ ሰብ ኣብ ምርጫታት ምምሕዳር ከባቢ (kommun) ወይ ዞባ (region) ክመርጽ ኣይክእልን",
-        "tr": "İsveç vatandaşlığı olmayan hiç kimse belediye (kommun) veya bölge (region) seçimlerinde oy kullanamaz",
-        "uk": "Ніхто без шведського громадянства не може голосувати на муніципальних (kommun) чи регіональних (region) виборах"
+        "ti": "ዜግነት ሽወደን ዘይብሉ ዝኾነ ሰብ ኣብ ምርጫታት ምምሕዳር ከባቢ ወይ ክልል ክመርጽ ኣይክእልን",
+        "tr": "İsveç vatandaşlığı olmayan hiç kimse belediye veya bölge seçimlerinde oy kullanamaz",
+        "uk": "Ніхто без шведського громадянства не може голосувати на муніципальних чи регіональних виборах"
       },
       {
         "en": "All tourists may vote if they are in Sweden on election day",
@@ -60813,16 +60813,16 @@
       {
         "en": "No one without Swedish citizenship may vote in municipal or regional elections",
         "sv": "Ingen utan svenskt medborgarskap får rösta i kommun- eller regionval",
-        "zh-Hant": "沒有瑞典公民身分的人一律不得在市鎮（kommun）或大區（region）選舉中投票",
-        "zh-Hans": "没有瑞典公民身份的人一律不得在市镇（kommun）或大区（region）选举中投票",
+        "zh-Hant": "沒有瑞典公民身分的人一律不得在市鎮或大區選舉中投票",
+        "zh-Hans": "没有瑞典公民身份的人一律不得在市镇或大区选举中投票",
         "ar": "لا يحقّ لأحدٍ بلا جنسية سويدية التصويت في انتخابات البلديات (kommun) أو الأقاليم (region)",
         "ckb": "هیچ کەسێک بەبێ هاووڵاتیبوونی سوید بۆی نییە لە هەڵبژاردنی شارەوانی (kommun) یان هەرێم (region) دەنگ بدات",
-        "fa": "هیچ‌کس بدون شهروندی سوئد اجازهٔ رأی‌دادن در انتخابات شهرداری (kommun) یا منطقه (region) را ندارد",
+        "fa": "هیچ‌کس بدون شهروندی سوئد اجازهٔ رأی‌دادن در انتخابات کمون (kommun) یا منطقه (region) را ندارد",
         "pl": "Nikt bez obywatelstwa szwedzkiego nie może głosować w wyborach gminnych ani regionalnych",
         "so": "Cidna aan lahayn muwaadinimada Iswiidhan kuma codayn karto doorashooyinka degmooyinka ama gobollada",
-        "ti": "ዜግነት ሽወደን ዘይብሉ ዝኾነ ሰብ ኣብ ምርጫታት ምምሕዳር ከባቢ (kommun) ወይ ዞባ (region) ክመርጽ ኣይክእልን",
-        "tr": "İsveç vatandaşlığı olmayan hiç kimse belediye (kommun) veya bölge (region) seçimlerinde oy kullanamaz",
-        "uk": "Ніхто без шведського громадянства не може голосувати на муніципальних (kommun) чи регіональних (region) виборах"
+        "ti": "ዜግነት ሽወደን ዘይብሉ ዝኾነ ሰብ ኣብ ምርጫታት ምምሕዳር ከባቢ ወይ ክልል ክመርጽ ኣይክእልን",
+        "tr": "İsveç vatandaşlığı olmayan hiç kimse belediye veya bölge seçimlerinde oy kullanamaz",
+        "uk": "Ніхто без шведського громадянства не може голосувати на муніципальних чи регіональних виборах"
       },
       {
         "en": "All tourists may vote if they are in Sweden on election day",
@@ -60890,8 +60890,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "The voting card shows ...?",
-      "sv": "Röstkortet visar ...?"
+      "en": "What is correct about the voting card sent home before an election's contents?",
+      "sv": "Vad stämmer om röstkortet som skickas hem före valets innehåll?"
     },
     "opts": [
       {
@@ -61058,8 +61058,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what is stated on the voting card sent home before an election?",
-      "sv": "Vilken uppgift stämmer när det gäller vad står på röstkortet som skickas hem före valet?"
+      "en": "Which fact is correct about the voting card sent home before an election's contents?",
+      "sv": "Vilken uppgift stämmer om röstkortet som skickas hem före valets innehåll?"
     },
     "opts": [
       {
@@ -61146,8 +61146,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "What is correct regarding what can someone do to influence the content of party politics?",
-      "sv": "En person kan påverka partipolitik genom att ...?"
+      "en": "What is correct about ways to influence the content of party politics?",
+      "sv": "Vad stämmer om sätt att påverka innehållet i partipolitiken?"
     },
     "opts": [
       {
@@ -61317,8 +61317,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what can someone do to influence the content of party politics?",
-      "sv": "Vilken uppgift stämmer när det gäller vad kan den som vill påverka innehållet i partipolitiken göra?"
+      "en": "Which fact is correct about ways to influence the content of party politics?",
+      "sv": "Vilken uppgift stämmer om sätt att påverka innehållet i partipolitiken?"
     },
     "opts": [
       {
@@ -61407,22 +61407,22 @@
     "type": "single_choice",
     "q": {
       "en": "What is correct about special parties in municipal and regional elections?",
-      "sv": "Vad stämmer när det gäller vilket påstående om särskilda partier i kommun- och regionval är korrekt?"
+      "sv": "Vad stämmer om särskilda partier i kommun- och regionval?"
     },
     "opts": [
       {
         "en": "They can have policies only for their own municipality or region",
         "sv": "De kan ha politik bara för den egna kommunen eller regionen",
-        "zh-Hant": "它們可以只針對本市鎮（kommun）或本大區（region）制定政策",
-        "zh-Hans": "它们可以只针对本市镇（kommun）或本大区（region）制定政策",
+        "zh-Hant": "它們可以只針對本市鎮或本大區制定政策",
+        "zh-Hans": "它们可以只针对本市镇或本大区制定政策",
         "ar": "يمكن أن تكون لها سياسات تخصّ بلديتها (kommun) أو إقليمها (region) وحده فقط",
         "ckb": "دەتوانن تەنها سیاسەتیان بۆ شارەوانی یان هەرێمی خۆیان هەبێت",
-        "fa": "می‌توانند سیاست‌هایی داشته باشند که تنها مربوط به شهرداری خودشان (kommun) یا منطقهٔ خودشان (region) است",
+        "fa": "می‌توانند سیاست‌هایی داشته باشند که تنها مربوط به کمون یا منطقهٔ خودشان است",
         "pl": "Mogą prowadzić politykę tylko dla własnej gminy lub własnego regionu",
-        "so": "Waxay siyaasad u yeelan karaan kaliya degmadooda ama gobolkooda",
-        "ti": "ንናይ ገዛእ ርእሶም ምምሕዳር ከባቢ (kommun) ወይ ዞባ (region) ጥራይ ፖሊሲ ክህልዎም ይኽእል",
-        "tr": "Yalnızca kendi belediyeleri (kommun) veya bölgeleri (region) için politikaları olabilir",
-        "uk": "Вони можуть мати політику лише для власного муніципалітету (kommun) чи власного регіону (region)"
+        "so": "Waxay siyaasad u yeelan karaan kaliya degmadooda ama gobolkooda gaarka ah",
+        "ti": "ንናይ ገዛእ ርእሶም ምምሕዳር ከባቢ ወይ ክልል ጥራይ ፖሊሲ ክህልዎም ይኽእል",
+        "tr": "Yalnızca kendi belediyeleri veya bölgeleri için politikaları olabilir",
+        "uk": "Вони можуть мати політику лише для власного муніципалітету чи регіону"
       },
       {
         "en": "They must always be parties in the Riksdag",
@@ -61578,22 +61578,22 @@
     "type": "single_choice",
     "q": {
       "en": "Which fact is correct about special parties in municipal and regional elections?",
-      "sv": "Vilken uppgift stämmer när det gäller vilket påstående om särskilda partier i kommun- och regionval är korrekt?"
+      "sv": "Vilken uppgift stämmer om särskilda partier i kommun- och regionval?"
     },
     "opts": [
       {
         "en": "They can have policies only for their own municipality or region",
         "sv": "De kan ha politik bara för den egna kommunen eller regionen",
-        "zh-Hant": "它們可以只針對本市鎮（kommun）或本大區（region）制定政策",
-        "zh-Hans": "它们可以只针对本市镇（kommun）或本大区（region）制定政策",
+        "zh-Hant": "它們可以只針對本市鎮或本大區制定政策",
+        "zh-Hans": "它们可以只针对本市镇或本大区制定政策",
         "ar": "يمكن أن تكون لها سياسات تخصّ بلديتها (kommun) أو إقليمها (region) وحده فقط",
         "ckb": "دەتوانن تەنها سیاسەتیان بۆ شارەوانی یان هەرێمی خۆیان هەبێت",
-        "fa": "می‌توانند سیاست‌هایی داشته باشند که تنها مربوط به شهرداری خودشان (kommun) یا منطقهٔ خودشان (region) است",
+        "fa": "می‌توانند سیاست‌هایی داشته باشند که تنها مربوط به کمون یا منطقهٔ خودشان است",
         "pl": "Mogą prowadzić politykę tylko dla własnej gminy lub własnego regionu",
-        "so": "Waxay siyaasad u yeelan karaan kaliya degmadooda ama gobolkooda",
-        "ti": "ንናይ ገዛእ ርእሶም ምምሕዳር ከባቢ (kommun) ወይ ዞባ (region) ጥራይ ፖሊሲ ክህልዎም ይኽእል",
-        "tr": "Yalnızca kendi belediyeleri (kommun) veya bölgeleri (region) için politikaları olabilir",
-        "uk": "Вони можуть мати політику лише для власного муніципалітету (kommun) чи власного регіону (region)"
+        "so": "Waxay siyaasad u yeelan karaan kaliya degmadooda ama gobolkooda gaarka ah",
+        "ti": "ንናይ ገዛእ ርእሶም ምምሕዳር ከባቢ ወይ ክልል ጥራይ ፖሊሲ ክህልዎም ይኽእል",
+        "tr": "Yalnızca kendi belediyeleri veya bölgeleri için politikaları olabilir",
+        "uk": "Вони можуть мати політику лише для власного муніципалітету чи регіону"
       },
       {
         "en": "They must always be parties in the Riksdag",
@@ -61666,8 +61666,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "The Freedom of the Press Act protects ...?",
-      "sv": "Tryckfrihetsförordningen skyddar ...?"
+      "en": "What is correct about the Freedom of the Press Act?",
+      "sv": "Vad stämmer om tryckfrihetsförordningen?"
     },
     "opts": [
       {
@@ -61834,8 +61834,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what does the Freedom of the Press Act protect?",
-      "sv": "Vilken uppgift stämmer när det gäller vad skyddar tryckfrihetsförordningen?"
+      "en": "Which fact is correct about the Freedom of the Press Act?",
+      "sv": "Vilken uppgift stämmer om tryckfrihetsförordningen?"
     },
     "opts": [
       {
@@ -61922,8 +61922,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "The Fundamental Law on Freedom of Expression gives everyone the right ...?",
-      "sv": "Yttrandefrihetsgrundlagen ger alla rätt ...?"
+      "en": "What is correct about the rights in the Fundamental Law on Freedom of Expression?",
+      "sv": "Vad stämmer om yttrandefrihetsgrundlagens rättigheter?"
     },
     "opts": [
       {
@@ -62090,8 +62090,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what does the Fundamental Law on Freedom of Expression give everyone the right to do?",
-      "sv": "Vilken uppgift stämmer när det gäller vad ger yttrandefrihetsgrundlagen alla rätt att göra?"
+      "en": "Which fact is correct about the rights in the Fundamental Law on Freedom of Expression?",
+      "sv": "Vilken uppgift stämmer om yttrandefrihetsgrundlagens rättigheter?"
     },
     "opts": [
       {
@@ -62178,8 +62178,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "What is correct regarding what happens during a preliminary investigation in a criminal investigation?",
-      "sv": "Vad stämmer när det gäller vad händer under en förundersökning i en brottsutredning?"
+      "en": "What is correct about a preliminary investigation in a criminal investigation?",
+      "sv": "Vad stämmer om en förundersökning i en brottsutredning?"
     },
     "opts": [
       {
@@ -62349,8 +62349,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what happens during a preliminary investigation in a criminal investigation?",
-      "sv": "Vilken uppgift stämmer när det gäller vad händer under en förundersökning i en brottsutredning?"
+      "en": "Which fact is correct about a preliminary investigation in a criminal investigation?",
+      "sv": "Vilken uppgift stämmer om en förundersökning i en brottsutredning?"
     },
     "opts": [
       {
@@ -62438,8 +62438,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "During a trial, the accused person has ...?",
-      "sv": "Under en rättegång har en åtalad person ...?"
+      "en": "What is correct about the right the accused person have during a trial?",
+      "sv": "Vad stämmer om rätten för den åtalade under en rättegång?"
     },
     "opts": [
       {
@@ -62609,8 +62609,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what right does the accused person have during a trial?",
-      "sv": "Vilken uppgift stämmer när det gäller vilken rätt har den åtalade under en rättegång?"
+      "en": "Which fact is correct about the right the accused person have during a trial?",
+      "sv": "Vilken uppgift stämmer om rätten för den åtalade under en rättegång?"
     },
     "opts": [
       {
@@ -62698,8 +62698,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "What is correct regarding how are roles divided among the police, prosecutor, and courts?",
-      "sv": "Vad stämmer när det gäller hur fördelas rollerna mellan polis, åklagare och domstolar?"
+      "en": "What is correct about the division of roles among the police, prosecutor, and courts?",
+      "sv": "Vad stämmer om rollfördelningen mellan polis, åklagare och domstolar?"
     },
     "opts": [
       {
@@ -62869,8 +62869,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding how are roles divided among the police, prosecutor, and courts?",
-      "sv": "Vilken uppgift stämmer när det gäller hur fördelas rollerna mellan polis, åklagare och domstolar?"
+      "en": "Which fact is correct about the division of roles among the police, prosecutor, and courts?",
+      "sv": "Vilken uppgift stämmer om rollfördelningen mellan polis, åklagare och domstolar?"
     },
     "opts": [
       {
@@ -63127,7 +63127,7 @@
     "type": "single_choice",
     "q": {
       "en": "Which meaning is correct for human rights apply to everyone?",
-      "sv": "Vilken innebörd stämmer för mänskliga rättigheter gäller alla?"
+      "sv": "Vad stämmer om att mänskliga rättigheter gäller alla?"
     },
     "opts": [
       {
@@ -63214,8 +63214,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "What is correct regarding which example is part of efforts to promote gender equality?",
-      "sv": "Vad stämmer när det gäller vilket exempel hör till arbetet för jämställdhet mellan könen?"
+      "en": "What is correct about examples in efforts to promote gender equality?",
+      "sv": "Vad stämmer om exempel inom arbetet för jämställdhet mellan könen?"
     },
     "opts": [
       {
@@ -63385,8 +63385,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding which example is part of efforts to promote gender equality?",
-      "sv": "Vilken uppgift stämmer när det gäller vilket exempel hör till arbetet för jämställdhet mellan könen?"
+      "en": "Which fact is correct about examples in efforts to promote gender equality?",
+      "sv": "Vilken uppgift stämmer om exempel inom arbetet för jämställdhet mellan könen?"
     },
     "opts": [
       {
@@ -63474,7 +63474,7 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Minority rights mean ...?",
+      "en": "What is correct about minority rights?",
       "sv": "Vad betyder minoriteters rättigheter?"
     },
     "opts": [
@@ -63645,8 +63645,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what do minority rights mean?",
-      "sv": "Vilken beskrivning stämmer för minoriteters rättigheter?"
+      "en": "Which fact is correct about minority rights?",
+      "sv": "Vad stämmer om minoriteters rättigheter?"
     },
     "opts": [
       {
@@ -63734,8 +63734,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "What is correct regarding what is one aim of disability rights work?",
-      "sv": "Ett mål med arbetet för personer med funktionsnedsättning är ...?"
+      "en": "What is correct about one goal of disability rights work?",
+      "sv": "Vad stämmer om arbetet för personer med funktionsnedsättnings mål?"
     },
     "opts": [
       {
@@ -63822,7 +63822,7 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "Society should be accessible so people can participate on equal terms.",
+      "en": "One aim of disability rights work is that society should be accessible so people can participate on equal terms.",
       "sv": "Ett mål med arbetet för personer med funktionsnedsättning är att samhället ska vara tillgängligt så att människor kan delta på jämlika villkor."
     },
     "opts": [
@@ -63862,7 +63862,7 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "People with disabilities should not be able to study or work.",
+      "en": "One aim of disability rights work is that people with disabilities should not be able to study or work.",
       "sv": "Ett mål med arbetet för personer med funktionsnedsättning är att personer med funktionsnedsättning inte ska kunna studera eller arbeta."
     },
     "opts": [
@@ -63902,8 +63902,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what is one aim of disability rights work?",
-      "sv": "Vilken uppgift stämmer när det gäller vad ett mål med arbetet för personer med funktionsnedsättning är?"
+      "en": "Which fact is correct about one goal of disability rights work?",
+      "sv": "Vilken uppgift stämmer om arbetet för personer med funktionsnedsättnings mål?"
     },
     "opts": [
       {
@@ -64158,8 +64158,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which description is correct for protection against discrimination in Sweden?",
-      "sv": "Vilken beskrivning stämmer för diskrimineringsskyddet i Sverige?"
+      "en": "Which fact is correct about protection against discrimination in Sweden?",
+      "sv": "Vilken uppgift stämmer om diskrimineringsskyddet i Sverige?"
     },
     "opts": [
       {

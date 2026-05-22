@@ -39,7 +39,11 @@ release posture.
   performance.
 - **Purchases** — App Store in-app purchase infrastructure and the app runtime
   process the Remove Ads non-consumable purchase/restore state for app
-  functionality. The app stores only the local `adsDisabled` entitlement flag.
+  functionality. The app stores a local, versioned Remove Ads entitlement record
+  on the device; when needed for restore or revalidation, that record can
+  include the store product ID, purchase token or transaction ID, receipt
+  validation status, receipt-validation timestamp, and whether the grant came
+  from purchase or restore.
 - **Location review** — Google Mobile Ads may use IP address to estimate general
   location. Confirm whether the final Xcode privacy report requires a Coarse
   Location disclosure for the submitted binary.

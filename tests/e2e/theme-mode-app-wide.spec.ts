@@ -5,6 +5,7 @@ import {
   dismissBlockingModals,
   seedFreshSettingsLanguageAndAboutSeenWithStorage,
 } from './browserLaunch';
+import { startAllVisiblePractice } from './practiceHub';
 
 const accessibilityThemeModeKey = 'accessibility\\a11y.themeMode.v1';
 const mobileViewport = { width: 390, height: 844 };
@@ -203,6 +204,71 @@ test('profile Remove Ads and Pro surfaces use dark theme tokens', async ({ page 
     'color',
     darkColors.textPlaceholder,
     'Pro price note should use the dark placeholder text token',
+  );
+});
+
+test('practice post-answer reward panel uses dark theme tokens', async ({ page }) => {
+  await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, 'en', {
+    localStorageValues: {
+      [accessibilityThemeModeKey]: 'dark',
+    },
+  });
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+  await startAllVisiblePractice(page, 'en');
+
+  await page.getByLabel('Select answer In the Nordic region in northern Europe').click();
+
+  const rewardPanel = page.getByRole('region', { name: /^Correct answer\./ }).first();
+  await rewardPanel.scrollIntoViewIfNeeded();
+  await expect(rewardPanel).toBeVisible();
+  await expectComputedColor(
+    rewardPanel,
+    'backgroundColor',
+    darkColors.surfaceWarm,
+    'Post-answer reward panel should use the dark warm surface token',
+  );
+  await expectComputedColor(
+    rewardPanel,
+    'borderColor',
+    darkColors.border,
+    'Post-answer reward panel should use the dark border token',
+  );
+
+  const factTitle = page.getByText("Today's UHR thread", { exact: true });
+  const factBubble = factTitle.locator('..');
+  await expectComputedColor(
+    factBubble,
+    'backgroundColor',
+    darkColors.surface,
+    'Post-answer fact bubble should use the dark surface token',
+  );
+  await expectComputedColor(
+    factTitle,
+    'color',
+    darkColors.text,
+    'Post-answer fact title should use the dark text token',
+  );
+
+  const xpLabel = page.getByText('XP now', { exact: true });
+  const xpPill = xpLabel.locator('..');
+  await expectComputedColor(
+    xpPill,
+    'backgroundColor',
+    darkColors.badgeBlueBg,
+    'Post-answer XP pill should use the dark badge surface token',
+  );
+  await expectComputedColor(
+    page.getByText('+12', { exact: true }),
+    'color',
+    darkColors.text,
+    'Post-answer XP value should use the dark text token',
+  );
+  await expectComputedColor(
+    xpLabel,
+    'color',
+    darkColors.badgeBlueText,
+    'Post-answer XP label should use the dark badge text token',
   );
 });
 

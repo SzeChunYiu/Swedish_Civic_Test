@@ -13,7 +13,9 @@ const repoRoot = path.resolve(__dirname, '..');
 
 function createStorageById() {
   return {
+    accessibility: createMemoryMMKV(),
     'citizenship-requirements': createMemoryMMKV(),
+    companion: createMemoryMMKV(),
     progress: createMemoryMMKV(),
     'mistake-review': createMemoryMMKV(),
     reviews: createMemoryMMKV(),
@@ -63,17 +65,19 @@ function loadExportModule(storageById) {
   return loadTsWithStorage(repoRoot, 'lib/storage/localStudyDataExport.ts', storageById);
 }
 
-function createSpeechStub() {
-  let stopCalls = 0;
-  return {
-    get stopCalls() {
-      return stopCalls;
-    },
-    speak() {},
-    stop() {
-      stopCalls += 1;
-    },
-  };
+function assertNoSnapshotWrites(storageById) {
+  for (const storageId of [
+    'accessibility',
+    'citizenship-requirements',
+    'companion',
+    'progress',
+    'mistake-review',
+    'reviews',
+    'settings',
+    'highlights',
+  ]) {
+    assert.equal(storageById[storageId].values.size, 0, `${storageId} storage should be untouched`);
+  }
 }
 
 function listJavaScriptFiles(rootDir) {
@@ -178,6 +182,8 @@ test('local study data import summary keeps Swedish copy learner-facing', () => 
   assert.match(swedishCopyMatch[0], /other: 'granskningar av fel svar'/);
   assert.match(swedishCopyMatch[0], /one: 'sparad inställning'/);
   assert.match(swedishCopyMatch[0], /other: 'sparade inställningar'/);
+  assert.match(swedishCopyMatch[0], /one: 'tillgänglighetsval'/);
+  assert.match(swedishCopyMatch[0], /one: 'vald studiekompis'/);
   assert.match(swedishCopyMatch[0], /Studiesvit och svitskydd ingår/);
   assert.match(swedishCopyMatch[0], /högst \$\{localStudyDataImportMaxLabel\}/);
   assert.match(
@@ -203,6 +209,9 @@ test('local study data import summary keeps Swedish copy learner-facing', () => 
   assert.match(englishCopyMatch[0], /other: 'wrong-answer reviews'/);
   assert.match(englishCopyMatch[0], /one: 'saved setting'/);
   assert.match(englishCopyMatch[0], /other: 'saved settings'/);
+  assert.match(englishCopyMatch[0], /one: 'accessibility preference'/);
+  assert.match(englishCopyMatch[0], /other: 'accessibility preferences'/);
+  assert.match(englishCopyMatch[0], /one: 'selected study companion'/);
   assert.match(englishCopyMatch[0], /under \$\{localStudyDataImportMaxLabel\}/);
   assert.match(
     englishCopyMatch[0],
@@ -229,12 +238,9 @@ test('local study data import summary keeps Swedish copy learner-facing', () => 
 test('local study data import previews and applies all learner snapshot sections', () => {
   const storageById = createStorageById();
   const speech = createSpeechStub();
-  const { applyLocalStudyDataImport, previewLocalStudyDataImport } = loadImportModule(
-    storageById,
-    {
-      'expo-speech': () => speech,
-    },
-  );
+  const { applyLocalStudyDataImport, previewLocalStudyDataImport } = loadImportModule(storageById, {
+    'expo-speech': () => speech,
+  });
   const rawPayload = JSON.stringify({
     version: 1,
     progress: {
@@ -300,6 +306,17 @@ test('local study data import previews and applies all learner snapshot sections
       hasSeenAboutTheTest: true,
       ignoredSetting: 'skip',
     },
+    accessibility: {
+      easyReadFont: true,
+      fontSizeStep: 3,
+      audioPlaybackRate: 1.25,
+      listenFirstAudioEnabled: true,
+      themeMode: 'dark',
+      invalidPreference: 'skip',
+    },
+    companion: {
+      selectedId: 'dala-horse',
+    },
     citizenshipRequirements: {
       checkedAreaIds: ['civicKnowledge', 'unknown', 'identity', 'identity'],
     },
@@ -330,6 +347,8 @@ test('local study data import previews and applies all learner snapshot sections
     fsrsReviewCardCount: 1,
     gradedReviewDayCount: 1,
     settingCount: 5,
+    accessibilityPreferenceCount: 5,
+    companionPreferenceCount: 1,
     citizenshipRequirementChecklistCount: 2,
     highlightCount: 1,
   });
@@ -362,6 +381,12 @@ test('local study data import previews and applies all learner snapshot sections
   assert.equal(storageById.settings.values.get('dailyGoalAnswers'), 20);
   assert.equal(storageById.settings.values.get('includeSupplementaryQuestions'), true);
   assert.equal(storageById.settings.values.get('hasSeenAboutTheTest'), true);
+  assert.equal(storageById.accessibility.values.get('a11y.easyReadFont.v1'), true);
+  assert.equal(storageById.accessibility.values.get('a11y.fontSizeStep.v1'), 3);
+  assert.equal(storageById.accessibility.values.get('a11y.audioPlaybackRate.v1'), 1.25);
+  assert.equal(storageById.accessibility.values.get('a11y.listenFirstAudio.v1'), true);
+  assert.equal(storageById.accessibility.values.get('a11y.themeMode.v1'), 'dark');
+  assert.equal(storageById.companion.values.get('companion.selectedId.v1'), 'dala-horse');
 
   const citizenshipRequirements = JSON.parse(
     storageById['citizenship-requirements'].values.get('citizenshipRequirementsChecklistState'),
@@ -664,6 +689,8 @@ test('local study data import summary reports plural bookmark wrong-answer mock 
     fsrsReviewCardCount: 2,
     gradedReviewDayCount: 2,
     settingCount: 5,
+    accessibilityPreferenceCount: 0,
+    companionPreferenceCount: 0,
     citizenshipRequirementChecklistCount: 3,
     highlightCount: 2,
   });
@@ -730,6 +757,12 @@ test('local study data export round-trips citizenship requirements without purch
   );
   sourceStorageById.settings.set('language', 'en');
   sourceStorageById.settings.set('dailyGoalAnswers', 20);
+  sourceStorageById.accessibility.set('a11y.easyReadFont.v1', true);
+  sourceStorageById.accessibility.set('a11y.fontSizeStep.v1', 2);
+  sourceStorageById.accessibility.set('a11y.audioPlaybackRate.v1', 1.25);
+  sourceStorageById.accessibility.set('a11y.listenFirstAudio.v1', true);
+  sourceStorageById.accessibility.set('a11y.themeMode.v1', 'dark');
+  sourceStorageById.companion.set('companion.selectedId.v1', 'lucia');
 
   const { buildLocalStudyDataExportSnapshot, serializeLocalStudyDataExport } =
     loadExportModule(sourceStorageById);
@@ -747,6 +780,14 @@ test('local study data export round-trips citizenship requirements without purch
   );
   assert.equal(snapshot.settings.language, 'en');
   assert.equal(snapshot.settings.dailyGoalAnswers, 20);
+  assert.deepEqual(snapshot.accessibility, {
+    easyReadFont: true,
+    fontSizeStep: 2,
+    audioPlaybackRate: 1.25,
+    listenFirstAudioEnabled: true,
+    themeMode: 'dark',
+  });
+  assert.deepEqual(snapshot.companion, { selectedId: 'lucia' });
   assert.doesNotMatch(JSON.stringify(snapshot), /purchase|receipt|entitlement|removeAds/i);
 
   const targetStorageById = createStorageById();
@@ -760,6 +801,8 @@ test('local study data export round-trips citizenship requirements without purch
   assert.equal(previewResult.preview.summary.citizenshipRequirementChecklistCount, 3);
   assert.equal(previewResult.preview.summary.highlightCount, 1);
   assert.equal(previewResult.preview.summary.settingCount, 5);
+  assert.equal(previewResult.preview.summary.accessibilityPreferenceCount, 5);
+  assert.equal(previewResult.preview.summary.companionPreferenceCount, 1);
   applyLocalStudyDataImport(previewResult.preview);
 
   const restoredChecklist = JSON.parse(
@@ -779,6 +822,12 @@ test('local study data export round-trips citizenship requirements without purch
     restoredHighlights.byChapter.ch01.map((highlight) => highlight.note),
     ['Exported note'],
   );
+  assert.equal(targetStorageById.accessibility.values.get('a11y.easyReadFont.v1'), true);
+  assert.equal(targetStorageById.accessibility.values.get('a11y.fontSizeStep.v1'), 2);
+  assert.equal(targetStorageById.accessibility.values.get('a11y.audioPlaybackRate.v1'), 1.25);
+  assert.equal(targetStorageById.accessibility.values.get('a11y.listenFirstAudio.v1'), true);
+  assert.equal(targetStorageById.accessibility.values.get('a11y.themeMode.v1'), 'dark');
+  assert.equal(targetStorageById.companion.values.get('companion.selectedId.v1'), 'lucia');
 });
 
 test('local study data import omits malformed daily-goal settings before applying', () => {
@@ -809,6 +858,47 @@ test('local study data import omits malformed daily-goal settings before applyin
   assert.equal(storageById.settings.values.get('dailyGoalAnswers'), 20);
 });
 
+test('local study data import omits malformed accessibility and companion preferences before applying', () => {
+  const storageById = createStorageById();
+  storageById.accessibility.set('a11y.fontSizeStep.v1', 2);
+  storageById.accessibility.set('a11y.audioPlaybackRate.v1', 0.75);
+  storageById.accessibility.set('a11y.themeMode.v1', 'dark');
+  storageById.companion.set('companion.selectedId.v1', 'lucia');
+  const { applyLocalStudyDataImport, previewLocalStudyDataImport } = loadImportModule(storageById);
+  const rawPayload = JSON.stringify({
+    version: 1,
+    accessibility: {
+      easyReadFont: true,
+      fontSizeStep: 8,
+      audioPlaybackRate: 1.5,
+      listenFirstAudioEnabled: true,
+      themeMode: 'sepia',
+    },
+    companion: {
+      selectedId: 'not-a-mascot',
+    },
+  });
+
+  const previewResult = previewLocalStudyDataImport(rawPayload);
+  assert.equal(previewResult.ok, true);
+  assert.deepEqual(previewResult.preview.accessibility, {
+    easyReadFont: true,
+    listenFirstAudioEnabled: true,
+  });
+  assert.deepEqual(previewResult.preview.companion, {});
+  assert.equal(previewResult.preview.summary.accessibilityPreferenceCount, 2);
+  assert.equal(previewResult.preview.summary.companionPreferenceCount, 0);
+
+  applyLocalStudyDataImport(previewResult.preview);
+
+  assert.equal(storageById.accessibility.values.get('a11y.easyReadFont.v1'), true);
+  assert.equal(storageById.accessibility.values.get('a11y.listenFirstAudio.v1'), true);
+  assert.equal(storageById.accessibility.values.get('a11y.fontSizeStep.v1'), 2);
+  assert.equal(storageById.accessibility.values.get('a11y.audioPlaybackRate.v1'), 0.75);
+  assert.equal(storageById.accessibility.values.get('a11y.themeMode.v1'), 'dark');
+  assert.equal(storageById.companion.values.get('companion.selectedId.v1'), 'lucia');
+});
+
 test('local study data import rejects purchase fields before any snapshot writes', () => {
   const storageById = createStorageById();
   const { previewLocalStudyDataImport } = loadImportModule(storageById);
@@ -829,12 +919,7 @@ test('local study data import rejects purchase fields before any snapshot writes
     code: 'purchase_fields_rejected',
     detail: 'purchase',
   });
-  assert.equal(storageById.progress.values.size, 0);
-  assert.equal(storageById['mistake-review'].values.size, 0);
-  assert.equal(storageById.reviews.values.size, 0);
-  assert.equal(storageById.highlights.values.size, 0);
-  assert.equal(storageById.settings.values.size, 0);
-  assert.equal(storageById['citizenship-requirements'].values.size, 0);
+  assertNoSnapshotWrites(storageById);
 });
 
 test('local study data import rejects nested purchase fields with useful detail', () => {
@@ -855,12 +940,7 @@ test('local study data import rejects nested purchase fields with useful detail'
     code: 'purchase_fields_rejected',
     detail: 'progress.history.0.removeAdsReceipt',
   });
-  assert.equal(storageById.progress.values.size, 0);
-  assert.equal(storageById['mistake-review'].values.size, 0);
-  assert.equal(storageById.reviews.values.size, 0);
-  assert.equal(storageById.highlights.values.size, 0);
-  assert.equal(storageById.settings.values.size, 0);
-  assert.equal(storageById['citizenship-requirements'].values.size, 0);
+  assertNoSnapshotWrites(storageById);
 });
 
 test('local study data import formats rejected field details with bounded head and tail', () => {
@@ -911,12 +991,7 @@ test('local study data import rejects deeply nested payloads without throwing or
   const result = previewLocalStudyDataImport(rawPayload);
 
   assert.deepEqual(result, { ok: false, code: 'empty_import' });
-  assert.equal(storageById.progress.values.size, 0);
-  assert.equal(storageById['mistake-review'].values.size, 0);
-  assert.equal(storageById.reviews.values.size, 0);
-  assert.equal(storageById.highlights.values.size, 0);
-  assert.equal(storageById.settings.values.size, 0);
-  assert.equal(storageById['citizenship-requirements'].values.size, 0);
+  assertNoSnapshotWrites(storageById);
 });
 
 test('local study data import rejects oversized payloads before parsing', () => {
@@ -936,12 +1011,7 @@ test('local study data import rejects oversized payloads before parsing', () => 
 
     assert.deepEqual(result, { ok: false, code: 'input_too_large' });
     assert.equal(parseCalls, 0);
-    assert.equal(storageById.progress.values.size, 0);
-    assert.equal(storageById['mistake-review'].values.size, 0);
-    assert.equal(storageById.reviews.values.size, 0);
-    assert.equal(storageById.highlights.values.size, 0);
-    assert.equal(storageById.settings.values.size, 0);
-    assert.equal(storageById['citizenship-requirements'].values.size, 0);
+    assertNoSnapshotWrites(storageById);
   } finally {
     JSON.parse = originalParse;
   }
@@ -1004,12 +1074,7 @@ test('local study data import rejects multibyte payloads by UTF-8 byte size', ()
       code: 'input_too_large',
     });
     assert.equal(parseCalls, 0);
-    assert.equal(storageById.progress.values.size, 0);
-    assert.equal(storageById['mistake-review'].values.size, 0);
-    assert.equal(storageById.reviews.values.size, 0);
-    assert.equal(storageById.highlights.values.size, 0);
-    assert.equal(storageById.settings.values.size, 0);
-    assert.equal(storageById['citizenship-requirements'].values.size, 0);
+    assertNoSnapshotWrites(storageById);
   } finally {
     JSON.parse = originalParse;
   }

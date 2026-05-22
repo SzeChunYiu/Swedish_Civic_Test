@@ -148,7 +148,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     'ch03',
     { chapter: 'Så här styrs Sverige', section: 'Regioner och kommuner', pageApprox: 13 },
     'Vilken är regionernas främsta uppgift i Sverige?',
-    "What is the foremost task of Sweden's regions?",
+    "What is the main responsibility of Sweden's regions?",
     [
       ['Att ansvara för hälso- och sjukvården', 'To be responsible for health care'],
       ['Att döma i brottmål', 'To judge criminal cases'],
@@ -1299,7 +1299,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     ],
     0,
     'För tvåhundra år sedan var Sverige ett typiskt jordbruksland. Nästan hela befolkningen bodde på landet och arbetade med att odla jorden och sköta djur, städerna var små och Sverige var fattigt jämfört med andra länder i Europa.',
-    'Two hundred years ago, Sweden was a typical agricultural country. Almost the whole population lived in the countryside and worked by farming and caring for animals, cities were small, and Sweden was poor compared with other European countries.',
+    'Two hundred years ago, Sweden was a typical agricultural country. Almost the whole population lived in the countryside and worked on farms, growing crops and caring for animals. Cities were small, and Sweden was poor compared with other European countries.',
     ['modern-history', 'agriculture', 'industrialization'],
   ),
   single(
@@ -1398,7 +1398,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     ],
     2,
     'År 1921 hölls det första riksdagsvalet där både kvinnor och män fick rösta och där kvinnor kunde bli riksdagsledamöter. Nästan alla män hade fått rösträtt 1909 och beslutet om allmän rösträtt kom 1918, men 1921 är året för valet som frågan syftar på.',
-    "The first Riksdag election in which both women and men could vote and women could become members of the Riksdag was held in 1921. Almost all men had gained suffrage in 1909 and the decision on universal suffrage came in 1918, but the first Riksdag election with both women's and men's voting rights and women's eligibility was held in 1921.",
+    'The first Riksdag election in which both women and men could vote and women could become members of the Riksdag was held in 1921. Almost all men had gained suffrage in 1909, and the decision on universal suffrage came in 1918, but the first Riksdag election held after those reforms was in 1921.',
     ['suffrage', '1921', 'democracy'],
     'medium',
   ),
@@ -1419,7 +1419,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     ],
     0,
     'Saltsjöbadsavtalet slöts 1938 mellan arbetsgivare och fackförbund. Det blev viktigt för samarbetet mellan dem och lade grunden för den svenska modellen, där arbetsgivare och fackförbund kommer överens om arbetsmarknadens villkor i kollektivavtal.',
-    'The Saltsjöbaden Agreement was made in 1938 between employers and trade unions. It was important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.',
+    'The Saltsjöbaden Agreement was concluded in 1938 between employers and trade unions. It was important for cooperation between them and laid the foundation for the Swedish model, where employers and trade unions agree on labour-market conditions through collective agreements.',
     ['saltsjobaden', 'swedish-model', 'labour-market'],
   ),
   single(

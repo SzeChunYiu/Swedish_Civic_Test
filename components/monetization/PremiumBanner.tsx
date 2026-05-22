@@ -63,6 +63,8 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
     statusAccessibilityLabel: (message) => `Status för Ta bort annonser: ${message}`,
     statusMessages: {
       error: 'Köp är inte tillgängligt. Försök igen senare.',
+      finish_failed:
+        'Annonser är avstängda. Butiken kunde inte markera köpet som slutfört, så återställ köpet om det visas igen.',
       idle: 'Engångsköp. Återställning finns om du redan har köpt.',
       not_found: 'Inget tidigare köp av Ta bort annonser hittades.',
       pending: 'Väntar på butikens bekräftelse innan annonser tas bort.',
@@ -99,6 +101,8 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
     statusAccessibilityLabel: (message) => `Remove Ads status: ${message}`,
     statusMessages: {
       error: 'Purchase is unavailable. Try again later.',
+      finish_failed:
+        'Ads are disabled. The store could not mark the purchase as finished, so restore the purchase if it appears again.',
       idle: 'One-time purchase. Restore is available if you already bought it.',
       not_found: 'No previous Remove Ads purchase was found.',
       pending: 'Waiting for store confirmation before removing ads.',
@@ -158,10 +162,15 @@ export function PremiumBanner({
     setCurrentEntitlements(entitlements);
   }, [entitlements]);
 
-  const statusMessage = getStatusMessage(
-    adsDisabled ? 'purchased' : purchaseUnavailable ? 'unavailable' : status,
-    copy,
-  );
+  const visibleStatus =
+    status === 'finish_failed'
+      ? 'finish_failed'
+      : adsDisabled
+        ? 'purchased'
+        : purchaseUnavailable
+          ? 'unavailable'
+          : status;
+  const statusMessage = getStatusMessage(visibleStatus, copy);
   const actionsDisabled = activeAction !== null || adsDisabled || purchaseUnavailable;
 
   async function runPurchaseAction(action: PurchaseAction) {

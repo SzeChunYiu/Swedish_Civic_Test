@@ -400,6 +400,11 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'dailyChallengeRuntime',
+    flags: ['--focus-daily-challenge-runtime'],
+    summaryKeys: ['dailyChallengeRuntimeCasesValidated', 'dailyChallengeRuntimeParityValidated'],
+  },
+  {
     id: 'readinessScoreRules',
     flags: ['--focus-readiness-score-rules'],
     summaryKeys: ['readinessScoreRulesValidated', 'readinessScoreRuntimeParityValidated'],
@@ -593,6 +598,14 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     summaryKeys: [
       'uhrReferenceCardAccessibilityRulesValidated',
       'uhrReferenceCardAccessibilityParityValidated',
+    ],
+  },
+  {
+    id: 'sourceCitationAccessibility',
+    flags: ['--focus-source-citation-accessibility'],
+    summaryKeys: [
+      'sourceCitationAccessibilityRulesValidated',
+      'sourceCitationAccessibilityParityValidated',
     ],
   },
   {

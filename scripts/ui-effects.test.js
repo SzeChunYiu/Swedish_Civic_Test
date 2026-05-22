@@ -280,7 +280,7 @@ test('settings controls mirror selected and checked state to web aria attributes
   assert.match(source, /aria-checked=\{audioEnabled\}/);
   assert.match(
     source,
-    /accessibilityLabel=\{\s*audioEnabled\s*\?\s*copy\.disableAudioAccessibilityLabel\s*:\s*copy\.enableAudioAccessibilityLabel\s*\}/,
+    /accessibilityLabel=\{[\s\S]*audioEnabled[\s\S]*\? copy\.disableAudioAccessibilityLabel[\s\S]*: copy\.enableAudioAccessibilityLabel[\s\S]*\}/,
   );
   assert.match(source, /\{audioEnabled \? copy\.audioEnabledLabel : copy\.audioDisabledLabel\}/);
   assert.match(source, /accessibilityState=\{\{ checked: audioEnabled \}\}/);
@@ -301,7 +301,7 @@ test('settings route remains scrollable on narrow mobile viewports', () => {
 
   assert.match(
     source,
-    /import\s+\{[\s\S]*Pressable,[\s\S]*ScrollView,[\s\S]*StyleSheet,[\s\S]*Text,[\s\S]*TextInput,[\s\S]*View[\s\S]*\}\s+from 'react-native';/,
+    /import\s+\{[\s\S]*ScrollView,[\s\S]*StyleSheet,[\s\S]*Text,[\s\S]*TextInput,[\s\S]*View[\s\S]*\}\s+from 'react-native';/,
   );
   assert.match(
     source,
@@ -385,7 +385,12 @@ test('practice screen adds bookmark controls backed by progress storage', () => 
   assert.match(source, /bookmarked/);
   assert.match(source, /aria-pressed=\{isBookmarked\}/);
   assert.doesNotMatch(source, /aria-selected=\{isBookmarked\}/);
-  assert.match(source, /accessibilityState=\{\{ selected: isBookmarked \}\}/);
+  assert.match(
+    source,
+    /const bookmarkAccessibilityState =\s*Platform\.OS === 'web' \? undefined : \{ selected: isBookmarked \};/,
+  );
+  assert.match(source, /accessibilityState=\{bookmarkAccessibilityState\}/);
+  assert.doesNotMatch(source, /accessibilityState=\{\{ selected: isBookmarked \}\}/);
 });
 
 test('practice header controls keep accessible targets and token feedback', () => {
@@ -442,7 +447,7 @@ test('practice and routed quiz screens expose primary titles as headers', () => 
   assert.match(routedQuizSource, /\{copy\.emptyTitle\}/);
   assert.match(
     routedQuizSource,
-    /const sessionTitle =[\s\S]*copy\.sessionTitle\(normalizedSessionId\)/,
+    /const sessionTitle =[\s\S]*copy\.sessionTitle\(normalizedSessionId\);/,
   );
   assert.match(routedQuizSource, /\{sessionTitle\}/);
   assert.doesNotMatch(practiceSource, /#[0-9a-fA-F]{6}|rgba?\(/);
@@ -485,12 +490,25 @@ test('routed quiz shell copy follows Swedish and English settings language', () 
   assert.match(source, /accessibilityLabel=\{copy\.backToPracticeAccessibilityLabel\}/);
 });
 
-test('routed quiz answer state resets when the shuffle session seed changes', () => {
+test('routed quiz answer state resets when the route-entry shuffle seed changes', () => {
   const source = read('app/quiz/[sessionId].tsx');
 
   assert.match(
     source,
-    /useEffect\(\(\) => \{\n\s+setSelectedOptionId\(null\);\n\s+setSelectedConfidenceRating\(null\);\n\s+\}, \[normalizedSessionId, question\?\.id\]\);/,
+    /const routedQuizShuffleSessionId = useRoutedQuizShuffleSessionId\(normalizedSessionId\);/,
+  );
+  assert.match(
+    source,
+    /shuffleQuestionOptionsForSession\(\s*pickedQuestion,\s*routedQuizShuffleSessionId\s*\)/,
+  );
+  assert.match(
+    source,
+    /useEffect\(\(\) => \{\n\s+setSelectedOptionId\(null\);\n\s+setSelectedConfidenceRating\(null\);\n\s+\}, \[routedQuizShuffleSessionId, question\?\.id\]\);/,
+  );
+  assert.doesNotMatch(source, /\}, \[normalizedSessionId, question\?\.id\]\);/);
+  assert.doesNotMatch(
+    source,
+    /shuffleQuestionOptionsForSession\(\s*pickedQuestion,\s*normalizedSessionId\s*\)/,
   );
   assert.doesNotMatch(source, /\}, \[question\?\.id\]\);/);
 });
@@ -1189,10 +1207,13 @@ test('home screen exposes dashboard card titles as headers', () => {
   assert.match(source, /\{copy\.dailyGoalTitle\}/);
   assert.match(source, /\{copy\.readinessTitle\}/);
   assert.match(source, /\{copy\.feedbackTitle\}/);
+  assert.match(source, /\{copy\.rewardedExamHeading\}/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.goalLabel\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.readinessTitle\}>/);
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.rewardedExamTitle\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.feedbackTitle\}>/);
-  assert.ok((headerMatches?.length ?? 0) >= 3);
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.rewardedExamTitle\}>/);
+  assert.equal(headerMatches?.length, 4);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 

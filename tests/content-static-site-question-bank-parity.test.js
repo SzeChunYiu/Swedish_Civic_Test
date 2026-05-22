@@ -33,13 +33,24 @@ const SOMALI_HOLIDAY_FOOD_ENGLISH_TOKEN_PATTERN = /\b(?:herring|strawberries|Eas
 const CHAPTER_LOCALIZATION_ENGLISH_WELFARE_GLOSS_PATTERN = /\(welfare\)/i;
 const PUBLIC_SERVICE_LOANWORD_PATTERN = /\bpublic service\b|\(welfare\)/i;
 const PUBLIC_SECTOR_STALE_STATIC_PATTERN =
-  /\bWhat is meant by the public sector in Sweden\b|\bWhich fact is correct regarding what the public sector in Sweden is\b|\bActivities for which the state, regions, and municipalities are responsible\b|\bThe public sector(?: in Sweden)? means\b/i;
+  /\bWhat is meant by the public sector in Sweden\b|\bActivities for which the state, regions, and municipalities are responsible\b|\bThe public sector(?: in Sweden)? means\b/i;
+const GENERATED_SINGLE_CHOICE_ANSWER_LOGIC_STATIC_PATTERN =
+  /\b(?:Båda påståendena är korrekta|Both statements are correct|Inget av påståendena är korrekt|Neither statement is correct)\b/i;
 const SUFFRAGE_1921_STALE_STATIC_PATTERN =
   /\b1921 is the year of the election asked about here\b|\bthe year of the election asked about here\b/i;
 const SUFFRAGE_1921_EXPECTED_STATIC_EXPLANATION =
   "the first Riksdag election with both women's and men's voting rights and women's eligibility was held in 1921";
 const SOURCE_CRITICISM_STALE_STATIC_PATTERN =
   /具有(?:來|来)源批判意識|أن تكون ناقدًا للمصادر|سەرچاوە-ڕەخنەیی|منبع‌سنج بودن|krytyczne podejście do źródeł|si naqdineed loo eego ilaha|ንምንጭታት ብነቐፌታዊ መንገዲ ምርኣይ|kaynaklara eleştirel yaklaşmak|критично ставитися до джерел/i;
+const KOMMUN_REGION_STATIC_LOCALE_PATTERNS = {
+  'zh-Hant': /\b(?:kommun|region)\b/i,
+  'zh-Hans': /\b(?:kommun|region)\b/i,
+  pl: /\bkommun\b/i,
+  so: /\b(?:kommun|region)\b/i,
+  ti: /\b(?:kommun|region)\b/i,
+  tr: /\b(?:kommun|region)\b/i,
+  uk: /\b(?:kommun|region)\b/i,
+};
 const NEW_YEARS_EVE_DATE_STALE_PATTERN = /\bNew Year(?:’|')s Eve on 31 December\b/i;
 const LUCIA_DAY_DATE_STALE_PATTERN = /\bLucia Day on 13 December\b/i;
 const BASE_LOCALES = new Set(['sv', 'en']);
@@ -101,6 +112,16 @@ function staticPublicServiceSegments(question) {
     const locale = String(segment).split('.').at(-1);
     return !BASE_LOCALES.has(locale);
   });
+}
+
+function staticLocalizedSegments(question, locales) {
+  return [
+    ...locales.map((locale) => [`${question.id}.q.${locale}`, question.q?.[locale]]),
+    ...locales.map((locale) => [`${question.id}.why.${locale}`, question.why?.[locale]]),
+    ...(question.opts || []).flatMap((option, index) =>
+      locales.map((locale) => [`${question.id}.opts.${index}.${locale}`, option?.[locale]]),
+    ),
+  ];
 }
 
 function staticQuestionToI18nQuestion(question) {
@@ -234,6 +255,44 @@ test('static site question bank avoids English holiday-food tokens in Somali tex
   assert.deepEqual(offenders, []);
 });
 
+test('static site question bank has no generated single-choice both/neither answer-logic options', () => {
+  const expectedBank = buildSiteQuestionBank();
+  const sourceQuestions = expectedBank.questions.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const targetIds = [
+    'q002',
+    'q006',
+    'q023',
+    'q028',
+    'q031',
+    'q047',
+    'q049',
+    'q074',
+    'q091',
+    'q094',
+    'q143',
+  ].flatMap((sourceId) => [
+    generatedQuestionId(sourceQuestions, sourceId, 'singleChoice'),
+    generatedQuestionId(sourceQuestions, sourceId, 'judgement'),
+  ]);
+  const context = { window: {} };
+  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
+  const questionsById = new Map(
+    context.window.SMT_QUESTIONS.map((question) => [question.id, question]),
+  );
+
+  for (const id of targetIds) {
+    const question = questionsById.get(id);
+    assert.ok(question, `${id} should be present in static question bank`);
+    assert.doesNotMatch(
+      JSON.stringify(question.opts),
+      GENERATED_SINGLE_CHOICE_ANSWER_LOGIC_STATIC_PATTERN,
+      `${id} should use civic distractors, not answer-logic labels`,
+    );
+  }
+});
+
 test('static site question bank keeps q062 public-sector i18n and generated variants direct', () => {
   const expectedBank = buildSiteQuestionBank();
   const sourceQuestions = expectedBank.questions.filter(
@@ -297,6 +356,55 @@ test('static site question bank keeps q062 public-sector i18n and generated vari
       );
     }
   }
+});
+
+test('static site question bank keeps q166/q169 kommun-region i18n target-language first', () => {
+  const expectedBank = buildSiteQuestionBank();
+  const sourceQuestions = expectedBank.questions.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const ids = [
+    'q166',
+    generatedQuestionId(sourceQuestions, 'q166', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q166', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q166', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q166', 'judgement'),
+    'q169',
+    generatedQuestionId(sourceQuestions, 'q169', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q169', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q169', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q169', 'judgement'),
+  ];
+  const context = { window: {} };
+  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
+  const questionsById = new Map(
+    context.window.SMT_QUESTIONS.map((question) => [question.id, question]),
+  );
+  const sourceRows = Q166_Q169_KOMMUN_REGION_NATURALNESS_IDS.map((id) =>
+    staticQuestionToI18nQuestion(questionsById.get(id)),
+  );
+
+  assert.deepEqual(
+    summarizeQ166Q169KommunRegionNaturalness(sourceRows, Q166_Q169_KOMMUN_REGION_NATURALNESS_IDS)
+      .errors,
+    [],
+  );
+
+  const offenders = [];
+  for (const id of ids) {
+    const question = questionsById.get(id);
+    assert.ok(question, `${id} should be present in static question bank`);
+
+    for (const [locale, pattern] of Object.entries(KOMMUN_REGION_STATIC_LOCALE_PATTERNS)) {
+      for (const [segment, value] of staticLocalizedSegments(question, [locale])) {
+        if (typeof value === 'string' && pattern.test(value)) {
+          offenders.push(segment);
+        }
+      }
+    }
+  }
+
+  assert.deepEqual(offenders, []);
 });
 
 test('static site question bank keeps q080 suffrage explanations learner-facing', () => {
@@ -377,36 +485,30 @@ test('static site question bank keeps q050 source-criticism i18n noun-based', ()
   assert.doesNotMatch(staticQuestionVisibleText(q050), SOURCE_CRITICISM_STALE_STATIC_PATTERN);
 });
 
-test('static site question bank keeps q166/q169 kommun-region i18n target-language-first', () => {
+test('static site question bank keeps q080 suffrage explanation learner-facing', () => {
   const expectedBank = buildSiteQuestionBank();
-  const uhrQuestions = expectedBank.questions.filter(
+  const sourceQuestions = expectedBank.questions.filter(
     (question) => question.questionProvenance === 'uhr',
   );
-  const generatedIds = ['q166', 'q169'].flatMap((id) => [
-    generatedQuestionId(uhrQuestions, id, 'singleChoice'),
-    generatedQuestionId(uhrQuestions, id, 'judgement'),
-  ]);
+  const expectedIds = [
+    'q080',
+    generatedQuestionId(sourceQuestions, 'q080', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q080', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q080', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q080', 'judgement'),
+  ];
   const context = { window: {} };
   vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
   const questionsById = new Map(
     context.window.SMT_QUESTIONS.map((question) => [question.id, question]),
   );
-  const sourceQuestions = Q166_Q169_KOMMUN_REGION_NATURALNESS_IDS.map((id) => {
-    const question = questionsById.get(id);
-    assert.ok(question, `${id} should be present in static question bank`);
-    return staticQuestionToI18nQuestion(question);
-  });
-  const generatedQuestions = generatedIds.map((id) => {
-    const question = questionsById.get(id);
-    assert.ok(question, `${id} should be present in static question bank`);
-    return staticQuestionToI18nQuestion(question);
-  });
 
-  assert.deepEqual(summarizeQ166Q169KommunRegionNaturalness(sourceQuestions).errors, []);
-  assert.deepEqual(
-    summarizeQ166Q169KommunRegionNaturalness(generatedQuestions, generatedIds).errors,
-    [],
-  );
+  for (const id of expectedIds) {
+    const question = questionsById.get(id);
+    assert.ok(question, `${id} should be present in static question bank`);
+    assert.doesNotMatch(question.why.en, Q080_SUFFRAGE_STALE_STATIC_PATTERN);
+    assert.match(question.why.en, Q080_SUFFRAGE_REVISED_STATIC_PATTERN);
+  }
 });
 
 test('chapter localization metadata avoids parenthetical English welfare glosses', () => {

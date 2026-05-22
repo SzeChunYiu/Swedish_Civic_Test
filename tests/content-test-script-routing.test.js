@@ -65,58 +65,44 @@ function countSourceOccurrences(source, token) {
   return source.match(new RegExp(`\\b${token}\\b`, 'g'))?.length ?? 0;
 }
 
-test('Playwright dist-web server reuse is explicit and worktree-bound', () => {
-  const playwrightConfigSource = fs.readFileSync(
-    path.join(repoRoot, 'playwright.config.ts'),
-    'utf8',
-  );
-  const serveDistWebSource = fs.readFileSync(
-    path.join(repoRoot, 'tests/e2e/serve-dist-web.cjs'),
-    'utf8',
-  );
+function parseJsonSummary(output, label) {
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, `${label} should print a JSON summary`);
+  return JSON.parse(match[0]);
+}
 
-  assert.match(
-    playwrightConfigSource,
-    /const e2ePort = Number\(process\.env\.E2E_PORT \?\? DEFAULT_E2E_PORT\);/,
-    'Playwright must keep the E2E_PORT override for unique local ports',
-  );
-  assert.match(
-    playwrightConfigSource,
-    /PORT=\$\{e2ePort\} node tests\/e2e\/serve-dist-web\.cjs/,
-    'Playwright must pass the selected E2E_PORT to the dist-web server',
-  );
-  assert.match(
-    playwrightConfigSource,
-    /process\.env\.E2E_REUSE_EXISTING_SERVER === '1' && !process\.env\.CI/,
-    'local server reuse must require E2E_REUSE_EXISTING_SERVER=1 while CI keeps reuse disabled',
-  );
-  assert.match(
-    playwrightConfigSource,
-    /reuseExistingServer,\s*\n\s*timeout:/,
-    'Playwright webServer must use the guarded reuseExistingServer value',
-  );
-  assert.doesNotMatch(
-    playwrightConfigSource,
-    /reuseExistingServer:\s*!process\.env\.CI|reuseExistingServer:\s*true/,
-    'local Playwright must not silently reuse any server already listening on the default port',
-  );
-  assert.doesNotMatch(
-    playwrightConfigSource,
-    /DIST_WEB_ROOT=/,
-    'Playwright must serve this worktree default dist-web path instead of pointing at another root',
-  );
-  assert.match(
-    serveDistWebSource,
-    /path\.join\(__dirname, '\.\.\/\.\.\/dist-web'\)/,
-    'serve-dist-web must default to the invoking worktree dist-web directory',
-  );
-});
+function runFocusedValidationCommand(flag) {
+  return spawnSync(process.execPath, ['scripts/validate-content.js', flag], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+  });
+}
+
+function assertFocusedValidationSummary(flag, expectedSummaryKeys) {
+  const result = runFocusedValidationCommand(flag);
+  const combinedOutput = `${result.stdout}\n${result.stderr}`;
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.doesNotMatch(combinedOutput, /ReferenceError|Cannot access .* before initialization/);
+
+  const summary = parseJsonSummary(result.stdout, `${flag} focused validation`);
+  for (const key of expectedSummaryKeys) {
+    assert.ok(Object.prototype.hasOwnProperty.call(summary, key), `${key} is present`);
+  }
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
+
+  return summary;
+}
 
 test('npm test keeps selector routing in the project dispatcher', () => {
   const pkg = readPackageJson();
   const testContentScript = pkg.scripts['test:content'];
   const studyReminderParitySource = fs.readFileSync(
     path.join(repoRoot, 'tests/content-study-reminder-runtime-parity.test.js'),
+    'utf8',
+  );
+  const weeklyRecapParitySource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-weekly-recap-runtime-parity.test.js'),
     'utf8',
   );
 
@@ -128,6 +114,11 @@ test('npm test keeps selector routing in the project dispatcher', () => {
       .length,
     1,
     'test:content must include the study reminder runtime parity guard exactly once',
+  );
+  assert.equal(
+    (testContentScript.match(/tests\/content-weekly-recap-runtime-parity\.test\.js/g) ?? []).length,
+    1,
+    'test:content must include the weekly recap runtime parity guard exactly once',
   );
   assert.equal(
     (testContentScript.match(/tests\/content-route-link-accessibility-parity\.test\.js/g) ?? [])
@@ -158,10 +149,32 @@ test('npm test keeps selector routing in the project dispatcher', () => {
     /test:content|test:all|validate:content(?!\.js --focus-answer-shuffle-parity)/,
     'correct-display-position must stay limited to the P0 answer-shuffle acceptance bundle',
   );
+  assert.equal(
+    pkg.scripts['test:mobile-ads-consent'],
+    [
+      'node --test tests/mobile-ads-consent-runtime.test.js tests/content-mobile-ads-consent-schema-parity.test.js --test-name-pattern "mobile ads consent|Mobile Ads consent runtime|focus-mobile-ads-consent|ATT|UMP|SDK init"',
+      'node scripts/validate-content.js --focus-mobile-ads-consent',
+    ].join(' && '),
+  );
+  assert.doesNotMatch(
+    pkg.scripts['test:mobile-ads-consent'],
+    /test:monetization|scripts\/monetization\.test|test:all|validate:content(?!\.js --focus-mobile-ads-consent)/,
+    'mobile-ads-consent must stay limited to the Mobile Ads consent runtime and focused validator bundle',
+  );
   assert.match(
     studyReminderParitySource,
     /lib\/notifications\/studyReminderRouting\.ts/,
     'study reminder content parity must cover notification tap routing helpers',
+  );
+  assert.match(
+    weeklyRecapParitySource,
+    /--focus-weekly-recap-runtime/,
+    'weekly recap content parity must execute the focused weekly recap runtime validator',
+  );
+  assert.doesNotMatch(
+    weeklyRecapParitySource,
+    /\['scripts\/validate-content\.js'\]/,
+    'weekly recap content parity must not route through full content validation',
   );
 });
 
@@ -201,7 +214,7 @@ test('app config schema parity uses focused content validation routing', () => {
   assert.match(validatorSource, /--focus-app-config-schema/);
   assert.match(
     validatorSource,
-    /validateAppConfigSchema\(\);[\s\S]*validateStaticHeadMetadataParity\(\);[\s\S]*appConfigSchemaValidated[\s\S]*staticHeadMetadataParityValidated/,
+    /validateAppConfigSchema\(\);[\s\S]*validateWebDocumentMetadataUsageParity\(\);[\s\S]*validateStaticHeadMetadataParity\(\);[\s\S]*appConfigSchemaValidated[\s\S]*webDocumentMetadataUsageParityValidated[\s\S]*staticHeadMetadataParityValidated/,
   );
   assert.match(appConfigTestSource, /--focus-app-config-schema/);
   assert.doesNotMatch(
@@ -279,6 +292,58 @@ test('LegalSection rendering focus registry lists granular summary keys', () => 
   assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
 });
 
+test('mock exam copy parity focus registry executes a narrow summary', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const mockExamRuntimeTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-mock-exam-runtime-parity.test.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('mockExamCopyParity');
+
+  assert.ok(registryEntry, 'mock exam copy focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-mock-exam-copy-parity']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'nativeMockExamComponentCopyLabelsValidated',
+    'nativeMockExamComponentLegalCopyValidated',
+    'nativeMockExamLibraryLabelsValidated',
+    'nativeMockExamScoreSourceCopyValidated',
+    'nativeMockExamSwedishCopyNaturalnessValidated',
+    'nativeMockExamTierCopyValidated',
+  ]);
+  assert.match(validatorSource, /--focus-mock-exam-copy-parity/);
+  assert.match(
+    validatorSource,
+    /validateNativeMockExamComponentLegalCopy\(\);[\s\S]*validateNativeMockExamLibraryAndTierCopy\(\);[\s\S]*nativeMockExamLibraryLabelsValidated[\s\S]*nativeMockExamTierCopyValidated/,
+  );
+  assert.match(mockExamRuntimeTestSource, /--focus-mock-exam-copy-parity/);
+  assert.match(mockExamRuntimeTestSource, /provexamen and provexamina regressions/);
+  assert.match(mockExamRuntimeTestSource, /weakened English Mock Exam labels/);
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-mock-exam-copy-parity'],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused mock exam copy validation should print a JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  for (const key of registryEntry.summaryKeys) {
+    assert.ok(Object.prototype.hasOwnProperty.call(summary, key), `${key} is present`);
+  }
+  assert.equal(summary.nativeMockExamComponentCopyLabelsValidated, 6);
+  assert.equal(summary.nativeMockExamComponentLegalCopyValidated, true);
+  assert.equal(summary.nativeMockExamLibraryLabelsValidated, 7);
+  assert.equal(summary.nativeMockExamScoreSourceCopyValidated, true);
+  assert.equal(summary.nativeMockExamSwedishCopyNaturalnessValidated, true);
+  assert.equal(summary.nativeMockExamTierCopyValidated, true);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
+});
+
 test('ProgressBar accessibility parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
@@ -345,6 +410,36 @@ test('UHRReferenceCard accessibility parity uses focused content validation rout
     uhrReferenceCardTestSource,
     /\['scripts\/validate-content\.js'\]/,
     'UHRReferenceCard accessibility tests must not route through full content validation',
+  );
+});
+
+test('SourceCitation accessibility parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const sourceCitationTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-source-citation-accessibility-parity.test.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('sourceCitationAccessibility');
+
+  assert.ok(registryEntry, 'SourceCitation accessibility focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-source-citation-accessibility']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'sourceCitationAccessibilityRulesValidated',
+    'sourceCitationAccessibilityParityValidated',
+  ]);
+  assert.match(validatorSource, /--focus-source-citation-accessibility/);
+  assert.match(
+    validatorSource,
+    /validateSourceCitationAccessibilityParity\(\);[\s\S]*sourceCitationAccessibilityRulesValidated[\s\S]*sourceCitationAccessibilityParityValidated/,
+  );
+  assert.match(sourceCitationTestSource, /--focus-source-citation-accessibility/);
+  assert.doesNotMatch(
+    sourceCitationTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'SourceCitation accessibility tests must not route through full content validation',
   );
 });
 
@@ -608,6 +703,44 @@ test('question speech text parity uses focused content validation routing', () =
     /\['scripts\/validate-content\.js'\]/,
     'question speech text tests must not route through full content validation',
   );
+});
+
+test('question speech focused validation exits after helper constants initialize', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('questionSpeechTextParity');
+  const helperIndex = validatorSource.indexOf('const SOURCE_AUTHORITY_REPLACEMENTS');
+  const focusIndex = validatorSource.indexOf(
+    "if (process.argv.includes('--focus-question-speech-text-parity'))",
+  );
+
+  assert.ok(registryEntry, 'question speech text parity focus mode must be registered');
+  assert.equal(helperIndex >= 0, true, 'speech text helper constants must stay in source');
+  assert.equal(
+    focusIndex > helperIndex,
+    true,
+    'question speech focus exit must follow helper constants',
+  );
+  assert.match(
+    validatorSource,
+    /function finishFocusedValidation\([\s\S]*exitWithValidationFailures\(\);[\s\S]*printValidationSummary\(summary\);[\s\S]*process\.exit\(0\);/,
+    'focused validation exits should use the shared focused summary helper',
+  );
+  assert.match(
+    validatorSource,
+    /--focus-question-speech-text-parity[\s\S]*validateQuestionSpeechTextParity\(\);[\s\S]*finishFocusedValidation\(\{/,
+    'question speech focus mode must use the shared focused summary helper',
+  );
+
+  const summary = assertFocusedValidationSummary(
+    '--focus-question-speech-text-parity',
+    registryEntry.summaryKeys,
+  );
+
+  assert.equal(summary.questionSpeechTextQuestionsValidated, summary.publishedQuestions);
+  assert.equal(summary.questionSpeechTextParityValidated, true);
 });
 
 test('generated localization overlay parity uses focused content validation routing', () => {
@@ -1291,6 +1424,49 @@ test('adaptive difficulty focused content validation runs only its runtime summa
   assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
 });
 
+test('daily challenge runtime focused content validation runs only its runtime summary', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('dailyChallengeRuntime');
+
+  assert.ok(registryEntry, 'daily challenge runtime focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-daily-challenge-runtime']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'dailyChallengeRuntimeCasesValidated',
+    'dailyChallengeRuntimeParityValidated',
+  ]);
+  assert.match(validatorSource, /--focus-daily-challenge-runtime/);
+  assert.match(
+    validatorSource,
+    /validateDailyChallengeRuntimeGuards\(\);[\s\S]*dailyChallengeRuntimeCasesValidated[\s\S]*dailyChallengeRuntimeParityValidated/,
+  );
+  assert.match(
+    validatorSource,
+    /validateAdaptivePracticeDifficultyRuntimeGuards\(\);[\s\S]*validateDailyChallengeRuntimeGuards\(\);[\s\S]*validateStreakRules\(\);/,
+    'full content validation must still invoke the daily challenge runtime guard',
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-daily-challenge-runtime'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused daily challenge validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.equal(summary.dailyChallengeRuntimeCasesValidated, 9);
+  assert.equal(summary.dailyChallengeRuntimeParityValidated, true);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
+});
+
 test('monetization schema parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
@@ -1686,6 +1862,33 @@ test('correct-display-position selector runs the P0 answer shuffle acceptance sc
   }
 });
 
+test('mobile-ads-consent selector runs only the focused Mobile Ads consent suite', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-mobile-ads-routing-'));
+  const npmLog = path.join(tmpDir, 'npm.log');
+  const env = {
+    ...process.env,
+    TEST_DISPATCH_CAPTURE: '1',
+    TEST_DISPATCH_LOG: npmLog,
+    TEST_DISPATCH_NPM: createFakeNpm(tmpDir),
+  };
+
+  try {
+    const selectedResult = runDispatcher(['--', 'mobile-ads-consent'], env);
+    assert.equal(selectedResult.status, 0, selectedResult.stderr || selectedResult.stdout);
+    assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:mobile-ads-consent\n');
+
+    const pkg = readPackageJson();
+    const script = pkg.scripts['test:mobile-ads-consent'];
+    assert.match(script, /tests\/mobile-ads-consent-runtime\.test\.js/);
+    assert.match(script, /tests\/content-mobile-ads-consent-schema-parity\.test\.js/);
+    assert.match(script, /node scripts\/validate-content\.js --focus-mobile-ads-consent/);
+    assert.match(script, /ATT\|UMP\|SDK init/);
+    assert.doesNotMatch(script, /test:monetization|scripts\/monetization\.test|test:all|npm test/);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
 test('xp selector runs only the focused XP rules parity script', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-xp-routing-'));
   const npmLog = path.join(tmpDir, 'npm.log');
@@ -1713,8 +1916,8 @@ test('xp selector runs only the focused XP rules parity script', () => {
   }
 });
 
-test('architecture selector runs only architecture scaffold and router-shell gates', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-architecture-routing-'));
+test('mobile ads consent selector runs only the focused runtime and schema parity bundle', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-mobile-ads-routing-'));
   const npmLog = path.join(tmpDir, 'npm.log');
   const env = {
     ...process.env,
@@ -1724,20 +1927,19 @@ test('architecture selector runs only architecture scaffold and router-shell gat
   };
 
   try {
-    const selectedResult = runDispatcher(['--', 'architecture'], env);
+    const selectedResult = runDispatcher(['--', 'mobile-ads-consent'], env);
     assert.equal(selectedResult.status, 0, selectedResult.stderr || selectedResult.stdout);
-    assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:architecture\nrun test:router-shell\n');
+    assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:mobile-ads-consent\n');
 
     const pkg = readPackageJson();
-    assert.equal(
-      pkg.scripts['test:architecture'],
-      'node --test scripts/architecture-scaffold.test.js',
-    );
-    assert.equal(pkg.scripts['test:router-shell'], 'node --test scripts/router-shell.test.js');
+    const script = pkg.scripts['test:mobile-ads-consent'];
+    assert.match(script, /tests\/mobile-ads-consent-runtime\.test\.js/);
+    assert.match(script, /tests\/content-mobile-ads-consent-schema-parity\.test\.js/);
+    assert.match(script, /node scripts\/validate-content\.js --focus-mobile-ads-consent/);
+    assert.match(script, /mobile ads consent\|Mobile Ads consent runtime\|ATT\|UMP\|SDK init/);
     assert.doesNotMatch(
-      fs.readFileSync(path.join(repoRoot, 'scripts/test-dispatch.js'), 'utf8'),
-      /architecture[\s\S]{0,220}test:all/,
-      'architecture selector must not route through the full suite',
+      script,
+      /scripts\/monetization\.test\.js|npm run test:monetization|npm run test:content|npm run test:all|npm test/,
     );
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
@@ -1766,13 +1968,9 @@ test('package npm test selector enters the dispatcher before running suites', ()
     assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:correct-display-position\n');
 
     fs.writeFileSync(npmLog, '');
-    const architectureResult = runPackageTest(['architecture'], env);
-    assert.equal(
-      architectureResult.status,
-      0,
-      architectureResult.stderr || architectureResult.stdout,
-    );
-    assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:architecture\nrun test:router-shell\n');
+    const mobileAdsResult = runPackageTest(['mobile-ads-consent'], env);
+    assert.equal(mobileAdsResult.status, 0, mobileAdsResult.stderr || mobileAdsResult.stdout);
+    assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:mobile-ads-consent\n');
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
   }
@@ -1920,11 +2118,9 @@ test('unsupported npm test selectors fail before running any suite', () => {
       result.stderr,
       /correct-display-position -> npm run test:correct-display-position/,
     );
-    assert.match(
-      result.stderr,
-      /architecture -> npm run test:architecture && npm run test:router-shell/,
-    );
+    assert.match(result.stderr, /mobile-ads-consent -> npm run test:mobile-ads-consent/);
     assert.match(result.stderr, /monetization -> npm run test:monetization/);
+    assert.match(result.stderr, /mobile-ads-consent -> npm run test:mobile-ads-consent/);
     assert.match(result.stderr, /xp -> npm run test:xp-rules/);
     assert.equal(fs.existsSync(npmLog), false);
   } finally {

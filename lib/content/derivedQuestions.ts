@@ -160,6 +160,19 @@ function lowerLeadingEnglishArticle(value: string): string {
   return value.replace(/^(The|In|A|An|At|On|Almost)\b/, (match) => match.toLowerCase());
 }
 
+function swedishPossessive(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) return trimmed;
+  if (/^[A-ZÅÄÖ]{2,}$/.test(trimmed)) return `${trimmed}:s`;
+  return `${trimmed}s`;
+}
+
+function englishPossessive(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) return trimmed;
+  return /s$/i.test(trimmed) ? `${trimmed}'` : `${trimmed}'s`;
+}
+
 function lowerLeadingSwedishCommonStart(value: string): string {
   return value.replace(/^(Havet|Nästan|Ungefär|Ett|En|Man|När|Kungens)\b/, (match) =>
     match.toLowerCase(),
@@ -198,6 +211,17 @@ function englishSubjectVerb(value: string, singular: string, plural: string): st
 function englishInfinitive(value: string): string {
   const trimmed = lowerFirst(value.trim());
   return /^to\b/i.test(trimmed) ? trimmed : `to ${trimmed}`;
+}
+
+function englishResponsibilityPredicate(value: string): string {
+  const phrase = lowerFirst(stripLeadingPurposeEn(value).trim());
+  if (/^be responsible for\b/i.test(phrase)) {
+    return phrase.replace(/^be responsible for\s+/i, '');
+  }
+  if (/^judge\b/i.test(phrase)) return phrase.replace(/^judge\b/i, 'judging');
+  if (/^decide\b/i.test(phrase)) return phrase.replace(/^decide\b/i, 'deciding');
+  if (/^appoint\b/i.test(phrase)) return phrase.replace(/^appoint\b/i, 'appointing');
+  return englishInfinitive(phrase);
 }
 
 function englishAgePhrase(value: string): string {
@@ -1486,7 +1510,166 @@ function statementTopicEn(source: PracticeQuestion): string {
     .replace(/^Public service companies\b/, 'public service companies');
 }
 
+const TRUE_FALSE_SOURCE_CIVIC_DISTRACTORS: Record<
+  string,
+  readonly [QuestionOption, QuestionOption]
+> = {
+  q002: [
+    {
+      id: 'civic-distractor-1',
+      textSv: 'Sveriges nordligaste del ligger i Skåne.',
+      textEn: "Sweden's northernmost part is in Skåne.",
+    },
+    {
+      id: 'civic-distractor-2',
+      textSv: 'Sveriges nordligaste del ligger på Gotland.',
+      textEn: "Sweden's northernmost part is on Gotland.",
+    },
+  ],
+  q006: [
+    {
+      id: 'civic-distractor-1',
+      textSv: 'Kalla havsströmmar gör Sveriges klimat arktiskt.',
+      textEn: "Cold ocean currents make Sweden's climate arctic.",
+    },
+    {
+      id: 'civic-distractor-2',
+      textSv: 'Golfströmmen kyler ner Sveriges klimat.',
+      textEn: "The Gulf Stream cools Sweden's climate.",
+    },
+  ],
+  q023: [
+    {
+      id: 'civic-distractor-1',
+      textSv: 'Kungen väljer Sveriges statsminister.',
+      textEn: "The King chooses Sweden's prime minister.",
+    },
+    {
+      id: 'civic-distractor-2',
+      textSv: 'Kommunerna väljer Sveriges statsminister.',
+      textEn: "Municipalities choose Sweden's prime minister.",
+    },
+  ],
+  q028: [
+    {
+      id: 'civic-distractor-1',
+      textSv: 'Oppositionen utser regeringens ministrar.',
+      textEn: 'The opposition appoints the government ministers.',
+    },
+    {
+      id: 'civic-distractor-2',
+      textSv: 'Oppositionen beslutar om budgeten utan riksdagsbeslut.',
+      textEn: 'The opposition decides the budget without a Riksdag decision.',
+    },
+  ],
+  q031: [
+    {
+      id: 'civic-distractor-1',
+      textSv: 'Folkomröstningar i Sverige är alltid bindande.',
+      textEn: 'Referendums in Sweden are always binding.',
+    },
+    {
+      id: 'civic-distractor-2',
+      textSv: 'Bara regeringen får rösta i folkomröstningar.',
+      textEn: 'Only the government may vote in referendums.',
+    },
+  ],
+  q047: [
+    {
+      id: 'civic-distractor-1',
+      textSv: 'Redaktioner måste alltid lämna ut sina källor till myndigheter.',
+      textEn: 'Newsrooms must always disclose their sources to authorities.',
+    },
+    {
+      id: 'civic-distractor-2',
+      textSv: 'Bara myndighetsanställda får lämna uppgifter anonymt till medier.',
+      textEn: 'Only government employees may provide information anonymously to media.',
+    },
+  ],
+  q049: [
+    {
+      id: 'civic-distractor-1',
+      textSv: 'Public service-företag får finansieras med politisk reklam.',
+      textEn: 'Public service companies may be funded with political advertising.',
+    },
+    {
+      id: 'civic-distractor-2',
+      textSv: 'Public service-företag ska stödja regeringspartierna.',
+      textEn: 'Public service companies should support the governing parties.',
+    },
+  ],
+  q074: [
+    {
+      id: 'civic-distractor-1',
+      textSv: 'Regionerna ensamma ansvarar för all äldreomsorg.',
+      textEn: 'Regions alone are responsible for all elderly care.',
+    },
+    {
+      id: 'civic-distractor-2',
+      textSv: 'Kommuner får inte erbjuda äldre personer hemtjänst.',
+      textEn: 'Municipalities may not offer older people home care services.',
+    },
+  ],
+  q091: [
+    {
+      id: 'civic-distractor-1',
+      textSv: 'Svenskt totalförsvar består bara av militärt försvar.',
+      textEn: 'Swedish total defence consists only of military defence.',
+    },
+    {
+      id: 'civic-distractor-2',
+      textSv: 'Det civila försvaret ingår inte i totalförsvaret.',
+      textEn: 'Civil defence is not part of total defence.',
+    },
+  ],
+  q094: [
+    {
+      id: 'civic-distractor-1',
+      textSv: 'Svenska kyrkan blev en statlig myndighet år 2000.',
+      textEn: 'The Church of Sweden became a state authority in 2000.',
+    },
+    {
+      id: 'civic-distractor-2',
+      textSv: 'Bara Svenska kyrkan får verka som trossamfund i Sverige.',
+      textEn: 'Only the Church of Sweden may operate as a faith community in Sweden.',
+    },
+  ],
+  q143: [
+    {
+      id: 'civic-distractor-1',
+      textSv: 'Götaland, Svealand och Norrland är Sveriges tre största län.',
+      textEn: 'Götaland, Svealand, and Norrland are Sweden’s three largest counties.',
+    },
+    {
+      id: 'civic-distractor-2',
+      textSv: 'Norrland är Sveriges minsta landsdel.',
+      textEn: 'Norrland is Sweden’s smallest major region.',
+    },
+  ],
+};
+
+function trueFalseSourceCivicDistractors(
+  source: PracticeQuestion,
+): readonly [QuestionOption, QuestionOption] {
+  return (
+    TRUE_FALSE_SOURCE_CIVIC_DISTRACTORS[source.id] ?? [
+      {
+        id: 'civic-distractor-1',
+        textSv: 'Sverige har ingen riksdag.',
+        textEn: 'Sweden has no Riksdag.',
+      },
+      {
+        id: 'civic-distractor-2',
+        textSv: 'Det finns inga kommuner i Sverige.',
+        textEn: 'There are no municipalities in Sweden.',
+      },
+    ]
+  );
+}
+
 function trueFalseStatementOptions(source: PracticeQuestion): QuestionOption[] {
+  const [firstDistractor, secondDistractor] = trueFalseSourceCivicDistractors(source);
+
   return [
     {
       id: 'true-statement',
@@ -1498,16 +1681,8 @@ function trueFalseStatementOptions(source: PracticeQuestion): QuestionOption[] {
       textSv: ensureSentence(trueFalseSourceStatementSv(source, false)),
       textEn: ensureSentence(trueFalseSourceStatementEn(source, false)),
     },
-    {
-      id: 'both-statements',
-      textSv: 'Båda påståendena är korrekta',
-      textEn: 'Both statements are correct',
-    },
-    {
-      id: 'neither-statement',
-      textSv: 'Inget av påståendena är korrekt',
-      textEn: 'Neither statement is correct',
-    },
+    firstDistractor,
+    secondDistractor,
   ];
 }
 
@@ -1532,49 +1707,418 @@ function generatedTrueFalseStatementEn(
 function embeddedQuestionTopicSv(question: string): string {
   const q = stripFinalPunctuation(question);
   let match = q.match(/^Var ligger (.+)$/i);
-  if (match) return `var ${match[1]} ligger`;
+  if (match) return `${swedishPossessive(match[1])} läge`;
+
+  match = q.match(/^Ungefär hur långt sträcker sig (.+?) från (.+?) till (.+)$/i);
+  if (match) return `${swedishPossessive(match[1])} sträckning från ${match[2]} till ${match[3]}`;
 
   match = q.match(/^Vad heter (.+)$/i);
-  if (match) return `vad ${match[1]} heter`;
+  if (match) return `namnet på ${lowerFirst(match[1])}`;
+
+  if (/^Vilka öar är Sveriges två största$/i.test(q)) return 'Sveriges största öar';
+  if (/^Vilka är Sveriges tre största sjöar$/i.test(q)) return 'Sveriges största sjöar';
+  if (/^Vilka är Sveriges fem nationella minoriteter$/i.test(q))
+    return 'Sveriges nationella minoriteter';
+  if (/^Ungefär hur många människor bor i Sverige$/i.test(q)) return 'Sveriges befolkning';
+  if (/^Ungefär hur många svenskar utvandrade till USA mellan 1850 och 1920$/i.test(q)) {
+    return 'utvandringen till USA mellan 1850 och 1920';
+  }
+  if (/^Vilka naturresurser är viktiga i Sverige$/i.test(q)) return 'Sveriges naturresurser';
+  if (/^Vad betyder demokrati$/i.test(q)) return 'demokrati';
 
   match = q.match(/^Vad är vanligt att göra på (.+)$/i);
-  if (match) return `vad som är vanligt att göra på ${match[1]}`;
+  if (match) return `vanliga traditioner på ${match[1]}`;
 
-  match = q.match(/^Vad gör många på (.+?) i Sverige$/i);
-  if (match) return `vad många gör på ${match[1]} i Sverige`;
+  match = q.match(/^Vad är vanligt att familjer gör på (.+)$/i);
+  if (match) return `familjetraditioner på ${match[1]}`;
 
-  match = q.match(/^Vad gör många med (.+?) vid (.+?) i Sverige$/i);
-  if (match) return `vad många gör med ${match[1]} vid ${match[2]} i Sverige`;
+  match = q.match(/^Vad är vanligt vid (.+)$/i);
+  if (match) return match[1];
 
-  match = q.match(/^Vad menas med (.+)$/i);
-  if (match) return `vad som menas med ${match[1]}`;
+  match = q.match(/^Vad är vanligt på (.+)$/i);
+  if (match) return `vanliga traditioner på ${match[1]}`;
+
+  match = q.match(/^Vad är typiskt för (.+)$/i);
+  if (match) return match[1];
+
+  match = q.match(/^Vad är viktigt att komma ihåg om (.+)$/i);
+  if (match) return match[1];
+
+  match = q.match(/^Vad är ett mål med (.+)$/i);
+  if (match) return `${swedishPossessive(match[1])} mål`;
+
+  match = q.match(/^Vad är en uppgift för (.+)$/i);
+  if (match) return `${swedishPossessive(match[1])} uppgifter`;
 
   match = q.match(/^Vad är (.+)$/i);
-  if (match) return `vad ${match[1]} är`;
+  if (match) return match[1];
+
+  match = q.match(/^Vad gör många på (.+?) i Sverige$/i);
+  if (match) return `traditioner på ${match[1]} i Sverige`;
+
+  match = q.match(/^Vad gör många med (.+?) vid (.+?) i Sverige$/i);
+  if (match) return `${match[1]} vid ${match[2]} i Sverige`;
+
+  match = q.match(/^Vad gör barn ofta med (.+)$/i);
+  if (match) return `barns ${match[1]}`;
+
+  match = q.match(/^Vad gör (.+?) på arbetsmarknaden$/i);
+  if (match) return `${match[1]} på arbetsmarknaden`;
+
+  match = q.match(/^Vad brukar hända på (.+)$/i);
+  if (match) return `traditioner på ${match[1]}`;
+
+  match = q.match(/^Vad brukar (.+?) bära i (.+)$/i);
+  if (match) return `${swedishPossessive(match[1])} klädsel i ${match[2]}`;
+
+  match = q.match(/^Vad brukar man bjuda på (.+)$/i);
+  if (match) return `serveringen ${match[1]}`;
+
+  match = q.match(/^Vad menas med (.+)$/i);
+  if (match) return match[1];
+
+  match = q.match(/^Vad betyder det att folkomröstningar i Sverige är rådgivande$/i);
+  if (match) return 'rådgivande folkomröstningar i Sverige';
+
+  match = q.match(/^Vad betyder det att Sverige är en konstitutionell monarki$/i);
+  if (match) return 'Sveriges konstitutionella monarki';
+
+  match = q.match(/^Vad betyder det att Sverige är en sekulär stat$/i);
+  if (match) return 'Sveriges sekulära stat';
+
+  match = q.match(/^Vad betyder det att val i en demokrati är hemliga$/i);
+  if (match) return 'hemliga val i en demokrati';
+
+  match = q.match(/^Vad betyder det att mänskliga rättigheter gäller alla$/i);
+  if (match) return 'mänskliga rättigheter';
+
+  match = q.match(/^Vad betyder det att (.+)$/i);
+  if (match) return `innebörden av att ${lowerFirst(match[1])}`;
 
   match = q.match(/^Vad betyder (.+)$/i);
-  if (match) return `vad ${match[1]} betyder`;
+  if (match) return match[1];
 
   match = q.match(/^Vad innebär (.+)$/i);
-  if (match) return `vad ${match[1]} innebär`;
+  if (match) return match[1];
 
-  match = q.match(/^Hur kan (.+?) (.+)$/i);
-  if (match) return `hur ${match[1]} kan ${match[2]}`;
+  match = q.match(/^Vad gäller för (.+)$/i);
+  if (match) return match[1];
 
-  match = q.match(/^Vilka är (.+)$/i);
-  if (match) return `vilka ${match[1]} är`;
+  match = q.match(/^Vad kallas det när (.+)$/i);
+  if (match) return `begreppet för att ${lowerFirst(match[1])}`;
+
+  match = q.match(/^Vad kallas (.+)$/i);
+  if (match) return `namnet på ${lowerFirst(match[1])}`;
+
+  match = q.match(/^Vad kan göra (.+?) starkare$/i);
+  if (match) return `${lowerFirst(match[1])} och deltagande`;
+
+  match = q.match(/^Vad kan hända med (.+?) när (.+)$/i);
+  if (match) return `förändringar i ${match[1]} när ${match[2]}`;
+
+  match = q.match(/^Vad kan den som vill påverka (.+?) göra$/i);
+  if (match) return `sätt att påverka ${match[1]}`;
+
+  match = q.match(/^Vad beslutade Sverige som första land i världen (.+)$/i);
+  if (match) return `Sveriges beslut ${match[1]}`;
+
+  match = q.match(/^Vad bidrog till kontakter med (.+)$/i);
+  if (match) return `kontakter med ${match[1]}`;
+
+  match = q.match(/^Vad händer i (.+?) om (.+)$/i);
+  if (match) return `${match[1]} när ${match[2]}`;
+
+  match = q.match(/^Vad händer under (.+)$/i);
+  if (match) return match[1];
+
+  match = q.match(/^Vad har (.+?) gemensamt$/i);
+  if (match) return `gemensamma drag hos ${match[1]}`;
+
+  match = q.match(/^Vad har (.+?) förändrat$/i);
+  if (match) return `${swedishPossessive(match[1])} förändringar`;
+
+  match = q.match(/^Vad fick (.+?) rätt att göra i Sverige på (.+)$/i);
+  if (match) return `${swedishPossessive(match[1])} rättigheter i Sverige på ${match[2]}`;
+
+  match = q.match(/^Vad finansierar staten inom (.+)$/i);
+  if (match) return `statens finansiering inom ${match[1]}`;
+
+  match = q.match(/^Vad firar (.+?) traditionellt inom (.+)$/i);
+  if (match) return `${match[1]} inom ${match[2]}`;
+
+  match = q.match(/^Vad förändrades genom (.+)$/i);
+  if (match) return match[1];
+
+  match = q.match(/^Vad finns på olika platser i Sverige för (.+)$/i);
+  if (match) return `platser i Sverige för ${match[1]}`;
+
+  match = q.match(/^Vad ger (.+?) alla rätt att göra$/i);
+  if (match) return `${swedishPossessive(match[1])} rättigheter`;
+
+  match = q.match(/^Vad hände (.+)$/i);
+  if (match) return `händelsen ${match[1]}`;
+
+  match = q.match(/^Vad handlar (.+?) mycket om/i);
+  if (match) return match[1];
+
+  match = q.match(/^Vad ingår i (.+)$/i);
+  if (match) return match[1];
+
+  match = q.match(/^Vad reglerar (.+)$/i);
+  if (match) return match[1];
+
+  match = q.match(/^Vad säger (.+?) om (.+)$/i);
+  if (match) return `${match[1]} och ${match[2]}`;
+
+  match = q.match(/^Vad skyddar (.+)$/i);
+  if (match) return match[1];
+
+  match = q.match(/^Vad står på (.+)$/i);
+  if (match) return `${swedishPossessive(match[1])} innehåll`;
+
+  match = q.match(/^Vad uppmärksammas på (.+)$/i);
+  if (match) return `${match[1]} i Sverige`;
+
+  match = q.match(/^Vad var (.+?)s mål (.+)$/i);
+  if (match) return `${swedishPossessive(match[1])} mål ${match[2]}`;
+
+  match = q.match(/^Vad var (.+)$/i);
+  if (match) return match[1];
+
+  match = q.match(/^Vad blev (.+?) viktigt för$/i);
+  if (match) return `${swedishPossessive(match[1])} betydelse`;
+
+  match = q.match(/^Vad blev tillåtet för (.+?) år (.+)$/i);
+  if (match) return `religionsfrihet för ${match[1]} år ${match[2]}`;
+
+  match = q.match(/^Vad erbjuder (.+)$/i);
+  if (match) return `${swedishPossessive(match[1])} verksamhet`;
+
+  match = q.match(/^Vad arbetar (.+?) för$/i);
+  if (match) return `${swedishPossessive(match[1])} arbete`;
+
+  match = q.match(/^Vad valde (.+?) att göra efter (.+)$/i);
+  if (match) return `${swedishPossessive(match[1])} val efter ${match[2]}`;
+
+  match = q.match(/^Vilket av följande ingår i (.+)$/i);
+  if (match) return match[1];
+
+  match = q.match(/^Vilket exempel hör till (.+)$/i);
+  if (match) return `exempel inom ${match[1]}`;
+
+  match = q.match(/^Vilket svar ger exempel på (.+)$/i);
+  if (match) return `exempel på ${match[1]}`;
+
+  match = q.match(/^Vilket stöd kan (.+?) ge (.+)$/i);
+  if (match) return `${swedishPossessive(match[1])} stöd till ${match[2]}`;
+
+  match = q.match(/^Vilket ansvar har (.+?) inom (.+)$/i);
+  if (match) return `${swedishPossessive(match[1])} ansvar inom ${match[2]}`;
+
+  match = q.match(/^Vilket ansvar har (.+?) för (.+)$/i);
+  if (match) return `${swedishPossessive(match[1])} ansvar för ${match[2]}`;
+
+  match = q.match(/^Vilken hjälp kan (.+?) få av (.+?) för att (.+)$/i);
+  if (match) return `${match[2]}s stöd till ${match[1]}`;
+
+  match = q.match(/^Vilken lag markerade (.+)$/i);
+  if (match) return `lagen för ${match[1]}`;
+
+  match = q.match(/^Vilken lista innehåller (.+)$/i);
+  if (match) return `listan över ${match[1]}`;
+
+  match = q.match(/^Vilken religion beskrivs som (.+)$/i);
+  if (match) return `religionen som beskrivs som ${match[1]}`;
+
+  match = q.match(/^Vilken högtid avslutar (.+)$/i);
+  if (match) return `högtiden som avslutar ${match[1]}`;
+
+  match = q.match(/^Vilken högtid firas (.+)$/i);
+  if (match) return `högtiden som firas ${match[1]}`;
+
+  match = q.match(/^Vilken rätt har (.+)$/i);
+  if (match) return `rätten för ${match[1]}`;
+
+  match = q.match(/^Vilken roll har (.+?) i (.+)$/i);
+  if (match) return `${swedishPossessive(match[1])} roll i ${match[2]}`;
+
+  match = q.match(/^Vilken tradition har (.+?) historiska rötter i$/i);
+  if (match) return `${swedishPossessive(match[1])} historiska rötter`;
 
   match = q.match(/^Vilka (.+?) ansvarar (.+?) för$/i);
-  if (match) return `vilka ${match[1]} ${match[2]} ansvarar för`;
+  if (match) return `${match[1]} som ${match[2]} ansvarar för`;
+
+  match = q.match(/^Vilka (.+?) ingår i (.+)$/i);
+  if (match) return `${match[1]} i ${match[2]}`;
+
+  match = q.match(/^Vilka (.+?) har (.+)$/i);
+  if (match) return `${match[1]} med ${match[2]}`;
+
+  match = q.match(/^Vilka (.+?) kallas (.+)$/i);
+  if (match) return `${match[1]} som kallas ${match[2]}`;
+
+  match = q.match(/^Vilka (.+?) finns i (.+)$/i);
+  if (match) return `${match[1]} i ${match[2]}`;
+
+  match = q.match(/^Vilka (.+?) firar (.+)$/i);
+  if (match) return `${match[1]} som ${match[2]} firar`;
+
+  match = q.match(/^Vilka (.+?) kan (.+)$/i);
+  if (match) return `${match[1]} som kan ${match[2]}`;
 
   match = q.match(/^Vilka betalar skatt i Sverige$/i);
-  if (match) return 'vilka som betalar skatt i Sverige';
+  if (match) return 'skattebetalning i Sverige';
+
+  match = q.match(/^Vilka krav gäller för (.+)$/i);
+  if (match) return `kraven för ${match[1]}`;
+
+  match = q.match(/^Vilka regler gäller för (.+)$/i);
+  if (match) return `reglerna för ${match[1]}`;
+
+  match = q.match(/^Vilka tre nivåer delar (.+)$/i);
+  if (match) return 'Sveriges politiska ansvarsnivåer';
+
+  match = q.match(/^Vilka fyra folkrörelser var (.+)$/i);
+  if (match) return `folkrörelserna som var ${match[1]}`;
+
+  match = q.match(/^Vilka högtider är exempel på (.+)$/i);
+  if (match) return `exempel på ${match[1]}`;
+
+  match = q.match(/^Vilka (.+?) är (.+)$/i);
+  if (match) return `${match[1]} som är ${match[2]}`;
+
+  match = q.match(/^Vilka är (.+)$/i);
+  if (match) return match[1];
 
   match = q.match(/^Vem väljer (.+)$/i);
-  if (match) return `vem som väljer ${match[1]}`;
+  if (match) return `valet av ${match[1]}`;
 
-  match = q.match(/^När (.+)$/i);
-  if (match) return `när ${lowerFirst(match[1])}`;
+  match = q.match(/^Hur gammal måste man ha fyllt för att ha rösträtt$/i);
+  if (match) return 'ålderskravet för rösträtt';
+
+  match = q.match(/^Hur gammal måste man ha fyllt för att (.+)$/i);
+  if (match) return `ålderskravet för att ${match[1]}`;
+
+  match = q.match(/^Hur väljer (.+?) (.+)$/i);
+  if (match) return `${swedishPossessive(match[1])} val av ${match[2]}`;
+
+  match = q.match(/^Hur många (.+?) har (.+)$/i);
+  if (match) return `antalet ${match[1]} i ${match[2]}`;
+
+  match = q.match(/^Hur många (.+?) är (.+?) indelat i$/i);
+  if (match) return `antalet ${match[1]} i ${match[2]}`;
+
+  match = q.match(/^Hur ofta hålls (.+)$/i);
+  if (match) return `tidsintervallet för ${lowerFirst(match[1])}`;
+
+  match = q.match(/^Hur stor andel av rösterna måste (.+?) minst få för att (.+)$/i);
+  if (match) return `röstspärren för att ${match[2]}`;
+
+  match = q.match(/^Hur stor del av arbetskraften jobbar i (.+)$/i);
+  if (match) return `andelen av arbetskraften i ${match[1]}`;
+
+  match = q.match(/^Hur bestäms löner i Sverige$/i);
+  if (match) return 'lönebildningen i Sverige';
+
+  match = q.match(/^Hur hjälper (.+?) till med (.+)$/i);
+  if (match) return `${swedishPossessive(match[1])} hjälp med ${match[2]}`;
+
+  match = q.match(/^Hur underlättar (.+?) (.+)$/i);
+  if (match) return `${swedishPossessive(match[1])} betydelse för ${match[2]}`;
+
+  match = q.match(/^Hur publiceras (.+?) i dag$/i);
+  if (match) return `${swedishPossessive(match[1])} publicering i dag`;
+
+  match = q.match(/^Hur agerade Sverige under kalla kriget i förhållande till Nato$/i);
+  if (match) return 'Sveriges agerande under kalla kriget i förhållande till Nato';
+
+  match = q.match(/^Hur fördelas rollerna mellan (.+)$/i);
+  if (match) return `rollfördelningen mellan ${match[1]}`;
+
+  match = q.match(/^Hur kan människor påverka samhället och delta i demokratin$/i);
+  if (match) return 'människors demokratiska deltagande';
+
+  match = q.match(/^Hur kan (.+?) påverka (.+)$/i);
+  if (match) return `${match[1]} och ${match[2]}`;
+
+  match = q.match(/^Hur kan (.+?) få inkomster$/i);
+  if (match) return `${swedishPossessive(match[1])} inkomstkällor`;
+
+  match = q.match(/^Hur kan (.+?) vara privat och ändå skattefinansierad$/i);
+  if (match)
+    return `en privat utförd ${match[1].replace(/^en\s+/i, '')} med offentlig finansiering`;
+
+  match = q.match(/^Hur firar många (.+?) i Sverige (.+)$/i);
+  if (match) return `firandet av ${match[1]} i Sverige`;
+
+  match = q.match(/^Genom vilka två organ sker (.+?) främst$/i);
+  if (match) return `organen för ${match[1]}`;
+
+  match = q.match(/^Från vilken ålder är (.+)$/i);
+  if (match) return `åldern för ${match[1]}`;
+
+  match = q.match(/^Sedan vilket år är (.+)$/i);
+  if (match) return `året då ${match[1]}`;
+
+  match = q.match(/^Vilket år blev (.+?) (.+)$/i);
+  if (match) return `året då ${match[1]} blev ${match[2]}`;
+
+  match = q.match(/^Vilket år hölls (.+)$/i);
+  if (match) return `året då ${lowerFirst(match[1])}`;
+
+  match = q.match(/^När firas (.+)$/i);
+  if (match) return `tidpunkten för ${match[1]}`;
+
+  match = q.match(/^När infaller (.+)$/i);
+  if (match) return `tidpunkten för ${match[1]}`;
+
+  match = q.match(/^När byggdes (.+)$/i);
+  if (match) return `tidpunkten då ${match[1]} byggdes`;
+
+  match = q.match(/^Varför röstar väljare (.+)$/i);
+  if (match) return `skälet till att väljare röstar ${match[1]}`;
+
+  match = q.match(/^Varför bildades (.+)$/i);
+  if (match) return `skälet till att ${match[1]} bildades`;
+
+  match = q.match(/^Varför ökade (.+)$/i);
+  if (match) return `skälet till att ${match[1]} ökade`;
+
+  match = q.match(/^Varför kallas (.+)$/i);
+  if (match) return `skälet till namnet ${match[1]}`;
+
+  match = q.match(/^Varför finns (.+)$/i);
+  if (match) return `skälet till att ${match[1]} finns`;
+
+  match = q.match(/^Varför behövs (.+)$/i);
+  if (match) return `skälet till att ${match[1]} behövs`;
+
+  match = q.match(/^Varför kan (.+?) (.+)$/i);
+  if (match) return `skälet till att ${match[1]} kan ${match[2]}`;
+
+  match = q.match(/^Vilken av följande uppgifter har (.+)$/i);
+  if (match) return `${swedishPossessive(match[1])} uppgifter`;
+
+  match = q.match(/^Vilken uppgift har (.+)$/i);
+  if (match) return `${swedishPossessive(match[1])} uppgifter`;
+
+  match = q.match(/^Vilket påstående beskriver (.+)$/i);
+  if (match) return lowerFirst(match[1]);
+
+  match = q.match(/^Vilket påstående stämmer om (.+)$/i);
+  if (match) return match[1];
+
+  match = q.match(/^Vilket påstående om (.+?) stämmer$/i);
+  if (match) return match[1];
+
+  match = q.match(/^Vilket påstående om (.+?) är korrekt$/i);
+  if (match) return match[1];
+
+  match = q.match(/^Vilken är (.+)$/i);
+  if (match) return lowerFirst(match[1]);
+
+  match = q.match(/^Vilket år blev (.+)$/i);
+  if (match) return `året då ${lowerFirst(match[1])}`;
 
   return lowerFirst(q);
 }
@@ -1582,43 +2126,433 @@ function embeddedQuestionTopicSv(question: string): string {
 function embeddedQuestionTopicEn(question: string): string {
   const q = stripFinalPunctuation(question);
   let match = q.match(/^Where is (.+) located$/i);
-  if (match) return `where ${match[1]} is located`;
+  if (match) return `${englishPossessive(match[1])} location`;
+
+  match = q.match(/^Approximately how far does (.+?) stretch from (.+?) to (.+)$/i);
+  if (match) return `${englishPossessive(match[1])} distance from ${match[2]} to ${match[3]}`;
+
+  if (/^Approximately how many people live in Sweden$/i.test(q)) return "Sweden's population";
+  if (
+    /^Approximately how many Swedes emigrated to the United States between 1850 and 1920$/i.test(q)
+  ) {
+    return 'emigration to the United States between 1850 and 1920';
+  }
 
   match = q.match(/^What is (.+) called$/i);
-  if (match) return `what ${match[1]} is called`;
+  if (match) return `the name of ${lowerEnglishNounPhrase(match[1])}`;
 
   match = q.match(/^What is the name of (.+)$/i);
-  if (match) return `what the name of ${match[1]} is`;
+  if (match) return `the name of ${match[1]}`;
 
   match = q.match(/^How is (.+?) commonly (celebrated|observed) in Sweden$/i);
-  if (match) return `how ${match[1]} is commonly ${match[2]} in Sweden`;
+  if (match) return `${match[1]} traditions in Sweden`;
 
   match = q.match(/^What do many people do with (.+?) at (.+?) in Sweden$/i);
-  if (match) return `what many people do with ${match[1]} at ${match[2]} in Sweden`;
+  if (match) return `${match[1]} at ${match[2]} in Sweden`;
 
   match = q.match(/^Which everyday services are (.+?) responsible for$/i);
-  if (match) return `which everyday services ${match[1]} are responsible for`;
+  if (match) return `the everyday services ${match[1]} are responsible for`;
 
   match = q.match(/^What is the public sector in Sweden$/i);
-  if (match) return 'what the public sector in Sweden is';
+  if (match) return 'the public sector in Sweden';
+
+  match = q.match(/^What does it mean that referendums in Sweden are advisory$/i);
+  if (match) return 'advisory referendums in Sweden';
+
+  match = q.match(/^What does it mean that Sweden is a constitutional monarchy$/i);
+  if (match) return "Sweden's constitutional monarchy";
+
+  match = q.match(/^What does it mean that Sweden is a secular state$/i);
+  if (match) return "Sweden's secular state";
+
+  match = q.match(/^What does it mean that elections in a democracy are secret$/i);
+  if (match) return 'secret elections in a democracy';
+
+  match = q.match(/^What does it mean that human rights apply to everyone$/i);
+  if (match) return 'human rights';
 
   match = q.match(/^Which three companies are Sweden's public service broadcasters$/i);
   if (match) return "Sweden's public service broadcasters";
 
   match = q.match(/^What does it mean that (.+)$/i);
-  if (match) return `what it means that ${match[1]}`;
+  if (match) return `the meaning of ${lowerFirst(match[1])}`;
 
   match = q.match(/^What does (.+) mean$/i);
-  if (match) return `what ${match[1]} means`;
+  if (match) return lowerEnglishNounPhrase(match[1]);
 
-  match = q.match(/^How can (.+?) (.+)$/i);
-  if (match) return `how ${match[1]} can ${match[2]}`;
+  match = q.match(/^What do (.+) mean$/i);
+  if (match) return lowerEnglishNounPhrase(match[1]);
+
+  match = q.match(/^What important roles do (.+?) play in (.+)$/i);
+  if (match) return `the important roles of ${match[1]} in ${match[2]}`;
+
+  match = q.match(/^What is one (?:aim|goal) of (.+)$/i);
+  if (match) return `one goal of ${match[1]}`;
+
+  match = q.match(/^What is one role of (.+)$/i);
+  if (match) return `one role of ${match[1]}`;
+
+  match = q.match(/^What is one task of (.+)$/i);
+  if (match) return `${englishPossessive(match[1])} tasks`;
+
+  match = q.match(/^What is important to remember about (.+)$/i);
+  if (match) return lowerEnglishNounPhrase(match[1]);
+
+  match = q.match(/^What is typical of (.+)$/i);
+  if (match) return lowerEnglishNounPhrase(match[1]);
+
+  match = q.match(/^What is common (?:during|on) (.+)$/i);
+  if (match) return `common traditions ${match[1]}`;
+
+  match = q.match(/^What applies to (.+)$/i);
+  if (match) return lowerEnglishNounPhrase(match[1]);
+
+  match = q.match(/^What is it called when (.+)$/i);
+  if (match) return `the term for ${lowerFirst(match[1])}`;
+
+  match = q.match(/^What can make (.+?) stronger$/i);
+  if (match) return `${lowerEnglishNounPhrase(match[1])} and participation`;
+
+  match = q.match(/^What can happen to (.+?) when (.+)$/i);
+  if (match) return `changes in ${match[1]} when ${match[2]}`;
+
+  match = q.match(/^What can someone do to influence (.+)$/i);
+  if (match) return `ways to influence ${match[1]}`;
+
+  match = q.match(/^What did Sweden decide as the first country in the world in (.+)$/i);
+  if (match) return `Sweden's decision in ${match[1]}`;
+
+  match = q.match(/^What contributed to contacts with (.+)$/i);
+  if (match) return `contacts with ${match[1]}`;
+
+  match = q.match(/^What happens in (.+?) if (.+)$/i);
+  if (match) return `${match[1]} when ${match[2]}`;
+
+  match = q.match(/^What happens during (.+)$/i);
+  if (match) return lowerEnglishNounPhrase(match[1]);
+
+  match = q.match(/^What do (.+?) have in common$/i);
+  if (match) return `common features of ${match[1]}`;
+
+  match = q.match(/^What has (.+?) changed$/i);
+  if (match) return `${englishPossessive(match[1])} changes`;
+
+  match = q.match(/^What did (.+?) gain the right to do in Sweden in (.+)$/i);
+  if (match) return `${englishPossessive(match[1])} rights in Sweden in ${match[2]}`;
+
+  match = q.match(/^What does the state finance within (.+)$/i);
+  if (match) return `state financing within ${match[1]}`;
+
+  match = q.match(/^What does (.+?) traditionally celebrate in (.+)$/i);
+  if (match) return `${match[1]} in ${match[2]}`;
+
+  match = q.match(/^What changed through (.+)$/i);
+  if (match) return lowerEnglishNounPhrase(match[1]);
+
+  match = q.match(/^What exists in different places in Sweden for (.+)$/i);
+  if (match) return `places in Sweden for ${match[1]}`;
+
+  match = q.match(/^What does (.+?) give everyone the right to do$/i);
+  if (match) return `the rights in ${match[1]}`;
+
+  match = q.match(/^What do (.+?) do in the labour market$/i);
+  if (match) return `${match[1]} in the labour market`;
+
+  match = q.match(/^What happened (.+)$/i);
+  if (match) return `the event ${match[1]}`;
+
+  match = q.match(/^What usually happens on (.+)$/i);
+  if (match) return `traditions on ${match[1]}`;
+
+  match = q.match(/^What is the Lucia celebration largely about in Sweden$/i);
+  if (match) return 'the Lucia celebration in Sweden';
+
+  match = q.match(/^What is included in (.+)$/i);
+  if (match) return lowerEnglishNounPhrase(match[1]);
+
+  match = q.match(/^What does (.+?) regulate$/i);
+  if (match) return lowerEnglishNounPhrase(match[1]);
+
+  match = q.match(/^What does (.+?) say about (.+)$/i);
+  if (match) return `${match[1]} and ${match[2]}`;
+
+  match = q.match(/^What does (.+?) protect regarding (.+)$/i);
+  if (match) return `${match[1]} and ${match[2]}`;
+
+  match = q.match(/^What does (.+?) protect$/i);
+  if (match) return lowerEnglishNounPhrase(match[1]);
+
+  match = q.match(/^What is stated on (.+)$/i);
+  if (match) return `${englishPossessive(match[1])} contents`;
+
+  match = q.match(/^What is marked on (.+)$/i);
+  if (match) return `${match[1]} in Sweden`;
+
+  match = q.match(/^What was the goal of (.+)$/i);
+  if (match) return `${englishPossessive(match[1])} goal`;
+
+  match = q.match(/^What was (.+?) important for$/i);
+  if (match) return `${englishPossessive(match[1])} importance`;
+
+  match = q.match(/^What was (.+)$/i);
+  if (match) return lowerEnglishNounPhrase(match[1]);
+
+  match = q.match(/^What became permitted for (.+?) in (.+)$/i);
+  if (match) return `religious freedom for ${match[1]} in ${match[2]}`;
+
+  match = q.match(/^What do (.+?) offer$/i);
+  if (match) return `${englishPossessive(match[1])} activities`;
+
+  match = q.match(/^What does (.+?) work to do$/i);
+  if (match) return `${englishPossessive(match[1])} work`;
+
+  match = q.match(/^What does (.+?) promote$/i);
+  if (match) return `${englishPossessive(match[1])} work`;
+
+  match = q.match(/^What did (.+?) choose to do after (.+)$/i);
+  if (match) return `${englishPossessive(match[1])} choice after ${match[2]}`;
+
+  if (/^Which islands are Sweden's two largest$/i.test(q)) return "Sweden's largest islands";
+  if (/^Which are Sweden's three largest lakes$/i.test(q)) return "Sweden's largest lakes";
+  if (/^Which groups are Sweden's five national minorities$/i.test(q))
+    return "Sweden's national minorities";
+  if (/^Which natural resources are important in Sweden$/i.test(q))
+    return "Sweden's natural resources";
+
+  match = q.match(/^Which of the following is part of (.+)$/i);
+  if (match) return lowerEnglishNounPhrase(match[1]);
+
+  match = q.match(/^Which example is part of (.+)$/i);
+  if (match) return `examples in ${match[1]}`;
+
+  match = q.match(/^Which answer gives examples of (.+)$/i);
+  if (match) return `examples of ${match[1]}`;
+
+  match = q.match(/^What support can (.+?) provide to (.+)$/i);
+  if (match) return `${englishPossessive(match[1])} support for ${match[2]}`;
+
+  match = q.match(/^What responsibility do (.+?) have within (.+)$/i);
+  if (match) return `${englishPossessive(match[1])} responsibility within ${match[2]}`;
+
+  match = q.match(/^What responsibility does (.+?) have for (.+)$/i);
+  if (match) return `${englishPossessive(match[1])} responsibility for ${match[2]}`;
+
+  match = q.match(/^What help can (.+?) receive from (.+?) to (.+)$/i);
+  if (match) return `${match[2]} support for ${match[1]}`;
+
+  match = q.match(/^Which law marked (.+)$/i);
+  if (match) return `the law for ${match[1]}`;
+
+  match = q.match(/^Which list contains (.+)$/i);
+  if (match) return `the list of ${match[1]}`;
+
+  match = q.match(/^Which religion is described as (.+)$/i);
+  if (match) return `the religion described as ${match[1]}`;
+
+  match = q.match(/^Which three companies are called (.+) in Sweden$/i);
+  if (match) return `${match[1]} companies in Sweden`;
+
+  match = q.match(/^Which holiday ends (.+)$/i);
+  if (match) return `the holiday that ends ${match[1]}`;
+
+  match = q.match(/^Which holiday is celebrated (.+)$/i);
+  if (match) return `the holiday celebrated ${match[1]}`;
+
+  match = q.match(/^What right (?:do|does) (.+?) have (.+)$/i);
+  if (match) return `the right ${match[1]} have ${match[2]}`;
+
+  match = q.match(/^What role do (.+?) have in (.+)$/i);
+  if (match) return `${englishPossessive(match[1])} role in ${match[2]}`;
+
+  match = q.match(/^Which tradition does (.+?) have historical roots in$/i);
+  if (match) return `${englishPossessive(match[1])} historical roots`;
+
+  match = q.match(/^Which (.+?) are (.+?) responsible for$/i);
+  if (match) return `${match[1]} ${match[2]} are responsible for`;
+
+  match = q.match(/^Which (.+?) are part of (.+)$/i);
+  if (match) return `${match[1]} in ${match[2]}`;
+
+  match = q.match(/^Which (.+?) are found in (.+)$/i);
+  if (match) return `${match[1]} in ${match[2]}`;
+
+  match = q.match(/^Which (.+?) are still common in (.+)$/i);
+  if (match) return `${match[1]} still common in ${match[2]}`;
+
+  match = q.match(/^Which (.+?) exist in (.+)$/i);
+  if (match) return `${match[1]} in ${match[2]}`;
+
+  match = q.match(/^Which (.+?) do (.+?) celebrate (.+)$/i);
+  if (match) return `${match[1]} ${match[2]} celebrate ${match[3]}`;
+
+  match = q.match(/^Which (.+?) can (.+)$/i);
+  if (match) return `${match[1]} that can ${match[2]}`;
+
+  match = q.match(/^Who pays tax in Sweden$/i);
+  if (match) return 'tax payment in Sweden';
+
+  match = q.match(/^Which requirements apply to (.+)$/i);
+  if (match) return `the requirements for ${match[1]}`;
+
+  match = q.match(/^What rules apply to (.+)$/i);
+  if (match) return `the rules for ${match[1]}`;
+
+  match = q.match(/^Which three levels share (.+)$/i);
+  if (match) return "Sweden's political responsibility levels";
+
+  match = q.match(/^Which four popular movements were (.+)$/i);
+  if (match) return `the popular movements that were ${match[1]}`;
+
+  match = q.match(/^Which holidays are examples of (.+)$/i);
+  if (match) return `examples of ${match[1]}`;
 
   match = q.match(/^Who chooses (.+)$/i);
-  if (match) return `who chooses ${match[1]}`;
+  if (match) return `the choice of ${match[1]}`;
 
-  match = q.match(/^When (.+)$/i);
-  if (match) return `when ${lowerFirst(match[1])}`;
+  match = q.match(/^How old must a person be to have the right to vote$/i);
+  if (match) return 'the voting-age requirement';
+
+  match = q.match(/^How old must a person be to (.+)$/i);
+  if (match) return `the age requirement to ${match[1]}`;
+
+  match = q.match(/^How do (.+?) choose (.+)$/i);
+  if (match) return `${englishPossessive(match[1])} choice of ${match[2]}`;
+
+  match = q.match(/^How many (.+?) does (.+?) have$/i);
+  if (match) return `the number of ${match[1]} in ${match[2]}`;
+
+  match = q.match(/^How many (.+?) is (.+?) divided into$/i);
+  if (match) return `the number of ${match[1]} in ${match[2]}`;
+
+  match = q.match(/^How often are (.+?) held(?: in Sweden)?$/i);
+  if (match) return `the interval for ${match[1]}${/\bin Sweden$/i.test(q) ? ' in Sweden' : ''}`;
+
+  match = q.match(/^What minimum share of votes must (.+?) receive to (.+)$/i);
+  if (match) return `the vote threshold to ${match[2]}`;
+
+  match = q.match(/^What share of the workforce works in (.+)$/i);
+  if (match) return `the workforce share in ${match[1]}`;
+
+  match = q.match(/^How are wages set in Sweden$/i);
+  if (match) return 'wage-setting in Sweden';
+
+  match = q.match(/^How does (.+?) help with (.+)$/i);
+  if (match) return `${englishPossessive(match[1])} help with ${match[2]}`;
+
+  match = q.match(/^How does (.+?) make it easier to (.+)$/i);
+  if (match) return `${englishPossessive(match[1])} role in making it easier to ${match[2]}`;
+
+  match = q.match(/^How are (.+?) published today$/i);
+  if (match) return `${englishPossessive(match[1])} publication today`;
+
+  match = q.match(/^How did Sweden act toward NATO during the Cold War$/i);
+  if (match) return "Sweden's conduct toward NATO during the Cold War";
+
+  match = q.match(/^How are roles divided among (.+)$/i);
+  if (match) return `the division of roles among ${match[1]}`;
+
+  match = q.match(/^How can people influence society and participate in democracy$/i);
+  if (match) return 'democratic participation';
+
+  match = q.match(/^How can (.+?) affect (.+)$/i);
+  if (match) return `${match[1]} and ${match[2]}`;
+
+  match = q.match(/^How can (.+?) earn income$/i);
+  if (match) return `${englishPossessive(match[1])} income sources`;
+
+  match = q.match(
+    /^How can (.+?) be provided by a private company but still be funded by tax revenue$/i,
+  );
+  if (match) return `a privately run ${match[1].replace(/^a\s+/i, '')} with public funding`;
+
+  match = q.match(/^How do many people in Sweden celebrate (.+?) even when (.+)$/i);
+  if (match) return `${match[1]} celebrations in Sweden`;
+
+  match = q.match(/^Through which two bodies does (.+?) mainly take place$/i);
+  if (match) return `the bodies for ${match[1]}`;
+
+  match = q.match(/^From what age is (.+)$/i);
+  if (match) return `the age for ${match[1]}`;
+
+  match = q.match(/^Since what year has (.+)$/i);
+  if (match) return `the year when ${match[1]}`;
+
+  match = q.match(/^In which year did (.+?) become (.+)$/i);
+  if (match) return `the year when ${match[1]} became ${match[2]}`;
+
+  match = q.match(/^In which year was (.+?) held in which (.+)$/i);
+  if (match) return `the year when ${match[1]} was held with ${match[2]}`;
+
+  match = q.match(/^In what year did (.+)$/i);
+  if (match) return `the year when ${lowerFirst(match[1])}`;
+
+  match = q.match(/^When is (.+?) (?:celebrated|observed)(?: in Sweden)?$/i);
+  if (match) return `the timing of ${match[1]}${/\bin Sweden$/i.test(q) ? ' in Sweden' : ''}`;
+
+  match = q.match(/^When are (.+?) celebrated$/i);
+  if (match) return `the timing of ${match[1]}`;
+
+  match = q.match(/^When does (.+?) occur(?: in Sweden)?$/i);
+  if (match) return `the timing of ${match[1]}${/\bin Sweden$/i.test(q) ? ' in Sweden' : ''}`;
+
+  match = q.match(/^When were (.+?) built$/i);
+  if (match) return `the time when ${match[1]} were built`;
+
+  match = q.match(/^Why do voters (.+)$/i);
+  if (match) return `the reason voters ${match[1]}`;
+
+  match = q.match(/^Why was (.+?) created (.+)$/i);
+  if (match) return `the reason ${match[1]} was created ${match[2]}`;
+
+  match = q.match(/^Why did (.+?) grow (.+)$/i);
+  if (match) return `the reason ${match[1]} grew ${match[2]}`;
+
+  match = q.match(/^Why is (.+?) called (.+)$/i);
+  if (match) return `the name ${match[2]}`;
+
+  match = q.match(/^Why does (.+?) have (.+)$/i);
+  if (match) return `the reason ${match[1]} has ${match[2]}`;
+
+  match = q.match(/^Why is (.+?) needed (.+)$/i);
+  if (match) return `the reason ${match[1]} is needed ${match[2]}`;
+
+  match = q.match(/^Why can (.+?) (.+)$/i);
+  if (match) return `the reason ${match[1]} can ${match[2]}`;
+
+  match =
+    q.match(/^Which of the following tasks belongs to (.+)$/i) ??
+    q.match(/^Which task belongs to (.+)$/i);
+  if (match) return `${englishPossessive(match[1])} tasks`;
+
+  match = q.match(/^Which statement describes (.+)$/i);
+  if (match) return lowerEnglishNounPhrase(match[1]);
+
+  match = q.match(/^Which statement is correct about (.+)$/i);
+  if (match) return lowerEnglishNounPhrase(match[1]);
+
+  match = q.match(/^Which statement about (.+?) is correct$/i);
+  if (match) return lowerEnglishNounPhrase(match[1]);
+
+  match = q.match(/^Which statement best matches (.+)$/i);
+  if (match) return lowerEnglishNounPhrase(match[1]);
+
+  match = q.match(/^What do families commonly do on (.+)$/i);
+  if (match) return `family traditions on ${match[1]}`;
+
+  match = q.match(/^What do many people do on (.+)$/i);
+  if (match) return `traditions on ${match[1]}`;
+
+  match = q.match(/^What does Lucia usually wear in (.+)$/i);
+  if (match) return `Lucia's clothing in ${match[1]}`;
+
+  match = q.match(/^What do children often do with (.+)$/i);
+  if (match) return `children's ${match[1]}`;
+
+  match = q.match(/^What is commonly served (.+)$/i);
+  if (match) return `foods served ${match[1]}`;
+
+  match = q.match(/^What is (.+)$/i);
+  if (match) return lowerEnglishNounPhrase(match[1]);
 
   return lowerFirst(q);
 }
@@ -1629,8 +2563,8 @@ function generatedSingleChoiceGenericPromptSv(
 ): string {
   const topic = embeddedQuestionTopicSv(source.questionSv);
   return variant === 'judgement'
-    ? `Vilken uppgift stämmer när det gäller ${topic}?`
-    : `Vad stämmer när det gäller ${topic}?`;
+    ? `Vilken uppgift stämmer om ${topic}?`
+    : `Vad stämmer om ${topic}?`;
 }
 
 function generatedSingleChoiceGenericPromptEn(
@@ -1639,8 +2573,8 @@ function generatedSingleChoiceGenericPromptEn(
 ): string {
   const topic = embeddedQuestionTopicEn(source.questionEn);
   return variant === 'judgement'
-    ? `Which fact is correct regarding ${topic}?`
-    : `What is correct regarding ${topic}?`;
+    ? `Which fact is correct about ${topic}?`
+    : `What is correct about ${topic}?`;
 }
 
 function judgementPromptSv(source: PracticeQuestion): string {
@@ -1667,10 +2601,7 @@ function singleChoicePromptSv(source: PracticeQuestion): string {
   }
   const prompt = generatedSingleChoicePromptFromSourceSv(source, 'section-practice');
   if (prompt) return prompt;
-  return (
-    generatedSingleChoiceClozePromptSv(source, correctOption(source)) ??
-    generatedSingleChoiceGenericPromptSv(source, 'section-practice')
-  );
+  return generatedSingleChoiceGenericPromptSv(source, 'section-practice');
 }
 
 function singleChoicePromptEn(source: PracticeQuestion): string {
@@ -1679,10 +2610,7 @@ function singleChoicePromptEn(source: PracticeQuestion): string {
   }
   const prompt = generatedSingleChoicePromptFromSourceEn(source, 'section-practice');
   if (prompt) return prompt;
-  return (
-    generatedSingleChoiceClozePromptEn(source, correctOption(source)) ??
-    generatedSingleChoiceGenericPromptEn(source, 'section-practice')
-  );
+  return generatedSingleChoiceGenericPromptEn(source, 'section-practice');
 }
 
 function generatedSingleChoiceClozePromptSv(
@@ -1721,29 +2649,25 @@ function generatedSingleChoicePromptFromSourceSv(
   let match = q.match(/^Vilket påstående beskriver (.+)$/i);
   if (match) {
     return variant === 'judgement'
-      ? `Vilken beskrivning stämmer för ${match[1]}?`
+      ? `Vilken uppgift stämmer om ${match[1]}?`
       : `Vad gäller för ${match[1]}?`;
   }
 
   match = q.match(/^Vad betyder det att (.+)$/i);
   if (match) {
     return variant === 'judgement'
-      ? `Vilken innebörd stämmer för ${match[1]}?`
+      ? `Vad stämmer om att ${match[1]}?`
       : `Vad innebär det att ${match[1]}?`;
   }
 
   match = q.match(/^Vad betyder (?!det att\b)(.+)$/i);
   if (match) {
-    return variant === 'judgement'
-      ? `Vilken beskrivning stämmer för ${match[1]}?`
-      : `Vad innebär ${match[1]}?`;
+    return variant === 'judgement' ? `Vad stämmer om ${match[1]}?` : `Vad innebär ${match[1]}?`;
   }
 
   match = q.match(/^Vad innebär (.+)$/i);
   if (match) {
-    return variant === 'judgement'
-      ? `Vilken beskrivning stämmer för ${match[1]}?`
-      : `Vad betyder ${match[1]}?`;
+    return variant === 'judgement' ? `Vad stämmer om ${match[1]}?` : `Vad betyder ${match[1]}?`;
   }
 
   match = q.match(/^Vad gäller för (.+)$/i);
@@ -1827,7 +2751,7 @@ function generatedSingleChoicePromptFromSourceSv(
   match = q.match(/^Vad kännetecknar (.+)$/i);
   if (match) {
     return variant === 'judgement'
-      ? `Vilken beskrivning stämmer för ${match[1]}?`
+      ? `Vilken uppgift stämmer om ${match[1]}?`
       : `Vad är typiskt för ${match[1]}?`;
   }
 
@@ -1879,7 +2803,7 @@ function generatedSingleChoicePromptFromSourceEn(
   let match = q.match(/^Which statement describes (.+)$/i);
   if (match) {
     return variant === 'judgement'
-      ? `Which description is correct for ${match[1]}?`
+      ? `Which fact is correct about ${match[1]}?`
       : `What is correct about ${match[1]}?`;
   }
 
@@ -1893,7 +2817,7 @@ function generatedSingleChoicePromptFromSourceEn(
   match = q.match(/^What does (.+) mean$/i);
   if (match) {
     return variant === 'judgement'
-      ? `Which description is correct for ${match[1]}?`
+      ? `What is correct about ${match[1]}?`
       : `What is meant by ${match[1]}?`;
   }
 
@@ -1979,7 +2903,7 @@ function generatedSingleChoicePromptFromSourceEn(
   match = q.match(/^What characterizes (.+)$/i);
   if (match) {
     return variant === 'judgement'
-      ? `Which description is correct for ${match[1]}?`
+      ? `Which fact is correct about ${match[1]}?`
       : `What is typical of ${match[1]}?`;
   }
 
@@ -2063,6 +2987,39 @@ function universalHumanRightsStatementEn(answer: string): string | null {
   return null;
 }
 
+
+function constitution1809ChangeStatementSv(answer: string): string | null {
+  if (/^Kungens makt begränsades$/i.test(answer)) {
+    return '1809 års nya grundlag begränsade kungens makt';
+  }
+  if (/^Sverige gick med i EU$/i.test(answer)) {
+    return '1809 års nya grundlag innebar inte att Sverige gick med i EU';
+  }
+  if (/^Kvinnor fick rösträtt direkt$/i.test(answer)) {
+    return '1809 års nya grundlag gav inte kvinnor rösträtt direkt';
+  }
+  if (/^Riksdagen avskaffades$/i.test(answer)) {
+    return '1809 års nya grundlag avskaffade inte riksdagen';
+  }
+  return null;
+}
+
+function constitution1809ChangeStatementEn(answer: string): string | null {
+  if (/^The king’s power was limited$/i.test(answer)) {
+    return "The 1809 constitution limited the king's power";
+  }
+  if (/^Sweden joined the EU$/i.test(answer)) {
+    return 'The 1809 constitution did not make Sweden join the EU';
+  }
+  if (/^Women received the right to vote immediately$/i.test(answer)) {
+    return 'The 1809 constitution did not immediately give women the right to vote';
+  }
+  if (/^The Riksdag was abolished$/i.test(answer)) {
+    return 'The 1809 constitution did not abolish the Riksdag';
+  }
+  return null;
+}
+
 function politicalDemocracyRightStatementSv(answer: string): string | null {
   if (/^(?:Att\s+)?försöka övertyga andra om sina politiska idéer$/i.test(answer)) {
     return 'I en demokrati får människor, grupper och partier försöka övertyga andra om sina politiska idéer';
@@ -2079,6 +3036,26 @@ function politicalDemocracyRightStatementEn(answer: string): string | null {
   }
   if (/^(?:To\s+)?stop others from voting$/i.test(answer)) {
     return 'In a democracy, people, groups, and parties may not stop others from voting';
+  }
+  return null;
+}
+
+function advisoryReferendumStatementSv(answer: string): string | null {
+  if (/^politikerna (?:behöver inte|måste inte) följa resultatet$/i.test(answer)) {
+    return 'I Sverige är folkomröstningar rådgivande, så politiker behöver inte följa resultatet';
+  }
+  if (/^politikerna måste alltid följa resultatet$/i.test(answer)) {
+    return 'I Sverige är folkomröstningar bindande, så politiker är skyldiga att följa resultatet';
+  }
+  return null;
+}
+
+function advisoryReferendumStatementEn(answer: string): string | null {
+  if (/^politicians do not have to follow the result$/i.test(answer)) {
+    return 'In Sweden, referendums are advisory, so politicians do not have to follow the result';
+  }
+  if (/^politicians must always follow the result$/i.test(answer)) {
+    return 'In Sweden, referendums are binding, so politicians are required to follow the result';
   }
   return null;
 }
@@ -2106,6 +3083,15 @@ export function deriveCivicStatementSv(source: PracticeQuestion, option: Questio
     }
     if (/^De får aldrig sälja reklamplats$/i.test(answer)) {
       return 'Reklamfinansierade medier får aldrig sälja reklamplats';
+    }
+  }
+
+  if (source.id === 'q155') {
+    if (/^Ett privat företag kan utföra tjänsten medan skattepengar betalar den$/i.test(answer)) {
+      return 'En välfärdstjänst kan utföras av ett privat företag och ändå finansieras med skattepengar';
+    }
+    if (/^Tjänsten måste alltid betalas helt med privata lån$/i.test(answer)) {
+      return 'En välfärdstjänst måste alltid betalas helt med privata lån';
     }
   }
 
@@ -2250,19 +3236,8 @@ export function deriveCivicStatementSv(source: PracticeQuestion, option: Questio
       if (statement) return statement;
     }
     if (/^folkomröstningar i Sverige är rådgivande$/i.test(match[1])) {
-      return `Att ${match[1]} betyder att ${answer
-        .replace(
-          /^politikerna behöver inte följa resultatet$/i,
-          'politikerna inte behöver följa resultatet',
-        )
-        .replace(
-          /^politikerna måste inte följa resultatet$/i,
-          'politikerna inte behöver följa resultatet',
-        )
-        .replace(
-          /^politikerna måste alltid följa resultatet$/i,
-          'politikerna alltid måste följa resultatet',
-        )}`;
+      const statement = advisoryReferendumStatementSv(answer);
+      if (statement) return statement;
     }
     if (/^val i en demokrati är hemliga$/i.test(match[1])) {
       if (/^(?:Att\s+)?väljare inte behöver avslöja hur de röstar$/i.test(answer)) {
@@ -2445,6 +3420,11 @@ export function deriveCivicStatementSv(source: PracticeQuestion, option: Questio
 
   match = q.match(/^Vilket svar ger exempel på (.+)$/i);
   if (match) return `${upperFirst(answer)} är exempel på ${match[1]}`;
+
+  if (source.id === 'q078') {
+    const statement = constitution1809ChangeStatementSv(answer);
+    if (statement) return statement;
+  }
 
   match = q.match(/^Vad förändrades genom (.+)$/i);
   if (match)
@@ -2762,6 +3742,15 @@ export function deriveCivicStatementEn(source: PracticeQuestion, option: Questio
     }
   }
 
+  if (source.id === 'q155') {
+    if (/^A private company can provide the service while tax revenue funds it$/i.test(answer)) {
+      return 'A welfare service can be provided by a private company while tax revenue funds it';
+    }
+    if (/^The service must always be paid for entirely with private loans$/i.test(answer)) {
+      return 'A welfare service must always be paid for entirely with private loans';
+    }
+  }
+
   if (source.id === 'q152') {
     if (
       /^They are also available online and updated with news several times per day$/i.test(answer)
@@ -2922,6 +3911,10 @@ export function deriveCivicStatementEn(source: PracticeQuestion, option: Questio
       const statement = universalHumanRightsStatementEn(answer);
       if (statement) return statement;
     }
+    if (/^referendums in Sweden are advisory$/i.test(match[1])) {
+      const statement = advisoryReferendumStatementEn(answer);
+      if (statement) return statement;
+    }
     if (/^Sweden is a constitutional monarchy$/i.test(match[1])) {
       const clause = stripLeadingPurposeEn(answer)
         .replace(/^that /i, '')
@@ -2978,6 +3971,13 @@ export function deriveCivicStatementEn(source: PracticeQuestion, option: Questio
     return `The foremost task of ${lowerLeadingEnglishArticle(match[1])} is ${englishInfinitive(
       stripLeadingPurposeEn(answer),
     )}`;
+  }
+
+  match = q.match(/^What is the main responsibility of (.+)$/i);
+  if (match) {
+    return `The main responsibility of ${lowerLeadingEnglishArticle(
+      match[1],
+    )} is ${englishResponsibilityPredicate(answer)}`;
   }
 
   match = q.match(/^Which example describes (.+)$/i);
@@ -3114,6 +4114,11 @@ export function deriveCivicStatementEn(source: PracticeQuestion, option: Questio
 
   match = q.match(/^Which answer gives examples of (.+)$/i);
   if (match) return `${upperFirst(answer)} are examples of ${match[1]}`;
+
+  if (source.id === 'q078') {
+    const statement = constitution1809ChangeStatementEn(answer);
+    if (statement) return statement;
+  }
 
   match = q.match(/^What changed through (.+)$/i);
   if (match) return `The change through ${match[1]} was that ${lowerLeadingEnglishArticle(answer)}`;
@@ -3278,6 +4283,9 @@ export function deriveCivicStatementEn(source: PracticeQuestion, option: Questio
 
   match = q.match(/^What is one goal of (.+)$/i);
   if (match) return `One goal of ${match[1]} is to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+
+  match = q.match(/^What is one aim of (.+)$/i);
+  if (match) return `One aim of ${match[1]} is that ${lowerFirst(stripLeadingPurposeEn(answer))}`;
 
   match = q.match(/^When were (.+?) built$/i);
   if (match) return `${upperFirst(match[1])} were built ${lowerFirst(answer)}`;

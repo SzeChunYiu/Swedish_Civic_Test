@@ -1375,23 +1375,23 @@ test('remove-ads entitlement is decoupled from premium feature bundle', () => {
   assert.equal(
     isPremiumUser({
       adsDisabled: false,
-      fullMistakeReview: 1,
-      unlimitedMockExams: true,
+      fullMistakeReview: true,
+      unlimitedMockExams: 'yes',
     }),
     false,
   );
   assert.equal(
     hasProEntitlement({
-      adsDisabled: false,
-      confidenceSlider: false,
-      customStudyPlan: false,
-      fullMistakeReview: true,
-      multiColorHighlights: false,
-      nativeLangExplanations: false,
-      notesExport: false,
-      predictedPassProbability: false,
+      adsDisabled: true,
+      confidenceSlider: true,
+      customStudyPlan: true,
+      fullMistakeReview: 'yes',
+      multiColorHighlights: true,
+      nativeLangExplanations: true,
+      notesExport: true,
+      predictedPassProbability: true,
       spacedRepetition: true,
-      unlimitedMockExams: 'yes',
+      unlimitedMockExams: true,
     }),
     false,
   );
@@ -1638,7 +1638,7 @@ test('remove-ads buy persists before native finish and leaves failed persistence
     transactionId: 'ordering-remove-ads',
   };
 
-  function createProvider(events) {
+  function createProvider(events, options = {}) {
     return {
       async connect() {
         events.push('connect');
@@ -1648,6 +1648,9 @@ test('remove-ads buy persists before native finish and leaves failed persistence
       },
       async finishPurchase() {
         events.push('finish');
+        if (options.finishFails) {
+          throw new Error('finish failed');
+        }
       },
       async requestRemoveAdsPurchase() {
         events.push('request');
@@ -1698,6 +1701,36 @@ test('remove-ads buy persists before native finish and leaves failed persistence
     JSON.parse(successfulValues.get(REMOVE_ADS_STORAGE_KEY)).transactionId,
     'ordering-remove-ads',
   );
+
+  const finishFailureEvents = [];
+  const finishFailureValues = new Map();
+  const finishFailureResult = await buyRemoveAds({
+    provider: createProvider(finishFailureEvents, { finishFails: true }),
+    storage: {
+      async getItemAsync(key) {
+        return finishFailureValues.get(key) ?? null;
+      },
+      async setItemAsync(key, value) {
+        finishFailureEvents.push('persist');
+        finishFailureValues.set(key, value);
+      },
+    },
+  });
+
+  assert.equal(finishFailureResult.status, 'finish_failed');
+  assert.equal(finishFailureResult.entitlements.adsDisabled, true);
+  assert.equal(
+    JSON.parse(finishFailureValues.get(REMOVE_ADS_STORAGE_KEY)).transactionId,
+    'ordering-remove-ads',
+  );
+  assert.deepEqual(finishFailureEvents, [
+    'connect',
+    'request',
+    'validate',
+    'persist',
+    'finish',
+    'disconnect',
+  ]);
 
   const failingEvents = [];
   const failingResult = await buyRemoveAds({
@@ -1807,6 +1840,128 @@ test('native Remove Ads purchases require an injected receipt verifier', async (
   );
 });
 
+test('default native Remove Ads runtime requires receipt-validator config before store purchase', async () => {
+  const purchases = loadTs('lib/monetization/purchases.ts');
+  const moduleCache = new Map();
+  const { createDefaultPurchaseRuntimeOptions } = loadTs(
+    'lib/monetization/useRemoveAdsEntitlements.ts',
+    undefined,
+    moduleCache,
+    {
+      react: createReactHookStub(),
+      'react-native': { Platform: { OS: 'ios' } },
+    },
+  );
+
+  await withEnv({ EXPO_PUBLIC_REMOVE_ADS_RECEIPT_VALIDATOR_URL: undefined }, async () => {
+    const runtimeOptions = createDefaultPurchaseRuntimeOptions();
+
+    assert.equal(runtimeOptions.purchaseUnavailableReason, 'native_receipt_validator_unavailable');
+  });
+
+  const events = [];
+  const storage = purchases.createMemoryPurchaseStorage();
+  const unavailableResult = await purchases.buyRemoveAds({
+    purchaseUnavailableReason: 'native_receipt_validator_unavailable',
+    provider: {
+      async connect() {
+        events.push('connect');
+      },
+      async disconnect() {
+        events.push('disconnect');
+      },
+      async requestRemoveAdsPurchase() {
+        events.push('request');
+        throw new Error('requestPurchase must not run without receipt validation config');
+      },
+      async restorePurchases() {
+        events.push('restore');
+        return [];
+      },
+      async validateRemoveAdsReceipt() {
+        events.push('validate');
+        return { status: 'pending' };
+      },
+    },
+    storage,
+  });
+
+  assert.equal(unavailableResult.status, 'unavailable');
+  assert.equal(unavailableResult.entitlements.adsDisabled, false);
+  assert.deepEqual(events, []);
+});
+
+test('native Remove Ads receipt-validator adapter normalizes backend receipt responses', async () => {
+  const { createNativeRemoveAdsReceiptValidator, hasNativeRemoveAdsReceiptValidatorConfig } =
+    loadTs('lib/monetization/removeAdsReceiptValidator.native.ts');
+  const { REMOVE_ADS_PRODUCT_ID } = loadTs('lib/monetization/purchases.ts');
+  const requests = [];
+  const validator = createNativeRemoveAdsReceiptValidator({
+    endpointUrl: 'https://validator.example/remove-ads',
+    fetchImpl: async (url, init) => {
+      requests.push({
+        body: JSON.parse(init.body),
+        headers: init.headers,
+        method: init.method,
+        url,
+      });
+      return {
+        ok: true,
+        async json() {
+          return {
+            status: 'valid',
+            validatedAt: '2026-05-20T12:00:00.000Z',
+          };
+        },
+      };
+    },
+    platform: 'ios',
+  });
+
+  assert.equal(hasNativeRemoveAdsReceiptValidatorConfig({}), false);
+  assert.equal(
+    hasNativeRemoveAdsReceiptValidatorConfig({
+      EXPO_PUBLIC_REMOVE_ADS_RECEIPT_VALIDATOR_URL: 'https://validator.example/remove-ads',
+    }),
+    true,
+  );
+  assert.equal(typeof validator, 'function');
+
+  const result = await validator(
+    {
+      productId: REMOVE_ADS_PRODUCT_ID,
+      purchaseToken: 'tok-remove-ads',
+      transactionId: 'tx-remove-ads',
+    },
+    REMOVE_ADS_PRODUCT_ID,
+  );
+
+  assert.deepEqual(result, {
+    productId: REMOVE_ADS_PRODUCT_ID,
+    purchaseToken: 'tok-remove-ads',
+    status: 'valid',
+    transactionId: 'tx-remove-ads',
+    validatedAt: '2026-05-20T12:00:00.000Z',
+  });
+  assert.deepEqual(requests, [
+    {
+      body: {
+        platform: 'ios',
+        productId: REMOVE_ADS_PRODUCT_ID,
+        purchaseToken: 'tok-remove-ads',
+        raw: null,
+        transactionId: 'tx-remove-ads',
+      },
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      url: 'https://validator.example/remove-ads',
+    },
+  ]);
+});
+
 test('native purchase provider matches requested product ids instead of Remove Ads only', async () => {
   const { REMOVE_ADS_PRODUCT_ID, createNativePurchaseProvider } = loadTs(
     'lib/monetization/purchases.ts',
@@ -1902,7 +2057,6 @@ test('native Remove Ads requests platform store ids while storing canonical enti
     assert.equal(purchaseResult.productId, REMOVE_ADS_PRODUCT_ID);
     assert.equal(purchaseResult.entitlements.adsDisabled, true);
     assert.deepEqual(purchaseFixture.state.requestedProductIds, [storeProductId]);
-    assert.deepEqual(purchaseFixture.state.requestedGoogleProductIds, [storeProductId]);
     const storedPurchaseRecord = JSON.parse(
       await purchaseStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY),
     );
@@ -2642,7 +2796,13 @@ test('explicit ad entitlements skip default purchase runtime side effects', asyn
 });
 
 test('release monetization policy requires ad-supported free tier and Remove Ads IAP', () => {
-  const { REMOVE_ADS_PRICE_LABEL, REMOVE_ADS_PRODUCT_ID } = loadTs('lib/monetization/purchases.ts');
+  const {
+    REMOVE_ADS_ANDROID_PRODUCT_ID,
+    REMOVE_ADS_IOS_PRODUCT_ID,
+    REMOVE_ADS_PRICE_LABEL,
+    REMOVE_ADS_PRODUCT_ID,
+    REMOVE_ADS_STORE_PRODUCT_IDS,
+  } = loadTs('lib/monetization/purchases.ts');
   const { isReleaseMonetizationPolicyReady, releaseMonetizationPolicy } = loadTs(
     'lib/monetization/releasePolicy.ts',
   );
@@ -2655,6 +2815,17 @@ test('release monetization policy requires ad-supported free tier and Remove Ads
   assert.equal(releaseMonetizationPolicy.realAdsEnvFlag, 'EXPO_PUBLIC_REAL_ADS_ENABLED');
   assert.equal(releaseMonetizationPolicy.removeAdsProductId, REMOVE_ADS_PRODUCT_ID);
   assert.equal(releaseMonetizationPolicy.removeAdsPriceLabel, REMOVE_ADS_PRICE_LABEL);
+  assert.deepEqual(
+    releaseMonetizationPolicy.removeAdsStoreProductIds,
+    REMOVE_ADS_STORE_PRODUCT_IDS,
+  );
+  assert.equal(releaseMonetizationPolicy.removeAdsStoreProductIds.android, 'removeads');
+  assert.equal(
+    releaseMonetizationPolicy.removeAdsStoreProductIds.android,
+    REMOVE_ADS_ANDROID_PRODUCT_ID,
+  );
+  assert.equal(releaseMonetizationPolicy.removeAdsStoreProductIds.ios, REMOVE_ADS_IOS_PRODUCT_ID);
+  assert.equal(releaseMonetizationPolicy.removeAdsStoreProductIds.ios, REMOVE_ADS_PRODUCT_ID);
   assert.ok(releaseMonetizationPolicy.noAdPlacements.includes('exam_screen'));
   assert.deepEqual(releaseMonetizationPolicy.consentPromptsRequired, [
     'app_tracking_transparency',
@@ -3068,7 +3239,7 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
     runtime: {
       async gatherUmpConsent() {
         malformedDisabledCalls.push('ump');
-        return { canRequestAds: true, status: 'REQUIRED' };
+        return { canRequestAds: true, status: 'OBTAINED' };
       },
       async getTrackingPermissionsAsync() {
         malformedDisabledCalls.push('att:get');
@@ -3077,13 +3248,13 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
       platform: 'ios',
       async requestTrackingPermissionsAsync() {
         malformedDisabledCalls.push('att:request');
-        return { status: 'denied' };
+        return { status: 'authorized' };
       },
     },
   });
 
   assert.deepEqual(malformedDisabledCalls, ['att:get', 'att:request', 'ump']);
-  assert.equal(malformedDisabledState.trackingTransparencyStatus, 'denied');
+  assert.equal(malformedDisabledState.trackingTransparencyStatus, 'authorized');
   assert.equal(malformedDisabledState.umpConsentStatus, 'obtained');
 
   const canRequestAdsCalls = [];

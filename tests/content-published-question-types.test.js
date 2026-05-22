@@ -52,7 +52,13 @@ const luciaExplanationRoleScaffoldPattern =
   /\b(?:In a Lucia procession,\s+one person is Lucia|I ett luciatåg\s+(?:är en person Lucia|en person är Lucia))\b/i;
 const umeaDemonymOldSwedishPattern = /\bumebor\b/i;
 const referendumAdvisorySwedishNaturalnessPattern =
-  /\b(?:måste inte följa resultatet|betyder att politikerna måste (?:inte|alltid) följa resultatet)\b/i;
+  /\b(?:måste inte följa resultatet|Att folkomröstningar i Sverige är rådgivande betyder att|betyder att politikerna måste (?:inte|alltid) följa resultatet)\b/i;
+const referendumAdvisoryEnglishNaturalnessPattern =
+  /\bThat referendums in Sweden are advisory means\b/i;
+const referendumAdvisoryNaturalnessPattern = new RegExp(
+  `${referendumAdvisorySwedishNaturalnessPattern.source}|${referendumAdvisoryEnglishNaturalnessPattern.source}`,
+  'i',
+);
 const taxVatTwoConceptPattern =
   /\b(?:skatt och moms|tax and VAT|Företag betalar också skatt,\s+och moms betalas|Companies also pay tax,\s+and VAT is paid|Skatt betalas både av personer som arbetar och av företag\.\s+Moms är|Both people who work and companies pay tax\.\s+VAT is)\b/i;
 const q038OldVatDistractorPattern = /\b(?:Vilka varor som har moms|Which goods have VAT)\b/i;
@@ -66,7 +72,9 @@ const sourceRecallPromptPattern =
   /\b(?:nämns som exempel|mentioned as examples?|nämns som en anledning|mentioned as a reason|Vad nämns som exempel|What is mentioned as an example|Vilken händelse från[^?!.]*nämns|Which event from[^?!.]*mentioned)\b/i;
 const sourceCriticismStiltedEnglishPattern = /\bsource-critical\b/i;
 const publicSectorStiltedEnglishPattern =
-  /\b(?:What is meant by the public sector in Sweden|Which fact is correct regarding what the public sector in Sweden is|Activities for which the state, regions, and municipalities are responsible|The public sector(?: in Sweden)? means (?:activities|all privately owned companies))\b/i;
+  /\b(?:What is meant by the public sector in Sweden|Activities for which the state, regions, and municipalities are responsible|The public sector(?: in Sweden)? means (?:activities|all privately owned companies))\b/i;
+const generatedSingleChoiceAnswerLogicOptionPattern =
+  /\b(?:Båda påståendena är korrekta|Both statements are correct|Inget av påståendena är korrekt|Neither statement is correct)\b/i;
 const generatedIdLiteralPatterns = [
   {
     label: 'question.id equality',
@@ -108,6 +116,13 @@ function contentQuestionBankCsvRowsById(ids) {
       .filter((columns) => targetIds.has(columns[0]))
       .map((columns) => [columns[0], columns]),
   );
+}
+
+function generatedSingleChoiceIdsForTrueFalseSource(sourceQuestions, sourceId) {
+  return [
+    generatedQuestionId(sourceQuestions, sourceId, 'singleChoice'),
+    generatedQuestionId(sourceQuestions, sourceId, 'judgement'),
+  ];
 }
 
 function religiousFreedom1951QuestionIds() {
@@ -199,10 +214,60 @@ test('published question types stay answerable by quiz runtime', () => {
   );
   assert.equal(summary.questionPublicSectorEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(
+    summary.questionRegionsMainResponsibilityEnglishNaturalnessValidated,
+    summary.publishedQuestions,
+  );
+  assert.equal(
     summary.questionSourceCriticismEnglishNaturalnessValidated,
     summary.publishedQuestions,
   );
   assert.equal(summary.derivedCivicStatementPromptMirrorValidated, 2);
+});
+
+test('generated single-choice variants from true/false sources avoid both/neither answer-logic options', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const targetIds = [
+    'q002',
+    'q006',
+    'q023',
+    'q028',
+    'q031',
+    'q047',
+    'q049',
+    'q074',
+    'q091',
+    'q094',
+    'q143',
+  ].flatMap((sourceId) => generatedSingleChoiceIdsForTrueFalseSource(sourceQuestions, sourceId));
+
+  for (const bank of [generatedSiteBank, actualSiteBank]) {
+    const byId = new Map(bank.map((question) => [question.id, question]));
+    for (const id of targetIds) {
+      const question = byId.get(id);
+      assert.ok(question, `${id} should exist in generated and static banks`);
+      assert.equal(question.opts.length, 4, `${id} should stay a four-option single-choice row`);
+      assert.doesNotMatch(
+        JSON.stringify(question.opts),
+        generatedSingleChoiceAnswerLogicOptionPattern,
+        `${id} should use civic distractors, not answer-logic labels`,
+      );
+    }
+  }
+
+  const q002SingleChoiceId = generatedQuestionId(sourceQuestions, 'q002', 'singleChoice');
+  const q002Generated = generatedSiteBank.find((question) => question.id === q002SingleChoiceId);
+  const q002Actual = actualSiteBank.find((question) => question.id === q002SingleChoiceId);
+  for (const question of [q002Generated, q002Actual]) {
+    assert.ok(question, `${q002SingleChoiceId} should exist`);
+    assert.equal(question.opts[2].sv, 'Sveriges nordligaste del ligger i Skåne.');
+    assert.equal(question.opts[2].en, "Sweden's northernmost part is in Skåne.");
+    assert.equal(question.opts[3].sv, 'Sveriges nordligaste del ligger på Gotland.');
+    assert.equal(question.opts[3].en, "Sweden's northernmost part is on Gotland.");
+  }
 });
 
 test('q001 generated answer template parity includes localized true-false options', () => {
@@ -451,6 +516,9 @@ require('./scripts/validate-content.js');
 test('private welfare source and exports use natural tax-funding English', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const actualSiteBank = actualStaticQuestions();
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
   const fileFindings = [
     'data/additionalQuestions.ts',
     'content/question-bank.csv',
@@ -469,15 +537,28 @@ test('private welfare source and exports use natural tax-funding English', () =>
       privateWelfareTaxFundingStiltedEnglishPattern.test(textForQuestion(question)),
     )
     .map((question) => question.id);
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
   const q155 = generatedSiteBank.find((question) => question.id === 'q155');
-  const welfareVariantIds = ['q155', 'q776', 'q777', 'q778', 'q779'];
+  const welfareVariantIds = [
+    'q155',
+    generatedQuestionId(sourceQuestions, 'q155', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q155', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q155', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q155', 'judgement'),
+  ];
   const welfareVariants = generatedSiteBank.filter((question) =>
     welfareVariantIds.includes(question.id),
   );
+  const staticById = new Map(Array.from(actualSiteBank).map((question) => [question.id, question]));
+  const csvRows = contentQuestionBankCsvRowsById([trueStatementId, falseStatementId]);
 
   assert.deepEqual(fileFindings, []);
   assert.deepEqual(bankFindings, []);
   assert.ok(q155, 'q155 should be published in the site bank');
+  assert.ok(trueStatement, `${trueStatementId} should be published in the site bank`);
+  assert.ok(falseStatement, `${falseStatementId} should be published in the site bank`);
   assert.equal(
     q155.q.en,
     'How can a welfare service be provided by a private company but still be funded by tax revenue?',
@@ -487,11 +568,44 @@ test('private welfare source and exports use natural tax-funding English', () =>
     'A private company can provide the service while tax revenue funds it',
   );
   assert.equal(welfareVariants.length, welfareVariantIds.length);
+  assert.equal(
+    trueStatement.q.sv,
+    'En välfärdstjänst kan utföras av ett privat företag och ändå finansieras med skattepengar.',
+  );
+  assert.equal(
+    trueStatement.q.en,
+    'A welfare service can be provided by a private company while tax revenue funds it.',
+  );
+  assert.equal(trueStatement.opts[trueStatement.answer]?.en, 'True');
+  assert.equal(falseStatement.q.sv, 'En välfärdstjänst måste alltid betalas helt med privata lån.');
+  assert.equal(
+    falseStatement.q.en,
+    'A welfare service must always be paid for entirely with private loans.',
+  );
+  assert.equal(falseStatement.opts[falseStatement.answer]?.en, 'False');
+  assert.equal(csvRows.get(trueStatementId)?.[3], trueStatement.q.sv);
+  assert.equal(csvRows.get(trueStatementId)?.[4], trueStatement.q.en);
+  assert.equal(csvRows.get(trueStatementId)?.[7], 'true');
+  assert.equal(csvRows.get(falseStatementId)?.[3], falseStatement.q.sv);
+  assert.equal(csvRows.get(falseStatementId)?.[4], falseStatement.q.en);
+  assert.equal(csvRows.get(falseStatementId)?.[7], 'false');
   for (const question of welfareVariants) {
     assert.equal(
       privateWelfareTaxFundingStiltedEnglishPattern.test(textForQuestion(question)),
       false,
     );
+  }
+  for (const question of [
+    trueStatement,
+    falseStatement,
+    staticById.get(trueStatementId),
+    staticById.get(falseStatementId),
+  ]) {
+    assert.ok(question, 'q155 true/false variant should exist in generated and static banks');
+    assert.doesNotMatch(question.q.sv, /^Tjänsten\b/i);
+    assert.doesNotMatch(question.q.en, /\bthe service\b/i);
+    assert.match(question.q.sv, /\bvälfärdstjänst\b/i);
+    assert.match(question.q.en, /\bwelfare service\b/i);
   }
 });
 
@@ -529,6 +643,52 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q155 uses stilted state-welfare English wording/,
+  );
+});
+
+test('private welfare generated true/false guard rejects contextless service stems', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/lib/content/derivedQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'En välfärdstjänst kan utföras av ett privat företag och ändå finansieras med skattepengar',
+        'Ett privat företag kan utföra tjänsten medan skattepengar betalar den',
+      )
+      .replace(
+        'En välfärdstjänst måste alltid betalas helt med privata lån',
+        'Tjänsten måste alltid betalas helt med privata lån',
+      )
+      .replace(
+        'A welfare service can be provided by a private company while tax revenue funds it',
+        'A private company can provide the service while tax revenue funds it',
+      )
+      .replace(
+        'A welfare service must always be paid for entirely with private loans',
+        'The service must always be paid for entirely with private loans',
+      );
+  }
+  return contents;
+};
+process.argv.push('--focus-generated-true-false-naturalness');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /contains a generated true\/false grammar-splice stem/,
   );
 });
 
@@ -790,15 +950,21 @@ test('tradition prompts avoid literal common-to-do English', () => {
   assert.ok(q104, 'q104 should be published in the site bank');
   assert.equal(q097.q.en, 'How is New Year’s Eve on 31 December commonly celebrated in Sweden?');
   assert.equal(q104.q.en, 'How is All Saints’ Day commonly observed in Sweden?');
-  assert.equal(q097SingleChoice?.q.en, 'On New Year’s Eve, 31 December, it is common to ...?');
+  assert.equal(
+    q097SingleChoice?.q.en,
+    'What is correct about New Year’s Eve on 31 December traditions in Sweden?',
+  );
   assert.equal(
     q097Judgement?.q.en,
-    'Which fact is correct regarding how New Year’s Eve on 31 December is commonly celebrated in Sweden?',
+    'Which fact is correct about New Year’s Eve on 31 December traditions in Sweden?',
   );
-  assert.equal(q104SingleChoice?.q.en, 'On All Saints’ Day, it is common to ...?');
+  assert.equal(
+    q104SingleChoice?.q.en,
+    'What is correct about All Saints’ Day traditions in Sweden?',
+  );
   assert.equal(
     q104Judgement?.q.en,
-    'Which fact is correct regarding how All Saints’ Day is commonly observed in Sweden?',
+    'Which fact is correct about All Saints’ Day traditions in Sweden?',
   );
 });
 
@@ -841,7 +1007,10 @@ test('Christmas tree prompts keep natural English wording', () => {
   assert.deepEqual(fileFindings, []);
   assert.deepEqual(bankFindings, []);
   assert.equal(q138?.q.en, 'What do many people do with a Christmas tree at Christmas in Sweden?');
-  assert.equal(q138SingleChoice?.q.en, 'In Sweden, at Christmas, many people ...?');
+  assert.equal(
+    q138SingleChoice?.q.en,
+    'What is correct about a Christmas tree at Christmas in Sweden?',
+  );
   assert.equal(
     q138TrueStatement?.q.en,
     'In Sweden, at Christmas, many people bring a Christmas tree into the home and decorate it with strings of lights, baubles, and tinsel.',
@@ -852,7 +1021,7 @@ test('Christmas tree prompts keep natural English wording', () => {
   );
   assert.equal(
     q138Judgement?.q.en,
-    'Which fact is correct regarding what many people do with a Christmas tree at Christmas in Sweden?',
+    'Which fact is correct about a Christmas tree at Christmas in Sweden?',
   );
 });
 
@@ -1005,27 +1174,28 @@ test('referendum advisory Swedish copy stays natural across source and exports',
   ];
   const q020Ids = ['q020', ...q020GeneratedIds];
   const textForQuestion = (question) =>
-    [question.q?.sv, question.why?.sv, ...(question.opts || []).map((option) => option.sv)].join(
-      ' ',
-    );
+    [
+      question.q?.sv,
+      question.q?.en,
+      question.why?.sv,
+      question.why?.en,
+      ...(question.opts || []).map((option) => option.sv),
+      ...(question.opts || []).map((option) => option.en),
+    ].join(' ');
   const fileFindings = ['data/questions.ts', 'content/question-bank.csv', 'site/questions.js']
     .filter((relativePath) =>
-      referendumAdvisorySwedishNaturalnessPattern.test(
+      referendumAdvisoryNaturalnessPattern.test(
         fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'),
       ),
     )
     .map((relativePath) => path.normalize(relativePath));
   const generatedOffenders = generatedSiteBank
     .filter((question) => q020Ids.includes(question.id))
-    .filter((question) =>
-      referendumAdvisorySwedishNaturalnessPattern.test(textForQuestion(question)),
-    )
+    .filter((question) => referendumAdvisoryNaturalnessPattern.test(textForQuestion(question)))
     .map((question) => question.id);
   const actualOffenders = actualSiteBank
     .filter((question) => q020Ids.includes(question.id))
-    .filter((question) =>
-      referendumAdvisorySwedishNaturalnessPattern.test(textForQuestion(question)),
-    )
+    .filter((question) => referendumAdvisoryNaturalnessPattern.test(textForQuestion(question)))
     .map((question) => question.id);
   const q020 = generatedSiteBank.find((question) => question.id === 'q020');
   const q020True = generatedSiteBank.find(
@@ -1045,11 +1215,19 @@ test('referendum advisory Swedish copy stays natural across source and exports',
   assert.ok(q020False, 'q020 false generated variant should be published');
   assert.equal(
     q020True.q.sv,
-    'Att folkomröstningar i Sverige är rådgivande betyder att politikerna inte behöver följa resultatet.',
+    'I Sverige är folkomröstningar rådgivande, så politiker behöver inte följa resultatet.',
+  );
+  assert.equal(
+    q020True.q.en,
+    'In Sweden, referendums are advisory, so politicians do not have to follow the result.',
   );
   assert.equal(
     q020False.q.sv,
-    'Att folkomröstningar i Sverige är rådgivande betyder att politikerna alltid måste följa resultatet.',
+    'I Sverige är folkomröstningar bindande, så politiker är skyldiga att följa resultatet.',
+  );
+  assert.equal(
+    q020False.q.en,
+    'In Sweden, referendums are binding, so politicians are required to follow the result.',
   );
 });
 
@@ -1769,7 +1947,7 @@ test('source-criticism source and single-choice exports use natural English', ()
   assert.ok(q050SingleChoice, 'q050 generated single-choice variant should be published');
   assert.equal(q050SingleChoice.q.en, 'What is meant by source criticism?');
   assert.ok(q050Judgement, 'q050 generated judgement variant should be published');
-  assert.equal(q050Judgement.q.en, 'Which description is correct for source criticism?');
+  assert.equal(q050Judgement.q.en, 'What is correct about source criticism?');
 });
 
 test('source-criticism English naturalness guard rejects source-critical wording', () => {
@@ -1783,16 +1961,22 @@ const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
   const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
-    return String(contents)
-      .replace(
-        'What does source criticism mean?',
-        'What does it mean to be source-critical?',
-      )
-      .replace(
-        'Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct.',
-        'Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct.',
-      );
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  question.id === 'q050'",
+        "    ? {",
+        "        ...question,",
+        "        questionEn: 'What does it mean to be source-critical?',",
+        "        explanationEn: 'Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct.',",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
   }
   return contents;
 };
@@ -2240,6 +2424,47 @@ test('political-rights generated true/false exports use direct propositions', ()
   );
 });
 
+test('1809 constitution generated true/false exports direct propositions', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = Array.from(actualStaticQuestions());
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const expectedRows = [
+    {
+      id: generatedQuestionId(sourceQuestions, 'q078', 'trueStatement'),
+      sv: '1809 års nya grundlag begränsade kungens makt.',
+      en: "The 1809 constitution limited the king's power.",
+    },
+    {
+      id: generatedQuestionId(sourceQuestions, 'q078', 'falseStatement'),
+      sv: '1809 års nya grundlag innebar inte att Sverige gick med i EU.',
+      en: 'The 1809 constitution did not make Sweden join the EU.',
+    },
+  ];
+  const residualPattern =
+    /\b(?:Förändringen genom den nya grundlagen år 1809 var att|The change through the new constitution in 1809 was that)\b/i;
+
+  for (const bank of [generatedSiteBank, actualSiteBank]) {
+    for (const expected of expectedRows) {
+      const question = bank.find((candidate) => candidate.id === expected.id);
+      assert.ok(question, `${expected.id} should be present in published bank`);
+      assert.equal(question.q.sv, expected.sv);
+      assert.equal(question.q.en, expected.en);
+      assert.doesNotMatch(`${question.q.sv}\n${question.q.en}`, residualPattern);
+    }
+  }
+
+  const csvRowsById = contentQuestionBankCsvRowsById(expectedRows.map((row) => row.id));
+  for (const expected of expectedRows) {
+    const columns = csvRowsById.get(expected.id);
+    assert.ok(columns, `${expected.id} should be present in content/question-bank.csv`);
+    assert.equal(columns[3], expected.sv);
+    assert.equal(columns[4], expected.en);
+    assert.doesNotMatch(`${columns[3]}\n${columns[4]}`, residualPattern);
+  }
+});
+
 test('public-sector source and generated exports use direct English propositions', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const actualSiteBank = Array.from(actualStaticQuestions());
@@ -2256,7 +2481,7 @@ test('public-sector source and generated exports use direct English propositions
     },
     {
       id: generatedQuestionId(sourceQuestions, 'q062', 'singleChoice'),
-      q: 'The public sector in Sweden consists of ...?',
+      q: 'What is correct about the public sector in Sweden?',
       why: expectedExplanation,
     },
     {
@@ -2271,7 +2496,7 @@ test('public-sector source and generated exports use direct English propositions
     },
     {
       id: generatedQuestionId(sourceQuestions, 'q062', 'judgement'),
-      q: "Which statement about Sweden's public sector is correct?",
+      q: 'Which fact is correct about the public sector in Sweden?',
       why: expectedExplanation,
     },
   ];
@@ -2914,16 +3139,22 @@ test('municipal responsibilities source and generated prompts ask directly about
   assert.equal(q026.q.sv, 'Vilka vardagstjänster ansvarar kommuner för?');
   assert.equal(q026.q.en, 'Which everyday services are municipalities responsible for?');
   assert.ok(q026SectionPractice, 'q026 section-practice generated variant should be published');
-  assert.equal(q026SectionPractice.q.sv, 'Kommuner ansvarar för ...?');
-  assert.equal(q026SectionPractice.q.en, 'Municipalities are responsible for ...?');
+  assert.equal(
+    q026SectionPractice.q.sv,
+    'Vad stämmer om vardagstjänster som kommuner ansvarar för?',
+  );
+  assert.equal(
+    q026SectionPractice.q.en,
+    'What is correct about the everyday services municipalities are responsible for?',
+  );
   assert.ok(q026Judgement, 'q026 judgement generated variant should be published');
   assert.equal(
     q026Judgement.q.sv,
-    'Vilken uppgift stämmer när det gäller vilka vardagstjänster kommuner ansvarar för?',
+    'Vilken uppgift stämmer om vardagstjänster som kommuner ansvarar för?',
   );
   assert.equal(
     q026Judgement.q.en,
-    'Which fact is correct regarding which everyday services municipalities are responsible for?',
+    'Which fact is correct about the everyday services municipalities are responsible for?',
   );
   assert.equal(
     q026True?.q.sv,
@@ -3025,11 +3256,11 @@ test('Christmas celebration source and generated prompts use a direct civic ques
     'How do many people in Sweden celebrate Christmas even when it has no religious meaning for them?',
   );
   assert.ok(q140SectionPractice, 'q140 section-practice generated variant should be published');
-  assert.match(q140SectionPractice.q.sv, /Hur firar många jul i Sverige/);
-  assert.match(q140SectionPractice.q.en, /How do many people in Sweden celebrate Christmas/);
+  assert.equal(q140SectionPractice.q.sv, 'Vad stämmer om firandet av jul i Sverige?');
+  assert.equal(q140SectionPractice.q.en, 'What is correct about Christmas celebrations in Sweden?');
   assert.ok(q140Judgement, 'q140 judgement generated variant should be published');
-  assert.match(q140Judgement.q.sv, /Hur firar många jul i Sverige/);
-  assert.match(q140Judgement.q.en, /How do many people in Sweden celebrate Christmas/);
+  assert.equal(q140Judgement.q.sv, 'Vilken uppgift stämmer om firandet av jul i Sverige?');
+  assert.equal(q140Judgement.q.en, 'Which fact is correct about Christmas celebrations in Sweden?');
   assert.equal(
     q140True?.q.sv,
     'Många firar jul som en familjehögtid även när julen inte har religiös betydelse för dem.',
@@ -3314,7 +3545,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "        ...question,",
         "        options: question.options.map((option, index) =>",
         "          index === 0",
-        "            ? { ...option, text: { ...option.text, en: 'Template drift' } }",
+        "            ? { ...option, textEn: 'Template drift', text: { ...option.text, en: 'Template drift' } }",
         "            : option,",
         "        ),",
         "      }",
@@ -3325,6 +3556,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('scripts/validate-content.js', '--focus-generated-localization-template-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -3778,15 +4010,21 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
   const contents = originalReadFileSync.call(this, filePath, ...args);
   if (normalizedPath.endsWith('/data/questions.ts')) {
-    return String(contents)
-      .replace(
-        'Var ligger Sverige?',
-        'Vilket svar stämmer bäst? Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
-      )
-      .replace(
-        'Where is Sweden located?',
-        'Which answer best matches? True or false: Sweden is in northern Europe.',
-      );
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  question.id === 'q001'",
+        "    ? {",
+        "        ...question,",
+        "        questionSv: 'Vilket svar stämmer bäst? Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',",
+        "        questionEn: 'Which answer best matches? True or false: Sweden is in northern Europe.',",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
   }
   return contents;
 };
@@ -3815,15 +4053,21 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
   const contents = originalReadFileSync.call(this, filePath, ...args);
   if (normalizedPath.endsWith('/data/questions.ts')) {
-    return String(contents)
-      .replace(
-        'Var ligger Sverige?',
-        'Vilket alternativ motsvarar rätt bedömning av påståendet? Var ligger Sverige?',
-      )
-      .replace(
-        'Where is Sweden located?',
-        'Which option gives the correct judgment of the statement? Where is Sweden located?',
-      );
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  question.id === 'q001'",
+        "    ? {",
+        "        ...question,",
+        "        questionSv: 'Vilket alternativ motsvarar rätt bedömning av påståendet? Var ligger Sverige?',",
+        "        questionEn: 'Which option gives the correct judgment of the statement? Where is Sweden located?',",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
   }
   return contents;
 };
@@ -3845,6 +4089,14 @@ test('published question schema guards generated statement-choice meta prompts a
     path.join(repoRoot, 'scripts/validate-content.js'),
     'utf8',
   );
+  const derivedSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/content/derivedQuestions.ts'),
+    'utf8',
+  );
+  const trueFalsePatternSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/generated-true-false-naturalness-patterns.js'),
+    'utf8',
+  );
 
   assert.match(validatorSource, /Vilket påstående är korrekt/);
   assert.match(validatorSource, /Vilket påstående stämmer bäst/);
@@ -3852,10 +4104,11 @@ test('published question schema guards generated statement-choice meta prompts a
   assert.match(validatorSource, /Which statement best matches/);
   assert.match(validatorSource, /påståendet som motsvarar den uppgiften/);
   assert.match(validatorSource, /statement that matches that fact/);
-  assert.match(validatorSource, /universalHumanRightsStatementSv/);
-  assert.match(validatorSource, /Mänskliga rättigheter gäller varje människa/);
-  assert.match(validatorSource, /Human rights apply to every person/);
-  assert.match(validatorSource, /That human rights apply to everyone means/);
+  assert.match(derivedSource, /universalHumanRightsStatementSv/);
+  assert.match(derivedSource, /Mänskliga rättigheter gäller varje människa/);
+  assert.match(derivedSource, /Human rights apply to every person/);
+  assert.doesNotMatch(derivedSource, /That human rights apply to everyone means/);
+  assert.match(trueFalsePatternSource, /That human rights apply to everyone means/);
 });
 
 test('published question schema rejects generated true/false grammar-splice stems', () => {
@@ -4686,59 +4939,50 @@ test('q146 political-rights generated true/false exports direct propositions', (
   );
 });
 
-test('task-question generated true/false exports use direct propositions', () => {
+test('q178 disability-rights generated true/false exports scoped aim propositions', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const actualSiteBank = actualStaticQuestions();
   const sourceQuestions = generatedSiteBank.filter(
     (question) => question.questionProvenance === 'uhr',
   );
-  const expectedRows = [
-    {
-      id: generatedQuestionId(sourceQuestions, 'q022', 'trueStatement'),
-      sv: 'Riksdagen beslutar om lagar och hur statens pengar ska användas.',
-      en: 'The Riksdag passes laws and decides how state funds are used.',
-    },
-    {
-      id: generatedQuestionId(sourceQuestions, 'q022', 'falseStatement'),
-      sv: 'Riksdagen sköter regionernas kollektivtrafik.',
-      en: 'The Riksdag manages regional public transport.',
-    },
-    {
-      id: generatedQuestionId(sourceQuestions, 'q059', 'trueStatement'),
-      sv: 'Sametinget representerar den samiska befolkningen i frågor om språk, kultur och identitet.',
-      en: 'The Sami Parliament represents the Sami population on questions of language, culture, and identity.',
-    },
-    {
-      id: generatedQuestionId(sourceQuestions, 'q059', 'falseStatement'),
-      sv: 'Sametinget beslutar statens budget.',
-      en: 'The Sami Parliament decides the state budget.',
-    },
-  ];
-  const generatedById = new Map(generatedSiteBank.map((question) => [question.id, question]));
+  const trueStatementId = generatedQuestionId(sourceQuestions, 'q178', 'trueStatement');
+  const falseStatementId = generatedQuestionId(sourceQuestions, 'q178', 'falseStatement');
+  const byId = new Map(generatedSiteBank.map((question) => [question.id, question]));
   const actualById = new Map(Array.from(actualSiteBank).map((question) => [question.id, question]));
-  const residualPattern = /\b(?:har uppgiften att|has the task to|One task of .+? is to)\b/i;
+  const csvRows = contentQuestionBankCsvRowsById([trueStatementId, falseStatementId]);
+  const stalePattern =
+    /^(?:Society should be accessible so people can participate on equal terms|People with disabilities should not be able to study or work)\.?$/im;
 
-  for (const expected of expectedRows) {
-    const generated = generatedById.get(expected.id);
-    const actual = actualById.get(expected.id);
-    assert.ok(generated, `${expected.id} should be present in generated bank`);
-    assert.ok(actual, `${expected.id} should be present in static bank`);
-    assert.equal(generated.q.sv, expected.sv);
-    assert.equal(generated.q.en, expected.en);
-    assert.equal(actual.q.sv, expected.sv);
-    assert.equal(actual.q.en, expected.en);
-    assert.doesNotMatch(`${generated.q.sv}\n${generated.q.en}`, residualPattern);
-    assert.doesNotMatch(`${actual.q.sv}\n${actual.q.en}`, residualPattern);
-  }
-
-  const csvRowsById = contentQuestionBankCsvRowsById(expectedRows.map((row) => row.id));
-  for (const expected of expectedRows) {
-    const columns = csvRowsById.get(expected.id);
-    assert.ok(columns, `${expected.id} should be present in content/question-bank.csv`);
-    assert.equal(columns[3], expected.sv);
-    assert.equal(columns[4], expected.en);
-    assert.doesNotMatch(`${columns[3]}\n${columns[4]}`, residualPattern);
-  }
+  assert.equal(byId.get('q178')?.q.en, 'What is one aim of disability rights work?');
+  assert.equal(byId.get(trueStatementId)?.q.sv, actualById.get(trueStatementId)?.q.sv);
+  assert.equal(byId.get(trueStatementId)?.q.en, actualById.get(trueStatementId)?.q.en);
+  assert.equal(
+    byId.get(trueStatementId)?.q.en,
+    'One aim of disability rights work is that society should be accessible so people can participate on equal terms.',
+  );
+  assert.equal(byId.get(falseStatementId)?.q.sv, actualById.get(falseStatementId)?.q.sv);
+  assert.equal(byId.get(falseStatementId)?.q.en, actualById.get(falseStatementId)?.q.en);
+  assert.equal(
+    byId.get(falseStatementId)?.q.en,
+    'One aim of disability rights work is that people with disabilities should not be able to study or work.',
+  );
+  assert.equal(csvRows.get(trueStatementId)?.[4], byId.get(trueStatementId)?.q.en);
+  assert.equal(csvRows.get(falseStatementId)?.[4], byId.get(falseStatementId)?.q.en);
+  assert.equal(csvRows.get(trueStatementId)?.[11], 'Personer med funktionsnedsättning');
+  assert.equal(csvRows.get(falseStatementId)?.[11], 'Personer med funktionsnedsättning');
+  assert.equal(byId.get(trueStatementId)?.answer, 0);
+  assert.equal(byId.get(falseStatementId)?.answer, 1);
+  assert.doesNotMatch(
+    [
+      byId.get(trueStatementId)?.q.en,
+      byId.get(falseStatementId)?.q.en,
+      actualById.get(trueStatementId)?.q.en,
+      actualById.get(falseStatementId)?.q.en,
+      csvRows.get(trueStatementId)?.[4],
+      csvRows.get(falseStatementId)?.[4],
+    ].join('\n'),
+    stalePattern,
+  );
 });
 
 test('q062 public-sector exports natural English in canonical and static banks', () => {
@@ -6109,6 +6353,55 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('published question schema rejects generated single-choice both/neither answer-logic options', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents).replace(
+      "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(\\n  sourceQuestions,\\n  sourceQuestions.length + 1,\\n).map(applyQuestionLocalizationPilot);",
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(",
+        "  sourceQuestions,",
+        "  sourceQuestions.length + 1,",
+        ").map(applyQuestionLocalizationPilot).map((question) =>",
+        "  question.id === generatedFixtureId('q001', 3)",
+        "    ? {",
+        "        ...question,",
+        "        options: question.options.map((option, index) =>",
+        "          index === 2",
+        "            ? { ...option, textSv: 'Båda påståendena är korrekta', textEn: 'Both statements are correct' }",
+        "            : option,",
+        "        ),",
+        "      }",
+        "    : question,",
+        ").map(applyQuestionLocalizationPilot);",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /generated variant\[3\] option\[2\] uses generated single-choice filler option "(?:Båda påståendena är korrekta|Both statements are correct)"/,
+  );
+});
+
 test('published question schema rejects generated single-choice meta prompts', () => {
   const result = spawnSync(
     process.execPath,
@@ -6132,9 +6425,15 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "  question.id === generatedFixtureId('q001', 0)",
         "    ? {",
         "        ...question,",
-        "        questionSv: 'Vilket svar är korrekt? Var ligger Sverige?',",
-        "        questionEn: 'Which answer is correct? Where is Sweden located?',",
+        "        questionSv: 'Sverige ligger ...?',",
+        "        questionEn: 'Sweden is located ...?',",
         "      }",
+        "    : question.id === generatedFixtureId('q001', 3)",
+        "      ? {",
+        "          ...question,",
+        "          questionSv: 'Vilken uppgift stämmer när det gäller var Sverige ligger?',",
+        "          questionEn: 'Which fact is correct regarding where Sweden is located?',",
+        "        }",
         "    : question,",
         ").map(applyQuestionLocalizationPilot);",
       ].join('\\n'),
@@ -6152,6 +6451,10 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /generated variant\[0\] uses generated single-choice meta-stem wording/,
+  );
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /generated variant\[3\] uses generated single-choice meta-stem wording/,
   );
 });
 

@@ -522,6 +522,62 @@
     } catch {}
   }
 
+  function questionBankReady() {
+    return typeof window.smtQuestionBankIsReady === 'function'
+      ? window.smtQuestionBankIsReady()
+      : Array.isArray(window.SMT_QUESTIONS);
+  }
+
+  function routeStatusCopy(kind) {
+    if (kind === 'error') {
+      return tr({
+        sv: 'Frågorna kunde inte laddas. Uppdatera sidan och försök igen.',
+        en: 'Questions could not be loaded. Refresh the page and try again.',
+        'zh-Hans': '题库无法加载。请刷新页面后重试。',
+        'zh-Hant': '題庫無法載入。請重新整理頁面後再試。',
+        ar: 'تعذر تحميل الأسئلة. حدّث الصفحة وحاول مرة أخرى.',
+        ckb: 'پرسیارەکان بار نەبوون. پەڕەکە نوێ بکەرەوە و دووبارە هەوڵ بدە.',
+        fa: 'پرسش‌ها بارگیری نشدند. صفحه را تازه‌سازی و دوباره تلاش کنید.',
+        pl: 'Nie udało się załadować pytań. Odśwież stronę i spróbuj ponownie.',
+        so: "Su'aalaha lama rarin. Cusbooneysii bogga oo mar kale isku day.",
+        ti: 'ሕቶታት ክጽዓና ኣይከኣላን። ገጹ ኣሐድስ እሞ እንደገና ፈትን።',
+        tr: 'Sorular yüklenemedi. Sayfayı yenileyip tekrar dene.',
+        uk: 'Не вдалося завантажити запитання. Оновіть сторінку й спробуйте ще раз.',
+      });
+    }
+    return tr({
+      sv: 'Laddar frågor...',
+      en: 'Loading questions...',
+      'zh-Hans': '正在加载题库...',
+      'zh-Hant': '正在載入題庫...',
+      ar: 'جارٍ تحميل الأسئلة...',
+      ckb: 'پرسیارەکان دادەگیرێن...',
+      fa: 'در حال بارگذاری پرسش‌ها...',
+      pl: 'Ładowanie pytań...',
+      so: "Su'aalaha ayaa la rarayaa...",
+      ti: 'ሕቶታት ይጽዓና ኣለዋ...',
+      tr: 'Sorular yükleniyor...',
+      uk: 'Завантаження запитань...',
+    });
+  }
+
+  function renderRouteStatus(targetId, kind) {
+    const stage = document.getElementById(targetId);
+    if (!stage) return;
+    stage.innerHTML = `<div class="quiz__card"><h2 class="quiz__q">${escapeHtml(
+      routeStatusCopy(kind),
+    )}</h2></div>`;
+  }
+
+  function withQuestionBank(targetId, callback) {
+    if (questionBankReady() || typeof window.smtEnsureQuestionBank !== 'function') {
+      callback();
+      return;
+    }
+    renderRouteStatus(targetId, 'loading');
+    window.smtEnsureQuestionBank().then(callback, () => renderRouteStatus(targetId, 'error'));
+  }
+
   // ---------- chapter hub ----------
 
   function chapterQuestionCount(id) {
@@ -1273,10 +1329,10 @@
   // re-render hub when we return to /practice without ?c=
   function onRoute() {
     if (isOnPractice() && !activePracticeChapter()) {
-      renderPracticeHub();
+      withQuestionBank('quiz-stage', renderPracticeHub);
     }
     if (isOnMock()) {
-      mockBoot();
+      withQuestionBank('mock-stage', mockBoot);
     }
   }
 
@@ -1285,7 +1341,7 @@
       if (activePracticeChapter()) {
         if (typeof window.smtQuizRender === 'function') window.smtQuizRender();
       } else {
-        renderPracticeHub();
+        withQuestionBank('quiz-stage', renderPracticeHub);
       }
     }
     if (!isOnMock()) return;
@@ -1296,7 +1352,7 @@
     } else if (MOCK.questions.length) {
       renderMockExam();
     } else {
-      mockBoot();
+      withQuestionBank('mock-stage', mockBoot);
     }
   }
 
@@ -1333,6 +1389,7 @@
 
   window.addEventListener('hashchange', onRoute);
   window.addEventListener('DOMContentLoaded', onRoute);
+  window.addEventListener('smt:questionbankready', onRoute);
   window.addEventListener('smt:languagechange', rerenderForLanguageChange);
 
   // Re-render hub when language changes
@@ -1343,7 +1400,9 @@
       e.target.closest('[data-set="language"], select[data-set="language"]')
     ) {
       setTimeout(() => {
-        if (isOnPractice() && !activePracticeChapter()) renderPracticeHub();
+        if (isOnPractice() && !activePracticeChapter()) {
+          withQuestionBank('quiz-stage', renderPracticeHub);
+        }
       }, 60);
     }
   });
