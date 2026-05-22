@@ -632,11 +632,39 @@ test('generateWeeklyRecap: guards malformed runtime recap inputs', () => {
   assert.equal(recap.chapterNowMastered, null);
 });
 
+test('formatWeeklyRecapDateRange: localizes compact week ranges', () => {
+  const { formatWeeklyRecapDateRange } = loadTs('lib/learning/weeklyRecapDateRange.ts');
+
+  assert.equal(formatWeeklyRecapDateRange('2026-05-18', '2026-05-24', 'sv'), '18-24 maj 2026');
+  assert.equal(formatWeeklyRecapDateRange('2026-05-18', '2026-05-24', 'en'), 'May 18-24, 2026');
+  assert.equal(
+    formatWeeklyRecapDateRange('2026-05-25', '2026-06-01', 'sv'),
+    '25 maj - 1 juni 2026',
+  );
+  assert.equal(
+    formatWeeklyRecapDateRange('2026-05-25', '2026-06-01', 'en'),
+    'May 25 - June 1, 2026',
+  );
+  assert.equal(
+    formatWeeklyRecapDateRange('2026-12-28', '2027-01-03', 'sv'),
+    '28 december 2026 - 3 januari 2027',
+  );
+  assert.equal(
+    formatWeeklyRecapDateRange('2026-12-28', '2027-01-03', 'en'),
+    'December 28, 2026 - January 3, 2027',
+  );
+  assert.equal(
+    formatWeeklyRecapDateRange('2026-02-30', '2026-03-08', 'en'),
+    '2026-02-30 - 2026-03-08',
+  );
+});
+
 test('weekly recap screen and Profile entry point surface the selector locally', () => {
   const recapRoute = fs.readFileSync(path.join(repoRoot, 'app/recap.tsx'), 'utf8');
   const profileRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
 
   assert.match(recapRoute, /import \{ generateWeeklyRecap, type WeeklyRecap \}/);
+  assert.match(recapRoute, /import \{ formatWeeklyRecapDateRange \}/);
   assert.match(recapRoute, /import \{ calculateStreakWithFreeze \}/);
   assert.match(recapRoute, /import \{ topWeakChapters \}/);
   assert.match(recapRoute, /const questionChapterIndex = Object\.fromEntries/);
@@ -645,10 +673,15 @@ test('weekly recap screen and Profile entry point surface the selector locally',
   assert.match(recapRoute, /answerHistory: AnswerHistoryEntry\[\]/);
   assert.match(recapRoute, /mockExamSessions: MockExamProgress\[\]/);
   assert.match(recapRoute, /generateWeeklyRecap\(\{ progress, questionChapterIndex \}\)/);
+  assert.match(
+    recapRoute,
+    /formatWeeklyRecapDateRange\(recap\.weekStart, recap\.weekEnd, language\)/,
+  );
   assert.match(recapRoute, /getTouchedWeakChapter\(recap, progress\)/);
   assert.match(recapRoute, /href=\{`\/chapter\/\$\{touchedWeakChapter\.chapterId\}`\}/);
   assert.match(recapRoute, /No problem\. A quiet week still counts/);
   assert.match(recapRoute, /En lugn vecka räknas också/);
+  assert.doesNotMatch(recapRoute, /\$\{start\} to \$\{end\}|\$\{start\} till \$\{end\}/);
   assert.doesNotMatch(recapRoute, /useProLifetimeEntitlements|useRemoveAdsEntitlements|account/i);
 
   assert.match(profileRoute, /weeklyRecapTitle: 'Veckans översikt'/);
