@@ -45,6 +45,11 @@ type FreshSettingsSeedOptions = {
   windowValues?: Record<string, BrowserInitWindowValue>;
 };
 
+export type BrowserEntropySeed = {
+  now: number;
+  random: number;
+};
+
 const SYSTEM_CHROMIUM_EXECUTABLES = [
   process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
   process.env.CHROME_BIN,
@@ -166,6 +171,22 @@ export async function seedFreshSettingsLanguageAndAboutSeenWithStorage(
       windowValues,
     },
   );
+}
+
+export async function installDeterministicBrowserEntropy(
+  page: Page,
+  entropy: BrowserEntropySeed,
+): Promise<void> {
+  await page.addInitScript(({ now, random }: BrowserEntropySeed) => {
+    Object.defineProperty(Date, 'now', {
+      configurable: true,
+      value: () => now,
+    });
+    Object.defineProperty(Math, 'random', {
+      configurable: true,
+      value: () => random,
+    });
+  }, entropy);
 }
 
 export async function installSpeechSynthesisMock(page: Page): Promise<void> {
