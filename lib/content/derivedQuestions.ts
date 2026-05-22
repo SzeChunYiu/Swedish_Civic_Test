@@ -296,31 +296,70 @@ function stripLeadingByEn(value: string): string {
   return stripLeadingPurposeEn(value).replace(/^by\s+/i, '');
 }
 
+type TaskPropositionOverride = {
+  sourceId: string;
+  answerSv: string;
+  answerEn: string;
+  propositionSv: (subject: string) => string;
+  propositionEn: (subject: string) => string;
+};
+
+const TASK_PROPOSITION_OVERRIDES: TaskPropositionOverride[] = [
+  {
+    sourceId: 'q022',
+    answerSv: 'besluta om lagar och hur statens pengar ska användas',
+    answerEn: "decide laws and how the state's money should be used",
+    propositionSv: (subject) =>
+      `${upperFirst(subject)} beslutar om lagar och hur statens pengar ska användas`,
+    propositionEn: (subject) =>
+      `${upperFirst(subject)} passes laws and decides how state funds are used`,
+  },
+  {
+    sourceId: 'q022',
+    answerSv: 'sköta regionernas kollektivtrafik',
+    answerEn: 'manage regional public transport',
+    propositionSv: (subject) => `${upperFirst(subject)} sköter regionernas kollektivtrafik`,
+    propositionEn: (subject) => `${upperFirst(subject)} manages regional public transport`,
+  },
+  {
+    sourceId: 'q059',
+    answerSv: 'representera den samiska befolkningen i frågor om språk, kultur och identitet',
+    answerEn: 'represent the Sami population on questions of language, culture, and identity',
+    propositionSv: (subject) =>
+      `${upperFirst(subject)} representerar den samiska befolkningen i frågor om språk, kultur och identitet`,
+    propositionEn: (subject) =>
+      `${upperFirst(subject)} represents the Sami population on questions of language, culture, and identity`,
+  },
+  {
+    sourceId: 'q059',
+    answerSv: 'besluta statens budget',
+    answerEn: 'decide the state budget',
+    propositionSv: (subject) => `${upperFirst(subject)} beslutar statens budget`,
+    propositionEn: (subject) => `${upperFirst(subject)} decides the state budget`,
+  },
+];
+
+function findTaskPropositionOverride(
+  source: PracticeQuestion,
+  answer: string,
+  language: 'sv' | 'en',
+): TaskPropositionOverride | undefined {
+  const normalizedAnswer =
+    language === 'sv' ? stripLeadingPurposeSv(answer).trim() : stripLeadingPurposeEn(answer).trim();
+  const key = language === 'sv' ? 'answerSv' : 'answerEn';
+  return TASK_PROPOSITION_OVERRIDES.find(
+    (override) =>
+      override.sourceId === source.id &&
+      override[key].localeCompare(normalizedAnswer, undefined, { sensitivity: 'accent' }) === 0,
+  );
+}
+
 function swedishTaskProposition(source: PracticeQuestion, subject: string, answer: string): string {
   const normalizedSubject = upperFirst(subject);
   const phrase = stripLeadingPurposeSv(answer).trim();
+  const override = findTaskPropositionOverride(source, answer, 'sv');
 
-  if (source.id === 'q022') {
-    if (/^besluta om lagar och hur statens pengar ska användas$/i.test(phrase)) {
-      return `${normalizedSubject} beslutar om lagar och hur statens pengar ska användas`;
-    }
-    if (/^sköta regionernas kollektivtrafik$/i.test(phrase)) {
-      return `${normalizedSubject} sköter regionernas kollektivtrafik`;
-    }
-  }
-
-  if (source.id === 'q059') {
-    if (
-      /^representera den samiska befolkningen i frågor om språk, kultur och identitet$/i.test(
-        phrase,
-      )
-    ) {
-      return `${normalizedSubject} representerar den samiska befolkningen i frågor om språk, kultur och identitet`;
-    }
-    if (/^besluta statens budget$/i.test(phrase)) {
-      return `${normalizedSubject} beslutar statens budget`;
-    }
-  }
+  if (override) return override.propositionSv(subject);
 
   return `${normalizedSubject} har uppgiften att ${lowerFirst(phrase)}`;
 }
@@ -328,28 +367,9 @@ function swedishTaskProposition(source: PracticeQuestion, subject: string, answe
 function englishTaskProposition(source: PracticeQuestion, subject: string, answer: string): string {
   const normalizedSubject = upperFirst(subject);
   const phrase = stripLeadingPurposeEn(answer).trim();
+  const override = findTaskPropositionOverride(source, answer, 'en');
 
-  if (source.id === 'q022') {
-    if (/^decide laws and how the state's money should be used$/i.test(phrase)) {
-      return `${normalizedSubject} passes laws and decides how state funds are used`;
-    }
-    if (/^manage regional public transport$/i.test(phrase)) {
-      return `${normalizedSubject} manages regional public transport`;
-    }
-  }
-
-  if (source.id === 'q059') {
-    if (
-      /^represent the Sami population on questions of language, culture, and identity$/i.test(
-        phrase,
-      )
-    ) {
-      return `${normalizedSubject} represents the Sami population on questions of language, culture, and identity`;
-    }
-    if (/^decide the state budget$/i.test(phrase)) {
-      return `${normalizedSubject} decides the state budget`;
-    }
-  }
+  if (override) return override.propositionEn(subject);
 
   return `${normalizedSubject} has the task to ${lowerFirst(phrase)}`;
 }
