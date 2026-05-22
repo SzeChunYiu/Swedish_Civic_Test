@@ -10154,3 +10154,102 @@ button.quiz__dot.is-nav:hover {
     width: 56px;
   }
 }
+
+/* ------------------------------------------------------------------
+   CHAPTER INTRO BOX OPTIMIZATION ROUND
+   Frames the "What's inside" chapter intro as a calm guide card so the
+   chapter list has a clear tactile heading before the long index.
+------------------------------------------------------------------ */
+
+.quiet .wrap > .eyebrow,
+.quiet .headline,
+.quiet .deck {
+  position: relative;
+  z-index: 1;
+}
+
+.quiet .wrap--narrow {
+  position: relative;
+}
+
+.quiet .wrap--narrow::before {
+  background:
+    radial-gradient(circle at 12% 8%, rgba(254, 204, 0, 0.16), transparent 32%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(255, 248, 228, 0.36));
+  border: 1px solid rgba(0, 106, 167, 0.1);
+  border-radius: 28px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.32),
+    0 20px 54px -46px rgba(11, 31, 51, 0.74);
+  content: '';
+  height: 268px;
+  left: -32px;
+  position: absolute;
+  right: -32px;
+  top: -30px;
+  z-index: 0;
+}
+
+.quiet .wrap--narrow::after {
+  background: var(--card-rail);
+  border-radius: 999px;
+  content: '';
+  height: 70px;
+  left: -12px;
+  opacity: 0.72;
+  position: absolute;
+  top: -4px;
+  width: 4px;
+  z-index: 1;
+}
+
+.quiet .wrap > .eyebrow {
+  background: rgba(0, 106, 167, 0.08);
+  border: 1px solid rgba(0, 106, 167, 0.14);
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+  color: var(--blue);
+  display: inline-flex;
+  padding: 7px 12px;
+}
+
+.quiet .deck {
+  background: rgba(255, 255, 255, 0.42);
+  border: 1px solid rgba(0, 106, 167, 0.08);
+  border-radius: 18px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+  margin-bottom: 44px;
+  padding: 14px 16px;
+}
+
+:root[data-theme='dark'] .quiet .wrap--narrow::before,
+:root[data-theme='dark'] .quiet .deck,
+:root[data-theme='dark'] .quiet .wrap > .eyebrow {
+  background: rgba(255, 255, 255, 0.045);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: var(--ink);
+}
+
+@media (max-width: 640px) {
+  .quiet .wrap--narrow::before {
+    border-radius: 22px;
+    height: 314px;
+    left: -10px;
+    right: -10px;
+    top: -22px;
+  }
+  .quiet .wrap--narrow::after {
+    height: 54px;
+    left: 2px;
+    top: 0;
+    width: 3px;
+  }
+  .quiet .deck {
+    border-radius: 16px;
+    margin-bottom: 32px;
+    padding: 12px 13px;
+  }
+  .quiet .wrap > .eyebrow {
+    padding: 6px 10px;
+  }
+}
