@@ -1487,6 +1487,33 @@ test('derivePublishedQuestions renders q062 public-sector English as direct prop
   );
 });
 
+test('derivePublishedQuestions keeps q080/q496-q499 suffrage explanation learner-facing', () => {
+  const { questions, sourceQuestions } = loadTs('data/questions.ts');
+  const byId = new Map(questions.map((question) => [question.id, question]));
+  const expectedIds = [
+    'q080',
+    generatedQuestionId(sourceQuestions, 'q080', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q080', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q080', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q080', 'judgement'),
+  ];
+
+  assert.deepEqual(expectedIds, ['q080', 'q496', 'q497', 'q498', 'q499']);
+
+  for (const id of expectedIds) {
+    const question = byId.get(id);
+    assert.ok(question, `${id} should be published`);
+    assert.doesNotMatch(
+      question.explanationEn,
+      /(?:the election asked about here|asked about here)/i,
+    );
+    assert.match(
+      question.explanationEn,
+      /the first Riksdag election held after those reforms was in 1921/i,
+    );
+  }
+});
+
 test('derivePublishedQuestions renders q048 public-service broadcasters in natural English', () => {
   const { questions, sourceQuestions } = loadTs('data/questions.ts');
   const byId = new Map(questions.map((question) => [question.id, question]));
