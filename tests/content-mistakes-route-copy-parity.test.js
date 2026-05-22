@@ -25,6 +25,10 @@ function parseValidationSummary() {
 test('mistakes route shell copy follows the persisted settings language', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/mistakes.tsx'), 'utf8');
+  const mistakesRouteE2eSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/e2e/mistakes-route.spec.ts'),
+    'utf8',
+  );
 
   assert.equal(summary.mistakesRouteCopyLabelsValidated, 30);
   assert.equal(summary.mistakesRouteCopyParityValidated, true);
@@ -68,6 +72,15 @@ test('mistakes route shell copy follows the persisted settings language', () => 
     source,
     /\{copy\.wrongAnswers\(questionProgress\[question\.id\]\?\.wrongCount \?\? 0\)\}/,
   );
+  assert.match(
+    mistakesRouteE2eSource,
+    /Practice bookmark persists into Mistakes saved list after reload and clears on revisit/,
+  );
+  assert.match(mistakesRouteE2eSource, /page\.reload\(\{ waitUntil: 'networkidle' \}\)/);
+  assert.match(mistakesRouteE2eSource, /Bookmarked questions/);
+  assert.match(mistakesRouteE2eSource, /Saved for focused review/);
+  assert.match(mistakesRouteE2eSource, /Remove this question bookmark/);
+  assert.match(mistakesRouteE2eSource, /No mistakes yet/);
 });
 
 test('mistakes route copy parity rejects the stale Swedish empty-state title', () => {
