@@ -313,7 +313,7 @@ const rawBaseQuestions: PracticeQuestion[] = [
       {
         id: 'a',
         textSv: 'Alla som har rätt att rösta har en röst var',
-        textEn: 'Everyone who has the right to vote has one vote each',
+        textEn: 'Everyone who is eligible to vote has one vote',
       },
       {
         id: 'b',
@@ -335,7 +335,7 @@ const rawBaseQuestions: PracticeQuestion[] = [
     explanationSv:
       'Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka sina åsikter utan hot eller tvång, det ska finnas flera partier och valet ska vara hemligt.',
     explanationEn:
-      'Free elections mean that everyone who has the right to vote has one vote each. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret.',
+      'Free elections mean that everyone who is eligible to vote has one vote. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret.',
     uhrReference: {
       chapter: 'Sveriges demokratiska system',
       section: 'Demokrati betyder folkstyre',
