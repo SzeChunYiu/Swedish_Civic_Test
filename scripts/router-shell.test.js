@@ -552,7 +552,7 @@ test('router shell tooling guard is wired into package scripts', () => {
     const testDispatcher = read('scripts/test-dispatch.js');
     assertMatches(
       testDispatcher,
-      /runNpmScript\('test:all'\)/,
+      /runNpmScripts\(\['test:all'\]\)/,
       'npm test dispatcher should run the full aggregate suite without a selector',
     );
     assertMatches(

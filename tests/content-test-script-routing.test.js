@@ -1493,6 +1493,37 @@ test('xp selector runs only the focused XP rules parity script', () => {
   }
 });
 
+test('architecture selector runs only architecture scaffold and router-shell gates', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-architecture-routing-'));
+  const npmLog = path.join(tmpDir, 'npm.log');
+  const env = {
+    ...process.env,
+    TEST_DISPATCH_CAPTURE: '1',
+    TEST_DISPATCH_LOG: npmLog,
+    TEST_DISPATCH_NPM: createFakeNpm(tmpDir),
+  };
+
+  try {
+    const selectedResult = runDispatcher(['--', 'architecture'], env);
+    assert.equal(selectedResult.status, 0, selectedResult.stderr || selectedResult.stdout);
+    assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:architecture\nrun test:router-shell\n');
+
+    const pkg = readPackageJson();
+    assert.equal(
+      pkg.scripts['test:architecture'],
+      'node --test scripts/architecture-scaffold.test.js',
+    );
+    assert.equal(pkg.scripts['test:router-shell'], 'node --test scripts/router-shell.test.js');
+    assert.doesNotMatch(
+      fs.readFileSync(path.join(repoRoot, 'scripts/test-dispatch.js'), 'utf8'),
+      /architecture[\s\S]{0,220}test:all/,
+      'architecture selector must not route through the full suite',
+    );
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
 test('package npm test selector enters the dispatcher before running suites', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-package-routing-'));
   const npmLog = path.join(tmpDir, 'npm.log');
@@ -1513,6 +1544,15 @@ test('package npm test selector enters the dispatcher before running suites', ()
     const shuffleResult = runPackageTest(['correct-display-position'], env);
     assert.equal(shuffleResult.status, 0, shuffleResult.stderr || shuffleResult.stdout);
     assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:correct-display-position\n');
+
+    fs.writeFileSync(npmLog, '');
+    const architectureResult = runPackageTest(['architecture'], env);
+    assert.equal(
+      architectureResult.status,
+      0,
+      architectureResult.stderr || architectureResult.stdout,
+    );
+    assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:architecture\nrun test:router-shell\n');
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
   }
@@ -1659,6 +1699,10 @@ test('unsupported npm test selectors fail before running any suite', () => {
     assert.match(
       result.stderr,
       /correct-display-position -> npm run test:correct-display-position/,
+    );
+    assert.match(
+      result.stderr,
+      /architecture -> npm run test:architecture && npm run test:router-shell/,
     );
     assert.match(result.stderr, /monetization -> npm run test:monetization/);
     assert.match(result.stderr, /xp -> npm run test:xp-rules/);
