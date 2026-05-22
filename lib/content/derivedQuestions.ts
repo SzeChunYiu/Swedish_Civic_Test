@@ -200,6 +200,17 @@ function englishInfinitive(value: string): string {
   return /^to\b/i.test(trimmed) ? trimmed : `to ${trimmed}`;
 }
 
+function englishResponsibilityPredicate(value: string): string {
+  const phrase = lowerFirst(stripLeadingPurposeEn(value).trim());
+  if (/^be responsible for\b/i.test(phrase)) {
+    return phrase.replace(/^be responsible for\s+/i, '');
+  }
+  if (/^judge\b/i.test(phrase)) return phrase.replace(/^judge\b/i, 'judging');
+  if (/^decide\b/i.test(phrase)) return phrase.replace(/^decide\b/i, 'deciding');
+  if (/^appoint\b/i.test(phrase)) return phrase.replace(/^appoint\b/i, 'appointing');
+  return englishInfinitive(phrase);
+}
+
 function englishAgePhrase(value: string): string {
   return value.replace(/^(\d+)\s+years$/i, 'age $1');
 }
@@ -2978,6 +2989,13 @@ export function deriveCivicStatementEn(source: PracticeQuestion, option: Questio
     return `The foremost task of ${lowerLeadingEnglishArticle(match[1])} is ${englishInfinitive(
       stripLeadingPurposeEn(answer),
     )}`;
+  }
+
+  match = q.match(/^What is the main responsibility of (.+)$/i);
+  if (match) {
+    return `The main responsibility of ${lowerLeadingEnglishArticle(
+      match[1],
+    )} is ${englishResponsibilityPredicate(answer)}`;
   }
 
   match = q.match(/^Which example describes (.+)$/i);

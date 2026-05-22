@@ -2487,7 +2487,7 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "What is the foremost task of Sweden's regions?",
+      "en": "What is the main responsibility of Sweden's regions?",
       "sv": "Vilken är regionernas främsta uppgift i Sverige?",
       "zh-Hant": "瑞典區域的主要任務是什麼？",
       "zh-Hans": "瑞典区域的主要任务是什么？",
@@ -24810,8 +24810,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "The foremost task of Sweden's regions is ...?",
-      "sv": "Regionernas främsta uppgift i Sverige är ...?"
+      "en": "Which answer best matches? What is the main responsibility of Sweden's regions?",
+      "sv": "Vilket svar stämmer bäst? Vilken är regionernas främsta uppgift i Sverige?"
     },
     "opts": [
       {
@@ -24898,7 +24898,7 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "The foremost task of Sweden's regions is to be responsible for health care.",
+      "en": "The main responsibility of Sweden's regions is health care.",
       "sv": "Regionernas främsta uppgift i Sverige är att ansvara för hälso- och sjukvården."
     },
     "opts": [
@@ -24938,7 +24938,7 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "The foremost task of Sweden's regions is to judge criminal cases.",
+      "en": "The main responsibility of Sweden's regions is judging criminal cases.",
       "sv": "Regionernas främsta uppgift i Sverige är att döma i brottmål."
     },
     "opts": [
@@ -24978,8 +24978,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding what is the foremost task of Sweden's regions?",
-      "sv": "Vilken uppgift stämmer när det gäller vilken är regionernas främsta uppgift i Sverige?"
+      "en": "Choose the correct option: What is the main responsibility of Sweden's regions?",
+      "sv": "Välj rätt alternativ: Vilken är regionernas främsta uppgift i Sverige?"
     },
     "opts": [
       {

@@ -199,6 +199,10 @@ test('published question types stay answerable by quiz runtime', () => {
   );
   assert.equal(summary.questionPublicSectorEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(
+    summary.questionRegionsMainResponsibilityEnglishNaturalnessValidated,
+    summary.publishedQuestions,
+  );
+  assert.equal(
     summary.questionSourceCriticismEnglishNaturalnessValidated,
     summary.publishedQuestions,
   );
