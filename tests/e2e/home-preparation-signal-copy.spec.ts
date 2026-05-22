@@ -21,8 +21,7 @@ type HomePreparationCopy = {
 const preparationCopy: Record<AppLanguage, HomePreparationCopy> = {
   sv: {
     caveat: /Bygger bara på dina svar och övningsprov i appen, inte en officiell prognos/i,
-    ctaAccessibleName:
-      /Starta ett tidsatt övningsprov för att jämföra med din lokala förberedelsesignal/i,
+    ctaAccessibleName: /Starta ett tidsatt övningsprov från kortet Förberedelsesignal/i,
     detail: /\d+ % rätt i appen · \d+ % av kapitlen provade/i,
     heading: /Förberedelsesignal/i,
     metric: /^lokalt$/i,
@@ -31,7 +30,7 @@ const preparationCopy: Record<AppLanguage, HomePreparationCopy> = {
   },
   en: {
     caveat: /Based only on your in-app answers and mock practice, not an official result forecast/i,
-    ctaAccessibleName: /Start a timed practice exam to compare with your local preparation signal/i,
+    ctaAccessibleName: /Start a timed practice exam from the Preparation signal card/i,
     detail: /\d+% in-app accuracy · \d+% chapters tried/i,
     heading: /Preparation signal/i,
     metric: /^local$/i,

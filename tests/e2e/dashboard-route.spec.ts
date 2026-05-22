@@ -177,8 +177,10 @@ function buildNonEmptyDashboardProgressSeed() {
     todayKey: localDateKey(today),
     yesterdayKey: localDateKey(yesterdayDate),
   };
-  const todayMorning = isoAtLocalHour(today, 0, 9);
-  const todayLater = isoAtLocalHour(today, 0, 10);
+  const latestPastHour = today.getHours();
+  const earlierPastHour = Math.max(0, latestPastHour - 1);
+  const todayMorning = isoAtLocalHour(today, 0, earlierPastHour);
+  const todayLater = isoAtLocalHour(today, 0, latestPastHour);
   const yesterday = isoAtLocalHour(today, -1, 11);
   const dayBeforeYesterday = isoAtLocalHour(today, -2, 12);
 

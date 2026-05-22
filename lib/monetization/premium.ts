@@ -33,7 +33,8 @@ export const PRO_LIFETIME_ENTITLEMENTS: ProTierEntitlements = {
   nativeLangExplanations: true,
   customStudyPlan: true,
   notesExport: true,
-  predictedPassProbability: true,
+  // Fail closed until a production route renders a real local pass-readiness projection.
+  predictedPassProbability: false,
   confidenceSlider: true,
   multiColorHighlights: true,
 };
@@ -85,9 +86,9 @@ export function unionEntitlements(
     customStudyPlan:
       isStrictEntitlementFlag(a.customStudyPlan) || isStrictEntitlementFlag(b.customStudyPlan),
     notesExport: isStrictEntitlementFlag(a.notesExport) || isStrictEntitlementFlag(b.notesExport),
-    predictedPassProbability:
-      isStrictEntitlementFlag(a.predictedPassProbability) ||
-      isStrictEntitlementFlag(b.predictedPassProbability),
+    // The optional schema field exists for the planned feature, but no shipped route
+    // fulfills it yet, so stale stored/referral inputs must not re-enable it.
+    predictedPassProbability: false,
     confidenceSlider:
       isStrictEntitlementFlag(a.confidenceSlider) || isStrictEntitlementFlag(b.confidenceSlider),
     multiColorHighlights:

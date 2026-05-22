@@ -487,7 +487,7 @@ test('getProLifetimeEntitlement: provider revalidates, refreshes, and clears sto
   assert.equal(await invalidStorage.getItemAsync(PRO_LIFETIME_STORAGE_KEY), null);
 });
 
-test('mergeWithRemoveAds: Pro purchase preserves all flags even if Remove-Ads is also active', () => {
+test('mergeWithRemoveAds: Pro purchase preserves shipped flags even if Remove-Ads is also active', () => {
   const { mergeWithRemoveAds } = loadTs('lib/monetization/proLifetimePurchase.ts');
   const removeAds = { adsDisabled: true, unlimitedMockExams: false, fullMistakeReview: false };
   const pro = {
@@ -498,7 +498,7 @@ test('mergeWithRemoveAds: Pro purchase preserves all flags even if Remove-Ads is
     nativeLangExplanations: true,
     customStudyPlan: true,
     notesExport: true,
-    predictedPassProbability: true,
+    predictedPassProbability: false,
     confidenceSlider: true,
     multiColorHighlights: true,
   };
@@ -506,6 +506,7 @@ test('mergeWithRemoveAds: Pro purchase preserves all flags even if Remove-Ads is
   assert.equal(merged.adsDisabled, true);
   assert.equal(merged.spacedRepetition, true);
   assert.equal(merged.unlimitedMockExams, true);
+  assert.equal(merged.predictedPassProbability, false);
 });
 
 test('mergeWithRemoveAds: Remove-Ads alone does NOT promote to Pro', () => {

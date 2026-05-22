@@ -151,15 +151,6 @@ export const TIER_ROWS: readonly TierRow[] = [
     pro: CHECK,
   },
   {
-    id: 'predictedPass',
-    labelSv: 'Provberedskap (%)',
-    labelEn: 'Predicted pass probability',
-    flag: 'predictedPassProbability',
-    free: CROSS,
-    adFree: CROSS,
-    pro: CHECK,
-  },
-  {
     id: 'confidenceSlider',
     labelSv: 'Säkerhetsskala + kalibrering',
     labelEn: 'Confidence rating + calibration',

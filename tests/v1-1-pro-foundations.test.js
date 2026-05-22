@@ -596,6 +596,40 @@ test('tierComparison: every flag referenced in TIER_ROWS exists on PRO_LIFETIME_
   }
 });
 
+test('tierComparison: pass-probability promise stays hidden until a route fulfills it', () => {
+  const tier = loadTs('lib/monetization/tierComparison.ts');
+  const premium = loadTs('lib/monetization/premium.ts');
+  const rowIds = tier.TIER_ROWS.map((row) => row.id);
+  const rowFlags = tier.TIER_ROWS.map((row) => row.flag).filter(Boolean);
+  const rowLabels = tier.TIER_ROWS.map((row) => `${row.labelSv}\n${row.labelEn}`).join('\n');
+
+  assert.equal(rowIds.includes('predictedPass'), false);
+  assert.equal(rowFlags.includes('predictedPassProbability'), false);
+  assert.doesNotMatch(rowLabels, /Provberedskap|Predicted pass probability/i);
+  assert.equal(premium.PRO_LIFETIME_ENTITLEMENTS.predictedPassProbability, false);
+  assert.equal(
+    premium.unionEntitlements(
+      {
+        adsDisabled: false,
+        unlimitedMockExams: false,
+        fullMistakeReview: false,
+        spacedRepetition: false,
+        nativeLangExplanations: false,
+        customStudyPlan: false,
+        notesExport: false,
+        predictedPassProbability: false,
+        confidenceSlider: false,
+        multiColorHighlights: false,
+      },
+      {
+        predictedPassProbability: true,
+        spacedRepetition: true,
+      },
+    ).predictedPassProbability,
+    false,
+  );
+});
+
 test('tierComparison: Pro Lifetime includes ad-free study while Remove Ads stays non-Pro', () => {
   const tier = loadTs('lib/monetization/tierComparison.ts');
   const premium = loadTs('lib/monetization/premium.ts');
