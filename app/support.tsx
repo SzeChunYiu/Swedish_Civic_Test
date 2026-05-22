@@ -3,10 +3,9 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { LegalExternalLink, LegalPage, LegalSection } from '../components/compliance/LegalPage';
 import { questions } from '../data/questions';
+import { publicUrls } from '../lib/scaffold/publicUrls';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../lib/theme';
-
-const PUBLIC_SUPPORT_URL = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/';
 
 type LegalRouteSectionCopy = {
   body: string;
@@ -204,8 +203,8 @@ export default function Screen() {
       >
         <LegalExternalLink
           accessibilityLabel={copy.openSupportPageAccessibilityLabel}
-          destination={PUBLIC_SUPPORT_URL}
-          href={PUBLIC_SUPPORT_URL}
+          destination={publicUrls.support}
+          href={publicUrls.support}
           label={copy.sections.publicSupportPage.title}
         />
       </LegalSection>

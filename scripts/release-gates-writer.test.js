@@ -6,6 +6,7 @@ const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
+const publicUrls = require('../config/publicUrls.json');
 
 function makeGatesFile() {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-gates-writer-'));
@@ -163,14 +164,8 @@ test('release evidence stub command creates gate-specific non-secret evidence fi
   assert.equal(stub.status, 'blocked');
   assert.equal(stub.bundleIdentifier, 'com.billyyiu.almostswedish');
   assert.equal(stub.packageName, 'com.billyyiu.almostswedish');
-  assert.equal(
-    stub.supportUrl,
-    'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/',
-  );
-  assert.equal(
-    stub.privacyUrl,
-    'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/',
-  );
+  assert.equal(stub.supportUrl, publicUrls.support);
+  assert.equal(stub.privacyUrl, publicUrls.privacy);
   assert.equal(stub.privacyPolicyUrl, undefined);
   assert.equal(stub.adMob.realAdsEnabled, true);
   assert.match(stub.adMob.appId, /^ca-app-pub-\d{16}~\d{10}$/);

@@ -214,8 +214,9 @@ test('compliance pages and source links are present', () => {
   assert.match(supportRoute, /Öppna den offentliga supportsidan/);
   assert.match(supportRoute, /content issue/i);
   assert.match(supportRoute, /no personal data/i);
-  assert.match(supportRoute, /szechunyiu\.github\.io\/Swedish_Civic_Test-public-site\/support/i);
-  assert.match(supportRoute, /<LegalExternalLink[\s\S]*href=\{PUBLIC_SUPPORT_URL\}/);
+  assert.match(supportRoute, /from '\.\.\/lib\/scaffold\/publicUrls'/);
+  assert.match(supportRoute, /<LegalExternalLink[\s\S]*href=\{publicUrls\.support\}/);
+  assert.doesNotMatch(supportRoute, /Swedish_Civic_Test-public-site/);
   assert.match(supportRoute, /accessibilityLabel=\{copy\.openSupportPageAccessibilityLabel\}/);
   assert.doesNotMatch(supportRoute, /release checklist items/i);
   const complianceLinks = read('components/compliance/ComplianceLinks.tsx');

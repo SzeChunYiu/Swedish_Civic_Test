@@ -2,17 +2,17 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 
+const configuredPublicUrls = require('../config/publicUrls.json');
+
 const jsonMode = process.argv.includes('--json');
 const runValidate = process.argv.includes('--run-validate');
 const skipExternalChecks = /^(1|true|yes)$/i.test(
   String(process.env.RELEASE_PREFLIGHT_SKIP_EXTERNAL_CHECKS || '').trim(),
 );
 const evidencePath = process.env.RELEASE_PREFLIGHT_EVIDENCE_PATH || 'reports/release-gates.json';
-const supportUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/';
-const privacyUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/';
-const appAdsUrl =
-  process.env.RELEASE_PREFLIGHT_APP_ADS_URL ||
-  'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/app-ads.txt';
+const supportUrl = configuredPublicUrls.support;
+const privacyUrl = configuredPublicUrls.privacy;
+const appAdsUrl = process.env.RELEASE_PREFLIGHT_APP_ADS_URL || configuredPublicUrls.appAdsTxt;
 const oldRealAdsV1EnvFlag = ['REAL_ADS', 'ENABLED_FOR_V1'].join('_');
 const publicUrls = process.env.RELEASE_PREFLIGHT_PUBLIC_URLS
   ? JSON.parse(process.env.RELEASE_PREFLIGHT_PUBLIC_URLS)

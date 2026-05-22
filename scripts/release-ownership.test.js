@@ -5,8 +5,11 @@ const { spawnSync } = require('node:child_process');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
-const supportUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/';
-const privacyUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/';
+const publicUrls = require('../config/publicUrls.json');
+
+const supportUrl = publicUrls.support;
+const privacyUrl = publicUrls.privacy;
+const appAdsTxtUrl = publicUrls.appAdsTxt;
 const appRepo = 'SzeChunYiu/Swedish_Civic_Test';
 const publicSiteRepo = 'SzeChunYiu/Swedish_Civic_Test-public-site';
 const currentNativeIdentifier = 'com.billyyiu.almostswedish';
@@ -38,6 +41,26 @@ function textReleaseArtifactFiles() {
   });
 }
 
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function currentPublicUrlRuntimeFiles() {
+  return trackedFiles().filter((file) => /^(app|components|lib|scripts|tests)\//.test(file));
+}
+
+function assertCurrentPublicUrlsOrSharedConfig(file) {
+  const source = read(file);
+  if (/^(app|components|lib|scripts|tests)\//.test(file)) {
+    assert.match(source, /publicUrls|configuredPublicUrls/);
+    assert.match(source, /config\/publicUrls\.json|\.\.\/config\/publicUrls\.json/);
+    return;
+  }
+
+  assert.match(source, new RegExp(escapeRegExp(supportUrl)));
+  assert.match(source, new RegExp(escapeRegExp(privacyUrl)));
+}
+
 test('release ownership target is SzeChunYiu and blocks legacy-owner drift', () => {
   const packageJson = JSON.parse(read('package.json'));
   assert.equal(
@@ -56,9 +79,7 @@ test('release ownership target is SzeChunYiu and blocks legacy-owner drift', () 
   ];
 
   for (const file of requiredFiles) {
-    const content = read(file);
-    assert.match(content, new RegExp(supportUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
-    assert.match(content, new RegExp(privacyUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+    assertCurrentPublicUrlsOrSharedConfig(file);
   }
 
   const ownershipDocs = [
@@ -106,15 +127,15 @@ test('current release identity surfaces reject stale native ids and public host 
       source,
       new RegExp(currentNativeIdentifier.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')),
     );
-    assert.match(source, new RegExp(supportUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
-    assert.match(source, new RegExp(privacyUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+    assertCurrentPublicUrlsOrSharedConfig(file);
   }
 
   const evidenceStubSource = read('scripts/create-release-evidence-stub.js');
   assert.match(evidenceStubSource, /appConfig\.ios\.bundleIdentifier/);
   assert.match(evidenceStubSource, /appConfig\.android\.package/);
-  assert.match(evidenceStubSource, new RegExp(supportUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
-  assert.match(evidenceStubSource, new RegExp(privacyUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  assert.match(evidenceStubSource, /publicUrls\.support/);
+  assert.match(evidenceStubSource, /publicUrls\.privacy/);
+  assert.match(evidenceStubSource, /publicUrls\.appAdsTxt/);
 
   const staleNativeIdPattern = new RegExp(['com', 'billyyiu', 'swedishcivictest'].join('\\.'), 'i');
   const legacyPublicHostPattern =
@@ -134,4 +155,29 @@ test('current release identity surfaces reject stale native ids and public host 
   }
 
   assert.deepEqual(staleHits, []);
+});
+
+test('public support, privacy, and app-ads URLs come from shared config in runtime and tests', () => {
+  assert.equal(new URL(supportUrl).hostname, 'szechunyiu.github.io');
+  assert.equal(new URL(supportUrl).pathname, '/Swedish_Civic_Test-public-site/support/');
+  assert.equal(new URL(privacyUrl).pathname, '/Swedish_Civic_Test-public-site/privacy/');
+  assert.equal(new URL(appAdsTxtUrl).pathname, '/Swedish_Civic_Test-public-site/app-ads.txt');
+
+  const configSource = read('config/publicUrls.json');
+  assert.match(configSource, /"support"/);
+  assert.match(configSource, /"privacy"/);
+  assert.match(configSource, /"appAdsTxt"/);
+
+  const sharedWrapper = read('lib/scaffold/publicUrls.ts');
+  assert.match(sharedWrapper, /\.\.\/\.\.\/config\/publicUrls\.json/);
+  assert.doesNotMatch(sharedWrapper, /Swedish_Civic_Test-public-site/);
+
+  const publicUrlPattern = new RegExp(
+    [supportUrl, privacyUrl, appAdsTxtUrl].map(escapeRegExp).join('|'),
+  );
+  const hardCodedHits = currentPublicUrlRuntimeFiles().filter((file) =>
+    publicUrlPattern.test(read(file)),
+  );
+
+  assert.deepEqual(hardCodedHits, []);
 });

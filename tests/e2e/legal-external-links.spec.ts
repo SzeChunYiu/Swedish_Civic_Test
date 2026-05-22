@@ -6,6 +6,7 @@ import {
   seedSettingsLanguage,
   type AppLanguage,
 } from './browserLaunch';
+import { publicUrls } from '../../lib/scaffold/publicUrls';
 
 type BoundingBox = NonNullable<Awaited<ReturnType<Locator['boundingBox']>>>;
 
@@ -64,7 +65,6 @@ type CitizenshipRequirementsOfficialSourceFixture = {
 };
 
 const UHR_EDUCATION_MATERIAL_URL = 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/';
-const PUBLIC_SUPPORT_URL = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/';
 const ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS = [
   'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
   'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
@@ -154,7 +154,7 @@ const legalExternalLinkFixtures: LegalExternalLinkFixture[] = [
     path: '/support',
     sectionTitle: 'Offentlig supportsida',
     title: 'Support och återkoppling',
-    url: PUBLIC_SUPPORT_URL,
+    url: publicUrls.support,
     visibleLabel: 'Offentlig supportsida',
   },
   {
@@ -164,7 +164,7 @@ const legalExternalLinkFixtures: LegalExternalLinkFixture[] = [
     path: '/support',
     sectionTitle: 'Public support page',
     title: 'Support and feedback',
-    url: PUBLIC_SUPPORT_URL,
+    url: publicUrls.support,
     visibleLabel: 'Public support page',
   },
 ];

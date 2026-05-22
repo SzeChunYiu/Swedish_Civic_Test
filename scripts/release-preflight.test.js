@@ -7,8 +7,10 @@ const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
-const supportUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/';
-const privacyUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/';
+const publicUrls = require('../config/publicUrls.json');
+const supportUrl = publicUrls.support;
+const privacyUrl = publicUrls.privacy;
+const appAdsTxtUrl = publicUrls.appAdsTxt;
 const adMobAppId = 'ca-app-pub-1234567890123456~1234567890';
 const appAdsSellerLine = 'google.com, pub-2451892671779738, DIRECT, f08c47fec0942fa0';
 
@@ -484,8 +486,7 @@ function writeAllReadyEvidence(evidencePath, overrides = {}, options = {}) {
           },
           'public-urls': {
             status: 'READY',
-            evidence:
-              'Support URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/, Privacy Policy URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/, and app-ads.txt URL https://szechunyiu.github.io/Swedish_Civic_Test-public-site/app-ads.txt verified over HTTPS.',
+            evidence: `Support URL ${supportUrl}, Privacy Policy URL ${privacyUrl}, and app-ads.txt URL ${appAdsTxtUrl} verified over HTTPS.`,
           },
           'device-screenshots': {
             status: 'READY',
@@ -1087,8 +1088,8 @@ function createStoreRecordEvidence(options = {}) {
     bundleIdentifier: 'com.billyyiu.almostswedish',
     appStoreConnectUrl: 'https://appstoreconnect.apple.com/apps/1234567890/appstore',
     googlePlayConsoleUrl: 'https://play.google.com/console/u/0/developers/123/app/497123',
-    supportUrl: 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/',
-    privacyUrl: 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/',
+    supportUrl,
+    privacyUrl,
     accountOwnership: {
       appleDeveloperTeamId: 'ABCDE12345',
       appleBundleIdReviewed: true,
