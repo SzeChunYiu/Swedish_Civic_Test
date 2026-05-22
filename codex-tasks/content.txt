@@ -1123,3 +1123,7 @@ capacity is available, use it only for current-main VERIFY or precise
 report-and-queue work approved by the manager, with no edits to `data/**`,
 generated CSV/static mirrors, generator templates, validator mirrors, or
 `site/**` without an explicit lease.
+[REVIEW-MAJOR][data] Rebalance question bank: chapter 13 Traditions (145q) disproportionately dominates
+  detail: Each chapter is 1 UHR-sourced + 4 derived; ch13 Traditions has the most UHR base (29) so balloons to 145q - larger than governance/law/rights (716/895 are derived). DECIDE+IMPLEMENT: cap the derived multiplier per chapter (proportional) OR curate ch13 down; keep all UHR-sourced, trim derived tail. Regenerate site/questions.js + content/question-bank.csv via scripts/export-site-question-bank.js; expect to update many tests/content-* parity tests. Same 12-lang content surface as the tone-rewrite lane.
+  repro: content/question-bank.csv chapterId ch13 questionProvenance; data/chapters.ts ch13 questionCount=145; site/questions.js SMT_CHAPTERS_META id=13
+  required: ship a product-source fix or, if not a defect, reply in ceo-inbox.txt with evidence why. Do NOT close as docs-only.

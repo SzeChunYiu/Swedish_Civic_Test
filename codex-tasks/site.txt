@@ -4,3 +4,7 @@ build Mock-exam page in site/ (timed exam + result) per docs/design/drafts/pract
 sync site/questions.js from data/questions.ts q001-q050 (then q051+ in slices)
 improve site/ebook.js writing quality (keep #154 richness, native voice); never regress
 polish site/index.html nav so Practice/Mock-exam/Ebook are all reachable + consistent
+[REVIEW-MAJOR][language] Homepage 'Whats inside' TOC: unify chapter taxonomy so titles and question counts agree
+  detail: site/index.html homepage list pairs EBOOK-editorial titles (chap.N.t, homepage-only) with QUESTION-BANK counts by id (chap.N.m1 -> SMT_CHAPTERS_META[id=N]) - two taxonomies indexed by same number, so labels/counts disagree and counts are blank on '/'. FIX: make title N and count N the same chapter. Source of truth = SMT_CHAPTERS_META (multilingual). Rewrite chap.1.t..chap.13.t in site/i18n-extras.js (12 langs) + site/index.html defaults to the question-bank titles; render counts on '/' via a small precomputed eager payload (NOT the 3.6MB site/questions.js). Update scripts/static-site-chapter-count-copy.test.js (line ~153 title assertion + the 'test 3' count-rendering block).
+  repro: site/index.html ol.list-quiet; site/app.js smtApplyChapterQuestionCounts; site/i18n-extras.js chap.N.t/m1; site/questions.js SMT_CHAPTERS_META; scripts/static-site-chapter-count-copy.test.js
+  required: ship a product-source fix or, if not a defect, reply in ceo-inbox.txt with evidence why. Do NOT close as docs-only.
