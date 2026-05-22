@@ -9651,9 +9651,12 @@ let staticEbookSomaliHolidayFoodParityValidated = false;
 let staticEbookFoodBeverageSourceChaptersValidated = 0;
 let staticEbookFoodBeverageSourcePatternsValidated = 0;
 let staticEbookFoodBeverageSourceParityValidated = false;
+let staticEbookCivicTermGlossesChecksValidated = 0;
+let staticEbookCivicTermGlossesParityValidated = false;
 let staticEbookFootnoteHashChaptersValidated = 0;
 let staticEbookFootnoteHashLanguagesValidated = 0;
 let staticEbookFootnoteHashParityValidated = false;
+let staticEbookProvenanceParityValidated = false;
 let staticEbookProseSourceMetadataRulesValidated = 0;
 let staticEbookProseSourceMetadataParityValidated = false;
 let staticEbookExtraLocaleHolidayGlossLanguagesValidated = 0;
@@ -9996,14 +9999,37 @@ if (process.argv.includes('--focus-static-ebook-footnote-hash-parity')) {
 
 if (process.argv.includes('--focus-static-ebook-provenance')) {
   validateStaticValidationSyntaxGate();
+  staticEbookOutcomeClaimPatternsValidated = validateStaticEbookOutcomeClaimPatterns();
+  staticEbookOutcomeClaimParityValidated =
+    staticEbookOutcomeClaimPatternsValidated ===
+    STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS.length;
+  const practicalTestValidation = validateStaticEbookPracticalTestClaims();
+  staticEbookPracticalTestClaimPatternsValidated =
+    practicalTestValidation.unsupportedPracticalClaimsValidated;
+  staticEbookPracticalTestRequiredCopyValidated = practicalTestValidation.requiredCopyValidated;
+  staticEbookPracticalTestSourceUrlsValidated = practicalTestValidation.sourceUrlsValidated;
+  staticEbookPracticalTestCurrentnessValidated =
+    staticEbookPracticalTestClaimPatternsValidated ===
+      STATIC_EBOOK_UNSUPPORTED_PRACTICAL_TEST_CLAIM_PATTERNS.length &&
+    staticEbookPracticalTestRequiredCopyValidated ===
+      STATIC_EBOOK_PRACTICAL_TEST_REQUIRED_COPY.length &&
+    staticEbookPracticalTestSourceUrlsValidated === STATIC_EBOOK_PRACTICAL_TEST_SOURCE_URLS.length;
   const factboxValidation = validateStaticEbookFactboxProvenance();
   staticEbookFactboxClaimPatternsValidated = factboxValidation.unsupportedFactboxClaimsValidated;
+  staticEbookFactboxRawParagraphsValidated = factboxValidation.rawFactboxParagraphsValidated;
+  staticEbookFactboxRawParagraphsTotal = factboxValidation.rawFactboxParagraphsTotal;
   staticEbookFactboxRequiredCopyValidated = factboxValidation.requiredCopyValidated;
   staticEbookFactboxSourceUrlsValidated = factboxValidation.sourceUrlsValidated;
   staticEbookFactboxProvenanceValidated =
     staticEbookFactboxClaimPatternsValidated === STATIC_EBOOK_UNSUPPORTED_FACTBOX_PATTERNS.length &&
+    staticEbookFactboxRawParagraphsValidated === staticEbookFactboxRawParagraphsTotal &&
+    staticEbookFactboxRawParagraphsTotal > 0 &&
     staticEbookFactboxRequiredCopyValidated === STATIC_EBOOK_FACTBOX_REQUIRED_COPY.length &&
     staticEbookFactboxSourceUrlsValidated === STATIC_EBOOK_FACTBOX_SOURCE_URLS.length;
+  const footnoteHashValidation = validateStaticEbookFootnoteHashParity();
+  staticEbookFootnoteHashChaptersValidated = footnoteHashValidation.chaptersValidated;
+  staticEbookFootnoteHashLanguagesValidated = footnoteHashValidation.languagesValidated;
+  staticEbookFootnoteHashParityValidated = footnoteHashValidation.parityValidated;
   const proseValidation = validateStaticEbookProseSourceMetadata();
   staticEbookProseSourceMetadataRulesValidated = proseValidation.rulesValidated;
   staticEbookProseSourceMetadataParityValidated =
@@ -10028,12 +10054,33 @@ if (process.argv.includes('--focus-static-ebook-provenance')) {
   const civicTermGlossValidation = validateStaticEbookCivicTermGlosses();
   staticEbookCivicTermGlossesChecksValidated = civicTermGlossValidation.checksValidated;
   staticEbookCivicTermGlossesParityValidated = civicTermGlossValidation.parityValidated;
+  staticEbookProvenanceParityValidated =
+    staticEbookOutcomeClaimParityValidated &&
+    staticEbookPracticalTestCurrentnessValidated &&
+    staticEbookFactboxProvenanceValidated &&
+    staticEbookFootnoteHashParityValidated &&
+    staticEbookProseSourceMetadataParityValidated &&
+    staticEbookSourceAuthorityCopyParityValidated &&
+    staticEbookSomaliHolidayFoodParityValidated &&
+    staticEbookFoodBeverageSourceParityValidated &&
+    staticEbookCivicTermGlossesParityValidated;
   exitWithValidationFailures();
   printValidationSummary({
+    staticEbookOutcomeClaimPatternsValidated,
+    staticEbookOutcomeClaimParityValidated,
+    staticEbookPracticalTestClaimPatternsValidated,
+    staticEbookPracticalTestRequiredCopyValidated,
+    staticEbookPracticalTestSourceUrlsValidated,
+    staticEbookPracticalTestCurrentnessValidated,
     staticEbookFactboxClaimPatternsValidated,
+    staticEbookFactboxRawParagraphsValidated,
+    staticEbookFactboxRawParagraphsTotal,
     staticEbookFactboxRequiredCopyValidated,
     staticEbookFactboxSourceUrlsValidated,
     staticEbookFactboxProvenanceValidated,
+    staticEbookFootnoteHashChaptersValidated,
+    staticEbookFootnoteHashLanguagesValidated,
+    staticEbookFootnoteHashParityValidated,
     staticEbookProseSourceMetadataRulesValidated,
     staticEbookProseSourceMetadataParityValidated,
     staticEbookSourceAuthorityPatternsValidated,
@@ -10046,6 +10093,7 @@ if (process.argv.includes('--focus-static-ebook-provenance')) {
     staticEbookFoodBeverageSourceParityValidated,
     staticEbookCivicTermGlossesChecksValidated,
     staticEbookCivicTermGlossesParityValidated,
+    staticEbookProvenanceParityValidated,
     staticValidationSyntaxFilesValidated,
     staticValidationImportChecksValidated,
     staticValidationSyntaxGateValidated,
@@ -10893,6 +10941,15 @@ staticEbookSourceAuthorityCopyParityValidated =
   staticEbookFootnoteHashLanguagesValidated = footnoteHashValidation.languagesValidated;
   staticEbookFootnoteHashParityValidated = footnoteHashValidation.parityValidated;
 }
+staticEbookProvenanceParityValidated =
+  staticEbookOutcomeClaimParityValidated &&
+  staticEbookPracticalTestCurrentnessValidated &&
+  staticEbookFactboxProvenanceValidated &&
+  staticEbookFootnoteHashParityValidated &&
+  staticEbookProseSourceMetadataParityValidated &&
+  staticEbookSourceAuthorityCopyParityValidated &&
+  staticEbookSomaliHolidayFoodParityValidated &&
+  staticEbookFoodBeverageSourceParityValidated;
 {
   const arabicI18nValidation = validateStaticI18nArabicNaturalness();
   staticI18nArabicRequiredCopyValidated = arabicI18nValidation.requiredCopyValidated;
@@ -24601,6 +24658,7 @@ console.log(
       staticEbookFootnoteHashChaptersValidated,
       staticEbookFootnoteHashLanguagesValidated,
       staticEbookFootnoteHashParityValidated,
+      staticEbookProvenanceParityValidated,
       staticI18nArabicRequiredCopyValidated,
       staticI18nArabicHighFrequencyLabelsValidated,
       staticI18nArabicForbiddenFragmentsValidated,
