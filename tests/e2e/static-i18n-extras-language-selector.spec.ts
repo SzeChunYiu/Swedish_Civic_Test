@@ -523,9 +523,15 @@ test('static Home demo question keeps q039 source and UHR provenance in extra la
 
     await expectRootLocale(page, locale);
     await expectDictionaryText(page, locale, 'qcard.chip', '#qcard [data-i18n="qcard.chip"]');
+    await expectDictionaryText(page, locale, 'qcard.q', '#qcard [data-i18n="qcard.q"]');
     await expectDictionaryText(page, locale, 'qcard.prov', '#qcard [data-i18n="qcard.prov"]');
     await expectDictionaryText(page, locale, 'qcard.src', '#qcard [data-i18n="qcard.src"]');
 
+    const questionText = await page.locator('#qcard [data-i18n="qcard.q"]').innerText();
+    if (locale === 'zh-Hans') {
+      expect(questionText).toContain('采摘莓果');
+      expect(questionText).not.toMatch(/\bberries\b/i);
+    }
     const sourceText = await page.locator('#qcard [data-i18n="qcard.src"]').innerText();
     expect(sourceText).toContain('Sverige i fokus');
     expect(sourceText).toContain('Lag och rätt');
