@@ -493,6 +493,32 @@ test('Search route e2e covers mounted query-param navigation without reload', ()
   assert.match(source, /await input\.fill\('lokal text'\)/);
 });
 
+test('Search route e2e covers q-before-query both-param precedence', () => {
+  const source = readSearchQueryHydrationE2eSource();
+
+  assert.match(
+    source,
+    /search route keeps q before query precedence for both params on load and mounted navigation/,
+  );
+  assert.match(
+    source,
+    /expectHydratedSearch\([\s\S]*?'\/search\?query=kommun&q=riksdag'[\s\S]*?'riksdag'/,
+  );
+  assert.match(
+    source,
+    /await page\.getByRole\('button', \{ name: searchStateCopy\.sv\.clearButtonName \}\)\.click\(\)/,
+  );
+  assert.match(source, /expectSearchUrlWithoutQueryParams\(page\)/);
+  assert.match(source, /expectHydratedSearch\(page, '\/search\?q=demokrati', 'demokrati'\)/);
+  assert.match(source, /await mountedInput\.fill\('lokal text'\)/);
+  assert.match(
+    source,
+    /window\.history\.pushState\(\{\}, '', '\/search\?query=kommun&q=riksdag'\)/,
+  );
+  assert.match(source, /window\.dispatchEvent\(new PopStateEvent\('popstate'\)\)/);
+  assert.match(source, /await expectSearchState\(page, 'riksdag'\)/);
+});
+
 test('Search route e2e covers English query URL clearing', () => {
   const source = readSearchQueryHydrationE2eSource();
 

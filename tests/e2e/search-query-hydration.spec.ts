@@ -206,6 +206,46 @@ test('search route hydrates q and query URL parameters before typing', async ({ 
   expect(consoleErrors).toEqual([]);
 });
 
+test('search route keeps q before query precedence for both params on load and mounted navigation', async ({
+  page,
+}) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await markAboutTheTestSeen(page);
+
+  const bothParamInput = await expectHydratedSearch(
+    page,
+    '/search?query=kommun&q=riksdag',
+    'riksdag',
+  );
+  await page.getByRole('button', { name: searchStateCopy.sv.clearButtonName }).click();
+  await expect(bothParamInput).toHaveValue('');
+  expectSearchUrlWithoutQueryParams(page);
+  await expect(page.getByText(searchStateCopy.sv.allTermsSummaryPattern)).toBeVisible();
+
+  const mountedInput = await expectHydratedSearch(page, '/search?q=demokrati', 'demokrati');
+  await mountedInput.fill('lokal text');
+  await expect(mountedInput).toHaveValue('lokal text');
+
+  await page.evaluate(() => {
+    window.history.pushState({}, '', '/search?query=kommun&q=riksdag');
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  });
+
+  await expectSearchState(page, 'riksdag');
+
+  await page.getByRole('button', { name: searchStateCopy.sv.clearButtonName }).click();
+  await expect(mountedInput).toHaveValue('');
+  expectSearchUrlWithoutQueryParams(page);
+
+  expect(consoleErrors).toEqual([]);
+});
+
 test('English search route hydrates and clears q/query URL parameters before typing', async ({
   page,
 }) => {
