@@ -45,4 +45,5 @@ test('TRANSLATE-COMPLETE P0 has explicit SV/EN completeness and naturalness clos
     summary.publishedQuestions,
   );
   assert.equal(summary.somaliGeographyNaturalnessParityValidated, true);
+  assert.equal(summary.somaliHolidayFoodNaturalnessParityValidated, true);
 });

@@ -41,7 +41,9 @@ const {
 } = require('./generated-true-false-naturalness-patterns');
 const {
   SOMALI_GEOGRAPHY_NATURALNESS_IDS,
+  SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS,
   summarizeSomaliGeographyNaturalness,
+  summarizeSomaliHolidayFoodNaturalness,
 } = require('./check-question-i18n-v8');
 const {
   MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES,
@@ -5592,7 +5594,8 @@ function translationNaturalnessGuardParityIsValidated() {
     questionReferendumAdvisorySwedishNaturalnessValidated === publishedQuestions &&
     questionSourceCriticismEnglishNaturalnessValidated === publishedQuestions &&
     questionReligiousFreedomParallelismValidated === publishedQuestions * 2 &&
-    somaliGeographyNaturalnessParityValidated === true
+    somaliGeographyNaturalnessParityValidated === true &&
+    somaliHolidayFoodNaturalnessParityValidated === true
   );
 }
 
@@ -9588,6 +9591,9 @@ let generatedSwedenScopeParityValidated = 0;
 let somaliGeographyNaturalnessCasesValidated = 0;
 let somaliGeographyNaturalnessStaticRowsValidated = 0;
 let somaliGeographyNaturalnessParityValidated = false;
+let somaliHolidayFoodNaturalnessCasesValidated = 0;
+let somaliHolidayFoodNaturalnessStaticRowsValidated = 0;
+let somaliHolidayFoodNaturalnessParityValidated = false;
 let questionLuciaRoleEnglishNaturalnessValidated = 0;
 let questionEuCooperationEnglishNaturalnessValidated = 0;
 let questionReligiousFreedom1951NaturalnessValidated = 0;
@@ -9769,6 +9775,40 @@ function validateSomaliGeographyNaturalnessParity() {
   if (!somaliGeographyNaturalnessParityValidated) {
     fail(
       'Somali geography naturalness guard must validate q004, q006, and q008 in canonical and static question banks',
+    );
+  }
+}
+
+function validateSomaliHolidayFoodNaturalnessParity() {
+  const failureCountBefore = failures.length;
+  const canonicalSummary = summarizeSomaliHolidayFoodNaturalness(
+    questions,
+    SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS,
+  );
+  canonicalSummary.errors.forEach(fail);
+  somaliHolidayFoodNaturalnessCasesValidated = canonicalSummary.casesValidated;
+
+  const staticQuestions = loadCommittedStaticSiteQuestions()
+    .filter((question) => SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS.includes(question.id))
+    .map(toStaticSomaliNaturalnessQuestion);
+  const staticSummary = summarizeSomaliHolidayFoodNaturalness(
+    staticQuestions,
+    SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS,
+  );
+  staticSummary.errors.forEach((error) => fail(`static site ${error}`));
+  somaliHolidayFoodNaturalnessStaticRowsValidated = staticSummary.casesValidated;
+
+  const guardFailed = failures.length !== failureCountBefore;
+  somaliHolidayFoodNaturalnessParityValidated =
+    !guardFailed &&
+    canonicalSummary.parityValidated &&
+    staticSummary.parityValidated &&
+    somaliHolidayFoodNaturalnessCasesValidated === SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS.length &&
+    somaliHolidayFoodNaturalnessStaticRowsValidated === SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS.length;
+
+  if (!somaliHolidayFoodNaturalnessParityValidated) {
+    fail(
+      'Somali holiday-food naturalness guard must validate q099, q101, q125, q131, q135, and q141 in canonical and static question banks',
     );
   }
 }
@@ -10238,6 +10278,17 @@ if (process.argv.includes('--focus-somali-geography-naturalness')) {
     somaliGeographyNaturalnessCasesValidated,
     somaliGeographyNaturalnessStaticRowsValidated,
     somaliGeographyNaturalnessParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-somali-holiday-food-naturalness')) {
+  validateSomaliHolidayFoodNaturalnessParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    somaliHolidayFoodNaturalnessCasesValidated,
+    somaliHolidayFoodNaturalnessStaticRowsValidated,
+    somaliHolidayFoodNaturalnessParityValidated,
   });
   process.exit(0);
 }
@@ -23624,6 +23675,7 @@ function validatePublishedQuestionNaturalnessGuards() {
 }
 
 validateSomaliGeographyNaturalnessParity();
+validateSomaliHolidayFoodNaturalnessParity();
 validatePublishedQuestionNaturalnessGuards();
 validateStaticValidationSyntaxGate();
 exitWithValidationFailures();
@@ -24558,6 +24610,9 @@ console.log(
       somaliGeographyNaturalnessCasesValidated,
       somaliGeographyNaturalnessStaticRowsValidated,
       somaliGeographyNaturalnessParityValidated,
+      somaliHolidayFoodNaturalnessCasesValidated,
+      somaliHolidayFoodNaturalnessStaticRowsValidated,
+      somaliHolidayFoodNaturalnessParityValidated,
       questionLuciaRoleEnglishNaturalnessValidated,
       questionEuCooperationEnglishNaturalnessValidated,
       questionReligiousFreedom1951NaturalnessValidated,

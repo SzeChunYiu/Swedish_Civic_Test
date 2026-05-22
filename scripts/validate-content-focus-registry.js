@@ -640,6 +640,15 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'somaliHolidayFoodNaturalness',
+    flags: ['--focus-somali-holiday-food-naturalness'],
+    summaryKeys: [
+      'somaliHolidayFoodNaturalnessCasesValidated',
+      'somaliHolidayFoodNaturalnessStaticRowsValidated',
+      'somaliHolidayFoodNaturalnessParityValidated',
+    ],
+  },
+  {
     id: 'examGeneratorSchema',
     flags: ['--focus-exam-generator-schema'],
     summaryKeys: [
