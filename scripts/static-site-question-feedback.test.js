@@ -193,6 +193,33 @@ test('static provenance badge copy avoids positive UHR authority wording', () =>
   assert.doesNotMatch(source, new RegExp(phrase(['genererats', 'från', 'en', 'UHR-fråga']), 'i'));
 });
 
+test('static Practice chapter parameter filters the question pool', () => {
+  const questions = [
+    staticMockQuestion({ id: 'chapter-1-a', chapterId: 1 }),
+    staticMockQuestion({ id: 'chapter-2-a', chapterId: 2 }),
+    staticMockQuestion({ id: 'chapter-2-b', chapterId: 2 }),
+  ];
+  const { sandbox } = createRenderContext({
+    hash: '#/practice?c=2',
+    language: 'en',
+    questions,
+  });
+  const source = read('site/practice.js').replace(
+    /\}\)\(\);\s*$/,
+    [
+      'window.__practiceScope = smtPracticeFilterFor().map((question) => question.id);',
+      'window.__quizScopeKey = typeof smtQuizScopeKey === "function" ? smtQuizScopeKey() : null;',
+      '})();',
+    ].join('\n'),
+  );
+
+  vm.runInContext(read('site/app.js'), sandbox, { timeout: 3000 });
+  vm.runInContext(source, sandbox, { timeout: 3000 });
+
+  assert.deepEqual(sandbox.window.__practiceScope, ['chapter-2-a', 'chapter-2-b']);
+  assert.equal(sandbox.window.__quizScopeKey, 'chapter:2');
+});
+
 test('static Home demo qcard renders q039 UHR source metadata', () => {
   const indexHtml = read('site/index.html');
   const appSource = read('site/app.js');

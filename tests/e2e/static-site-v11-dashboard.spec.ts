@@ -89,3 +89,40 @@ test('static v1.1 dashboard weak chapters render on home and dashboard without p
   await expect(page.locator('#v11-dashboard')).not.toContainText(/undefined|l is not defined/i);
   expect(pageErrors).toEqual([]);
 });
+
+test('static v1.1 weak chapter Practice CTA opens a chapter-filtered practice route', async ({
+  page,
+}) => {
+  const pageErrors = collectPageErrors(page);
+  await seedSignedInDashboard(page);
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(`${staticSite.baseUrl}/#/dashboard`, { waitUntil: 'load' });
+
+  const weakChapterCta = page.locator('a.v11-weak-link[href^="#/practice?c="]').first();
+  await expect(weakChapterCta).toBeVisible();
+  await expect(weakChapterCta).not.toHaveAttribute('href', /[?&]ch=/);
+
+  await weakChapterCta.click();
+  await expect(page).toHaveURL(/#\/practice\?c=\d+/);
+  await expect(page.locator('#quiz-stage .quiz__card')).toBeVisible();
+
+  const routeContract = await page.evaluate(() => {
+    const params = new URLSearchParams((location.hash.split('?')[1] || '').replace(/^#/, ''));
+    const chapterId = Number(params.get('c'));
+    const staticWindow = window as typeof window & {
+      smtPracticeFilterFor?: () => Array<{ chapterId: number }>;
+    };
+    const filtered = staticWindow.smtPracticeFilterFor?.() ?? [];
+    return {
+      chapterId,
+      questionCount: filtered.length,
+      allQuestionsMatchChapter: filtered.every((question) => question.chapterId === chapterId),
+    };
+  });
+
+  expect(routeContract.chapterId).toBeGreaterThan(0);
+  expect(routeContract.questionCount).toBeGreaterThan(0);
+  expect(routeContract.allQuestionsMatchChapter).toBe(true);
+  expect(pageErrors).toEqual([]);
+});
