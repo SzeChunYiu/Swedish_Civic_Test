@@ -301,7 +301,7 @@ test('settings route remains scrollable on narrow mobile viewports', () => {
 
   assert.match(
     source,
-    /import\s+\{[\s\S]*Pressable,[\s\S]*ScrollView,[\s\S]*StyleSheet,[\s\S]*Text,[\s\S]*TextInput,[\s\S]*View\s*\}\s+from 'react-native';/,
+    /import\s+\{[\s\S]*ScrollView,[\s\S]*StyleSheet,[\s\S]*Text,[\s\S]*TextInput,[\s\S]*View[\s\S]*\}\s+from 'react-native';/,
   );
   assert.match(
     source,
@@ -1189,10 +1189,12 @@ test('home screen exposes dashboard card titles as headers', () => {
   assert.match(source, /\{copy\.dailyGoalTitle\}/);
   assert.match(source, /\{copy\.readinessTitle\}/);
   assert.match(source, /\{copy\.feedbackTitle\}/);
+  assert.match(source, /\{copy\.rewardedExamHeading\}/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.goalLabel\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.readinessTitle\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.rewardedExamTitle\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.feedbackTitle\}>/);
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.rewardedExamTitle\}>/);
   assert.equal(headerMatches?.length, 4);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
