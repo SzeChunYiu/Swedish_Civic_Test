@@ -357,6 +357,65 @@ test('settings import reset coverage proves no-write preview and feedback cleari
   );
 });
 
+test('settings accessibilityPersistenceWarning browser coverage keeps warningScope separate', () => {
+  const settingsSource = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+  const e2eSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/e2e/settings-accessibility-state.spec.ts'),
+    'utf8',
+  );
+
+  assertIncludes(
+    settingsSource,
+    'const accessibilityPersistenceWarning = useAccessibilityStore(',
+    'Settings must subscribe to accessibility persistence warnings',
+  );
+  assertIncludes(
+    settingsSource,
+    'const clearAccessibilityPersistenceWarning = useAccessibilityStore(',
+    'Settings must clear accessibility persistence warnings through the accessibility store',
+  );
+  assertIncludes(
+    settingsSource,
+    'warningScope="settingsPreferences"',
+    'Settings must render core settings warning copy with the settings scope',
+  );
+  assertIncludes(
+    settingsSource,
+    'warningScope="accessibilityPreferences"',
+    'Settings must render accessibility warning copy with the accessibility scope',
+  );
+  assertIncludes(
+    e2eSource,
+    'installMMKVPersistenceFailureHarness',
+    'Settings browser proof must install a deterministic MMKV warning harness',
+  );
+  assertIncludes(
+    e2eSource,
+    'Storage.prototype.getItem',
+    'Settings browser proof must trigger storage read warnings at runtime',
+  );
+  assertIncludes(
+    e2eSource,
+    'Storage.prototype.setItem',
+    'Settings browser proof must trigger storage write warnings at runtime',
+  );
+  assertIncludes(
+    e2eSource,
+    'settings renders separate accessibility persistence warning and settings persistence warning',
+    'Settings browser proof must keep simultaneous warning scopes separate',
+  );
+  assertIncludes(
+    e2eSource,
+    'settings dismisses accessibility persistence warning after write without settings-store warning',
+    'Settings browser proof must dismiss accessibility warnings through the accessibility store',
+  );
+  assertIncludes(
+    e2eSource,
+    'Accessibility preferences could not be saved. The change is available temporarily in this session.',
+    'Settings browser proof must assert scoped accessibility write-warning copy',
+  );
+});
+
 test('settings import rejected purchase-field alerts include bounded field detail', () => {
   const settingsSource = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
   const e2eSource = fs.readFileSync(

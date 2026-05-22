@@ -1,6 +1,49 @@
-import { expect, test, type Locator } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
 
-import { dismissBlockingModals } from './browserLaunch';
+import {
+  collectConsoleAndPageErrors,
+  dismissBlockingModals,
+  seedFreshSettingsLanguageAndAboutSeen,
+} from './browserLaunch';
+
+const settingsLanguageStorageKey = 'settings\\language';
+const accessibilityThemeModeStorageKey = 'accessibility\\a11y.themeMode.v1';
+
+type MMKVPersistenceFailureHarnessOptions = {
+  failingReads?: string[];
+  failingWrites?: string[];
+};
+
+async function installMMKVPersistenceFailureHarness(
+  page: Page,
+  { failingReads = [], failingWrites = [] }: MMKVPersistenceFailureHarnessOptions,
+) {
+  await page.addInitScript(
+    ({ failingReads, failingWrites }: { failingReads: string[]; failingWrites: string[] }) => {
+      const readFailures = new Set(failingReads);
+      const writeFailures = new Set(failingWrites);
+      const originalGetItem = Storage.prototype.getItem;
+      const originalSetItem = Storage.prototype.setItem;
+
+      Storage.prototype.getItem = function getItem(key: string) {
+        const storageKey = String(key);
+        if (this === window.localStorage && readFailures.has(storageKey)) {
+          throw new Error(`e2e forced MMKV read failure for ${storageKey}`);
+        }
+        return originalGetItem.call(this, key);
+      };
+
+      Storage.prototype.setItem = function setItem(key: string, value: string) {
+        const storageKey = String(key);
+        if (this === window.localStorage && writeFailures.has(storageKey)) {
+          throw new Error(`e2e forced MMKV write failure for ${storageKey}`);
+        }
+        return originalSetItem.call(this, key, value);
+      };
+    },
+    { failingReads, failingWrites },
+  );
+}
 
 async function expectPreviewAsset(preview: Locator, pattern: RegExp) {
   await expect
@@ -22,6 +65,73 @@ async function expectStableCompanionPreview(preview: Locator, assetPattern: RegE
   await expect(preview).toHaveCSS('width', '48px');
   await expectPreviewAsset(preview, assetPattern);
 }
+
+test('settings renders separate accessibility persistence warning and settings persistence warning', async ({
+  page,
+}) => {
+  const browserErrors = collectConsoleAndPageErrors(page);
+  await seedFreshSettingsLanguageAndAboutSeen(page, 'sv');
+  await installMMKVPersistenceFailureHarness(page, {
+    failingReads: [settingsLanguageStorageKey, accessibilityThemeModeStorageKey],
+  });
+
+  await page.goto('/settings', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  const settingsReadWarning = page.getByRole('alert', {
+    name: 'Inställningar kunde inte läsas. Appen använder standardval i den här sessionen.',
+  });
+  const accessibilityReadWarnings = page.getByRole('alert', {
+    name: 'Tillgänglighetsinställningar kunde inte läsas. Appen använder standardinställningar i den här sessionen.',
+  });
+
+  await expect(settingsReadWarning).toBeVisible();
+  await expect.poll(() => accessibilityReadWarnings.count()).toBeGreaterThan(0);
+
+  await accessibilityReadWarnings.first().getByRole('button', { name: 'Jag förstår' }).click();
+  await expect(accessibilityReadWarnings).toHaveCount(0);
+  await expect(settingsReadWarning).toBeVisible();
+
+  await settingsReadWarning.getByRole('button', { name: 'Jag förstår' }).click();
+  await expect(settingsReadWarning).toHaveCount(0);
+  expect(browserErrors.get()).toEqual([]);
+});
+
+test('settings dismisses accessibility persistence warning after write without settings-store warning', async ({
+  page,
+}) => {
+  const browserErrors = collectConsoleAndPageErrors(page);
+  await seedFreshSettingsLanguageAndAboutSeen(page, 'en');
+  await installMMKVPersistenceFailureHarness(page, {
+    failingWrites: [accessibilityThemeModeStorageKey],
+  });
+
+  await page.goto('/settings', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  await expect(
+    page.getByRole('alert', {
+      name: /Settings could not be loaded|The setting could not be saved/,
+    }),
+  ).toHaveCount(0);
+
+  await page.getByLabel('Choose theme: Dark').click();
+  const accessibilityWriteWarnings = page.getByRole('alert', {
+    name: 'Accessibility preferences could not be saved. The change is available temporarily in this session.',
+  });
+
+  await expect.poll(() => accessibilityWriteWarnings.count()).toBeGreaterThan(0);
+  await expect(
+    page.getByRole('alert', {
+      name: /Settings could not be loaded|The setting could not be saved/,
+    }),
+  ).toHaveCount(0);
+
+  await accessibilityWriteWarnings.first().getByRole('button', { name: 'Got it' }).click();
+  await expect(accessibilityWriteWarnings).toHaveCount(0);
+  await expect(page.getByLabel('Choose theme: Dark')).toHaveAttribute('aria-checked', 'true');
+  expect(browserErrors.get()).toEqual([]);
+});
 
 test('settings controls expose selected state and radio arrow keyboard navigation on web', async ({
   page,
