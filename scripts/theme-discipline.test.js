@@ -515,6 +515,27 @@ test('post-answer reward surfaces resolve semantic colors from the active theme'
       /<Badge themeColors=\{themeColors\}/,
       `${componentPath} should pass active theme colors to reward badges`,
     );
+    for (const tokenName of [
+      'surfaceWarm',
+      'border',
+      'surface',
+      'badgeBlueBg',
+      'text',
+      'textSecondary',
+      'focusSoft',
+      'badgeBlueText',
+    ]) {
+      assert.match(
+        source,
+        new RegExp(`themeColors\\.${tokenName}\\b`),
+        `${componentPath} should style post-answer reward surfaces with active ${tokenName}`,
+      );
+    }
+    assert.match(
+      source,
+      /const styles = useMemo\(\(\) => createStyles\(themeColors\), \[themeColors\]\)/,
+      `${componentPath} should refresh reward panel styles when the active theme changes`,
+    );
     assert.doesNotMatch(
       source,
       /import \{[^}]*\bcolors\b[^}]*\} from ['"]\.\.\/\.\.\/lib\/theme['"]/,
