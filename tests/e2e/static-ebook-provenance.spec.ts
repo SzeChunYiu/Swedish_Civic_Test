@@ -204,6 +204,24 @@ test('static ebook footnote and backlink keep the active chapter hash', async ({
   expect(pageErrors).toEqual([]);
 });
 
+test('static ebook ignores malformed footnote hash values without page errors', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const pageErrors = collectPageErrors(page);
+
+  for (const hash of ['#/ebook?c=7&fn=%E0%A4%A', '#/ebook?c=7&fnref=%ZZ']) {
+    await openStaticEbook(page, staticSite.baseUrl, 'en', hash);
+    await expect(page.locator('.ebook__progress')).toHaveText('7 / 13');
+    await expect(page.locator('.ebook__nav a[data-eb="7"]')).toHaveClass(/is-active/);
+  }
+
+  await openStaticEbook(page, staticSite.baseUrl, 'en', '#/ebook?c=%E0%A4%A&fn=eb-7-en-fn-1');
+  await expect(page.locator('.ebook__progress')).toHaveText('Guide');
+
+  expect(pageErrors).toEqual([]);
+});
+
 test('static ebook external source links use safe attributes without changing chapter hashes', async ({
   page,
 }) => {

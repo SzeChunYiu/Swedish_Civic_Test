@@ -4459,10 +4459,28 @@
   function tr(map) {
     return (map && (map[getLang()] || map.en)) || '';
   }
+  function safeDecodeEbookRoutePart(value) {
+    try {
+      return decodeURIComponent(value.replace(/\+/g, ' '));
+    } catch {
+      return null;
+    }
+  }
+  function parseEbookRouteQuery() {
+    const hash = (location.hash || '').replace(/^#/, '');
+    const query = hash.split('?')[1] || '';
+    const params = {};
+    query.split('&').forEach((part) => {
+      if (!part) return;
+      const [rawKey, ...rawValueParts] = part.split('=');
+      const key = safeDecodeEbookRoutePart(rawKey);
+      const value = safeDecodeEbookRoutePart(rawValueParts.join('='));
+      if (key && value !== null) params[key] = value;
+    });
+    return params;
+  }
   function getActiveChapter() {
-    const hash = (location.hash || '#/').replace(/^#/, '');
-    const m = hash.match(/[?&]c=([^&]+)/);
-    return m ? m[1] : 'intro';
+    return parseEbookRouteQuery().c || 'intro';
   }
   const PRACTICE_LINKS = {
     intro: {
@@ -4681,13 +4699,7 @@
   }
 
   function scrollEbookRouteTarget() {
-    const hash = (location.hash || '').replace(/^#/, '');
-    const query = hash.split('?')[1] || '';
-    const params = {};
-    query.split('&').forEach((part) => {
-      const [key, value] = part.split('=');
-      if (key) params[decodeURIComponent(key)] = decodeURIComponent(value || '');
-    });
+    const params = parseEbookRouteQuery();
     const footnoteTarget = params.fn;
     const footnoteRefTarget = params.fnref;
     const targetId = footnoteTarget || (footnoteRefTarget ? `${footnoteRefTarget}-ref` : '');

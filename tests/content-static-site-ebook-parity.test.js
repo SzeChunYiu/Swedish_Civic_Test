@@ -1321,6 +1321,33 @@ test('static ebook footnote links preserve route hashes and rendered source coun
   }
 });
 
+test('static ebook malformed route hash values fail closed without losing valid chapters', () => {
+  const harness = createEbookHarness();
+
+  harness.localStorage.setItem('smt_lang', 'en');
+  for (const hash of [
+    '#/ebook?c=7&fn=%E0%A4%A',
+    '#/ebook?c=7&fnref=%ZZ',
+    '#/ebook?fn=%E0%A4%A&c=7',
+  ]) {
+    harness.location.hash = hash;
+    assert.doesNotThrow(() => harness.window.smtEbookRender(), hash);
+    assert.match(
+      harness.reader.innerHTML,
+      /<span class="ebook__progress">7 \/ 13<\/span>/,
+      `${hash} should keep the valid requested chapter`,
+    );
+  }
+
+  harness.location.hash = '#/ebook?c=%E0%A4%A&fn=eb-7-en-fn-1';
+  assert.doesNotThrow(() => harness.window.smtEbookRender());
+  assert.match(
+    harness.reader.innerHTML,
+    /<span class="ebook__progress">Guide<\/span>/,
+    'malformed c query should fall back to the intro chapter',
+  );
+});
+
 test('static ebook chapters expose heterogeneous source provenance in the source-count badge', () => {
   const harness = createEbookHarness();
   const chapterIds = getExpectedChapterIds();
