@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------
    Almost Swedish — site behaviour
-   - hash routing (/, /privacy, /support, /terms, /sources)
+   - hash routing (/, /practice, /dashboard, /mock, /ebook, legal/source pages)
    - language toggle (EN/SV) with localStorage persistence
    - try-a-question demo card
 ------------------------------------------------------------------ */

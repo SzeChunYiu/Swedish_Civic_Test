@@ -14,6 +14,14 @@ test.afterAll(async () => {
 
 async function seedSignedInDashboard(page: Page) {
   await page.addInitScript(() => {
+    for (const key of ['SMT_SUPABASE_URL', 'SMT_SUPABASE_ANON_KEY'] as const) {
+      Object.defineProperty(window, key, {
+        configurable: true,
+        get: () => '',
+        set: () => undefined,
+      });
+    }
+
     const today = new Date();
     const todayKey = [
       today.getFullYear(),
@@ -54,6 +62,7 @@ async function seedSignedInDashboard(page: Page) {
         rescuedDays: [],
       }),
     );
+    sessionStorage.setItem('smt_anchor_closed', '1');
     sessionStorage.setItem('smt_buddy_greeted', '1');
   });
 }
