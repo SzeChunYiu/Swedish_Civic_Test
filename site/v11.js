@@ -1056,7 +1056,7 @@
         : Math.round(ch.accuracy * 100) + '%';
       const link = document.createElement('a');
       link.className = 'v11-weak-link';
-      link.href = '#/practice?ch=' + encodeURIComponent(ch.id);
+      link.href = '#/practice?c=' + encodeURIComponent(ch.id);
       link.textContent = dtr({
         sv: 'Öva →',
         en: 'Practice →',

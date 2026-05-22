@@ -66,7 +66,17 @@ function visibleText(node) {
   return [node.textContent, ...node.children.map(visibleText)].filter(Boolean).join(' ');
 }
 
-function renderDashboard(language, storageOverrides = [], chaptersMeta = null) {
+function collectElementsByClass(node, className) {
+  const classes = new Set(
+    String(node.className || '')
+      .split(/\s+/)
+      .filter(Boolean),
+  );
+  const matches = classes.has(className) ? [node] : [];
+  return matches.concat(...node.children.map((child) => collectElementsByClass(child, className)));
+}
+
+function renderDashboardArtifacts(language, storageOverrides = [], chaptersMeta = null) {
   const dashboard = new Element('div');
   const dashboardEyebrow = new Element('span');
   const today = dateKey(new Date());
@@ -152,7 +162,14 @@ function renderDashboard(language, storageOverrides = [], chaptersMeta = null) {
 
   vm.createContext(sandbox);
   vm.runInContext(read('site/v11.js'), sandbox, { timeout: 3000 });
-  return visibleText(dashboard).replace(/\s+/g, ' ').trim();
+  return {
+    dashboard,
+    text: visibleText(dashboard).replace(/\s+/g, ' ').trim(),
+  };
+}
+
+function renderDashboard(language, storageOverrides = [], chaptersMeta = null) {
+  return renderDashboardArtifacts(language, storageOverrides, chaptersMeta).text;
 }
 
 function dateKey(date) {
@@ -364,6 +381,21 @@ test('static v1.1 dashboard uses natural Swedish streak protection copy', () => 
   assert.match(swedishText, /Svitskydd/);
   assert.match(swedishText, /Sviten är räddad — 1 svitskydd kvar/);
   assert.doesNotMatch(swedishText, /\b(?:streak|freeze|freezes)\b|Strecket|frysar|Frysar/i);
+});
+
+test('static v1.1 weak chapter CTAs use the supported Practice chapter parameter', () => {
+  const { dashboard } = renderDashboardArtifacts('en');
+  const weakChapterLinks = collectElementsByClass(dashboard, 'v11-weak-link').map(
+    (link) => link.href,
+  );
+
+  assert.deepEqual(new Set(weakChapterLinks), new Set(['#/practice?c=1', '#/practice?c=2']));
+  assert.equal(weakChapterLinks.length, 2);
+  weakChapterLinks.forEach((href) => {
+    assert.match(href, /^#\/practice\?c=\d+$/);
+    assert.doesNotMatch(href, /[?&]ch=/);
+  });
+  assert.doesNotMatch(read('site/v11.js'), /#\/practice\?ch=/);
 });
 
 test('static storage: v1.1 dashboard bounds local study-data shapes before rendering', () => {
