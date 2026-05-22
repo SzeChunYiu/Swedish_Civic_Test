@@ -614,6 +614,50 @@ test('Somali geography naturalness uses focused content validation routing', () 
   assert.match(questionI18nTestSource, /summarizeSomaliGeographyNaturalness/);
 });
 
+test('Somali holiday-food naturalness uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const questionI18nTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-question-i18n-v8-pilot.test.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('somaliHolidayFoodNaturalness');
+
+  assert.ok(registryEntry, 'Somali holiday-food focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-somali-holiday-food-naturalness']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'somaliHolidayFoodNaturalnessCasesValidated',
+    'somaliHolidayFoodNaturalnessStaticRowsValidated',
+    'somaliHolidayFoodNaturalnessParityValidated',
+  ]);
+  assert.match(validatorSource, /--focus-somali-holiday-food-naturalness/);
+  assert.match(
+    validatorSource,
+    /validateSomaliHolidayFoodNaturalnessParity\(\);[\s\S]*somaliHolidayFoodNaturalnessCasesValidated[\s\S]*somaliHolidayFoodNaturalnessStaticRowsValidated[\s\S]*somaliHolidayFoodNaturalnessParityValidated/,
+  );
+  assert.match(questionI18nTestSource, /summarizeSomaliHolidayFoodNaturalness/);
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-somali-holiday-food-naturalness'],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused Somali holiday-food validation should print a JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  for (const key of registryEntry.summaryKeys) {
+    assert.ok(Object.prototype.hasOwnProperty.call(summary, key), `${key} is present`);
+  }
+  assert.equal(summary.somaliHolidayFoodNaturalnessCasesValidated, 6);
+  assert.equal(summary.somaliHolidayFoodNaturalnessStaticRowsValidated, 6);
+  assert.equal(summary.somaliHolidayFoodNaturalnessParityValidated, true);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
+});
+
 test('generated localization overlay parity rejects typoed focus flags', () => {
   const result = spawnSync(
     process.execPath,
