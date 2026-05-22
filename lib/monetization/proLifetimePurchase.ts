@@ -14,12 +14,9 @@ import type {
   RemoveAdsPurchaseRecord,
   RemoveAdsReceiptValidationResult,
 } from './purchases';
+import { isCanonicalUtcIsoTimestamp } from '../time/canonicalTimestamp';
 import { appStoreProductIds } from './appStoreIdentity';
-import {
-  createNativePurchaseProvider,
-  createSecureStorePurchaseStorage,
-  isCanonicalUtcIsoTimestamp,
-} from './purchases';
+import { createNativePurchaseProvider, createSecureStorePurchaseStorage } from './purchases';
 import { PRO_LIFETIME_ENTITLEMENTS, unionEntitlements } from './premium';
 import type { PremiumEntitlements, ProTierEntitlements } from '../../types/monetization';
 

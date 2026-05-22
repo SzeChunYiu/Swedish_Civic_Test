@@ -2295,6 +2295,22 @@ test('Pro Lifetime entitlement storage and receipts require canonical UTC timest
   }
 });
 
+test('Pro Lifetime uses the shared canonical timestamp helper', () => {
+  const proLifetimeSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/proLifetimePurchase.ts'),
+    'utf8',
+  );
+
+  assert.match(
+    proLifetimeSource,
+    /import\s*\{\s*isCanonicalUtcIsoTimestamp\s*\}\s*from\s*['"]\.\.\/time\/canonicalTimestamp['"]/,
+  );
+  assert.doesNotMatch(
+    proLifetimeSource,
+    /import\s*\{[^}]*\bisCanonicalUtcIsoTimestamp\b[^}]*\}\s*from\s*['"]\.\/purchases['"]/,
+  );
+});
+
 test('remove-ads entitlement storage rejects stale boolean and malformed records', async () => {
   const {
     REMOVE_ADS_PRODUCT_ID,
