@@ -2083,6 +2083,26 @@ function politicalDemocracyRightStatementEn(answer: string): string | null {
   return null;
 }
 
+function advisoryReferendumStatementSv(answer: string): string | null {
+  if (/^politikerna (?:behöver inte|måste inte) följa resultatet$/i.test(answer)) {
+    return 'I Sverige är folkomröstningar rådgivande, så politiker behöver inte följa resultatet';
+  }
+  if (/^politikerna måste alltid följa resultatet$/i.test(answer)) {
+    return 'I Sverige är folkomröstningar bindande, så politiker är skyldiga att följa resultatet';
+  }
+  return null;
+}
+
+function advisoryReferendumStatementEn(answer: string): string | null {
+  if (/^politicians do not have to follow the result$/i.test(answer)) {
+    return 'In Sweden, referendums are advisory, so politicians do not have to follow the result';
+  }
+  if (/^politicians must always follow the result$/i.test(answer)) {
+    return 'In Sweden, referendums are binding, so politicians are required to follow the result';
+  }
+  return null;
+}
+
 export function deriveCivicStatementSv(source: PracticeQuestion, option: QuestionOption): string {
   if (isTrueFalseSource(source)) {
     return trueFalseSourceStatementSv(source, option.id === source.correctOptionId);
@@ -2250,19 +2270,8 @@ export function deriveCivicStatementSv(source: PracticeQuestion, option: Questio
       if (statement) return statement;
     }
     if (/^folkomröstningar i Sverige är rådgivande$/i.test(match[1])) {
-      return `Att ${match[1]} betyder att ${answer
-        .replace(
-          /^politikerna behöver inte följa resultatet$/i,
-          'politikerna inte behöver följa resultatet',
-        )
-        .replace(
-          /^politikerna måste inte följa resultatet$/i,
-          'politikerna inte behöver följa resultatet',
-        )
-        .replace(
-          /^politikerna måste alltid följa resultatet$/i,
-          'politikerna alltid måste följa resultatet',
-        )}`;
+      const statement = advisoryReferendumStatementSv(answer);
+      if (statement) return statement;
     }
     if (/^val i en demokrati är hemliga$/i.test(match[1])) {
       if (/^(?:Att\s+)?väljare inte behöver avslöja hur de röstar$/i.test(answer)) {
@@ -2920,6 +2929,10 @@ export function deriveCivicStatementEn(source: PracticeQuestion, option: Questio
   if (match) {
     if (/^human rights apply to everyone$/i.test(match[1])) {
       const statement = universalHumanRightsStatementEn(answer);
+      if (statement) return statement;
+    }
+    if (/^referendums in Sweden are advisory$/i.test(match[1])) {
+      const statement = advisoryReferendumStatementEn(answer);
       if (statement) return statement;
     }
     if (/^Sweden is a constitutional monarchy$/i.test(match[1])) {

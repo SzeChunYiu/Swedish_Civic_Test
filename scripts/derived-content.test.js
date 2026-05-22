@@ -923,17 +923,22 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
   assert.doesNotMatch(text, /are The/);
   assert.ok(
     text.includes(
-      'Att folkomröstningar i Sverige är rådgivande betyder att politikerna inte behöver följa resultatet.',
+      'I Sverige är folkomröstningar rådgivande, så politiker behöver inte följa resultatet.',
     ),
   );
   assert.ok(
     text.includes(
-      'Att folkomröstningar i Sverige är rådgivande betyder att politikerna alltid måste följa resultatet.',
+      'I Sverige är folkomröstningar bindande, så politiker är skyldiga att följa resultatet.',
     ),
   );
   assert.ok(
     text.includes(
-      'That referendums in Sweden are advisory means politicians do not have to follow the result.',
+      'In Sweden, referendums are advisory, so politicians do not have to follow the result.',
+    ),
+  );
+  assert.ok(
+    text.includes(
+      'In Sweden, referendums are binding, so politicians are required to follow the result.',
     ),
   );
   assert.ok(
@@ -1264,6 +1269,14 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
     [generatedQuestionId(sourceQuestions, 'q028', 'falseStatement')]: [
       'Oppositionen ska inte granska regeringens arbete och föreslå annan politik.',
       'The opposition should not scrutinize the government’s work and propose alternative policies.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q020', 'trueStatement')]: [
+      'I Sverige är folkomröstningar rådgivande, så politiker behöver inte följa resultatet.',
+      'In Sweden, referendums are advisory, so politicians do not have to follow the result.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q020', 'falseStatement')]: [
+      'I Sverige är folkomröstningar bindande, så politiker är skyldiga att följa resultatet.',
+      'In Sweden, referendums are binding, so politicians are required to follow the result.',
     ],
     [generatedQuestionId(sourceQuestions, 'q031', 'trueStatement')]: [
       'Politiker i Sverige behöver inte följa resultatet av en folkomröstning.',
