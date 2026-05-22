@@ -143,6 +143,8 @@ const localizedHomeChapterThreeFundamentalLawSnippets: Record<
   tr: /Temel yasalar\s*\(Grundlagarna\)/i,
   uk: /Основні закони\s*\(Grundlagarna\)/i,
 };
+const localizedHomeChapterFourTigrinyaWorkWelfareSnippet = /ሓባራዊ ስምምዓት.+ናይ ወለዲ ዕረፍቲ.+ጥቕማጥቕሚ ሕማም/;
+const forbiddenTigrinyaWorkWelfareTerms = /kollektivavtal|föräldraledighet|sjukpenning/iu;
 const localizedHomeChapterElevenCitizenshipSnippets: Record<ExtraLocale, RegExp> = {
   'zh-Hans': /公民身份（medborgarskap）/,
   'zh-Hant': /公民身分（medborgarskap）/,
@@ -567,6 +569,19 @@ async function assertHomeChapterThreeFundamentalLawTerms(
   expect(text).not.toMatch(/^Grundlagarna\b/);
 }
 
+async function assertHomeChapterFourTigrinyaWorkWelfareTerms(page: Page) {
+  const expectedDescription = await dictionaryText(page, 'ti', 'chap.4.d');
+  const chapterDescription = page.locator(i18nSelector('chap.4.d'));
+
+  await expect(chapterDescription).toBeVisible();
+  await expect(chapterDescription).toHaveText(expectedDescription);
+
+  const text = await chapterDescription.innerText();
+  expect(text).toContain('Skatteverket');
+  expect(text).toMatch(localizedHomeChapterFourTigrinyaWorkWelfareSnippet);
+  expect(text).not.toMatch(forbiddenTigrinyaWorkWelfareTerms);
+}
+
 async function assertHomeChapterElevenCitizenshipTerms(page: Page, locale: ExtraLocale) {
   const expectedDescription = await dictionaryText(page, locale, 'chap.11.d');
   const chapterDescription = page.locator(i18nSelector('chap.11.d'));
@@ -875,6 +890,23 @@ test('static Home chapter 3 fundamental laws render localized card descriptions 
     await assertHomeChapterThreeFundamentalLawTerms(page, locale);
     await expect(page.locator('.list-quiet > li')).toHaveCount(13);
   }
+
+  expect(pageErrors).toEqual([]);
+});
+
+test('static Home Tigrinya chapter 4 labor and welfare terms render localized card copy', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const pageErrors = collectPageErrors(page);
+  await openStaticHome(page, staticSite.baseUrl);
+
+  await switchStaticSiteLanguage(page, 'ti');
+
+  await expectRootLocale(page, 'ti');
+  await assertHomeChapterFourTigrinyaWorkWelfareTerms(page);
+  await expect(page.locator('.list-quiet > li')).toHaveCount(13);
+  await expectNoHorizontalOverflow(page);
 
   expect(pageErrors).toEqual([]);
 });
