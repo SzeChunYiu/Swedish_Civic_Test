@@ -2,11 +2,20 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
+const vm = require('node:vm');
 
 const repoRoot = path.resolve(__dirname, '..');
+const purchaseLocales = ['ckb', 'fa', 'so', 'ti', 'tr'];
 
 function read(filePath) {
   return fs.readFileSync(path.join(repoRoot, filePath), 'utf8');
+}
+
+function loadExtraI18n() {
+  const sandbox = { window: {} };
+  vm.createContext(sandbox);
+  vm.runInContext(read('site/i18n-extras.js'), sandbox, { timeout: 3000 });
+  return sandbox.window.__i18n_extra;
 }
 
 test('static web purchase surface is present but locked to signed-in accounts', () => {
@@ -46,4 +55,28 @@ test('sign-in session persistence exposes stable account identity for purchases'
   assert.match(signin, /smt_account_email/);
   assert.match(signin, /localStorage\.removeItem\(['"]smt_account_id['"]\)/);
   assert.match(signin, /window\.dispatchEvent\(new Event\(['"]smt:authchange['"]\)\)/);
+});
+
+test('extra-locale purchase copy preserves account interpolation and plan prices', () => {
+  const extra = loadExtraI18n();
+
+  for (const locale of purchaseLocales) {
+    const dictionary = extra?.[locale];
+    assert.equal(typeof dictionary, 'object', `${locale} dictionary must exist`);
+    assert.match(
+      dictionary['purchase.status.ready'],
+      /\{account\}/,
+      `${locale} ready status must keep the account placeholder`,
+    );
+    assert.match(
+      dictionary['purchase.removeAds.ready'],
+      /Google Play[\s\S]*29 kr/,
+      `${locale} Remove Ads purchase CTA should keep Google Play and 29 kr`,
+    );
+    assert.match(
+      dictionary['purchase.premium.ready'],
+      /Google Play[\s\S]*59 kr/,
+      `${locale} Premium purchase CTA should keep Google Play and 59 kr`,
+    );
+  }
 });
