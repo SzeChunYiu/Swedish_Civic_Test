@@ -459,6 +459,7 @@ test('exam route keeps flag-for-review state local to the current attempt', () =
     examRouteSource.match(/buildMockExamQuizSession\(\{[\s\S]*?\n\s*\}\)/)?.[0] ?? '';
   const progressRecordCall =
     examRouteSource.match(/recordMockExamSession\(\{[\s\S]*?\n\s*\}\);/)?.[0] ?? '';
+  const activeNavigatorCall = examRouteSource.match(/<QuestionNavigator[\s\S]*?\/>/)?.[0] ?? '';
 
   assert.match(
     examRouteSource,
@@ -491,6 +492,8 @@ test('exam route keeps flag-for-review state local to the current attempt', () =
   assert.match(examRouteSource, /copy\.unflagQuestionAccessibilityLabel\(index \+ 1\)/);
   assert.match(examRouteSource, /\{flaggedQuestionIds\[item\.questionId\] \? \(/);
   assert.match(examRouteSource, /<Badge tone="warm">\{copy\.flaggedQuestionLabel\}<\/Badge>/);
+  assert.match(activeNavigatorCall, /currentIndex=\{null\}/);
+  assert.doesNotMatch(activeNavigatorCall, /onSelect=/);
   assert.doesNotMatch(
     sessionBuilderCall,
     /flaggedQuestionIds/,
@@ -507,6 +510,18 @@ test('exam route keeps flag-for-review state local to the current attempt', () =
   );
   assert.match(navigatorSource, /flaggedIndexes\?: readonly number\[\];/);
   assert.match(navigatorSource, /if \(flaggedSet\.has\(index\)\) return 'flagged';/);
+  assert.match(
+    navigatorSource,
+    /const isInteractive = disabled !== true && typeof onSelect === 'function';/,
+  );
+  assert.match(navigatorSource, /isInteractive \? copy\.navigationLabel : copy\.statusLabel/);
+  assert.match(navigatorSource, /accessibilityRole="tab"/);
+  assert.match(navigatorSource, /accessibilityRole="text"/);
+  assert.match(navigatorSource, /accessibilityState=\{\{ selected \}\}/);
+  assert.doesNotMatch(
+    navigatorSource,
+    /accessibilityState=\{\{ disabled: isDisabled, selected \}\}/,
+  );
 });
 
 test('exam route separates reload-safe attempt ids from deterministic shuffle seeds', () => {
