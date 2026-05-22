@@ -133,6 +133,10 @@ function displayOrderFor(sandbox, question, sessionId) {
   );
 }
 
+function practiceAttemptSessionId(scope, attempt) {
+  return `practice:${scope}:attempt:${attempt}`;
+}
+
 function pickMovedCorrectQuestion(sandbox, sessionId) {
   for (let index = 0; index < 50; index += 1) {
     const question = sampleQuestion(`q-static-shuffle-${index}`);
@@ -142,6 +146,20 @@ function pickMovedCorrectQuestion(sandbox, sessionId) {
     }
   }
   throw new Error(`No moved-correct shuffle seed found for ${sessionId}`);
+}
+
+function pickAttemptChangingQuestion(sandbox, scope) {
+  const firstSessionId = practiceAttemptSessionId(scope, 1);
+  const secondSessionId = practiceAttemptSessionId(scope, 2);
+  for (let index = 0; index < 150; index += 1) {
+    const question = sampleQuestion(`q-static-attempt-${index}`);
+    const firstOrder = displayOrderFor(sandbox, question, firstSessionId);
+    const secondOrder = displayOrderFor(sandbox, question, secondSessionId);
+    if (firstOrder.join(',') !== secondOrder.join(',')) {
+      return { firstOrder, question, secondOrder };
+    }
+  }
+  throw new Error(`No attempt-changing shuffle seed found for ${scope}`);
 }
 
 function parseDataIndexes(html, attribute) {
@@ -197,7 +215,10 @@ test('static Practice renders shuffled labels while scoring the original correct
     language: 'en',
   });
   vm.runInContext(read('site/app.js'), sandbox, { timeout: 3000 });
-  const { question, order } = pickMovedCorrectQuestion(sandbox, 'practice:chapter:1');
+  const { question, order } = pickMovedCorrectQuestion(
+    sandbox,
+    practiceAttemptSessionId('chapter:1', 1),
+  );
   sandbox.window.SMT_QUESTIONS = [question];
   sandbox.window.smtPracticeFilterFor = () => [question];
 
@@ -224,6 +245,93 @@ test('static Practice renders shuffled labels while scoring the original correct
   const html = element('quiz-stage').innerHTML;
   assert.match(html, /Original correct answer/);
   assert.match(html, /class="quiz__opt is-correct" data-i="0"/);
+});
+
+test('static Practice quiz-again starts a fresh attempt seed for the same scope', () => {
+  const { sandbox, element, listeners } = createRenderContext({
+    hash: '#/practice?c=1',
+    language: 'en',
+  });
+  vm.runInContext(read('site/app.js'), sandbox, { timeout: 3000 });
+  const { firstOrder, question, secondOrder } = pickAttemptChangingQuestion(sandbox, 'chapter:1');
+  sandbox.window.SMT_QUESTIONS = [question];
+  sandbox.window.smtPracticeFilterFor = () => [question];
+
+  vm.runInContext('smtQuizRender();', sandbox, { timeout: 3000 });
+  assert.deepEqual(parseDataIndexes(element('quiz-stage').innerHTML, 'data-i'), firstOrder);
+
+  const correctOption = {
+    dataset: { i: String(question.answer) },
+    hasAttribute: () => false,
+    getBoundingClientRect: () => ({ left: 0, top: 0, width: 120, height: 44 }),
+  };
+  const nextButton = { hasAttribute: () => false };
+  const againButton = { hasAttribute: () => false };
+  const clickListeners = listeners.document.filter((entry) => entry.type === 'click');
+
+  for (const listener of clickListeners) {
+    listener.handler({
+      target: {
+        closest(selector) {
+          return selector === '#quiz-stage .quiz__opt' ? correctOption : null;
+        },
+      },
+    });
+  }
+  for (const listener of clickListeners) {
+    listener.handler({
+      target: {
+        closest(selector) {
+          return selector === '#quiz-next' ? nextButton : null;
+        },
+      },
+    });
+  }
+  assert.match(element('quiz-stage').innerHTML, /id="quiz-again"/);
+
+  for (const listener of clickListeners) {
+    listener.handler({
+      target: {
+        closest(selector) {
+          return selector === '#quiz-again' ? againButton : null;
+        },
+      },
+    });
+  }
+
+  assert.deepEqual(parseDataIndexes(element('quiz-stage').innerHTML, 'data-i'), secondOrder);
+  assert.notDeepEqual(firstOrder, secondOrder);
+  assert.equal(vm.runInContext('SMT_QUIZ.attempt', sandbox, { timeout: 3000 }), 2);
+  assert.equal(vm.runInContext('SMT_QUIZ.score', sandbox, { timeout: 3000 }), 0);
+});
+
+test('static Practice route re-entry starts a fresh attempt seed for the same scope', () => {
+  const { sandbox, element, listeners } = createRenderContext({
+    hash: '#/practice?c=1',
+    language: 'en',
+  });
+  vm.runInContext(read('site/app.js'), sandbox, { timeout: 3000 });
+  const { firstOrder, question, secondOrder } = pickAttemptChangingQuestion(sandbox, 'chapter:1');
+  sandbox.window.SMT_QUESTIONS = [question];
+  sandbox.window.smtPracticeFilterFor = () => [question];
+
+  vm.runInContext('smtQuizRenderRoute();', sandbox, { timeout: 3000 });
+  assert.deepEqual(parseDataIndexes(element('quiz-stage').innerHTML, 'data-i'), firstOrder);
+
+  sandbox.location.hash = '#/';
+  for (const listener of listeners.window.filter((entry) => entry.type === 'hashchange')) {
+    listener.handler();
+  }
+  assert.equal(vm.runInContext('SMT_QUIZ.routeActive', sandbox, { timeout: 3000 }), false);
+
+  sandbox.location.hash = '#/practice?c=1';
+  for (const listener of listeners.window.filter((entry) => entry.type === 'hashchange')) {
+    listener.handler();
+  }
+
+  assert.deepEqual(parseDataIndexes(element('quiz-stage').innerHTML, 'data-i'), secondOrder);
+  assert.notDeepEqual(firstOrder, secondOrder);
+  assert.equal(vm.runInContext('SMT_QUIZ.attempt', sandbox, { timeout: 3000 }), 2);
 });
 
 test('static Mock renders shuffled labels and reviews the selected original answer', () => {
