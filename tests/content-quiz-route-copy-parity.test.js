@@ -28,6 +28,10 @@ test('routed quiz shell copy follows the persisted settings language', () => {
     source.match(
       /<Link\b[\s\S]*?accessibilityLabel=\{copy\.backToPracticeAccessibilityLabel\}[\s\S]*?<\/Link>/g,
     ) ?? [];
+  const backToSearchLinks =
+    source.match(
+      /<Link\b[\s\S]*?accessibilityLabel=\{copy\.backToSearchAccessibilityLabel\}[\s\S]*?<\/Link>/g,
+    ) ?? [];
 
   assert.equal(summary.quizRouteCopyLabelsValidated, 20);
   assert.equal(summary.quizRouteCopyParityValidated, true);
@@ -60,6 +64,11 @@ test('routed quiz shell copy follows the persisted settings language', () => {
   assert.match(source, /if \(!searchQuery\) return '\/search';/);
   assert.match(source, /href=\{backToSearchHref\}/);
   assert.match(source, /return `\/search\?q=\$\{encodeURIComponent\(searchQuery\)\}` as Href;/);
+  assert.equal(backToSearchLinks.length, 3);
+  for (const backToSearchLink of backToSearchLinks) {
+    assert.match(backToSearchLink, /href=\{backToSearchHref\}/);
+    assert.match(backToSearchLink, /\bdismissTo\b|\breplace\b/);
+  }
   assert.equal(backToPracticeLinks.length, 3);
   for (const backToPracticeLink of backToPracticeLinks) {
     assert.match(backToPracticeLink, /href="\/practice"/);

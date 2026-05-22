@@ -418,6 +418,43 @@ test('routed quiz Back to Practice links use stack-aware route dismissal', () =>
   );
 });
 
+test('routed quiz Back to Search links use stack-aware route dismissal', () => {
+  const source = readRelative('search-query-hydration.spec.ts');
+  const quizSource = fs.readFileSync(path.join(repoRoot, 'app/quiz/[sessionId].tsx'), 'utf8');
+  const backToSearchLinks =
+    quizSource.match(
+      /<Link\b[\s\S]*?accessibilityLabel=\{copy\.backToSearchAccessibilityLabel\}[\s\S]*?<\/Link>/g,
+    ) ?? [];
+
+  assert.equal(
+    backToSearchLinks.length,
+    3,
+    'routed quiz should keep every Back to Search link under the same navigation contract',
+  );
+  for (const backToSearchLink of backToSearchLinks) {
+    assert.match(
+      backToSearchLink,
+      /href=\{backToSearchHref\}/,
+      'Back to Search links should keep their query-preserving destination',
+    );
+    assert.match(
+      backToSearchLink,
+      /\bdismissTo\b|\breplace\b/,
+      'Back to Search links should dismiss to or replace /search instead of pushing a duplicate route',
+    );
+  }
+  assert.match(
+    source,
+    /await expect\(page\.getByRole\('heading', \{ name: routeSessionHeading \}\)\)\.toHaveCount\(0\);/,
+    'Search return e2e should verify the old quiz session heading is no longer role-queryable',
+  );
+  assert.match(
+    source,
+    /await expect\(page\.getByRole\('link', \{ name: backSearchLinkName \}\)\)\.toHaveCount\(0\);/,
+    'Search return e2e should verify retained Back to Search links are gone after return',
+  );
+});
+
 test('practice feedback specs target answer option accessibility result labels', () => {
   const source = readRelative('practice-feedback.spec.ts');
 
