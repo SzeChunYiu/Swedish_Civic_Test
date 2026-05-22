@@ -7733,7 +7733,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Two hundred years ago, Sweden was a typical agricultural country. Almost the whole population lived in the countryside and worked by farming and caring for animals, cities were small, and Sweden was poor compared with other European countries.",
+      "en": "Two hundred years ago, Sweden was a typical agricultural country. Almost the whole population lived in the countryside and worked on farms, growing crops and caring for animals. Cities were small, and Sweden was poor compared with other European countries.",
       "sv": "För tvåhundra år sedan var Sverige ett typiskt jordbruksland. Nästan hela befolkningen bodde på landet och arbetade med att odla jorden och sköta djur, städerna var små och Sverige var fattigt jämfört med andra länder i Europa.",
       "zh-Hant": "兩百年前，瑞典是一個典型的農業國家。幾乎所有人口都住在鄉村，從事耕種和照料動物；城市很小，瑞典與歐洲其他國家相比很貧窮。",
       "zh-Hans": "两百年前，瑞典是一个典型的农业国家。几乎所有人口都住在乡村，从事耕种和照料动物；城市很小，瑞典与欧洲其他国家相比很贫穷。",
@@ -37325,7 +37325,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Two hundred years ago, Sweden was a typical agricultural country. Almost the whole population lived in the countryside and worked by farming and caring for animals, cities were small, and Sweden was poor compared with other European countries.",
+      "en": "Two hundred years ago, Sweden was a typical agricultural country. Almost the whole population lived in the countryside and worked on farms, growing crops and caring for animals. Cities were small, and Sweden was poor compared with other European countries.",
       "sv": "För tvåhundra år sedan var Sverige ett typiskt jordbruksland. Nästan hela befolkningen bodde på landet och arbetade med att odla jorden och sköta djur, städerna var små och Sverige var fattigt jämfört med andra länder i Europa."
     },
     "source": {
@@ -37365,7 +37365,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Two hundred years ago, Sweden was a typical agricultural country. Almost the whole population lived in the countryside and worked by farming and caring for animals, cities were small, and Sweden was poor compared with other European countries.",
+      "en": "Two hundred years ago, Sweden was a typical agricultural country. Almost the whole population lived in the countryside and worked on farms, growing crops and caring for animals. Cities were small, and Sweden was poor compared with other European countries.",
       "sv": "För tvåhundra år sedan var Sverige ett typiskt jordbruksland. Nästan hela befolkningen bodde på landet och arbetade med att odla jorden och sköta djur, städerna var små och Sverige var fattigt jämfört med andra länder i Europa."
     },
     "source": {
@@ -37405,7 +37405,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Two hundred years ago, Sweden was a typical agricultural country. Almost the whole population lived in the countryside and worked by farming and caring for animals, cities were small, and Sweden was poor compared with other European countries.",
+      "en": "Two hundred years ago, Sweden was a typical agricultural country. Almost the whole population lived in the countryside and worked on farms, growing crops and caring for animals. Cities were small, and Sweden was poor compared with other European countries.",
       "sv": "För tvåhundra år sedan var Sverige ett typiskt jordbruksland. Nästan hela befolkningen bodde på landet och arbetade med att odla jorden och sköta djur, städerna var små och Sverige var fattigt jämfört med andra länder i Europa."
     },
     "source": {
@@ -37493,7 +37493,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Two hundred years ago, Sweden was a typical agricultural country. Almost the whole population lived in the countryside and worked by farming and caring for animals, cities were small, and Sweden was poor compared with other European countries.",
+      "en": "Two hundred years ago, Sweden was a typical agricultural country. Almost the whole population lived in the countryside and worked on farms, growing crops and caring for animals. Cities were small, and Sweden was poor compared with other European countries.",
       "sv": "För tvåhundra år sedan var Sverige ett typiskt jordbruksland. Nästan hela befolkningen bodde på landet och arbetade med att odla jorden och sköta djur, städerna var små och Sverige var fattigt jämfört med andra länder i Europa."
     },
     "source": {

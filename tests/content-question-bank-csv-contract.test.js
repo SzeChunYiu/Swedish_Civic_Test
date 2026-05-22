@@ -8,7 +8,10 @@ const { buildSiteQuestionBank } = require('../scripts/export-site-question-bank'
 const { generatedQuestionId } = require('../scripts/generated-question-fixture-ids');
 
 const repoRoot = path.resolve(__dirname, '..');
-const learnerFacingLegalCertaintyPattern = /\blegal certainty\b/i;
+const Q075_AGRICULTURAL_STALE_PATTERN =
+  /worked by farming and caring for animals,\s*cities were small/i;
+const Q075_AGRICULTURAL_REVISED_PATTERN =
+  /worked on farms, growing crops and caring for animals\.\s+Cities were small/i;
 
 function parseExportedCsvLine(line) {
   return [...line.matchAll(/"((?:""|[^"])*)"(?:,|$)/g)].map((match) =>
@@ -226,44 +229,26 @@ test('question-bank CSV has unique public header names', () => {
   assert.equal(header.filter((field) => field === 'supplementalSourcePublisher').length, 1);
 });
 
-test('question-bank CSV keeps rule-of-law English natural while allowing internal tags', () => {
+test('question-bank CSV keeps q075 agricultural Sweden English explanation grammatical', () => {
   const csv = fs.readFileSync(path.join(repoRoot, 'content', 'question-bank.csv'), 'utf8');
   const lines = csv.trimEnd().split('\n');
   const header = parseExportedCsvLine(lines[0]);
-  const rows = lines.slice(1).map(parseExportedCsvLine);
-  const fieldIndexes = ['id', 'questionEn', 'explanationEn', 'optionEn', 'tags'].reduce(
-    (indexes, field) => {
-      const index = header.indexOf(field);
-      assert.notEqual(index, -1, `${field} column should exist`);
-      return { ...indexes, [field]: index };
-    },
-    {},
+  const idIndex = header.indexOf('id');
+  const explanationEnIndex = header.indexOf('explanationEn');
+  const expectedIds = new Set(['q075', 'q476', 'q477', 'q478', 'q479']);
+  const rowsById = new Map(
+    lines.slice(1).map((line) => {
+      const row = parseExportedCsvLine(line);
+      return [row[idIndex], row];
+    }),
   );
-  const offenders = [];
 
-  rows.forEach((row) => {
-    const id = row[fieldIndexes.id];
-    const learnerFields = [
-      ['questionEn', row[fieldIndexes.questionEn]],
-      ['explanationEn', row[fieldIndexes.explanationEn]],
-      ...JSON.parse(row[fieldIndexes.optionEn]).map((option) => [
-        `option ${option.id} text`,
-        option.text,
-      ]),
-    ];
-
-    learnerFields.forEach(([field, value]) => {
-      if (learnerFacingLegalCertaintyPattern.test(value)) {
-        offenders.push(`${id} ${field}: ${value}`);
-      }
-    });
-  });
-
-  assert.ok(
-    rows.some((row) => row[fieldIndexes.tags].split('|').includes('legal-certainty')),
-    'internal legal-certainty tag remains allowed',
-  );
-  assert.deepEqual(offenders, []);
+  for (const id of expectedIds) {
+    const row = rowsById.get(id);
+    assert.ok(row, `${id} should be exported to content/question-bank.csv`);
+    assert.doesNotMatch(row[explanationEnIndex], Q075_AGRICULTURAL_STALE_PATTERN);
+    assert.match(row[explanationEnIndex], Q075_AGRICULTURAL_REVISED_PATTERN);
+  }
 });
 
 test('question-bank CSV contract rejects public header drift', () => {

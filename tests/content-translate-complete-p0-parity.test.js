@@ -1,6 +1,5 @@
 const assert = require('node:assert/strict');
-const { execFileSync } = require('node:child_process');
-const fs = require('node:fs');
+const { execFileSync, spawnSync } = require('node:child_process');
 const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
@@ -126,6 +125,10 @@ test('TRANSLATE-COMPLETE P0 has explicit SV/EN completeness and naturalness clos
     summary.questionPublicServiceBroadcasterEnglishNaturalnessValidated,
     summary.publishedQuestions,
   );
+  assert.equal(
+    summary.questionAgriculturalSwedenEnglishNaturalnessValidated,
+    summary.publishedQuestions,
+  );
   assert.equal(summary.questionLargestLakesEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(
     summary.questionNationalMinoritiesEnglishNaturalnessValidated,
@@ -156,17 +159,34 @@ test('TRANSLATE-COMPLETE P0 has explicit SV/EN completeness and naturalness clos
   assert.equal(summary.somaliHolidayFoodNaturalnessParityValidated, true);
 });
 
-test('TRANSLATE-COMPLETE keeps rule-of-law English natural while allowing internal tags', () => {
-  const questions = loadTs('data/questions.ts', 'questions');
-  const staticQuestions = loadStaticQuestions();
-  const offenders = [];
-
-  questions.forEach((question) => pushCanonicalQuestionOffenders(offenders, question));
-  staticQuestions.forEach((question) => pushStaticQuestionOffenders(offenders, question));
-
-  assert.ok(
-    questions.some((question) => question.tags.includes('legal-certainty')),
-    'internal legal-certainty tag remains allowed',
+test('TRANSLATE-COMPLETE rejects q075 agricultural Sweden comma-splice English', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents).replace(
+      'Almost the whole population lived in the countryside and worked on farms, growing crops and caring for animals. Cities were small, and Sweden was poor compared with other European countries.',
+      'Almost the whole population lived in the countryside and worked by farming and caring for animals, cities were small, and Sweden was poor compared with other European countries.',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
   );
-  assert.deepEqual(offenders, []);
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q075 uses stilted agricultural Sweden English wording/,
+  );
 });

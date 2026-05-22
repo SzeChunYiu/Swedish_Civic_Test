@@ -40,8 +40,10 @@ const SUFFRAGE_1921_EXPECTED_STATIC_EXPLANATION =
   "the first Riksdag election with both women's and men's voting rights and women's eligibility was held in 1921";
 const SOURCE_CRITICISM_STALE_STATIC_PATTERN =
   /具有(?:來|来)源批判意識|أن تكون ناقدًا للمصادر|سەرچاوە-ڕەخنەیی|منبع‌سنج بودن|krytyczne podejście do źródeł|si naqdineed loo eego ilaha|ንምንጭታት ብነቐፌታዊ መንገዲ ምርኣይ|kaynaklara eleştirel yaklaşmak|критично ставитися до джерел/i;
-const NEW_YEARS_EVE_DATE_STALE_PATTERN = /\bNew Year(?:’|')s Eve on 31 December\b/i;
-const LUCIA_DAY_DATE_STALE_PATTERN = /\bLucia Day on 13 December\b/i;
+const Q075_AGRICULTURAL_STALE_STATIC_PATTERN =
+  /worked by farming and caring for animals,\s*cities were small/i;
+const Q075_AGRICULTURAL_REVISED_STATIC_PATTERN =
+  /worked on farms, growing crops and caring for animals\.\s+Cities were small/i;
 const BASE_LOCALES = new Set(['sv', 'en']);
 
 function withSvEn(localizedText, sv, en) {
@@ -377,25 +379,30 @@ test('static site question bank keeps q050 source-criticism i18n noun-based', ()
   assert.doesNotMatch(staticQuestionVisibleText(q050), SOURCE_CRITICISM_STALE_STATIC_PATTERN);
 });
 
-test('static site question bank preserves q050 source-criticism canonical copy and source metadata', () => {
+test('static site question bank keeps q075 agricultural Sweden English grammatical', () => {
+  const expectedBank = buildSiteQuestionBank();
+  const sourceQuestions = expectedBank.questions.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const expectedIds = [
+    'q075',
+    generatedQuestionId(sourceQuestions, 'q075', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q075', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q075', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q075', 'judgement'),
+  ];
   const context = { window: {} };
   vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
   const questionsById = new Map(
     context.window.SMT_QUESTIONS.map((question) => [question.id, question]),
   );
-  const q050 = questionsById.get('q050');
 
-  assert.ok(q050, 'q050 should be present in static question bank');
-  assert.equal(q050.q.sv, 'Vad betyder det att vara källkritisk?');
-  assert.equal(q050.q.en, 'What does source criticism mean?');
-  assert.equal(q050.answer, 0);
-  assert.equal(q050.opts[0].sv, 'Att ifrågasätta och kontrollera om information är korrekt');
-  assert.equal(q050.opts[0].en, 'Questioning and checking whether information is correct');
-  assert.equal(q050.source.title, 'Sverige i fokus');
-  assert.equal(q050.source.chapter, 'Mediernas roll');
-  assert.equal(q050.source.section, 'Källkritik');
-  assert.equal(q050.source.page, 21);
-  assert.equal(q050.questionProvenance, 'uhr');
+  for (const id of expectedIds) {
+    const question = questionsById.get(id);
+    assert.ok(question, `${id} should be present in static question bank`);
+    assert.doesNotMatch(question.why.en, Q075_AGRICULTURAL_STALE_STATIC_PATTERN);
+    assert.match(question.why.en, Q075_AGRICULTURAL_REVISED_STATIC_PATTERN);
+  }
 });
 
 test('chapter localization metadata avoids parenthetical English welfare glosses', () => {

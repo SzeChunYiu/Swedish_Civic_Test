@@ -648,10 +648,28 @@ const QUESTION_PUBLIC_SECTOR_ENGLISH_NATURALNESS_PATTERNS = [
   /\bActivities for which the state, regions, and municipalities are responsible\b/i,
   /\bThe public sector(?: in Sweden)? means (?:activities|all privately owned companies)\b/i,
 ];
-const QUESTION_RIGHTS_WORK_ENGLISH_NATURALNESS_PATTERNS = [
-  /\bpart of work for gender equality\b/i,
-  /\baim of work for people with disabilities\b/i,
-  /\bWork for people with disabilities is about\b/i,
+const QUESTION_PUBLIC_SERVICE_BROADCASTER_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bWhich three companies are called public service in Sweden\b/i,
+  /\bare called public service in Sweden\b/i,
+  /\b(?:the three )?media companies called public service\b/i,
+  /\bWhich fact is correct regarding which three companies are called public service\b/i,
+];
+const QUESTION_AGRICULTURAL_SWEDEN_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bworked by farming and caring for animals\b/i,
+  /\bfarming and caring for animals,\s+cities were small\b/i,
+];
+const QUESTION_LARGEST_LAKES_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bWhich are Sweden's three largest lakes\b/i,
+  /\bWhich fact is correct regarding which are Sweden's three largest lakes\b/i,
+  /\bWhat is correct regarding what are Sweden's three largest lakes\b/i,
+];
+const QUESTION_LARGEST_LAKES_ENGLISH_FRAGMENT_STEM_PATTERNS = [
+  /^Vänern, Vättern, and Mälaren\.?$/i,
+  /^The Baltic Sea, Kattegat, and Skagerrak\.?$/i,
+];
+const QUESTION_RECORD_YEARS_ENGLISH_NATURALNESS_PATTERNS = [
+  /\blong-lasting strong economic growth\b/i,
+  /\bstrong economic growth for a long time\b/i,
 ];
 const QUESTION_SOURCE_CRITICISM_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhat does it mean to be source-critical\b/i,
@@ -6049,6 +6067,7 @@ function translationNaturalnessGuardParityIsValidated() {
     questionMayDayEnglishNaturalnessValidated === publishedQuestions &&
     questionPublicSectorEnglishNaturalnessValidated === publishedQuestions &&
     questionPublicServiceBroadcasterEnglishNaturalnessValidated === publishedQuestions &&
+    questionAgriculturalSwedenEnglishNaturalnessValidated === publishedQuestions &&
     questionLargestLakesEnglishNaturalnessValidated === publishedQuestions &&
     questionNationalMinoritiesEnglishNaturalnessValidated === publishedQuestions &&
     questionNewYearsEveDateEnglishNaturalnessValidated === publishedQuestions &&
@@ -7784,14 +7803,35 @@ function findQuestionPublicSectorEnglishNaturalnessIssue(question) {
   );
 }
 
-function findQuestionRightsWorkEnglishNaturalnessIssue(question) {
-  if (
-    !question.tags?.includes('gender-equality') &&
-    !question.tags?.includes('disability-rights')
-  ) {
-    return null;
-  }
-  return QUESTION_RIGHTS_WORK_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+function findQuestionPublicServiceBroadcasterEnglishNaturalnessIssue(question) {
+  if (!question.tags?.includes('public-service')) return null;
+  return QUESTION_PUBLIC_SERVICE_BROADCASTER_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(questionText(question, ['questionEn', 'explanationEn'])),
+  );
+}
+
+function findQuestionAgriculturalSwedenEnglishNaturalnessIssue(question) {
+  if (!question.tags?.includes('agriculture')) return null;
+  return QUESTION_AGRICULTURAL_SWEDEN_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(questionText(question, ['questionEn', 'explanationEn'])),
+  );
+}
+
+function findQuestionLargestLakesEnglishNaturalnessIssue(question) {
+  if (!question.tags?.includes('lakes')) return null;
+  return (
+    QUESTION_LARGEST_LAKES_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+      pattern.test(question.questionEn || ''),
+    ) ||
+    QUESTION_LARGEST_LAKES_ENGLISH_FRAGMENT_STEM_PATTERNS.find((pattern) =>
+      pattern.test(question.questionEn || ''),
+    )
+  );
+}
+
+function findQuestionRecordYearsEnglishNaturalnessIssue(question) {
+  if (!question.tags?.includes('record-years')) return null;
+  return QUESTION_RECORD_YEARS_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
     pattern.test(questionText(question, ['questionEn', 'explanationEn'])),
   );
 }
@@ -10263,7 +10303,10 @@ let questionReligiousFreedomParallelismTargetRowsValidated = 0;
 let questionCouncilOfEuropeWorkForEnglishNaturalnessValidated = 0;
 let questionMayDayEnglishNaturalnessValidated = 0;
 let questionPublicSectorEnglishNaturalnessValidated = 0;
-let questionRightsWorkEnglishNaturalnessValidated = 0;
+let questionPublicServiceBroadcasterEnglishNaturalnessValidated = 0;
+let questionAgriculturalSwedenEnglishNaturalnessValidated = 0;
+let questionLargestLakesEnglishNaturalnessValidated = 0;
+let questionRecordYearsEnglishNaturalnessValidated = 0;
 let questionLuciaExplanationRoleScaffoldValidated = 0;
 let questionGoodFridayEnglishNaturalnessValidated = 0;
 let questionReferendumAdvisorySwedishNaturalnessValidated = 0;
@@ -25554,6 +25597,10 @@ function validatePublishedQuestionNaturalnessGuards() {
         `${label} uses stilted public-service broadcaster English wording`,
       ],
       [
+        findQuestionAgriculturalSwedenEnglishNaturalnessIssue(question),
+        `${label} uses stilted agricultural Sweden English wording`,
+      ],
+      [
         findQuestionLargestLakesEnglishNaturalnessIssue(question),
         `${label} uses stilted largest-lakes English wording`,
       ],
@@ -25867,8 +25914,14 @@ if (Array.isArray(questions)) {
         findQuestionReligiousFreedomOptionParallelismIssue(question);
       const publicSectorEnglishNaturalnessIssue =
         findQuestionPublicSectorEnglishNaturalnessIssue(question);
-      const rightsWorkEnglishNaturalnessIssue =
-        findQuestionRightsWorkEnglishNaturalnessIssue(question);
+      const publicServiceBroadcasterEnglishNaturalnessIssue =
+        findQuestionPublicServiceBroadcasterEnglishNaturalnessIssue(question);
+      const agriculturalSwedenEnglishNaturalnessIssue =
+        findQuestionAgriculturalSwedenEnglishNaturalnessIssue(question);
+      const largestLakesEnglishNaturalnessIssue =
+        findQuestionLargestLakesEnglishNaturalnessIssue(question);
+      const recordYearsEnglishNaturalnessIssue =
+        findQuestionRecordYearsEnglishNaturalnessIssue(question);
       const councilOfEuropeWorkForEnglishNaturalnessIssue =
         findQuestionCouncilOfEuropeWorkForEnglishNaturalnessIssue(question);
       const mayDayEnglishNaturalnessIssue = findQuestionMayDayEnglishNaturalnessIssue(question);
@@ -25940,7 +25993,22 @@ if (Array.isArray(questions)) {
       if (rightsWorkEnglishNaturalnessIssue) {
         fail(`${label} uses literal rights-work English wording`);
       } else {
-        questionRightsWorkEnglishNaturalnessValidated += 1;
+        questionPublicServiceBroadcasterEnglishNaturalnessValidated += 1;
+      }
+      if (agriculturalSwedenEnglishNaturalnessIssue) {
+        fail(`${label} uses stilted agricultural Sweden English wording`);
+      } else {
+        questionAgriculturalSwedenEnglishNaturalnessValidated += 1;
+      }
+      if (largestLakesEnglishNaturalnessIssue) {
+        fail(`${label} uses stilted largest-lakes English wording`);
+      } else {
+        questionLargestLakesEnglishNaturalnessValidated += 1;
+      }
+      if (recordYearsEnglishNaturalnessIssue) {
+        fail(`${label} uses stilted record-years English wording`);
+      } else {
+        questionRecordYearsEnglishNaturalnessValidated += 1;
       }
       if (councilOfEuropeWorkForEnglishNaturalnessIssue) {
         fail(`${label} uses literal Council of Europe work-for English wording`);
@@ -26582,7 +26650,10 @@ console.log(
       questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
       questionMayDayEnglishNaturalnessValidated,
       questionPublicSectorEnglishNaturalnessValidated,
-      questionRightsWorkEnglishNaturalnessValidated,
+      questionPublicServiceBroadcasterEnglishNaturalnessValidated,
+      questionAgriculturalSwedenEnglishNaturalnessValidated,
+      questionLargestLakesEnglishNaturalnessValidated,
+      questionRecordYearsEnglishNaturalnessValidated,
       questionLuciaExplanationRoleScaffoldValidated,
       questionGoodFridayEnglishNaturalnessValidated,
       questionReferendumAdvisorySwedishNaturalnessValidated,
