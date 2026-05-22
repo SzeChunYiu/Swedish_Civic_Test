@@ -97,6 +97,16 @@ async function openExamWithLanguage(page: Page, language: AppLanguage) {
   await dismissBlockingModals(page);
 }
 
+async function setDocumentHiddenForTest(page: Page, hidden: boolean) {
+  await page.evaluate((nextHidden) => {
+    Object.defineProperty(document, 'hidden', {
+      configurable: true,
+      get: () => nextHidden,
+    });
+    document.dispatchEvent(new Event('visibilitychange'));
+  }, hidden);
+}
+
 test('mock exam requires all answers before showing Swedish score and source provenance review', async ({
   page,
 }) => {
@@ -210,6 +220,44 @@ test('mock exam requires all answers before showing Swedish score and source pro
   await expect(page.getByText('Skickade resultat är slutgiltiga')).toBeVisible();
   await expect(page.getByLabel('Back to exam answers')).toHaveCount(0);
   await expectNoPassVerdictCopy(page);
+
+  expect(consoleErrors).toEqual([]);
+});
+
+test('mock exam pauses timer while the browser document is hidden', async ({ page }) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await openExamWithLanguage(page, 'en');
+
+  const activeCount = page.getByText(`0/${totalQuestions} answered`);
+  if ((await activeCount.count()) === 0) {
+    const start = page.getByLabel('Start mock exam');
+    await expect(start).toBeEnabled();
+    await start.click();
+  }
+
+  await expect(activeCount).toBeVisible();
+  const timerLine = page.getByText(/^Time left/);
+  await expect(timerLine).toBeVisible();
+
+  await setDocumentHiddenForTest(page, true);
+  await expect(
+    page.getByText(
+      'Paused while the app is in the background. The timer and question timing resume when you return.',
+    ),
+  ).toBeVisible();
+  const pausedTimerText = await timerLine.textContent();
+
+  await page.waitForTimeout(1250);
+  await expect(timerLine).toHaveText(pausedTimerText ?? '');
+
+  await setDocumentHiddenForTest(page, false);
+  await expect(page.getByText('Timer resumed. Hidden time was not counted.')).toBeVisible();
 
   expect(consoleErrors).toEqual([]);
 });

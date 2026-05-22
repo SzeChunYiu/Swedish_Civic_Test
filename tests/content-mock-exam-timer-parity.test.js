@@ -67,6 +67,7 @@ test('default mock exam timer stays in parity with configured duration', () => {
   assert.equal(formatExamTime(totalSeconds), expectedFormattedTime(totalSeconds));
   assert.equal(
     shouldAutoSubmitExam({
+      examActive: true,
       remainingSeconds: totalSeconds,
       submitted: false,
       questionCount: config.questionCount,
@@ -75,6 +76,7 @@ test('default mock exam timer stays in parity with configured duration', () => {
   );
   assert.equal(
     shouldAutoSubmitExam({
+      examActive: true,
       remainingSeconds: 0,
       submitted: false,
       questionCount: config.questionCount,

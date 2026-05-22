@@ -146,7 +146,7 @@ test('active mock exam keeps full UHR reference cards out of pre-submit question
   const examRouteSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
   const reviewSectionStart = examRouteSource.indexOf('{filteredReviewItems.map((item) => {');
   const activeQuestionSectionStart = examRouteSource.indexOf(
-    '{examQuestions.map((question, index) => (',
+    '{examQuestions.map((question, index) => {',
   );
 
   assert.notEqual(reviewSectionStart, -1, 'submitted review section should be present');
@@ -188,9 +188,17 @@ test('mock exam timer and auto-submit runtime guards reject malformed state', ()
   const examRouteSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
 
   assert.equal(summary.mockExamTimerParityValidated, true);
-  assert.match(examRouteSource, /examActive: examUnlocked/);
+  assert.match(examRouteSource, /examActive: examUnlocked && !examPaused/);
   assert.match(examRouteSource, /formatExamTime\(remainingSeconds\)/);
   assert.match(examRouteSource, /!Number\.isFinite\(remainingSeconds\)/);
+  assert.match(examRouteSource, /AppState\.addEventListener\('change', handleAppStateChange\)/);
+  assert.match(examRouteSource, /document\.addEventListener\('visibilitychange'/);
+  assert.match(examRouteSource, /const \[examPaused, setExamPaused\] = useState\(false\);/);
+  assert.match(examRouteSource, /pauseStartedAtMsRef\.current \?\?= Date\.now\(\);/);
+  assert.match(examRouteSource, /timingCheckpointMsRef\.current \+= pausedDurationMs/);
+  assert.match(examRouteSource, /setExamPauseStatus\('paused'\)/);
+  assert.match(examRouteSource, /setExamPauseStatus\('resumed'\)/);
+  assert.match(examRouteSource, /aria-live="polite"/);
   assert.match(examRouteSource, /Number\.isFinite\(current\) \? Math\.max\(0, current - 1\) : 0/);
   for (const malformedRemainingSeconds of [
     Number.NaN,

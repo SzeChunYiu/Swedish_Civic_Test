@@ -1,5 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { findNodeHandle, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  AppState,
+  findNodeHandle,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import type { AppStateStatus } from 'react-native';
 
 import { MockExamTimeHeatmap } from '../../components/MockExamTimeHeatmap';
 import { QuestionNavigator } from '../../components/QuestionNavigator';
@@ -55,7 +64,9 @@ type ExamRouteCopy = {
   heroSubtitle: (durationMinutes: number, questionCount: number) => string;
   mockExamTitle: string;
   nextExamTitle: string;
+  pausedStatus: string;
   progressTitle: string;
+  resumedStatus: string;
   navigatorStateLabels: { answered: string; current: string; flagged: string; unanswered: string };
   questionNumber: (questionNumber: number) => string;
   questionReviewTitle: string;
@@ -124,7 +135,10 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
       `Tidsgräns ${durationMinutes} minuter · ${questionCount} UHR-baserade frågor · inga annonser under provet`,
     mockExamTitle: 'Övningsprov',
     nextExamTitle: 'Nästa prov',
+    pausedStatus:
+      'Pausad medan appen är i bakgrunden. Timern och frågetiden fortsätter när du återvänder.',
     progressTitle: 'Framsteg',
+    resumedStatus: 'Tiden fortsätter nu. Paustiden räknades inte.',
     navigatorStateLabels: {
       answered: 'Besvarad',
       current: 'Aktuell fråga',
@@ -195,7 +209,10 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
       `Time limit ${durationMinutes} minutes · ${questionCount} UHR-based questions · no ads during exam`,
     mockExamTitle: 'Mock exam',
     nextExamTitle: 'Next exam',
+    pausedStatus:
+      'Paused while the app is in the background. The timer and question timing resume when you return.',
     progressTitle: 'Progress',
+    resumedStatus: 'Timer resumed. Hidden time was not counted.',
     navigatorStateLabels: {
       answered: 'Answered',
       current: 'Current question',
@@ -239,11 +256,22 @@ function createMockExamAttemptId(now = Date.now(), random = Math.random()): stri
   return `mock-exam-${now.toString(36)}-${randomPart}`;
 }
 
+function isActiveAppState(state: AppStateStatus | string | null | undefined): boolean {
+  return !state || state === 'active' || state === 'unknown';
+}
+
+function isDocumentHidden(): boolean {
+  return typeof document !== 'undefined' && document.hidden === true;
+}
+
 export default function Screen() {
   const scrollViewRef = useRef<ScrollView | null>(null);
   const reviewCardRefs = useRef<Record<string, View | null>>({});
   const examStartedAtIsoRef = useRef(new Date().toISOString());
   const timingCheckpointMsRef = useRef(Date.now());
+  const pauseStartedAtMsRef = useRef<number | null>(null);
+  const appStateActiveRef = useRef(isActiveAppState(AppState.currentState));
+  const documentVisibleRef = useRef(!isDocumentHidden());
   const [examAttemptId, setExamAttemptId] = useState(createMockExamAttemptId);
   const [examShuffleSeedIndex, setExamShuffleSeedIndex] = useState(0);
   const examShuffleSeed = `mock-exam-shuffle-${examShuffleSeedIndex}`;
@@ -266,6 +294,8 @@ export default function Screen() {
   const [accessStatusMessage, setAccessStatusMessage] = useState<string | null>(null);
   const [focusedReviewQuestionId, setFocusedReviewQuestionId] = useState<string | null>(null);
   const [startingAccessibleExam, setStartingAccessibleExam] = useState(false);
+  const [examPaused, setExamPaused] = useState(false);
+  const [examPauseStatus, setExamPauseStatus] = useState<'paused' | 'resumed' | null>(null);
   const [remainingSeconds, setRemainingSeconds] = useState(
     defaultMockExamConfig.durationMinutes * 60,
   );
@@ -285,7 +315,13 @@ export default function Screen() {
   const accessLoading = !accessReady || !entitlementsReady;
 
   useEffect(() => {
-    if (!examUnlocked || submitted || !Number.isFinite(remainingSeconds) || remainingSeconds <= 0) {
+    if (
+      !examUnlocked ||
+      submitted ||
+      examPaused ||
+      !Number.isFinite(remainingSeconds) ||
+      remainingSeconds <= 0
+    ) {
       return undefined;
     }
 
@@ -294,12 +330,63 @@ export default function Screen() {
     }, 1000);
 
     return () => clearInterval(interval);
+  }, [examPaused, examUnlocked, remainingSeconds, submitted]);
+
+  useEffect(() => {
+    const canPause =
+      examUnlocked && !submitted && Number.isFinite(remainingSeconds) && remainingSeconds > 0;
+
+    const applyPauseState = () => {
+      const shouldPause = canPause && (!appStateActiveRef.current || !documentVisibleRef.current);
+
+      if (shouldPause) {
+        pauseStartedAtMsRef.current ??= Date.now();
+        setExamPauseStatus('paused');
+        setExamPaused(true);
+        return;
+      }
+
+      const pauseStartedAt = pauseStartedAtMsRef.current;
+      if (pauseStartedAt !== null) {
+        const pausedDurationMs = Math.max(0, Date.now() - pauseStartedAt);
+        timingCheckpointMsRef.current += pausedDurationMs;
+        pauseStartedAtMsRef.current = null;
+        if (canPause) setExamPauseStatus('resumed');
+      }
+
+      setExamPaused(false);
+    };
+
+    const handleAppStateChange = (nextState: AppStateStatus) => {
+      appStateActiveRef.current = isActiveAppState(nextState);
+      applyPauseState();
+    };
+    const handleVisibilityChange = () => {
+      documentVisibleRef.current = !isDocumentHidden();
+      applyPauseState();
+    };
+
+    appStateActiveRef.current = isActiveAppState(AppState.currentState);
+    documentVisibleRef.current = !isDocumentHidden();
+    applyPauseState();
+
+    const appStateSubscription = AppState.addEventListener('change', handleAppStateChange);
+    if (typeof document !== 'undefined') {
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+    }
+
+    return () => {
+      appStateSubscription.remove();
+      if (typeof document !== 'undefined') {
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+      }
+    };
   }, [examUnlocked, remainingSeconds, submitted]);
 
   useEffect(() => {
     if (
       shouldAutoSubmitExam({
-        examActive: examUnlocked,
+        examActive: examUnlocked && !examPaused,
         remainingSeconds,
         submitted,
         questionCount: examQuestions.length,
@@ -308,7 +395,7 @@ export default function Screen() {
       setSubmittedAt((current) => current ?? new Date().toISOString());
       setSubmitted(true);
     }
-  }, [examQuestions.length, examUnlocked, remainingSeconds, submitted]);
+  }, [examPaused, examQuestions.length, examUnlocked, remainingSeconds, submitted]);
 
   useEffect(() => {
     if (examUnlocked || submitted || accessLoading) return;
@@ -316,6 +403,9 @@ export default function Screen() {
       const now = Date.now();
       examStartedAtIsoRef.current = new Date(now).toISOString();
       timingCheckpointMsRef.current = now;
+      pauseStartedAtMsRef.current = null;
+      setExamPauseStatus(null);
+      setExamPaused(false);
       setExamUnlocked(true);
     }
   }, [accessDecision.canStartExam, accessDecision.reason, accessLoading, examUnlocked, submitted]);
@@ -404,6 +494,7 @@ export default function Screen() {
     const now = Date.now();
     examStartedAtIsoRef.current = new Date(now).toISOString();
     timingCheckpointMsRef.current = now;
+    pauseStartedAtMsRef.current = null;
     setExamAttemptId(createMockExamAttemptId());
     setExamShuffleSeedIndex((current) => current + 1);
     setAnswers({});
@@ -414,6 +505,8 @@ export default function Screen() {
     setReviewFilter('all');
     setCompletionRecorded(false);
     setFocusedReviewQuestionId(null);
+    setExamPaused(false);
+    setExamPauseStatus(null);
     setRemainingSeconds(defaultMockExamConfig.durationMinutes * 60);
     setExamUnlocked(true);
   }, []);
@@ -802,6 +895,11 @@ export default function Screen() {
         <Text style={styles.subtitle}>
           {copy.activeHeroSubtitle(formatExamTime(remainingSeconds), examQuestions.length)}
         </Text>
+        {examPauseStatus ? (
+          <Text accessibilityLiveRegion="polite" aria-live="polite" style={styles.statusText}>
+            {examPauseStatus === 'paused' ? copy.pausedStatus : copy.resumedStatus}
+          </Text>
+        ) : null}
         <ProgressBar
           language={language}
           progress={examQuestions.length > 0 ? answeredCount / examQuestions.length : 0}
