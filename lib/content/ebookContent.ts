@@ -5,6 +5,7 @@ export type LocalizedText = Record<AppLanguage, string>;
 export type EbookArticlePracticePath = '/practice' | '/exam' | `/chapter/${string}`;
 
 export type EbookArticleSection = {
+  blockId: string;
   body: LocalizedText;
   heading: LocalizedText;
   sourceNoteKeys: readonly EbookSourceKey[];
@@ -91,6 +92,7 @@ function uniqueSourceNoteKeys(sections: readonly EbookArticleSection[]): readonl
 
 const introSections: readonly EbookArticleSection[] = [
   {
+    blockId: 'what-this-book-is',
     heading: {
       sv: 'Vad den här boken är',
       en: 'What this book is',
@@ -102,6 +104,7 @@ const introSections: readonly EbookArticleSection[] = [
     sourceNoteKeys: studyMaterialSourceKeys,
   },
   {
+    blockId: 'what-it-is-not',
     heading: {
       sv: 'Vad den inte är',
       en: 'What it is not',
@@ -310,6 +313,7 @@ function buildChapterSections(seed: EbookArticleSeed): readonly EbookArticleSect
   if (seed.staticChapterId === '12') {
     return [
       {
+        blockId: 'current-official-status',
         heading: { sv: 'Aktuell officiell status', en: 'Current official status' },
         body: {
           sv: 'Det första samhällskunskapsprovet inom medborgarskapsprovet hålls den 15 augusti 2026 i Stockholm. Anmälan kräver brev från Migrationsverket, och antalet platser är begränsat.',
@@ -322,6 +326,7 @@ function buildChapterSections(seed: EbookArticleSeed): readonly EbookArticleSect
         ],
       },
       {
+        blockId: 'practical-details-pending',
         heading: {
           sv: 'Praktiska detaljer väntar hos UHR',
           en: 'Practical details pending from UHR',
@@ -348,6 +353,7 @@ function buildChapterSections(seed: EbookArticleSeed): readonly EbookArticleSect
 
   return [
     {
+      blockId: 'read-with-focus',
       heading: { sv: 'Läs med fokus', en: 'Read with focus' },
       body: {
         sv: `${seed.lede.sv} Koppla läsningen till ${chapterNameSv} och stanna vid begrepp som dyker upp i övningsfrågorna.`,
@@ -356,6 +362,7 @@ function buildChapterSections(seed: EbookArticleSeed): readonly EbookArticleSect
       sourceNoteKeys: studyMaterialSourceKeys,
     },
     {
+      blockId: 'review-close-to-source',
       heading: { sv: 'Repetera nära källan', en: 'Review close to the source' },
       body: {
         sv: `${chapterDescriptionSv} Övningsfrågorna i appen visar UHR-hänvisning så att du kan kontrollera materialet utan konto eller nätverk.`,
@@ -430,4 +437,11 @@ export function getEbookSectionSourceNotes(
   section: EbookArticleSection,
 ): readonly EbookSourceNote[] {
   return section.sourceNoteKeys.map((key) => EBOOK_SOURCE_NOTES[key]);
+}
+
+export function getEbookArticleSectionByBlockId(
+  article: EbookArticle,
+  blockId: string,
+): EbookArticleSection | null {
+  return article.sections.find((section) => section.blockId === blockId) ?? null;
 }

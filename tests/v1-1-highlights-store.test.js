@@ -386,6 +386,40 @@ test('runtime highlight writes drop unsafe chapter keys when copying state', () 
   assert.equal(Object.hasOwn(store.byChapter, 'constructor'), false);
 });
 
+test('highlight ranges address native ebook sections by static chapter id and block id', () => {
+  const { EBOOK_ARTICLES, getEbookArticleSectionByBlockId } = loadTs('lib/content/ebookContent.ts');
+  const { useHighlightsStore, getHighlightsForBlock } = loadTs('lib/storage/highlightsStore.ts');
+  const store = useHighlightsStore();
+  store.clearAll();
+
+  const article = EBOOK_ARTICLES.find((item) => item.staticChapterId === '1');
+  assert.ok(article, 'chapter 1 native ebook article should exist');
+  const section = getEbookArticleSectionByBlockId(article, 'read-with-focus');
+  assert.ok(section, 'chapter 1 read-with-focus block should exist');
+
+  const created = store.addHighlight({
+    chapterId: article.staticChapterId,
+    blockId: section.blockId,
+    startOffset: 0,
+    endOffset: 12,
+    color: 'yellow',
+  });
+
+  assert.ok(created);
+  assert.equal(created.chapterId, article.staticChapterId);
+  assert.equal(created.blockId, section.blockId);
+  assert.deepEqual(Object.keys(store.byChapter), [article.staticChapterId]);
+  assert.deepEqual(
+    getHighlightsForBlock(store, article.staticChapterId, section.blockId).map((h) => ({
+      blockId: h.blockId,
+      endOffset: h.endOffset,
+      startOffset: h.startOffset,
+    })),
+    [{ blockId: 'read-with-focus', endOffset: 12, startOffset: 0 }],
+  );
+  assert.deepEqual(getHighlightsForBlock(store, 'ch01', section.blockId), []);
+});
+
 test('updateHighlight: rejects invalid runtime patches without corrupting existing state', () => {
   const { useHighlightsStore, getHighlightsForChapter, MAX_HIGHLIGHT_NOTE_LENGTH } = loadTs(
     'lib/storage/highlightsStore.ts',

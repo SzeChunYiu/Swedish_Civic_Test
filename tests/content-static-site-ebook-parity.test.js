@@ -9,6 +9,7 @@ const {
   assertNoUnsupportedStaticEbookCredentialClaims,
   assertNoUnsupportedStaticEbookCredentialText,
 } = require('../scripts/static-ebook-credential-claim-guard');
+const { loadTsModule } = require('./helpers/storageStoreHarness.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
 const phrasePattern = (...parts) => new RegExp(parts.join(''), 'i');
@@ -1519,6 +1520,7 @@ test('native ebook sections carry and render explicit source provenance', () => 
   const routeSource = readSiteFile('app/ebook.tsx');
   const contentSource = readSiteFile('lib/content/ebookContent.ts');
 
+  assert.match(contentSource, /blockId:\s*string/);
   assert.match(contentSource, /sourceNoteKeys:\s*readonly EbookSourceKey\[\]/);
   assert.match(contentSource, /function uniqueSourceNoteKeys\(sections:/);
   assert.match(contentSource, /sourceNoteKeys:\s*uniqueSourceNoteKeys\(sections\)/);
@@ -1563,6 +1565,58 @@ test('native ebook sections carry and render explicit source provenance', () => 
   assert.match(routeSource, /styles\.sectionSources/);
   assert.match(routeSource, /minHeight: space\[6\]/);
   assert.match(routeSource, /sectionSources\.map\(\(source\) =>/);
+});
+
+test('native ebook sections expose stable block ids for highlight ranges', () => {
+  const routeSource = readSiteFile('app/ebook.tsx');
+  const { EBOOK_ARTICLES, getEbookArticleSectionByBlockId } = loadTsModule(
+    repoRoot,
+    'lib/content/ebookContent.ts',
+  );
+
+  assert.ok(EBOOK_ARTICLES.length >= 14, 'native ebook should include intro plus chapters');
+  assert.match(routeSource, /key=\{section\.blockId\}/);
+  assert.match(
+    routeSource,
+    /const sectionElementId = `ebook-section-\$\{article\.staticChapterId\}-\$\{section\.blockId\}`;/,
+  );
+  assert.match(routeSource, /testID=\{sectionElementId\}/);
+  assert.match(routeSource, /nativeID=\{sectionElementId\}/);
+  assert.match(routeSource, /key=\{`\$\{section\.blockId\}-\$\{source\.key\}`\}/);
+  assert.doesNotMatch(routeSource, /key=\{getLocalizedText\(section\.heading,\s*'en'\)\}/);
+
+  for (const article of EBOOK_ARTICLES) {
+    assert.match(
+      article.staticChapterId,
+      /^(?:intro|\d+)$/,
+      `${article.staticChapterId} should stay addressable as a static ebook chapter id`,
+    );
+    const blockIds = new Set();
+    for (const section of article.sections) {
+      assert.match(
+        section.blockId,
+        /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+        `${article.staticChapterId} section blockId should be slug-safe`,
+      );
+      assert.equal(
+        blockIds.has(section.blockId),
+        false,
+        `${article.staticChapterId} duplicate native ebook blockId ${section.blockId}`,
+      );
+      blockIds.add(section.blockId);
+      assert.equal(getEbookArticleSectionByBlockId(article, section.blockId), section);
+      assert.notEqual(
+        section.blockId,
+        section.heading.en,
+        `${article.staticChapterId} blockId must not be localized English heading text`,
+      );
+      assert.notEqual(
+        section.blockId,
+        section.heading.sv,
+        `${article.staticChapterId} blockId must not be localized Swedish heading text`,
+      );
+    }
+  }
 });
 
 test('native ebook article navigation uses selected tab semantics', () => {
