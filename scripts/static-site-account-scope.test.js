@@ -10,6 +10,74 @@ function read(filePath) {
   return fs.readFileSync(path.join(repoRoot, filePath), 'utf8');
 }
 
+function staticAccountSurfaceSources(overrides = {}) {
+  return {
+    app: read('site/app.js'),
+    ebookTools: read('site/ebook-tools.js'),
+    index: read('site/index.html'),
+    purchase: read('site/purchase.js'),
+    signin: read('site/signin.js'),
+    v11: read('site/v11.js'),
+    ...overrides,
+  };
+}
+
+function assertStaticOptionalAccountSurface(sources = staticAccountSurfaceSources()) {
+  const { app, ebookTools, index, purchase, signin, v11 } = sources;
+  const staticSurface = `${index}\n${app}\n${signin}`;
+
+  assert.match(index, /id="signin-open"/);
+  assert.match(index, /id="signin-modal"/);
+  assert.match(index, /<script src="signin\.js"><\/script>/);
+  assert.match(staticSurface, /Continue with Google|Forts[aä]tt med Google/i);
+  assert.match(staticSurface, /Continue with Apple|Forts[aä]tt med Apple/i);
+  assert.match(staticSurface, /Email me a magic link|Mejla mig en magisk l[aä]nk/i);
+  assert.match(app, /Core study works without sign-in, and your progress lives on your device/);
+  assert.match(app, /Signing in is optional, but it unlocks more/);
+  assert.match(app, /Your study progress, answers, mistakes, and settings stay local/);
+  assert.match(app, /Dina studieframsteg, svar, misstag och inställningar sparas lokalt/);
+
+  assert.match(index, /window\.SMT_SITE_ORIGIN = 'https:\/\/almostswedish\.se'/);
+  assert.match(
+    index,
+    /window\.SMT_SUPABASE_URL\s*=\s*\n\s*window\.SMT_SUPABASE_URL \|\| 'https:\/\/uesfowwijbdlffyweyum\.supabase\.co'/,
+  );
+  assert.match(
+    index,
+    /window\.SMT_SUPABASE_ANON_KEY\s*=\s*\n\s*window\.SMT_SUPABASE_ANON_KEY \|\| 'sb_publishable_/,
+  );
+  assert.doesNotMatch(index, /intentionally LEFT EMPTY|leave EMPTY|no CDN is contacted/i);
+  assert.doesNotMatch(index, /<script[^>]+supabase-js/i);
+
+  assert.match(signin, /function\s+isConfigured\(\)/);
+  assert.match(signin, /if\s*\(!isConfigured\(\)\)\s+return Promise\.resolve\(null\)/);
+  assert.match(signin, /import\('https:\/\/esm\.sh\/@supabase\/supabase-js@2'\)/);
+  assert.match(
+    signin,
+    /if\s*\(!isConfigured\(\)\)\s+return;[\s\S]*clearConfiguredLocalDemoSession\(\);[\s\S]*getClient\(\)\.then/,
+  );
+  assert.match(signin, /window\.smtOpenSignin = open/);
+  assert.match(signin, /window\.smtIsSignedIn = signedIn/);
+  assert.match(signin, /signin\.unavailable/);
+  assert.match(signin, /function\s+failClosedAuth\b/);
+  assert.match(signin, /if\s*\(!client\)\s*\{\s*failClosedAuth\(\);/);
+  assert.match(signin, /\.catch\(\(err\) => failClosedAuth\(err\)\)/);
+  assert.match(signin, /accountId === 'local-demo'/);
+  assert.match(signin, /localStorage\.removeItem\('smt_signed_in'\)/);
+  assert.doesNotMatch(signin, /Supabase load failed; using local stub/);
+  assert.doesNotMatch(signin, /if\s*\(!client\)\s*\{\s*stubSignIn\(\);/);
+
+  assert.match(purchase, /account\.id === 'local-demo'/);
+  assert.match(purchase, /function\s+isRealPurchaseAccount\b/);
+  assert.match(purchase, /account\.id !== 'local-demo'/);
+  assert.match(purchase, /purchase\.status\.realSignin/);
+  assert.match(purchase, /window\.smtOpenSignin\(\)/);
+  assert.match(v11, /accountId !== 'local-demo'/);
+
+  assert.doesNotMatch(ebookTools, /isSignedIn|showSigninNudge|data-act="signin"/);
+  assert.doesNotMatch(ebookTools, /Sign in to (?:sync|highlight)|Logga in för att markera/i);
+}
+
 function createEbookToolsHarness() {
   const documentListeners = new Map();
   const windowListeners = new Map();
@@ -175,64 +243,66 @@ function createEbookToolsHarness() {
 }
 
 test('static site optional account surface keeps ebook highlights account-free', () => {
-  const index = read('site/index.html');
-  const app = read('site/app.js');
-  const ebookTools = read('site/ebook-tools.js');
-  const purchase = read('site/purchase.js');
-  const signin = read('site/signin.js');
-  const v11 = read('site/v11.js');
-  const staticSurface = `${index}\n${app}\n${signin}`;
+  assertStaticOptionalAccountSurface();
+});
 
-  assert.match(index, /id="signin-open"/);
-  assert.match(index, /id="signin-modal"/);
-  assert.match(index, /<script src="signin\.js"><\/script>/);
-  assert.match(staticSurface, /Continue with Google|Forts[aä]tt med Google/i);
-  assert.match(staticSurface, /Continue with Apple|Forts[aä]tt med Apple/i);
-  assert.match(staticSurface, /Email me a magic link|Mejla mig en magisk l[aä]nk/i);
-  assert.match(app, /Core study works without sign-in, and your progress lives on your device/);
-  assert.match(app, /Signing in is optional, but it unlocks more/);
-  assert.match(app, /Your study progress, answers, mistakes, and settings stay local/);
-  assert.match(app, /Dina studieframsteg, svar, misstag och inställningar sparas lokalt/);
+test('static account-scope guard rejects targeted optional-account regressions', () => {
+  const sources = staticAccountSurfaceSources();
+  const mutations = [
+    {
+      label: 'removed sign-in trigger',
+      sources: {
+        ...sources,
+        index: sources.index.replace('id="signin-open"', 'id="signin-missing"'),
+      },
+    },
+    {
+      label: 'removed sign-in modal',
+      sources: {
+        ...sources,
+        index: sources.index.replace('id="signin-modal"', 'id="signin-modal-missing"'),
+      },
+    },
+    {
+      label: 'removed sign-in script',
+      sources: {
+        ...sources,
+        index: sources.index.replace('<script src="signin.js"></script>', ''),
+      },
+    },
+    {
+      label: 'stale Supabase empty-config comments returned',
+      sources: {
+        ...sources,
+        index: `${sources.index}\n<!-- intentionally LEFT EMPTY; no CDN is contacted -->`,
+      },
+    },
+    {
+      label: 'ebook tools gained an account prompt',
+      sources: {
+        ...sources,
+        ebookTools: `${sources.ebookTools}\nfunction showSigninNudge(){ return 'Sign in to sync highlights'; }`,
+      },
+    },
+    {
+      label: 'local-demo purchase rejection disappeared',
+      sources: {
+        ...sources,
+        purchase: sources.purchase.replace(
+          /if \(account\.id === 'local-demo'\) \{[\s\S]*?return;\n    \}/,
+          '',
+        ),
+      },
+    },
+  ];
 
-  assert.match(index, /window\.SMT_SITE_ORIGIN = 'https:\/\/almostswedish\.se'/);
-  assert.match(
-    index,
-    /window\.SMT_SUPABASE_URL\s*=\s*\n\s*window\.SMT_SUPABASE_URL \|\| 'https:\/\/uesfowwijbdlffyweyum\.supabase\.co'/,
-  );
-  assert.match(
-    index,
-    /window\.SMT_SUPABASE_ANON_KEY\s*=\s*\n\s*window\.SMT_SUPABASE_ANON_KEY \|\| 'sb_publishable_/,
-  );
-  assert.doesNotMatch(index, /intentionally LEFT EMPTY|leave EMPTY|no CDN is contacted/i);
-  assert.doesNotMatch(index, /<script[^>]+supabase-js/i);
-
-  assert.match(signin, /function\s+isConfigured\(\)/);
-  assert.match(signin, /if\s*\(!isConfigured\(\)\)\s+return Promise\.resolve\(null\)/);
-  assert.match(signin, /import\('https:\/\/esm\.sh\/@supabase\/supabase-js@2'\)/);
-  assert.match(
-    signin,
-    /if\s*\(!isConfigured\(\)\)\s+return;[\s\S]*clearConfiguredLocalDemoSession\(\);[\s\S]*getClient\(\)\.then/,
-  );
-  assert.match(signin, /window\.smtOpenSignin = open/);
-  assert.match(signin, /window\.smtIsSignedIn = signedIn/);
-  assert.match(signin, /signin\.unavailable/);
-  assert.match(signin, /function\s+failClosedAuth\b/);
-  assert.match(signin, /if\s*\(!client\)\s*\{\s*failClosedAuth\(\);/);
-  assert.match(signin, /\.catch\(\(err\) => failClosedAuth\(err\)\)/);
-  assert.match(signin, /accountId === 'local-demo'/);
-  assert.match(signin, /localStorage\.removeItem\('smt_signed_in'\)/);
-  assert.doesNotMatch(signin, /Supabase load failed; using local stub/);
-  assert.doesNotMatch(signin, /if\s*\(!client\)\s*\{\s*stubSignIn\(\);/);
-
-  assert.match(purchase, /account\.id === 'local-demo'/);
-  assert.match(purchase, /function\s+isRealPurchaseAccount\b/);
-  assert.match(purchase, /account\.id !== 'local-demo'/);
-  assert.match(purchase, /purchase\.status\.realSignin/);
-  assert.match(purchase, /window\.smtOpenSignin\(\)/);
-  assert.match(v11, /accountId !== 'local-demo'/);
-
-  assert.doesNotMatch(ebookTools, /isSignedIn|showSigninNudge|data-act="signin"/);
-  assert.doesNotMatch(ebookTools, /Sign in to (?:sync|highlight)|Logga in för att markera/i);
+  for (const mutation of mutations) {
+    assert.throws(
+      () => assertStaticOptionalAccountSurface(mutation.sources),
+      assert.AssertionError,
+      mutation.label,
+    );
+  }
 });
 
 test('ebook highlights and notes stay local without account prompts', () => {

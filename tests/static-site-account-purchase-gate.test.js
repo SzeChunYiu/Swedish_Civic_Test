@@ -178,13 +178,15 @@ test('purchase handoff binds the selected plan to the signed-in Supabase account
 
   assert.match(purchase, /smt_account_id/);
   assert.match(purchase, /smt_account_email/);
-  assert.match(purchase, /URLSearchParams/);
-  assert.match(purchase, /account_id/);
-  assert.match(purchase, /plan/);
-  assert.match(purchase, /play\.google\.com\/store\/apps\/details/);
-  assert.match(purchase, /purchase_intents/);
-  assert.match(purchase, /user_id:\s*account\.id/);
-  assert.match(purchase, /plan:\s*kind/);
+  assert.match(purchase, /function\s+startCheckout\(plan\)/);
+  assert.match(purchase, /client\.auth\.getSession\(\)/);
+  assert.match(purchase, /Authorization:\s*`Bearer \$\{token\}`/);
+  assert.match(purchase, /functions\/v1\/create-checkout/);
+  assert.match(purchase, /body:\s*JSON\.stringify\(\{\s*plan\s*\}\)/);
+  assert.match(purchase, /window\.location\.href = result\.url/);
+  assert.match(purchase, /not_configured/);
+  assert.doesNotMatch(purchase, /play\.google\.com\/store\/apps\/details/);
+  assert.doesNotMatch(purchase, /purchase_intents/);
 });
 
 test('sign-in session persistence exposes stable account identity for purchases', () => {
