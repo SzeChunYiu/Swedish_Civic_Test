@@ -8537,3 +8537,245 @@ html[dir='rtl'] .lang-menu {
     width: 100%;
   }
 }
+
+/* ------------------------------------------------------------------
+   EBOOK ANNOTATION BOX OPTIMIZATION ROUND
+   Gives highlight popovers, note editors, and saved-note rows the same
+   tactile study-card language as the reader shell.
+------------------------------------------------------------------ */
+
+.eb-hl {
+  background: linear-gradient(180deg, rgba(254, 204, 0, 0.08) 0%, rgba(254, 204, 0, 0.45) 58%, rgba(254, 204, 0, 0.24) 100%);
+  border-radius: 0.28em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  box-shadow: inset 0 -0.08em 0 rgba(217, 169, 0, 0.34);
+  padding: 0 0.12em;
+}
+
+.eb-hl[data-has-note='1'] {
+  background: linear-gradient(180deg, rgba(0, 106, 167, 0.08) 0%, rgba(254, 204, 0, 0.5) 60%, rgba(0, 106, 167, 0.08) 100%);
+  box-shadow:
+    inset 0 -0.08em 0 rgba(0, 106, 167, 0.26),
+    0 0 0 1px rgba(0, 106, 167, 0.1);
+}
+
+.eb-pop,
+.eb-note {
+  background: var(--card-surface);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow-hover);
+  color: var(--ink);
+  position: absolute;
+  z-index: 110;
+}
+
+.eb-pop[hidden],
+.eb-note[hidden] {
+  display: none !important;
+}
+
+.eb-pop {
+  align-items: center;
+  border-radius: 999px;
+  display: flex;
+  gap: 6px;
+  max-width: min(calc(100vw - 24px), 340px);
+  overflow: hidden;
+  padding: 6px;
+}
+
+.eb-pop::before,
+.eb-note::before,
+.eb-notes-item::before {
+  background: var(--card-rail);
+  content: '';
+  position: absolute;
+}
+
+.eb-pop::before {
+  inset: auto 18px -6px auto;
+  height: 12px;
+  transform: rotate(45deg);
+  width: 12px;
+}
+
+.eb-pop__btn {
+  align-items: center;
+  background: rgba(0, 106, 167, 0.07);
+  border: 1px solid rgba(0, 106, 167, 0.12);
+  border-radius: 999px;
+  color: var(--ink);
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  gap: 6px;
+  min-height: 36px;
+  padding: 8px 11px;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+
+.eb-pop__btn:hover,
+.eb-pop__btn:focus-visible {
+  background: rgba(254, 204, 0, 0.18);
+  border-color: rgba(217, 169, 0, 0.36);
+  box-shadow: 0 12px 28px -22px rgba(11, 31, 51, 0.72);
+  transform: translateY(-1px);
+}
+
+.eb-note {
+  border-radius: 22px;
+  max-width: min(calc(100vw - 24px), 360px);
+  overflow: hidden;
+  padding: 16px;
+  width: 340px;
+}
+
+.eb-note::before {
+  inset: 0 auto 0 0;
+  opacity: 0.86;
+  width: 6px;
+}
+
+.eb-note__head {
+  align-items: start;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-left: 4px;
+}
+
+.eb-note__quote {
+  color: var(--ink-soft);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.eb-note__close {
+  align-items: center;
+  background: rgba(11, 31, 51, 0.06);
+  border: 1px solid rgba(11, 31, 51, 0.1);
+  border-radius: 999px;
+  color: var(--ink);
+  cursor: pointer;
+  display: inline-flex;
+  flex: 0 0 auto;
+  font: inherit;
+  font-weight: 900;
+  height: 30px;
+  justify-content: center;
+  width: 30px;
+}
+
+.eb-note__ta {
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid rgba(0, 106, 167, 0.14);
+  border-radius: 16px;
+  color: var(--ink);
+  font: inherit;
+  line-height: 1.5;
+  min-height: 112px;
+  outline: none;
+  padding: 12px;
+  resize: vertical;
+  width: 100%;
+}
+
+.eb-note__ta:focus {
+  border-color: rgba(0, 106, 167, 0.46);
+  box-shadow: 0 0 0 4px rgba(0, 106, 167, 0.1);
+}
+
+.eb-note__actions {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.eb-note__del {
+  background: transparent;
+  border: 1px solid rgba(11, 31, 51, 0.14);
+  border-radius: 999px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  min-height: 36px;
+  padding: 8px 12px;
+}
+
+.eb-notes-empty,
+.eb-notes-item {
+  background: rgba(255, 255, 255, 0.46);
+  border: 1px solid rgba(0, 106, 167, 0.1);
+  border-radius: 16px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+  padding: 14px 14px 14px 18px;
+  position: relative;
+}
+
+.eb-notes-item {
+  overflow: hidden;
+}
+
+.eb-notes-item + .eb-notes-item,
+.eb-notes-empty + .eb-notes-item {
+  margin-top: 10px;
+}
+
+.eb-notes-item::before {
+  inset: 0 auto 0 0;
+  opacity: 0.78;
+  width: 4px;
+}
+
+.eb-notes-item__actions button {
+  background: rgba(255, 255, 255, 0.58);
+  border-color: rgba(0, 106, 167, 0.16);
+  box-shadow: 0 10px 22px -20px rgba(11, 31, 51, 0.68);
+}
+
+:root[data-theme='dark'] .eb-pop,
+:root[data-theme='dark'] .eb-note {
+  background: var(--card-surface);
+  border-color: var(--card-border);
+}
+
+:root[data-theme='dark'] .eb-pop__btn,
+:root[data-theme='dark'] .eb-note__close,
+:root[data-theme='dark'] .eb-note__ta,
+:root[data-theme='dark'] .eb-notes-empty,
+:root[data-theme='dark'] .eb-notes-item,
+:root[data-theme='dark'] .eb-notes-item__actions button {
+  background: rgba(255, 255, 255, 0.045);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 560px) {
+  .eb-pop {
+    border-radius: 18px;
+    left: 12px !important;
+    right: 12px;
+    width: auto;
+  }
+  .eb-pop__btn {
+    flex: 1 1 0;
+    justify-content: center;
+  }
+  .eb-note {
+    left: 12px !important;
+    right: 12px;
+    width: auto;
+  }
+}
