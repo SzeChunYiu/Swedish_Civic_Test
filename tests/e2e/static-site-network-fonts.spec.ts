@@ -6,6 +6,8 @@ import {
 } from './staticSiteServer';
 import { trapExternalRequests } from './staticSiteNetworkGuards';
 
+test.use({ serviceWorkers: 'block' });
+
 async function seedStaticNetworkRun(page: Page) {
   await page.addInitScript(() => {
     localStorage.removeItem('smt_consent');
@@ -38,6 +40,60 @@ test('static site first load and necessary-only consent do not request Google Fo
   await page.locator('#consent-min').click();
   await page.waitForTimeout(250);
   expect(googleFontRequests).toEqual([]);
+});
+
+test('static Home defers ebook route bundles until ebook route demand', async ({ page }) => {
+  await seedStaticNetworkRun(page);
+  await trapExternalRequests(page, new URL(staticSite.baseUrl).origin, []);
+
+  await page.goto(`${staticSite.baseUrl}/#/`, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#consent')).toBeVisible();
+  await expect(page.locator('[data-page="/"]')).toHaveClass(/is-active/);
+
+  await expect
+    .poll(() =>
+      page.evaluate(() =>
+        performance
+          .getEntriesByType('resource')
+          .map((entry) => new URL(entry.name).pathname.replace(/^\//, '')),
+      ),
+    )
+    .not.toContain('ebook.js');
+  await expect
+    .poll(() =>
+      page.evaluate(() =>
+        performance
+          .getEntriesByType('resource')
+          .map((entry) => new URL(entry.name).pathname.replace(/^\//, '')),
+      ),
+    )
+    .not.toContain('ebook-tools.js');
+
+  await page.evaluate(() => {
+    window.location.hash = '#/privacy';
+  });
+  await expect(page.locator('[data-page="/privacy"]')).toHaveClass(/is-active/);
+  const nonEbookRouteResources = await page.evaluate(() =>
+    performance
+      .getEntriesByType('resource')
+      .map((entry) => new URL(entry.name).pathname.replace(/^\//, '')),
+  );
+  expect(nonEbookRouteResources).not.toContain('ebook.js');
+  expect(nonEbookRouteResources).not.toContain('ebook-tools.js');
+
+  await page.evaluate(() => {
+    window.location.hash = '#/ebook?c=1';
+  });
+  await expect(page.locator('#ebook-reader .ebook__h1')).toBeVisible();
+  await expect(page.locator('.ebook__nav a[data-eb="1"]')).toHaveClass(/is-active/);
+
+  const ebookRouteResources = await page.evaluate(() =>
+    performance
+      .getEntriesByType('resource')
+      .map((entry) => new URL(entry.name).pathname.replace(/^\//, '')),
+  );
+  expect(ebookRouteResources.filter((asset) => asset === 'ebook-tools.js')).toHaveLength(1);
+  expect(ebookRouteResources.filter((asset) => asset === 'ebook.js')).toHaveLength(1);
 });
 
 test('static system font fallback keeps primary routes inside mobile and desktop viewports', async ({
