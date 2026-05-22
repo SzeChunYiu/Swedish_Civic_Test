@@ -11536,6 +11536,7 @@ function validateTranslateCompleteP0Focus() {
     questionSourceCriticismEnglishNaturalnessValidated,
     questionRuleOfLawEnglishNaturalnessValidated,
     questionReligiousFreedomParallelismValidated,
+    questionReligiousFreedomParallelismTargetRowsValidated,
     somaliGeographyNaturalnessParityValidated,
     somaliHolidayFoodNaturalnessParityValidated,
     translationNaturalnessGuardParityValidated,
