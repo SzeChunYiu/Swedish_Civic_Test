@@ -1,4 +1,5 @@
 const assert = require('node:assert/strict');
+const ts = require('typescript');
 
 const generatedVariantOffsets = Object.freeze({
   singleChoice: 0,
@@ -80,7 +81,85 @@ function generatedQuestionIdLiteralFindingsForSource(
   return findings;
 }
 
+function generatedExpectedRowsKeyFindingsForSource(relativePath, source) {
+  const sourceFile = ts.createSourceFile(
+    relativePath,
+    source,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.JS,
+  );
+  const findings = [];
+
+  function lineNumberForNode(node) {
+    return lineNumberForIndex(source, node.getStart(sourceFile));
+  }
+
+  function propertyKeyLabel(propertyName) {
+    if (ts.isIdentifier(propertyName)) return propertyName.text;
+    if (ts.isStringLiteral(propertyName) || ts.isNoSubstitutionTemplateLiteral(propertyName)) {
+      return propertyName.text;
+    }
+    return null;
+  }
+
+  function isGeneratedQuestionIdKey(propertyName) {
+    return (
+      ts.isComputedPropertyName(propertyName) &&
+      ts.isCallExpression(propertyName.expression) &&
+      ts.isIdentifier(propertyName.expression.expression) &&
+      propertyName.expression.expression.text === 'generatedQuestionId'
+    );
+  }
+
+  function inspectExpectedRowsMap(node) {
+    for (const property of node.initializer.properties) {
+      if (ts.isSpreadAssignment(property)) {
+        findings.push(
+          `${relativePath}:${lineNumberForNode(property)} uses spread in generated expectedRows map`,
+        );
+        continue;
+      }
+      const propertyName = property.name;
+      if (!propertyName) continue;
+      if (isGeneratedQuestionIdKey(propertyName)) continue;
+
+      const literalKey = propertyKeyLabel(propertyName);
+      const lineNumber = lineNumberForNode(propertyName);
+      if (literalKey && /^q\d{3,}$/.test(literalKey)) {
+        findings.push(
+          `${relativePath}:${lineNumber} hardcodes generated expectedRows map key ${literalKey}`,
+        );
+        continue;
+      }
+
+      if (ts.isComputedPropertyName(propertyName)) {
+        findings.push(
+          `${relativePath}:${lineNumber} uses a generated expectedRows map key without generatedQuestionId(...)`,
+        );
+      }
+    }
+  }
+
+  function visit(node) {
+    if (
+      ts.isVariableDeclaration(node) &&
+      ts.isIdentifier(node.name) &&
+      node.name.text === 'expectedRows' &&
+      node.initializer &&
+      ts.isObjectLiteralExpression(node.initializer)
+    ) {
+      inspectExpectedRowsMap(node);
+    }
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  return findings;
+}
+
 module.exports = {
+  generatedExpectedRowsKeyFindingsForSource,
   generatedFixtureIdExpression,
   generatedFixtureIdHelperSource,
   generatedQuestionIdLiteralFindingsForSource,
