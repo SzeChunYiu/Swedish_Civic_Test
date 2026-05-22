@@ -159,17 +159,31 @@ function assertSearchRouteQuestionResults(source) {
     [/getProvenanceLabel,/, 'provenance label helper import'],
     [/getQuestionProvenance,/, 'provenance helper import'],
     [/import \{ questions \} from '\.\.\/data\/questions';/, 'question bank import'],
-    [/searchQuestions,/, 'question search helper import'],
+    [/searchQuestionsWithTotal,/, 'question search helper import'],
     [/getQuestionSearchTitle,/, 'localized question title helper import'],
     [/getQuestionSearchExcerpt,/, 'localized question excerpt helper import'],
     [/getQuestionSearchChapterName,/, 'localized question chapter helper import'],
-    [/const questionResults = useMemo\(\(\) => \{/, 'question results memo'],
-    [/return searchQuestions\(\{/, 'searchQuestions call'],
+    [/const questionSearchResults = useMemo\(\(\) => \{/, 'question results memo'],
+    [/return searchQuestionsWithTotal\(\{/, 'searchQuestionsWithTotal call'],
+    [/const questionResults = questionSearchResults\.results;/, 'capped visible question results'],
+    [/const totalQuestionMatches = questionSearchResults\.totalCount;/, 'total question matches'],
     [/query: trimmedQuery,/, 'trimmed query passed to question search'],
     [/questions,/, 'question bank passed to question search'],
     [
-      /copy\.filteredSummary\(filteredTerms\.length, glossaryTerms\.length, questionResults\.length\)/,
-      'live summary includes question count',
+      /copy\.filteredSummary\(filteredTerms\.length, glossaryTerms\.length, totalQuestionMatches\)/,
+      'live summary includes total question count',
+    ],
+    [
+      /copy\.questionSectionSubtitle\(questionResults\.length, totalQuestionMatches\)/,
+      'question section subtitle compares visible and total question counts',
+    ],
+    [
+      /`\$\{visibleCount\} av \$\{totalCount\} källbaserade övningsfrågor visas`/,
+      'Swedish visible of total question subtitle copy',
+    ],
+    [
+      /`\$\{visibleCount\} of \$\{totalCount\} source-backed practice questions shown`/,
+      'English visible of total question subtitle copy',
     ],
     [/const title = getQuestionSearchTitle\(result\.question, language\);/, 'localized title use'],
     [
@@ -426,7 +440,7 @@ test('Search helpers normalize malformed runtime result limits', () => {
   const { chapters } = loadTs('data/chapters.ts');
   const { questions } = loadTs('data/questions.ts');
   const { searchGlossary } = loadTs('lib/learning/glossarySearch.ts');
-  const { searchQuestions } = loadTs('lib/search/questionSearch.ts');
+  const { searchQuestions, searchQuestionsWithTotal } = loadTs('lib/search/questionSearch.ts');
 
   const questionSearchInput = { chapters, query: 'riksdag', questions };
   const defaultQuestionResults = searchQuestions(questionSearchInput);
@@ -455,6 +469,18 @@ test('Search helpers normalize malformed runtime result limits', () => {
       `question limit ${String(malformedLimit)} should fall back to default`,
     );
   }
+
+  const cappedQuestionResults = searchQuestionsWithTotal({ ...questionSearchInput, limit: 8 });
+  assert.equal(cappedQuestionResults.results.length, 8);
+  assert.ok(
+    cappedQuestionResults.totalCount > cappedQuestionResults.results.length,
+    'question search total count must keep the full match count when visible results are capped',
+  );
+  assert.equal(
+    cappedQuestionResults.totalCount,
+    searchQuestions({ ...questionSearchInput, limit: Number.POSITIVE_INFINITY }).length,
+    'question search total count must match the unlimited result count',
+  );
 
   const defaultGlossaryResults = searchGlossary('', 'en');
   const defaultGlossaryIds = defaultGlossaryResults.map((term) => term.id);
@@ -815,9 +841,32 @@ test('Search route question results reject dropping routed quiz links', () => {
 });
 
 test('Search route question results reject dropping ranked helper usage', () => {
-  const mutatedSource = readSearchRouteSource().replace('return searchQuestions({', 'return [];');
+  const mutatedSource = readSearchRouteSource().replace(
+    'return searchQuestionsWithTotal({',
+    'return { results: [], totalCount: 0 };',
+  );
 
-  assert.throws(() => assertSearchRouteQuestionResults(mutatedSource), /searchQuestions call/);
+  assert.throws(
+    () => assertSearchRouteQuestionResults(mutatedSource),
+    /searchQuestionsWithTotal call/,
+  );
+});
+
+test('Search route question results reject deriving totals from capped visible cards', () => {
+  const mutatedSource = readSearchRouteSource()
+    .replace(
+      'const totalQuestionMatches = questionSearchResults.totalCount;',
+      'const totalQuestionMatches = questionResults.length;',
+    )
+    .replace(
+      'copy.questionSectionSubtitle(questionResults.length, totalQuestionMatches)',
+      'copy.questionSectionSubtitle(questionResults.length, questionResults.length)',
+    );
+
+  assert.throws(
+    () => assertSearchRouteQuestionResults(mutatedSource),
+    /total question matches|visible and total question counts/,
+  );
 });
 
 test('Search route question results reject dropping provenance badges', () => {

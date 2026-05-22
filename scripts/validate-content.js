@@ -1149,7 +1149,7 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
   },
   {
     file: 'app/search.tsx',
-    pattern: /searchQuestions,/,
+    pattern: /searchQuestionsWithTotal,/,
     message: 'search route must import ranked question search',
   },
   {
@@ -1160,8 +1160,19 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
   },
   {
     file: 'app/search.tsx',
-    pattern: /const questionResults = useMemo\(\(\) => \{[\s\S]*?return searchQuestions\(\{/,
+    pattern:
+      /const questionSearchResults = useMemo\(\(\) => \{[\s\S]*?return searchQuestionsWithTotal\(\{/,
     message: 'search route must derive question results through the shared ranked helper',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /const questionResults = questionSearchResults\.results;/,
+    message: 'search route must render only the capped visible question results',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /const totalQuestionMatches = questionSearchResults\.totalCount;/,
+    message: 'search route must keep full question match totals separate from visible cards',
   },
   {
     file: 'app/search.tsx',
@@ -1171,8 +1182,23 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
   {
     file: 'app/search.tsx',
     pattern:
-      /copy\.filteredSummary\(filteredTerms\.length, glossaryTerms\.length, questionResults\.length\)/,
-    message: 'search route result summary must include matching question count',
+      /copy\.filteredSummary\(filteredTerms\.length, glossaryTerms\.length, totalQuestionMatches\)/,
+    message: 'search route result summary must include total matching question count',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /copy\.questionSectionSubtitle\(questionResults\.length, totalQuestionMatches\)/,
+    message: 'search route question section subtitle must compare visible and total matches',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /`\$\{visibleCount\} av \$\{totalCount\} källbaserade övningsfrågor visas`/,
+    message: 'search route must include Swedish visible-of-total question subtitle copy',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /`\$\{visibleCount\} of \$\{totalCount\} source-backed practice questions shown`/,
+    message: 'search route must include English visible-of-total question subtitle copy',
   },
   {
     file: 'app/search.tsx',

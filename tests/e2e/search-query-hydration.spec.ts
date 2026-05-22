@@ -8,6 +8,7 @@ type SearchStateCopy = {
   filteredSummaryPattern: RegExp;
   inputName: string;
   questionLinkName: RegExp;
+  questionShownPattern: RegExp;
 };
 
 const searchStateCopy: Record<'sv' | 'en', SearchStateCopy> = {
@@ -17,6 +18,7 @@ const searchStateCopy: Record<'sv' | 'en', SearchStateCopy> = {
     filteredSummaryPattern: /\d+ av \d+ begrepp och \d+ övningsfrågor matchar/,
     inputName: 'Sök samhällsbegrepp och övningsfrågor',
     questionLinkName: /Öppna övningsfrågan:/,
+    questionShownPattern: /8 av \d+ källbaserade övningsfrågor visas/,
   },
   en: {
     allTermsSummaryPattern: /\d+ civic reference terms/,
@@ -24,6 +26,7 @@ const searchStateCopy: Record<'sv' | 'en', SearchStateCopy> = {
     filteredSummaryPattern: /\d+ of \d+ terms and \d+ practice questions match/,
     inputName: 'Search civic terms and practice questions',
     questionLinkName: /Open practice question:/,
+    questionShownPattern: /8 of \d+ source-backed practice questions shown/,
   },
 };
 
@@ -184,6 +187,7 @@ test('search route hydrates q and query URL parameters before typing', async ({ 
   await markAboutTheTestSeen(page);
 
   const riksdagInput = await expectHydratedSearch(page, '/search?q=riksdag', 'riksdag');
+  await expect(page.getByText(searchStateCopy.sv.questionShownPattern)).toBeVisible();
   await page.getByRole('button', { name: searchStateCopy.sv.clearButtonName }).click();
   await expect(riksdagInput).toHaveValue('');
   expectSearchUrlWithoutQueryParams(page);
@@ -195,6 +199,7 @@ test('search route hydrates q and query URL parameters before typing', async ({ 
   await expect(page.getByText(searchStateCopy.sv.allTermsSummaryPattern)).toBeVisible();
 
   const kommunInput = await expectHydratedSearch(page, '/search?query=kommun', 'kommun');
+  await expect(page.getByText(searchStateCopy.sv.questionShownPattern)).toBeVisible();
   await page.getByRole('button', { name: searchStateCopy.sv.clearButtonName }).click();
   await expect(kommunInput).toHaveValue('');
   expectSearchUrlWithoutQueryParams(page);
@@ -265,6 +270,7 @@ test('English search route hydrates and clears q/query URL parameters before typ
     'democracy',
     searchStateCopy.en,
   );
+  await expect(page.getByText(searchStateCopy.en.questionShownPattern)).toBeVisible();
   await expect(page.getByRole('textbox', { name: searchStateCopy.sv.inputName })).toHaveCount(0);
   await page.getByRole('button', { name: searchStateCopy.en.clearButtonName }).click();
   await expect(democracyInput).toHaveValue('');
@@ -282,6 +288,7 @@ test('English search route hydrates and clears q/query URL parameters before typ
     'municipality',
     searchStateCopy.en,
   );
+  await expect(page.getByText(searchStateCopy.en.questionShownPattern)).toBeVisible();
   await expect(page.getByRole('button', { name: searchStateCopy.sv.clearButtonName })).toHaveCount(
     0,
   );
