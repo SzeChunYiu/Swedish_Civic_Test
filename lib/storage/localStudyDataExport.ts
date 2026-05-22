@@ -85,6 +85,7 @@ function settingsSnapshot(): ImportableSettings {
     audioEnabled: state.audioEnabled,
     dailyGoalAnswers: state.dailyGoalAnswers,
     includeSupplementaryQuestions: state.includeSupplementaryQuestions,
+    mockExamRealisticMode: state.mockExamRealisticMode,
     hasSeenAboutTheTest: state.hasSeenAboutTheTest,
   });
 }

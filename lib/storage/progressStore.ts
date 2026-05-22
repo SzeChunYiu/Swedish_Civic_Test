@@ -33,6 +33,7 @@ export type MockExamProgress = {
   score: number;
   completedAt: string;
   correctCount: number;
+  focusBreaks: number;
   totalCount: number;
   questionTimings: MockExamQuestionTiming[];
 };
@@ -108,6 +109,7 @@ type MockExamProgressInput = {
   score: number;
   completedAt?: string;
   correctCount?: number;
+  focusBreaks?: number;
   questionTimings?: MockExamQuestionTiming[];
   totalCount?: number;
 };
@@ -387,6 +389,7 @@ function normalizeProgress(value: unknown): PersistedProgress {
         score: clampScore(item.score ?? 0),
         completedAt,
         correctCount,
+        focusBreaks: normalizeNonNegativeInteger(item.focusBreaks, 0, maxHydratedMockQuestionCount),
         questionTimings: normalizeMockExamQuestionTimings(item.questionTimings),
         totalCount,
       });
@@ -626,6 +629,11 @@ export const useProgressStore = create<ProgressState>((set) => ({
         score: clampScore(session.score),
         completedAt,
         correctCount,
+        focusBreaks: normalizeNonNegativeInteger(
+          session.focusBreaks,
+          0,
+          maxHydratedMockQuestionCount,
+        ),
         questionTimings: normalizeMockExamQuestionTimings(session.questionTimings),
         totalCount,
       };

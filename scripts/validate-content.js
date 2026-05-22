@@ -1864,6 +1864,7 @@ const EXPECTED_SETTINGS_STORE_FIELDS = [
   { name: 'audioEnabled', type: 'boolean', optional: false },
   { name: 'dailyGoalAnswers', type: 'number', optional: false },
   { name: 'includeSupplementaryQuestions', type: 'boolean', optional: false },
+  { name: 'mockExamRealisticMode', type: 'boolean', optional: false },
   { name: 'hasSeenAboutTheTest', type: 'boolean', optional: false },
   { name: 'studyPlanTestDateIso', type: 'string | null', optional: false },
   { name: 'studyPlanIntensity', type: 'StudyIntensity', optional: false },
@@ -1872,6 +1873,7 @@ const EXPECTED_SETTINGS_STORE_FIELDS = [
   { name: 'setAudioEnabled', type: '(enabled: boolean) => void', optional: false },
   { name: 'setDailyGoalAnswers', type: '(answerCount: number) => void', optional: false },
   { name: 'setIncludeSupplementaryQuestions', type: '(include: boolean) => void', optional: false },
+  { name: 'setMockExamRealisticMode', type: '(enabled: boolean) => void', optional: false },
   {
     name: 'setStudyPlanTestDateIso',
     type: '(testDateIso: string | null) => void',
@@ -14085,6 +14087,22 @@ function validateMockExamTimerParity(config) {
       'submitDisabled={!canSubmit}',
       'status bar submit action must preserve all-answers-before-submit gating',
     ],
+    [
+      'const mockExamRealisticMode = useSettingsStore((state) => state.mockExamRealisticMode);',
+      'mock exam route must read the realistic-mode setting',
+    ],
+    [
+      'const shouldPause = canPause && !mockExamRealisticMode && awayFromExam;',
+      'mock exam route must keep standard-mode pause separate from realistic mode',
+    ],
+    [
+      "setExamPauseStatus('focusBreak');",
+      'mock exam route must announce realistic-mode focus breaks',
+    ],
+    [
+      'focusBreaks: focusBreaksRef.current',
+      'mock exam route must persist focus-break count with the submitted result',
+    ],
   ];
   for (const [snippet, message] of routeSnippets) {
     if (!examRoute.includes(snippet)) reject(message);
@@ -14182,6 +14200,7 @@ function validateExamSubmissionFinalityParity() {
     'completedAt: submittedExamSession?.completedAt ?? new Date().toISOString()',
     'correctCount: resultCorrectCount',
     'totalCount: resultTotalCount',
+    'focusBreaks: focusBreaksRef.current',
     'questionTimings:',
     'submittedExamSession?.answers',
     'timeSpentSeconds: answer.timeSpentSeconds',
@@ -17646,6 +17665,10 @@ function validateSettingsStoreSchemaParity() {
       'SettingsState must initialize dailyGoalAnswers from persisted storage',
     ],
     [
+      'mockExamRealisticMode: readMockExamRealisticMode()',
+      'SettingsState must initialize mock exam realistic mode from persisted storage',
+    ],
+    [
       'readRecoverably(settingsStorage, settingsStorageId, key',
       'settings primitive reads must use recoverable read warnings',
     ],
@@ -17669,6 +17692,10 @@ function validateSettingsStoreSchemaParity() {
     [
       'settingsStorageId, dailyGoalKey, safeGoal,',
       'setDailyGoalAnswers must persist the clamped daily goal through dailyGoalKey',
+    ],
+    [
+      'settingsStorageId, mockExamRealisticModeKey, mockExamRealisticMode,',
+      'setMockExamRealisticMode must persist through mockExamRealisticModeKey',
     ],
   ];
 
@@ -18632,6 +18659,16 @@ function validateProgressStoreSchemaParity() {
     ['const initialProgress = readProgress();', 'ProgressState must initialize from storage'],
     ['...initialProgress,', 'useProgressStore must hydrate persisted progress state'],
     ['mockExamSessions: [],', 'empty progress must initialize mock exam history'],
+    ['focusBreaks: number;', 'MockExamProgress must persist sanitized focus-break counts'],
+    ['focusBreaks?: number;', 'MockExamProgressInput must accept runtime focus-break counts'],
+    [
+      'focusBreaks: normalizeNonNegativeInteger(item.focusBreaks, 0, maxHydratedMockQuestionCount)',
+      'mock exam hydration must sanitize focusBreaks without string coercion',
+    ],
+    [
+      'focusBreaks: normalizeNonNegativeInteger( session.focusBreaks, 0, maxHydratedMockQuestionCount, )',
+      'recordMockExamSession must sanitize runtime focusBreaks without string coercion',
+    ],
     [
       'streakFreezeState: createInitialFreezeState(),',
       'empty progress must initialize streak-freeze state',

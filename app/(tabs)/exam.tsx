@@ -61,6 +61,9 @@ type ExamRouteCopy = {
   correctCount: (correctCount: number, totalCount: number) => string;
   examResultTitle: string;
   extraExamUnavailable: string;
+  focusBreakMetricLabel: string;
+  focusBreakMetricValue: (count: number) => string;
+  focusBreakStatus: (count: number) => string;
   flaggedReviewCount: (count: number) => string;
   flaggedQuestionLabel: string;
   flagQuestionAccessibilityLabel: (questionNumber: number) => string;
@@ -69,6 +72,10 @@ type ExamRouteCopy = {
   nextExamTitle: string;
   pausedStatus: string;
   progressTitle: string;
+  realisticModeHint: string;
+  realisticModeLabel: string;
+  realisticModeOffLabel: string;
+  realisticModeOnLabel: string;
   resumedStatus: string;
   navigatorStateLabels: { answered: string; current: string; flagged: string; unanswered: string };
   questionNumber: (questionNumber: number) => string;
@@ -132,6 +139,10 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     correctCount: (correctCount, totalCount) => `${correctCount}/${totalCount} rätt`,
     examResultTitle: 'Provresultat',
     extraExamUnavailable: 'Extra övningsprov är inte tillgängliga just nu.',
+    focusBreakMetricLabel: 'Fokusbyten',
+    focusBreakMetricValue: (count) => `${count} ${count === 1 ? 'tabbbyte' : 'tabbbyten'}`,
+    focusBreakStatus: (count) =>
+      `${count} ${count === 1 ? 'tabbbyte' : 'tabbbyten'} under detta övningsprov.`,
     flaggedReviewCount: (count) => `Flaggade frågor: ${count}`,
     flaggedQuestionLabel: 'Flaggad',
     flagQuestionAccessibilityLabel: (questionNumber) =>
@@ -143,6 +154,11 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     pausedStatus:
       'Pausad medan appen är i bakgrunden. Timern och frågetiden fortsätter när du återvänder.',
     progressTitle: 'Framsteg',
+    realisticModeHint:
+      'Standardläge pausar dold tid. Realistiskt läge låter timern fortsätta och räknar fokusbyten.',
+    realisticModeLabel: 'Realistiskt provläge',
+    realisticModeOffLabel: 'Standardläge',
+    realisticModeOnLabel: 'Realistiskt läge',
     resumedStatus: 'Tiden fortsätter nu. Paustiden räknades inte.',
     navigatorStateLabels: {
       answered: 'Besvarad',
@@ -208,6 +224,10 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     correctCount: (correctCount, totalCount) => `${correctCount}/${totalCount} correct`,
     examResultTitle: 'Exam result',
     extraExamUnavailable: 'Extra mock exams are unavailable right now.',
+    focusBreakMetricLabel: 'Focus breaks',
+    focusBreakMetricValue: (count) => `${count} ${count === 1 ? 'tab switch' : 'tab switches'}`,
+    focusBreakStatus: (count) =>
+      `${count} ${count === 1 ? 'tab switch' : 'tab switches'} during this mock exam.`,
     flaggedReviewCount: (count) => `Flagged questions: ${count}`,
     flaggedQuestionLabel: 'Flagged',
     flagQuestionAccessibilityLabel: (questionNumber) =>
@@ -219,6 +239,11 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     pausedStatus:
       'Paused while the app is in the background. The timer and question timing resume when you return.',
     progressTitle: 'Progress',
+    realisticModeHint:
+      'Standard mode pauses hidden time. Realistic mode keeps the timer running and counts focus breaks.',
+    realisticModeLabel: 'Realistic exam mode',
+    realisticModeOffLabel: 'Standard mode',
+    realisticModeOnLabel: 'Realistic mode',
     resumedStatus: 'Timer resumed. Hidden time was not counted.',
     navigatorStateLabels: {
       answered: 'Answered',
@@ -278,6 +303,9 @@ export default function Screen() {
   const examStartedAtIsoRef = useRef(new Date().toISOString());
   const timingCheckpointMsRef = useRef(Date.now());
   const pauseStartedAtMsRef = useRef<number | null>(null);
+  const focusBreakStartedAtMsRef = useRef<number | null>(null);
+  const focusBreakActiveRef = useRef(false);
+  const focusBreaksRef = useRef(0);
   const appStateActiveRef = useRef(isActiveAppState(AppState.currentState));
   const documentVisibleRef = useRef(!isDocumentHidden());
   const [examAttemptId, setExamAttemptId] = useState(createMockExamAttemptId);
@@ -303,12 +331,17 @@ export default function Screen() {
   const [focusedReviewQuestionId, setFocusedReviewQuestionId] = useState<string | null>(null);
   const [startingAccessibleExam, setStartingAccessibleExam] = useState(false);
   const [examPaused, setExamPaused] = useState(false);
-  const [examPauseStatus, setExamPauseStatus] = useState<'paused' | 'resumed' | null>(null);
+  const [examPauseStatus, setExamPauseStatus] = useState<
+    'paused' | 'resumed' | 'focusBreak' | null
+  >(null);
+  const [focusBreaks, setFocusBreaks] = useState(0);
   const [remainingSeconds, setRemainingSeconds] = useState(
     defaultMockExamConfig.durationMinutes * 60,
   );
   const recordMockExamSession = useProgressStore((state) => state.recordMockExamSession);
   const language = useSettingsStore((state) => state.language);
+  const mockExamRealisticMode = useSettingsStore((state) => state.mockExamRealisticMode);
+  const setMockExamRealisticMode = useSettingsStore((state) => state.setMockExamRealisticMode);
   const copy = examRouteCopy[language];
   const themeColors = useThemeColors();
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
@@ -344,14 +377,47 @@ export default function Screen() {
     const canPause =
       examUnlocked && !submitted && Number.isFinite(remainingSeconds) && remainingSeconds > 0;
 
+    const recordFocusBreakStart = () => {
+      if (focusBreakActiveRef.current) return;
+      focusBreakActiveRef.current = true;
+      focusBreakStartedAtMsRef.current = Date.now();
+      setFocusBreaks((current) => {
+        const nextFocusBreaks = current + 1;
+        focusBreaksRef.current = nextFocusBreaks;
+        return nextFocusBreaks;
+      });
+    };
+
     const applyPauseState = () => {
-      const shouldPause = canPause && (!appStateActiveRef.current || !documentVisibleRef.current);
+      const awayFromExam = !appStateActiveRef.current || !documentVisibleRef.current;
+      const shouldPause = canPause && !mockExamRealisticMode && awayFromExam;
+
+      if (canPause && awayFromExam) {
+        recordFocusBreakStart();
+      }
 
       if (shouldPause) {
         pauseStartedAtMsRef.current ??= Date.now();
         setExamPauseStatus('paused');
         setExamPaused(true);
         return;
+      }
+
+      if (!awayFromExam && focusBreakActiveRef.current) {
+        const focusBreakStartedAt = focusBreakStartedAtMsRef.current;
+        if (mockExamRealisticMode && focusBreakStartedAt !== null) {
+          const hiddenDurationSeconds = Math.floor(
+            Math.max(0, Date.now() - focusBreakStartedAt) / 1000,
+          );
+          if (hiddenDurationSeconds > 0) {
+            setRemainingSeconds((current) =>
+              Number.isFinite(current) ? Math.max(0, current - hiddenDurationSeconds) : 0,
+            );
+          }
+          setExamPauseStatus('focusBreak');
+        }
+        focusBreakActiveRef.current = false;
+        focusBreakStartedAtMsRef.current = null;
       }
 
       const pauseStartedAt = pauseStartedAtMsRef.current;
@@ -389,7 +455,7 @@ export default function Screen() {
         document.removeEventListener('visibilitychange', handleVisibilityChange);
       }
     };
-  }, [examUnlocked, remainingSeconds, submitted]);
+  }, [examUnlocked, mockExamRealisticMode, remainingSeconds, submitted]);
 
   useEffect(() => {
     if (
@@ -412,8 +478,12 @@ export default function Screen() {
       examStartedAtIsoRef.current = new Date(now).toISOString();
       timingCheckpointMsRef.current = now;
       pauseStartedAtMsRef.current = null;
+      focusBreakStartedAtMsRef.current = null;
+      focusBreakActiveRef.current = false;
+      focusBreaksRef.current = 0;
       setExamPauseStatus(null);
       setExamPaused(false);
+      setFocusBreaks(0);
       setExamUnlocked(true);
     }
   }, [accessDecision.canStartExam, accessDecision.reason, accessLoading, examUnlocked, submitted]);
@@ -508,6 +578,9 @@ export default function Screen() {
     examStartedAtIsoRef.current = new Date(now).toISOString();
     timingCheckpointMsRef.current = now;
     pauseStartedAtMsRef.current = null;
+    focusBreakStartedAtMsRef.current = null;
+    focusBreakActiveRef.current = false;
+    focusBreaksRef.current = 0;
     setExamAttemptId(createMockExamAttemptId());
     setExamShuffleSeedIndex((current) => current + 1);
     setAnswers({});
@@ -520,6 +593,7 @@ export default function Screen() {
     setFocusedReviewQuestionId(null);
     setExamPaused(false);
     setExamPauseStatus(null);
+    setFocusBreaks(0);
     setRemainingSeconds(defaultMockExamConfig.durationMinutes * 60);
     setExamUnlocked(true);
   }, []);
@@ -617,6 +691,7 @@ export default function Screen() {
       score: resultTotalCount > 0 ? resultCorrectCount / resultTotalCount : 0,
       completedAt: submittedExamSession?.completedAt ?? new Date().toISOString(),
       correctCount: resultCorrectCount,
+      focusBreaks: focusBreaksRef.current,
       questionTimings:
         submittedExamSession?.answers
           .filter((answer) => answer.timeSpentSeconds > 0)
@@ -644,6 +719,7 @@ export default function Screen() {
     completionRecorded,
     copy.completionStoreFailure,
     examAttemptId,
+    focusBreaks,
     recordExamCompletion,
     recordMockExamSession,
     resultCorrectCount,
@@ -673,6 +749,22 @@ export default function Screen() {
           {accessStatusMessage ? (
             <Text style={styles.statusText}>{accessStatusMessage}</Text>
           ) : null}
+          <Pressable
+            accessibilityHint={copy.realisticModeHint}
+            accessibilityLabel={copy.realisticModeLabel}
+            accessibilityRole="switch"
+            accessibilityState={{ checked: mockExamRealisticMode }}
+            onPress={() => setMockExamRealisticMode(!mockExamRealisticMode)}
+            style={[styles.modeToggle, mockExamRealisticMode ? styles.modeToggleActive : null]}
+          >
+            <View style={styles.modeToggleText}>
+              <Text style={styles.modeToggleTitle}>{copy.realisticModeLabel}</Text>
+              <Text style={styles.modeToggleHint}>{copy.realisticModeHint}</Text>
+            </View>
+            <Badge tone={mockExamRealisticMode ? 'green' : 'blue'}>
+              {mockExamRealisticMode ? copy.realisticModeOnLabel : copy.realisticModeOffLabel}
+            </Badge>
+          </Pressable>
           <Button
             aria-disabled={!canStartAccessibleExam || startingAccessibleExam}
             accessibilityLabel={startAccessibleExamLabel}
@@ -713,6 +805,12 @@ export default function Screen() {
           correctCount={result.correctCount}
           languageOverride={language}
           subtitle={copy.resultNote}
+          trailingMetrics={[
+            {
+              label: copy.focusBreakMetricLabel,
+              value: copy.focusBreakMetricValue(focusBreaks),
+            },
+          ]}
           totalCount={result.totalCount}
         />
         <View style={styles.accessCard}>
@@ -914,7 +1012,11 @@ export default function Screen() {
         </Text>
         {examPauseStatus ? (
           <Text accessibilityLiveRegion="polite" aria-live="polite" style={styles.statusText}>
-            {examPauseStatus === 'paused' ? copy.pausedStatus : copy.resumedStatus}
+            {examPauseStatus === 'paused'
+              ? copy.pausedStatus
+              : examPauseStatus === 'focusBreak'
+                ? copy.focusBreakStatus(focusBreaks)
+                : copy.resumedStatus}
           </Text>
         ) : null}
         <ProgressBar
@@ -1085,6 +1187,37 @@ function createStyles(themeColors: ThemeColors) {
     },
     statusText: {
       color: themeColors.warning,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+    modeToggle: {
+      alignItems: 'center',
+      borderColor: themeColors.border,
+      borderRadius: radius.card,
+      borderWidth: space.hairline,
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1],
+      justifyContent: 'space-between',
+      minHeight: space[6],
+      padding: space[1.5],
+    },
+    modeToggleActive: {
+      backgroundColor: themeColors.successSoft,
+      borderColor: themeColors.success,
+    },
+    modeToggleText: {
+      flex: 1,
+      gap: space[0.5],
+      minWidth: 180,
+    },
+    modeToggleTitle: {
+      color: themeColors.text,
+      fontSize: typography.navButton.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+    },
+    modeToggleHint: {
+      color: themeColors.textMuted,
       fontSize: typography.caption.fontSize,
       lineHeight: typography.caption.lineHeight,
     },
