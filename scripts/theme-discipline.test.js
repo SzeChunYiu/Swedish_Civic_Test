@@ -32,6 +32,13 @@ const HEADER_THEME_ICONS = [
   'components/ui/icons/SettingsIcon.tsx',
 ];
 const PRO_LEARNING_THEME_SURFACES = ['components/quiz/PostAnswerRewardPanel.tsx'];
+const NATIVE_LEARNING_THEME_SURFACES = [
+  'components/learning/BadgeRow.tsx',
+  'components/learning/ChapterCard.tsx',
+  'components/learning/Flashcard.tsx',
+  'components/learning/GuidedPracticePath.tsx',
+  'components/learning/StudyArticleCard.tsx',
+];
 const POST_ANSWER_REWARD_CALLERS = ['app/(tabs)/practice.tsx', 'app/quiz/[sessionId].tsx'];
 const WEEKLY_RECAP_THEME_SURFACES = [
   'app/recap.tsx',
@@ -532,6 +539,50 @@ test('post-answer reward surfaces resolve semantic colors from the active theme'
       `${callerPath} should pass the current answer streak`,
     );
   }
+});
+
+test('native learning child components resolve semantic colors from the active theme', () => {
+  for (const componentPath of NATIVE_LEARNING_THEME_SURFACES) {
+    const source = read(componentPath);
+
+    assert.match(
+      source,
+      /useThemeColors\(\)/,
+      `${componentPath} should read the active theme color context`,
+    );
+    assert.match(
+      source,
+      /const styles = useMemo\(\(\) => createStyles\(themeColors\), \[themeColors\]\)/,
+      `${componentPath} should memoize styles from active ThemeColors`,
+    );
+    assert.match(
+      source,
+      /function createStyles\(themeColors: ThemeColors\)/,
+      `${componentPath} should derive styles from ThemeColors`,
+    );
+    assert.match(
+      source,
+      /themeColors\./,
+      `${componentPath} should use semantic ThemeColors in styles`,
+    );
+    assert.doesNotMatch(
+      source,
+      /import \{[^}]*\bcolors\b[^}]*\} from ['"]\.\.\/\.\.\/lib\/theme['"]/,
+      `${componentPath} must not import the static light color singleton`,
+    );
+    assert.doesNotMatch(
+      source,
+      /\bcolors\./,
+      `${componentPath} must not read static colors.* values`,
+    );
+  }
+
+  const flashcardSource = read('components/learning/Flashcard.tsx');
+  assert.match(
+    flashcardSource,
+    /<QuestionSourceCitation[\s\S]*themeColors=\{themeColors\}/,
+    'Flashcard source citations should receive active theme colors',
+  );
 });
 
 test('TopBarActions LanguagePicker GlobeIcon SearchIcon AudioIcon focusSoft avoid the static colors singleton', () => {

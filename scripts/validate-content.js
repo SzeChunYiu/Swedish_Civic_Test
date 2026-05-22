@@ -4033,7 +4033,7 @@ const EXPECTED_FLASHCARD_ACCESSIBILITY_RULES = [
   },
   {
     label: 'visible localized flashcard badge',
-    pattern: /<Badge tone="warm">\{copy\.badgeLabel\}<\/Badge>/,
+    pattern: /<Badge[\s\S]*tone="warm"[\s\S]*>\s*\{copy\.badgeLabel\}\s*<\/Badge>/,
   },
   {
     label: 'localized prompt header text',

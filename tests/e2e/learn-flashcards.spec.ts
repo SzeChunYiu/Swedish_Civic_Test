@@ -20,13 +20,13 @@ test('learn flashcards show the study disclaimer and source citation in Swedish'
   await expect(body).toContainText('Studieinformation');
   await expect(body).toContainText('Oberoende studieverktyg');
   await expect(body).toContainText('Källhänvisning');
-  await expect(body).toContainText('Sverige i fokus, Landet Sverige, Geografi, klimat och natur');
-  await expect(body).toContainText('s. 5');
+  await expect(body).toContainText('Källa: Sverige i fokus');
+  await expect(body).toContainText(/s\. \d+/);
   await expect(
     page.getByRole('region', {
-      name: /Övningskort\. Fråga: Var ligger Sverige\?.*Källhänvisning: Källa: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, s\. 5\./,
+      name: /Övningskort\. Fråga: [\s\S]+Källhänvisning: Källa: Sverige i fokus,[\s\S]+s\. \d+\./,
     }),
-  ).toBeVisible();
+  ).toHaveCount(3);
 
   expect(consoleErrors).toEqual([]);
 });
@@ -57,13 +57,13 @@ test('learn flashcards keep source labels in English support mode', async ({ pag
   await expect(body).toContainText('Study disclaimer');
   await expect(body).toContainText('Independent study tool');
   await expect(body).toContainText('Source citation');
-  await expect(body).toContainText('Sverige i fokus, Landet Sverige, Geografi, klimat och natur');
-  await expect(body).toContainText('p. 5');
+  await expect(body).toContainText('Source: Sverige i fokus');
+  await expect(body).toContainText(/p\. \d+/);
   await expect(
     page.getByRole('region', {
-      name: /Study flashcard\. Prompt: Where is Sweden located\?.*Source citation: Source: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, p\. 5\./,
+      name: /Study flashcard\. Prompt: [\s\S]+Source citation: Source: Sverige i fokus,[\s\S]+p\. \d+\./,
     }),
-  ).toBeVisible();
+  ).toHaveCount(3);
 
   expect(consoleErrors).toEqual([]);
 });

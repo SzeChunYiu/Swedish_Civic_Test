@@ -63,7 +63,7 @@ test('learning Flashcard keeps prompt and answer accessibility in parity', () =>
   );
   assert.match(source, /accessibilityLabel=\{flashcardAccessibilityLabel\}/);
   assert.match(source, /accessibilityRole="summary"/);
-  assert.match(source, /<Badge tone="warm">\{copy\.badgeLabel\}<\/Badge>/);
+  assert.match(source, /<Badge[\s\S]*tone="warm"[\s\S]*>\s*\{copy\.badgeLabel\}\s*<\/Badge>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.label\}>/);
   assert.match(source, /\{copy\.promptHeader\}/);
   assert.match(source, /\{copy\.answerHeader\}/);
