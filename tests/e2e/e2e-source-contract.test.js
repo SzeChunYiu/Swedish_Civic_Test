@@ -1,6 +1,7 @@
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
 const fs = require('node:fs');
+const http = require('node:http');
 const net = require('node:net');
 const os = require('node:os');
 const path = require('node:path');
@@ -38,6 +39,29 @@ function createPreparedDistWebFixture() {
   return outputDir;
 }
 
+function createStaticSiteFixture() {
+  const outputDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sct-static-site-'));
+  const indexHtml = [
+    '<!doctype html>',
+    '<html lang="en">',
+    '<head>',
+    '<link rel="preconnect" href="https://fonts.googleapis.com">',
+    '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>',
+    '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">',
+    '<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>',
+    '<link rel="stylesheet" href="/styles.css">',
+    '<script src="/app.js"></script>',
+    '</head>',
+    '<body><main id="app">Fixture static app</main></body>',
+    '</html>',
+  ].join('\n');
+
+  fs.writeFileSync(path.join(outputDir, 'index.html'), indexHtml);
+  fs.writeFileSync(path.join(outputDir, 'styles.css'), 'body { color: #111; }\n');
+  fs.writeFileSync(path.join(outputDir, 'app.js'), 'window.fixtureLoaded = true;\n');
+  return outputDir;
+}
+
 function assertPortCanBind(port) {
   return new Promise((resolve, reject) => {
     const server = net.createServer();
@@ -51,6 +75,30 @@ function assertPortCanBind(port) {
         resolve();
       });
     });
+  });
+}
+
+function waitForListening(server) {
+  if (server.listening) {
+    return Promise.resolve();
+  }
+
+  return new Promise((resolve, reject) => {
+    const cleanup = () => {
+      server.off('error', onError);
+      server.off('listening', onListening);
+    };
+    const onError = (error) => {
+      cleanup();
+      reject(error);
+    };
+    const onListening = () => {
+      cleanup();
+      resolve();
+    };
+
+    server.once('error', onError);
+    server.once('listening', onListening);
   });
 }
 
@@ -86,6 +134,38 @@ function waitForServerReady(
     child.stdout.on('data', onData);
     child.stderr.on('data', onData);
     child.once('exit', onExit);
+  });
+}
+
+function requestFromServer(server, requestPath) {
+  const address = server.address();
+  assert.ok(address && typeof address === 'object', 'server should have a bound address');
+
+  return new Promise((resolve, reject) => {
+    const req = http.request(
+      {
+        hostname: '127.0.0.1',
+        path: requestPath,
+        port: address.port,
+      },
+      (res) => {
+        let body = '';
+        res.setEncoding('utf8');
+        res.on('data', (chunk) => {
+          body += chunk;
+        });
+        res.on('end', () => {
+          resolve({
+            body,
+            headers: res.headers,
+            statusCode: res.statusCode,
+          });
+        });
+      },
+    );
+
+    req.once('error', reject);
+    req.end();
   });
 }
 
@@ -857,6 +937,57 @@ test('dist-web e2e server releases the default port on SIGTERM', async () => {
       child.kill('SIGKILL');
     }
     fs.rmSync(outputDir, { force: true, recursive: true });
+  }
+});
+
+test('static site request handler serves sanitized fixture responses', async () => {
+  const { closeServer, createRequestHandler, startServer } = require('./serve-static-site.cjs');
+  assert.equal(typeof createRequestHandler, 'function');
+  assert.equal(typeof startServer, 'function');
+
+  const siteRoot = createStaticSiteFixture();
+  const server = startServer({ siteRoot, listenPort: 0 });
+
+  try {
+    await waitForListening(server);
+
+    const index = await requestFromServer(server, '/');
+    assert.equal(index.statusCode, 200);
+    assert.equal(index.headers['content-type'], 'text/html; charset=utf-8');
+    assert.match(index.body, /Fixture static app/);
+    assert.doesNotMatch(index.body, /fonts\.googleapis\.com|fonts\.gstatic\.com/);
+    assert.doesNotMatch(index.body, /https:\/\/unpkg\.com/);
+
+    const fallback = await requestFromServer(server, '/unknown/static/route');
+    assert.equal(fallback.statusCode, 200);
+    assert.equal(fallback.headers['content-type'], 'text/html; charset=utf-8');
+    assert.match(fallback.body, /Fixture static app/);
+    assert.doesNotMatch(fallback.body, /fonts\.googleapis\.com|https:\/\/unpkg\.com/);
+
+    const css = await requestFromServer(server, '/styles.css');
+    assert.equal(css.statusCode, 200);
+    assert.equal(css.headers['content-type'], 'text/css; charset=utf-8');
+    assert.match(css.body, /color: #111/);
+
+    const js = await requestFromServer(server, '/app.js');
+    assert.equal(js.statusCode, 200);
+    assert.equal(js.headers['content-type'], 'text/javascript; charset=utf-8');
+    assert.match(js.body, /fixtureLoaded/);
+
+    const traversal = await requestFromServer(server, '/%2e%2e/package.json');
+    assert.equal(traversal.statusCode, 403);
+    assert.equal(traversal.body, 'Forbidden');
+  } finally {
+    await new Promise((resolve, reject) => {
+      closeServer(server, (error) => {
+        fs.rmSync(siteRoot, { force: true, recursive: true });
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve();
+      });
+    });
   }
 });
 
