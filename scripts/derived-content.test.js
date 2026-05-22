@@ -1780,8 +1780,12 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'Sweden’s population grew during the 19th century because of EU membership.',
     ],
     [generatedQuestionId(sourceQuestions, 'q078', 'trueStatement')]: [
-      'Förändringen genom den nya grundlagen år 1809 var att kungens makt begränsades.',
-      'The change through the new constitution in 1809 was that the king’s power was limited.',
+      '1809 års nya grundlag begränsade kungens makt.',
+      "The 1809 constitution limited the king's power.",
+    ],
+    [generatedQuestionId(sourceQuestions, 'q078', 'falseStatement')]: [
+      '1809 års nya grundlag innebar inte att Sverige gick med i EU.',
+      'The 1809 constitution did not make Sweden join the EU.',
     ],
     [generatedQuestionId(sourceQuestions, 'q081', 'trueStatement')]: [
       'Saltsjöbadsavtalet från 1938 blev viktigt för samarbetet mellan fackföreningar och arbetsgivare.',

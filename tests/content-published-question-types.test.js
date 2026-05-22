@@ -2340,6 +2340,47 @@ test('political-rights generated true/false exports use direct propositions', ()
   );
 });
 
+test('1809 constitution generated true/false exports direct propositions', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = Array.from(actualStaticQuestions());
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const expectedRows = [
+    {
+      id: generatedQuestionId(sourceQuestions, 'q078', 'trueStatement'),
+      sv: '1809 års nya grundlag begränsade kungens makt.',
+      en: "The 1809 constitution limited the king's power.",
+    },
+    {
+      id: generatedQuestionId(sourceQuestions, 'q078', 'falseStatement'),
+      sv: '1809 års nya grundlag innebar inte att Sverige gick med i EU.',
+      en: 'The 1809 constitution did not make Sweden join the EU.',
+    },
+  ];
+  const residualPattern =
+    /\b(?:Förändringen genom den nya grundlagen år 1809 var att|The change through the new constitution in 1809 was that)\b/i;
+
+  for (const bank of [generatedSiteBank, actualSiteBank]) {
+    for (const expected of expectedRows) {
+      const question = bank.find((candidate) => candidate.id === expected.id);
+      assert.ok(question, `${expected.id} should be present in published bank`);
+      assert.equal(question.q.sv, expected.sv);
+      assert.equal(question.q.en, expected.en);
+      assert.doesNotMatch(`${question.q.sv}\n${question.q.en}`, residualPattern);
+    }
+  }
+
+  const csvRowsById = contentQuestionBankCsvRowsById(expectedRows.map((row) => row.id));
+  for (const expected of expectedRows) {
+    const columns = csvRowsById.get(expected.id);
+    assert.ok(columns, `${expected.id} should be present in content/question-bank.csv`);
+    assert.equal(columns[3], expected.sv);
+    assert.equal(columns[4], expected.en);
+    assert.doesNotMatch(`${columns[3]}\n${columns[4]}`, residualPattern);
+  }
+});
+
 test('public-sector source and generated exports use direct English propositions', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const actualSiteBank = Array.from(actualStaticQuestions());

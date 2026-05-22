@@ -38122,8 +38122,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "The change through the new constitution in 1809 was that the king’s power was limited.",
-      "sv": "Förändringen genom den nya grundlagen år 1809 var att kungens makt begränsades."
+      "en": "The 1809 constitution limited the king's power.",
+      "sv": "1809 års nya grundlag begränsade kungens makt."
     },
     "opts": [
       {
@@ -38162,8 +38162,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "The change through the new constitution in 1809 was that Sweden joined the EU.",
-      "sv": "Förändringen genom den nya grundlagen år 1809 var att Sverige gick med i EU."
+      "en": "The 1809 constitution did not make Sweden join the EU.",
+      "sv": "1809 års nya grundlag innebar inte att Sverige gick med i EU."
     },
     "opts": [
       {

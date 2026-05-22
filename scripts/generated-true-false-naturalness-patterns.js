@@ -155,6 +155,8 @@ const GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /^Only responsible publishers may write posts there\.?$/i,
   /\b(?:Att Sverige är en sekulär stat betyder att|That Sweden is a secular state means)\b/i,
   /\b(?:Att val i en demokrati är hemliga betyder att|That elections in a democracy are secret means)\b/i,
+  /^Förändringen genom den nya grundlagen år 1809 var att\b/i,
+  /^The change through the new constitution in 1809 was that\b/i,
   /^Water and sewage\b/i,
   /^Vatten och avlopp\b/i,
   /^Sending ambassadors\b/i,
