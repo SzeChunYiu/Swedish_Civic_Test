@@ -11594,3 +11594,48 @@ img.ebook__brand-mark {
     gap: 6px;
   }
 }
+
+/* ======================================================================
+   DOC NAV HEADING BOX OPTIMIZATION ROUND
+   ====================================================================== */
+
+.doc__nav h5 {
+  align-items: center;
+  background:
+    linear-gradient(90deg, rgba(254, 204, 0, 0.2), rgba(254, 204, 0, 0) 54%),
+    rgba(0, 106, 167, 0.065);
+  border: 1px solid rgba(0, 106, 167, 0.12);
+  border-radius: 999px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.34);
+  color: var(--blue-ink);
+  display: inline-flex;
+  gap: 8px;
+  margin: 0 0 14px;
+  padding: 7px 10px 7px 8px;
+  width: fit-content;
+}
+
+.doc__nav h5::before {
+  background: var(--gold);
+  border-radius: 999px;
+  box-shadow: 0 0 0 3px rgba(254, 204, 0, 0.16);
+  content: '';
+  height: 7px;
+  width: 7px;
+}
+
+:root[data-theme='dark'] .doc__nav h5 {
+  background: rgba(45, 168, 255, 0.12);
+  border-color: rgba(45, 168, 255, 0.22);
+  color: var(--blue-soft);
+}
+
+:root[data-theme='dark'] .doc__nav h5::before {
+  box-shadow: 0 0 0 3px rgba(254, 204, 0, 0.2);
+}
+
+@media (max-width: 620px) {
+  .doc__nav h5 {
+    margin-bottom: 12px;
+  }
+}
