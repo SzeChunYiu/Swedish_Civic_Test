@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 import {
   collectConsoleAndPageErrors,
   dismissBlockingModals,
-  seedFreshSettingsLanguageAndAboutSeen,
+  seedFreshSettingsLanguageAndAboutSeenWithStorage,
   type AppLanguage,
 } from './browserLaunch';
 
@@ -14,6 +14,12 @@ const settingsLanguageKey = 'settings\\language';
 const settingsAudioEnabledKey = 'settings\\audioEnabled';
 const settingsDailyGoalKey = 'settings\\dailyGoalAnswers';
 const settingsIncludeSupplementaryKey = 'settings\\includeSupplementaryQuestions';
+const accessibilityEasyReadFontKey = 'accessibility\\a11y.easyReadFont.v1';
+const accessibilityFontSizeStepKey = 'accessibility\\a11y.fontSizeStep.v1';
+const accessibilityAudioPlaybackRateKey = 'accessibility\\a11y.audioPlaybackRate.v1';
+const accessibilityListenFirstAudioKey = 'accessibility\\a11y.listenFirstAudio.v1';
+const accessibilityThemeModeKey = 'accessibility\\a11y.themeMode.v1';
+const companionSelectedIdKey = 'companion\\companion.selectedId.v1';
 const citizenshipRequirementsCheckedAreaIdsKey =
   'citizenship-requirements\\citizenshipRequirements.checkedAreaIds.v1';
 const citizenshipRequirementsLegacyStateKey =
@@ -27,6 +33,14 @@ type ImportExpectation = {
   rescuedDayKeys: string[];
   reviewIds: string[];
   gradedPerDay: Record<string, number>;
+  accessibilityPreferences: {
+    easyReadFont: string | null;
+    fontSizeStep: string | null;
+    audioPlaybackRate: string | null;
+    listenFirstAudioEnabled: string | null;
+    themeMode: string | null;
+  };
+  companionSelectedId: string | null;
   checkedAreaIds: string[];
 };
 
@@ -89,6 +103,14 @@ const importPayloadCases: ImportPayloadCase[] = [
       rescuedDayKeys: ['2026-05-19'],
       reviewIds: ['q001'],
       gradedPerDay: { '2026-05-20': 2 },
+      accessibilityPreferences: {
+        easyReadFont: null,
+        fontSizeStep: null,
+        audioPlaybackRate: null,
+        listenFirstAudioEnabled: null,
+        themeMode: 'dark',
+      },
+      companionSelectedId: 'dala-horse',
       checkedAreaIds: [],
     },
     summaryTexts: {
@@ -100,6 +122,8 @@ const importPayloadCases: ImportPayloadCase[] = [
         '1 repetitionskort',
         '1 repetitionsdag',
         '5 sparade inställningar',
+        '1 tillgänglighetsval',
+        '1 vald studiekompis',
         'Studiesvit och svitskydd ingår',
       ],
       en: [
@@ -110,6 +134,8 @@ const importPayloadCases: ImportPayloadCase[] = [
         '1 FSRS review card',
         '1 FSRS review day',
         '5 saved settings',
+        '1 accessibility preference',
+        '1 selected study companion',
         'Study streak and freeze status included',
       ],
     },
@@ -129,6 +155,14 @@ const importPayloadCases: ImportPayloadCase[] = [
       rescuedDayKeys: ['2026-05-19', '2026-05-20'],
       reviewIds: ['q001', 'q002'],
       gradedPerDay: { '2026-05-20': 2, '2026-05-21': 1 },
+      accessibilityPreferences: {
+        easyReadFont: 'true',
+        fontSizeStep: '3',
+        audioPlaybackRate: '1.25',
+        listenFirstAudioEnabled: 'true',
+        themeMode: 'dark',
+      },
+      companionSelectedId: 'dala-horse',
       checkedAreaIds: ['identity', 'residenceStatus', 'conduct'],
     },
     summaryTexts: {
@@ -140,6 +174,8 @@ const importPayloadCases: ImportPayloadCase[] = [
         '2 repetitionskort',
         '2 repetitionsdagar',
         '5 sparade inställningar',
+        '5 tillgänglighetsval',
+        '1 vald studiekompis',
         '3 markerade kravområden',
         'Studiesvit och svitskydd ingår',
       ],
@@ -151,6 +187,8 @@ const importPayloadCases: ImportPayloadCase[] = [
         '2 FSRS review cards',
         '2 FSRS review days',
         '5 saved settings',
+        '5 accessibility preferences',
+        '1 selected study companion',
         '3 marked requirements',
         'Study streak and freeze status included',
       ],
@@ -229,6 +267,12 @@ function buildSingularImportPayload(importedLanguage: AppLanguage): string {
       dailyGoalAnswers: 20,
       includeSupplementaryQuestions: true,
       hasSeenAboutTheTest: true,
+    },
+    accessibility: {
+      themeMode: 'dark',
+    },
+    companion: {
+      selectedId: 'dala-horse',
     },
   });
 }
@@ -333,6 +377,16 @@ function buildPluralImportPayload(importedLanguage: AppLanguage): string {
       includeSupplementaryQuestions: true,
       hasSeenAboutTheTest: true,
     },
+    accessibility: {
+      easyReadFont: true,
+      fontSizeStep: 3,
+      audioPlaybackRate: 1.25,
+      listenFirstAudioEnabled: true,
+      themeMode: 'dark',
+    },
+    companion: {
+      selectedId: 'dala-horse',
+    },
     citizenshipRequirements: {
       checkedAreaIds: ['conduct', 'identity', 'residenceStatus', 'identity'],
     },
@@ -351,6 +405,12 @@ async function readImportStorage(page: Page) {
       mistakeKey,
       progressKey,
       reviewKey,
+      accessibilityEasyReadFontKey,
+      accessibilityFontSizeStepKey,
+      accessibilityAudioPlaybackRateKey,
+      accessibilityListenFirstAudioKey,
+      accessibilityThemeModeKey,
+      companionSelectedIdKey,
     }) => ({
       progress: window.localStorage.getItem(progressKey),
       mistakeReview: window.localStorage.getItem(mistakeKey),
@@ -361,6 +421,14 @@ async function readImportStorage(page: Page) {
         dailyGoalAnswers: window.localStorage.getItem(dailyGoalKey),
         includeSupplementaryQuestions: window.localStorage.getItem(includeSupplementaryKey),
       },
+      accessibilityPreferences: {
+        easyReadFont: window.localStorage.getItem(accessibilityEasyReadFontKey),
+        fontSizeStep: window.localStorage.getItem(accessibilityFontSizeStepKey),
+        audioPlaybackRate: window.localStorage.getItem(accessibilityAudioPlaybackRateKey),
+        listenFirstAudioEnabled: window.localStorage.getItem(accessibilityListenFirstAudioKey),
+        themeMode: window.localStorage.getItem(accessibilityThemeModeKey),
+      },
+      companionSelectedId: window.localStorage.getItem(companionSelectedIdKey),
       citizenshipRequirements: {
         checkedAreaIds: window.localStorage.getItem(citizenshipRequirementsCheckedKey),
         legacyState: window.localStorage.getItem(citizenshipRequirementsLegacyKey),
@@ -376,6 +444,12 @@ async function readImportStorage(page: Page) {
       mistakeKey: mistakeReviewStateKey,
       progressKey: progressStateKey,
       reviewKey: reviewStateKey,
+      accessibilityEasyReadFontKey,
+      accessibilityFontSizeStepKey,
+      accessibilityAudioPlaybackRateKey,
+      accessibilityListenFirstAudioKey,
+      accessibilityThemeModeKey,
+      companionSelectedIdKey,
     },
   );
 }
@@ -393,6 +467,14 @@ async function expectNoImportApplied(page: Page, language: AppLanguage) {
         dailyGoalAnswers: null,
         includeSupplementaryQuestions: null,
       },
+      accessibilityPreferences: {
+        easyReadFont: null,
+        fontSizeStep: null,
+        audioPlaybackRate: null,
+        listenFirstAudioEnabled: null,
+        themeMode: null,
+      },
+      companionSelectedId: null,
       citizenshipRequirements: {
         checkedAreaIds: null,
         legacyState: null,
@@ -452,6 +534,8 @@ async function expectImportApplied(
         checkedAreaIds,
         legacyCheckedAreaIds: legacyState?.checkedAreaIds ?? [],
         settings: storage.settings,
+        accessibilityPreferences: storage.accessibilityPreferences,
+        companionSelectedId: storage.companionSelectedId,
       };
     })
     .toEqual({
@@ -463,7 +547,50 @@ async function expectImportApplied(
         dailyGoalAnswers: '20',
         includeSupplementaryQuestions: 'true',
       },
+      accessibilityPreferences: expected.accessibilityPreferences,
+      companionSelectedId: expected.companionSelectedId,
     });
+}
+
+async function expectImportedSettingsControlsPersistAfterReload(
+  page: Page,
+  importedLanguage: AppLanguage,
+  expected: ImportExpectation,
+) {
+  await page.reload({ waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  const themeLabel = importedLanguage === 'sv' ? 'Välj tema: Mörkt' : 'Choose theme: Dark';
+  await expect(page.getByLabel(themeLabel)).toHaveAttribute('aria-checked', 'true');
+
+  if (expected.accessibilityPreferences.listenFirstAudioEnabled === 'true') {
+    const listenFirstName =
+      importedLanguage === 'sv'
+        ? 'Stäng av automatisk uppläsning av nya frågor'
+        : 'Disable automatic playback for new questions';
+    await expect(page.getByRole('switch', { name: listenFirstName })).toHaveAttribute(
+      'aria-checked',
+      'true',
+    );
+  }
+
+  if (expected.companionSelectedId === 'dala-horse') {
+    const companionGroupName =
+      importedLanguage === 'sv' ? 'Välj studiekompis' : 'Choose study companion';
+    const selectedDalaHorseName =
+      importedLanguage === 'sv'
+        ? /Dalahäst är vald som studiekompis\. Folksymbol från Dalarna\./
+        : /Dala horse is selected as study companion\. Folk symbol from Dalarna\./;
+    await expect(page.getByRole('radiogroup', { name: companionGroupName })).toBeVisible();
+    await expect(page.getByRole('radio', { name: selectedDalaHorseName })).toHaveAttribute(
+      'aria-checked',
+      'true',
+    );
+  }
+
+  const storage = await readImportStorage(page);
+  expect(storage.accessibilityPreferences).toEqual(expected.accessibilityPreferences);
+  expect(storage.companionSelectedId).toBe(expected.companionSelectedId);
 }
 
 async function installProgressImportWriteFailure(page: Page) {
@@ -484,7 +611,9 @@ for (const scenario of scenarios) {
     test(`settings import previews and confirms ${payloadCase.name} study data in ${scenario.language}`, async ({
       page,
     }) => {
-      await seedFreshSettingsLanguageAndAboutSeen(page, scenario.language);
+      await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, scenario.language, {
+        reseedOnNavigation: false,
+      });
       const errors = collectConsoleAndPageErrors(page);
 
       await page.goto('/settings', { waitUntil: 'networkidle' });
@@ -510,6 +639,11 @@ for (const scenario of scenarios) {
       await expect(page.getByText(scenario.successText)).toBeVisible();
       await expect(page.getByText(payloadCase.summaryTexts[scenario.language][0])).toHaveCount(0);
       await expectImportApplied(page, scenario.importedLanguage, payloadCase.expected);
+      await expectImportedSettingsControlsPersistAfterReload(
+        page,
+        scenario.importedLanguage,
+        payloadCase.expected,
+      );
       expect(errors.get()).toEqual([]);
     });
   }
@@ -519,7 +653,9 @@ for (const scenario of scenarios) {
   test(`settings import warns instead of showing success when progress storage fails in ${scenario.language}`, async ({
     page,
   }) => {
-    await seedFreshSettingsLanguageAndAboutSeen(page, scenario.language);
+    await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, scenario.language, {
+      reseedOnNavigation: false,
+    });
     await installProgressImportWriteFailure(page);
     const errors = collectConsoleAndPageErrors(page);
     const payloadCase = importPayloadCases.find((candidate) => candidate.name === 'singular');
@@ -564,7 +700,9 @@ for (const scenario of scenarios) {
   test(`settings import reset clears preview and feedback without writes in ${scenario.language}`, async ({
     page,
   }) => {
-    await seedFreshSettingsLanguageAndAboutSeen(page, scenario.language);
+    await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, scenario.language, {
+      reseedOnNavigation: false,
+    });
     const errors = collectConsoleAndPageErrors(page);
 
     await page.goto('/settings', { waitUntil: 'networkidle' });

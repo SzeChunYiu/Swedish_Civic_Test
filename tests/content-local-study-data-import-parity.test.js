@@ -250,6 +250,41 @@ test('local study data import summary keeps Swedish copy learner-facing', () => 
   assert.match(source, /maxLength=\{LOCAL_STUDY_DATA_IMPORT_MAX_BYTES\}/);
 });
 
+test('settings import browser fixtures cover accessibility and companion preview rows', () => {
+  const source = fs.readFileSync(
+    path.join(repoRoot, 'tests/e2e/settings-import-confirm-apply.spec.ts'),
+    'utf8',
+  );
+
+  assert.match(source, /const accessibilityEasyReadFontKey = 'accessibility\\\\a11y\.easyReadFont\.v1';/);
+  assert.match(source, /const accessibilityFontSizeStepKey = 'accessibility\\\\a11y\.fontSizeStep\.v1';/);
+  assert.match(
+    source,
+    /const accessibilityAudioPlaybackRateKey = 'accessibility\\\\a11y\.audioPlaybackRate\.v1';/,
+  );
+  assert.match(
+    source,
+    /const accessibilityListenFirstAudioKey = 'accessibility\\\\a11y\.listenFirstAudio\.v1';/,
+  );
+  assert.match(source, /const accessibilityThemeModeKey = 'accessibility\\\\a11y\.themeMode\.v1';/);
+  assert.match(source, /const companionSelectedIdKey = 'companion\\\\companion\.selectedId\.v1';/);
+  assert.match(source, /accessibility:\s*\{\s*themeMode: 'dark',\s*\}/);
+  assert.match(
+    source,
+    /accessibility:\s*\{\s*easyReadFont: true,\s*fontSizeStep: 3,\s*audioPlaybackRate: 1\.25,\s*listenFirstAudioEnabled: true,\s*themeMode: 'dark',\s*\}/,
+  );
+  assert.match(source, /companion:\s*\{\s*selectedId: 'dala-horse',\s*\}/);
+  assert.match(source, /'1 tillgänglighetsval'/);
+  assert.match(source, /'5 tillgänglighetsval'/);
+  assert.match(source, /'1 vald studiekompis'/);
+  assert.match(source, /'1 accessibility preference'/);
+  assert.match(source, /'5 accessibility preferences'/);
+  assert.match(source, /'1 selected study companion'/);
+  assert.match(source, /expectImportedSettingsControlsPersistAfterReload/);
+  assert.match(source, /Dalahäst är vald som studiekompis/);
+  assert.match(source, /Dala horse is selected as study companion/);
+});
+
 test('local study data import previews and applies all learner snapshot sections', () => {
   const storageById = createStorageById();
   const speech = createSpeechStub();
