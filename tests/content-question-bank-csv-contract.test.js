@@ -5,6 +5,10 @@ const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
+const Q075_AGRICULTURAL_STALE_PATTERN =
+  /worked by farming and caring for animals,\s*cities were small/i;
+const Q075_AGRICULTURAL_REVISED_PATTERN =
+  /worked on farms, growing crops and caring for animals\.\s+Cities were small/i;
 
 function parseExportedCsvLine(line) {
   return [...line.matchAll(/"((?:""|[^"])*)"(?:,|$)/g)].map((match) =>
@@ -108,6 +112,28 @@ test('question-bank CSV has unique public header names', () => {
   assert.deepEqual(duplicateHeaderNames, []);
   assert.equal(header.filter((field) => field === 'uhrSourcePublisher').length, 1);
   assert.equal(header.filter((field) => field === 'supplementalSourcePublisher').length, 1);
+});
+
+test('question-bank CSV keeps q075 agricultural Sweden English explanation grammatical', () => {
+  const csv = fs.readFileSync(path.join(repoRoot, 'content', 'question-bank.csv'), 'utf8');
+  const lines = csv.trimEnd().split('\n');
+  const header = parseExportedCsvLine(lines[0]);
+  const idIndex = header.indexOf('id');
+  const explanationEnIndex = header.indexOf('explanationEn');
+  const expectedIds = new Set(['q075', 'q476', 'q477', 'q478', 'q479']);
+  const rowsById = new Map(
+    lines.slice(1).map((line) => {
+      const row = parseExportedCsvLine(line);
+      return [row[idIndex], row];
+    }),
+  );
+
+  for (const id of expectedIds) {
+    const row = rowsById.get(id);
+    assert.ok(row, `${id} should be exported to content/question-bank.csv`);
+    assert.doesNotMatch(row[explanationEnIndex], Q075_AGRICULTURAL_STALE_PATTERN);
+    assert.match(row[explanationEnIndex], Q075_AGRICULTURAL_REVISED_PATTERN);
+  }
 });
 
 test('question-bank CSV contract rejects public header drift', () => {

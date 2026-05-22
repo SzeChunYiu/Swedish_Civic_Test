@@ -1487,6 +1487,33 @@ test('derivePublishedQuestions renders q062 public-sector English as direct prop
   );
 });
 
+test('derivePublishedQuestions keeps q075/q476-q479 agricultural Sweden English grammatical', () => {
+  const { questions, sourceQuestions } = loadTs('data/questions.ts');
+  const byId = new Map(questions.map((question) => [question.id, question]));
+  const expectedIds = [
+    'q075',
+    generatedQuestionId(sourceQuestions, 'q075', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q075', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q075', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q075', 'judgement'),
+  ];
+
+  assert.deepEqual(expectedIds, ['q075', 'q476', 'q477', 'q478', 'q479']);
+
+  for (const id of expectedIds) {
+    const question = byId.get(id);
+    assert.ok(question, `${id} should be published`);
+    assert.doesNotMatch(
+      question.explanationEn,
+      /worked by farming and caring for animals,\s*cities were small/i,
+    );
+    assert.match(
+      question.explanationEn,
+      /worked on farms, growing crops and caring for animals\.\s+Cities were small/i,
+    );
+  }
+});
+
 test('derivePublishedQuestions renders q048 public-service broadcasters in natural English', () => {
   const { questions, sourceQuestions } = loadTs('data/questions.ts');
   const byId = new Map(questions.map((question) => [question.id, question]));

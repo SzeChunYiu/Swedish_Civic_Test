@@ -619,6 +619,10 @@ const QUESTION_PUBLIC_SERVICE_BROADCASTER_ENGLISH_NATURALNESS_PATTERNS = [
   /\b(?:the three )?media companies called public service\b/i,
   /\bWhich fact is correct regarding which three companies are called public service\b/i,
 ];
+const QUESTION_AGRICULTURAL_SWEDEN_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bworked by farming and caring for animals\b/i,
+  /\bfarming and caring for animals,\s+cities were small\b/i,
+];
 const QUESTION_LARGEST_LAKES_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhich are Sweden's three largest lakes\b/i,
   /\bWhich fact is correct regarding which are Sweden's three largest lakes\b/i,
@@ -5649,6 +5653,7 @@ function translationNaturalnessGuardParityIsValidated() {
     questionMayDayEnglishNaturalnessValidated === publishedQuestions &&
     questionPublicSectorEnglishNaturalnessValidated === publishedQuestions &&
     questionPublicServiceBroadcasterEnglishNaturalnessValidated === publishedQuestions &&
+    questionAgriculturalSwedenEnglishNaturalnessValidated === publishedQuestions &&
     questionLargestLakesEnglishNaturalnessValidated === publishedQuestions &&
     questionRecordYearsEnglishNaturalnessValidated === publishedQuestions &&
     questionLuciaExplanationRoleScaffoldValidated === publishedQuestions &&
@@ -7272,6 +7277,13 @@ function findQuestionPublicSectorEnglishNaturalnessIssue(question) {
 function findQuestionPublicServiceBroadcasterEnglishNaturalnessIssue(question) {
   if (!question.tags?.includes('public-service')) return null;
   return QUESTION_PUBLIC_SERVICE_BROADCASTER_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(questionText(question, ['questionEn', 'explanationEn'])),
+  );
+}
+
+function findQuestionAgriculturalSwedenEnglishNaturalnessIssue(question) {
+  if (!question.tags?.includes('agriculture')) return null;
+  return QUESTION_AGRICULTURAL_SWEDEN_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
     pattern.test(questionText(question, ['questionEn', 'explanationEn'])),
   );
 }
@@ -9694,6 +9706,7 @@ let questionCouncilOfEuropeWorkForEnglishNaturalnessValidated = 0;
 let questionMayDayEnglishNaturalnessValidated = 0;
 let questionPublicSectorEnglishNaturalnessValidated = 0;
 let questionPublicServiceBroadcasterEnglishNaturalnessValidated = 0;
+let questionAgriculturalSwedenEnglishNaturalnessValidated = 0;
 let questionLargestLakesEnglishNaturalnessValidated = 0;
 let questionRecordYearsEnglishNaturalnessValidated = 0;
 let questionLuciaExplanationRoleScaffoldValidated = 0;
@@ -23894,6 +23907,10 @@ function validatePublishedQuestionNaturalnessGuards() {
         `${label} uses stilted public-service broadcaster English wording`,
       ],
       [
+        findQuestionAgriculturalSwedenEnglishNaturalnessIssue(question),
+        `${label} uses stilted agricultural Sweden English wording`,
+      ],
+      [
         findQuestionLargestLakesEnglishNaturalnessIssue(question),
         `${label} uses stilted largest-lakes English wording`,
       ],
@@ -24195,6 +24212,8 @@ if (Array.isArray(questions)) {
         findQuestionPublicSectorEnglishNaturalnessIssue(question);
       const publicServiceBroadcasterEnglishNaturalnessIssue =
         findQuestionPublicServiceBroadcasterEnglishNaturalnessIssue(question);
+      const agriculturalSwedenEnglishNaturalnessIssue =
+        findQuestionAgriculturalSwedenEnglishNaturalnessIssue(question);
       const largestLakesEnglishNaturalnessIssue =
         findQuestionLargestLakesEnglishNaturalnessIssue(question);
       const recordYearsEnglishNaturalnessIssue =
@@ -24266,6 +24285,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses stilted public-service broadcaster English wording`);
       } else {
         questionPublicServiceBroadcasterEnglishNaturalnessValidated += 1;
+      }
+      if (agriculturalSwedenEnglishNaturalnessIssue) {
+        fail(`${label} uses stilted agricultural Sweden English wording`);
+      } else {
+        questionAgriculturalSwedenEnglishNaturalnessValidated += 1;
       }
       if (largestLakesEnglishNaturalnessIssue) {
         fail(`${label} uses stilted largest-lakes English wording`);
@@ -24899,6 +24923,7 @@ console.log(
       questionMayDayEnglishNaturalnessValidated,
       questionPublicSectorEnglishNaturalnessValidated,
       questionPublicServiceBroadcasterEnglishNaturalnessValidated,
+      questionAgriculturalSwedenEnglishNaturalnessValidated,
       questionLargestLakesEnglishNaturalnessValidated,
       questionRecordYearsEnglishNaturalnessValidated,
       questionLuciaExplanationRoleScaffoldValidated,

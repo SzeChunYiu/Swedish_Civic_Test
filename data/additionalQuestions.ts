@@ -1299,7 +1299,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     ],
     0,
     'För tvåhundra år sedan var Sverige ett typiskt jordbruksland. Nästan hela befolkningen bodde på landet och arbetade med att odla jorden och sköta djur, städerna var små och Sverige var fattigt jämfört med andra länder i Europa.',
-    'Two hundred years ago, Sweden was a typical agricultural country. Almost the whole population lived in the countryside and worked by farming and caring for animals, cities were small, and Sweden was poor compared with other European countries.',
+    'Two hundred years ago, Sweden was a typical agricultural country. Almost the whole population lived in the countryside and worked on farms, growing crops and caring for animals. Cities were small, and Sweden was poor compared with other European countries.',
     ['modern-history', 'agriculture', 'industrialization'],
   ),
   single(
