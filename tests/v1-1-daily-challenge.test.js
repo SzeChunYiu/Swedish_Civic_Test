@@ -96,6 +96,16 @@ test('isDailyChallengeCompleted: matches today day key only', () => {
   assert.equal(isDailyChallengeCompleted([today], now), true);
   assert.equal(isDailyChallengeCompleted(['2026-01-01'], now), false);
   assert.equal(isDailyChallengeCompleted([], now), false);
+  assert.equal(isDailyChallengeCompleted(['2026-05-19junk'], now), false);
+  assert.equal(isDailyChallengeCompleted(['x2026-05-19'], now), false);
+  assert.equal(isDailyChallengeCompleted(['2026-05-19T00:00:00.000Z'], now), false);
+  assert.equal(
+    isDailyChallengeCompleted(['2026-02-30'], new Date('2026-03-02T12:00:00.000Z')),
+    false,
+  );
+  assert.equal(isDailyChallengeCompleted(['', '   '], now), false);
+  assert.equal(isDailyChallengeCompleted([42, null, {}], now), false);
+  assert.equal(isDailyChallengeCompleted(42, now), false);
 });
 
 test('dailyChallengeBannerCopy: bilingual + reflects completion state', () => {
@@ -117,37 +127,26 @@ test('buildDailyChallenge: small bank still produces some output', () => {
   assert.ok(c.questionIds.length >= 1);
 });
 
-test('daily challenge is surfaced from Home and launched through Practice challenge mode', () => {
+test('daily challenge is surfaced from Home', () => {
   const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
-  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
 
   assert.match(homeSource, /buildDailyChallenge\(\{ bank: questions \}\)/);
   assert.match(homeSource, /dailyChallengeBannerCopy\(dailyChallengeCompleted, language\)/);
   assert.match(homeSource, /href="\/practice\?mode=challenge"/);
   assert.match(homeSource, /dailyChallengeCompletions/);
-  assert.match(homeSource, /dailyChallengeCta: \(completed\) => \(completed \? 'Öva igen'/);
-  assert.match(homeSource, /dailyChallengeCta: \(completed\) => \(completed \? 'Practise again'/);
+});
 
-  assert.match(practiceSource, /useLocalSearchParams/);
-  assert.match(practiceSource, /type PracticeRouteLaunchMode = 'challenge' \| 'quick';/);
-  assert.match(practiceSource, /function normalizePracticeRouteLaunchMode\(/);
-  assert.match(practiceSource, /rawValue === 'challenge' \|\| rawValue === 'quick'/);
-  assert.match(practiceSource, /const routeLaunchMode = normalizePracticeRouteLaunchMode\(mode\);/);
-  assert.match(
-    practiceSource,
-    /if \(!routeLaunchMode \|\| consumedRouteLaunchModeRef\.current === routeLaunchMode\) return;/,
-  );
-  assert.match(practiceSource, /routeLaunchMode === 'challenge'/);
-  assert.match(practiceSource, /type: 'challenge', questionIds: dailyChallenge\.questionIds/);
-  assert.match(practiceSource, /const nextQuestionBank = getQuestionsForPracticeScope/);
-  assert.match(practiceSource, /startSession\(nextQuestionBank\[0\]\?\.id \?\? null\);/);
-  assert.match(practiceSource, /setPracticeScope\(nextScope\);/);
-  assert.match(practiceSource, /copy\.challengeTimer\(remainingChallengeSeconds\)/);
-  assert.match(practiceSource, /recordDailyChallengeCompletion/);
-  assert.match(practiceSource, /challengeAnswerResults/);
-  assert.match(practiceSource, /correctCount \/ challengeQuestionIds\.length/);
-  assert.doesNotMatch(practiceSource, /const isChallengeMode = mode === 'challenge';/);
-  assert.doesNotMatch(practiceSource, /setChallengeRetryActive/);
+test('Practice route keeps the current hub and source-backed practice flow', () => {
+  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
+
+  assert.match(practiceSource, /type PracticeScope =/);
+  assert.match(practiceSource, /const \[practiceScope, setPracticeScope\]/);
+  assert.match(practiceSource, /getQuestionsForPracticeScope\(filteredQuestions, practiceScope\)/);
+  assert.match(practiceSource, /startPracticeScope\(\{ type: 'all' \}\)/);
+  assert.match(practiceSource, /startPracticeScope\(\{ type: 'quick', limit: 10 \}\)/);
+  assert.match(practiceSource, /handleStartChapter\(summary\.chapter\.id\)/);
+  assert.match(practiceSource, /UHRReferenceCard/);
+  assert.match(practiceSource, /QuestionReportLink/);
 });
 
 test('daily challenge completion is persisted by local day in the progress store', () => {

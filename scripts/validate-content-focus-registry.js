@@ -400,6 +400,11 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'dailyChallengeRuntime',
+    flags: ['--focus-daily-challenge-runtime'],
+    summaryKeys: ['dailyChallengeRuntimeCasesValidated', 'dailyChallengeRuntimeParityValidated'],
+  },
+  {
     id: 'readinessScoreRules',
     flags: ['--focus-readiness-score-rules'],
     summaryKeys: ['readinessScoreRulesValidated', 'readinessScoreRuntimeParityValidated'],
