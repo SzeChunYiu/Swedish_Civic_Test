@@ -21,20 +21,6 @@
       url: 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
       retrievedDate: '2026-05-19',
     },
-    uhrOfficialTestSources: {
-      label: 'UHR current medborgarskapsprovet source pages',
-      labels: {
-        en: 'UHR current medborgarskapsprovet source pages',
-        sv: 'UHR:s aktuella källsidor om medborgarskapsprovet',
-      },
-      mixLabel: 'UHR test status',
-      mixLabels: {
-        en: 'UHR test status',
-        sv: 'UHR:s provstatus',
-      },
-      url: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
-      retrievedDate: '2026-05-19',
-    },
     uhrOfficialTestAbout: {
       label: 'UHR: Om medborgarskapsprovet',
       labels: {
@@ -51,19 +37,43 @@
     },
     uhrOfficialTestFaq: {
       label: 'UHR: Frågor och svar',
+      labels: {
+        en: 'UHR: Questions and answers',
+        sv: 'UHR: Frågor och svar',
+      },
       mixLabel: 'UHR test FAQ',
+      mixLabels: {
+        en: 'UHR test FAQ',
+        sv: 'UHR:s frågor och svar',
+      },
       url: 'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
       retrievedDate: '2026-05-19',
     },
     uhrOfficialTestSignup: {
       label: 'UHR: Anmälan',
+      labels: {
+        en: 'UHR: Sign-up',
+        sv: 'UHR: Anmälan',
+      },
       mixLabel: 'UHR sign-up',
+      mixLabels: {
+        en: 'UHR sign-up',
+        sv: 'UHR:s anmälan',
+      },
       url: 'https://www.uhr.se/medborgarskapsprovet/anmalan/',
       retrievedDate: '2026-05-19',
     },
     uhrOfficialTestStudyMaterial: {
       label: 'UHR: Utbildningsmaterial',
+      labels: {
+        en: 'UHR: Study material',
+        sv: 'UHR: Utbildningsmaterial',
+      },
       mixLabel: 'UHR study material',
+      mixLabels: {
+        en: 'UHR study material',
+        sv: 'UHR:s utbildningsmaterial',
+      },
       url: 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
       retrievedDate: '2026-05-19',
     },
@@ -129,6 +139,10 @@
     ...EBOOK_FACTBOX_SOURCE_NOTES,
     editorialCommentary: {
       label: 'editorial commentary',
+      labels: {
+        en: 'editorial commentary',
+        sv: 'redaktionell kommentar',
+      },
       mixLabel: { en: 'Editorial', sv: 'Redaktionellt' },
       url: '#/sources',
       retrievedDate: 'editorial',
@@ -230,8 +244,8 @@
       .filter(Boolean);
   }
 
-  function officialTestSourceLinks() {
-    return OFFICIAL_TEST_SOURCE_NOTES.map(sourceAnchor).join(' · ');
+  function officialTestSourceLinks(lang = 'en') {
+    return OFFICIAL_TEST_SOURCE_NOTES.map((source) => sourceAnchor(source, lang)).join(' · ');
   }
 
   function ebookLocalizedLabel(map, lang) {
@@ -3482,7 +3496,7 @@
             <li>Skim the official <em>Sverige i fokus</em> PDF (free download from UHR) the week before the test. Don't try to memorise it.</li>
             <li>Use the mock exam here as a rehearsal for mixed-topic recall, then revisit the chapters where you missed points.</li>
           </ol>
-          <div class="ebook__factbox"><h4>Current source notes</h4><p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SOURCE_KEYS)}>Sources accessed 2026-05-19: ${officialTestSourceLinks()}</p></div>
+          <div class="ebook__factbox"><h4>Current source notes</h4><p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SOURCE_KEYS)}>Sources accessed 2026-05-19: ${officialTestSourceLinks('en')}</p></div>
         `,
         sv: `
           <h2>Aktuell officiell status</h2>
@@ -3498,7 +3512,7 @@
             <li>Använd UHR:s utbildningsmaterial som kontrollpunkt innan provet.</li>
             <li>Använd övningsprovet här för blandad repetition och gå tillbaka till kapitlen där du tappade poäng.</li>
           </ol>
-          <div class="ebook__factbox"><h4>Aktuella källnoter</h4><p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SOURCE_KEYS)}>Källor hämtade 2026-05-19: ${officialTestSourceLinks()}</p></div>
+          <div class="ebook__factbox"><h4>Aktuella källnoter</h4><p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SOURCE_KEYS)}>Källor hämtade 2026-05-19: ${officialTestSourceLinks('sv')}</p></div>
         `,
         'zh-Hans': `
           <h2>当前的官方状态</h2>
