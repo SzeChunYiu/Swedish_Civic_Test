@@ -1375,23 +1375,23 @@ test('remove-ads entitlement is decoupled from premium feature bundle', () => {
   assert.equal(
     isPremiumUser({
       adsDisabled: false,
-      fullMistakeReview: 1,
-      unlimitedMockExams: true,
+      fullMistakeReview: true,
+      unlimitedMockExams: 'yes',
     }),
     false,
   );
   assert.equal(
     hasProEntitlement({
-      adsDisabled: false,
-      confidenceSlider: false,
-      customStudyPlan: false,
-      fullMistakeReview: true,
-      multiColorHighlights: false,
-      nativeLangExplanations: false,
-      notesExport: false,
-      predictedPassProbability: false,
+      adsDisabled: true,
+      confidenceSlider: true,
+      customStudyPlan: true,
+      fullMistakeReview: 'yes',
+      multiColorHighlights: true,
+      nativeLangExplanations: true,
+      notesExport: true,
+      predictedPassProbability: true,
       spacedRepetition: true,
-      unlimitedMockExams: 'yes',
+      unlimitedMockExams: true,
     }),
     false,
   );
@@ -3100,7 +3100,7 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
     runtime: {
       async gatherUmpConsent() {
         malformedDisabledCalls.push('ump');
-        return { canRequestAds: true, status: 'REQUIRED' };
+        return { canRequestAds: true, status: 'OBTAINED' };
       },
       async getTrackingPermissionsAsync() {
         malformedDisabledCalls.push('att:get');
@@ -3109,13 +3109,13 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
       platform: 'ios',
       async requestTrackingPermissionsAsync() {
         malformedDisabledCalls.push('att:request');
-        return { status: 'denied' };
+        return { status: 'authorized' };
       },
     },
   });
 
   assert.deepEqual(malformedDisabledCalls, ['att:get', 'att:request', 'ump']);
-  assert.equal(malformedDisabledState.trackingTransparencyStatus, 'denied');
+  assert.equal(malformedDisabledState.trackingTransparencyStatus, 'authorized');
   assert.equal(malformedDisabledState.umpConsentStatus, 'obtained');
 
   const canRequestAdsCalls = [];

@@ -1,4 +1,5 @@
 import type { PremiumEntitlements } from '../../types/monetization';
+import { isStrictEntitlementFlag } from './premium';
 
 export type AdConsentPlatform = 'android' | 'ios' | 'web' | 'unknown';
 export type AdConsentRegion = 'eea' | 'uk' | 'us' | 'other' | 'unknown';
@@ -82,7 +83,7 @@ function hasSatisfiedUmpRequirement(state: AdConsentState): boolean {
 }
 
 export function getAdConsentDecision(state: AdConsentState): AdConsentDecision {
-  if (!state.googleMobileAdsEnabled || state.entitlements.adsDisabled === true) {
+  if (!state.googleMobileAdsEnabled || isStrictEntitlementFlag(state.entitlements.adsDisabled)) {
     return {
       adServingAllowed: false,
       canRequestNonPersonalizedAds: false,
@@ -120,7 +121,7 @@ export function getAdSdkInitializationDecision(state: AdConsentState): AdSdkInit
     };
   }
 
-  if (state.entitlements.adsDisabled === true) {
+  if (isStrictEntitlementFlag(state.entitlements.adsDisabled)) {
     return {
       blockReason: 'remove_ads_entitlement',
       canInitializeGoogleMobileAds: false,
