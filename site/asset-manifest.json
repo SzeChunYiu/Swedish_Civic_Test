@@ -124,8 +124,8 @@
       "sha256": "7c73ab63e08a89f3dde77b2eba53fcb32477fee7a899467742c7029020f0ef74"
     },
     "questions.js": {
-      "bytes": 3775722,
-      "sha256": "665f3f8e00701c46bfc613f42448d3672145fca5699e20a02873e8f0f5427f24"
+      "bytes": 3766904,
+      "sha256": "356077825b82868b8057ec86472ee3d21fb94e9c0cfd09ed7fd5b90d22dde03a"
     },
     "settings.js": {
       "bytes": 12903,
@@ -140,8 +140,8 @@
       "sha256": "4e2dca9706273065513ca97fb0d493f6ea67d852034a03166d67f1ee03c9975b"
     },
     "styles.css": {
-      "bytes": 247663,
-      "sha256": "1d04c12d34946d36bd3a6f0c24aa6c305ae8d75e5c1d8e001b840b300d269f56"
+      "bytes": 251247,
+      "sha256": "12b5b3a27ceba9b04d9969af10815c5db53fc66c9df7ebb37048c5a527dbc29c"
     },
     "sw.js": {
       "bytes": 4589,
