@@ -929,6 +929,7 @@ export default function Screen() {
         currentIndex={null}
         flaggedIndexes={flaggedIndexes}
         languageOverride={language}
+        showLegend
         stateLabels={copy.navigatorStateLabels}
         totalCount={examQuestions.length}
       />

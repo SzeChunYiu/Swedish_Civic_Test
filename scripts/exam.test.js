@@ -524,6 +524,7 @@ test('exam route keeps flag-for-review state local to the current attempt', () =
   assert.match(examRouteSource, /const examQuestionNumberById = useMemo/);
   assert.match(examRouteSource, /copy\.questionNumber\(questionNumber\)/);
   assert.match(examRouteSource, /flaggedIndexes=\{flaggedIndexes\}/);
+  assert.match(examRouteSource, /showLegend/);
   assert.match(examRouteSource, /stateLabels=\{copy\.navigatorStateLabels\}/);
   assert.match(examRouteSource, /const isFlagged = Boolean\(flaggedQuestionIds\[question\.id\]\);/);
   assert.match(examRouteSource, /aria-pressed=\{isFlagged\}/);
@@ -555,7 +556,16 @@ test('exam route keeps flag-for-review state local to the current attempt', () =
     /export type QuestionNavigatorItemState = 'current' \| 'answered' \| 'flagged' \| 'unanswered';/,
   );
   assert.match(navigatorSource, /flaggedIndexes\?: readonly number\[\];/);
+  assert.match(navigatorSource, /showLegend\?: boolean;/);
   assert.match(navigatorSource, /if \(flaggedSet\.has\(index\)\) return 'flagged';/);
+  assert.match(
+    navigatorSource,
+    /const shouldShowLegend = showLegend === true && !isInteractive && safeTotalCount > 0;/,
+  );
+  assert.match(navigatorSource, /const statusLegendStates: readonly QuestionNavigatorItemState/);
+  assert.match(navigatorSource, /'answered',\s*'flagged',\s*'unanswered'/);
+  assert.match(navigatorSource, /styles\.legendSwatch/);
+  assert.match(navigatorSource, /resolvedStateLabels\[state\]/);
   assert.match(
     navigatorSource,
     /const isInteractive = disabled !== true && typeof onSelect === 'function';/,
