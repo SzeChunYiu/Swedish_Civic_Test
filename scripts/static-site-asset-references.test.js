@@ -107,6 +107,9 @@ test('lazy static question bank remains manifest-backed without eager index load
   assert.doesNotMatch(indexHtml, /<script\b[^>]*\bsrc=["'][^"']*questions\.js/i);
   assert.match(appSource, /function\s+smtEnsureQuestionBank\s*\(/);
   assert.match(appSource, /questions\.js/);
+  assert.match(appSource, /function\s+smtRenderQuestionBankRouteStatus\s*\(/);
+  assert.match(appSource, /smtQuestionBankRouteStatusCopy/);
+  assert.match(appSource, /smtEnsureQuestionBank\(\)\.then\(/);
   assert.match(practiceSource, /smtEnsureQuestionBank/);
   assert.match(v11Source, /smtEnsureQuestionBank/);
   assert.ok(manifest.assets?.['questions.js']);
