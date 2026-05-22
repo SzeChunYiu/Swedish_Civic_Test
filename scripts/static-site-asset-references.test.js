@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
+const vm = require('node:vm');
 
 const repoRoot = path.resolve(__dirname, '..');
 const siteRoot = path.join(repoRoot, 'site');
@@ -21,6 +22,30 @@ function readSiteIndex() {
 
 function localAssetReferences(indexHtml, options) {
   return extractLocalAssetReferences(indexHtml, options);
+}
+
+function loadServiceWorkerTestApi() {
+  const serviceWorker = fs.readFileSync(path.join(siteRoot, 'sw.js'), 'utf8');
+  const self = {
+    __SMT_PWA_TEST__: null,
+    addEventListener() {},
+    location: new URL('https://almost-swedish.test/'),
+    registration: {
+      scope: 'https://almost-swedish.test/',
+    },
+  };
+
+  vm.runInNewContext(
+    serviceWorker,
+    {
+      URL,
+      TextEncoder,
+      self,
+    },
+    { filename: 'site/sw.js' },
+  );
+
+  return self.__SMT_PWA_TEST__;
 }
 
 test('static site index references only shipped local assets', () => {
@@ -121,6 +146,8 @@ test('static PWA shell is installable and covered by the asset manifest', () => 
   assert.match(serviceWorker, /cacheNameForManifestText/);
   assert.match(serviceWorker, /crypto\.subtle\.digest\(["']SHA-256["']/);
   assert.match(serviceWorker, /cache\.addAll\(resolvePrecacheUrls\(manifest\)\)/);
+  assert.match(serviceWorker, /ROUTE_LAZY_ASSETS/);
+  assert.match(serviceWorker, /isInstallPrecacheAssetPath/);
   assert.match(serviceWorker, /caches\.keys\(\)/);
   assert.match(serviceWorker, /caches\.delete\(cacheName\)/);
   assert.match(
@@ -128,6 +155,26 @@ test('static PWA shell is installable and covered by the asset manifest', () => 
     /event\.respondWith\(networkFirstWithCacheFallback\(event\.request\)\)/,
   );
   assert.doesNotMatch(serviceWorker, /https?:\/\//);
+});
+
+test('static PWA install precache excludes lazy ebook route bundles', () => {
+  const assetManifest = JSON.parse(
+    fs.readFileSync(path.join(siteRoot, 'asset-manifest.json'), 'utf8'),
+  );
+  const serviceWorkerApi = loadServiceWorkerTestApi();
+  const precachePaths = serviceWorkerApi
+    .resolvePrecacheUrls(assetManifest)
+    .map((assetUrl) => new URL(assetUrl).pathname.replace(/^\//, ''));
+
+  assert.equal(serviceWorkerApi.isInstallPrecacheAssetPath('ebook-tools.js'), false);
+  assert.equal(serviceWorkerApi.isInstallPrecacheAssetPath('./ebook.js'), false);
+  assert.equal(serviceWorkerApi.isInstallPrecacheAssetPath('app.js'), true);
+  assert.equal(precachePaths.includes('index.html'), true);
+  assert.equal(precachePaths.includes('asset-manifest.json'), true);
+  assert.equal(precachePaths.includes('app.js'), true);
+  assert.equal(precachePaths.includes('styles.css'), true);
+  assert.equal(precachePaths.includes('ebook-tools.js'), false);
+  assert.equal(precachePaths.includes('ebook.js'), false);
 });
 
 test('asset manifest check rejects referenced assets omitted by manifest scope', () => {

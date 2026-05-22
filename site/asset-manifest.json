@@ -124,8 +124,8 @@
       "sha256": "9e1322599dd8fc8149d838d09fcb9ff72731bb196846b1a0f4af403a672b9144"
     },
     "questions.js": {
-      "bytes": 3766894,
-      "sha256": "071a316a0a266b9ae4cfac534e8183bfe771390f3e4c8546001c750f2febc7d1"
+      "bytes": 3766852,
+      "sha256": "f43e870131750f7fdc15c34250672078afc81298cb4b17e23698678d92b6e001"
     },
     "settings.js": {
       "bytes": 12903,
@@ -144,8 +144,8 @@
       "sha256": "bdb00c46164327d1e781abf195fdf341db0a8083fd6eab31d8197d6c8f66050b"
     },
     "sw.js": {
-      "bytes": 4589,
-      "sha256": "8a723df9544ab5581b66031172349b4e51cbdd4abaef310522204ed3b8154f82"
+      "bytes": 4844,
+      "sha256": "28365f50df2820cc68f4254ccecef4f8ddb89edf3fd3d034da6bffbae1b65a99"
     },
     "tweaks-panel.jsx": {
       "bytes": 25802,
