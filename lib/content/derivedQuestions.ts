@@ -1510,7 +1510,166 @@ function statementTopicEn(source: PracticeQuestion): string {
     .replace(/^Public service companies\b/, 'public service companies');
 }
 
+const TRUE_FALSE_SOURCE_CIVIC_DISTRACTORS: Record<
+  string,
+  readonly [QuestionOption, QuestionOption]
+> = {
+  q002: [
+    {
+      id: 'civic-distractor-1',
+      textSv: 'Sveriges nordligaste del ligger i Skåne.',
+      textEn: "Sweden's northernmost part is in Skåne.",
+    },
+    {
+      id: 'civic-distractor-2',
+      textSv: 'Sveriges nordligaste del ligger på Gotland.',
+      textEn: "Sweden's northernmost part is on Gotland.",
+    },
+  ],
+  q006: [
+    {
+      id: 'civic-distractor-1',
+      textSv: 'Kalla havsströmmar gör Sveriges klimat arktiskt.',
+      textEn: "Cold ocean currents make Sweden's climate arctic.",
+    },
+    {
+      id: 'civic-distractor-2',
+      textSv: 'Golfströmmen kyler ner Sveriges klimat.',
+      textEn: "The Gulf Stream cools Sweden's climate.",
+    },
+  ],
+  q023: [
+    {
+      id: 'civic-distractor-1',
+      textSv: 'Kungen väljer Sveriges statsminister.',
+      textEn: "The King chooses Sweden's prime minister.",
+    },
+    {
+      id: 'civic-distractor-2',
+      textSv: 'Kommunerna väljer Sveriges statsminister.',
+      textEn: "Municipalities choose Sweden's prime minister.",
+    },
+  ],
+  q028: [
+    {
+      id: 'civic-distractor-1',
+      textSv: 'Oppositionen utser regeringens ministrar.',
+      textEn: 'The opposition appoints the government ministers.',
+    },
+    {
+      id: 'civic-distractor-2',
+      textSv: 'Oppositionen beslutar om budgeten utan riksdagsbeslut.',
+      textEn: 'The opposition decides the budget without a Riksdag decision.',
+    },
+  ],
+  q031: [
+    {
+      id: 'civic-distractor-1',
+      textSv: 'Folkomröstningar i Sverige är alltid bindande.',
+      textEn: 'Referendums in Sweden are always binding.',
+    },
+    {
+      id: 'civic-distractor-2',
+      textSv: 'Bara regeringen får rösta i folkomröstningar.',
+      textEn: 'Only the government may vote in referendums.',
+    },
+  ],
+  q047: [
+    {
+      id: 'civic-distractor-1',
+      textSv: 'Redaktioner måste alltid lämna ut sina källor till myndigheter.',
+      textEn: 'Newsrooms must always disclose their sources to authorities.',
+    },
+    {
+      id: 'civic-distractor-2',
+      textSv: 'Bara myndighetsanställda får lämna uppgifter anonymt till medier.',
+      textEn: 'Only government employees may provide information anonymously to media.',
+    },
+  ],
+  q049: [
+    {
+      id: 'civic-distractor-1',
+      textSv: 'Public service-företag får finansieras med politisk reklam.',
+      textEn: 'Public service companies may be funded with political advertising.',
+    },
+    {
+      id: 'civic-distractor-2',
+      textSv: 'Public service-företag ska stödja regeringspartierna.',
+      textEn: 'Public service companies should support the governing parties.',
+    },
+  ],
+  q074: [
+    {
+      id: 'civic-distractor-1',
+      textSv: 'Regionerna ensamma ansvarar för all äldreomsorg.',
+      textEn: 'Regions alone are responsible for all elderly care.',
+    },
+    {
+      id: 'civic-distractor-2',
+      textSv: 'Kommuner får inte erbjuda äldre personer hemtjänst.',
+      textEn: 'Municipalities may not offer older people home care services.',
+    },
+  ],
+  q091: [
+    {
+      id: 'civic-distractor-1',
+      textSv: 'Svenskt totalförsvar består bara av militärt försvar.',
+      textEn: 'Swedish total defence consists only of military defence.',
+    },
+    {
+      id: 'civic-distractor-2',
+      textSv: 'Det civila försvaret ingår inte i totalförsvaret.',
+      textEn: 'Civil defence is not part of total defence.',
+    },
+  ],
+  q094: [
+    {
+      id: 'civic-distractor-1',
+      textSv: 'Svenska kyrkan blev en statlig myndighet år 2000.',
+      textEn: 'The Church of Sweden became a state authority in 2000.',
+    },
+    {
+      id: 'civic-distractor-2',
+      textSv: 'Bara Svenska kyrkan får verka som trossamfund i Sverige.',
+      textEn: 'Only the Church of Sweden may operate as a faith community in Sweden.',
+    },
+  ],
+  q143: [
+    {
+      id: 'civic-distractor-1',
+      textSv: 'Götaland, Svealand och Norrland är Sveriges tre största län.',
+      textEn: 'Götaland, Svealand, and Norrland are Sweden’s three largest counties.',
+    },
+    {
+      id: 'civic-distractor-2',
+      textSv: 'Norrland är Sveriges minsta landsdel.',
+      textEn: 'Norrland is Sweden’s smallest major region.',
+    },
+  ],
+};
+
+function trueFalseSourceCivicDistractors(
+  source: PracticeQuestion,
+): readonly [QuestionOption, QuestionOption] {
+  return (
+    TRUE_FALSE_SOURCE_CIVIC_DISTRACTORS[source.id] ?? [
+      {
+        id: 'civic-distractor-1',
+        textSv: 'Sverige har ingen riksdag.',
+        textEn: 'Sweden has no Riksdag.',
+      },
+      {
+        id: 'civic-distractor-2',
+        textSv: 'Det finns inga kommuner i Sverige.',
+        textEn: 'There are no municipalities in Sweden.',
+      },
+    ]
+  );
+}
+
 function trueFalseStatementOptions(source: PracticeQuestion): QuestionOption[] {
+  const [firstDistractor, secondDistractor] = trueFalseSourceCivicDistractors(source);
+
   return [
     {
       id: 'true-statement',
@@ -1522,16 +1681,8 @@ function trueFalseStatementOptions(source: PracticeQuestion): QuestionOption[] {
       textSv: ensureSentence(trueFalseSourceStatementSv(source, false)),
       textEn: ensureSentence(trueFalseSourceStatementEn(source, false)),
     },
-    {
-      id: 'both-statements',
-      textSv: 'Båda påståendena är korrekta',
-      textEn: 'Both statements are correct',
-    },
-    {
-      id: 'neither-statement',
-      textSv: 'Inget av påståendena är korrekt',
-      textEn: 'Neither statement is correct',
-    },
+    firstDistractor,
+    secondDistractor,
   ];
 }
 

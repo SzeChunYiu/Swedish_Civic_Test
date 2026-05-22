@@ -732,6 +732,10 @@ const GENERATED_SINGLE_CHOICE_FILLER_OPTION_TEXTS = new Set([
   'None of the options is correct',
   'Endast ibland',
   'Only sometimes',
+  'Båda påståendena är korrekta',
+  'Both statements are correct',
+  'Inget av påståendena är korrekt',
+  'Neither statement is correct',
 ]);
 const GENERATED_SINGLE_CHOICE_META_STEM_PATTERNS = [
   /^\s*Vilket svar stämmer bäst\?/i,
