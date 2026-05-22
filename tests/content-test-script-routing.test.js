@@ -13,8 +13,13 @@ const {
   MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES,
   MALFORMED_ADAPTIVE_PRACTICE_SIZE_CASES,
 } = require('./helpers/adaptivePracticeRuntimeFixtures.cjs');
+const {
+  runFocusedValidatorMutation,
+} = require('./helpers/focusedValidatorMutation.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
+const streakFreezeCounterRuntimeFocusFlag = '--focus-streak-freeze-counter-runtime-input';
+const streakFreezeModulePath = 'lib/learning/streakWithFreeze.ts';
 
 function readPackageJson() {
   return JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
@@ -79,6 +84,21 @@ function runFocusedValidationCommand(flag) {
     cwd: repoRoot,
     encoding: 'utf8',
   });
+}
+
+function assertStreakFreezeCounterMutationFails({ label, expectedCase, mutateSource }) {
+  const result = runFocusedValidatorMutation({
+    focusFlag: streakFreezeCounterRuntimeFocusFlag,
+    targetFile: streakFreezeModulePath,
+    mutateSource,
+  });
+  const output = `${result.stdout}\n${result.stderr}`;
+
+  assert.equal(result.status, 1, `${label} should fail focused validation\n${output}`);
+  assert.match(output, /Content validation failed:/);
+  assert.match(output, expectedCase);
+  assert.doesNotMatch(output, /questionSchemasValidated/);
+  assert.doesNotMatch(output, /streakFreezeNormalizerCasesValidated/);
 }
 
 function assertFocusedValidationSummary(flag, expectedSummaryKeys) {
@@ -1842,6 +1862,67 @@ test('streak freeze counter runtime input focus reports isolated summary', () =>
   assert.deepEqual(Object.keys(summary).sort(), registryEntry.summaryKeys.slice().sort());
   assert.equal(summary.streakFreezeCounterRuntimeCasesValidated, 4);
   assert.equal(summary.streakFreezeCounterRuntimeParityValidated, true);
+});
+
+test('streak freeze counter runtime input focus rejects targeted source mutations', () => {
+  assertStreakFreezeCounterMutationFails({
+    label: 'weakened integer counter normalization',
+    expectedCase: /refillFreezes rejects NaN, negative, and string counters|refillFreezes clamps overstocked available and rejects fractional counters/,
+    mutateSource: function mutateSource(source) {
+      const strictIntegerGuard = `typeof value === 'number' &&
+    Number.isFinite(value) &&
+    Number.isInteger(value) &&
+    value >= 0`;
+      if (!source.includes(strictIntegerGuard)) {
+        throw new Error('strict integer guard fixture target was not found');
+      }
+      return source.replace(strictIntegerGuard, "typeof value === 'number'");
+    },
+  });
+
+  assertStreakFreezeCounterMutationFails({
+    label: 'string available counter spending',
+    expectedCase: /calculateStreakWithFreeze refuses string available freezes/,
+    mutateSource: function mutateSource(source) {
+      const strictAvailableNormalizer = `function normalizeAvailableFreezes(value: unknown, fallback: number): number {
+  return normalizeNonNegativeInteger(value, fallback, MAX_STOCKPILE);
+}`;
+      const stringAvailableNormalizer = `function normalizeAvailableFreezes(value: unknown, fallback: number): number {
+  if (typeof value === 'string' && value.trim() !== '') {
+    return Math.min(Number(value), MAX_STOCKPILE);
+  }
+  return normalizeNonNegativeInteger(value, fallback, MAX_STOCKPILE);
+}`;
+      if (!source.includes(strictAvailableNormalizer)) {
+        throw new Error('available counter fixture target was not found');
+      }
+      return source.replace(strictAvailableNormalizer, stringAvailableNormalizer);
+    },
+  });
+
+  assertStreakFreezeCounterMutationFails({
+    label: 'string lifetimeSpent preservation',
+    expectedCase: /calculateStreakWithFreeze resets string lifetimeSpent before spending/,
+    mutateSource: function mutateSource(source) {
+      const strictLifetimeSpentNormalizer = `lifetimeSpent: normalizeNonNegativeInteger(
+      candidate.lifetimeSpent,
+      0,
+      MAX_HYDRATED_FREEZE_LIFETIME_COUNT,
+    ),`;
+      const stringLifetimeSpentNormalizer = `lifetimeSpent:
+      typeof candidate.lifetimeSpent === 'string'
+        ? Number(candidate.lifetimeSpent)
+        : normalizeNonNegativeInteger(
+            candidate.lifetimeSpent,
+            0,
+            MAX_HYDRATED_FREEZE_LIFETIME_COUNT,
+          ),`;
+      if (!source.includes(strictLifetimeSpentNormalizer)) {
+        throw new Error('lifetime spent counter fixture target was not found');
+      }
+      return source.replace(strictLifetimeSpentNormalizer, stringLifetimeSpentNormalizer);
+    },
+  });
 });
 
 test('streak freeze normalizer parity uses focused content validation routing', () => {
