@@ -6,22 +6,29 @@ const selectors = new Map([
   [
     'monetization',
     {
-      script: 'test:monetization',
+      scripts: ['test:monetization'],
       description: 'focused ads and Remove Ads monetization gate',
     },
   ],
   [
     'correct-display-position',
     {
-      script: 'test:correct-display-position',
+      scripts: ['test:correct-display-position'],
       description: 'P0 answer-shuffle distribution, stability, and static scoring gate',
     },
   ],
   [
     'xp',
     {
-      script: 'test:xp-rules',
+      scripts: ['test:xp-rules'],
       description: 'focused XP rules parity gate',
+    },
+  ],
+  [
+    'architecture',
+    {
+      scripts: ['test:architecture', 'test:router-shell'],
+      description: 'focused architecture scaffold and router shell release gate',
     },
   ],
 ]);
@@ -29,7 +36,8 @@ const selectors = new Map([
 function supportedSelectorText() {
   return [...selectors.entries()]
     .map(
-      ([selector, config]) => `  ${selector} -> npm run ${config.script} (${config.description})`,
+      ([selector, config]) =>
+        `  ${selector} -> ${config.scripts.map((script) => `npm run ${script}`).join(' && ')} (${config.description})`,
     )
     .join('\n');
 }
@@ -67,12 +75,20 @@ function runCommand(command, args, label) {
     process.exit(1);
   }
 
-  process.exit(result.status ?? 1);
+  return result.status ?? 1;
 }
 
 function runNpmScript(script) {
   const command = process.env.TEST_DISPATCH_NPM || 'npm';
-  runCommand(command, ['run', script], `npm script ${script}`);
+  const status = runCommand(command, ['run', script], `npm script ${script}`);
+  if (status !== 0) process.exit(status);
+}
+
+function runNpmScripts(scripts) {
+  for (const script of scripts) {
+    runNpmScript(script);
+  }
+  process.exit(0);
 }
 
 function failFocusedNodeTests(message) {
@@ -120,13 +136,18 @@ function parseFocusedNodeTestArgs(args) {
 function runFocusedNodeTests(args) {
   const { pattern, files } = parseFocusedNodeTestArgs(args);
   const command = process.env.TEST_DISPATCH_NODE || process.execPath;
-  runCommand(command, ['--test', '--test-name-pattern', pattern, ...files], 'focused Node tests');
+  const status = runCommand(
+    command,
+    ['--test', '--test-name-pattern', pattern, ...files],
+    'focused Node tests',
+  );
+  process.exit(status);
 }
 
 const args = process.argv.slice(2).filter((arg) => arg !== '--');
 
 if (args.length === 0) {
-  runNpmScript('test:all');
+  runNpmScripts(['test:all']);
 }
 
 if (args[0] === 'content-focused') {
@@ -137,4 +158,4 @@ if (args.length !== 1 || !selectors.has(args[0])) {
   failUnsupported(args);
 }
 
-runNpmScript(selectors.get(args[0]).script);
+runNpmScripts(selectors.get(args[0]).scripts);
