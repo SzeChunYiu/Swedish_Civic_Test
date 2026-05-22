@@ -155,6 +155,71 @@ test('native Remove Ads provider fails closed unless a platform verifier validat
   assert.equal(notFoundStoredRestore.entitlements.adsDisabled, false);
   assert.equal(await notFoundStoredStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
 
+  const matchingStoredPurchase = {
+    productId: REMOVE_ADS_PRODUCT_ID,
+    purchaseToken: 'stored-token-from-real-store',
+    transactionId: 'stored-transaction-from-real-store',
+  };
+  const matchingStoredRecord = JSON.stringify({
+    grantedAt: '2026-05-19T00:00:00.000Z',
+    productId: REMOVE_ADS_PRODUCT_ID,
+    purchaseToken: matchingStoredPurchase.purchaseToken,
+    receiptValidatedAt: '2026-05-19T00:00:00.000Z',
+    receiptValidationStatus: 'valid',
+    schemaVersion: REMOVE_ADS_RECORD_SCHEMA_VERSION,
+    source: 'purchase',
+    transactionId: matchingStoredPurchase.transactionId,
+  });
+  const verifiedStoredProvider = createProvider(async (purchase, productId) => ({
+    productId,
+    purchaseToken: purchase.purchaseToken ?? null,
+    status: 'valid',
+    transactionId: purchase.transactionId ?? null,
+    validatedAt: '2026-05-19T00:00:00.000Z',
+  }));
+
+  const pendingWithMatchingStoredStorage = createMemoryPurchaseStorage();
+  await pendingWithMatchingStoredStorage.setItemAsync(REMOVE_ADS_STORAGE_KEY, matchingStoredRecord);
+  const pendingWithMatchingStoredProvider = createProvider(
+    verifiedStoredProvider.provider.validateRemoveAdsReceipt,
+    {
+      requestRemoveAdsPurchase: async () => null,
+      restorePurchases: async () => [matchingStoredPurchase],
+    },
+  );
+  const pendingWithMatchingStored = await buyRemoveAds({
+    provider: pendingWithMatchingStoredProvider.provider,
+    storage: pendingWithMatchingStoredStorage,
+  });
+
+  assert.equal(pendingWithMatchingStored.status, 'pending');
+  assert.equal(pendingWithMatchingStored.entitlements.adsDisabled, true);
+  assert.equal(pendingWithMatchingStoredProvider.finishCalls, 0);
+  assert.equal(
+    JSON.parse(await pendingWithMatchingStoredStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY))
+      .transactionId,
+    matchingStoredPurchase.transactionId,
+  );
+
+  const notFoundWithMatchingStoredStorage = createMemoryPurchaseStorage();
+  await notFoundWithMatchingStoredStorage.setItemAsync(
+    REMOVE_ADS_STORAGE_KEY,
+    matchingStoredRecord,
+  );
+  let restoreAttempt = 0;
+  const notFoundWithMatchingStored = await restoreRemoveAdsPurchase({
+    provider: createProvider(verifiedStoredProvider.provider.validateRemoveAdsReceipt, {
+      restorePurchases: async () => {
+        restoreAttempt += 1;
+        return restoreAttempt === 1 ? [] : [matchingStoredPurchase];
+      },
+    }).provider,
+    storage: notFoundWithMatchingStoredStorage,
+  });
+
+  assert.equal(notFoundWithMatchingStored.status, 'not_found');
+  assert.equal(notFoundWithMatchingStored.entitlements.adsDisabled, true);
+
   for (const [label, validatedAt] of [
     ['date-only validator timestamp', '2026-05-20'],
     ['timezone-offset validator timestamp', '2026-05-20T12:34:56.789+00:00'],

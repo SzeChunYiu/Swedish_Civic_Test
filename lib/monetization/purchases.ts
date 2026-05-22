@@ -507,9 +507,9 @@ async function revalidateStoredRemoveAdsEntitlementRecordWithConnectedProvider({
 }): Promise<boolean> {
   try {
     const availablePurchases = await provider.restorePurchases([REMOVE_ADS_PRODUCT_ID]);
-    const restoredPurchase =
-      availablePurchases.find((purchase) => purchaseMatchesStoredRecord(purchase, record)) ??
-      availablePurchases.find(isRemoveAdsPurchase);
+    const restoredPurchase = availablePurchases.find((purchase) =>
+      purchaseMatchesStoredRecord(purchase, record),
+    );
 
     if (!restoredPurchase) {
       await clearStoredRemoveAdsEntitlement(storage);
@@ -899,6 +899,7 @@ export function createMockPurchaseProvider({
 }: MockPurchaseProviderOptions = {}): RemoveAdsPurchaseProvider {
   let connected = false;
   let ownsRemoveAds = owned;
+  let ownedRemoveAdsPurchase: RemoveAdsPurchaseRecord | null = null;
 
   function assertConnected() {
     if (!connected) throw new Error('Mock purchase provider is not connected');
@@ -935,12 +936,13 @@ export function createMockPurchaseProvider({
       assertConnected();
       if (pendingPurchase) return null;
       ownsRemoveAds = true;
-      return createMockPurchase('buy-remove-ads');
+      ownedRemoveAdsPurchase = createMockPurchase('buy-remove-ads');
+      return ownedRemoveAdsPurchase;
     },
     async restorePurchases(productIds) {
       assertConnected();
       if (!ownsRemoveAds || !productIds.includes(REMOVE_ADS_PRODUCT_ID)) return [];
-      return [createMockPurchase('restore-remove-ads')];
+      return [ownedRemoveAdsPurchase ?? createMockPurchase('restore-remove-ads')];
     },
   };
 }
