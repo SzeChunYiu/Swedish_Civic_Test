@@ -857,6 +857,48 @@ test('static Home demo question keeps q039 source and UHR provenance in extra la
   expect(pageErrors).toEqual([]);
 });
 
+test('static Home demo question exposes screen reader answer state and reset', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const pageErrors = collectPageErrors(page);
+  await openStaticHome(page, staticSite.baseUrl);
+
+  const qcard = page.locator('#qcard');
+  const optionGroup = qcard.locator('.qcard__opts');
+  const options = qcard.locator('.qopt');
+  const status = page.locator('#qcard-status');
+
+  await expect(optionGroup).toHaveAttribute('role', 'group');
+  await expect(optionGroup).toHaveAttribute('aria-label', 'Answer choices for the demo question');
+  await expect(options).toHaveCount(4);
+  await expect(options.nth(0)).toHaveAttribute('aria-pressed', 'false');
+
+  await options.nth(0).click();
+  await expect(qcard).toHaveClass(/is-answered/);
+  await expect(options.nth(0)).toHaveAttribute('aria-pressed', 'true');
+  await expect(options.nth(0)).toHaveAttribute('aria-label', /Selected answer, incorrect/);
+  await expect(options.nth(1)).toHaveAttribute('aria-label', /Correct answer/);
+  await expect(status).toContainText('Not quite.');
+  await expect(status).toContainText('Allemansrätten');
+  await expect(qcard.locator('#qcard-explanation')).toBeVisible();
+
+  await qcard.locator('#qreset').click();
+  await expect(qcard).not.toHaveClass(/is-answered/);
+  await expect(options.nth(0)).toHaveAttribute('aria-pressed', 'false');
+  await expect(options.nth(0)).not.toHaveAttribute('aria-label', /Selected answer/);
+  await expect(options.nth(1)).not.toHaveAttribute('aria-label', /Correct answer/);
+  await expect(status).toHaveText('');
+
+  await page.evaluate(() => window.smtSetLanguage?.('sv'));
+  await expect(page.locator('html')).toHaveAttribute('lang', 'sv');
+  await expect(page.locator('html')).toHaveAttribute('dir', 'ltr');
+  await expect(optionGroup).toHaveAttribute('aria-label', 'Svarsalternativ för demofrågan');
+  await options.nth(1).click();
+  await expect(options.nth(1)).toHaveAttribute('aria-label', /Valt svar, rätt/);
+  await expect(status).toContainText('Rätt.');
+
+  expect(pageErrors).toEqual([]);
+});
+
 test('static Home chapter 2 civic terms render localized card descriptions without kommun region regering', async ({
   page,
 }) => {

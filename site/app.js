@@ -273,6 +273,12 @@ const i18n = (window.i18n = {
       " — \"everyone's right\" — lets you walk, swim, ski, camp, and forage on most land in Sweden. The catch: be careful, considerate, and don't pitch a tent in someone's flowerbed.",
     'qcard.prov': 'UHR',
     'qcard.src': 'Source: Sverige i fokus · Lag och rätt · Allemansrätten · p. 17',
+    'qcard.optionsLabel': 'Answer choices for the demo question',
+    'qcard.state.correct': 'Correct answer',
+    'qcard.state.selectedCorrect': 'Selected answer, correct',
+    'qcard.state.selectedIncorrect': 'Selected answer, incorrect',
+    'qcard.feedback.correct': 'Correct.',
+    'qcard.feedback.incorrect': 'Not quite.',
     'qcard.again': 'Try again →',
     'numbers.1': 'questions sourced from public records',
     'numbers.2': 'chapters covering history, society & rights',
@@ -691,6 +697,12 @@ const i18n = (window.i18n = {
       ' — "allas rätt" — låter dig gå, simma, åka skidor, tälta och plocka bär på det mesta av Sveriges mark. Haken: var försiktig, hänsynsfull, och slå inte upp tältet i någons rabatt.',
     'qcard.prov': 'UHR',
     'qcard.src': 'Källa: Sverige i fokus · Lag och rätt · Allemansrätten · s. 17',
+    'qcard.optionsLabel': 'Svarsalternativ för demofrågan',
+    'qcard.state.correct': 'Rätt svar',
+    'qcard.state.selectedCorrect': 'Valt svar, rätt',
+    'qcard.state.selectedIncorrect': 'Valt svar, fel',
+    'qcard.feedback.correct': 'Rätt.',
+    'qcard.feedback.incorrect': 'Inte riktigt.',
     'qcard.again': 'Försök igen →',
     'numbers.1': 'frågor från offentliga källor',
     'numbers.2': 'kapitel om historia, samhälle & rättigheter',
@@ -1204,6 +1216,57 @@ window.addEventListener('DOMContentLoaded', smtApplySavedLanguage);
 
 /* ============================ TRY-A-QUESTION DEMO */
 
+function smtQcardText(key) {
+  const lang = smtNormalizeLanguage(document.documentElement.getAttribute('lang') || 'en');
+  return (i18n[lang] && i18n[lang][key]) || (i18n.en && i18n.en[key]) || '';
+}
+
+function smtQcardOptionLabel(option) {
+  return (option.textContent || '').replace(/\s+/g, ' ').trim();
+}
+
+function smtClearQcardA11yState(card) {
+  card.querySelectorAll('.qopt').forEach((option) => {
+    option.setAttribute('aria-pressed', 'false');
+    option.removeAttribute('aria-label');
+  });
+  const status = card.querySelector('#qcard-status');
+  if (status) status.textContent = '';
+}
+
+function smtApplyQcardA11yState(card, selectedOption, selectedCorrect) {
+  card.querySelectorAll('.qopt').forEach((option) => {
+    const isSelected = option === selectedOption;
+    const isCorrectOption = option.dataset.correct === 'true';
+    option.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+
+    const stateText =
+      isSelected && selectedCorrect
+        ? smtQcardText('qcard.state.selectedCorrect')
+        : isSelected
+          ? smtQcardText('qcard.state.selectedIncorrect')
+          : isCorrectOption
+            ? smtQcardText('qcard.state.correct')
+            : '';
+
+    if (stateText) {
+      option.setAttribute('aria-label', `${smtQcardOptionLabel(option)}. ${stateText}`);
+    } else {
+      option.removeAttribute('aria-label');
+    }
+  });
+
+  const explanation = card.querySelector('#qcard-explanation');
+  const status = card.querySelector('#qcard-status');
+  if (status && explanation) {
+    const feedback = smtQcardText(
+      selectedCorrect ? 'qcard.feedback.correct' : 'qcard.feedback.incorrect',
+    );
+    const explanationText = (explanation.textContent || '').replace(/\s+/g, ' ').trim();
+    status.textContent = [feedback, explanationText].filter(Boolean).join(' ');
+  }
+}
+
 document.addEventListener('click', (e) => {
   const opt = e.target.closest('.qopt');
   if (opt) {
@@ -1217,6 +1280,7 @@ document.addEventListener('click', (e) => {
       if (right) right.classList.add('is-correct');
     }
     card.querySelectorAll('.qopt').forEach((o) => (o.disabled = true));
+    smtApplyQcardA11yState(card, opt, correct);
     card.classList.add('is-answered');
     return;
   }
@@ -1228,7 +1292,16 @@ document.addEventListener('click', (e) => {
       o.disabled = false;
       o.classList.remove('is-correct', 'is-wrong');
     });
+    smtClearQcardA11yState(card);
   }
+});
+
+window.addEventListener('smt:languagechange', () => {
+  const card = document.getElementById('qcard');
+  if (!card || !card.classList.contains('is-answered')) return;
+  const selectedOption = card.querySelector('.qopt[aria-pressed="true"]');
+  if (!selectedOption) return;
+  smtApplyQcardA11yState(card, selectedOption, selectedOption.dataset.correct === 'true');
 });
 
 /* ============================ ADS + CONSENT */
