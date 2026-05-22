@@ -88,8 +88,8 @@
       "sha256": "292a60fafed6aeb71be4d99e4e231f1644cda3656c5f5fa9f00b537468bba1a8"
     },
     "i18n-extras.js": {
-      "bytes": 348107,
-      "sha256": "233e630bc2f7dde2b0a785d011b70437d53638e9afd75cac72489c4e3fa54e71"
+      "bytes": 348281,
+      "sha256": "7d009fd2c5e1629a2d8b9ba6a61f82ff2325a954bc887ccb412eca87191f0b51"
     },
     "icon.png": {
       "bytes": 362794,
@@ -140,8 +140,8 @@
       "sha256": "4e2dca9706273065513ca97fb0d493f6ea67d852034a03166d67f1ee03c9975b"
     },
     "styles.css": {
-      "bytes": 257161,
-      "sha256": "e8452c378ff624a19bc5077bf4c2e3d46fd8d2cbe19c309efef8ed198a790135"
+      "bytes": 258326,
+      "sha256": "b0db703d6acbcd0b1ce922173936ac3a6c12aa39f5e2960433719ab6f84b7ddf"
     },
     "sw.js": {
       "bytes": 4589,
