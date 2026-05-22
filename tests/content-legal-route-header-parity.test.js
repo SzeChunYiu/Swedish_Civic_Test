@@ -190,6 +190,49 @@ test('sources route authority boundary cites the current UHR page', () => {
   );
 });
 
+test('legal external links keep visible titles separate from action labels', () => {
+  const legalPage = fs.readFileSync(
+    path.join(repoRoot, 'components/compliance/LegalPage.tsx'),
+    'utf8',
+  );
+  const sourceLinks = fs.readFileSync(
+    path.join(repoRoot, 'components/compliance/SourceMaterialLinks.tsx'),
+    'utf8',
+  );
+  const supportRoute = fs.readFileSync(path.join(repoRoot, 'app/support.tsx'), 'utf8');
+
+  assert.match(
+    legalPage,
+    /export interface LegalExternalLinkProps \{[\s\S]*accessibilityLabel: string;[\s\S]*destination: string;[\s\S]*label: string;[\s\S]*\}/,
+  );
+  assert.match(
+    legalPage,
+    /<Link[\s\S]*accessibilityLabel=\{accessibilityLabel\}[\s\S]*target="_blank"[\s\S]*>\s*\{label\}\s*\{'\\n'\}\s*\{destination\}\s*<\/Link>/,
+  );
+  assert.doesNotMatch(legalPage, /\{accessibilityLabel\}\s*\{'\\n'\}/);
+  assert.doesNotMatch(legalPage, /label=\{accessibilityLabel\}/);
+
+  assert.match(
+    sourceLinks,
+    /function OfficialSourceLink\([\s\S]*<LegalExternalLink[\s\S]*accessibilityLabel=\{accessibilityLabel\}[\s\S]*label=\{sourceTitleForLanguage\(source, language\)\}[\s\S]*\/>/,
+  );
+  assert.match(
+    sourceLinks,
+    /accessibilityLabel=\{sourceLinkCopy\[language\]\.openEducationMaterialAccessibilityLabel\}/,
+  );
+  assert.match(
+    sourceLinks,
+    /accessibilityLabel=\{sourceLinkCopy\[language\]\.openAuthorityBoundarySourceAccessibilityLabel\}/,
+  );
+  assert.doesNotMatch(sourceLinks, /label=\{sourceLinkCopy\[language\]\.open/);
+
+  assert.match(
+    supportRoute,
+    /<LegalExternalLink[\s\S]*accessibilityLabel=\{copy\.openSupportPageAccessibilityLabel\}[\s\S]*label=\{copy\.sections\.publicSupportPage\.title\}[\s\S]*\/>/,
+  );
+  assert.doesNotMatch(supportRoute, /label=\{copy\.openSupportPageAccessibilityLabel\}/);
+});
+
 test('legal, source, and support routes stay on shared accessible header path', () => {
   const summary = parseValidationSummary();
   const legalPage = fs.readFileSync(

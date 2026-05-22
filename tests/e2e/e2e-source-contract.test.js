@@ -580,6 +580,26 @@ test('static Home chapter 2 civic-term e2e keeps a focused grep target', () => {
   );
 });
 
+test('legal external-link e2e fixtures preserve visible-title and action-label split', () => {
+  const source = readRelative('legal-external-links.spec.ts');
+
+  assert.match(
+    source,
+    /type LegalExternalLinkFixture = \{[\s\S]*actionLabel: string;[\s\S]*visibleLabel: string;[\s\S]*\}/,
+    'legal external-link fixtures should require both action and visible labels',
+  );
+  assert.match(source, /visibleLabel: 'UHR: Utbildningsmaterial om det svenska samhället'/);
+  assert.match(source, /visibleLabel: 'UHR: Study material about Swedish society'/);
+  assert.match(source, /visibleLabel: 'UHR: Om medborgarskapsprovet'/);
+  assert.match(source, /visibleLabel: 'UHR: About the citizenship test'/);
+  assert.match(source, /visibleLabel: 'Offentlig supportsida'/);
+  assert.match(source, /visibleLabel: 'Public support page'/);
+  assert.match(source, /getByRole\('link', \{ name: fixture\.actionLabel \}\)/);
+  assert.match(source, /await expect\(link\)\.toContainText\(fixture\.visibleLabel\)/);
+  assert.match(source, /await expect\(link\)\.not\.toContainText\(fixture\.actionLabel\)/);
+  assert.doesNotMatch(source, /visibleLabel \?\? fixture\.actionLabel/);
+});
+
 test('static site network specs share one external request trap helper', () => {
   const helperSource = readRelative('staticSiteNetworkGuards.ts');
   const privacySource = readRelative('static-site-network-privacy.spec.ts');
