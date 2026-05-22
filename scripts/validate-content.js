@@ -4189,9 +4189,19 @@ const EXPECTED_QUESTION_SOURCE_CITATION_RULES = [
 ];
 const EXPECTED_PROVENANCE_BADGE_QUESTION_CARD_RULES = [
   {
+    label: 'stable source note id',
+    pattern:
+      /function sourceNoteIdFor\(questionId: string \| undefined, language: AppLanguage\)[\s\S]*return `provenance-source-note-\$\{language\}-\$\{safeQuestionId\}`;[\s\S]*const sourceNoteId = useMemo\([\s\S]*\(\) => sourceNoteIdFor\(question\?\.id, language\),[\s\S]*\[question\?\.id, language\],[\s\S]*\);/,
+  },
+  {
     label: 'source note disclosure reset on question or language change',
     pattern:
       /useEffect\(\(\) =>\s*\{[\s\S]*setSourceNoteVisible\(false\);[\s\S]*\},\s*\[\s*question\?\.id,\s*language\s*\]\s*\);/,
+  },
+  {
+    label: 'expanded source note control relationship',
+    pattern:
+      /aria-controls=\{sourceNoteVisible \? sourceNoteId : undefined\}[\s\S]*aria-describedby=\{sourceNoteVisible \? sourceNoteId : undefined\}/,
   },
   {
     label: 'expanded source note native polite live region',
@@ -4200,6 +4210,10 @@ const EXPECTED_PROVENANCE_BADGE_QUESTION_CARD_RULES = [
   {
     label: 'expanded source note web polite live region',
     pattern: /aria-live="polite"/,
+  },
+  {
+    label: 'expanded source note id target',
+    pattern: /nativeID=\{sourceNoteId\}/,
   },
 ];
 const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
