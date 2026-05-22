@@ -16,6 +16,13 @@ type ProgressLike = {
   wrongCount?: number;
 };
 
+type ChapterMasteryTotals = {
+  correctCount: number;
+  seenCount: number;
+  totalQuestions: number;
+  recent: boolean;
+};
+
 const DEFAULT_WEAK_MASTERY_THRESHOLD = 0.6;
 
 function roundScore(score: number): number {
@@ -59,6 +66,33 @@ function validProgressCounts(item: ProgressLike | undefined) {
   return { correctCount, seenCount };
 }
 
+function emptyChapterMasteryTotals(): ChapterMasteryTotals {
+  return { correctCount: 0, seenCount: 0, totalQuestions: 0, recent: false };
+}
+
+function chapterMasteryTotalsById(
+  questions: QuestionLike[],
+  progress: Record<string, ProgressLike>,
+): Map<string, ChapterMasteryTotals> {
+  const totalsByChapter = new Map<string, ChapterMasteryTotals>();
+
+  for (const question of questions) {
+    const totals = totalsByChapter.get(question.chapterId) ?? emptyChapterMasteryTotals();
+    totals.totalQuestions += 1;
+
+    const item = validProgressCounts(progress[question.id]);
+    if (item) {
+      totals.correctCount += item.correctCount;
+      totals.seenCount += item.seenCount;
+      if (item.seenCount > 0) totals.recent = true;
+    }
+
+    totalsByChapter.set(question.chapterId, totals);
+  }
+
+  return totalsByChapter;
+}
+
 export function calculateMastery({
   correctCount,
   seenCount,
@@ -87,24 +121,13 @@ export function calculateChapterMastery(
   questions: QuestionLike[],
   progress: Record<string, ProgressLike>,
 ): number {
-  const chapterQuestions = questions.filter((question) => question.chapterId === chapterId);
-  const totals = chapterQuestions.reduce(
-    (acc, question) => {
-      const item = validProgressCounts(progress[question.id]);
-      if (!item) return acc;
-      acc.correctCount += item.correctCount;
-      acc.seenCount += item.seenCount;
-      if (item.seenCount > 0) acc.recent = true;
-      return acc;
-    },
-    { correctCount: 0, seenCount: 0, recent: false },
-  );
+  const totals = chapterMasteryTotalsById(questions, progress).get(chapterId);
 
   return calculateMastery({
-    correctCount: totals.correctCount,
-    seenCount: totals.seenCount,
-    totalQuestions: chapterQuestions.length,
-    recent: totals.recent,
+    correctCount: totals?.correctCount ?? 0,
+    seenCount: totals?.seenCount ?? 0,
+    totalQuestions: totals?.totalQuestions ?? 0,
+    recent: totals?.recent ?? false,
   });
 }
 
@@ -114,13 +137,18 @@ export function findWeakChapterIds(
   threshold = DEFAULT_WEAK_MASTERY_THRESHOLD,
 ): string[] {
   const safeThreshold = normalizeThreshold(threshold);
-  const chapterIds = [...new Set(questions.map((question) => question.chapterId))];
-  return chapterIds.filter((chapterId) => {
-    const chapterQuestions = questions.filter((question) => question.chapterId === chapterId);
-    const attempted = chapterQuestions.some((question) => {
-      const item = validProgressCounts(progress[question.id]);
-      return item !== null && item.seenCount > 0;
+  const weakChapterIds: string[] = [];
+
+  for (const [chapterId, totals] of chapterMasteryTotalsById(questions, progress)) {
+    if (totals.seenCount <= 0) continue;
+    const mastery = calculateMastery({
+      correctCount: totals.correctCount,
+      seenCount: totals.seenCount,
+      totalQuestions: totals.totalQuestions,
+      recent: totals.recent,
     });
-    return attempted && calculateChapterMastery(chapterId, questions, progress) < safeThreshold;
-  });
+    if (mastery < safeThreshold) weakChapterIds.push(chapterId);
+  }
+
+  return weakChapterIds;
 }

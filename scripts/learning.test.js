@@ -571,6 +571,80 @@ test('readiness score can be derived from the persisted question progress snapsh
   assert.equal(result.components.coverage, 1);
 });
 
+test('readiness adapter can reuse precomputed question-bank indexes', () => {
+  const { computeReadinessFromQuestionProgress } = loadAllTs('lib/learning/readiness.ts');
+  const questions = [
+    { id: 'q1', chapterId: 'ch01' },
+    { id: 'q2', chapterId: 'ch02' },
+    { id: 'q3', chapterId: 'ch02' },
+  ];
+  const input = {
+    questionProgress: {
+      q1: {
+        seenCount: 1,
+        correctCount: 1,
+        wrongCount: 0,
+        lastAnsweredAt: '2026-05-18T10:00:00.000Z',
+      },
+      outsideBank: {
+        seenCount: 99,
+        correctCount: 99,
+        wrongCount: 0,
+        lastAnsweredAt: '2026-05-18T10:00:00.000Z',
+      },
+    },
+    questions,
+    chapters: [
+      { id: 'ch01', questionCount: 1 },
+      { id: 'ch02', questionCount: 2 },
+    ],
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  };
+
+  const derivedIndexes = computeReadinessFromQuestionProgress(input);
+  const precomputedIndexes = computeReadinessFromQuestionProgress({
+    ...input,
+    questionChapterIndex: Object.fromEntries(
+      questions.map((question) => [question.id, question.chapterId]),
+    ),
+    questionIdsInBank: new Set(questions.map((question) => question.id)),
+  });
+
+  assert.deepEqual(precomputedIndexes, derivedIndexes);
+  assert.equal(precomputedIndexes.components.accuracy, 1);
+  assert.equal(precomputedIndexes.components.coverage, 0.5);
+});
+
+test('weak chapter selector builds per-chapter totals without repeated full-bank filters', () => {
+  const { calculateChapterMastery, findWeakChapterIds } = loadAllTs('lib/learning/mastery.ts');
+  const source = fs.readFileSync(path.join(repoRoot, 'lib/learning/mastery.ts'), 'utf8');
+  const questions = [
+    { id: 'strong-1', chapterId: 'strong' },
+    { id: 'weak-1', chapterId: 'weak' },
+    { id: 'weak-2', chapterId: 'weak' },
+    { id: 'unseen-1', chapterId: 'unseen' },
+  ];
+  const progress = {
+    'strong-1': { seenCount: 1, correctCount: 1, wrongCount: 0 },
+    'weak-1': { seenCount: 1, correctCount: 0, wrongCount: 1 },
+    'weak-2': { seenCount: 1, correctCount: 1, wrongCount: 0 },
+  };
+
+  assert.equal(calculateChapterMastery('strong', questions, progress), 1);
+  assert.equal(calculateChapterMastery('missing', questions, progress), 0);
+  assert.deepEqual(findWeakChapterIds(questions, progress, 0.8), ['weak']);
+  assert.match(source, /function chapterMasteryTotalsById\(/);
+  assert.match(source, /for \(const \[chapterId, totals\] of chapterMasteryTotalsById\(questions, progress\)\)/);
+  assert.doesNotMatch(
+    source,
+    /export function findWeakChapterIds[\s\S]*questions\.filter\(/,
+  );
+  assert.doesNotMatch(
+    source,
+    /export function findWeakChapterIds[\s\S]*calculateChapterMastery\(chapterId, questions, progress\)/,
+  );
+});
+
 test('readiness score softens copy when there are too few stored answers', () => {
   const { computeReadinessFromQuestionProgress } = loadAllTs('lib/learning/readiness.ts');
   const result = computeReadinessFromQuestionProgress({
