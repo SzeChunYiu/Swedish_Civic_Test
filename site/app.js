@@ -1859,7 +1859,7 @@ function smtQuizBuddyMessage(key, values = {}) {
   return template.replace(/\{(\w+)\}/g, (_, name) => String(values[name] ?? ''));
 }
 
-const SMT_QUIZ = { i: 0, score: 0, answers: [], scope: '' };
+const SMT_QUIZ = { i: 0, score: 0, answers: [], scope: '', attempt: 0, routeActive: false };
 
 function smtQuizCurrentLang() {
   try {
@@ -2250,15 +2250,24 @@ function smtQuizQuestionSet() {
   return SMT_FALLBACK_QUESTIONS;
 }
 
+function smtQuizStartAttempt(scope) {
+  SMT_QUIZ.i = 0;
+  SMT_QUIZ.score = 0;
+  SMT_QUIZ.answers = [];
+  SMT_QUIZ.scope = scope;
+  SMT_QUIZ.attempt += 1;
+}
+
+function smtQuizSessionId(scope) {
+  return `practice:${scope}:attempt:${SMT_QUIZ.attempt || 1}`;
+}
+
 function smtQuizRender() {
   const stage = document.getElementById('quiz-stage');
   if (!stage) return;
   const scope = smtQuizScopeKey();
   if (SMT_QUIZ.scope !== scope) {
-    SMT_QUIZ.i = 0;
-    SMT_QUIZ.score = 0;
-    SMT_QUIZ.answers = [];
-    SMT_QUIZ.scope = scope;
+    smtQuizStartAttempt(scope);
   }
   const lang = smtQuizCurrentLang();
   const copy = SMT_QUIZ_COPY[lang] || SMT_QUIZ_COPY.en;
@@ -2315,7 +2324,7 @@ function smtQuizRender() {
   const q = questions[SMT_QUIZ.i];
   const ans = SMT_QUIZ.answers[SMT_QUIZ.i];
   const answered = ans !== undefined;
-  const sessionId = `practice:${scope}`;
+  const sessionId = smtQuizSessionId(scope);
   const sourceRow = smtQuizQuestionSourceRow(q, lang);
   const qNavLabel = smtTr({
     sv: 'Fråga',
@@ -2446,9 +2455,21 @@ function smtQuizRender() {
 }
 
 function smtQuizReset() {
-  SMT_QUIZ.i = 0;
-  SMT_QUIZ.score = 0;
-  SMT_QUIZ.answers = [];
+  smtQuizStartAttempt(smtQuizScopeKey());
+  smtQuizRender();
+}
+
+function smtQuizRenderRoute() {
+  if (!smtQuizShouldRender()) {
+    SMT_QUIZ.routeActive = false;
+    return;
+  }
+
+  const scope = smtQuizScopeKey();
+  if (!SMT_QUIZ.routeActive && SMT_QUIZ.scope === scope) {
+    smtQuizStartAttempt(scope);
+  }
+  SMT_QUIZ.routeActive = true;
   smtQuizRender();
 }
 
@@ -2543,10 +2564,10 @@ document.addEventListener('click', (e) => {
 
 // Re-render on route change to /practice, and on language change
 window.addEventListener('hashchange', () => {
-  if (smtQuizShouldRender()) smtQuizRender();
+  smtQuizRenderRoute();
 });
 window.addEventListener('DOMContentLoaded', () => {
-  if (smtQuizShouldRender()) smtQuizRender();
+  smtQuizRenderRoute();
 });
 window.addEventListener('smt:languagechange', () => {
   if (smtQuizShouldRender()) smtQuizRender();
