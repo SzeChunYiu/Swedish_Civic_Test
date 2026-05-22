@@ -49,6 +49,7 @@ const {
   MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES,
   MALFORMED_ADAPTIVE_PRACTICE_SIZE_CASES,
 } = require('../tests/helpers/adaptivePracticeRuntimeFixtures.cjs');
+const { getMockExamSourceCitationSections } = require('./mock-exam-source-sections');
 
 const repoRoot = path.resolve(__dirname, '..');
 const failures = [];
@@ -4251,7 +4252,8 @@ const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
   },
   {
     label: 'visible source citation component',
-    pattern: /<QuestionSourceCitation[\s\S]*accessibilityLabel=\{`\$\{copy\.sourceCitationLabel\}: \$\{sourceCitation\}`\}[\s\S]*question=\{question\}/,
+    pattern:
+      /<QuestionSourceCitation[\s\S]*accessibilityLabel=\{`\$\{copy\.sourceCitationLabel\}: \$\{sourceCitation\}`\}[\s\S]*question=\{question\}/,
   },
   {
     label: 'visible display-safe English translation',
@@ -14755,14 +14757,34 @@ function validateExamRouteCopyParity() {
     if (!examRoute.includes(snippet)) reject(message);
   });
 
-  const reviewSectionStart = examRoute.indexOf('{filteredReviewItems.map((item) => {');
-  const activeQuestionSectionStart = examRoute.indexOf('{examQuestions.map((question, index) =>');
-  if (reviewSectionStart < 0 || activeQuestionSectionStart < 0) {
-    reject('exam route must keep distinct submitted-review and active-question sections');
-  } else {
-    const activeQuestionSection = examRoute.slice(activeQuestionSectionStart);
+  try {
+    const { activeQuestionSection, reviewSection } = getMockExamSourceCitationSections(examRoute);
+
+    if (
+      !reviewSection.includes(
+        '<UHRReferenceCard language={language} reference={item.uhrReference} />',
+      )
+    ) {
+      reject('submitted exam review must render localized UHR reference cards');
+    }
+    if (!reviewSection.includes('<ExplanationPanel')) {
+      reject('submitted exam review must render localized explanations');
+    }
+    if (!reviewSection.includes('<QuestionSourceCitation')) {
+      reject('submitted exam review must keep source citations');
+    }
+    if (
+      !/<QuestionReportLink\s+language=\{language\}\s+question=\{reviewQuestion\}\s+screen="exam"\s+selectedOptionId=\{answers\[item\.questionId\]\}\s+\/>/.test(
+        reviewSection,
+      )
+    ) {
+      reject('submitted exam review must keep selected-answer report context');
+    }
     if (activeQuestionSection.includes('UHRReferenceCard')) {
       reject('active unsubmitted exam questions must not render UHRReferenceCard');
+    }
+    if (activeQuestionSection.includes('ExplanationPanel')) {
+      reject('active unsubmitted exam questions must not render ExplanationPanel');
     }
     if (!activeQuestionSection.includes('<QuestionSourceCitation')) {
       reject('active unsubmitted exam questions must keep compact source citations');
@@ -14771,6 +14793,13 @@ function validateExamRouteCopyParity() {
       !activeQuestionSection.includes('<ProvenanceBadge language={language} question={question} />')
     ) {
       reject('active unsubmitted exam questions must keep provenance badges');
+    }
+    if (
+      !/<QuestionReportLink\s+language=\{language\}\s+question=\{question\}\s+screen="exam"\s+\/>/.test(
+        activeQuestionSection,
+      )
+    ) {
+      reject('active unsubmitted exam questions must keep report source context');
     }
     if (
       !activeQuestionSection.includes('const isFlagged = Boolean(flaggedQuestionIds[question.id]);')
@@ -14791,6 +14820,10 @@ function validateExamRouteCopyParity() {
     ) {
       reject('exam flag-for-review control must use pressed toggle semantics, not selected state');
     }
+  } catch (error) {
+    reject(
+      `exam route must keep distinct submitted-review and active-question sections: ${error.message}`,
+    );
   }
 
   if (

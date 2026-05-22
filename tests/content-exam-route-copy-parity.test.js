@@ -3,6 +3,7 @@ const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
+const { getMockExamSourceCitationSections } = require('../scripts/mock-exam-source-sections');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -37,6 +38,7 @@ test('exam route result summary avoids unsupported official pass-line styling', 
 test('exam route shell and review copy follows the persisted settings language', () => {
   const summary = parseValidationSummary();
   const source = readExamRouteSource();
+  const { activeQuestionSection, reviewSection } = getMockExamSourceCitationSections(source);
 
   assert.equal(summary.examRouteCopyLabelsValidated, 72);
   assert.equal(summary.examRouteCopyParityValidated, true);
@@ -130,7 +132,11 @@ test('exam route shell and review copy follows the persisted settings language',
   assert.match(source, /language === 'en' \? chapter\.chapterNameEn : chapter\.chapterNameSv/);
   assert.match(
     source,
-    /import \{ getQuestionDisplayText, getQuestionSourceCitation \} from '..\/..\/lib\/quiz\/questionText';/,
+    /import \{ getQuestionDisplayText \} from '..\/..\/lib\/quiz\/questionText';/,
+  );
+  assert.match(
+    source,
+    /import \{ QuestionSourceCitation \} from '..\/..\/components\/quiz\/QuestionSourceCitation';/,
   );
   assert.match(
     source,
@@ -140,8 +146,14 @@ test('exam route shell and review copy follows the persisted settings language',
     source,
     /import \{ QuestionReportLink \} from '..\/..\/components\/quiz\/QuestionReportLink';/,
   );
-  assert.match(source, /getQuestionSourceCitation\(item, language\)/);
-  assert.match(source, /getQuestionSourceCitation\(question, language\)/);
+  assert.match(
+    reviewSection,
+    /<QuestionSourceCitation[\s\S]*language=\{language\}[\s\S]*question=\{item\}/,
+  );
+  assert.match(
+    activeQuestionSection,
+    /<QuestionSourceCitation[\s\S]*language=\{language\}[\s\S]*question=\{question\}/,
+  );
   assert.match(source, /const examQuestionById = useMemo\(/);
   assert.match(
     source,
@@ -158,6 +170,9 @@ test('exam route shell and review copy follows the persisted settings language',
     /const reviewQuestion = examQuestionById\.get\(item\.questionId\);[\s\S]*<QuestionReportLink\s+language=\{language\}\s+question=\{reviewQuestion\}\s+screen="exam"\s+selectedOptionId=\{answers\[item\.questionId\]\}\s+\/>/,
   );
   assert.match(source, /<UHRReferenceCard language=\{language\}/);
+  assert.match(reviewSection, /<ExplanationPanel[\s\S]*language=\{language\}/);
+  assert.doesNotMatch(activeQuestionSection, /<UHRReferenceCard/);
+  assert.doesNotMatch(activeQuestionSection, /<ExplanationPanel/);
   assert.match(
     source,
     /const recordMockExamSession = useProgressStore\(\(state\) => state\.recordMockExamSession\);/,

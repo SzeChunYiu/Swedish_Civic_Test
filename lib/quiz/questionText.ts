@@ -118,9 +118,8 @@ export function getQuestionSourceCitation(
   if (!question?.uhrReference) return primaryCitation;
 
   const supplementalCitations = getQuestionSupplementalSourceCitations(question, language).map(
-    (source) => [`${source.label}: ${source.title}`, source.meta, source.url]
-      .filter(Boolean)
-      .join(', '),
+    (source) =>
+      [`${source.label}: ${source.title}`, source.meta, source.url].filter(Boolean).join(', '),
   );
   return [primaryCitation, ...supplementalCitations].join('; ');
 }
@@ -152,9 +151,7 @@ export function getQuestionSupplementalSourceCitations(
     .map((source) => {
       const meta = formatSupplementalSourceMeta(source, isEnglish);
       return {
-        accessibilityLabel: [label, source.title, meta, source.url]
-          .filter(Boolean)
-          .join(', '),
+        accessibilityLabel: [label, source.title, meta, source.url].filter(Boolean).join(', '),
         label,
         meta,
         publisher: source.publisher,
