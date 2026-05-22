@@ -159,7 +159,7 @@ test('accessibilityStore: local study data import normalizes portable preference
     },
   );
 
-  importAccessibilityPreferencesSnapshot({
+  const warning = importAccessibilityPreferencesSnapshot({
     easyReadFont: true,
     fontSizeStep: 3,
     audioPlaybackRate: 1.25,
@@ -167,6 +167,7 @@ test('accessibilityStore: local study data import normalizes portable preference
     themeMode: 'system',
   });
 
+  assert.equal(warning, null);
   assert.equal(useAccessibilityStore.getState().easyReadFont, true);
   assert.equal(useAccessibilityStore.getState().fontSizeStep, 3);
   assert.equal(useAccessibilityStore.getState().audioPlaybackRate, 1.25);
@@ -177,6 +178,32 @@ test('accessibilityStore: local study data import normalizes portable preference
   assert.equal(storage.values.get('a11y.audioPlaybackRate.v1'), 1.25);
   assert.equal(storage.values.get('a11y.listenFirstAudio.v1'), true);
   assert.equal(storage.values.get('a11y.themeMode.v1'), 'system');
+});
+
+test('accessibilityStore: local study data import reports recoverable write warnings', () => {
+  const storage = createThrowingSetMMKV('accessibility import disk full');
+  const { importAccessibilityPreferencesSnapshot, useAccessibilityStore } = loadTsWithStorage(
+    repoRoot,
+    'lib/storage/accessibilityStore.ts',
+    {
+      accessibility: storage,
+    },
+  );
+
+  const warning = importAccessibilityPreferencesSnapshot({
+    easyReadFont: true,
+    fontSizeStep: 3,
+    audioPlaybackRate: 1.25,
+    listenFirstAudioEnabled: true,
+    themeMode: 'dark',
+  });
+
+  assert.equal(useAccessibilityStore.getState().themeMode, 'dark');
+  assert.equal(warning.type, 'recoverable-persistence-warning');
+  assert.equal(warning.storageId, 'accessibility');
+  assert.equal(warning.operation, 'write');
+  assert.match(warning.errorMessage, /accessibility import disk full/);
+  assert.equal(useAccessibilityStore.getState().persistenceWarning, warning);
 });
 
 test('accessibilityStore: runtime writes and font scale reads normalize invalid values', () => {

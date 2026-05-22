@@ -224,6 +224,8 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
       if (section === 'mistakeReview') return 'granskningar av fel svar';
       if (section === 'reviews') return 'repetitionskort';
       if (section === 'settings') return 'inställningar';
+      if (section === 'accessibility') return 'tillgänglighetsval';
+      if (section === 'companion') return 'studiekompis';
       if (section === 'citizenshipRequirements') return 'kravchecklista';
       return 'e-boksmarkeringar';
     },
@@ -334,6 +336,8 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
       if (section === 'mistakeReview') return 'wrong-answer reviews';
       if (section === 'reviews') return 'review cards';
       if (section === 'settings') return 'settings';
+      if (section === 'accessibility') return 'accessibility preferences';
+      if (section === 'companion') return 'study companion';
       if (section === 'citizenshipRequirements') return 'requirements checklist';
       return 'ebook highlights';
     },

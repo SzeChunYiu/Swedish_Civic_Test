@@ -95,6 +95,8 @@ export type LocalStudyDataImportSection =
   | 'mistakeReview'
   | 'reviews'
   | 'settings'
+  | 'accessibility'
+  | 'companion'
   | 'citizenshipRequirements'
   | 'highlights';
 
@@ -494,9 +496,11 @@ export function applyLocalStudyDataImport(
   };
 
   if (preview.sections.accessibility) {
-    importAccessibilityPreferencesSnapshot(preview.accessibility);
+    recordWarning('accessibility', importAccessibilityPreferencesSnapshot(preview.accessibility));
   }
-  if (preview.sections.companion) importCompanionSnapshot(preview.companion);
+  if (preview.sections.companion) {
+    recordWarning('companion', importCompanionSnapshot(preview.companion));
+  }
 
   if (preview.sections.progress) {
     recordWarning('progress', importProgressSnapshot(preview.progress));
