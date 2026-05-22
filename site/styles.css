@@ -11516,3 +11516,81 @@ img.ebook__brand-mark {
     padding-inline: 6px;
   }
 }
+
+/* ======================================================================
+   DOC META CHIP BOX OPTIMIZATION ROUND
+   ====================================================================== */
+
+.doc__meta {
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+
+.doc__meta > span {
+  align-items: center;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.42)),
+    rgba(0, 106, 167, 0.04);
+  border: 1px solid rgba(0, 106, 167, 0.1);
+  border-radius: 16px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  display: inline-flex;
+  gap: 8px;
+  min-height: 42px;
+  padding: 8px 10px;
+}
+
+.doc__meta > span > b {
+  align-items: center;
+  background: rgba(0, 106, 167, 0.08);
+  border: 1px solid rgba(0, 106, 167, 0.12);
+  border-radius: 999px;
+  color: var(--blue-ink);
+  display: inline-flex;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  padding: 5px 7px;
+  text-transform: uppercase;
+}
+
+.doc__meta > span > span {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  color: var(--ink);
+  font-weight: 850;
+  padding: 0;
+}
+
+:root[data-theme='dark'] .doc__meta > span {
+  background: rgba(255, 255, 255, 0.045);
+  border-color: rgba(255, 255, 255, 0.09);
+}
+
+:root[data-theme='dark'] .doc__meta > span > b {
+  background: rgba(45, 168, 255, 0.12);
+  border-color: rgba(45, 168, 255, 0.22);
+  color: var(--blue-soft);
+}
+
+:root[data-theme='dark'] .doc__meta > span > span {
+  background: transparent;
+  border: 0;
+  color: var(--ink);
+}
+
+@media (max-width: 620px) {
+  .doc__meta > span {
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 420px) {
+  .doc__meta > span {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+}
