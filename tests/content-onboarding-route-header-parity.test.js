@@ -183,6 +183,38 @@ test('first-run about modal guide link keeps natural Swedish accessibility copy'
   assert.doesNotMatch(source, /Öppna\s+om-[\s\S]*provet-[\s\S]*guiden/);
 });
 
+test('first-run about modal resolves styles from active ThemeColors', () => {
+  const source = fs.readFileSync(
+    path.join(repoRoot, 'components/onboarding/FirstRunAboutTheTestModal.tsx'),
+    'utf8',
+  );
+
+  assert.match(source, /type ThemeColors/);
+  assert.match(source, /useResolvedThemeColors/);
+  assert.match(source, /themeColors\?: ThemeColors;/);
+  assert.match(source, /const resolvedThemeColors = useResolvedThemeColors\(themeColors\);/);
+  assert.match(
+    source,
+    /const styles = useMemo\(\(\) => createStyles\(resolvedThemeColors\), \[resolvedThemeColors\]\);/,
+  );
+  assert.match(source, /function createStyles\(themeColors: ThemeColors\)/);
+  assert.match(source, /testID="first-run-about-modal-card"/);
+  assert.match(source, /testID="first-run-about-modal-primary-action"/);
+  assert.match(source, /backgroundColor: themeColors\.surfaceMuted/);
+  assert.match(source, /backgroundColor: themeColors\.focusSoft/);
+  assert.match(source, /backgroundColor: themeColors\.surface/);
+  assert.match(source, /borderColor: themeColors\.border/);
+  assert.match(source, /color: themeColors\.badgeBlueText/);
+  assert.match(source, /color: themeColors\.text/);
+  assert.match(source, /color: themeColors\.textSecondary/);
+  assert.match(source, /backgroundColor: themeColors\.accent/);
+  assert.match(source, /backgroundColor: themeColors\.accentActive/);
+  assert.match(source, /backgroundColor: themeColors\.surfaceWarm/);
+  assert.match(source, /color: themeColors\.textMuted/);
+  assert.doesNotMatch(source, /\bcolors\./);
+  assert.doesNotMatch(source, /import \{[^}]*\bcolors\b/);
+});
+
 test('about-the-test first-run guide copy rejects mockprov wording', () => {
   const result = spawnSync(
     process.execPath,
