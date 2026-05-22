@@ -13,7 +13,7 @@ import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsSt
 import { space, typography, type ThemeColors } from '../../lib/theme';
 import { useThemeColors } from '../../lib/theme/ThemeProvider';
 import type { AdPlacement } from '../../types/monetization';
-import { Button } from '../ui/Button';
+import { Button } from '../Button';
 import { Card } from '../ui/Card';
 
 type RemoveAdsPlacementCtaCopy = {

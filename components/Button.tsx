@@ -1,6 +1,12 @@
 import type { PropsWithChildren } from 'react';
-import { useMemo } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text as NativeText } from 'react-native';
+import { useId, useMemo } from 'react';
+import {
+  ActivityIndicator,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text as NativeText,
+} from 'react-native';
 import type { PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native';
 
 import { useReducedMotion } from '../lib/motion/useReducedMotion';
@@ -8,7 +14,7 @@ import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore
 import { motion, radius, space, typography, type ThemeColors } from '../lib/theme';
 import { useThemeColors } from '../lib/theme/ThemeProvider';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost';
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'option' | 'success' | 'danger';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 const buttonLoadingCopy: Record<AppLanguage, string> = {
@@ -29,6 +35,7 @@ export interface ButtonProps extends PropsWithChildren<Omit<PressableProps, 'chi
   size?: ButtonSize;
   style?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
+  themeColors?: ThemeColors;
   variant?: ButtonVariant;
 }
 
@@ -47,9 +54,11 @@ function getSpinnerColor(themeColors: ThemeColors, variant: ButtonVariant, disab
 }
 
 export function Button({
+  accessibilityHint,
   accessibilityLabel,
   accessibilityRole = 'button',
   accessibilityState,
+  android_ripple,
   children,
   disabled = false,
   hitSlop,
@@ -59,10 +68,12 @@ export function Button({
   size = 'md',
   style,
   textStyle,
+  themeColors: providedThemeColors,
   variant = 'primary',
   ...pressableProps
 }: ButtonProps) {
-  const themeColors = useThemeColors();
+  const fallbackThemeColors = useThemeColors();
+  const themeColors = providedThemeColors ?? fallbackThemeColors;
   const reduceMotion = useReducedMotion();
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const settingsLanguage = useSettingsStore((state) => state.language);
@@ -70,26 +81,41 @@ export function Button({
   const resolvedLoadingLabel = loadingLabel ?? buttonLoadingCopy[language];
   const isExplicitlyDisabled = disabled === true;
   const isPressDisabled = isExplicitlyDisabled || loading;
-  const resolvedAccessibilityLabel =
+  const buttonAccessibilityLabel =
     accessibilityLabel ?? (loading ? resolvedLoadingLabel : getStringLabel(children));
-  const resolvedAccessibilityState = {
+  const mergedAccessibilityState = {
     ...accessibilityState,
     disabled: isPressDisabled || accessibilityState?.disabled,
     busy: loading || accessibilityState?.busy,
   };
+  const hintId = useId();
+  const buttonAccessibilityHintId =
+    accessibilityHint && Platform.OS === 'web'
+      ? `button-hint-${hintId.replace(/:/g, '')}`
+      : undefined;
 
   return (
     <Pressable
-      accessibilityLabel={resolvedAccessibilityLabel}
+      aria-busy={mergedAccessibilityState.busy === true}
+      aria-checked={mergedAccessibilityState.checked}
+      aria-describedby={buttonAccessibilityHintId}
+      aria-disabled={mergedAccessibilityState.disabled === true}
+      aria-expanded={mergedAccessibilityState.expanded}
+      aria-label={buttonAccessibilityLabel}
+      aria-selected={mergedAccessibilityState.selected}
+      accessibilityHint={accessibilityHint}
+      accessibilityLabel={buttonAccessibilityLabel}
       accessibilityRole={accessibilityRole}
-      accessibilityState={resolvedAccessibilityState}
+      accessibilityState={mergedAccessibilityState}
+      android_ripple={android_ripple ?? { color: themeColors.focusSoft, borderless: false }}
       disabled={isPressDisabled}
-      hitSlop={hitSlop ?? space[1]}
+      hitSlop={hitSlop ?? space[0.5]}
       style={({ pressed }) => [
         styles.base,
         styles[size],
         styles[variant],
-        pressed && !isPressDisabled && !reduceMotion ? styles.pressed : null,
+        pressed && !isPressDisabled ? styles.pressed : null,
+        pressed && !isPressDisabled && !reduceMotion ? styles.pressedMotion : null,
         pressed && !isPressDisabled ? styles[`${variant}Pressed`] : null,
         isExplicitlyDisabled ? styles.disabled : null,
         style,
@@ -114,6 +140,11 @@ export function Button({
       >
         {children}
       </NativeText>
+      {buttonAccessibilityHintId ? (
+        <NativeText nativeID={buttonAccessibilityHintId} style={styles.accessibilityHintText}>
+          {accessibilityHint}
+        </NativeText>
+      ) : null}
     </Pressable>
   );
 }
@@ -148,13 +179,37 @@ function createStyles(themeColors: ThemeColors) {
       borderColor: themeColors.accent,
     },
     secondary: {
-      backgroundColor: themeColors.surface,
+      backgroundColor: themeColors.surfaceMuted,
       borderColor: themeColors.border,
     },
     ghost: {
       borderColor: themeColors.surfaceMuted,
     },
+    option: {
+      alignItems: 'flex-start',
+      backgroundColor: themeColors.surface,
+      borderColor: themeColors.border,
+      borderRadius: radius.small,
+      paddingVertical: space[1.5],
+    },
+    success: {
+      alignItems: 'flex-start',
+      backgroundColor: themeColors.successSoft,
+      borderColor: themeColors.success,
+      borderRadius: radius.small,
+      paddingVertical: space[1.5],
+    },
+    danger: {
+      alignItems: 'flex-start',
+      backgroundColor: themeColors.warningSoft,
+      borderColor: themeColors.warning,
+      borderRadius: radius.small,
+      paddingVertical: space[1.5],
+    },
     pressed: {
+      opacity: 0.86,
+    },
+    pressedMotion: {
       transform: [{ scale: motion.pressedScale }],
     },
     primaryPressed: {
@@ -169,12 +224,31 @@ function createStyles(themeColors: ThemeColors) {
       backgroundColor: themeColors.focusSoft,
       borderColor: themeColors.focus,
     },
+    optionPressed: {
+      backgroundColor: themeColors.surfaceWarm,
+      borderColor: themeColors.focus,
+    },
+    successPressed: {
+      backgroundColor: themeColors.successSoft,
+      borderColor: themeColors.success,
+    },
+    dangerPressed: {
+      backgroundColor: themeColors.warningSoft,
+      borderColor: themeColors.warning,
+    },
     disabled: {
       backgroundColor: themeColors.surfaceWarm,
       borderColor: themeColors.border,
     },
     label: {
       ...typography.navButton,
+    },
+    accessibilityHintText: {
+      height: space.divider,
+      opacity: 0,
+      overflow: 'hidden',
+      position: 'absolute',
+      width: space.divider,
     },
     primaryLabel: {
       color: themeColors.surface,
@@ -184,6 +258,15 @@ function createStyles(themeColors: ThemeColors) {
     },
     ghostLabel: {
       color: themeColors.accent,
+    },
+    optionLabel: {
+      color: themeColors.text,
+    },
+    successLabel: {
+      color: themeColors.text,
+    },
+    dangerLabel: {
+      color: themeColors.text,
     },
     disabledLabel: {
       color: themeColors.textMuted,

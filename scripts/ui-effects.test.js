@@ -93,8 +93,10 @@ test('provenance badge source note uses tokenized toggle feedback', () => {
 });
 
 test('button derives an accessibility label from plain text children by default', () => {
-  const source = read('components/ui/Button.tsx');
+  const source = read('components/Button.tsx');
+  const wrapperSource = read('components/ui/Button.tsx');
 
+  assert.match(wrapperSource, /export \{ Button \} from '\.\.\/Button';/);
   assert.match(source, /accessibilityLabel,/);
   assert.match(source, /accessibilityHint,/);
   assert.match(source, /const buttonAccessibilityLabel =/);
@@ -116,11 +118,11 @@ test('button derives an accessibility label from plain text children by default'
   assert.match(source, /android_ripple=\{android_ripple \?\? \{ color: themeColors\.focusSoft/);
   assert.match(source, /hitSlop=\{hitSlop \?\? space\[0\.5\]\}/);
   assert.match(source, /style=\{\(\{ pressed \}\) => \[/);
-  assert.match(source, /pressed && !disabled && !reduceMotion \? styles\.pressedMotion : null/);
   assert.match(
     source,
-    /pressed && !disabled && variant === 'primary' \? styles\.primaryPressed : null/,
+    /pressed && !isPressDisabled && !reduceMotion \? styles\.pressedMotion : null/,
   );
+  assert.match(source, /pressed && !isPressDisabled \? styles\[`\$\{variant\}Pressed`\] : null/);
   assert.match(source, /minHeight: space\[6\]/);
   assert.match(source, /transform: \[\{ scale: motion\.pressedScale \}\]/);
   assert.match(source, /borderRadius: radius\.button/);

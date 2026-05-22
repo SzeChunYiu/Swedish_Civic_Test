@@ -16,7 +16,7 @@ import { space, typography, type ThemeColors } from '../../lib/theme';
 import { useThemeColors } from '../../lib/theme/ThemeProvider';
 import type { PremiumEntitlements } from '../../types/monetization';
 import { Card } from '../ui/Card';
-import { Button } from '../ui/Button';
+import { Button } from '../Button';
 
 type PurchaseAction = 'buy' | 'restore';
 type PurchaseUiStatus = RemoveAdsPurchaseStatus | 'idle' | 'error' | 'unavailable';

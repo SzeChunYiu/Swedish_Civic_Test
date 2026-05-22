@@ -7,7 +7,7 @@ import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
 
 import { ProvenanceBadge } from '../components/quiz/ProvenanceBadge';
 import { Card } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
+import { Button } from '../components/Button';
 import { ScreenShell, SectionHeader } from '../components/ui/ScreenShell';
 import { chapters } from '../data/chapters';
 import { glossaryTerms } from '../data/glossary';

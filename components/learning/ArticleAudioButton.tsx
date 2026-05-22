@@ -4,7 +4,7 @@ import type { StyleProp, ViewStyle } from 'react-native';
 import { chunkArticleNarrationText } from '../../lib/audio/ebookNarration';
 import { speakSwedish, stopSpeech } from '../../lib/audio/speak';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
-import { Button } from '../ui/Button';
+import { Button } from '../Button';
 
 type ArticleAudioScope = 'article' | 'section';
 

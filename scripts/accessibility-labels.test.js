@@ -40,7 +40,7 @@ test('interactive elements expose explicit accessibility labels, roles, and stat
       lines.forEach((line, index) => {
         if (!INTERACTIVE_TAG.test(line)) return;
         const tag = collectOpeningTag(lines, index);
-        const isButtonImplementation = relPath === 'components/ui/Button.tsx';
+        const isButtonImplementation = relPath === 'components/Button.tsx';
         const tagName = (tag.match(/<(Pressable|Link|Button)\b/) || [])[1];
         const isIntentionallyHidden =
           tag.includes('accessible={false}') &&
@@ -231,7 +231,6 @@ test('shared interactive scale feedback respects reduced-motion preferences', ()
     'components/onboarding/FirstRunAboutTheTestModal.tsx',
     'components/quiz/ConfidenceRatingPicker.tsx',
     'components/quiz/ProvenanceBadge.tsx',
-    'components/ui/Button.tsx',
     'components/ui/LanguagePicker.tsx',
     'components/ui/RouteLink.tsx',
     'components/ui/SocialProofRow.tsx',

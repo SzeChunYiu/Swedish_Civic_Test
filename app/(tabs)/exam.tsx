@@ -11,7 +11,7 @@ import { QuestionReportLink } from '../../components/quiz/QuestionReportLink';
 import { QuestionSourceCitation } from '../../components/quiz/QuestionSourceCitation';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { Badge } from '../../components/ui/Badge';
-import { Button } from '../../components/ui/Button';
+import { Button } from '../../components/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { chapters } from '../../data/chapters';
 import { defaultMockExamConfig } from '../../data/mockExamConfig';

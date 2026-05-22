@@ -5,6 +5,8 @@ const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
+const canonicalButtonPath = path.join(repoRoot, 'components/Button.tsx');
+const compatibilityButtonPath = path.join(repoRoot, 'components/ui/Button.tsx');
 
 function parseValidationSummary() {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
@@ -16,15 +18,32 @@ function parseValidationSummary() {
   return JSON.parse(match[0]);
 }
 
+function walkProductSources(dir) {
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) return walkProductSources(fullPath);
+    if (/\.(ts|tsx)$/.test(entry.name)) return [fullPath];
+    return [];
+  });
+}
+
 test('shared Button mirrors native accessibility state to web aria attributes', () => {
   const summary = parseValidationSummary();
-  const source = fs.readFileSync(path.join(repoRoot, 'components/ui/Button.tsx'), 'utf8');
+  const source = fs.readFileSync(canonicalButtonPath, 'utf8');
+  const wrapperSource = fs.readFileSync(compatibilityButtonPath, 'utf8');
 
   assert.equal(summary.buttonAccessibilityRulesValidated, 23);
   assert.equal(summary.buttonAccessibilityParityValidated, true);
+  assert.match(wrapperSource, /export \{ Button \} from '\.\.\/Button';/);
+  assert.match(
+    wrapperSource,
+    /export type \{ ButtonProps, ButtonSize, ButtonVariant \} from '\.\.\/Button';/,
+  );
   assert.match(source, /accessibilityRole = 'button'/);
   assert.match(source, /const mergedAccessibilityState =/);
-  assert.match(source, /\.\.\.\(disabled == null \? \{\} : \{ disabled \}\),/);
+  assert.match(source, /disabled:\s*isPressDisabled \|\| accessibilityState\?\.disabled,/);
+  assert.match(source, /busy:\s*loading \|\| accessibilityState\?\.busy,/);
+  assert.match(source, /disabled=\{isPressDisabled\}/);
   assert.match(source, /aria-busy=\{mergedAccessibilityState\.busy === true\}/);
   assert.match(source, /aria-checked=\{mergedAccessibilityState\.checked\}/);
   assert.match(source, /aria-disabled=\{mergedAccessibilityState\.disabled === true\}/);
@@ -34,9 +53,22 @@ test('shared Button mirrors native accessibility state to web aria attributes', 
   assert.match(source, /borderWidth:\s*space\.hairline/);
   assert.match(source, /minHeight:\s*space\[6\]/);
   assert.match(source, /const reduceMotion = useReducedMotion\(\);/);
-  assert.match(source, /pressed && !disabled && !reduceMotion \? styles\.pressedMotion : null/);
+  assert.match(
+    source,
+    /pressed && !isPressDisabled && !reduceMotion \? styles\.pressedMotion : null/,
+  );
   assert.match(source, /transform:\s*\[\{ scale: motion\.pressedScale \}\]/);
-  assert.match(source, /disabled \? styles\.disabled : null,[\s\S]*style,/);
+  assert.match(source, /isExplicitlyDisabled \? styles\.disabled : null,[\s\S]*style,/);
+
+  const splitImportOffenders = ['app', 'components'].flatMap((sourceDir) =>
+    walkProductSources(path.join(repoRoot, sourceDir)).filter((filePath) => {
+      const relPath = path.relative(repoRoot, filePath).replace(/\\/g, '/');
+      if (relPath === 'components/ui/Button.tsx') return false;
+      const fileSource = fs.readFileSync(filePath, 'utf8');
+      return /from\s+['"][^'"]*(?:components\/ui\/Button|\/ui\/Button)['"]/.test(fileSource);
+    }),
+  );
+  assert.deepEqual(splitImportOffenders, []);
 });
 
 test('Button accessibility parity rejects web aria state drift', () => {
@@ -49,7 +81,7 @@ const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/components/ui/Button.tsx')) {
+  if (normalizedPath.endsWith('/components/Button.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace('aria-disabled={mergedAccessibilityState.disabled === true}', 'aria-disabled={disabled}');
@@ -79,7 +111,7 @@ const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/components/ui/Button.tsx')) {
+  if (normalizedPath.endsWith('/components/Button.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace('        style,\\n', '');

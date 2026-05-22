@@ -221,29 +221,25 @@ test('semantic text tokens meet WCAG AA contrast on app surfaces', () => {
 });
 
 test('disabled button tokens keep labels readable without wrapper opacity', () => {
-  const appButtonSource = read('components/Button.tsx');
-  const uiButtonSource = read('components/ui/Button.tsx');
+  const buttonSource = read('components/Button.tsx');
+  const compatibilityButtonSource = read('components/ui/Button.tsx');
 
-  for (const [label, source] of [
-    ['app Button', appButtonSource],
-    ['ui Button', uiButtonSource],
-  ]) {
-    assert.doesNotMatch(
-      source,
-      /disabled:\s*\{\s*opacity\s*:/,
-      `${label} disabled state should not dim child labels with wrapper opacity`,
-    );
-    assert.match(
-      source,
-      /disabled:\s*\{[\s\S]*backgroundColor:\s*themeColors\.surfaceWarm[\s\S]*borderColor:\s*themeColors\.border[\s\S]*\}/,
-      `${label} disabled state should use tokenized disabled surface and border`,
-    );
-    assert.match(
-      source,
-      /disabledLabel:\s*\{[\s\S]*color:\s*themeColors\.textMuted[\s\S]*\}/,
-      `${label} disabled label should use the readable muted text token`,
-    );
-  }
+  assert.match(compatibilityButtonSource, /export \{ Button \} from '\.\.\/Button';/);
+  assert.doesNotMatch(
+    buttonSource,
+    /disabled:\s*\{\s*opacity\s*:/,
+    'Button disabled state should not dim child labels with wrapper opacity',
+  );
+  assert.match(
+    buttonSource,
+    /disabled:\s*\{[\s\S]*backgroundColor:\s*themeColors\.surfaceWarm[\s\S]*borderColor:\s*themeColors\.border[\s\S]*\}/,
+    'Button disabled state should use tokenized disabled surface and border',
+  );
+  assert.match(
+    buttonSource,
+    /disabledLabel:\s*\{[\s\S]*color:\s*themeColors\.textMuted[\s\S]*\}/,
+    'Button disabled label should use the readable muted text token',
+  );
 
   for (const { label, colors } of readThemeColorPalettes()) {
     assert.ok(colors.textMuted, `${label} theme textMuted token should be present`);
@@ -260,20 +256,19 @@ test('disabled button tokens keep labels readable without wrapper opacity', () =
 });
 
 test('form fields and primary button controls consume dedicated radius tokens', () => {
-  const appButtonSource = read('components/Button.tsx');
-  const uiButtonSource = read('components/ui/Button.tsx');
+  const buttonSource = read('components/Button.tsx');
+  const compatibilityButtonSource = read('components/ui/Button.tsx');
   const searchSource = read('app/search.tsx');
   const settingsSource = read('app/settings.tsx');
 
-  assert.match(appButtonSource, /base:\s*\{[^}]*borderRadius:\s*radius\.button/);
-  assert.match(uiButtonSource, /button:\s*\{[^}]*borderRadius:\s*radius\.button/);
+  assert.match(compatibilityButtonSource, /export \{ Button \} from '\.\.\/Button';/);
+  assert.match(buttonSource, /base:\s*\{[^}]*borderRadius:\s*radius\.button/);
   assert.match(searchSource, /searchInput:\s*\{[^}]*borderRadius:\s*radius\.input/);
   assert.match(settingsSource, /importInput:\s*\{[^}]*borderRadius:\s*radius\.input/);
   assert.match(settingsSource, /secondaryButton:\s*\{[^}]*borderRadius:\s*radius\.button/);
   assert.match(settingsSource, /outlineButton:\s*\{[^}]*borderRadius:\s*radius\.button/);
 
-  assert.doesNotMatch(appButtonSource, /base:\s*\{[^}]*borderRadius:\s*radius\.card/);
-  assert.doesNotMatch(uiButtonSource, /button:\s*\{[^}]*borderRadius:\s*radius\.card/);
+  assert.doesNotMatch(buttonSource, /base:\s*\{[^}]*borderRadius:\s*radius\.card/);
   assert.doesNotMatch(searchSource, /searchInput:\s*\{[^}]*borderRadius:\s*radius\.card/);
   assert.doesNotMatch(settingsSource, /importInput:\s*\{[^}]*borderRadius:\s*radius\.card/);
 });

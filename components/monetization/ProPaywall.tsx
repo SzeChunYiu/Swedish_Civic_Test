@@ -23,7 +23,7 @@ import { radius, space, typography, type ThemeColors } from '../../lib/theme';
 import { useThemeColors } from '../../lib/theme/ThemeProvider';
 import type { ProTierEntitlements } from '../../types/monetization';
 import { createDefaultProLifetimeRuntimeOptions } from '../../lib/monetization/useProLifetimeEntitlements';
-import { Button } from '../ui/Button';
+import { Button } from '../Button';
 import { Card } from '../ui/Card';
 
 type ProPaywallStatus = ProLifetimePurchaseStatus | 'idle' | 'error';

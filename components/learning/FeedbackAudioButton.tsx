@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { speakSwedish, stopSpeech } from '../../lib/audio/speak';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
-import { Button } from '../ui/Button';
+import { Button } from '../Button';
 
 type FeedbackAudioCopy = {
   disabledHint: string;
