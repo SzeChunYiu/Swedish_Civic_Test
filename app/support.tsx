@@ -1,5 +1,6 @@
+import { useEffect, useRef } from 'react';
 import { useLocalSearchParams } from 'expo-router';
-import { StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 
 import { LegalExternalLink, LegalPage, LegalSection } from '../components/compliance/LegalPage';
 import { questions } from '../data/questions';
@@ -244,11 +245,28 @@ function RejectedQuestionReportContextNotice({
 }: {
   copy: SupportRouteCopy['questionReportContext'];
 }) {
+  const noticeRef = useRef<View | null>(null);
+
+  useEffect(() => {
+    if (Platform.OS !== 'web') return undefined;
+
+    const focusTimer = setTimeout(() => {
+      noticeRef.current?.focus?.();
+    }, 0);
+
+    return () => clearTimeout(focusTimer);
+  }, []);
+
   return (
     <View
+      accessible
+      accessibilityLiveRegion="polite"
       accessibilityLabel={copy.rejectedAccessibilityLabel}
       accessibilityRole="summary"
+      aria-live="polite"
+      ref={noticeRef}
       style={styles.rejectedContextNotice}
+      {...(Platform.OS === 'web' ? { tabIndex: -1 } : {})}
     >
       <Text accessibilityRole="header" style={styles.rejectedContextTitle}>
         {copy.rejectedTitle}

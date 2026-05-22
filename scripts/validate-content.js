@@ -4636,6 +4636,12 @@ const EXPECTED_QUESTION_REPORT_LINK_RULES = [
   },
   {
     file: 'components/quiz/QuestionReportLink.tsx',
+    label: 'reportScreen support query parameter',
+    message: 'QuestionReportLink must emit reportScreen for app-generated support links',
+    pattern: /\['reportScreen', screen\]/,
+  },
+  {
+    file: 'components/quiz/QuestionReportLink.tsx',
     label: 'question surface support query parameter',
     pattern: /\['screen', screen\]/,
   },
@@ -4724,6 +4730,13 @@ const EXPECTED_QUESTION_REPORT_LINK_RULES = [
   },
   {
     file: 'app/support.tsx',
+    label: 'support context reportScreen precedence',
+    message: 'QuestionReportLink support context must prefer reportScreen before legacy screen',
+    pattern:
+      /return hasSearchParam\(params\.reportScreen\) \? params\.reportScreen : params\.screen;/,
+  },
+  {
+    file: 'app/support.tsx',
     label: 'support context non-PII and no-network handling',
     message: 'QuestionReportLink missing support context non-PII copy',
     test(source) {
@@ -4754,6 +4767,22 @@ const EXPECTED_QUESTION_REPORT_LINK_RULES = [
         /if \(language\.value && language\.value !== 'sv' && language\.value !== 'en'\) \{\s*rejected = true;\s*\}\s*if \(!questionId\.value/.test(
           source,
         )
+      );
+    },
+  },
+  {
+    file: 'app/support.tsx',
+    label: 'support rejected context focus announcement',
+    message: 'QuestionReportLink missing support rejected context focus announcement',
+    test(source) {
+      return (
+        source.includes('const noticeRef = useRef<View | null>(null);') &&
+        source.includes("if (Platform.OS !== 'web') return undefined;") &&
+        source.includes('noticeRef.current?.focus?.();') &&
+        source.includes('accessibilityLiveRegion="polite"') &&
+        source.includes('aria-live="polite"') &&
+        source.includes('ref={noticeRef}') &&
+        source.includes('tabIndex: -1')
       );
     },
   },
