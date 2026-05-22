@@ -29,6 +29,8 @@ test('static site ebook reader and sidebar use tactile box treatment', () => {
     css,
     /\.ebook__reader\s*{[\s\S]*border-radius: 28px;[\s\S]*padding-left: clamp\(34px, 5vw, 70px\);/,
   );
+  assert.doesNotMatch(css, /\.ebook__reader::after/);
+  assert.doesNotMatch(css, /\.ebook__reader::after\s*{[\s\S]*radial-gradient/);
   assert.match(
     css,
     /\.ebook__reader blockquote,[\s\S]*\.ebook__factbox\s*{[\s\S]*border-left: 7px solid var\(--gold\);[\s\S]*box-shadow: var\(--card-shadow\);/,

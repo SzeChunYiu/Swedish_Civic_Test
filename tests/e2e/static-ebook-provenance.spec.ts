@@ -349,3 +349,28 @@ test('static ebook language switching keeps localized source labels', async ({ p
 
   expect(pageErrors).toEqual([]);
 });
+
+test('static ebook reader has no decorative orb pseudo-element', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const pageErrors = collectPageErrors(page);
+
+  await page.goto(`${staticSite.baseUrl}/#/ebook?c=12`, { waitUntil: 'load' });
+  await expect(page.locator('[data-page="/ebook"]')).toHaveClass(/is-active/);
+  await expect(page.locator('#ebook-reader')).toBeVisible();
+
+  const readerDecoration = await page.locator('#ebook-reader').evaluate((reader) => {
+    const style = window.getComputedStyle(reader, '::after');
+    return {
+      backgroundImage: style.backgroundImage,
+      content: style.content,
+      height: style.height,
+      width: style.width,
+    };
+  });
+
+  expect(['none', 'normal', '']).toContain(readerDecoration.content);
+  expect(readerDecoration.backgroundImage).toBe('none');
+  expect(readerDecoration.width).toBe('auto');
+  expect(readerDecoration.height).toBe('auto');
+  expect(pageErrors).toEqual([]);
+});
