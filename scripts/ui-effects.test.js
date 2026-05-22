@@ -382,7 +382,12 @@ test('practice screen adds bookmark controls backed by progress storage', () => 
   assert.match(source, /bookmarked/);
   assert.match(source, /aria-pressed=\{isBookmarked\}/);
   assert.doesNotMatch(source, /aria-selected=\{isBookmarked\}/);
-  assert.match(source, /accessibilityState=\{\{ selected: isBookmarked \}\}/);
+  assert.match(
+    source,
+    /const bookmarkAccessibilityState =\s*Platform\.OS === 'web' \? undefined : \{ selected: isBookmarked \};/,
+  );
+  assert.match(source, /accessibilityState=\{bookmarkAccessibilityState\}/);
+  assert.doesNotMatch(source, /accessibilityState=\{\{ selected: isBookmarked \}\}/);
 });
 
 test('practice header controls keep accessible targets and token feedback', () => {

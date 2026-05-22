@@ -89,6 +89,8 @@ test('practice route shell copy follows the persisted settings language', () => 
   assert.match(source, /accessibilityLabel=\{copy\.bookmarkAccessibilityLabel\(isBookmarked\)\}/);
   assert.match(source, /aria-pressed=\{isBookmarked\}/);
   assert.doesNotMatch(source, /aria-selected=\{isBookmarked\}/);
+  assert.match(source, /accessibilityState=\{bookmarkAccessibilityState\}/);
+  assert.doesNotMatch(source, /accessibilityState=\{\{ selected: isBookmarked \}\}/);
   assert.match(source, /\{copy\.scoreLabel\}: \{currentScore\.correct\}\/\{currentScore\.total\}/);
 });
 
@@ -128,6 +130,20 @@ test('practice route source wires selected companion copy to answer feedback sta
   assert.match(mascotArtwork, /feedbackState === 'incorrect'[\s\S]*return 'oops'/);
   assert.match(mascotArtwork, /return 'idle'/);
   assert.doesNotMatch(source, /selectedCompanionId[\s\S]{0,120}recordAnswer/);
+});
+
+test('practice route bookmark uses web pressed toggle semantics', () => {
+  const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
+
+  assert.match(source, /import \{ Platform, Pressable, ScrollView, StyleSheet, Text, View \}/);
+  assert.match(source, /aria-pressed=\{isBookmarked\}/);
+  assert.doesNotMatch(source, /aria-selected=\{isBookmarked\}/);
+  assert.match(
+    source,
+    /const bookmarkAccessibilityState =\s*Platform\.OS === 'web' \? undefined : \{ selected: isBookmarked \};/,
+  );
+  assert.match(source, /accessibilityState=\{bookmarkAccessibilityState\}/);
+  assert.doesNotMatch(source, /accessibilityState=\{\{ selected: isBookmarked \}\}/);
 });
 
 test('web aria false-state e2e covers localized Practice control labels', () => {

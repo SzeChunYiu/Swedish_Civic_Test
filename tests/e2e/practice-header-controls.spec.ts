@@ -81,6 +81,14 @@ test('practice header controls keep English labels, states, and mobile targets',
     page.getByRole('button', { name: 'Remove this question bookmark' }),
   ).not.toHaveAttribute('aria-selected');
   await expect(page.getByText('Bookmarked', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Remove this question bookmark' }).click();
+  await expect(page.getByRole('button', { name: 'Bookmark this question' })).toHaveAttribute(
+    'aria-pressed',
+    'false',
+  );
+  await expect(page.getByRole('button', { name: 'Bookmark this question' })).not.toHaveAttribute(
+    'aria-selected',
+  );
 
   await expect(supplementary).toHaveAttribute('aria-checked', 'false');
   await supplementary.click();
