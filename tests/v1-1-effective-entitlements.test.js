@@ -164,7 +164,9 @@ test('resolveEffectiveEntitlement: Pro Lifetime contributes only strict boolean 
 });
 
 test('resolveEffectiveEntitlement: unexpired referral grant promotes to Pro temporarily', () => {
-  const { resolveEffectiveEntitlement } = loadTs('lib/monetization/effectiveEntitlements.ts');
+  const { REFERRAL_PRO_GRANT_EXPIRES_AT_STORAGE_KEY, resolveEffectiveEntitlement } = loadTs(
+    'lib/monetization/effectiveEntitlements.ts',
+  );
   const future = new Date(NOW.getTime() + 5 * 24 * 60 * 60 * 1000).toISOString();
   const r = resolveEffectiveEntitlement({
     proLifetime: NO_PRO_SNAP,
@@ -175,6 +177,10 @@ test('resolveEffectiveEntitlement: unexpired referral grant promotes to Pro temp
   assert.equal(r.entitlements.adsDisabled, true);
   assert.equal(r.entitlements.spacedRepetition, true);
   assert.equal(r.nextExpiryIso, future);
+  assert.equal(
+    REFERRAL_PRO_GRANT_EXPIRES_AT_STORAGE_KEY,
+    'monetization.referral.proGrant.expiresAt.v1',
+  );
 });
 
 test('resolveEffectiveEntitlement: expired referral grant contributes nothing', () => {

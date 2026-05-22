@@ -104,9 +104,11 @@ test('effective entitlement schema guard keeps malformed runtime flags strict bo
 });
 
 test('effective entitlement schema guard rejects non-canonical temporary Pro expiry values', () => {
-  const { resolveEffectiveEntitlement, timeBoundedExpiry } = loadTs(
-    'lib/monetization/effectiveEntitlements.ts',
-  );
+  const {
+    REFERRAL_PRO_GRANT_EXPIRES_AT_STORAGE_KEY,
+    resolveEffectiveEntitlement,
+    timeBoundedExpiry,
+  } = loadTs('lib/monetization/effectiveEntitlements.ts');
   const now = new Date('2026-05-19T12:00:00.000Z');
   const canonicalReferral = '2026-05-26T12:00:00.000Z';
 
@@ -134,6 +136,10 @@ test('effective entitlement schema guard rejects non-canonical temporary Pro exp
   assert.equal(stacked.primarySource, 'referral-grant-active');
   assert.deepEqual(stacked.activeSources, ['referral-grant-active']);
   assert.equal(stacked.nextExpiryIso, canonicalReferral);
+  assert.equal(
+    REFERRAL_PRO_GRANT_EXPIRES_AT_STORAGE_KEY,
+    'monetization.referral.proGrant.expiresAt.v1',
+  );
 });
 
 test('temporary Pro expiry parsing stays on the shared canonical timestamp helper', () => {
