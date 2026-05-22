@@ -43,21 +43,45 @@ function extractStackScreenNames(rootLayoutSource) {
   );
 }
 
-function loadTsRuntime(relativePath, globals = {}) {
+function loadTsRuntime(relativePath, globals = {}, cache = new Map()) {
+  const normalizedPath = path.normalize(relativePath);
+  if (cache.has(normalizedPath)) {
+    return cache.get(normalizedPath).exports;
+  }
   const source = read(relativePath);
   const module = { exports: {} };
+  cache.set(normalizedPath, module);
   const transpiled = ts.transpileModule(source, {
     compilerOptions: {
       module: ts.ModuleKind.CommonJS,
       target: ts.ScriptTarget.ES2020,
     },
   }).outputText;
+  const localRequire = (request) => {
+    if (!request.startsWith('.')) {
+      return require(request);
+    }
+
+    const requestBase = path.normalize(path.join(path.dirname(normalizedPath), request));
+    const candidates = path.extname(requestBase)
+      ? [requestBase]
+      : [`${requestBase}.ts`, `${requestBase}.tsx`, `${requestBase}.js`, requestBase];
+    const resolved = candidates.find((candidate) => fs.existsSync(path.join(repoRoot, candidate)));
+
+    assert.ok(resolved, `unable to resolve ${request} from ${normalizedPath}`);
+    if (resolved.endsWith('.ts') || resolved.endsWith('.tsx')) {
+      return loadTsRuntime(resolved, globals, cache);
+    }
+
+    return require(path.join(repoRoot, resolved));
+  };
 
   vm.runInNewContext(
     transpiled,
     {
       module,
       exports: module.exports,
+      require: localRequire,
       ...globals,
     },
     { filename: relativePath },
@@ -398,8 +422,17 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
     `<html data-app-shell="${manifest.webAppShellMarkers[0]}" lang={webDocumentMetadata.language}>`,
   );
   assertContains(htmlShell, `content={${manifest.themeColorTokens[0]}} name="theme-color"`);
-  assertContains(nativeIntent, `const APP_SCHEME = '${appScheme}:';`);
-  assertContains(nativeIntent, `const APP_LINK_BASE = '${appScheme}://app';`);
+  assertContains(
+    nativeIntent,
+    "import { appLinkBase, appSchemeProtocol } from '../lib/scaffold/appScheme';",
+  );
+  assert.doesNotMatch(
+    nativeIntent,
+    new RegExp(escapeRegExp(appScheme)),
+    'native intent should consume the shared app-scheme export instead of repeating the configured scheme literal',
+  );
+  assertContains(nativeIntent, 'protocol !== appSchemeProtocol');
+  assertContains(nativeIntent, 'new URL(path, appLinkBase)');
   assert.equal(
     manifest.nativeIntentRuntimeSampleInputs.some((input) => input.startsWith(`${appScheme}://`)),
     true,

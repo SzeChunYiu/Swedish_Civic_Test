@@ -1,3 +1,5 @@
+import { appScheme } from './appScheme';
+
 export type ExpoRouterShellRole =
   | 'initial-redirect'
   | 'root-layout'
@@ -5,7 +7,7 @@ export type ExpoRouterShellRole =
   | 'web-document'
   | 'native-intent';
 
-export const expoRouterShellAppScheme = 'almost-swedish' as const;
+export const expoRouterShellAppScheme = appScheme;
 
 export type ExpoRouterShellFile = {
   readonly file: string;

@@ -1,10 +1,10 @@
+import { appLinkBase, appSchemeProtocol } from '../lib/scaffold/appScheme';
+
 type RedirectSystemPathEvent = {
   initial: boolean;
   path: string;
 };
 
-const APP_SCHEME = 'almost-swedish:';
-const APP_LINK_BASE = 'almost-swedish://app';
 const protocolPattern = /^([A-Za-z][A-Za-z0-9+.-]*):/;
 
 const staticRoutes = new Set([
@@ -72,11 +72,11 @@ function routeFromNativeIntentPath(path: string) {
   }
 
   const protocol = explicitProtocol(path);
-  if (protocol && protocol !== APP_SCHEME) {
+  if (protocol && protocol !== appSchemeProtocol) {
     return null;
   }
 
-  return routeFromUrl(new URL(path, APP_LINK_BASE));
+  return routeFromUrl(new URL(path, appLinkBase));
 }
 
 export function redirectSystemPath({ path }: RedirectSystemPathEvent) {
