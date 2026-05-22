@@ -12,6 +12,29 @@ const {
 } = require('./helpers/storageStoreHarness.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
+const LOCAL_STUDY_CORRUPT_JSON_FOCUS_FLAG = '--focus-local-study-corrupt-json-warnings';
+const LOCAL_STUDY_CORRUPT_JSON_SUMMARY_KEYS = [
+  'localStudyCorruptJsonStoresValidated',
+  'localStudyCorruptJsonRecoverableReadWarningTestsValidated',
+  'localStudyCorruptJsonWarningParityValidated',
+];
+
+function runFocusedLocalStudyCorruptJsonValidation() {
+  return spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', LOCAL_STUDY_CORRUPT_JSON_FOCUS_FLAG],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+}
+
+function parseValidationSummary(stdout) {
+  const match = stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused local study corrupt JSON validation should print a JSON summary');
+  return JSON.parse(match[0]);
+}
 
 function loadPersistenceWarningNoticeModule() {
   return loadTsWithStorage(
@@ -270,6 +293,18 @@ test('highlight corrupt JSON reads fall back with a recoverable read warning', (
   assert.ok(created);
   assert.equal(state.persistenceWarning, null);
   assert.equal(JSON.parse(storage.values.get('ebook.highlights.v1')).byChapter.ch01.length, 1);
+});
+
+test('local study corrupt JSON warnings report focused validator coverage', () => {
+  const result = runFocusedLocalStudyCorruptJsonValidation();
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const summary = parseValidationSummary(result.stdout);
+
+  assert.deepEqual(Object.keys(summary).sort(), [...LOCAL_STUDY_CORRUPT_JSON_SUMMARY_KEYS].sort());
+  assert.equal(summary.localStudyCorruptJsonStoresValidated, 4);
+  assert.equal(summary.localStudyCorruptJsonRecoverableReadWarningTestsValidated, 4);
+  assert.equal(summary.localStudyCorruptJsonWarningParityValidated, true);
 });
 
 test('PersistenceWarningNotice copy selector covers warning scope and operation copy', () => {
