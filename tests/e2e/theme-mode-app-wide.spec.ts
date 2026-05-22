@@ -128,6 +128,36 @@ async function seedDarkEnglishMonetization(page: Page) {
   });
 }
 
+async function openDarkSwedishMockExam(page: Page) {
+  await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, 'sv', {
+    localStorageValues: {
+      [accessibilityThemeModeKey]: 'dark',
+    },
+  });
+  await page.goto('/exam', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  const start = page.getByLabel('Starta övningsprov');
+  if ((await start.count()) > 0 && (await start.isEnabled())) {
+    await start.click();
+  }
+}
+
+async function submitVisibleMockExam(page: Page) {
+  const totalQuestions = 20;
+  const submit = page.getByRole('button', { name: 'Skicka övningsprov' });
+
+  for (let questionNumber = 1; questionNumber <= totalQuestions; questionNumber += 1) {
+    await page
+      .getByLabel(new RegExp(`^Välj svaret .+ för fråga ${questionNumber}$`))
+      .first()
+      .click();
+  }
+
+  await expect(submit).toBeEnabled();
+  await submit.click();
+}
+
 function dateInCurrentLocalWeek(offsetDays: number, minuteOffset = 0) {
   const date = new Date();
   const offsetToMonday = (date.getDay() + 6) % 7;
@@ -440,6 +470,61 @@ test('practice post-answer reward panel uses dark theme tokens', async ({ page }
     'color',
     darkColors.badgeBlueText,
     'Post-answer XP label should use the dark badge text token',
+  );
+});
+
+test('mock exam result summary and heatmap use dark theme tokens', async ({ page }) => {
+  await openDarkSwedishMockExam(page);
+  await submitVisibleMockExam(page);
+
+  const resultSummary = page.locator('[role="region"][aria-label^="Övningsresultat"]').first();
+  await expectComputedColor(
+    resultSummary,
+    'backgroundColor',
+    darkColors.surface,
+    'Mock exam result summary should use the dark surface token',
+  );
+  await expectComputedColor(
+    resultSummary,
+    'borderColor',
+    darkColors.border,
+    'Mock exam result summary border should use the dark border token',
+  );
+  await expectComputedColor(
+    page.locator('[aria-label="Övningsresultat"]').first(),
+    'backgroundColor',
+    darkColors.badgeBlueBg,
+    'Mock exam result badge should use the dark badge surface token',
+  );
+  await expectComputedColor(
+    page.getByText(/%$/).first(),
+    'color',
+    darkColors.text,
+    'Mock exam result percent should use the dark text token',
+  );
+
+  const heatmap = page.locator('[role="region"][aria-label^="Tidskarta per fråga"]').first();
+  await expectComputedColor(
+    heatmap,
+    'backgroundColor',
+    darkColors.surface,
+    'Mock exam heatmap card should use the dark surface token',
+  );
+  await expectComputedColor(
+    page.getByRole('heading', { name: 'Tidskarta per fråga' }),
+    'color',
+    darkColors.text,
+    'Mock exam heatmap title should use the dark text token',
+  );
+  await expectComputedColor(
+    page.locator('[aria-label^="Mediantid"]').first(),
+    'backgroundColor',
+    darkColors.badgeBlueBg,
+    'Mock exam heatmap median badge should use the dark badge surface token',
+  );
+  await expectNoHorizontalOverflow(
+    page,
+    'Submitted mock exam result should not overflow in dark mode',
   );
 });
 

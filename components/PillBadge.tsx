@@ -1,8 +1,9 @@
-import type { ComponentProps, PropsWithChildren } from 'react';
+import { useMemo, type ComponentProps, type PropsWithChildren } from 'react';
 import { StyleSheet, Text as NativeText, View } from 'react-native';
 import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
 
-import { colors, radius, space, typography } from '../lib/theme';
+import { radius, space, typography, type ThemeColors } from '../lib/theme';
+import { useThemeColors } from '../lib/theme/ThemeProvider';
 
 export type PillBadgeVariant = 'neutral' | 'accent' | 'success' | 'warning' | 'danger';
 
@@ -35,6 +36,9 @@ export function PillBadge({
   variant = 'neutral',
   ...viewProps
 }: PillBadgeProps) {
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
+
   return (
     <View
       accessibilityLabel={accessibilityLabel ?? getStringLabel(children)}
@@ -50,55 +54,57 @@ export function PillBadge({
   );
 }
 
-const styles = StyleSheet.create({
-  base: {
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    borderRadius: radius.pill,
-    borderWidth: space.hairline,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    minHeight: space[4],
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[0.5],
-  },
-  neutral: {
-    backgroundColor: colors.surfaceWarm,
-    borderColor: colors.border,
-  },
-  accent: {
-    backgroundColor: colors.badgeBlueBg,
-    borderColor: colors.badgeBlueText,
-  },
-  success: {
-    backgroundColor: colors.correctBg,
-    borderColor: colors.success,
-  },
-  warning: {
-    backgroundColor: colors.incorrectBg,
-    borderColor: colors.warning,
-  },
-  danger: {
-    backgroundColor: colors.dangerSoft,
-    borderColor: colors.danger,
-  },
-  label: {
-    ...typography.badge,
-    textTransform: 'uppercase',
-  },
-  neutralLabel: {
-    color: colors.textSecondary,
-  },
-  accentLabel: {
-    color: colors.badgeBlueText,
-  },
-  successLabel: {
-    color: colors.success,
-  },
-  warningLabel: {
-    color: colors.warning,
-  },
-  dangerLabel: {
-    color: colors.danger,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    base: {
+      alignItems: 'center',
+      alignSelf: 'flex-start',
+      borderRadius: radius.pill,
+      borderWidth: space.hairline,
+      flexDirection: 'row',
+      justifyContent: 'center',
+      minHeight: space[4],
+      paddingHorizontal: space[1.5],
+      paddingVertical: space[0.5],
+    },
+    neutral: {
+      backgroundColor: themeColors.surfaceWarm,
+      borderColor: themeColors.border,
+    },
+    accent: {
+      backgroundColor: themeColors.badgeBlueBg,
+      borderColor: themeColors.badgeBlueText,
+    },
+    success: {
+      backgroundColor: themeColors.correctBg,
+      borderColor: themeColors.success,
+    },
+    warning: {
+      backgroundColor: themeColors.incorrectBg,
+      borderColor: themeColors.warning,
+    },
+    danger: {
+      backgroundColor: themeColors.dangerSoft,
+      borderColor: themeColors.danger,
+    },
+    label: {
+      ...typography.badge,
+      textTransform: 'uppercase',
+    },
+    neutralLabel: {
+      color: themeColors.textSecondary,
+    },
+    accentLabel: {
+      color: themeColors.badgeBlueText,
+    },
+    successLabel: {
+      color: themeColors.success,
+    },
+    warningLabel: {
+      color: themeColors.warning,
+    },
+    dangerLabel: {
+      color: themeColors.danger,
+    },
+  });
+}

@@ -1,8 +1,9 @@
-import type { ComponentProps, PropsWithChildren } from 'react';
+import { useMemo, type ComponentProps, type PropsWithChildren } from 'react';
 import { StyleSheet, Text as NativeText } from 'react-native';
 import type { AccessibilityRole, StyleProp, TextStyle } from 'react-native';
 
-import { colors, typography } from '../lib/theme';
+import { typography, type ThemeColors } from '../lib/theme';
+import { useThemeColors } from '../lib/theme/ThemeProvider';
 
 export type TextVariant = 'h1' | 'h2' | 'body' | 'caption' | 'label';
 export type TextTone = 'primary' | 'secondary' | 'disclaimer' | 'accent' | 'success' | 'warning';
@@ -36,6 +37,9 @@ export function Text({
   variant = 'body',
   ...textProps
 }: TextProps) {
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
+
   return (
     <NativeText
       accessibilityRole={accessibilityRole ?? getDefaultRole(variant)}
@@ -47,50 +51,52 @@ export function Text({
   );
 }
 
-const styles = StyleSheet.create({
-  base: {
-    color: colors.text,
-  },
-  h1: {
-    ...typography.displaySecondary,
-  },
-  h2: {
-    ...typography.sectionHeading,
-  },
-  body: {
-    ...typography.body,
-  },
-  caption: {
-    ...typography.captionLight,
-  },
-  label: {
-    ...typography.navButton,
-  },
-  primary: {
-    color: colors.text,
-  },
-  secondary: {
-    color: colors.textSecondary,
-  },
-  disclaimer: {
-    color: colors.textDisclaimer,
-  },
-  accent: {
-    color: colors.accent,
-  },
-  success: {
-    color: colors.success,
-  },
-  warning: {
-    color: colors.warning,
-  },
-  left: {
-    textAlign: 'left',
-  },
-  center: {
-    textAlign: 'center',
-  },
-  right: {
-    textAlign: 'right',
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    base: {
+      color: themeColors.text,
+    },
+    h1: {
+      ...typography.displaySecondary,
+    },
+    h2: {
+      ...typography.sectionHeading,
+    },
+    body: {
+      ...typography.body,
+    },
+    caption: {
+      ...typography.captionLight,
+    },
+    label: {
+      ...typography.navButton,
+    },
+    primary: {
+      color: themeColors.text,
+    },
+    secondary: {
+      color: themeColors.textSecondary,
+    },
+    disclaimer: {
+      color: themeColors.textDisclaimer,
+    },
+    accent: {
+      color: themeColors.accent,
+    },
+    success: {
+      color: themeColors.success,
+    },
+    warning: {
+      color: themeColors.warning,
+    },
+    left: {
+      textAlign: 'left',
+    },
+    center: {
+      textAlign: 'center',
+    },
+    right: {
+      textAlign: 'right',
+    },
+  });
+}

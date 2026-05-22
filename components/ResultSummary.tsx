@@ -1,8 +1,10 @@
+import { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import type { StyleProp, ViewStyle } from 'react-native';
 
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
-import { colors, radius, space, typography } from '../lib/theme';
+import { radius, space, typography, type ThemeColors } from '../lib/theme';
+import { useThemeColors } from '../lib/theme/ThemeProvider';
 import { Button } from './Button';
 import type { ButtonVariant } from './Button';
 import { PillBadge } from './PillBadge';
@@ -126,6 +128,8 @@ export function ResultSummary({
   ...surfaceProps
 }: ResultSummaryProps) {
   const settingsLanguage = useSettingsStore((state) => state.language);
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const language = languageOverride ?? settingsLanguage;
   const copy = resultSummaryCopy[language];
   const safeTotal = Number.isFinite(totalCount) && totalCount > 0 ? Math.round(totalCount) : 0;
@@ -226,55 +230,57 @@ export function ResultSummary({
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    gap: space[1.5],
-    padding: space[2.25],
-  },
-  header: {
-    gap: space[1],
-  },
-  percent: {
-    ...typography.displayHero,
-    color: colors.text,
-  },
-  progress: {
-    height: space[1.25],
-  },
-  neutralFill: {
-    backgroundColor: colors.accent,
-  },
-  strongFill: {
-    backgroundColor: colors.success,
-  },
-  reviewFill: {
-    backgroundColor: colors.warning,
-  },
-  metrics: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-  },
-  metric: {
-    backgroundColor: colors.surfaceWarm,
-    borderColor: colors.border,
-    borderRadius: radius.small,
-    borderWidth: space.hairline,
-    flexBasis: space[12],
-    flexGrow: 1,
-    gap: space[0.5],
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[1],
-  },
-  metricValue: {
-    color: colors.text,
-  },
-  actions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-  },
-  action: {
-    flexGrow: 1,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    card: {
+      gap: space[1.5],
+      padding: space[2.25],
+    },
+    header: {
+      gap: space[1],
+    },
+    percent: {
+      ...typography.displayHero,
+      color: themeColors.text,
+    },
+    progress: {
+      height: space[1.25],
+    },
+    neutralFill: {
+      backgroundColor: themeColors.accent,
+    },
+    strongFill: {
+      backgroundColor: themeColors.success,
+    },
+    reviewFill: {
+      backgroundColor: themeColors.warning,
+    },
+    metrics: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1],
+    },
+    metric: {
+      backgroundColor: themeColors.surfaceWarm,
+      borderColor: themeColors.border,
+      borderRadius: radius.small,
+      borderWidth: space.hairline,
+      flexBasis: space[12],
+      flexGrow: 1,
+      gap: space[0.5],
+      paddingHorizontal: space[1.5],
+      paddingVertical: space[1],
+    },
+    metricValue: {
+      color: themeColors.text,
+    },
+    actions: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1],
+    },
+    action: {
+      flexGrow: 1,
+    },
+  });
+}

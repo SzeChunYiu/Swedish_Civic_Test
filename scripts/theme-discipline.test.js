@@ -32,6 +32,13 @@ const HEADER_THEME_ICONS = [
   'components/ui/icons/SettingsIcon.tsx',
 ];
 const PRO_LEARNING_THEME_SURFACES = ['components/quiz/PostAnswerRewardPanel.tsx'];
+const MOCK_EXAM_RESULT_THEME_SURFACES = [
+  'components/Surface.tsx',
+  'components/Text.tsx',
+  'components/PillBadge.tsx',
+  'components/ResultSummary.tsx',
+  'components/MockExamTimeHeatmap.tsx',
+];
 const NATIVE_LEARNING_THEME_SURFACES = [
   'components/learning/BadgeRow.tsx',
   'components/learning/ChapterCard.tsx',
@@ -539,6 +546,51 @@ test('post-answer reward surfaces resolve semantic colors from the active theme'
       `${callerPath} should pass the current answer streak`,
     );
   }
+});
+
+test('mock exam result analysis surfaces resolve semantic colors from the active theme', () => {
+  for (const componentPath of MOCK_EXAM_RESULT_THEME_SURFACES) {
+    const source = read(componentPath);
+
+    assert.match(
+      source,
+      /useThemeColors\(\)/,
+      `${componentPath} should read the active theme color context`,
+    );
+    assert.match(
+      source,
+      /const styles = useMemo\(\(\) => createStyles\(themeColors\), \[themeColors\]\)/,
+      `${componentPath} should memoize styles from active ThemeColors`,
+    );
+    assert.match(
+      source,
+      /function createStyles\(themeColors: ThemeColors\)/,
+      `${componentPath} should derive styles from ThemeColors`,
+    );
+    assert.match(
+      source,
+      /themeColors\./,
+      `${componentPath} should use semantic ThemeColors in styles`,
+    );
+    assert.doesNotMatch(
+      source,
+      /import \{[^}]*\bcolors\b[^}]*\} from ['"]\.\.\/lib\/theme['"]/,
+      `${componentPath} must not import the static light colors singleton`,
+    );
+    assert.doesNotMatch(
+      source,
+      /\bcolors\./,
+      `${componentPath} must not read static colors.* values`,
+    );
+  }
+
+  const examRouteSource = read('app/(tabs)/exam.tsx');
+  assert.match(examRouteSource, /useThemeColors\(\)/);
+  assert.match(examRouteSource, /<ResultSummary[\s\S]*correctCount=\{result\.correctCount\}/);
+  assert.match(
+    examRouteSource,
+    /<MockExamTimeHeatmap[\s\S]*answers=\{submittedExamSession\.answers\}/,
+  );
 });
 
 test('native learning child components resolve semantic colors from the active theme', () => {
