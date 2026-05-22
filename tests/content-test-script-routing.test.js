@@ -1457,6 +1457,46 @@ test('static ebook footnote hash parity uses focused content validation routing'
   );
 });
 
+test('static ebook provenance umbrella focus routes only static ebook provenance guards', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('staticEbookProvenance');
+
+  assert.ok(registryEntry, 'static ebook provenance focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-static-ebook-provenance']);
+  assert.match(validatorSource, /--focus-static-ebook-provenance/);
+  assert.match(
+    validatorSource,
+    /validateStaticEbookOutcomeClaimPatterns\(\);[\s\S]*validateStaticEbookPracticalTestClaims\(\);[\s\S]*validateStaticEbookFactboxProvenance\(\);[\s\S]*validateStaticEbookFootnoteHashParity\(\);[\s\S]*staticEbookProvenanceParityValidated/,
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-static-ebook-provenance'],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused static ebook provenance validation should print a JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  for (const key of registryEntry.summaryKeys) {
+    assert.ok(Object.prototype.hasOwnProperty.call(summary, key), `${key} is present`);
+  }
+  assert.equal(summary.staticEbookOutcomeClaimParityValidated, true);
+  assert.equal(summary.staticEbookPracticalTestCurrentnessValidated, true);
+  assert.equal(summary.staticEbookFactboxProvenanceValidated, true);
+  assert.equal(summary.staticEbookFootnoteHashParityValidated, true);
+  assert.equal(summary.staticEbookProvenanceParityValidated, true);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
+  assert.equal(
+    Object.prototype.hasOwnProperty.call(summary, 'staticFaqFallbackParityValidated'),
+    false,
+  );
+});
+
 test('weekly recap runtime guard uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),

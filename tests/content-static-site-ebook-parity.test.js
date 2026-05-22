@@ -247,6 +247,22 @@ function runFocusedStaticEbookFootnoteHashValidator() {
   return JSON.parse(result.stdout.slice(jsonStart));
 }
 
+function runFocusedStaticEbookProvenanceValidator() {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-static-ebook-provenance'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      env: process.env,
+    },
+  );
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const jsonStart = result.stdout.indexOf('{');
+  assert.notEqual(jsonStart, -1, result.stdout);
+  return JSON.parse(result.stdout.slice(jsonStart));
+}
+
 function readStaticChapterMeta() {
   const context = { console, window: {} };
   context.globalThis = context;
@@ -1090,6 +1106,23 @@ test('focus-static-ebook-footnote hash validator mirrors source-counts and route
   assert.equal(summary.staticEbookFootnoteHashChaptersValidated, getExpectedChapterIds().length);
   assert.equal(summary.staticEbookFootnoteHashLanguagesValidated, 2);
   assert.equal(summary.staticEbookFootnoteHashParityValidated, true);
+});
+
+test('focus-static-ebook-provenance validator routes static ebook provenance guards', () => {
+  const summary = runFocusedStaticEbookProvenanceValidator();
+
+  assert.equal(summary.staticEbookOutcomeClaimParityValidated, true);
+  assert.equal(summary.staticEbookPracticalTestCurrentnessValidated, true);
+  assert.equal(summary.staticEbookFactboxProvenanceValidated, true);
+  assert.equal(summary.staticEbookFootnoteHashChaptersValidated, getExpectedChapterIds().length);
+  assert.equal(summary.staticEbookFootnoteHashLanguagesValidated, 2);
+  assert.equal(summary.staticEbookFootnoteHashParityValidated, true);
+  assert.equal(summary.staticEbookProvenanceParityValidated, true);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
+  assert.equal(
+    Object.prototype.hasOwnProperty.call(summary, 'staticFaqFallbackParityValidated'),
+    false,
+  );
 });
 
 test('static ebook prose source metadata is explicit or typed, never fallback annotation', () => {
