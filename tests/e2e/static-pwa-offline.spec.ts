@@ -27,6 +27,24 @@ async function waitForServiceWorkerControl(page: Page) {
   });
 }
 
+async function cachedStaticPaths(page: Page) {
+  return page.evaluate(async () => {
+    const cacheNames = await caches.keys();
+    const requests = (
+      await Promise.all(
+        cacheNames.map(async (cacheName) => {
+          const cache = await caches.open(cacheName);
+          return cache.keys();
+        }),
+      )
+    ).flat();
+
+    return requests
+      .map((request) => new URL(request.url).pathname.replace(/^\//, ''))
+      .sort((left, right) => left.localeCompare(right));
+  });
+}
+
 async function expectOfflineRoute(
   page: Page,
   context: BrowserContext,
@@ -91,8 +109,35 @@ test('static PWA shell installs and reloads core study routes offline', async ({
     ['#/practice', '/practice'],
     ['#/mock', '/mock'],
     ['#/dashboard', '/dashboard'],
-    ['#/ebook', '/ebook'],
   ] as const) {
     await expectOfflineRoute(page, context, staticSite, hash, activePage);
   }
+});
+
+test('static PWA caches lazy ebook route bundles only after route demand', async ({
+  context,
+  page,
+}) => {
+  await seedStaticPwaRun(page);
+  await trapExternalRequests(page, new URL(staticSite.baseUrl).origin, []);
+
+  await page.goto(staticSite.baseUrl, { waitUntil: 'load' });
+  await waitForServiceWorkerControl(page);
+
+  const installCachedPaths = await cachedStaticPaths(page);
+  expect(installCachedPaths).toContain('app.js');
+  expect(installCachedPaths).toContain('styles.css');
+  expect(installCachedPaths).not.toContain('ebook-tools.js');
+  expect(installCachedPaths).not.toContain('ebook.js');
+
+  await page.goto(`${staticSite.baseUrl}/#/ebook?c=1`, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#ebook-reader .ebook__h1')).toBeVisible();
+  await expect(page.locator('.ebook__nav a[data-eb="1"]')).toHaveClass(/is-active/);
+
+  await expect.poll(() => cachedStaticPaths(page)).toContain('ebook-tools.js');
+  await expect.poll(() => cachedStaticPaths(page)).toContain('ebook.js');
+
+  await expectOfflineRoute(page, context, staticSite, '#/ebook?c=1', '/ebook');
+  await expect(page.locator('#ebook-reader .ebook__h1')).toBeVisible();
+  await expect(page.locator('.ebook__nav a[data-eb="1"]')).toHaveClass(/is-active/);
 });
