@@ -589,7 +589,12 @@
     }
     const signedIn = (function () {
       try {
-        return localStorage.getItem('smt_signed_in') === '1';
+        const configured = Boolean(window.SMT_SUPABASE_URL && window.SMT_SUPABASE_ANON_KEY);
+        const accountId = localStorage.getItem('smt_account_id') || '';
+        return (
+          localStorage.getItem('smt_signed_in') === '1' &&
+          (!configured || accountId !== 'local-demo')
+        );
       } catch {
         return false;
       }

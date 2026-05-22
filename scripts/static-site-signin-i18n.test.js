@@ -26,6 +26,7 @@ test('static sign-in trigger and modal copy are localized display text', () => {
     'signin.or',
     'signin.magic',
     'signin.fineprint',
+    'signin.unavailable',
   ];
 
   for (const key of requiredKeys) {
