@@ -12,6 +12,8 @@ const SUFFRAGE_1921_STALE_CSV_PATTERN =
   /\b1921 is the year of the election asked about here\b|\bthe year of the election asked about here\b/i;
 const SUFFRAGE_1921_EXPECTED_CSV_EXPLANATION =
   "the first Riksdag election with both women's and men's voting rights and women's eligibility was held in 1921";
+const GENERATED_SINGLE_CHOICE_ANSWER_LOGIC_OPTION_PATTERN =
+  /\b(?:Båda påståendena är korrekta|Both statements are correct|Inget av påståendena är korrekt|Neither statement is correct)\b/i;
 
 function parseExportedCsvLine(line) {
   return [...line.matchAll(/"((?:""|[^"])*)"(?:,|$)/g)].map((match) =>
@@ -65,6 +67,46 @@ test('question-bank CSV keeps its public row contract', () => {
   assert.equal(summary.questionBankCsvUhrSourcePublisherParityValidated, true);
   assert.equal(summary.questionBankCsvSupplementalSourceRowsValidated, 15);
   assert.equal(summary.questionBankCsvVotingRightsSupplementalSourceParityValidated, true);
+});
+
+test('question-bank CSV has no generated single-choice both/neither answer-logic options', () => {
+  const rowsById = loadQuestionBankRowsById();
+  const expectedBank = buildSiteQuestionBank();
+  const sourceQuestions = expectedBank.questions.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const targetIds = [
+    'q002',
+    'q006',
+    'q023',
+    'q028',
+    'q031',
+    'q047',
+    'q049',
+    'q074',
+    'q091',
+    'q094',
+    'q143',
+  ].flatMap((sourceId) => [
+    generatedQuestionId(sourceQuestions, sourceId, 'singleChoice'),
+    generatedQuestionId(sourceQuestions, sourceId, 'judgement'),
+  ]);
+
+  for (const id of targetIds) {
+    const row = rowsById.get(id);
+    assert.ok(row, `${id} should exist in content/question-bank.csv`);
+    assert.equal(row.type, 'single_choice');
+    assert.doesNotMatch(
+      row.optionSv,
+      GENERATED_SINGLE_CHOICE_ANSWER_LOGIC_OPTION_PATTERN,
+      `${id} Swedish options should use civic distractors`,
+    );
+    assert.doesNotMatch(
+      row.optionEn,
+      GENERATED_SINGLE_CHOICE_ANSWER_LOGIC_OPTION_PATTERN,
+      `${id} English options should use civic distractors`,
+    );
+  }
 });
 
 test('question-bank CSV keeps q128 holiday date options appositive', () => {

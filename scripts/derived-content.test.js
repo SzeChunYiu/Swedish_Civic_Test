@@ -150,10 +150,14 @@ test('derivePublishedQuestions keeps generated single-choice variants at four op
   assert.equal(derived[0].options[0].textEn, 'Sweden is in the Nordic region.');
   assert.equal(derived[0].options[1].textSv, 'Sverige ligger inte i Norden.');
   assert.equal(derived[0].options[1].textEn, 'Sweden is not in the Nordic region.');
+  assert.equal(derived[0].options[2].textSv, 'Sveriges nordligaste del ligger i Skåne.');
+  assert.equal(derived[0].options[2].textEn, "Sweden's northernmost part is in Skåne.");
+  assert.equal(derived[0].options[3].textSv, 'Sveriges nordligaste del ligger på Gotland.');
+  assert.equal(derived[0].options[3].textEn, "Sweden's northernmost part is on Gotland.");
   assert.ok(
     singleChoiceVariants.every(
       (question) =>
-        !/materialet|from the material|None of the options is correct|Only sometimes|Inget av alternativen stämmer|Endast ibland/i.test(
+        !/Both statements are correct|Neither statement is correct|Båda påståendena är korrekta|Inget av påståendena är korrekt|None of the options is correct|Only sometimes|Inget av alternativen stämmer|Endast ibland/i.test(
           JSON.stringify(question.options),
         ),
     ),

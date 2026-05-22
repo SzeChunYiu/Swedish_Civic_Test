@@ -66,6 +66,8 @@ const sourceRecallPromptPattern =
 const sourceCriticismStiltedEnglishPattern = /\bsource-critical\b/i;
 const publicSectorStiltedEnglishPattern =
   /\b(?:What is meant by the public sector in Sweden|Activities for which the state, regions, and municipalities are responsible|The public sector(?: in Sweden)? means (?:activities|all privately owned companies))\b/i;
+const generatedSingleChoiceAnswerLogicOptionPattern =
+  /\b(?:Båda påståendena är korrekta|Both statements are correct|Inget av påståendena är korrekt|Neither statement is correct)\b/i;
 const generatedIdLiteralPatterns = [
   {
     label: 'question.id equality',
@@ -107,6 +109,13 @@ function contentQuestionBankCsvRowsById(ids) {
       .filter((columns) => targetIds.has(columns[0]))
       .map((columns) => [columns[0], columns]),
   );
+}
+
+function generatedSingleChoiceIdsForTrueFalseSource(sourceQuestions, sourceId) {
+  return [
+    generatedQuestionId(sourceQuestions, sourceId, 'singleChoice'),
+    generatedQuestionId(sourceQuestions, sourceId, 'judgement'),
+  ];
 }
 
 function religiousFreedom1951QuestionIds() {
@@ -202,6 +211,52 @@ test('published question types stay answerable by quiz runtime', () => {
     summary.publishedQuestions,
   );
   assert.equal(summary.derivedCivicStatementPromptMirrorValidated, 2);
+});
+
+test('generated single-choice variants from true/false sources avoid both/neither answer-logic options', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const targetIds = [
+    'q002',
+    'q006',
+    'q023',
+    'q028',
+    'q031',
+    'q047',
+    'q049',
+    'q074',
+    'q091',
+    'q094',
+    'q143',
+  ].flatMap((sourceId) => generatedSingleChoiceIdsForTrueFalseSource(sourceQuestions, sourceId));
+
+  for (const bank of [generatedSiteBank, actualSiteBank]) {
+    const byId = new Map(bank.map((question) => [question.id, question]));
+    for (const id of targetIds) {
+      const question = byId.get(id);
+      assert.ok(question, `${id} should exist in generated and static banks`);
+      assert.equal(question.opts.length, 4, `${id} should stay a four-option single-choice row`);
+      assert.doesNotMatch(
+        JSON.stringify(question.opts),
+        generatedSingleChoiceAnswerLogicOptionPattern,
+        `${id} should use civic distractors, not answer-logic labels`,
+      );
+    }
+  }
+
+  const q002SingleChoiceId = generatedQuestionId(sourceQuestions, 'q002', 'singleChoice');
+  const q002Generated = generatedSiteBank.find((question) => question.id === q002SingleChoiceId);
+  const q002Actual = actualSiteBank.find((question) => question.id === q002SingleChoiceId);
+  for (const question of [q002Generated, q002Actual]) {
+    assert.ok(question, `${q002SingleChoiceId} should exist`);
+    assert.equal(question.opts[2].sv, 'Sveriges nordligaste del ligger i Skåne.');
+    assert.equal(question.opts[2].en, "Sweden's northernmost part is in Skåne.");
+    assert.equal(question.opts[3].sv, 'Sveriges nordligaste del ligger på Gotland.');
+    assert.equal(question.opts[3].en, "Sweden's northernmost part is on Gotland.");
+  }
 });
 
 test('q001 generated answer template parity includes localized true-false options', () => {
@@ -6065,6 +6120,55 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /generated variant\[3\] option\[2\] uses generated single-choice filler option "(?:Inget av alternativen stämmer|None of the options is correct)"/,
+  );
+});
+
+test('published question schema rejects generated single-choice both/neither answer-logic options', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents).replace(
+      "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(\\n  sourceQuestions,\\n  sourceQuestions.length + 1,\\n).map(applyQuestionLocalizationPilot);",
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(",
+        "  sourceQuestions,",
+        "  sourceQuestions.length + 1,",
+        ").map(applyQuestionLocalizationPilot).map((question) =>",
+        "  question.id === generatedFixtureId('q001', 3)",
+        "    ? {",
+        "        ...question,",
+        "        options: question.options.map((option, index) =>",
+        "          index === 2",
+        "            ? { ...option, textSv: 'Båda påståendena är korrekta', textEn: 'Both statements are correct' }",
+        "            : option,",
+        "        ),",
+        "      }",
+        "    : question,",
+        ").map(applyQuestionLocalizationPilot);",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /generated variant\[3\] option\[2\] uses generated single-choice filler option "(?:Båda påståendena är korrekta|Both statements are correct)"/,
   );
 });
 

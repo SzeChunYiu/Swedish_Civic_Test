@@ -32,6 +32,8 @@ const CHAPTER_LOCALIZATION_ENGLISH_WELFARE_GLOSS_PATTERN = /\(welfare\)/i;
 const PUBLIC_SERVICE_LOANWORD_PATTERN = /\bpublic service\b|\(welfare\)/i;
 const PUBLIC_SECTOR_STALE_STATIC_PATTERN =
   /\bWhat is meant by the public sector in Sweden\b|\bActivities for which the state, regions, and municipalities are responsible\b|\bThe public sector(?: in Sweden)? means\b/i;
+const GENERATED_SINGLE_CHOICE_ANSWER_LOGIC_STATIC_PATTERN =
+  /\b(?:Båda påståendena är korrekta|Both statements are correct|Inget av påståendena är korrekt|Neither statement is correct)\b/i;
 const SUFFRAGE_1921_STALE_STATIC_PATTERN =
   /\b1921 is the year of the election asked about here\b|\bthe year of the election asked about here\b/i;
 const SUFFRAGE_1921_EXPECTED_STATIC_EXPLANATION =
@@ -230,6 +232,44 @@ test('static site question bank avoids English holiday-food tokens in Somali tex
   }
 
   assert.deepEqual(offenders, []);
+});
+
+test('static site question bank has no generated single-choice both/neither answer-logic options', () => {
+  const expectedBank = buildSiteQuestionBank();
+  const sourceQuestions = expectedBank.questions.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const targetIds = [
+    'q002',
+    'q006',
+    'q023',
+    'q028',
+    'q031',
+    'q047',
+    'q049',
+    'q074',
+    'q091',
+    'q094',
+    'q143',
+  ].flatMap((sourceId) => [
+    generatedQuestionId(sourceQuestions, sourceId, 'singleChoice'),
+    generatedQuestionId(sourceQuestions, sourceId, 'judgement'),
+  ]);
+  const context = { window: {} };
+  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
+  const questionsById = new Map(
+    context.window.SMT_QUESTIONS.map((question) => [question.id, question]),
+  );
+
+  for (const id of targetIds) {
+    const question = questionsById.get(id);
+    assert.ok(question, `${id} should be present in static question bank`);
+    assert.doesNotMatch(
+      JSON.stringify(question.opts),
+      GENERATED_SINGLE_CHOICE_ANSWER_LOGIC_STATIC_PATTERN,
+      `${id} should use civic distractors, not answer-logic labels`,
+    );
+  }
 });
 
 test('static site question bank keeps q062 public-sector i18n and generated variants direct', () => {

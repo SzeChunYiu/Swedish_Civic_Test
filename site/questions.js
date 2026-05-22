@@ -19121,12 +19121,12 @@
         "sv": "Sveriges nordligaste del ligger inte norr om polcirkeln."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "Sweden's northernmost part is in Skåne.",
+        "sv": "Sveriges nordligaste del ligger i Skåne."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Sweden's northernmost part is on Gotland.",
+        "sv": "Sveriges nordligaste del ligger på Gotland."
       }
     ],
     "answer": 0,
@@ -19248,12 +19248,12 @@
         "sv": "Sveriges nordligaste del ligger inte norr om polcirkeln."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "Sweden's northernmost part is in Skåne.",
+        "sv": "Sveriges nordligaste del ligger i Skåne."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Sweden's northernmost part is on Gotland.",
+        "sv": "Sveriges nordligaste del ligger på Gotland."
       }
     ],
     "answer": 0,
@@ -20072,12 +20072,12 @@
         "sv": "Golfströmmen och den Nordatlantiska strömmen bidrar inte till Sveriges milda klimat."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "Cold ocean currents make Sweden's climate arctic.",
+        "sv": "Kalla havsströmmar gör Sveriges klimat arktiskt."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "The Gulf Stream cools Sweden's climate.",
+        "sv": "Golfströmmen kyler ner Sveriges klimat."
       }
     ],
     "answer": 0,
@@ -20199,12 +20199,12 @@
         "sv": "Golfströmmen och den Nordatlantiska strömmen bidrar inte till Sveriges milda klimat."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "Cold ocean currents make Sweden's climate arctic.",
+        "sv": "Kalla havsströmmar gör Sveriges klimat arktiskt."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "The Gulf Stream cools Sweden's climate.",
+        "sv": "Golfströmmen kyler ner Sveriges klimat."
       }
     ],
     "answer": 0,
@@ -24391,12 +24391,12 @@
         "sv": "Riksdagen väljer inte statsminister."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "The King chooses Sweden's prime minister.",
+        "sv": "Kungen väljer Sveriges statsminister."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Municipalities choose Sweden's prime minister.",
+        "sv": "Kommunerna väljer Sveriges statsminister."
       }
     ],
     "answer": 0,
@@ -24519,12 +24519,12 @@
         "sv": "Riksdagen väljer inte statsminister."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "The King chooses Sweden's prime minister.",
+        "sv": "Kungen väljer Sveriges statsminister."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Municipalities choose Sweden's prime minister.",
+        "sv": "Kommunerna väljer Sveriges statsminister."
       }
     ],
     "answer": 0,
@@ -25591,12 +25591,12 @@
         "sv": "Oppositionen ska inte granska regeringens arbete och föreslå annan politik."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "The opposition appoints the government ministers.",
+        "sv": "Oppositionen utser regeringens ministrar."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "The opposition decides the budget without a Riksdag decision.",
+        "sv": "Oppositionen beslutar om budgeten utan riksdagsbeslut."
       }
     ],
     "answer": 0,
@@ -25719,12 +25719,12 @@
         "sv": "Oppositionen ska inte granska regeringens arbete och föreslå annan politik."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "The opposition appoints the government ministers.",
+        "sv": "Oppositionen utser regeringens ministrar."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "The opposition decides the budget without a Riksdag decision.",
+        "sv": "Oppositionen beslutar om budgeten utan riksdagsbeslut."
       }
     ],
     "answer": 0,
@@ -26315,12 +26315,12 @@
         "sv": "Politiker i Sverige är skyldiga att följa resultatet av en folkomröstning."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "Referendums in Sweden are always binding.",
+        "sv": "Folkomröstningar i Sverige är alltid bindande."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Only the government may vote in referendums.",
+        "sv": "Bara regeringen får rösta i folkomröstningar."
       }
     ],
     "answer": 0,
@@ -26443,12 +26443,12 @@
         "sv": "Politiker i Sverige är skyldiga att följa resultatet av en folkomröstning."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "Referendums in Sweden are always binding.",
+        "sv": "Folkomröstningar i Sverige är alltid bindande."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Only the government may vote in referendums.",
+        "sv": "Bara regeringen får rösta i folkomröstningar."
       }
     ],
     "answer": 0,
@@ -30331,12 +30331,12 @@
         "sv": "Den som lämnar uppgifter till tidningar, radio och tv har inte rätt att vara anonym."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "Newsrooms must always disclose their sources to authorities.",
+        "sv": "Redaktioner måste alltid lämna ut sina källor till myndigheter."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Only government employees may provide information anonymously to media.",
+        "sv": "Bara myndighetsanställda får lämna uppgifter anonymt till medier."
       }
     ],
     "answer": 0,
@@ -30459,12 +30459,12 @@
         "sv": "Den som lämnar uppgifter till tidningar, radio och tv har inte rätt att vara anonym."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "Newsrooms must always disclose their sources to authorities.",
+        "sv": "Redaktioner måste alltid lämna ut sina källor till myndigheter."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Only government employees may provide information anonymously to media.",
+        "sv": "Bara myndighetsanställda får lämna uppgifter anonymt till medier."
       }
     ],
     "answer": 0,
@@ -30767,12 +30767,12 @@
         "sv": "Public service-företag ska inte vara oberoende av politiska och andra intressen."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "Public service companies may be funded with political advertising.",
+        "sv": "Public service-företag får finansieras med politisk reklam."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Public service companies should support the governing parties.",
+        "sv": "Public service-företag ska stödja regeringspartierna."
       }
     ],
     "answer": 0,
@@ -30895,12 +30895,12 @@
         "sv": "Public service-företag ska inte vara oberoende av politiska och andra intressen."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "Public service companies may be funded with political advertising.",
+        "sv": "Public service-företag får finansieras med politisk reklam."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Public service companies should support the governing parties.",
+        "sv": "Public service-företag ska stödja regeringspartierna."
       }
     ],
     "answer": 0,
@@ -37099,12 +37099,12 @@
         "sv": "Sveriges kommuner ska inte erbjuda äldre personer stöd och hjälp."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "Regions alone are responsible for all elderly care.",
+        "sv": "Regionerna ensamma ansvarar för all äldreomsorg."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Municipalities may not offer older people home care services.",
+        "sv": "Kommuner får inte erbjuda äldre personer hemtjänst."
       }
     ],
     "answer": 0,
@@ -37227,12 +37227,12 @@
         "sv": "Sveriges kommuner ska inte erbjuda äldre personer stöd och hjälp."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "Regions alone are responsible for all elderly care.",
+        "sv": "Regionerna ensamma ansvarar för all äldreomsorg."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Municipalities may not offer older people home care services.",
+        "sv": "Kommuner får inte erbjuda äldre personer hemtjänst."
       }
     ],
     "answer": 0,
@@ -41375,12 +41375,12 @@
         "sv": "Det svenska totalförsvaret omfattar inte både det militära försvaret och det civila försvaret."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "Swedish total defence consists only of military defence.",
+        "sv": "Svenskt totalförsvar består bara av militärt försvar."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Civil defence is not part of total defence.",
+        "sv": "Det civila försvaret ingår inte i totalförsvaret."
       }
     ],
     "answer": 0,
@@ -41503,12 +41503,12 @@
         "sv": "Det svenska totalförsvaret omfattar inte både det militära försvaret och det civila försvaret."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "Swedish total defence consists only of military defence.",
+        "sv": "Svenskt totalförsvar består bara av militärt försvar."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Civil defence is not part of total defence.",
+        "sv": "Det civila försvaret ingår inte i totalförsvaret."
       }
     ],
     "answer": 0,
@@ -42063,12 +42063,12 @@
         "sv": "År 2000 blev inte Svenska kyrkan ett trossamfund bland flera när staten och Svenska kyrkan skildes åt."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "The Church of Sweden became a state authority in 2000.",
+        "sv": "Svenska kyrkan blev en statlig myndighet år 2000."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Only the Church of Sweden may operate as a faith community in Sweden.",
+        "sv": "Bara Svenska kyrkan får verka som trossamfund i Sverige."
       }
     ],
     "answer": 0,
@@ -42191,12 +42191,12 @@
         "sv": "År 2000 blev inte Svenska kyrkan ett trossamfund bland flera när staten och Svenska kyrkan skildes åt."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "The Church of Sweden became a state authority in 2000.",
+        "sv": "Svenska kyrkan blev en statlig myndighet år 2000."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Only the Church of Sweden may operate as a faith community in Sweden.",
+        "sv": "Bara Svenska kyrkan får verka som trossamfund i Sverige."
       }
     ],
     "answer": 0,
@@ -54739,12 +54739,12 @@
         "sv": "Sverige brukar inte delas in i Götaland, Svealand och Norrland."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "Götaland, Svealand, and Norrland are Sweden’s three largest counties.",
+        "sv": "Götaland, Svealand och Norrland är Sveriges tre största län."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Norrland is Sweden’s smallest major region.",
+        "sv": "Norrland är Sveriges minsta landsdel."
       }
     ],
     "answer": 0,
@@ -54873,12 +54873,12 @@
         "sv": "Sverige brukar inte delas in i Götaland, Svealand och Norrland."
       },
       {
-        "en": "Both statements are correct",
-        "sv": "Båda påståendena är korrekta"
+        "en": "Götaland, Svealand, and Norrland are Sweden’s three largest counties.",
+        "sv": "Götaland, Svealand och Norrland är Sveriges tre största län."
       },
       {
-        "en": "Neither statement is correct",
-        "sv": "Inget av påståendena är korrekt"
+        "en": "Norrland is Sweden’s smallest major region.",
+        "sv": "Norrland är Sveriges minsta landsdel."
       }
     ],
     "answer": 0,
