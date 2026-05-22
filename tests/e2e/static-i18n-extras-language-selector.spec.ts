@@ -74,6 +74,24 @@ const forbiddenOutcomeSlogans = [
 const forbiddenHomeChapterTwoCivicTerms =
   /(^|[^\p{L}\p{N}_-])(kommun|region|regering)(?=$|[^\p{L}\p{N}_-])/iu;
 const forbiddenBareHomeChapterOneFolkhemmet = /[←→]\s*folkhemmet\s*(?:[←→.]|$)/i;
+const sourceRouteCopyKeys = [
+  'sources.lede',
+  'sources.meta3.v',
+  'sources.s1.li2',
+  'sources.s1.li3',
+] as const;
+const staleExtraSourceFragments: Record<ExtraLocale, readonly string[]> = {
+  'zh-Hans': ['今天的题库仅来自 UHR', '不会列出其他来源系列'],
+  'zh-Hant': ['目前題庫僅採用 UHR', '不會列出其他來源類別'],
+  ar: ['يعتمد البنك اليوم على UHR فقط', 'ولا ندرج عائلات مصادر أخرى'],
+  ckb: ['بانکەکە ئەمڕۆ تەنها UHRـە', 'خێزانە سەرچاوەکانی تر ناخەینە لیستەوە'],
+  fa: ['بانک امروز تنها UHR است', 'خانواده‌های منبع دیگر را فهرست نمی‌کنیم'],
+  pl: ['Baza opiera się dziś wyłącznie na UHR', 'Nie wymieniamy innych rodzin źródeł'],
+  so: ['Bangigu maanta waa UHR-kaliya', 'Ma liiseyno qoysaska kale ee ilaha'],
+  ti: ['እታ ባንኪ ሎሚ UHR-only እያ', 'ካልኦት ስድራቤታት ምንጪ ኣይንዝርዝርን'],
+  tr: ["Banka bugün yalnızca UHR'ye dayanıyor", 'başka kaynak ailelerini listelemeyiz'],
+  uk: ['Сьогодні банк лише на основі UHR', 'Ми не перелічуємо інші родини джерел'],
+};
 const localizedHomeChapterOneFolkhemmetTerms: Record<ExtraLocale, RegExp> = {
   'zh-Hans': /人民之家/,
   'zh-Hant': /人民之家/,
@@ -192,6 +210,17 @@ function i18nSelector(key: string) {
   return `[data-i18n="${key}"]`;
 }
 
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function plainDictionaryText(value: string) {
+  return value
+    .replace(/<[^>]*>/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 async function dictionaryText(page: Page, locale: ExtraLocale, key: string) {
   const value = await page.evaluate(
     ({ key: lookupKey, locale: lookupLocale }) => {
@@ -212,6 +241,16 @@ async function expectDictionaryText(
   selector = i18nSelector(key),
 ) {
   await expect(page.locator(selector).first()).toHaveText(await dictionaryText(page, locale, key));
+}
+
+async function expectDictionaryRenderedText(
+  page: Page,
+  locale: ExtraLocale,
+  key: string,
+  selector = i18nSelector(key),
+) {
+  const expected = plainDictionaryText(await dictionaryText(page, locale, key));
+  await expect(page.locator(selector).first()).toHaveText(expected);
 }
 
 async function expectRootLocale(page: Page, locale: ExtraLocale) {
@@ -273,6 +312,13 @@ async function switchToTermsRoute(page: Page) {
   await expect(page.locator('[data-page="/terms"]')).toHaveClass(/is-active/);
 }
 
+async function switchToSourcesRoute(page: Page) {
+  await page.evaluate(() => {
+    window.location.hash = '#/sources';
+  });
+  await expect(page.locator('[data-page="/sources"]')).toHaveClass(/is-active/);
+}
+
 async function switchToHomeRoute(page: Page) {
   await page.evaluate(() => {
     window.location.hash = '#/';
@@ -304,6 +350,29 @@ async function assertLongFormRouteCopy(page: Page, locale: ExtraLocale) {
   );
   await expectLegalReadingTime(page, locale, 'terms.meta3.v');
   await switchToHomeRoute(page);
+}
+
+async function assertSourcesRouteCopy(page: Page, locale: ExtraLocale, settingsSourceHint: string) {
+  await switchToSourcesRoute(page);
+
+  for (const key of sourceRouteCopyKeys) {
+    await expectDictionaryRenderedText(page, locale, key);
+  }
+
+  const sourceRouteText = await page.locator('[data-page="/sources"]').innerText();
+  const sourceCopySurface = `${sourceRouteText}\n${settingsSourceHint}`;
+  const metaText = await page.locator(i18nSelector('sources.meta3.v')).innerText();
+
+  expect(sourceRouteText).toContain('179');
+  expect(sourceRouteText).toContain('716');
+  expect(sourceRouteText).toMatch(/\bUHR\b/);
+  expect(settingsSourceHint).toContain('179');
+  expect(metaText.trim()).not.toBe('Sverige i fokus');
+  expect(sourceCopySurface).not.toMatch(/169|۱۶۹/);
+
+  for (const staleFragment of staleExtraSourceFragments[locale]) {
+    expect(sourceCopySurface).not.toMatch(new RegExp(escapeRegExp(staleFragment)));
+  }
 }
 
 async function assertHomeChapterOneFolkhemmetGlossary(page: Page, locale: ExtraLocale) {
@@ -415,6 +484,37 @@ test('static Settings selects extra languages with localized legal metadata with
     await assertLongFormRouteCopy(page, locale);
     await expectRootLocale(page, locale);
     await expectNoOutcomeSlogans(page);
+    await expectNoHorizontalOverflow(page);
+  }
+
+  expect(pageErrors).toEqual([]);
+});
+
+test('static Sources route renders extra-language UHR and Derived provenance copy', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const pageErrors = collectPageErrors(page);
+  await openStaticHome(page, staticSite.baseUrl);
+
+  for (const locale of extraLocales) {
+    await page.locator('#settings-open').click();
+    await expect(page.locator('#settings-modal')).toBeVisible();
+    await page
+      .locator(`#settings-modal [data-set="language"] button[data-val="${locale}"]`)
+      .click();
+
+    await expectRootLocale(page, locale);
+    await expectDictionaryRenderedText(page, locale, 'settings.sources.hint');
+    const settingsSourceHint = await page
+      .locator(i18nSelector('settings.sources.hint'))
+      .innerText();
+
+    await page.locator('#settings-modal button[data-close="settings"]').last().click();
+    await expect(page.locator('#settings-modal')).toBeHidden();
+
+    await assertSourcesRouteCopy(page, locale, settingsSourceHint);
+    await expectRootLocale(page, locale);
     await expectNoHorizontalOverflow(page);
   }
 
