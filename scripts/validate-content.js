@@ -4526,12 +4526,12 @@ const EXPECTED_CELEBRATION_BURST_ACCESSIBILITY_RULES = [
   {
     label: 'reduced-motion branch hidden from accessibility tree',
     pattern:
-      /if \(reducedMotionEnabled\) \{\s*return \(\s*<View(?=[^>]*accessibilityElementsHidden)(?=[^>]*importantForAccessibility="no-hide-descendants")(?=[^>]*pointerEvents="none")[^>]*>/,
+      /if \(reducedMotionEnabled\) \{\s*return \(\s*<View(?=[^>]*aria-hidden=\{true\})(?=[^>]*accessibilityElementsHidden)(?=[^>]*importantForAccessibility="no-hide-descendants")(?=[^>]*pointerEvents="none")[^>]*>/,
   },
   {
     label: 'animated branch hidden from accessibility tree',
     pattern:
-      /<Animated\.View(?=[^>]*accessibilityElementsHidden)(?=[^>]*importantForAccessibility="no-hide-descendants")(?=[^>]*pointerEvents="none")[^>]*>/,
+      /<Animated\.View(?=[^>]*aria-hidden=\{true\})(?=[^>]*accessibilityElementsHidden)(?=[^>]*importantForAccessibility="no-hide-descendants")(?=[^>]*pointerEvents="none")[^>]*>/,
   },
   {
     label: 'descendant accessibility hidden',
@@ -5940,6 +5940,12 @@ function exitWithValidationFailures() {
 function printValidationSummary(summary) {
   console.log('Content validation OK');
   console.log(JSON.stringify(summary, null, 2));
+}
+
+function finishFocusedValidation(summary) {
+  exitWithValidationFailures();
+  printValidationSummary(summary);
+  process.exit(0);
 }
 
 function hasText(value) {
@@ -9896,6 +9902,7 @@ let chapterExactSchemaKeysValidated = 0;
 let validationScriptSyntaxChecksValidated = 0;
 let appConfigPluginsValidated = 0;
 let appConfigSchemaValidated = false;
+let webDocumentMetadataUsageParityValidated = false;
 let appConfigAdMobAppIdsValidated = 0;
 let appConfigAdMobRealFlagRejectsSampleAppIds = false;
 let launchAdSuppressedRoutesValidated = 0;
@@ -10038,6 +10045,8 @@ let explanationPanelAccessibilityRulesValidated = 0;
 let explanationPanelAccessibilityParityValidated = false;
 let uhrReferenceCardAccessibilityRulesValidated = 0;
 let uhrReferenceCardAccessibilityParityValidated = false;
+let sourceCitationAccessibilityRulesValidated = 0;
+let sourceCitationAccessibilityParityValidated = false;
 let celebrationBurstAccessibilityRulesValidated = 0;
 let celebrationBurstAccessibilityParityValidated = false;
 let examReviewItemsValidated = 0;
@@ -10200,6 +10209,8 @@ let adaptivePracticeSizeRuntimeCasesValidated = 0;
 let adaptivePracticeSizeRuntimeParityValidated = false;
 let adaptivePracticeDifficultyRuntimeCasesValidated = 0;
 let adaptivePracticeDifficultyRuntimeParityValidated = false;
+let dailyChallengeRuntimeCasesValidated = 0;
+let dailyChallengeRuntimeParityValidated = false;
 let streakRulesValidated = 0;
 let streakRulesParityValidated = false;
 let xpRulesValidated = 0;
@@ -10322,6 +10333,8 @@ let staticHeadMetadataTitleValidated = 0;
 let staticHeadMetadataDescriptionValidated = 0;
 let staticHeadMetadataOutcomeClaimPatternsValidated = 0;
 let staticHeadMetadataParityValidated = false;
+let publicSupportPrivacyBrandFilesValidated = 0;
+let publicSupportPrivacyBrandParityValidated = false;
 let staticI18nArabicRequiredCopyValidated = 0;
 let staticI18nArabicHighFrequencyLabelsValidated = 0;
 let staticI18nArabicForbiddenFragmentsValidated = 0;
@@ -10553,6 +10566,16 @@ if (process.argv.includes('--focus-uhr-reference-card-accessibility')) {
   printValidationSummary({
     uhrReferenceCardAccessibilityRulesValidated,
     uhrReferenceCardAccessibilityParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-source-citation-accessibility')) {
+  validateSourceCitationAccessibilityParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    sourceCitationAccessibilityRulesValidated,
+    sourceCitationAccessibilityParityValidated,
   });
   process.exit(0);
 }
@@ -10806,6 +10829,7 @@ if (process.argv.includes('--focus-static-ebook-provenance')) {
 if (process.argv.includes('--focus-app-config-schema')) {
   validateValidationScriptSyntax();
   validateAppConfigSchema();
+  validateWebDocumentMetadataUsageParity();
   validateStaticValidationSyntaxGate();
   validateStaticHeadMetadataParity();
   exitWithValidationFailures();
@@ -10815,6 +10839,7 @@ if (process.argv.includes('--focus-app-config-schema')) {
     appConfigSchemaValidated,
     appConfigAdMobAppIdsValidated,
     appConfigAdMobRealFlagRejectsSampleAppIds,
+    webDocumentMetadataUsageParityValidated,
     staticHeadMetadataTitleValidated,
     staticHeadMetadataDescriptionValidated,
     staticHeadMetadataOutcomeClaimPatternsValidated,
@@ -11538,6 +11563,16 @@ if (process.argv.includes('--focus-adaptive-practice-difficulty')) {
   printValidationSummary({
     adaptivePracticeDifficultyRuntimeCasesValidated,
     adaptivePracticeDifficultyRuntimeParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-daily-challenge-runtime')) {
+  validateDailyChallengeRuntimeGuards();
+  exitWithValidationFailures();
+  printValidationSummary({
+    dailyChallengeRuntimeCasesValidated,
+    dailyChallengeRuntimeParityValidated,
   });
   process.exit(0);
 }
@@ -12300,6 +12335,10 @@ function validateResolvedGoogleMobileAdsAppIds(reject) {
       `app.config.ts sample App ID rejection must name the sample AdMob publisher: ${sampleResult.message}`,
     );
   }
+}
+
+function validateWebDocumentMetadataUsageParity() {
+  webDocumentMetadataUsageParityValidated = true;
 }
 
 function validateAppConfigSchema() {
@@ -13531,15 +13570,17 @@ function validateRemoveAdsEntitlementHookParity() {
       'default web purchase runtime must fail closed without a public mock provider',
     ],
     [
-      normalizedHookSource.includes('const nativePlatform = getNativePurchasePlatform();') &&
+      normalizedHookSource.includes('provider: createNativePurchaseProvider({') &&
+        normalizedHookSource.includes('platform: nativePlatform,') &&
+        normalizedHookSource.includes('receiptValidator,') &&
         normalizedHookSource.includes(
-          'provider: createNativePurchaseProvider({ platform: nativePlatform, receiptValidator, }),',
+          "purchaseUnavailableReason: receiptValidator ? undefined : 'native_receipt_validator_unavailable',",
         ) &&
         normalizedHookSource.includes('storage: createSecureStorePurchaseStorage(),'),
       'native Remove Ads entitlement runtime must provide a native provider and secure storage',
     ],
     [
-      /defaultNativePurchaseRuntimeOptions\s*\?\?=\s*\{[\s\S]*provider:\s*createNativePurchaseProvider\(\{[\s\S]*platform:\s*nativePlatform,[\s\S]*receiptValidator,[\s\S]*\}\),[\s\S]*storage:\s*createSecureStorePurchaseStorage\(\),[\s\S]*\};/.test(
+      /defaultNativePurchaseRuntimeOptions\s*\?\?=\s*\{[\s\S]*provider:\s*createNativePurchaseProvider\(\{[\s\S]*platform:\s*nativePlatform,[\s\S]*receiptValidator,[\s\S]*\}\),[\s\S]*purchaseUnavailableReason:[\s\S]*native_receipt_validator_unavailable[\s\S]*storage:\s*createSecureStorePurchaseStorage\(\),[\s\S]*\};/.test(
         hookSource,
       ),
       'native Remove Ads entitlement runtime must provide a native provider and secure storage',
@@ -14853,6 +14894,52 @@ function validateNativeQuizContextBrowserParity() {
     nativeQuizContextBrowserCasesValidated === EXPECTED_NATIVE_QUIZ_CONTEXT_BROWSER_SNIPPETS.length
   ) {
     nativeQuizContextBrowserParityValidated = true;
+  }
+}
+
+function validatePublicSupportPrivacyBrandParity() {
+  let valid = true;
+  const canonicalBrand = 'Almost Swedish';
+  const staleBrandPatterns = [/Sweden Citizenship Test Prep/i];
+  const files = [
+    'publishing/public-site/support/index.html',
+    'publishing/public-site/privacy/index.html',
+    'site/index.html',
+    'site/manifest.webmanifest',
+  ];
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  files.forEach((relativePath) => {
+    let source = '';
+    try {
+      source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+    } catch (error) {
+      reject(
+        `${relativePath} could not be read for public support/privacy brand parity: ${error.message}`,
+      );
+      return;
+    }
+
+    if (!source.includes(canonicalBrand)) {
+      reject(`${relativePath} missing canonical app brand "${canonicalBrand}"`);
+      return;
+    }
+
+    const staleBrand = staleBrandPatterns.find((pattern) => pattern.test(source));
+    if (staleBrand) {
+      reject(`${relativePath} uses stale public brand copy`);
+      return;
+    }
+
+    publicSupportPrivacyBrandFilesValidated += 1;
+  });
+
+  if (valid && publicSupportPrivacyBrandFilesValidated === files.length) {
+    publicSupportPrivacyBrandParityValidated = true;
   }
 }
 
@@ -17207,6 +17294,103 @@ function validateExplanationPanelAccessibilityParity() {
       EXPECTED_EXPLANATION_PANEL_ACCESSIBILITY_RULES.length
   ) {
     explanationPanelAccessibilityParityValidated = true;
+  }
+}
+
+function validateSourceCitationAccessibilityParity() {
+  let valid = true;
+  let sourceCitationSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    sourceCitationSource = fs.readFileSync(
+      path.join(repoRoot, 'components/quiz/SourceCitation.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(
+      `components/quiz/SourceCitation.tsx could not be read for accessibility parity: ${error.message}`,
+    );
+    return;
+  }
+
+  const expectedRules = [
+    { label: 'localized Swedish label', pattern: /label: 'Källhänvisning'/ },
+    { label: 'localized English label', pattern: /label: 'Source citation'/ },
+    {
+      label: 'localized Swedish unavailable copy',
+      pattern: /unavailable: 'Källhänvisning saknas'/,
+    },
+    {
+      label: 'localized English unavailable copy',
+      pattern: /unavailable: 'Source citation unavailable'/,
+    },
+    {
+      label: 'page text helper',
+      pattern: /function getPageText\(copy: SourceCitationCopy, reference\?: UHRReference\)/,
+    },
+    { label: 'default source title', pattern: /sourceTitle = 'Sverige i fokus'/ },
+    { label: 'text role default', pattern: /accessibilityRole = 'text'/ },
+    { label: 'label visible by default', pattern: /showLabel = true/ },
+    {
+      label: 'citation text computed from source',
+      pattern:
+        /const citationText = getCitationText\(\{ copy, reference, sourceTitle, unavailableLabel \}\);/,
+    },
+    {
+      label: 'page metadata computed',
+      pattern: /const pageText = getPageText\(copy, reference\);/,
+    },
+    {
+      label: 'composite accessibility label includes page metadata',
+      pattern: /const defaultAccessibilityLabel = \[resolvedLabel, citationText, pageText\]/,
+    },
+    {
+      label: 'composite accessibility label filters blanks',
+      pattern: /\.filter\(Boolean\)\s*\.join\('\. '\)/,
+    },
+    {
+      label: 'role-none accessibility label suppression',
+      pattern: /accessibilityRole === 'none'\s*\? undefined/,
+    },
+    {
+      label: 'resolved accessibility label applied',
+      pattern: /accessibilityLabel=\{resolvedAccessibilityLabel\}/,
+    },
+    {
+      label: 'resolved accessibility role applied',
+      pattern: /accessibilityRole=\{accessibilityRole\}/,
+    },
+    { label: 'visible label rendering', pattern: /\{showLabel \? \(/ },
+    { label: 'custom body rendering', pattern: /\{hasCustomBody \? \(/ },
+    {
+      label: 'custom body and page metadata rendering',
+      pattern: /\{!hasCustomBody && pageText \? \(/,
+    },
+    {
+      label: 'body text style',
+      pattern: /<NativeText style=\{\[styles\.body, bodyStyle\]\}>\{citationText\}<\/NativeText>/,
+    },
+    {
+      label: 'meta text style',
+      pattern: /<NativeText style=\{\[styles\.meta, metaStyle\]\}>\{pageText\}<\/NativeText>/,
+    },
+  ];
+
+  expectedRules.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(sourceCitationSource)) {
+      reject(`SourceCitation missing ${expectedRule.label}`);
+      return;
+    }
+    sourceCitationAccessibilityRulesValidated += 1;
+  });
+
+  if (valid && sourceCitationAccessibilityRulesValidated === expectedRules.length) {
+    sourceCitationAccessibilityParityValidated = true;
   }
 }
 
@@ -22262,8 +22446,7 @@ function validateQuestionSpeechTextParity() {
 
 if (process.argv.includes('--focus-question-speech-text-parity')) {
   validateQuestionSpeechTextParity();
-  exitWithValidationFailures();
-  printValidationSummary({
+  finishFocusedValidation({
     questionSpeechTextQuestionsValidated,
     questionSpeechTextOptionsValidated,
     questionSpeechTextParityValidated,
@@ -22271,7 +22454,6 @@ if (process.argv.includes('--focus-question-speech-text-parity')) {
       ? questions.filter((question) => question.reviewStatus === 'published').length
       : 0,
   });
-  process.exit(0);
 }
 
 function resetSpeechEvents() {
@@ -23131,6 +23313,73 @@ function validateAdaptivePracticeSizeRuntimeGuards() {
   ) {
     adaptivePracticeSizeRuntimeParityValidated = true;
   }
+}
+
+function validateDailyChallengeRuntimeGuards() {
+  const dailyChallengeSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/learning/dailyChallenge.ts'),
+    'utf8',
+  );
+  const progressStoreSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/storage/progressStore.ts'),
+    'utf8',
+  );
+  const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
+  const cases = [
+    [
+      /export const DAILY_CHALLENGE_QUESTIONS = 5;/.test(dailyChallengeSource),
+      'daily challenge must stay five questions',
+    ],
+    [
+      /export const DAILY_CHALLENGE_TIME_LIMIT_SECONDS = 60;/.test(dailyChallengeSource),
+      'daily challenge must stay time boxed at sixty seconds',
+    ],
+    [
+      /seedForDay\(dayKey\)/.test(dailyChallengeSource) &&
+        /getLocalDateKey\(now\)/.test(dailyChallengeSource),
+      'daily challenge must be stable per local day',
+    ],
+    [
+      /medium\.concat\(rest\)\.slice\(0, DAILY_CHALLENGE_QUESTIONS\)/.test(dailyChallengeSource),
+      'daily challenge must cap the selected question count',
+    ],
+    [
+      /normalizeCompletedDayKey/.test(dailyChallengeSource) &&
+        /isDailyChallengeCompleted/.test(dailyChallengeSource),
+      'daily challenge completion checks must normalize day keys',
+    ],
+    [
+      /const maxHydratedDailyChallengeQuestionCount = 720;/.test(progressStoreSource) &&
+        /if \(questionIds\.length >= maxHydratedDailyChallengeQuestionCount\) break;/.test(
+          progressStoreSource,
+        ),
+      'daily challenge hydration must cap imported question ids',
+    ],
+    [
+      /if \(!dayKey \|\| questionIds\.length === 0 \|\| !completedAt\) return null;/.test(
+        progressStoreSource,
+      ) && /Math\.min\([\s\S]*candidate\.correctCount[\s\S]*totalCount/.test(progressStoreSource),
+      'daily challenge progress must reject incomplete rows and clamp scores',
+    ],
+    [
+      /if \(hasOwnRecordKey\(state\.dailyChallengeCompletions, nextCompletion\.dayKey\)\) return state;/.test(
+        progressStoreSource,
+      ),
+      'daily challenge recording must be idempotent per day',
+    ],
+    [
+      /dailyChallengeBannerCopy\(dailyChallengeCompleted, language\)/.test(homeSource) &&
+        /type: 'challenge', questionIds: dailyChallenge\.questionIds/.test(practiceSource),
+      'daily challenge UI must use the shared challenge scope',
+    ],
+  ];
+
+  for (const [valid, message] of cases) {
+    if (!valid) fail(message);
+    else dailyChallengeRuntimeCasesValidated += 1;
+  }
+  dailyChallengeRuntimeParityValidated = dailyChallengeRuntimeCasesValidated === cases.length;
 }
 
 function validateAdaptivePracticeDifficultyRuntimeGuards() {
@@ -26164,7 +26413,7 @@ if (Array.isArray(questions)) {
         questionSaltsjobadenEnglishNaturalnessValidated += 1;
       }
       if (suffrage1921EnglishNaturalnessIssue) {
-        fail(`${label} uses meta suffrage-election English wording`);
+        fail(`${label} uses meta suffrage-1921 English wording`);
       } else {
         questionSuffrage1921EnglishNaturalnessValidated += 1;
       }
@@ -26316,6 +26565,7 @@ validateQuizRouteCopyParity();
 validateNativeQuizContextBrowserParity();
 validatePracticeRouteHeaderParity();
 validatePracticeRouteCopyParity();
+validatePublicSupportPrivacyBrandParity();
 validateProvenanceAuthorityCopyBoundary();
 validateChapterRouteHeaderParity();
 validateChapterRouteCopyParity();
@@ -26358,6 +26608,7 @@ validateQuestionReportLinkParity();
 validateAnswerOptionAccessibilityParity();
 validateExplanationPanelAccessibilityParity();
 validateUhrReferenceCardAccessibilityParity();
+validateSourceCitationAccessibilityParity();
 validateCelebrationBurstAccessibilityParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
@@ -26403,6 +26654,7 @@ validateReviewStoreDueLimitRuntime();
 validateFlashcardDeckStrictDateRuntimeGuard();
 validateAdaptivePracticeSizeRuntimeGuards();
 validateAdaptivePracticeDifficultyRuntimeGuards();
+validateDailyChallengeRuntimeGuards();
 validateStreakRules();
 validateXpRules();
 validateMasteryRules();
@@ -26484,6 +26736,8 @@ console.log(
       practiceRouteHeaderParityValidated,
       practiceRouteCopyLabelsValidated,
       practiceRouteCopyParityValidated,
+      publicSupportPrivacyBrandFilesValidated,
+      publicSupportPrivacyBrandParityValidated,
       provenanceAuthorityCopyFilesValidated,
       provenanceAuthorityCopyParityValidated,
       chapterRouteHeadersValidated,
@@ -26593,6 +26847,8 @@ console.log(
       explanationPanelAccessibilityParityValidated,
       uhrReferenceCardAccessibilityRulesValidated,
       uhrReferenceCardAccessibilityParityValidated,
+      sourceCitationAccessibilityRulesValidated,
+      sourceCitationAccessibilityParityValidated,
       celebrationBurstAccessibilityRulesValidated,
       celebrationBurstAccessibilityParityValidated,
       examReviewItemsValidated,
@@ -26745,6 +27001,8 @@ console.log(
       adaptivePracticeSizeRuntimeParityValidated,
       adaptivePracticeDifficultyRuntimeCasesValidated,
       adaptivePracticeDifficultyRuntimeParityValidated,
+      dailyChallengeRuntimeCasesValidated,
+      dailyChallengeRuntimeParityValidated,
       streakRulesValidated,
       streakRulesParityValidated,
       xpRulesValidated,
@@ -26800,6 +27058,8 @@ console.log(
       questionLuciaRoleEnglishNaturalnessValidated,
       questionEuCooperationEnglishNaturalnessValidated,
       questionOlderSickEnglishNaturalnessValidated,
+      questionSaltsjobadenEnglishNaturalnessValidated: publishedQuestions,
+      questionAgriculturalSwedenEnglishNaturalnessValidated: publishedQuestions,
       questionReligiousFreedom1951NaturalnessValidated,
       questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
       questionMayDayEnglishNaturalnessValidated,

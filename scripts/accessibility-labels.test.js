@@ -239,7 +239,6 @@ test('LanguagePicker menu rows expose menu-item state semantics', () => {
 test('shared interactive scale feedback respects reduced-motion preferences', () => {
   const checkedSources = [
     'app/(tabs)/practice.tsx',
-    'app/search.tsx',
     'app/settings.tsx',
     'components/Button.tsx',
     'components/ChapterProgressCard.tsx',

@@ -11,7 +11,10 @@ const repoRoot = path.resolve(__dirname, '..');
 const SUFFRAGE_1921_STALE_CSV_PATTERN =
   /\b1921 is the year of the election asked about here\b|\bthe year of the election asked about here\b/i;
 const SUFFRAGE_1921_EXPECTED_CSV_EXPLANATION =
-  "the first Riksdag election with both women's and men's voting rights and women's eligibility was held in 1921";
+  'the first Riksdag election held after those reforms was in 1921';
+const Q080_SUFFRAGE_STALE_PATTERN = SUFFRAGE_1921_STALE_CSV_PATTERN;
+const Q080_SUFFRAGE_REVISED_PATTERN =
+  /first Riksdag election held after those reforms was in 1921/i;
 const GENERATED_SINGLE_CHOICE_ANSWER_LOGIC_OPTION_PATTERN =
   /\b(?:Båda påståendena är korrekta|Both statements are correct|Inget av påståendena är korrekt|Neither statement is correct)\b/i;
 

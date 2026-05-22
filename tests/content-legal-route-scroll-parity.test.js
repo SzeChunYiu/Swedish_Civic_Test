@@ -25,7 +25,7 @@ test('shared legal page keeps long compliance content inside a scrollable root',
 
   assert.equal(summary.legalRouteScrollRulesValidated, 3);
   assert.equal(summary.legalRouteScrollParityValidated, true);
-  assert.match(source, /import \{ Platform, ScrollView, StyleSheet, Text, View \}/);
+  assert.match(source, /import \{ ScrollView, StyleSheet, Text, View \} from 'react-native'/);
   assert.match(
     source,
     /<ScrollView style=\{styles\.container\} contentContainerStyle=\{styles\.content\}>/,

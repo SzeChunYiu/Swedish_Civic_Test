@@ -21,7 +21,7 @@ test('purchase TypeScript schema stays in parity with validator expectations', (
   );
 
   assert.equal(summary.purchaseTypeUnionsValidated, 2);
-  assert.equal(summary.purchaseTypeInterfacesValidated, 8);
+  assert.equal(summary.purchaseTypeInterfacesValidated, 9);
   assert.equal(summary.purchaseTypeSchemaParityValidated, true);
   assert.match(purchaseSource, /export type RemoveAdsPurchaseStatus =/);
   assert.match(purchaseSource, /export interface PurchaseStorage/);

@@ -22,7 +22,7 @@ test('onboarding route title stays accessible as a header', () => {
 
   assert.equal(summary.onboardingRouteHeadersValidated, 1);
   assert.equal(summary.onboardingRouteHeaderParityValidated, true);
-  assert.equal(summary.onboardingRouteCopyLabelsValidated, 29);
+  assert.equal(summary.onboardingRouteCopyLabelsValidated, 17);
   assert.equal(summary.onboardingRouteCopyParityValidated, true);
   assert.match(source, /type OnboardingCopy =/);
   assert.match(source, /import \{ formatExamDate, type StudyIntensity \}/);

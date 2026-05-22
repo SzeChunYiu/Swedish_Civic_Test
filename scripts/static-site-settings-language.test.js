@@ -61,6 +61,21 @@ function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
+function extractQuotedArray(source, variableName) {
+  const escapedName = variableName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const match = source.match(new RegExp(`const\\s+${escapedName}\\s*=\\s*\\[([\\s\\S]*?)\\];`));
+  assert.ok(match, `${variableName} quoted array should exist`);
+  return Array.from(match[1].matchAll(/'([^']+)'/g), (arrayMatch) => arrayMatch[1]);
+}
+
+function extractAttributeValues(source, attributeName) {
+  const escapedName = attributeName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return Array.from(
+    source.matchAll(new RegExp(`${escapedName}=["']([^"']+)["']`, 'g')),
+    (match) => match[1],
+  );
+}
+
 function extractSigninDictionaryBlock(source, key) {
   const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const match = source.match(new RegExp(`'${escapedKey}':\\s*\\{([\\s\\S]*?)\\n    \\},`));

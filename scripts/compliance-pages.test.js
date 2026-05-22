@@ -76,21 +76,20 @@ test('static mock exam copy avoids unsupported official pass-line claims', () =>
 
 test('sources route cites the current UHR authority-boundary page', () => {
   const sourcesRoute = read('app/sources.tsx');
+  const sourceMaterialLinks = read('components/compliance/SourceMaterialLinks.tsx');
 
-  assert.match(sourcesRoute, /const UHR_AUTHORITY_BOUNDARY_SOURCE = \{/);
-  assert.match(sourcesRoute, /retrievedDate:\s*'2026-05-20'/);
+  assert.match(sourceMaterialLinks, /export const UHR_AUTHORITY_BOUNDARY_SOURCE =/);
+  assert.match(sourceMaterialLinks, /titleSv:\s*'UHR: Om medborgarskapsprovet'/);
   assert.match(
-    sourcesRoute,
+    sourceMaterialLinks,
     /url:\s*'https:\/\/www\.uhr\.se\/medborgarskapsprovet\/om-medborgarskapsprovet\/'/,
   );
-  assert.match(sourcesRoute, /UHR inte står bakom dessa/);
+  assert.match(sourceMaterialLinks, /retrievedDate:\s*'2026-05-20'/);
+  assert.match(sourcesRoute, /UHR står inte bakom dessa/);
   assert.match(sourcesRoute, /quality is not controlled by UHR or any other authority/);
   assert.match(sourcesRoute, /Källa hämtad \$\{UHR_AUTHORITY_BOUNDARY_SOURCE\.retrievedDate\}/);
   assert.match(sourcesRoute, /Source accessed \$\{UHR_AUTHORITY_BOUNDARY_SOURCE\.retrievedDate\}/);
-  assert.match(
-    sourcesRoute,
-    /<LegalExternalLink[\s\S]*href=\{UHR_AUTHORITY_BOUNDARY_SOURCE\.url\}/,
-  );
+  assert.match(sourcesRoute, /<UhrAuthorityBoundaryLink language=\{language\} \/>/);
   assert.doesNotMatch(sourcesRoute, /UHR\s+varnar|UHR\s+warns/i);
   assert.doesNotMatch(
     sourcesRoute,
@@ -103,9 +102,9 @@ test('sources route back affordance returns to Home instead of Profile', () => {
 
   assert.match(sourcesRoute, /backAccessibilityLabel: 'Tillbaka till startsidan'/);
   assert.match(sourcesRoute, /backLabel: '← Tillbaka till startsidan'/);
-  assert.match(sourcesRoute, /backAccessibilityLabel: 'Back to Home'/);
-  assert.match(sourcesRoute, /backLabel: '← Back to Home'/);
-  assert.match(sourcesRoute, /backHref="\/home"/);
+  assert.match(sourcesRoute, /backAccessibilityLabel: 'Back to home'/);
+  assert.match(sourcesRoute, /backLabel: '← Back to home'/);
+  assert.match(sourcesRoute, /backHref="\/\(tabs\)\/home"/);
   assert.match(sourcesRoute, /backLabel=\{copy\.backLabel\}/);
   assert.match(sourcesRoute, /backAccessibilityLabel=\{copy\.backAccessibilityLabel\}/);
   assert.doesNotMatch(sourcesRoute, /backHref="\/\(tabs\)\/profile"/);
@@ -153,11 +152,12 @@ test('compliance pages and source links are present', () => {
   assert.match(legalPage, /← Back to Profile/);
   assert.match(legalPage, /Back to profile/);
   const sourcesRoute = read('app/sources.tsx');
+  const sourceMaterialLinks = read('components/compliance/SourceMaterialLinks.tsx');
   assert.match(sourcesRoute, /backAccessibilityLabel: 'Tillbaka till startsidan'/);
   assert.match(sourcesRoute, /backLabel: '← Tillbaka till startsidan'/);
-  assert.match(sourcesRoute, /backAccessibilityLabel: 'Back to Home'/);
-  assert.match(sourcesRoute, /backLabel: '← Back to Home'/);
-  assert.match(sourcesRoute, /backHref="\/home"/);
+  assert.match(sourcesRoute, /backAccessibilityLabel: 'Back to home'/);
+  assert.match(sourcesRoute, /backLabel: '← Back to home'/);
+  assert.match(sourcesRoute, /backHref="\/\(tabs\)\/home"/);
   assert.match(sourcesRoute, /backLabel=\{copy\.backLabel\}/);
   assert.match(sourcesRoute, /backAccessibilityLabel=\{copy\.backAccessibilityLabel\}/);
   assert.doesNotMatch(sourcesRoute, /backHref="\/\(tabs\)\/profile"/);
@@ -166,34 +166,30 @@ test('compliance pages and source links are present', () => {
   assert.match(sourcesRoute, /Källor/);
   assert.match(sourcesRoute, /Primärt studiematerial/);
   assert.match(sourcesRoute, /Varje övningsfråga visar en källrad med UHR:s kapitel/);
-  assert.match(sourcesRoute, /const UHR_AUTHORITY_BOUNDARY_SOURCE = \{/);
-  assert.match(sourcesRoute, /retrievedDate:\s*'2026-05-20'/);
-  assert.match(sourcesRoute, /title:\s*'UHR: Om medborgarskapsprovet'/);
+
+  assert.match(sourceMaterialLinks, /titleSv:\s*'UHR: Om medborgarskapsprovet'/);
+  assert.match(sourceMaterialLinks, /titleEn:\s*'UHR: About the citizenship test'/);
+  assert.match(sourceMaterialLinks, /retrievedDate:\s*'2026-05-20'/);
   assert.match(
-    sourcesRoute,
+    sourceMaterialLinks,
     /url:\s*'https:\/\/www\.uhr\.se\/medborgarskapsprovet\/om-medborgarskapsprovet\/'/,
   );
-  assert.match(sourcesRoute, /UHR inte står bakom dessa/);
+
+  assert.match(sourcesRoute, /UHR står inte bakom dessa/);
   assert.match(sourcesRoute, /Källa hämtad \$\{UHR_AUTHORITY_BOUNDARY_SOURCE\.retrievedDate\}/);
   assert.match(sourcesRoute, /Sources/);
   assert.match(sourcesRoute, /Primary study material/);
   assert.match(sourcesRoute, /Every practice question shows a source line with the UHR chapter/);
   assert.match(sourcesRoute, /quality is not controlled by UHR or any other authority/);
   assert.match(sourcesRoute, /Source accessed \$\{UHR_AUTHORITY_BOUNDARY_SOURCE\.retrievedDate\}/);
-  assert.match(sourcesRoute, /uhr\.se\/medborgarskapsprovet\/om-medborgarskapsprovet/i);
-  assert.match(sourcesRoute, /<LegalExternalLink[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/);
+  assert.match(sourceMaterialLinks, /uhr\.se\/medborgarskapsprovet\/om-medborgarskapsprovet/i);
   assert.match(
     sourcesRoute,
-    /<LegalExternalLink[\s\S]*href=\{UHR_AUTHORITY_BOUNDARY_SOURCE\.url\}/,
+    /<UhrEducationMaterialLink href=\{UHR_EDUCATION_MATERIAL_URL\} language=\{language\} \/>/,
   );
-  assert.match(
-    sourcesRoute,
-    /accessibilityLabel=\{copy\.openEducationMaterialAccessibilityLabel\}/,
-  );
-  assert.match(
-    sourcesRoute,
-    /accessibilityLabel=\{copy\.openAuthorityBoundarySourceAccessibilityLabel\}/,
-  );
+  assert.match(sourcesRoute, /<UhrAuthorityBoundaryLink language=\{language\} \/>/);
+  assert.match(sourcesRoute, /openEducationMaterialAccessibilityLabel/);
+  assert.match(sourcesRoute, /openAuthorityBoundarySourceAccessibilityLabel/);
   assert.match(sourcesRoute, /Öppna UHR:s utbildningsmaterial/);
   assert.match(sourcesRoute, /Open UHR education material/);
   assert.match(sourcesRoute, /Öppna UHR:s sida Om medborgarskapsprovet/);
@@ -261,8 +257,8 @@ test('static site release copy avoids MVP and beta labels', () => {
   assert.equal(assertNoUnsupportedStaticReleaseCopy(repoRoot), 3);
   assert.match(read('site/app.js'), /['"]privacy\.meta2\.v['"]:\s*['"]1\.0['"]/);
   assert.match(read('site/index.html'), /data-i18n="privacy\.meta2\.v">1\.0</);
-  assert.match(read('site/app.js'), /No\. You do not need to register\./);
-  assert.match(read('site/app.js'), /Nej\. Du behöver inte registrera dig\./);
+  assert.match(read('site/app.js'), /Core study works without sign-in/);
+  assert.match(read('site/app.js'), /Kärnövningen fungerar utan inloggning/);
 });
 
 test('static learner-facing slogans avoid pass and passport outcome promises', () => {
@@ -433,7 +429,7 @@ test('static Swedish mock exam copy stays clearly unofficial practice wording', 
   assert.match(practice, /['"]Bygg ditt övningsprov\.['"]/);
   assert.match(practice, /['"]Starta övningsprov['"]/);
   assert.doesNotMatch(practice, /Skarp tentamen|Bygg din tentamen|Starta tentamen|\btentamen\b/i);
-  assert.match(practice, /['"]Mock exam['"]/);
+  assert.match(practice, /['"]Timed practice['"]/);
 });
 
 test('static Swedish legal and study copy keeps adult grammar and tone', () => {

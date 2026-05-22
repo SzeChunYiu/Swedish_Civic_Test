@@ -519,12 +519,8 @@ test('routed quiz answer state resets when the route-entry shuffle seed changes'
 test('home daily goal uses local-day answer progress instead of lifetime completions', () => {
   const source = read('app/(tabs)/home.tsx');
 
-  assert.match(source, /countAnswerAttemptsForLocalDate/);
-  assert.match(
-    source,
-    /const answerHistory = useProgressStore\(\(state\) => state\.answerHistory\);/,
-  );
-  assert.match(source, /answerAttempts: answerHistory/);
+  assert.match(source, /countAnswersForLocalDate/);
+  assert.doesNotMatch(source, /const answerHistory = useProgressStore/);
   assert.match(source, /questionProgress,/);
   assert.doesNotMatch(source, /countAnswersForLocalDate\(questionProgress\)/);
   assert.doesNotMatch(source, /completedQuestionIds\.length,\s*dailyGoalAnswers/);
@@ -1213,7 +1209,7 @@ test('home screen exposes dashboard card titles as headers', () => {
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.rewardedExamTitle\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.feedbackTitle\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.rewardedExamTitle\}>/);
-  assert.equal(headerMatches?.length, 4);
+  assert.equal(headerMatches?.length, 5);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 

@@ -108,7 +108,7 @@ test('quiz QuestionCard keeps question text and accessibility summary in parity'
   );
   assert.match(
     webAriaFalseStateSource,
-    /await provenance\.focus\(\);\s*await expect\(provenance\)\.toHaveAttribute\('aria-expanded', 'true'\);\s*await expect\(sourceNote\)\.toBeVisible\(\);\s*await provenance\.evaluate\(\(element: HTMLElement\) => element\.blur\(\)\);\s*await expect\(provenance\)\.not\.toBeFocused\(\);\s*await expect\(provenance\)\.toHaveAttribute\('aria-expanded', 'false'\);\s*await expect\(sourceNote\)\.toHaveCount\(0\);\s*await provenance\.click\(\);\s*await expect\(provenance\)\.toHaveAttribute\('aria-expanded', 'true'\);/,
+    /await provenance\.focus\(\);\s*await expect\(provenance\)\.toHaveAttribute\('aria-expanded', 'true'\);\s*await expect\(sourceNote\)\.toBeVisible\(\);\s*(?:await expectSourceNoteRelationship\(provenance, sourceNote\);\s*)?await provenance\.evaluate\(\(element: HTMLElement\) => element\.blur\(\)\);\s*await expect\(provenance\)\.not\.toBeFocused\(\);\s*await expect\(provenance\)\.toHaveAttribute\('aria-expanded', 'false'\);\s*(?:await expectNoSourceNoteRelationship\(provenance\);\s*)?await expect\(sourceNote\)\.toHaveCount\(0\);\s*await provenance\.click\(\);\s*await expect\(provenance\)\.toHaveAttribute\('aria-expanded', 'true'\);/,
   );
   assert.match(helperSource, /const QUESTION_DISPLAY_FALLBACKS/);
   assert.match(helperSource, /sv: 'Fråga saknas'/);

@@ -52,7 +52,7 @@ test('app and components do not draw flag surfaces from mutable swedish color to
   const flagBand = readText('components/ui/SwedishFlagBand.tsx');
 
   assert.deepEqual(offenders, []);
-  assert.match(flagBand, /import \{ flagColors, radius \} from '..\/..\/lib\/theme';/);
+  assert.match(flagBand, /import \{[^}]*flagColors[^}]*radius[^}]*\} from '..\/..\/lib\/theme';/);
   assert.match(flagBand, /backgroundColor:\s*flagColors\.blue/);
   assert.match(flagBand, /backgroundColor:\s*flagColors\.gold/);
 });

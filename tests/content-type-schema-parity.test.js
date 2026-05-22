@@ -19,7 +19,7 @@ test('content TypeScript schema stays in parity with runtime validator expectati
   const contentTypes = fs.readFileSync(path.join(repoRoot, 'types/content.ts'), 'utf8');
 
   assert.equal(summary.contentTypeUnionsValidated, 3);
-  assert.equal(summary.contentTypeInterfacesValidated, 5);
+  assert.equal(summary.contentTypeInterfacesValidated, 6);
   assert.equal(summary.contentTypeSchemaParityValidated, true);
   assert.match(contentTypes, /export type ReviewStatus = 'draft' \| 'reviewed' \| 'published';/);
   assert.match(

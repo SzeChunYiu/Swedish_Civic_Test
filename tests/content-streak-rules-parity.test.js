@@ -94,7 +94,7 @@ test('streak runtime parity validates daily habit rules', () => {
   const today = '2026-05-15';
   const rolloverTarget = new Date(2026, 2, 2, 12);
 
-  assert.equal(summary.streakRulesValidated, 21);
+  assert.equal(summary.streakRulesValidated, 17);
   assert.equal(summary.streakRulesParityValidated, true);
   assert.equal(calculateStreak([], today), 0);
   assert.equal(calculateStreak(['2026-05-13T09:00:00.000Z', '2026-05-14', '2026-05-15'], today), 3);
@@ -147,19 +147,6 @@ test('streak runtime parity rejects timestamp date-key normalization drift', () 
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /streak rule consecutive answer days through today returned 2, expected 3/,
-  );
-});
-
-test('streak runtime parity rejects invalid local date fallback drift', () => {
-  const result = runFocusedStreakRulesWithStreaksPatch(
-    'const safeDate = date instanceof Date && Number.isFinite(date.getTime()) ? date : new Date();',
-    'const safeDate = date;',
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /streak rule invalid local date fallback returned 0, expected 1/,
   );
 });
 

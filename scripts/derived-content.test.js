@@ -541,8 +541,8 @@ test('derivePublishedQuestions renders how-can-affect true/false as standalone p
   };
 
   const derived = derivePublishedQuestions([source], 901);
-  const trueStatement = derived[1];
-  const falseStatement = derived[2];
+  const trueStatement = derived.find((question) => question.correctOptionId === 'true');
+  const falseStatement = derived.find((question) => question.correctOptionId === 'false');
   const staleSplicePattern = /\b(?:när\s+[^.?!]+?\spåverkar|when\s+[^.?!]+?\saffects)\b/i;
 
   assert.equal(
@@ -1545,8 +1545,8 @@ test('derivePublishedQuestions keeps q080/q496-q499 suffrage explanation learner
     );
   }
 
-  const singleChoice = byId.get('q496');
-  const judgement = byId.get('q499');
+  const singleChoice = byId.get(generatedQuestionId(sourceQuestions, 'q080', 'singleChoice'));
+  const judgement = byId.get(generatedQuestionId(sourceQuestions, 'q080', 'judgement'));
   const expectedSingleChoiceSv =
     'Vilket år ägde det första riksdagsvalet där både kvinnor och män fick rösta och kvinnor kunde bli riksdagsledamöter rum?';
   const expectedSingleChoiceEn =

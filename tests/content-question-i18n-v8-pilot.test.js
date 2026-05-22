@@ -617,10 +617,18 @@ test('question localization v8 rejects bare kommun and region terms for q166/q16
     q166Q169KommunRegionFixture('q169', { stale: true }),
   ]);
 
-  assert.ok(errors.includes('q166.questionText.zh-Hant uses bare kommun/region term'));
-  assert.ok(errors.includes('q166.explanationText.so uses bare kommun/region term'));
-  assert.ok(errors.includes('q166.options.a.text.tr uses bare kommun/region term'));
-  assert.ok(errors.includes('q169.questionText.uk uses bare kommun/region term'));
+  assert.ok(
+    errors.includes('q166.questionText.zh-Hant uses bare Swedish civic term(s): kommun, region'),
+  );
+  assert.ok(
+    errors.includes('q166.explanationText.so uses bare Swedish civic term(s): kommun, region'),
+  );
+  assert.ok(
+    errors.includes('q166.options.a.text.tr uses bare Swedish civic term(s): kommun, region'),
+  );
+  assert.ok(
+    errors.includes('q169.questionText.uk uses bare Swedish civic term(s): kommun, region'),
+  );
 });
 
 test('question localization v8 summarizes q166/q169 kommun-region naturalness cases', () => {

@@ -23,6 +23,10 @@ test('quiz empty-state title remains a localized header when route is empty or u
   });
   const output = `${result.stdout}\n${result.stderr}`;
 
-  assert.notEqual(result.status, 0, 'unrelated content gates should still keep validation red');
+  assert.equal(
+    result.status,
+    0,
+    'content validation should pass when the empty-title header stays wired',
+  );
   assert.doesNotMatch(output, /quiz route missing empty quiz title as a title header/);
 });

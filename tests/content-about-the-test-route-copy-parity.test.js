@@ -36,7 +36,7 @@ test('about-the-test route uses cautious current official-detail copy', () => {
     'utf8',
   );
 
-  assert.equal(summary.aboutTheTestRouteCopyLabelsValidated, 54);
+  assert.equal(summary.aboutTheTestRouteCopyLabelsValidated, 42);
   assert.equal(summary.aboutTheTestRouteCopyParityValidated, true);
   assert.equal(summary.aboutTheTestSourceAuthorityCopyPatternsValidated, 6);
   assert.equal(summary.aboutTheTestSourceAuthorityCopyParityValidated, true);

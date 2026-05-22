@@ -26,7 +26,7 @@ test('mobile ads consent TypeScript schema stays in parity with validator expect
 
   assert.equal(summary.mobileAdsConsentTypeInterfacesValidated, 5);
   assert.equal(summary.mobileAdsConsentTypeSchemaParityValidated, true);
-  assert.equal(summary.mobileAdsConsentRuntimeCasesValidated, 7);
+  assert.equal(summary.mobileAdsConsentRuntimeCasesValidated, 9);
   assert.equal(summary.mobileAdsConsentRuntimeParityValidated, true);
   assert.match(mobileConsentSource, /export interface MobileAdsConsentRuntime/);
   assert.match(mobileConsentSource, /platform: AdConsentPlatform \| string;/);

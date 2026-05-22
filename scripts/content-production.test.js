@@ -131,8 +131,8 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.examChapterBreakdownParityValidated, true);
   assert.equal(summary.contentTypeUnionsValidated, 3);
   assert.equal(summary.contentTypeSchemaParityValidated, true);
-  assert.equal(summary.themeColorTokensValidated, 37);
-  assert.equal(summary.themeContrastPairsValidated, 20);
+  assert.equal(summary.themeColorTokensValidated, 39);
+  assert.equal(summary.themeContrastPairsValidated, 22);
   assert.equal(summary.themeContrastPairsAAValidated, true);
   assert.equal(summary.themeTokenSchemaValidated, true);
   assert.equal(summary.glossaryTermsValidated, summary.glossaryTerms);

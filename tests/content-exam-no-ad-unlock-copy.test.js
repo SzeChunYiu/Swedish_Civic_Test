@@ -21,7 +21,7 @@ test('exam route copy validator reflects no ad unlocks on the exam screen', () =
   });
   const output = `${result.stdout}\n${result.stderr}`;
 
-  assert.notEqual(result.status, 0, 'unrelated content gates should still keep validation red');
+  assert.equal(result.status, 0, `content validation should pass: ${output}`);
   assert.doesNotMatch(output, /exam route is missing sv copy "Lås upp extra prov"/);
   assert.doesNotMatch(output, /exam route is missing en copy "Unlock extra exam"/);
 });
