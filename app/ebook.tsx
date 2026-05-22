@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -23,7 +24,8 @@ import {
 } from '../lib/content/ebookContent';
 import { useAccessibilityStore } from '../lib/storage/accessibilityStore';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
-import { colors, radius, space, typography } from '../lib/theme';
+import { radius, space, typography, type ThemeColors } from '../lib/theme';
+import { useThemeColors } from '../lib/theme/ThemeProvider';
 
 type EbookRouteCopy = {
   articleNavGroupAccessibilityLabel: string;
@@ -100,16 +102,26 @@ function navigateToArticle(router: ReturnType<typeof useRouter>, article: EbookA
   router.push(`/ebook?c=${article.staticChapterId}`);
 }
 
-function SourceNoteLine({ language, source }: { language: AppLanguage; source: EbookSourceNote }) {
+type EbookStyles = ReturnType<typeof createStyles>;
+
+function SourceNoteLine({
+  ebookStyles,
+  language,
+  source,
+}: {
+  ebookStyles: EbookStyles;
+  language: AppLanguage;
+  source: EbookSourceNote;
+}) {
   const copy = ebookRouteCopy[language];
   const sourceLabel = getLocalizedText(source.label, language);
   const safeSourceUrl = getSafeEbookSourceUrl(source);
 
   if (!safeSourceUrl) {
     return (
-      <View accessibilityLabel={`${sourceLabel}. ${source.url}`} style={styles.sourceLine}>
-        <Text style={styles.sourceLabel}>{sourceLabel}</Text>
-        <Text style={styles.sourceUrl}>{source.url}</Text>
+      <View accessibilityLabel={`${sourceLabel}. ${source.url}`} style={ebookStyles.sourceLine}>
+        <Text style={ebookStyles.sourceLabel}>{sourceLabel}</Text>
+        <Text style={ebookStyles.sourceUrl}>{source.url}</Text>
       </View>
     );
   }
@@ -120,11 +132,11 @@ function SourceNoteLine({ language, source }: { language: AppLanguage; source: E
       accessibilityRole="link"
       href={safeSourceUrl}
       rel="noreferrer"
-      style={styles.sourceLine}
+      style={ebookStyles.sourceLine}
       target="_blank"
     >
-      <Text style={styles.sourceLabel}>{sourceLabel}</Text>
-      <Text style={styles.sourceUrl}>{safeSourceUrl}</Text>
+      <Text style={ebookStyles.sourceLabel}>{sourceLabel}</Text>
+      <Text style={ebookStyles.sourceUrl}>{safeSourceUrl}</Text>
     </Link>
   );
 }
@@ -135,7 +147,9 @@ export default function EbookScreen() {
   const language = useSettingsStore((state) => state.language);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const audioPlaybackRate = useAccessibilityStore((state) => state.audioPlaybackRate);
+  const themeColors = useThemeColors();
   const copy = ebookRouteCopy[language];
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const article = getEbookArticleByParam(c);
   const previousArticle = getAdjacentEbookArticle(article, 'previous');
   const nextArticle = getAdjacentEbookArticle(article, 'next');
@@ -145,7 +159,12 @@ export default function EbookScreen() {
   const sourceDate = sources[0]?.retrievedDate ?? '2026-05-19';
 
   return (
-    <ScreenShell eyebrow={copy.sectionTitle} title={copy.title} subtitle={copy.subtitle}>
+    <ScreenShell
+      eyebrow={copy.sectionTitle}
+      subtitle={copy.subtitle}
+      themeColors={themeColors}
+      title={copy.title}
+    >
       <Pressable
         accessibilityLabel={copy.backToLearnAccessibilityLabel}
         accessibilityRole="link"
@@ -156,7 +175,11 @@ export default function EbookScreen() {
         <Text style={styles.backLinkText}>{copy.backToLearn}</Text>
       </Pressable>
 
-      <SectionHeader title={copy.sectionTitle} subtitle={copy.sectionSubtitle} />
+      <SectionHeader
+        subtitle={copy.sectionSubtitle}
+        themeColors={themeColors}
+        title={copy.sectionTitle}
+      />
       <ScrollView
         aria-label={copy.articleNavGroupAccessibilityLabel}
         accessibilityLabel={copy.articleNavGroupAccessibilityLabel}
@@ -202,8 +225,10 @@ export default function EbookScreen() {
         })}
       </ScrollView>
 
-      <Card elevated style={styles.articleCard}>
-        <Badge tone="blue">{articleKicker}</Badge>
+      <Card elevated style={styles.articleCard} themeColors={themeColors}>
+        <Badge themeColors={themeColors} tone="blue">
+          {articleKicker}
+        </Badge>
         <Text accessibilityRole="header" style={styles.articleTitle}>
           {articleTitle}
         </Text>
@@ -220,8 +245,11 @@ export default function EbookScreen() {
         <Card
           accessibilityLabel={`${copy.provenanceBadge}. ${copy.provenanceText}`}
           style={styles.provenanceCard}
+          themeColors={themeColors}
         >
-          <Badge tone="warm">{copy.provenanceBadge}</Badge>
+          <Badge themeColors={themeColors} tone="warm">
+            {copy.provenanceBadge}
+          </Badge>
           <Text style={styles.provenanceText}>{copy.provenanceText}</Text>
         </Card>
 
@@ -247,6 +275,7 @@ export default function EbookScreen() {
                 {sectionSources.map((source) => (
                   <SourceNoteLine
                     key={`${sectionHeading}-${source.key}`}
+                    ebookStyles={styles}
                     language={language}
                     source={source}
                   />
@@ -264,12 +293,17 @@ export default function EbookScreen() {
           );
         })}
 
-        <Card style={styles.sourcesCard}>
+        <Card style={styles.sourcesCard} themeColors={themeColors}>
           <Text accessibilityRole="header" style={styles.sourcesHeading}>
             {copy.sourceHeading(sourceDate)}
           </Text>
           {sources.map((source) => (
-            <SourceNoteLine key={source.key} language={language} source={source} />
+            <SourceNoteLine
+              key={source.key}
+              ebookStyles={styles}
+              language={language}
+              source={source}
+            />
           ))}
         </Card>
       </Card>
@@ -280,6 +314,7 @@ export default function EbookScreen() {
           accessibilityRole="link"
           onPress={() => router.push(article.practicePath)}
           style={styles.primaryAction}
+          themeColors={themeColors}
         >
           {getLocalizedText(article.practiceLabel, language)}
         </Button>
@@ -287,6 +322,7 @@ export default function EbookScreen() {
           accessibilityLabel={copy.sourcesCtaAccessibilityLabel}
           accessibilityRole="link"
           onPress={() => router.push('/sources')}
+          themeColors={themeColors}
           variant="secondary"
         >
           {copy.sourcesCta}
@@ -299,6 +335,7 @@ export default function EbookScreen() {
             accessibilityLabel={`${copy.previousArticle}: ${getLocalizedText(previousArticle.title, language)}`}
             accessibilityRole="link"
             onPress={() => navigateToArticle(router, previousArticle)}
+            themeColors={themeColors}
             variant="ghost"
           >
             {copy.previousArticle}
@@ -311,6 +348,7 @@ export default function EbookScreen() {
             accessibilityLabel={`${copy.nextArticle}: ${getLocalizedText(nextArticle.title, language)}`}
             accessibilityRole="link"
             onPress={() => navigateToArticle(router, nextArticle)}
+            themeColors={themeColors}
             variant="ghost"
           >
             {copy.nextArticle}
@@ -323,165 +361,167 @@ export default function EbookScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  backLink: {
-    alignSelf: 'flex-start',
-    borderRadius: radius.button,
-    minHeight: space[6],
-    paddingHorizontal: space[1],
-    paddingVertical: space[1],
-  },
-  pressedLink: {
-    backgroundColor: colors.focusSoft,
-  },
-  backLinkText: {
-    color: colors.accent,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    lineHeight: typography.bodyTight.lineHeight,
-  },
-  articleNav: {
-    marginHorizontal: -space[3],
-  },
-  articleNavContent: {
-    gap: space[1],
-    paddingHorizontal: space[3],
-  },
-  articleNavItem: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: space.hairline,
-    maxWidth: 220,
-    minHeight: space[8],
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[1],
-    width: 184,
-  },
-  articleNavItemSelected: {
-    backgroundColor: colors.accent,
-    borderColor: colors.accent,
-  },
-  articleNavItemPressed: {
-    backgroundColor: colors.focusSoft,
-    borderColor: colors.focus,
-  },
-  articleNavKicker: {
-    color: colors.textMuted,
-    fontSize: typography.badge.fontSize,
-    fontWeight: typography.badge.fontWeight,
-    lineHeight: typography.badge.lineHeight,
-    textTransform: 'uppercase',
-  },
-  articleNavTitle: {
-    color: colors.text,
-    fontSize: typography.caption.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    lineHeight: typography.caption.lineHeight,
-  },
-  articleNavTextSelected: {
-    color: colors.surface,
-  },
-  articleCard: {
-    gap: space[2],
-  },
-  articleTitle: {
-    color: colors.text,
-    fontSize: typography.subHeading.fontSize,
-    fontWeight: typography.subHeading.fontWeight,
-    letterSpacing: typography.subHeading.letterSpacing,
-    lineHeight: typography.subHeading.lineHeight,
-  },
-  lede: {
-    color: colors.textSecondary,
-    fontSize: typography.bodyLarge.fontSize,
-    lineHeight: typography.bodyLarge.lineHeight,
-  },
-  audioAction: {
-    alignSelf: 'flex-start',
-  },
-  provenanceCard: {
-    backgroundColor: colors.surfaceWarm,
-    gap: space[1],
-  },
-  provenanceText: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  sectionBlock: {
-    gap: space[0.75],
-  },
-  sectionHeading: {
-    color: colors.text,
-    fontSize: typography.sectionTitle.fontSize,
-    fontWeight: typography.sectionTitle.fontWeight,
-    lineHeight: typography.sectionTitle.lineHeight,
-  },
-  sectionBody: {
-    color: colors.textSecondary,
-    fontSize: typography.body.fontSize,
-    lineHeight: typography.body.lineHeight,
-  },
-  sectionSources: {
-    backgroundColor: colors.surfaceWarm,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: space.hairline,
-    gap: space[0.75],
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[1],
-  },
-  sectionSourcesHeading: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    lineHeight: typography.caption.lineHeight,
-  },
-  sectionAudioAction: {
-    alignSelf: 'flex-start',
-    marginTop: space[0.5],
-  },
-  sourcesCard: {
-    gap: space[1],
-  },
-  sourcesHeading: {
-    color: colors.text,
-    fontSize: typography.bodyLarge.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    lineHeight: typography.bodyLarge.lineHeight,
-  },
-  sourceLine: {
-    borderColor: colors.border,
-    borderRadius: radius.small,
-    borderWidth: space.hairline,
-    gap: space[0.5],
-    minHeight: space[6],
-    paddingHorizontal: space[1],
-    paddingVertical: space[0.75],
-    textDecorationLine: 'none',
-  },
-  sourceLabel: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    lineHeight: typography.caption.lineHeight,
-  },
-  sourceUrl: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  actions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-  },
-  primaryAction: {
-    flexGrow: 1,
-  },
-  pager: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    backLink: {
+      alignSelf: 'flex-start',
+      borderRadius: radius.button,
+      minHeight: space[6],
+      paddingHorizontal: space[1],
+      paddingVertical: space[1],
+    },
+    pressedLink: {
+      backgroundColor: themeColors.focusSoft,
+    },
+    backLinkText: {
+      color: themeColors.accent,
+      fontSize: typography.navButton.fontSize,
+      fontWeight: typography.navButton.fontWeight,
+      lineHeight: typography.bodyTight.lineHeight,
+    },
+    articleNav: {
+      marginHorizontal: -space[3],
+    },
+    articleNavContent: {
+      gap: space[1],
+      paddingHorizontal: space[3],
+    },
+    articleNavItem: {
+      backgroundColor: themeColors.surface,
+      borderColor: themeColors.border,
+      borderRadius: radius.card,
+      borderWidth: space.hairline,
+      maxWidth: 220,
+      minHeight: space[8],
+      paddingHorizontal: space[1.5],
+      paddingVertical: space[1],
+      width: 184,
+    },
+    articleNavItemSelected: {
+      backgroundColor: themeColors.accent,
+      borderColor: themeColors.accent,
+    },
+    articleNavItemPressed: {
+      backgroundColor: themeColors.focusSoft,
+      borderColor: themeColors.focus,
+    },
+    articleNavKicker: {
+      color: themeColors.textMuted,
+      fontSize: typography.badge.fontSize,
+      fontWeight: typography.badge.fontWeight,
+      lineHeight: typography.badge.lineHeight,
+      textTransform: 'uppercase',
+    },
+    articleNavTitle: {
+      color: themeColors.text,
+      fontSize: typography.caption.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      lineHeight: typography.caption.lineHeight,
+    },
+    articleNavTextSelected: {
+      color: themeColors.surface,
+    },
+    articleCard: {
+      gap: space[2],
+    },
+    articleTitle: {
+      color: themeColors.text,
+      fontSize: typography.subHeading.fontSize,
+      fontWeight: typography.subHeading.fontWeight,
+      letterSpacing: typography.subHeading.letterSpacing,
+      lineHeight: typography.subHeading.lineHeight,
+    },
+    lede: {
+      color: themeColors.textSecondary,
+      fontSize: typography.bodyLarge.fontSize,
+      lineHeight: typography.bodyLarge.lineHeight,
+    },
+    audioAction: {
+      alignSelf: 'flex-start',
+    },
+    provenanceCard: {
+      backgroundColor: themeColors.surfaceWarm,
+      gap: space[1],
+    },
+    provenanceText: {
+      color: themeColors.textSecondary,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+    sectionBlock: {
+      gap: space[0.75],
+    },
+    sectionHeading: {
+      color: themeColors.text,
+      fontSize: typography.sectionTitle.fontSize,
+      fontWeight: typography.sectionTitle.fontWeight,
+      lineHeight: typography.sectionTitle.lineHeight,
+    },
+    sectionBody: {
+      color: themeColors.textSecondary,
+      fontSize: typography.body.fontSize,
+      lineHeight: typography.body.lineHeight,
+    },
+    sectionSources: {
+      backgroundColor: themeColors.surfaceWarm,
+      borderColor: themeColors.border,
+      borderRadius: radius.card,
+      borderWidth: space.hairline,
+      gap: space[0.75],
+      paddingHorizontal: space[1.5],
+      paddingVertical: space[1],
+    },
+    sectionSourcesHeading: {
+      color: themeColors.textSecondary,
+      fontSize: typography.caption.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      lineHeight: typography.caption.lineHeight,
+    },
+    sectionAudioAction: {
+      alignSelf: 'flex-start',
+      marginTop: space[0.5],
+    },
+    sourcesCard: {
+      gap: space[1],
+    },
+    sourcesHeading: {
+      color: themeColors.text,
+      fontSize: typography.bodyLarge.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      lineHeight: typography.bodyLarge.lineHeight,
+    },
+    sourceLine: {
+      borderColor: themeColors.border,
+      borderRadius: radius.small,
+      borderWidth: space.hairline,
+      gap: space[0.5],
+      minHeight: space[6],
+      paddingHorizontal: space[1],
+      paddingVertical: space[0.75],
+      textDecorationLine: 'none',
+    },
+    sourceLabel: {
+      color: themeColors.textSecondary,
+      fontSize: typography.caption.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      lineHeight: typography.caption.lineHeight,
+    },
+    sourceUrl: {
+      color: themeColors.textMuted,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+    actions: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1],
+    },
+    primaryAction: {
+      flexGrow: 1,
+    },
+    pager: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+  });
+}
