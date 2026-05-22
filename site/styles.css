@@ -12092,3 +12092,50 @@ img.ebook__brand-mark {
     padding: 9px 10px;
   }
 }
+
+/* ======================================================================
+   DOC NAV LINK BOX OPTIMIZATION ROUND
+   ====================================================================== */
+
+.doc__nav a {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.28);
+  border: 1px solid transparent;
+  border-radius: 12px;
+  display: inline-flex;
+  margin: -5px -7px;
+  min-height: 32px;
+  padding: 5px 7px;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.doc__nav a:hover,
+.doc__nav a:focus-visible {
+  background: rgba(0, 106, 167, 0.08);
+  border-color: rgba(0, 106, 167, 0.14);
+  color: var(--blue-ink);
+  outline: none;
+  transform: translateX(2px);
+}
+
+:root[data-theme='dark'] .doc__nav a {
+  background: rgba(255, 255, 255, 0.035);
+}
+
+:root[data-theme='dark'] .doc__nav a:hover,
+:root[data-theme='dark'] .doc__nav a:focus-visible {
+  background: rgba(45, 168, 255, 0.12);
+  border-color: rgba(45, 168, 255, 0.22);
+  color: var(--blue-soft);
+}
+
+@media (max-width: 620px) {
+  .doc__nav a {
+    min-height: 36px;
+    width: 100%;
+  }
+}
