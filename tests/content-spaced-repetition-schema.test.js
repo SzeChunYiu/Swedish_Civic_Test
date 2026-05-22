@@ -142,3 +142,35 @@ require('./scripts/validate-content.js');
   assert.match(output, /spaced repetition due timestamp rollover dueAt returned true/);
   assert.match(output, /spaced repetition due timestamp date-only dueAt returned true/);
 });
+
+test('review store due-limit focus rejects Array.slice coercion regressions', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/lib/storage/reviewStore.ts')) {
+    return String(contents).replace(
+      "function normalizeDueCardsLimit(limit: unknown): number | undefined {\\n  if (limit === undefined || limit === Number.POSITIVE_INFINITY) return undefined;\\n  if (isNonNegativeInteger(limit)) return limit;\\n  return undefined;\\n}",
+      "function normalizeDueCardsLimit(limit: unknown): number | undefined {\\n  return limit as number | undefined;\\n}",
+    );
+  }
+  return contents;
+};
+process.argv.push('--focus-review-store-due-limit');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.match(output, /review-store due limit malformed negative limit/);
+  assert.match(output, /review-store due limit malformed fractional limit/);
+});

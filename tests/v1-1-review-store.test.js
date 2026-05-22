@@ -2,6 +2,7 @@
 // Run with: node --test tests/v1-1-review-store.test.js
 
 const assert = require('node:assert/strict');
+const { spawnSync } = require('node:child_process');
 const path = require('node:path');
 const test = require('node:test');
 
@@ -94,6 +95,26 @@ test('dueCards: normalizes malformed runtime limits without dropping due cards',
       `malformed limit ${String(malformedLimit)} should fall back to unlimited`,
     );
   }
+});
+
+test('dueCards: focused validator covers valid and malformed runtime limits', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-review-store-due-limit'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused review-store due-limit validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.equal(summary.reviewStoreDueLimitCasesValidated, 12);
+  assert.equal(summary.reviewStoreDueLimitParityValidated, true);
+  assert.equal(Object.hasOwn(summary, 'questionSchemasValidated'), false);
 });
 
 test('dueCards: applies questionIdAllowlist (e.g. mistakes only)', () => {

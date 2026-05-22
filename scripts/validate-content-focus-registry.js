@@ -325,6 +325,11 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'reviewStoreDueLimit',
+    flags: ['--focus-review-store-due-limit'],
+    summaryKeys: ['reviewStoreDueLimitCasesValidated', 'reviewStoreDueLimitParityValidated'],
+  },
+  {
     id: 'mobileAdsConsentHook',
     flags: ['--focus-mobile-ads-consent-hook'],
     summaryKeys: ['mobileAdsConsentHookCasesValidated', 'mobileAdsConsentHookParityValidated'],

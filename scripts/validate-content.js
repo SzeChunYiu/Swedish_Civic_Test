@@ -9563,6 +9563,8 @@ let spacedRepetitionRuntimeInputCasesValidated = 0;
 let spacedRepetitionRuntimeInputParityValidated = false;
 let spacedRepetitionDueTimestampCasesValidated = 0;
 let spacedRepetitionDueTimestampParityValidated = false;
+let reviewStoreDueLimitCasesValidated = 0;
+let reviewStoreDueLimitParityValidated = false;
 let flashcardDeckStrictDateRuntimeCasesValidated = 0;
 let flashcardDeckStrictDateRuntimeParityValidated = false;
 let adaptivePracticeSizeRuntimeCasesValidated = 0;
@@ -10545,6 +10547,16 @@ if (process.argv.includes('--focus-spaced-repetition-schema')) {
     spacedRepetitionRuntimeInputParityValidated,
     spacedRepetitionDueTimestampCasesValidated,
     spacedRepetitionDueTimestampParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-review-store-due-limit')) {
+  validateReviewStoreDueLimitRuntime();
+  exitWithValidationFailures();
+  printValidationSummary({
+    reviewStoreDueLimitCasesValidated,
+    reviewStoreDueLimitParityValidated,
   });
   process.exit(0);
 }
@@ -20985,6 +20997,131 @@ function validateSpacedRepetitionSchedule() {
   }
 }
 
+function validateReviewStoreDueLimitRuntime() {
+  let reviewStoreModule;
+  try {
+    const { loadTsWithStorage } = require('../tests/helpers/storageStoreHarness.cjs');
+    reviewStoreModule = loadTsWithStorage(repoRoot, 'lib/storage/reviewStore.ts', {});
+  } catch (error) {
+    fail(`review-store due limit could not load reviewStore.ts: ${error.message}`);
+    return;
+  }
+
+  const { dueCards, dueCount } = reviewStoreModule;
+  if (typeof dueCards !== 'function' || typeof dueCount !== 'function') {
+    fail('review-store due limit requires dueCards and dueCount exports');
+    return;
+  }
+
+  const now = '2026-05-19T12:00:00.000Z';
+  const state = {
+    byId: {
+      q0: { questionId: 'q0', dueAt: '2026-05-15T08:00:00.000Z' },
+      q1: { questionId: 'q1', dueAt: '2026-05-16T08:00:00.000Z' },
+      q2: { questionId: 'q2', dueAt: '2026-05-17T08:00:00.000Z' },
+      q3: { questionId: 'q3', dueAt: '2026-05-18T08:00:00.000Z' },
+      future: { questionId: 'future', dueAt: '2026-05-20T08:00:00.000Z' },
+    },
+  };
+  const allDueIds = ['q0', 'q1', 'q2', 'q3'];
+  const cases = [
+    {
+      label: 'unlimited default returns every due card',
+      actual: () => dueCards(state, { now }).map((card) => card.questionId),
+      expected: allDueIds,
+    },
+    {
+      label: 'explicit infinite limit returns every due card',
+      actual: () =>
+        dueCards(state, { now, limit: Number.POSITIVE_INFINITY }).map((card) => card.questionId),
+      expected: allDueIds,
+    },
+    {
+      label: 'positive limit caps the sorted due queue',
+      actual: () => dueCards(state, { now, limit: 2 }).map((card) => card.questionId),
+      expected: ['q0', 'q1'],
+    },
+    {
+      label: 'zero limit returns no due cards',
+      actual: () => dueCards(state, { now, limit: 0 }).map((card) => card.questionId),
+      expected: [],
+    },
+    {
+      label: 'allowlist filtering happens before the positive limit',
+      actual: () =>
+        dueCards(state, {
+          now,
+          limit: 1,
+          questionIdAllowlist: new Set(['q1', 'q3']),
+        }).map((card) => card.questionId),
+      expected: ['q1'],
+    },
+    {
+      label: 'malformed negative limit falls back to unlimited',
+      actual: () => dueCards(state, { now, limit: -1 }).map((card) => card.questionId),
+      expected: allDueIds,
+    },
+    {
+      label: 'malformed fractional limit falls back to unlimited',
+      actual: () => dueCards(state, { now, limit: 1.5 }).map((card) => card.questionId),
+      expected: allDueIds,
+    },
+    {
+      label: 'malformed NaN limit falls back to unlimited',
+      actual: () => dueCards(state, { now, limit: Number.NaN }).map((card) => card.questionId),
+      expected: allDueIds,
+    },
+    {
+      label: 'malformed negative infinity limit falls back to unlimited',
+      actual: () =>
+        dueCards(state, { now, limit: Number.NEGATIVE_INFINITY }).map((card) => card.questionId),
+      expected: allDueIds,
+    },
+    {
+      label: 'malformed string limit falls back to unlimited',
+      actual: () => dueCards(state, { now, limit: '2' }).map((card) => card.questionId),
+      expected: allDueIds,
+    },
+    {
+      label: 'malformed null limit falls back to unlimited',
+      actual: () => dueCards(state, { now, limit: null }).map((card) => card.questionId),
+      expected: allDueIds,
+    },
+    {
+      label: 'dueCount ignores runtime caps and counts due cards',
+      actual: () => dueCount(state, now),
+      expected: allDueIds.length,
+    },
+  ];
+
+  let dueLimitParityIsValid = true;
+  cases.forEach(({ actual, expected, label }) => {
+    let actualValue;
+    try {
+      actualValue = actual();
+    } catch (error) {
+      dueLimitParityIsValid = false;
+      fail(`review-store due limit ${label} threw ${error.message}`);
+      return;
+    }
+
+    if (!jsonEqual(actualValue, expected)) {
+      dueLimitParityIsValid = false;
+      fail(
+        `review-store due limit ${label} returned ${JSON.stringify(
+          actualValue,
+        )}, expected ${JSON.stringify(expected)}`,
+      );
+    } else {
+      reviewStoreDueLimitCasesValidated += 1;
+    }
+  });
+
+  if (dueLimitParityIsValid && reviewStoreDueLimitCasesValidated === cases.length) {
+    reviewStoreDueLimitParityValidated = true;
+  }
+}
+
 function validateFlashcardDeckStrictDateRuntimeGuard() {
   if (typeof selectDailyFlashcardDeck !== 'function') {
     fail('selectDailyFlashcardDeck export is not a function');
@@ -24360,6 +24497,7 @@ validateQuestionSpeechTextParity();
 validateSpeechRuntimeParity();
 validateChapterQuizSessionParity();
 validateSpacedRepetitionSchedule();
+validateReviewStoreDueLimitRuntime();
 validateFlashcardDeckStrictDateRuntimeGuard();
 validateAdaptivePracticeSizeRuntimeGuards();
 validateAdaptivePracticeDifficultyRuntimeGuards();
@@ -24690,6 +24828,8 @@ console.log(
       spacedRepetitionRuntimeInputParityValidated,
       spacedRepetitionDueTimestampCasesValidated,
       spacedRepetitionDueTimestampParityValidated,
+      reviewStoreDueLimitCasesValidated,
+      reviewStoreDueLimitParityValidated,
       flashcardDeckStrictDateRuntimeCasesValidated,
       flashcardDeckStrictDateRuntimeParityValidated,
       adaptivePracticeSizeRuntimeCasesValidated,
