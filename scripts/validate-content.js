@@ -7108,6 +7108,63 @@ function validateCitizenshipRequirementsSourceAuthorityCopy() {
     valid && fieldsValidated === citizenshipRequirementAreas.length * 4;
 }
 
+const EXPECTED_CITIZENSHIP_TIMELINE_RETURN_KEYS = [
+  'countdownCopyParity',
+  'homeMountParity',
+  'homeMountRulesValidated',
+  'dateParity',
+  'firstSittingDate',
+  'rulesDate',
+  'sourceUrlsValidated',
+  'testDeadlineDate',
+];
+
+function validateCitizenshipTimelineReturnShape() {
+  let valid = true;
+  const validatorSource = fs.readFileSync(__filename, 'utf8');
+  const returnMatch = validatorSource.match(
+    /function validateCitizenshipTimeline\(\) \{[\s\S]*?\n\s+return\s+\{([\s\S]*?)\n\s+\};\n\}/,
+  );
+
+  if (!returnMatch) {
+    fail('validateCitizenshipTimeline return shape must stay source-checkable');
+    citizenshipTimelineReturnShapeKeysValidated = false;
+    return false;
+  }
+
+  const returnKeys = [...returnMatch[1].matchAll(/^\s*([A-Za-z_$][\w$]*)\s*(?=,|:)/gm)].map(
+    (match) => match[1],
+  );
+  const duplicateKeys = returnKeys.filter((key, index) => returnKeys.indexOf(key) !== index);
+  const missingKeys = EXPECTED_CITIZENSHIP_TIMELINE_RETURN_KEYS.filter(
+    (key) => !returnKeys.includes(key),
+  );
+  const extraKeys = returnKeys.filter(
+    (key) => !EXPECTED_CITIZENSHIP_TIMELINE_RETURN_KEYS.includes(key),
+  );
+
+  if (duplicateKeys.length > 0) {
+    valid = false;
+    fail(
+      `validateCitizenshipTimeline return shape must not duplicate keys: ${[
+        ...new Set(duplicateKeys),
+      ].join(', ')}`,
+    );
+  }
+  if (missingKeys.length > 0) {
+    valid = false;
+    fail(`validateCitizenshipTimeline return shape missing keys: ${missingKeys.join(', ')}`);
+  }
+  if (extraKeys.length > 0) {
+    valid = false;
+    fail(`validateCitizenshipTimeline return shape has unexpected keys: ${extraKeys.join(', ')}`);
+  }
+
+  citizenshipTimelineReturnShapeKeysValidated =
+    valid && returnKeys.length === EXPECTED_CITIZENSHIP_TIMELINE_RETURN_KEYS.length;
+  return citizenshipTimelineReturnShapeKeysValidated;
+}
+
 function validateCitizenshipTimeline() {
   let dateParity = true;
   let countdownCopyParity = true;
@@ -7233,7 +7290,6 @@ function validateCitizenshipTimeline() {
 
   return {
     countdownCopyParity,
-    firstSittingDate,
     homeMountParity,
     homeMountRulesValidated,
     dateParity,
@@ -7422,6 +7478,7 @@ function validateStudyPlanRuntime() {
 }
 
 function validateCountdownBannerFocusedParity() {
+  validateCitizenshipTimelineReturnShape();
   const timelineValidation = validateCitizenshipTimeline();
   citizenshipRulesEffectiveDateValidated = timelineValidation.rulesDate;
   civicKnowledgeTestFirstSittingDateValidated = timelineValidation.firstSittingDate;
@@ -10222,6 +10279,7 @@ let civicKnowledgeTestFirstSittingDateValidated = '';
 let civicKnowledgeTestDeadlineDateValidated = '';
 let citizenshipTimelineSourceUrlsValidated = 0;
 let citizenshipTimelineDateParityValidated = false;
+let citizenshipTimelineReturnShapeKeysValidated = false;
 let citizenshipRequirementsCopyFieldsValidated = 0;
 let citizenshipRequirementsSourceAuthorityCopyParityValidated = false;
 let countdownBannerTimelineCopyParityValidated = false;
@@ -10552,6 +10610,7 @@ if (
     civicKnowledgeTestDeadlineDateValidated,
     citizenshipTimelineSourceUrlsValidated,
     citizenshipTimelineDateParityValidated,
+    citizenshipTimelineReturnShapeKeysValidated,
     countdownBannerTimelineCopyParityValidated,
     countdownBannerHomeMountRulesValidated,
     countdownBannerHomeMountParityValidated,
@@ -27589,6 +27648,7 @@ console.log(
       civicKnowledgeTestDeadlineDateValidated,
       citizenshipTimelineSourceUrlsValidated,
       citizenshipTimelineDateParityValidated,
+      citizenshipTimelineReturnShapeKeysValidated,
       countdownBannerTimelineCopyParityValidated,
       countdownBannerHomeMountRulesValidated,
       countdownBannerHomeMountParityValidated,

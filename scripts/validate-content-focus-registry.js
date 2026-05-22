@@ -344,6 +344,7 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
       'civicKnowledgeTestDeadlineDateValidated',
       'citizenshipTimelineSourceUrlsValidated',
       'citizenshipTimelineDateParityValidated',
+      'citizenshipTimelineReturnShapeKeysValidated',
       'countdownBannerTimelineCopyParityValidated',
       'countdownBannerHomeMountRulesValidated',
       'countdownBannerHomeMountParityValidated',
