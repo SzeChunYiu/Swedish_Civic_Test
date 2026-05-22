@@ -65,7 +65,17 @@ test('quiz QuestionCard keeps question text and accessibility summary in parity'
     source,
     /questionTranslation \? `\$\{copy\.secondaryLabel\}: \$\{questionTranslation\}` : null/,
   );
-  assert.match(source, /\$\{copy\.sourceCitationLabel\}: \$\{sourceCitation\}/);
+  const questionAccessibilityLabelBlock =
+    source.match(/const questionAccessibilityLabel = \[[\s\S]*?\]\s*\.filter\(Boolean\)/)?.[0] ??
+    '';
+  assert.doesNotMatch(
+    questionAccessibilityLabelBlock,
+    /\$\{copy\.sourceCitationLabel\}: \$\{sourceCitation\}/,
+  );
+  assert.match(
+    source,
+    /accessibilityLabel=\{`\$\{copy\.sourceCitationLabel\}: \$\{sourceCitation\}`\}/,
+  );
   assert.match(source, /Swedish original/);
   assert.match(source, /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/);
   assert.match(source, /<Text style=\{styles\.label\}>\{difficultyLabel\}<\/Text>/);

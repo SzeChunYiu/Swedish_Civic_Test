@@ -67,7 +67,6 @@ export function QuestionCard({
     `${copy.difficultyLabel}: ${difficultyLabel}`,
     `${copy.questionLabel}: ${questionText}`,
     questionTranslation ? `${copy.secondaryLabel}: ${questionTranslation}` : null,
-    `${copy.sourceCitationLabel}: ${sourceCitation}`,
   ]
     .filter(Boolean)
     .join('. ');

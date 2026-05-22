@@ -602,7 +602,17 @@ test('question card groups prompt and translation into an accessible summary', (
     source,
     /questionTranslation \? `\$\{copy\.secondaryLabel\}: \$\{questionTranslation\}` : null/,
   );
-  assert.match(source, /\$\{copy\.sourceCitationLabel\}: \$\{sourceCitation\}/);
+  const questionAccessibilityLabelBlock =
+    source.match(/const questionAccessibilityLabel = \[[\s\S]*?\]\s*\.filter\(Boolean\)/)?.[0] ??
+    '';
+  assert.doesNotMatch(
+    questionAccessibilityLabelBlock,
+    /\$\{copy\.sourceCitationLabel\}: \$\{sourceCitation\}/,
+  );
+  assert.match(
+    source,
+    /accessibilityLabel=\{`\$\{copy\.sourceCitationLabel\}: \$\{sourceCitation\}`\}/,
+  );
   assert.match(source, /Engelsk översättning/);
   assert.match(source, /Swedish original/);
   assert.match(helperSource, /Källa: Sverige i fokus/);

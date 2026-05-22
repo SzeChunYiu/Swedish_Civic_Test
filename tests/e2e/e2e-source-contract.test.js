@@ -56,10 +56,7 @@ function assertPortCanBind(port) {
 
 function waitForServerReady(
   child,
-  {
-    readyText = 'Serving dist-web on http://127.0.0.1:4173',
-    serverName = 'dist-web server',
-  } = {},
+  { readyText = 'Serving dist-web on http://127.0.0.1:4173', serverName = 'dist-web server' } = {},
 ) {
   return new Promise((resolve, reject) => {
     let output = '';
@@ -432,8 +429,8 @@ test('practice feedback specs target answer option accessibility result labels',
     'I Norden i norra Europa, Rätt svar',
   ]) {
     assert.ok(
-      source.includes(`getByLabel('${label}')`),
-      `practice feedback spec should assert the runtime accessibility label "${label}"`,
+      source.includes(`answerRadio(page, '${label}')`),
+      `practice feedback spec should assert the runtime radio accessibility name "${label}"`,
     );
   }
 });
@@ -518,7 +515,7 @@ test('countdown browser date coverage uses the shared clock helper', () => {
   );
   assert.match(
     countdownSource,
-    /import \{ dismissBlockingModals, mockBrowserDate \} from '\.\/browserLaunch';/,
+    /import \{[\s\S]*dismissBlockingModals,[\s\S]*mockBrowserDate,[\s\S]*\} from '\.\/browserLaunch';/,
     'countdown e2e coverage should import the shared browser clock helper',
   );
   assert.match(
