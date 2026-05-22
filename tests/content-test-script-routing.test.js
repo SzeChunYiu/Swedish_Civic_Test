@@ -874,6 +874,72 @@ test('Somali holiday-food naturalness uses focused content validation routing', 
   assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
 });
 
+test('static question-bank generated-id fixtures use focused validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const staticQuestionBankTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-static-site-question-bank-parity.test.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get(
+    'staticQuestionBankGeneratedIdFixtures',
+  );
+
+  assert.ok(registryEntry, 'static question-bank generated-id focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-static-question-bank-generated-id-fixtures']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'staticQuestionBankGeneratedIdFixtureFilesValidated',
+    'staticQuestionBankGeneratedIdFixtureFindingsValidated',
+    'staticQuestionBankGeneratedIdFixtureParityValidated',
+  ]);
+  assert.match(validatorSource, /--focus-static-question-bank-generated-id-fixtures/);
+  assert.match(
+    validatorSource,
+    /validateStaticQuestionBankGeneratedIdFixtureParity\(\);[\s\S]*staticQuestionBankGeneratedIdFixtureFilesValidated[\s\S]*staticQuestionBankGeneratedIdFixtureFindingsValidated[\s\S]*staticQuestionBankGeneratedIdFixtureParityValidated/,
+  );
+  assert.match(staticQuestionBankTestSource, /--focus-static-question-bank-generated-id-fixtures/);
+  assert.match(staticQuestionBankTestSource, /generatedQuestionIdLiteralFindingsForSource/);
+
+  const summary = assertFocusedValidationSummary(
+    '--focus-static-question-bank-generated-id-fixtures',
+    registryEntry.summaryKeys,
+  );
+  assert.equal(summary.staticQuestionBankGeneratedIdFixtureFilesValidated, 1);
+  assert.equal(summary.staticQuestionBankGeneratedIdFixtureFindingsValidated, 0);
+  assert.equal(summary.staticQuestionBankGeneratedIdFixtureParityValidated, true);
+});
+
+test('static question-bank generated-id focus rejects literal generated fixture ids', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/tests/content-static-site-question-bank-parity.test.js')) {
+    return String(contents) + "\\nconst staleStaticGeneratedIdFixture = 'q999';\\n";
+  }
+  return contents;
+};
+process.argv.push('--focus-static-question-bank-generated-id-fixtures');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+  const output = `${result.stdout}\n${result.stderr}`;
+
+  assert.notEqual(result.status, 0);
+  assert.match(output, /static question-bank drift fixtures hardcode generated ids/);
+  assert.match(output, /q999/);
+});
+
 test('generated localization overlay parity rejects typoed focus flags', () => {
   const result = spawnSync(
     process.execPath,
