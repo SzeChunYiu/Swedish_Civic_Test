@@ -60,11 +60,18 @@ test('interactive elements expose explicit accessibility labels, roles, and stat
             `${relPath}:${index + 1}: Link should use accessibilityRole="link": ${line.trim()}`,
           );
         }
+        const hasNativeCheckedState =
+          tag.includes('accessibilityRole="switch"') ||
+          /accessibilityState=\{\{[^}]*checked:/.test(tag);
+        const hasWebCheckedMirror = tag.includes('aria-checked=');
+        const hasWebPressedToggleMirror =
+          tag.includes('accessibilityRole="button"') && tag.includes('aria-pressed=');
+
         if (
           tagName === 'Pressable' &&
-          (tag.includes('accessibilityRole="switch"') ||
-            /accessibilityState=\{\{[^}]*checked:/.test(tag)) &&
-          !tag.includes('aria-checked=')
+          hasNativeCheckedState &&
+          !hasWebCheckedMirror &&
+          !hasWebPressedToggleMirror
         ) {
           offenders.push(
             `${relPath}:${index + 1}: missing aria-checked mirror for web false state: ${line.trim()}`,

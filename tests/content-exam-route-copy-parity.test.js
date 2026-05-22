@@ -58,6 +58,14 @@ test('exam route shell and review copy follows the persisted settings language',
   assert.match(source, /accessibilityState=\{\{ checked: isSelected \}\}/);
   assert.doesNotMatch(source, /aria-selected=\{isSelected\}/);
   assert.doesNotMatch(source, /accessibilityState=\{\{ selected: isSelected \}\}/);
+  assert.match(source, /const isFlagged = Boolean\(flaggedQuestionIds\[question\.id\]\);/);
+  assert.match(source, /aria-pressed=\{isFlagged\}/);
+  assert.match(source, /accessibilityState=\{\{ checked: isFlagged \}\}/);
+  assert.doesNotMatch(source, /aria-selected=\{isFlagged\}/);
+  assert.doesNotMatch(
+    source,
+    /accessibilityState=\{\{\s*selected:\s*(?:isFlagged|Boolean\(flaggedQuestionIds\[question\.id\]\))\s*\}\}/,
+  );
   assert.match(source, /submitAccessibilityLabel: 'Skicka övningsprov'/);
   assert.match(source, /submitAccessibilityLabel: 'Submit mock exam'/);
   assert.match(source, /selectedAnswerLabel: 'Valt svar'/);
@@ -203,6 +211,38 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('exam route copy parity rejects selected-button flag toggles', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/exam.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('aria-pressed={isFlagged}', 'aria-selected={isFlagged}')
+      .replace('accessibilityState={{ checked: isFlagged }}', 'accessibilityState={{ selected: isFlagged }}');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-mock-exam-runtime-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /exam flag-for-review control must use pressed toggle semantics, not selected state/,
+  );
+});
+
 test('exam route copy parity rejects missing Swedish review labels', () => {
   const result = spawnSync(
     process.execPath,
@@ -258,7 +298,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /exam UHR references must receive settings language/,
+    /exam UHR references must receive settings language|submitted exam review must render localized UHR reference cards/,
   );
 });
 

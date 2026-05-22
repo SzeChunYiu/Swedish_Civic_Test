@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import type { Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 
 import {
   dismissBlockingModals,
@@ -82,6 +82,14 @@ async function expectNoPassVerdictCopy(page: Page) {
   await expect(page.getByText(unsupportedPassVerdictPattern)).toHaveCount(0);
 }
 
+async function expectTouchTarget(locator: Locator) {
+  const box = await locator.boundingBox();
+
+  expect(box).not.toBeNull();
+  expect(Math.floor(box?.width ?? 0)).toBeGreaterThanOrEqual(44);
+  expect(Math.floor(box?.height ?? 0)).toBeGreaterThanOrEqual(44);
+}
+
 async function openExamWithLanguage(page: Page, language: AppLanguage) {
   await seedSettingsLanguage(page, language);
   await markAboutTheTestSeen(page);
@@ -127,8 +135,30 @@ test('mock exam requires all answers before showing Swedish score and source pro
   await expect(activeReportLink).toBeVisible();
   await expect(activeReportLink).toHaveAttribute('href', /reportScreen=exam/);
   await expect(activeReportLink).not.toHaveAttribute('href', /selectedAnswer=/);
-  await page.getByLabel('Flagga fråga 1 för granskning').click();
-  await page.getByLabel('Flagga fråga 2 för granskning').click();
+  const flagQuestionOne = page.getByRole('button', { name: 'Flagga fråga 1 för granskning' });
+  await expectTouchTarget(flagQuestionOne);
+  await expect(flagQuestionOne).toHaveAttribute('aria-pressed', 'false');
+  await expect(flagQuestionOne).not.toHaveAttribute('aria-selected');
+  await flagQuestionOne.click();
+  const unflagQuestionOne = page.getByRole('button', {
+    name: 'Ta bort flagga från fråga 1',
+  });
+  await expect(unflagQuestionOne).toHaveAttribute('aria-pressed', 'true');
+  await expect(unflagQuestionOne).not.toHaveAttribute('aria-selected');
+  await unflagQuestionOne.click();
+  await expect(flagQuestionOne).toHaveAttribute('aria-pressed', 'false');
+  await flagQuestionOne.click();
+  await expect(unflagQuestionOne).toHaveAttribute('aria-pressed', 'true');
+
+  const flagQuestionTwo = page.getByRole('button', { name: 'Flagga fråga 2 för granskning' });
+  await expectTouchTarget(flagQuestionTwo);
+  await expect(flagQuestionTwo).toHaveAttribute('aria-pressed', 'false');
+  await expect(flagQuestionTwo).not.toHaveAttribute('aria-selected');
+  await flagQuestionTwo.click();
+  await expect(page.getByRole('button', { name: 'Ta bort flagga från fråga 2' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
 
   for (let questionNumber = 1; questionNumber <= totalQuestions; questionNumber += 1) {
     await page
@@ -226,7 +256,20 @@ test('mock exam provenance review follows English support mode', async ({ page }
     buttonName: /Provenance: UHR source/,
     sourceNoteLabel: /^Source note:/,
   });
-  await page.getByLabel('Flag question 1 for review').click();
+  const flagQuestionOne = page.getByRole('button', { name: 'Flag question 1 for review' });
+  await expectTouchTarget(flagQuestionOne);
+  await expect(flagQuestionOne).toHaveAttribute('aria-pressed', 'false');
+  await expect(flagQuestionOne).not.toHaveAttribute('aria-selected');
+  await flagQuestionOne.click();
+  const unflagQuestionOne = page.getByRole('button', {
+    name: 'Remove flag from question 1',
+  });
+  await expect(unflagQuestionOne).toHaveAttribute('aria-pressed', 'true');
+  await expect(unflagQuestionOne).not.toHaveAttribute('aria-selected');
+  await unflagQuestionOne.click();
+  await expect(flagQuestionOne).toHaveAttribute('aria-pressed', 'false');
+  await flagQuestionOne.click();
+  await expect(unflagQuestionOne).toHaveAttribute('aria-pressed', 'true');
 
   for (let questionNumber = 1; questionNumber <= totalQuestions; questionNumber += 1) {
     await page

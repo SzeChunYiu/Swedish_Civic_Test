@@ -487,6 +487,15 @@ test('exam route keeps flag-for-review state local to the current attempt', () =
   assert.match(examRouteSource, /copy\.questionNumber\(questionNumber\)/);
   assert.match(examRouteSource, /flaggedIndexes=\{flaggedIndexes\}/);
   assert.match(examRouteSource, /stateLabels=\{copy\.navigatorStateLabels\}/);
+  assert.match(examRouteSource, /const isFlagged = Boolean\(flaggedQuestionIds\[question\.id\]\);/);
+  assert.match(examRouteSource, /aria-pressed=\{isFlagged\}/);
+  assert.match(examRouteSource, /accessibilityState=\{\{ checked: isFlagged \}\}/);
+  assert.doesNotMatch(examRouteSource, /aria-selected=\{isFlagged\}/);
+  assert.doesNotMatch(
+    examRouteSource,
+    /accessibilityState=\{\{\s*selected:\s*(?:isFlagged|Boolean\(flaggedQuestionIds\[question\.id\]\))\s*\}\}/,
+  );
+  assert.match(examRouteSource, /minHeight: space\[6\]/);
   assert.match(examRouteSource, /copy\.flagQuestionAccessibilityLabel\(index \+ 1\)/);
   assert.match(examRouteSource, /copy\.unflagQuestionAccessibilityLabel\(index \+ 1\)/);
   assert.match(examRouteSource, /\{flaggedQuestionIds\[item\.questionId\] \? \(/);

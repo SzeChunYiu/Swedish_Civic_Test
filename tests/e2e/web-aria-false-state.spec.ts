@@ -17,6 +17,15 @@ type PracticeAriaLocaleCase = {
   supplementaryOn: string;
 };
 
+type ExamFlagLocaleCase = {
+  activeCount: string;
+  flagLabel: string;
+  language: PracticeHubLanguage;
+  startLabel: string;
+  title: string;
+  unflagLabel: string;
+};
+
 const localeCases: PracticeAriaLocaleCase[] = [
   {
     aboutSourcesClose: 'Close source details',
@@ -43,6 +52,25 @@ const localeCases: PracticeAriaLocaleCase[] = [
     sourceNote: /^Källanteckning:/,
     supplementaryOff: 'Bara UHR-frågor',
     supplementaryOn: 'Inkludera tilläggsfrågor',
+  },
+];
+
+const examFlagCases: ExamFlagLocaleCase[] = [
+  {
+    activeCount: '0/20 answered',
+    flagLabel: 'Flag question 1 for review',
+    language: 'en',
+    startLabel: 'Start mock exam',
+    title: 'Mock exam',
+    unflagLabel: 'Remove flag from question 1',
+  },
+  {
+    activeCount: '0/20 besvarade',
+    flagLabel: 'Flagga fråga 1 för granskning',
+    language: 'sv',
+    startLabel: 'Starta övningsprov',
+    title: 'Övningsprov',
+    unflagLabel: 'Ta bort flagga från fråga 1',
   },
 ];
 
@@ -149,6 +177,50 @@ for (const labels of localeCases) {
     await page.keyboard.press('Enter');
     await expect(provenance).toHaveAttribute('aria-expanded', 'false');
     await expect(sourceNote).toHaveCount(0);
+
+    expect(consoleErrors).toEqual([]);
+  });
+}
+
+for (const labels of examFlagCases) {
+  test(`Exam flag control exposes false pressed state on web in ${labels.language}`, async ({
+    page,
+  }) => {
+    const consoleErrors: string[] = [];
+
+    page.on('console', (message) => {
+      if (message.type() === 'error') consoleErrors.push(message.text());
+    });
+    page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await seedSettingsLanguage(page, labels.language);
+    await markAboutTheTestSeen(page);
+
+    await page.goto('/exam', { waitUntil: 'networkidle' });
+    await dismissBlockingModals(page);
+    await expect(page.getByRole('heading', { name: labels.title }).first()).toBeVisible();
+    const activeCount = page.getByText(labels.activeCount);
+    if ((await activeCount.count()) === 0) {
+      const start = page.getByRole('button', { name: labels.startLabel });
+      await expect(start).toBeEnabled();
+      await start.click();
+    }
+    await expect(activeCount).toBeVisible();
+
+    const flag = page.getByRole('button', { name: labels.flagLabel });
+    await expectTouchTarget(flag);
+    await expect(flag).toHaveAttribute('aria-pressed', 'false');
+    await expect(flag).not.toHaveAttribute('aria-selected');
+    await flag.click();
+
+    const unflag = page.getByRole('button', { name: labels.unflagLabel });
+    await expectTouchTarget(unflag);
+    await expect(unflag).toHaveAttribute('aria-pressed', 'true');
+    await expect(unflag).not.toHaveAttribute('aria-selected');
+    await unflag.click();
+    await expect(flag).toHaveAttribute('aria-pressed', 'false');
+    await expect(flag).not.toHaveAttribute('aria-selected');
 
     expect(consoleErrors).toEqual([]);
   });

@@ -827,63 +827,72 @@ export default function Screen() {
         </Text>
       </View>
 
-      {examQuestions.map((question, index) => (
-        <View key={question.id} style={styles.questionCard}>
-          <View style={styles.questionHeader}>
-            <Text style={styles.questionMeta}>{copy.questionNumber(index + 1)}</Text>
-            <Pressable
-              accessibilityLabel={
-                flaggedQuestionIds[question.id]
-                  ? copy.unflagQuestionAccessibilityLabel(index + 1)
-                  : copy.flagQuestionAccessibilityLabel(index + 1)
-              }
-              accessibilityRole="button"
-              accessibilityState={{ selected: Boolean(flaggedQuestionIds[question.id]) }}
-              onPress={() => toggleFlaggedQuestion(question.id)}
-              style={styles.flagButton}
-            >
-              <Text style={styles.flagButtonText}>
-                {flaggedQuestionIds[question.id] ? copy.flaggedQuestionLabel : copy.reviewBadge}
-              </Text>
-            </Pressable>
-          </View>
-          <ProvenanceBadge language={language} question={question} />
-          <Text style={styles.questionText}>{getQuestionDisplayText(question, language)}</Text>
-          <QuestionSourceCitation
-            bodyStyle={styles.questionSourceCitation}
-            citationText={getQuestionSourceCitation(question, language)}
-            language={language}
-            question={question}
-          />
-          <QuestionReportLink language={language} question={question} screen="exam" />
-          <View
-            aria-label={copy.answerGroupAccessibilityLabel(index + 1)}
-            accessibilityLabel={copy.answerGroupAccessibilityLabel(index + 1)}
-            accessibilityRole="radiogroup"
-            style={styles.options}
-          >
-            {question.options.map((option) => {
-              const isSelected = answers[question.id] === option.id;
-              const optionText = language === 'en' ? option.textEn : option.textSv;
-              return (
-                <Pressable
-                  key={option.id}
-                  aria-checked={isSelected}
-                  accessibilityLabel={copy.answerAccessibilityLabel(optionText, index + 1)}
-                  accessibilityRole="radio"
-                  accessibilityState={{ checked: isSelected }}
-                  onPress={() => recordQuestionAnswer(question.id, option.id)}
-                  style={[styles.option, isSelected ? styles.optionSelected : null]}
+      {examQuestions.map((question, index) => {
+        const isFlagged = Boolean(flaggedQuestionIds[question.id]);
+
+        return (
+          <View key={question.id} style={styles.questionCard}>
+            <View style={styles.questionHeader}>
+              <Text style={styles.questionMeta}>{copy.questionNumber(index + 1)}</Text>
+              <Pressable
+                aria-pressed={isFlagged}
+                accessibilityLabel={
+                  isFlagged
+                    ? copy.unflagQuestionAccessibilityLabel(index + 1)
+                    : copy.flagQuestionAccessibilityLabel(index + 1)
+                }
+                accessibilityRole="button"
+                accessibilityState={{ checked: isFlagged }}
+                onPress={() => toggleFlaggedQuestion(question.id)}
+                style={[styles.flagButton, isFlagged ? styles.flagButtonActive : null]}
+              >
+                <Text
+                  style={[styles.flagButtonText, isFlagged ? styles.flagButtonTextActive : null]}
                 >
-                  <Text style={[styles.optionText, isSelected ? styles.optionTextSelected : null]}>
-                    {optionText}
-                  </Text>
-                </Pressable>
-              );
-            })}
+                  {isFlagged ? copy.flaggedQuestionLabel : copy.reviewBadge}
+                </Text>
+              </Pressable>
+            </View>
+            <ProvenanceBadge language={language} question={question} />
+            <Text style={styles.questionText}>{getQuestionDisplayText(question, language)}</Text>
+            <QuestionSourceCitation
+              bodyStyle={styles.questionSourceCitation}
+              citationText={getQuestionSourceCitation(question, language)}
+              language={language}
+              question={question}
+            />
+            <QuestionReportLink language={language} question={question} screen="exam" />
+            <View
+              aria-label={copy.answerGroupAccessibilityLabel(index + 1)}
+              accessibilityLabel={copy.answerGroupAccessibilityLabel(index + 1)}
+              accessibilityRole="radiogroup"
+              style={styles.options}
+            >
+              {question.options.map((option) => {
+                const isSelected = answers[question.id] === option.id;
+                const optionText = language === 'en' ? option.textEn : option.textSv;
+                return (
+                  <Pressable
+                    key={option.id}
+                    aria-checked={isSelected}
+                    accessibilityLabel={copy.answerAccessibilityLabel(optionText, index + 1)}
+                    accessibilityRole="radio"
+                    accessibilityState={{ checked: isSelected }}
+                    onPress={() => recordQuestionAnswer(question.id, option.id)}
+                    style={[styles.option, isSelected ? styles.optionSelected : null]}
+                  >
+                    <Text
+                      style={[styles.optionText, isSelected ? styles.optionTextSelected : null]}
+                    >
+                      {optionText}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
           </View>
-        </View>
-      ))}
+        );
+      })}
 
       <Button
         aria-disabled={!canSubmit}
@@ -972,16 +981,26 @@ function createStyles(themeColors: ThemeColors) {
       textTransform: 'uppercase',
     },
     flagButton: {
+      alignItems: 'center',
       borderColor: themeColors.border,
       borderRadius: radius.pill,
       borderWidth: space.hairline,
+      justifyContent: 'center',
+      minHeight: space[6],
       paddingHorizontal: space[1.5],
       paddingVertical: space[0.75],
+    },
+    flagButtonActive: {
+      backgroundColor: themeColors.badgeBlueBg,
+      borderColor: themeColors.badgeBlueText,
     },
     flagButtonText: {
       color: themeColors.textMuted,
       fontSize: typography.caption.fontSize,
       fontWeight: typography.bodyBold.fontWeight,
+    },
+    flagButtonTextActive: {
+      color: themeColors.badgeBlueText,
     },
     questionText: {
       color: themeColors.text,
