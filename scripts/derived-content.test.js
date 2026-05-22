@@ -1510,6 +1510,50 @@ test('derivePublishedQuestions renders q146 political-rights true/false as direc
   assert.doesNotMatch(text, /^(?:Försöka övertyga|Hindra andra|Try to persuade|Stop others)/im);
 });
 
+test('derivePublishedQuestions renders task-question true/false variants as direct propositions', () => {
+  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
+  const { sourceQuestions } = loadTs('data/questions.ts');
+  const generated = derivePublishedQuestions(sourceQuestions, sourceQuestions.length + 1);
+  const byId = new Map(generated.map((question) => [question.id, question]));
+  const expectedRows = [
+    {
+      id: generatedQuestionId(sourceQuestions, 'q022', 'trueStatement'),
+      sv: 'Riksdagen beslutar om lagar och hur statens pengar ska användas.',
+      en: 'The Riksdag passes laws and decides how state funds are used.',
+      correctOptionId: 'true',
+    },
+    {
+      id: generatedQuestionId(sourceQuestions, 'q022', 'falseStatement'),
+      sv: 'Riksdagen sköter regionernas kollektivtrafik.',
+      en: 'The Riksdag manages regional public transport.',
+      correctOptionId: 'false',
+    },
+    {
+      id: generatedQuestionId(sourceQuestions, 'q059', 'trueStatement'),
+      sv: 'Sametinget representerar den samiska befolkningen i frågor om språk, kultur och identitet.',
+      en: 'The Sami Parliament represents the Sami population on questions of language, culture, and identity.',
+      correctOptionId: 'true',
+    },
+    {
+      id: generatedQuestionId(sourceQuestions, 'q059', 'falseStatement'),
+      sv: 'Sametinget beslutar statens budget.',
+      en: 'The Sami Parliament decides the state budget.',
+      correctOptionId: 'false',
+    },
+  ];
+  const residualPattern = /\b(?:har uppgiften att|has the task to|One task of .+? is to)\b/i;
+
+  for (const expected of expectedRows) {
+    const question = byId.get(expected.id);
+    assert.ok(question, `${expected.id} should be generated from source data`);
+    assert.equal(question.type, 'true_false');
+    assert.equal(question.questionSv, expected.sv);
+    assert.equal(question.questionEn, expected.en);
+    assert.equal(question.correctOptionId, expected.correctOptionId);
+    assert.doesNotMatch(`${question.questionSv}\n${question.questionEn}`, residualPattern);
+  }
+});
+
 test('derivePublishedQuestions cleans residual generated true/false splice rows', () => {
   const { questions, sourceQuestions } = loadTs('data/questions.ts');
   const byId = new Map(questions.map((question) => [question.id, question]));
