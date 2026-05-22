@@ -20,6 +20,38 @@ function parseValidationSummary() {
   return JSON.parse(match[0]);
 }
 
+function countMatches(source, pattern) {
+  return source.match(pattern)?.length ?? 0;
+}
+
+function assertPracticeAudioAutoplaySingleton(source) {
+  assert.equal(
+    countMatches(source, /const hasSelectedAnswer =/g),
+    1,
+    'Practice must declare hasSelectedAnswer exactly once',
+  );
+  assert.equal(
+    countMatches(source, /const questionSpeechText = useMemo\(/g),
+    1,
+    'Practice must declare questionSpeechText exactly once',
+  );
+  assert.equal(
+    countMatches(source, /\buseQuestionAudioAutoplay\(\{/g),
+    1,
+    'Practice must call useQuestionAudioAutoplay exactly once',
+  );
+  assert.match(
+    source,
+    /questionKey:\s*question\s*\?\s*`practice:\$\{question\.id\}:\$\{shuffleSessionId\}`\s*:\s*null/,
+    'Practice autoplay key must include question id and shuffle session id',
+  );
+  assert.doesNotMatch(
+    source,
+    /questionKey:\s*question\s*\?\s*`practice:\$\{question\.id\}`\s*:\s*null/,
+    'Practice autoplay key must not fall back to the question id alone',
+  );
+}
+
 test('learning AudioButton keeps playback guards and accessibility copy in parity', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(
@@ -138,7 +170,39 @@ test('listen-first question audio is opt-in, rate-aware, and excluded from timed
     assert.match(routeSource, /<FeedbackAudioButton[\s\S]*rate=\{audioPlaybackRate\}/);
   }
 
+  assertPracticeAudioAutoplaySingleton(practiceSource);
   assert.doesNotMatch(examSource, /useQuestionAudioAutoplay|listenFirstAudioEnabled|AudioButton/);
+});
+
+test('Practice audio autoplay source guard rejects duplicate or weak-key drift', () => {
+  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
+  const duplicatedAutoplaySource = `${practiceSource}
+const hasSelectedAnswer = false;
+const questionSpeechText = useMemo(() => '', []);
+useQuestionAudioAutoplay({
+  audioEnabled,
+  listenFirstAudioEnabled,
+  questionKey: question ? \`practice:\${question.id}\` : null,
+  rate: audioPlaybackRate,
+  speechText: questionSpeechText,
+  stopSignal: hasSelectedAnswer,
+});
+`;
+
+  assert.throws(
+    () => assertPracticeAudioAutoplaySingleton(duplicatedAutoplaySource),
+    /Practice must declare hasSelectedAnswer exactly once/,
+  );
+  assert.throws(
+    () =>
+      assertPracticeAudioAutoplaySingleton(
+        practiceSource.replace(
+          '`practice:${question.id}:${shuffleSessionId}`',
+          '`practice:${question.id}`',
+        ),
+      ),
+    /Practice autoplay key must include question id and shuffle session id/,
+  );
 });
 
 test('AudioButton accessibility parity rejects untrimmed playback drift', () => {
