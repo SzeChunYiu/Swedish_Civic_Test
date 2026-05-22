@@ -1264,7 +1264,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     ],
     0,
     'Kommunerna ser till att det finns skolor och utbildning och ansvarar också för hjälp till gamla och sjuka. Därför är barnomsorg, skolor och utbildning, äldreomsorg och socialtjänst exempel på kommunal välfärd.',
-    'Municipalities make sure schools and education are available and are also responsible for help for older and sick people. That is why childcare, schools and education, elderly care, and social services are examples of municipal welfare.',
+    'Municipalities make sure schools and education are available and are also responsible for help for older adults and people who are ill. That is why childcare, schools and education, elderly care, and social services are examples of municipal welfare.',
     ['municipal-welfare', 'schools', 'social-services'],
   ),
   trueFalse(
@@ -1275,7 +1275,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     'Swedish municipalities must offer older people support and help.',
     true,
     'Kommunerna ansvarar för att äldre och sjuka personer kan få hjälp när de inte klarar vardagen på egen hand. Svensk lag säger att kommuner ska erbjuda äldre personer stöd och hjälp, till exempel vård och service i hemmet.',
-    'Municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own. Swedish law requires municipalities to offer older people support and help, including care and services at home.',
+    'Municipalities are responsible for helping older adults and people who are ill when they cannot manage everyday life on their own. Swedish law requires municipalities to offer older people support and help, including care and services at home.',
     ['elderly-care', 'municipality', 'welfare'],
   ),
   single(

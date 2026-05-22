@@ -598,6 +598,10 @@ const QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS = [
   /\btax-funded\b/i,
   /\btax revenue pays for it\b/i,
 ];
+const QUESTION_OLDER_SICK_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bolder and sick people\b/i,
+  /\bhelp(?:ing)? older and sick people\b/i,
+];
 const QUESTION_Q071_SOCIAL_INSURANCE_OVERLAP_PATTERNS = [
   /\b(?:sjukförsäkring|föräldraförsäkring|arbetslöshetsförsäkring)\b/i,
   /\b(?:sickness insurance|parental insurance|unemployment insurance)\b/i,
@@ -5791,6 +5795,7 @@ function translationNaturalnessGuardParityIsValidated() {
     questionGeneratedTrueFalseNaturalnessValidated === publishedQuestions &&
     questionLuciaRoleEnglishNaturalnessValidated === publishedQuestions &&
     questionEuCooperationEnglishNaturalnessValidated === publishedQuestions &&
+    questionOlderSickEnglishNaturalnessValidated === publishedQuestions &&
     questionCouncilOfEuropeWorkForEnglishNaturalnessValidated === publishedQuestions &&
     questionMayDayEnglishNaturalnessValidated === publishedQuestions &&
     questionPublicSectorEnglishNaturalnessValidated === publishedQuestions &&
@@ -7252,6 +7257,12 @@ function questionText(
 
 function findQuestionStateWelfareEnglishNaturalnessIssue(question) {
   return QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(questionText(question, ['questionEn', 'explanationEn'])),
+  );
+}
+
+function findQuestionOlderSickEnglishNaturalnessIssue(question) {
+  return QUESTION_OLDER_SICK_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
     pattern.test(questionText(question, ['questionEn', 'explanationEn'])),
   );
 }
@@ -9401,6 +9412,9 @@ function validateQuestionSchema(question, index) {
   if (findQuestionStateWelfareEnglishNaturalnessIssue(question)) {
     reject(`${label} uses stilted state-welfare English wording`);
   }
+  if (findQuestionOlderSickEnglishNaturalnessIssue(question)) {
+    reject(`${label} uses literal older-and-sick English wording`);
+  }
   if (findQuestionLuciaExplanationRoleScaffoldIssue(question)) {
     reject(`${label} uses Lucia role-scaffold explanation wording`);
   }
@@ -9996,6 +10010,7 @@ let somaliHolidayFoodNaturalnessStaticRowsValidated = 0;
 let somaliHolidayFoodNaturalnessParityValidated = false;
 let questionLuciaRoleEnglishNaturalnessValidated = 0;
 let questionEuCooperationEnglishNaturalnessValidated = 0;
+let questionOlderSickEnglishNaturalnessValidated = 0;
 let questionReligiousFreedom1951NaturalnessValidated = 0;
 let questionReligiousFreedomParallelismValidated = 0;
 let questionReligiousFreedomParallelismTargetRowsValidated = 0;
@@ -24950,6 +24965,10 @@ function validatePublishedQuestionNaturalnessGuards() {
         `${label} uses stilted state-welfare English wording`,
       ],
       [
+        findQuestionOlderSickEnglishNaturalnessIssue(question),
+        `${label} uses literal older-and-sick English wording`,
+      ],
+      [
         findQuestionLuciaExplanationRoleScaffoldIssue(question),
         `${label} uses Lucia role-scaffold explanation wording`,
       ],
@@ -25309,6 +25328,8 @@ if (Array.isArray(questions)) {
         findQuestionLuciaRoleEnglishNaturalnessIssue(question);
       const euCooperationEnglishNaturalnessIssue =
         findQuestionEuCooperationEnglishNaturalnessIssue(question);
+      const olderSickEnglishNaturalnessIssue =
+        findQuestionOlderSickEnglishNaturalnessIssue(question);
       const religiousFreedomParallelismIssue =
         findQuestionReligiousFreedomOptionParallelismIssue(question);
       const publicSectorEnglishNaturalnessIssue =
@@ -25379,6 +25400,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses missing-article EU cooperation English wording`);
       } else {
         questionEuCooperationEnglishNaturalnessValidated += 1;
+      }
+      if (olderSickEnglishNaturalnessIssue) {
+        fail(`${label} uses literal older-and-sick English wording`);
+      } else {
+        questionOlderSickEnglishNaturalnessValidated += 1;
       }
       if (religiousFreedomParallelismIssue) {
         fail(`${label} uses nonparallel religious-freedom option wording`);
@@ -26053,6 +26079,7 @@ console.log(
       somaliHolidayFoodNaturalnessParityValidated,
       questionLuciaRoleEnglishNaturalnessValidated,
       questionEuCooperationEnglishNaturalnessValidated,
+      questionOlderSickEnglishNaturalnessValidated,
       questionReligiousFreedom1951NaturalnessValidated,
       questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
       questionMayDayEnglishNaturalnessValidated,

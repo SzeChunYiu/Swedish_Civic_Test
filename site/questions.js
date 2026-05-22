@@ -7549,7 +7549,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Municipalities make sure schools and education are available and are also responsible for help for older and sick people. That is why childcare, schools and education, elderly care, and social services are examples of municipal welfare.",
+      "en": "Municipalities make sure schools and education are available and are also responsible for help for older adults and people who are ill. That is why childcare, schools and education, elderly care, and social services are examples of municipal welfare.",
       "sv": "Kommunerna ser till att det finns skolor och utbildning och ansvarar också för hjälp till gamla och sjuka. Därför är barnomsorg, skolor och utbildning, äldreomsorg och socialtjänst exempel på kommunal välfärd.",
       "zh-Hant": "市鎮確保有學校和教育，也負責為老人和病人提供幫助。因此兒童照護、學校和教育、老人照護以及社會服務都是市鎮福利的例子。",
       "zh-Hans": "市镇确保有学校和教育，也负责为老人和病人提供帮助。因此儿童照护、学校和教育、老人照护以及社会服务都是市镇福利的例子。",
@@ -7627,7 +7627,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own. Swedish law requires municipalities to offer older people support and help, including care and services at home.",
+      "en": "Municipalities are responsible for helping older adults and people who are ill when they cannot manage everyday life on their own. Swedish law requires municipalities to offer older people support and help, including care and services at home.",
       "sv": "Kommunerna ansvarar för att äldre och sjuka personer kan få hjälp när de inte klarar vardagen på egen hand. Svensk lag säger att kommuner ska erbjuda äldre personer stöd och hjälp, till exempel vård och service i hemmet.",
       "zh-Hant": "市鎮負責在老人和病人無法自行處理日常生活時提供幫助。瑞典法律規定，市鎮必須為老年人提供支持和幫助，例如居家照護和服務。",
       "zh-Hans": "市镇负责在老人和病人无法自行处理日常生活时提供帮助。瑞典法律规定，市镇必须为老年人提供支持和帮助，例如居家照护和服务。",
@@ -36893,7 +36893,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Municipalities make sure schools and education are available and are also responsible for help for older and sick people. That is why childcare, schools and education, elderly care, and social services are examples of municipal welfare.",
+      "en": "Municipalities make sure schools and education are available and are also responsible for help for older adults and people who are ill. That is why childcare, schools and education, elderly care, and social services are examples of municipal welfare.",
       "sv": "Kommunerna ser till att det finns skolor och utbildning och ansvarar också för hjälp till gamla och sjuka. Därför är barnomsorg, skolor och utbildning, äldreomsorg och socialtjänst exempel på kommunal välfärd."
     },
     "source": {
@@ -36933,7 +36933,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Municipalities make sure schools and education are available and are also responsible for help for older and sick people. That is why childcare, schools and education, elderly care, and social services are examples of municipal welfare.",
+      "en": "Municipalities make sure schools and education are available and are also responsible for help for older adults and people who are ill. That is why childcare, schools and education, elderly care, and social services are examples of municipal welfare.",
       "sv": "Kommunerna ser till att det finns skolor och utbildning och ansvarar också för hjälp till gamla och sjuka. Därför är barnomsorg, skolor och utbildning, äldreomsorg och socialtjänst exempel på kommunal välfärd."
     },
     "source": {
@@ -36973,7 +36973,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Municipalities make sure schools and education are available and are also responsible for help for older and sick people. That is why childcare, schools and education, elderly care, and social services are examples of municipal welfare.",
+      "en": "Municipalities make sure schools and education are available and are also responsible for help for older adults and people who are ill. That is why childcare, schools and education, elderly care, and social services are examples of municipal welfare.",
       "sv": "Kommunerna ser till att det finns skolor och utbildning och ansvarar också för hjälp till gamla och sjuka. Därför är barnomsorg, skolor och utbildning, äldreomsorg och socialtjänst exempel på kommunal välfärd."
     },
     "source": {
@@ -37061,7 +37061,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Municipalities make sure schools and education are available and are also responsible for help for older and sick people. That is why childcare, schools and education, elderly care, and social services are examples of municipal welfare.",
+      "en": "Municipalities make sure schools and education are available and are also responsible for help for older adults and people who are ill. That is why childcare, schools and education, elderly care, and social services are examples of municipal welfare.",
       "sv": "Kommunerna ser till att det finns skolor och utbildning och ansvarar också för hjälp till gamla och sjuka. Därför är barnomsorg, skolor och utbildning, äldreomsorg och socialtjänst exempel på kommunal välfärd."
     },
     "source": {
@@ -37091,7 +37091,7 @@
     },
     "opts": [
       {
-        "en": "Municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own.",
+        "en": "Municipalities are responsible for helping older adults and people who are ill when they cannot manage everyday life on their own.",
         "sv": "Kommunerna ansvarar för att äldre och sjuka personer kan få hjälp när de inte klarar vardagen på egen hand."
       },
       {
@@ -37109,7 +37109,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own. Swedish law requires municipalities to offer older people support and help, including care and services at home.",
+      "en": "Municipalities are responsible for helping older adults and people who are ill when they cannot manage everyday life on their own. Swedish law requires municipalities to offer older people support and help, including care and services at home.",
       "sv": "Kommunerna ansvarar för att äldre och sjuka personer kan få hjälp när de inte klarar vardagen på egen hand. Svensk lag säger att kommuner ska erbjuda äldre personer stöd och hjälp, till exempel vård och service i hemmet."
     },
     "source": {
@@ -37134,7 +37134,7 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "Municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own.",
+      "en": "Municipalities are responsible for helping older adults and people who are ill when they cannot manage everyday life on their own.",
       "sv": "Kommunerna ansvarar för att äldre och sjuka personer kan få hjälp när de inte klarar vardagen på egen hand."
     },
     "opts": [
@@ -37149,7 +37149,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own. Swedish law requires municipalities to offer older people support and help, including care and services at home.",
+      "en": "Municipalities are responsible for helping older adults and people who are ill when they cannot manage everyday life on their own. Swedish law requires municipalities to offer older people support and help, including care and services at home.",
       "sv": "Kommunerna ansvarar för att äldre och sjuka personer kan få hjälp när de inte klarar vardagen på egen hand. Svensk lag säger att kommuner ska erbjuda äldre personer stöd och hjälp, till exempel vård och service i hemmet."
     },
     "source": {
@@ -37219,7 +37219,7 @@
     },
     "opts": [
       {
-        "en": "Municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own.",
+        "en": "Municipalities are responsible for helping older adults and people who are ill when they cannot manage everyday life on their own.",
         "sv": "Kommunerna ansvarar för att äldre och sjuka personer kan få hjälp när de inte klarar vardagen på egen hand."
       },
       {
@@ -37237,7 +37237,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own. Swedish law requires municipalities to offer older people support and help, including care and services at home.",
+      "en": "Municipalities are responsible for helping older adults and people who are ill when they cannot manage everyday life on their own. Swedish law requires municipalities to offer older people support and help, including care and services at home.",
       "sv": "Kommunerna ansvarar för att äldre och sjuka personer kan få hjälp när de inte klarar vardagen på egen hand. Svensk lag säger att kommuner ska erbjuda äldre personer stöd och hjälp, till exempel vård och service i hemmet."
     },
     "source": {
