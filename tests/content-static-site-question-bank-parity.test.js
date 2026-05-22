@@ -7,9 +7,11 @@ const test = require('node:test');
 const {
   buildPublishedQuestionListFromSourceQuestions,
   buildSiteQuestionBank,
+  chapterLocalizationWelfareGlossOffenders,
   formatStaticQuestionBankDrift,
   generateStaticSiteQuestionBankJs,
   loadCanonicalExportInputs,
+  parseStaticSiteQuestionBank,
   summarizeStaticQuestionBankDrift,
 } = require('../scripts/export-site-question-bank');
 const {
@@ -30,7 +32,6 @@ const {
 const repoRoot = path.resolve(__dirname, '..');
 const SOMALI_ENGLISH_GEOGRAPHY_TERM_PATTERN = /\b(?:Mediterranean|Baltic|Atlantic|Gulf Stream)\b/;
 const SOMALI_HOLIDAY_FOOD_ENGLISH_TOKEN_PATTERN = /\b(?:herring|strawberries|Easter)\b/i;
-const CHAPTER_LOCALIZATION_ENGLISH_WELFARE_GLOSS_PATTERN = /\(welfare\)/i;
 const PUBLIC_SERVICE_LOANWORD_PATTERN = /\bpublic service\b|\(welfare\)/i;
 const PUBLIC_SECTOR_STALE_STATIC_PATTERN =
   /\bWhat is meant by the public sector in Sweden\b|\bActivities for which the state, regions, and municipalities are responsible\b|\bThe public sector(?: in Sweden)? means\b/i;
@@ -39,7 +40,11 @@ const GENERATED_SINGLE_CHOICE_ANSWER_LOGIC_STATIC_PATTERN =
 const SUFFRAGE_1921_STALE_STATIC_PATTERN =
   /\b1921 is the year of the election asked about here\b|\bthe year of the election asked about here\b/i;
 const SUFFRAGE_1921_EXPECTED_STATIC_EXPLANATION =
-  "the first Riksdag election with both women's and men's voting rights and women's eligibility was held in 1921";
+  'The first Riksdag election in which both women and men could vote and women could become members of the Riksdag was held in 1921';
+const Q080_SUFFRAGE_STALE_STATIC_PATTERN = SUFFRAGE_1921_STALE_STATIC_PATTERN;
+const Q080_SUFFRAGE_REVISED_STATIC_PATTERN = new RegExp(
+  SUFFRAGE_1921_EXPECTED_STATIC_EXPLANATION.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
+);
 const SOURCE_CRITICISM_STALE_STATIC_PATTERN =
   /具有(?:來|来)源批判意識|أن تكون ناقدًا للمصادر|سەرچاوە-ڕەخنەیی|منبع‌سنج بودن|krytyczne podejście do źródeł|si naqdineed loo eego ilaha|ንምንጭታት ብነቐፌታዊ መንገዲ ምርኣይ|kaynaklara eleştirel yaklaşmak|критично ставитися до джерел/i;
 const KOMMUN_REGION_STATIC_LOCALE_PATTERNS = {
@@ -139,26 +144,6 @@ function staticQuestionToI18nQuestion(question) {
 
 function staticQuestionVisibleText(question) {
   return JSON.stringify([question.q, question.why, question.opts]);
-}
-
-function chapterLocalizationWelfareGlossOffenders(chapters, scope) {
-  const offenders = [];
-  for (const chapter of chapters) {
-    for (const field of ['title', 'description']) {
-      const localized = chapter[field] || {};
-      for (const [locale, value] of Object.entries(localized)) {
-        if (BASE_LOCALES.has(locale)) continue;
-        if (
-          typeof value === 'string' &&
-          CHAPTER_LOCALIZATION_ENGLISH_WELFARE_GLOSS_PATTERN.test(value)
-        ) {
-          offenders.push(`${scope}.chapter${chapter.id}.${field}.${locale}`);
-        }
-      }
-    }
-  }
-
-  return offenders;
 }
 
 test('static site question bank is semantically generated from canonical content', () => {
@@ -521,6 +506,49 @@ test('chapter localization metadata avoids parenthetical English welfare glosses
     chapterLocalizationWelfareGlossOffenders(context.window.SMT_CHAPTERS_META, 'static'),
     [],
   );
+});
+
+test('chapter localization welfare gloss guard reports canonical and static mutations', () => {
+  const canonical = loadCanonicalExportInputs();
+  const mutatedChapters = canonical.chapters.map((chapter) => {
+    if (chapter.id !== 'ch09') return chapter;
+    return {
+      ...chapter,
+      nameEn: `${chapter.nameEn} (welfare)`,
+      descriptionSv: `${chapter.descriptionSv} (welfare)`,
+      nameText: {
+        ...chapter.nameText,
+        so: 'Caafimaad iyo daryeel (welfare)',
+      },
+      descriptionText: {
+        ...chapter.descriptionText,
+        pl: 'Zdrowie i opieka społeczna (welfare)',
+      },
+    };
+  });
+  const expectedBank = buildSiteQuestionBank({
+    questions: canonical.questions,
+    chapters: mutatedChapters,
+    getQuestionProvenance: canonical.getQuestionProvenance,
+  });
+  const staticBank = parseStaticSiteQuestionBank(
+    generateStaticSiteQuestionBankJs({
+      questions: canonical.questions,
+      chapters: mutatedChapters,
+      getQuestionProvenance: canonical.getQuestionProvenance,
+    }),
+    'mutated-static-chapter-metadata.js',
+  );
+
+  const expectedOffenders = ['canonical.chapter9.title.so', 'canonical.chapter9.description.pl'];
+  assert.deepEqual(
+    chapterLocalizationWelfareGlossOffenders(expectedBank.chapters, 'canonical'),
+    expectedOffenders,
+  );
+  assert.deepEqual(chapterLocalizationWelfareGlossOffenders(staticBank.chapters, 'static'), [
+    'static.chapter9.title.so',
+    'static.chapter9.description.pl',
+  ]);
 });
 
 test('static site question bank drift report classifies format-only mismatches', () => {
