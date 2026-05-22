@@ -24,6 +24,13 @@ const selectors = new Map([
       description: 'focused XP rules parity gate',
     },
   ],
+  [
+    'mobile-ads-consent',
+    {
+      script: 'test:mobile-ads-consent',
+      description: 'focused Mobile Ads consent runtime and schema gate',
+    },
+  ],
 ]);
 
 function supportedSelectorText() {

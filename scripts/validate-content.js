@@ -1914,7 +1914,7 @@ const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 15;
 const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 32;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
-const EXPECTED_MOBILE_ADS_CONSENT_RUNTIME_CASES = 7;
+const EXPECTED_MOBILE_ADS_CONSENT_RUNTIME_CASES = 9;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   {
@@ -18624,6 +18624,7 @@ function validateMobileAdsConsentTypeSchemaParity() {
 
 function validateMobileAdsConsentRuntimeParity() {
   let valid = true;
+  let consentSource = '';
   let mobileConsentSource = '';
 
   function reject(message) {
@@ -18632,12 +18633,13 @@ function validateMobileAdsConsentRuntimeParity() {
   }
 
   try {
+    consentSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/consent.ts'), 'utf8');
     mobileConsentSource = fs.readFileSync(
       path.join(repoRoot, 'lib/monetization/mobileAdsConsent.ts'),
       'utf8',
     );
   } catch (error) {
-    reject(`lib/monetization/mobileAdsConsent.ts could not be read: ${error.message}`);
+    reject(`Mobile Ads consent runtime sources could not be read: ${error.message}`);
     return;
   }
 
@@ -18654,6 +18656,18 @@ function validateMobileAdsConsentRuntimeParity() {
         mobileConsentSource,
       ),
       'Mobile Ads consent runtime must normalize invalid regions before building consent state',
+    ],
+    [
+      /return\s*\{[\s\S]*region:\s*normalizeAdConsentRegion\(region\),[\s\S]*\};/.test(
+        mobileConsentSource,
+      ),
+      'Mobile Ads consent state creation and collection must store normalized regions',
+    ],
+    [
+      /export function regionRequiresUmpConsent\(region: unknown\): boolean \{\s*const normalizedRegion = normalizeAdConsentRegion\(region\);\s*return normalizedRegion === 'eea' \|\| normalizedRegion === 'uk' \|\| normalizedRegion === 'unknown';\s*\}/.test(
+        consentSource,
+      ),
+      'Mobile Ads consent must normalize runtime region values before UMP checks',
     ],
     [
       /const\s+currentTrackingTransparencyStatus\s*=\s*await\s+getCurrentTrackingTransparencyStatus\([\s\S]*?\);\s*const\s+trackingTransparencyStatus\s*=\s*await\s+requestTrackingTransparencyStatusIfNeeded\([\s\S]*?currentTrackingTransparencyStatus[\s\S]*?\);\s*const\s+umpConsentStatus\s*=\s*await\s+resolveUmpConsentStatus\([\s\S]*?normalizedRegion[\s\S]*?\);/.test(

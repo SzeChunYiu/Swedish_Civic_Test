@@ -1493,6 +1493,36 @@ test('xp selector runs only the focused XP rules parity script', () => {
   }
 });
 
+test('mobile ads consent selector runs only the focused runtime and schema parity bundle', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-mobile-ads-routing-'));
+  const npmLog = path.join(tmpDir, 'npm.log');
+  const env = {
+    ...process.env,
+    TEST_DISPATCH_CAPTURE: '1',
+    TEST_DISPATCH_LOG: npmLog,
+    TEST_DISPATCH_NPM: createFakeNpm(tmpDir),
+  };
+
+  try {
+    const selectedResult = runDispatcher(['--', 'mobile-ads-consent'], env);
+    assert.equal(selectedResult.status, 0, selectedResult.stderr || selectedResult.stdout);
+    assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:mobile-ads-consent\n');
+
+    const pkg = readPackageJson();
+    const script = pkg.scripts['test:mobile-ads-consent'];
+    assert.match(script, /tests\/mobile-ads-consent-runtime\.test\.js/);
+    assert.match(script, /tests\/content-mobile-ads-consent-schema-parity\.test\.js/);
+    assert.match(script, /node scripts\/validate-content\.js --focus-mobile-ads-consent/);
+    assert.match(script, /mobile ads consent\|Mobile Ads consent runtime\|ATT\|UMP\|SDK init/);
+    assert.doesNotMatch(
+      script,
+      /scripts\/monetization\.test\.js|npm run test:monetization|npm run test:content|npm run test:all|npm test/,
+    );
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
 test('package npm test selector enters the dispatcher before running suites', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-package-routing-'));
   const npmLog = path.join(tmpDir, 'npm.log');
@@ -1513,6 +1543,15 @@ test('package npm test selector enters the dispatcher before running suites', ()
     const shuffleResult = runPackageTest(['correct-display-position'], env);
     assert.equal(shuffleResult.status, 0, shuffleResult.stderr || shuffleResult.stdout);
     assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:correct-display-position\n');
+
+    fs.writeFileSync(npmLog, '');
+    const mobileAdsConsentResult = runPackageTest(['mobile-ads-consent'], env);
+    assert.equal(
+      mobileAdsConsentResult.status,
+      0,
+      mobileAdsConsentResult.stderr || mobileAdsConsentResult.stdout,
+    );
+    assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:mobile-ads-consent\n');
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
   }
@@ -1661,6 +1700,7 @@ test('unsupported npm test selectors fail before running any suite', () => {
       /correct-display-position -> npm run test:correct-display-position/,
     );
     assert.match(result.stderr, /monetization -> npm run test:monetization/);
+    assert.match(result.stderr, /mobile-ads-consent -> npm run test:mobile-ads-consent/);
     assert.match(result.stderr, /xp -> npm run test:xp-rules/);
     assert.equal(fs.existsSync(npmLog), false);
   } finally {
