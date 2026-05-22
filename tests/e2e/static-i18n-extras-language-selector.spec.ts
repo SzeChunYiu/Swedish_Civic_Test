@@ -737,6 +737,41 @@ test('static Settings selects extra languages with localized legal and Support m
   expect(pageErrors).toEqual([]);
 });
 
+test('static cheatsheet easter egg localizes hidden command copy in extra languages', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const pageErrors = collectPageErrors(page);
+  await openStaticHome(page, staticSite.baseUrl);
+
+  for (const locale of extraLocales) {
+    await switchStaticSiteLanguage(page, locale);
+    await page.evaluate(() => {
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: '?', bubbles: true }));
+    });
+
+    const cheatsheet = page.locator('#smt-cheats');
+    await expect(cheatsheet).toBeVisible();
+    await expect(cheatsheet.locator('.cheats__panel h3')).not.toHaveText('Hidden things');
+    await expect(cheatsheet.locator('.cheats__close')).not.toHaveAttribute('aria-label', 'Close');
+    await expect(cheatsheet).toContainText('fika');
+    await expect(cheatsheet).toContainText('abba');
+    await expect(cheatsheet).toContainText('snö');
+    await expect(cheatsheet).toContainText('snow');
+    await expect(cheatsheet).toContainText('↑↑↓↓←→←→ b a');
+    await expect(cheatsheet).not.toContainText('coffee break');
+    await expect(cheatsheet).not.toContainText('some assembly required');
+    await expect(cheatsheet).not.toContainText('Hidden things');
+
+    await cheatsheet.locator('.cheats__close').click();
+    await expect(cheatsheet).toBeHidden();
+    await expectRootLocale(page, locale);
+    await expectNoHorizontalOverflow(page);
+  }
+
+  expect(pageErrors).toEqual([]);
+});
+
 test('static typography keeps nonnegative tracking across primary routes', async ({ page }) => {
   const staticSite = await startStaticSiteServer();
   try {
