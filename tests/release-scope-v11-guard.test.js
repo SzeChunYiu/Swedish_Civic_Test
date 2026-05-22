@@ -33,6 +33,9 @@ test('release preflight owns the v1.1 scope guard behind Remove Ads acceptance',
   assert.match(releasePreflightScript, /RELEASE_PREFLIGHT_REMOVE_ADS_PURCHASES_PATH/);
   assert.match(releasePreflightScript, /requestRemoveAdsPurchase\(REMOVE_ADS_PRODUCT_ID\)/);
   assert.match(releasePreflightScript, /restorePurchases\(\[REMOVE_ADS_PRODUCT_ID\]\)/);
+  assert.match(releasePreflightScript, /REMOVE_ADS_IOS_PRODUCT_ID/);
+  assert.match(releasePreflightScript, /REMOVE_ADS_ANDROID_PRODUCT_ID/);
+  assert.match(releasePreflightScript, /REMOVE_ADS_STORE_PRODUCT_IDS/);
   assert.match(releasePreflightScript, /REMOVE_ADS_PRICE_LABEL/);
   assert.match(releasePreflightScript, /anyRepoFileMatches\(wiringRoots/);
   assert.doesNotMatch(releasePreflightScript, /grep -rqi "remove\.\?ads" app components lib/);

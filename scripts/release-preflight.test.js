@@ -1543,6 +1543,36 @@ test('release preflight blocks Remove Ads step 3 structural drift without the br
         ),
     },
     {
+      id: 'ios-store-product-id',
+      expected: /iOS store product id must match the canonical entitlement id/i,
+      transform: (source) =>
+        replaceRequired(
+          source,
+          'export const REMOVE_ADS_IOS_PRODUCT_ID = REMOVE_ADS_PRODUCT_ID;',
+          "export const REMOVE_ADS_IOS_PRODUCT_ID = 'removeads';",
+        ),
+    },
+    {
+      id: 'android-store-product-id',
+      expected: /Android store product id must stay Play Console removeads/i,
+      transform: (source) =>
+        replaceRequired(
+          source,
+          "export const REMOVE_ADS_ANDROID_PRODUCT_ID = 'removeads';",
+          'export const REMOVE_ADS_ANDROID_PRODUCT_ID = REMOVE_ADS_PRODUCT_ID;',
+        ),
+    },
+    {
+      id: 'store-product-map',
+      expected: /store product ids must export the platform-specific Android\/iOS map/i,
+      transform: (source) =>
+        replaceRequired(
+          source,
+          'android: REMOVE_ADS_ANDROID_PRODUCT_ID,',
+          'android: REMOVE_ADS_PRODUCT_ID,',
+        ),
+    },
+    {
       id: 'visible-wiring',
       expected: /Remove Ads wiring must be visible/i,
       includeWiring: false,

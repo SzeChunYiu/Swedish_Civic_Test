@@ -206,7 +206,7 @@ const removeAdsStep3WiringRoots = envPathList('RELEASE_PREFLIGHT_REMOVE_ADS_WIRI
   'lib',
 ]);
 const removeAdsStep3StructuralGate =
-  'Remove Ads structural gate replacing GOAL step 3 grep: purchases.ts exists, canonical buy/restore flows use REMOVE_ADS_PRODUCT_ID, 29 SEK pricing is exported, and app/components/lib expose Remove Ads wiring';
+  'Remove Ads structural gate replacing GOAL step 3 grep: purchases.ts exists, canonical buy/restore flows use REMOVE_ADS_PRODUCT_ID, platform store ids export Android removeads + iOS canonical id, 29 SEK pricing is exported, and app/components/lib expose Remove Ads wiring';
 const releaseScopeOverrideId = 'release-scope-v11';
 const removeAdsDeviceQaArtifactRoot = 'reports/release-device-qa/';
 const removeAdsDeviceQaRequiredChecks = [
@@ -487,6 +487,24 @@ function removeAdsStep3StructuralFindings(purchasesSource, options = {}) {
     [
       /export\s+const\s+REMOVE_ADS_PRICE_LABEL\s*=\s*['"]29 SEK['"]/.test(purchasesSource),
       'Remove Ads price label must stay 29 SEK',
+    ],
+    [
+      /export\s+const\s+REMOVE_ADS_IOS_PRODUCT_ID\s*=\s*REMOVE_ADS_PRODUCT_ID\b/.test(
+        purchasesSource,
+      ),
+      'Remove Ads iOS store product id must match the canonical entitlement id',
+    ],
+    [
+      /export\s+const\s+REMOVE_ADS_ANDROID_PRODUCT_ID\s*=\s*['"]removeads['"]/.test(
+        purchasesSource,
+      ),
+      'Remove Ads Android store product id must stay Play Console removeads',
+    ],
+    [
+      /export\s+const\s+REMOVE_ADS_STORE_PRODUCT_IDS\s*=\s*\{[\s\S]*android:\s*REMOVE_ADS_ANDROID_PRODUCT_ID,?[\s\S]*ios:\s*REMOVE_ADS_IOS_PRODUCT_ID,?[\s\S]*\}\s*as\s+const/.test(
+        purchasesSource,
+      ),
+      'Remove Ads store product ids must export the platform-specific Android/iOS map',
     ],
     [
       normalizedPurchasesSource.includes(
