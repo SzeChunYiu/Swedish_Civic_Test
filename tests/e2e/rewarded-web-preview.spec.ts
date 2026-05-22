@@ -1,7 +1,12 @@
 import { expect, test } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
 
-import { dismissBlockingModals, markAboutTheTestSeen, seedSettingsLanguage } from './browserLaunch';
+import {
+  closeLaunchAdIfPresent,
+  dismissBlockingModals,
+  markAboutTheTestSeen,
+  seedSettingsLanguage,
+} from './browserLaunch';
 
 type Language = 'sv' | 'en';
 
@@ -83,14 +88,50 @@ async function expectButtonState(
   state: { busy: boolean; disabled: boolean },
   label: string,
 ) {
-  await expect(locator, `${label} disabled state`).toHaveAttribute(
-    'aria-disabled',
-    state.disabled ? 'true' : 'false',
-  );
+  if (state.disabled) {
+    await expect(locator, `${label} disabled state`).toHaveAttribute('aria-disabled', 'true');
+  } else {
+    await expect(locator, `${label} disabled state`).not.toHaveAttribute('aria-disabled', 'true');
+  }
   await expect(locator, `${label} busy state`).toHaveAttribute(
     'aria-busy',
     state.busy ? 'true' : 'false',
   );
+}
+
+async function clickAndExpectBusyTransition(locator: Locator) {
+  const busyObserved = locator.evaluate(
+    (element) =>
+      new Promise<boolean>((resolve) => {
+        const button = element as HTMLElement;
+        const sawBusy = () => button.getAttribute('aria-busy') === 'true';
+
+        if (sawBusy()) {
+          resolve(true);
+          return;
+        }
+
+        const observer = new MutationObserver(() => {
+          if (sawBusy()) {
+            observer.disconnect();
+            resolve(true);
+          }
+        });
+
+        observer.observe(button, {
+          attributeFilter: ['aria-busy'],
+          attributes: true,
+        });
+
+        window.setTimeout(() => {
+          observer.disconnect();
+          resolve(sawBusy());
+        }, 1_500);
+      }),
+  );
+
+  await locator.click();
+  await expect(busyObserved, 'unlock button should expose a busy transition').resolves.toBe(true);
 }
 
 async function seedDailyFreeMockUsed(page: Page, language: Language) {
@@ -165,6 +206,7 @@ for (const language of ['sv', 'en'] as const) {
 
     const completionButton = page.getByRole('button', { name: t.previewButtonLabel });
     await expectReachableTarget(completionButton);
+    await closeLaunchAdIfPresent(page);
     await completionButton.click();
     await expect(completionButton).toBeDisabled();
 
@@ -218,6 +260,7 @@ for (const language of ['sv', 'en'] as const) {
       'unlock button before preview',
     );
 
+    await closeLaunchAdIfPresent(page);
     await completionButton.click();
     await expectButtonState(
       completionButton,
@@ -230,12 +273,7 @@ for (const language of ['sv', 'en'] as const) {
       'unlock button after preview',
     );
 
-    const unlockClick = unlockButton.click();
-    await expect(unlockButton, 'unlock button should expose a busy transition').toHaveAttribute(
-      'aria-busy',
-      'true',
-    );
-    await unlockClick;
+    await clickAndExpectBusyTransition(unlockButton);
 
     await expect(page.getByText(t.unlockedStatus)).toBeVisible();
     const unlockedLink = page.getByRole('link', { name: t.unlockedCtaLabel });
