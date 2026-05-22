@@ -2080,7 +2080,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 15;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 35;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 36;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_RUNTIME_CASES = 9;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
@@ -20025,6 +20025,10 @@ function validateRemoveAdsPurchaseRuntimeParity() {
     purchaseSource.match(
       /async validateRemoveAdsReceipt\(purchase, productId\) \{([\s\S]*?)\n    \},\n    async requestRemoveAdsPurchase/,
     )?.[1] ?? '';
+  const storedRevalidationBlock =
+    purchaseSource.match(
+      /async function revalidateStoredRemoveAdsEntitlementRecordWithConnectedProvider\(\{[\s\S]*?\nfunction createResult/,
+    )?.[0] ?? '';
 
   function assertInFlightCase(source, options) {
     try {
@@ -20119,7 +20123,10 @@ function validateRemoveAdsPurchaseRuntimeParity() {
     [
       normalizedPurchaseSource.includes(
         'if (!ownsRemoveAds || !productIds.includes(REMOVE_ADS_PRODUCT_ID)) return [];',
-      ) && normalizedPurchaseSource.includes("return [createMockPurchase('restore-remove-ads')];"),
+      ) &&
+        normalizedPurchaseSource.includes(
+          "return [ownedRemoveAdsPurchase ?? createMockPurchase('restore-remove-ads')];",
+        ),
       'mock Remove Ads restore must require the canonical product id',
     ],
     [
@@ -20189,6 +20196,16 @@ function validateRemoveAdsPurchaseRuntimeParity() {
           "return createResult('not_found', await getPurchaseEntitlements({ storage }))",
         ),
       'Remove Ads failed buy and restore paths must revalidate stored entitlements with the active provider before trusting storage',
+    ],
+    [
+      /availablePurchases\.find\(\(purchase\)\s*=>[\s\S]*purchaseMatchesStoredRecord\(purchase,\s*record\)/.test(
+        storedRevalidationBlock,
+      ) &&
+        !/availablePurchases\.find\(isRemoveAdsPurchase\)/.test(storedRevalidationBlock) &&
+        /failed remove-ads actions preserve a valid stored entitlement only after matching revalidation/.test(
+          fs.readFileSync(path.join(repoRoot, 'scripts/monetization.test.js'), 'utf8'),
+        ),
+      'Remove Ads stored entitlement revalidation must require a matching restored purchase and cover the valid failed-action recovery path',
     ],
     [
       normalizedPurchaseSource.includes('receiptValidationStatus =') &&

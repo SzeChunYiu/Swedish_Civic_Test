@@ -40,8 +40,12 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
     purchaseSource.match(
       /async validateRemoveAdsReceipt\(purchase, productId\) \{([\s\S]*?)\n    \},\n    async requestRemoveAdsPurchase/,
     )?.[1] ?? '';
+  const storedRevalidationBlock =
+    purchaseSource.match(
+      /async function revalidateStoredRemoveAdsEntitlementRecordWithConnectedProvider\(\{[\s\S]*?\nfunction createResult/,
+    )?.[0] ?? '';
 
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 35);
+  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 36);
   assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
   assert.match(purchaseSource, /REMOVE_ADS_RECORD_SCHEMA_VERSION = 1/);
   assert.match(purchaseSource, /interface RemoveAdsProductMetadata/);
@@ -87,6 +91,8 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   );
   assert.match(purchaseSource, /function getFailClosedPurchaseEntitlements\(\{/);
   assert.match(purchaseSource, /revalidateStoredRemoveAdsEntitlementRecordWithConnectedProvider/);
+  assert.match(storedRevalidationBlock, /purchaseMatchesStoredRecord\(purchase, record\)/);
+  assert.doesNotMatch(storedRevalidationBlock, /availablePurchases\.find\(isRemoveAdsPurchase\)/);
   assert.match(
     purchaseSource,
     /createResult\(\s*'pending',\s*await getFailClosedPurchaseEntitlements\(\{\s*provider,\s*storage\s*\}\)/,
@@ -103,6 +109,10 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.match(purchaseSource, /source: 'purchase'/);
   assert.match(purchaseSource, /source: 'restore'/);
   assert.match(purchaseSource, /hasStoreConfirmation\(record\)/);
+  assert.match(
+    fs.readFileSync(path.join(repoRoot, 'scripts/monetization.test.js'), 'utf8'),
+    /failed remove-ads actions preserve a valid stored entitlement only after matching revalidation/,
+  );
   assert.match(purchaseSource, /isConsumable: false/);
   assert.match(purchaseSource, /type: 'in-app'/);
   assert.match(placementCtaSource, /restoreRemoveAdsPurchase/);

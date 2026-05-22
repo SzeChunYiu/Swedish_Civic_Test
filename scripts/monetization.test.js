@@ -1587,6 +1587,7 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
   assert.match(storedPurchaseRecord.grantedAt, /^\d{4}-\d{2}-\d{2}T/);
   assert.match(storedPurchaseRecord.receiptValidatedAt, /^\d{4}-\d{2}-\d{2}T/);
   assert.equal(Object.hasOwn(storedPurchaseRecord, 'raw'), false);
+  assert.equal((await getPurchaseEntitlements({ storage })).adsDisabled, true);
   assert.equal(
     (
       await getPurchaseEntitlements({
@@ -1594,7 +1595,7 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
         storage,
       })
     ).adsDisabled,
-    true,
+    false,
   );
 
   const restoredStorage = createMemoryPurchaseStorage();
@@ -2572,6 +2573,137 @@ test('failed remove-ads receipt validation does not grant adsDisabled', async ()
 
   assert.equal(directGrant.adsDisabled, false);
   assert.equal(await directGrantStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
+});
+
+test('failed remove-ads actions preserve a valid stored entitlement only after matching revalidation', async () => {
+  const {
+    REMOVE_ADS_PRODUCT_ID,
+    REMOVE_ADS_RECORD_SCHEMA_VERSION,
+    REMOVE_ADS_STORAGE_KEY,
+    buyRemoveAds,
+    createMemoryPurchaseStorage,
+    restoreRemoveAdsPurchase,
+  } = loadTs('lib/monetization/purchases.ts');
+  const canonicalTimestamp = '2026-05-20T12:00:00.000Z';
+  const storedPurchase = {
+    productId: REMOVE_ADS_PRODUCT_ID,
+    purchaseToken: 'stored-token',
+    transactionId: 'stored-tx',
+  };
+  const differentPurchase = {
+    productId: REMOVE_ADS_PRODUCT_ID,
+    purchaseToken: 'different-token',
+    transactionId: 'different-tx',
+  };
+
+  function storedRecord(purchase = storedPurchase) {
+    return JSON.stringify({
+      grantedAt: canonicalTimestamp,
+      productId: REMOVE_ADS_PRODUCT_ID,
+      purchaseToken: purchase.purchaseToken,
+      receiptValidatedAt: canonicalTimestamp,
+      receiptValidationStatus: 'valid',
+      schemaVersion: REMOVE_ADS_RECORD_SCHEMA_VERSION,
+      source: 'purchase',
+      transactionId: purchase.transactionId,
+    });
+  }
+
+  function createProvider({ requestPurchase = null, restoreSequences = [[]] } = {}) {
+    let restoreCalls = 0;
+    const events = [];
+
+    return {
+      events,
+      provider: {
+        async connect() {
+          events.push('connect');
+        },
+        async disconnect() {
+          events.push('disconnect');
+        },
+        async finishPurchase() {
+          events.push('finish');
+        },
+        async requestRemoveAdsPurchase() {
+          events.push('request');
+          return requestPurchase;
+        },
+        async restorePurchases() {
+          events.push(`restore:${restoreCalls}`);
+          const purchases =
+            restoreSequences[Math.min(restoreCalls, restoreSequences.length - 1)] ?? [];
+          restoreCalls += 1;
+          return purchases;
+        },
+        async validateRemoveAdsReceipt(purchase, productId) {
+          events.push(`validate:${purchase.transactionId}`);
+          return {
+            productId,
+            purchaseToken: purchase.purchaseToken ?? null,
+            status: 'valid',
+            transactionId: purchase.transactionId ?? null,
+            validatedAt: canonicalTimestamp,
+          };
+        },
+      },
+    };
+  }
+
+  const pendingBuyStorage = createMemoryPurchaseStorage();
+  await pendingBuyStorage.setItemAsync(REMOVE_ADS_STORAGE_KEY, storedRecord());
+  const pendingBuyProvider = createProvider({ restoreSequences: [[storedPurchase]] });
+  const pendingBuy = await buyRemoveAds({
+    provider: pendingBuyProvider.provider,
+    storage: pendingBuyStorage,
+  });
+
+  assert.equal(pendingBuy.status, 'pending');
+  assert.equal(pendingBuy.entitlements.adsDisabled, true);
+  assert.deepEqual(pendingBuyProvider.events, [
+    'connect',
+    'request',
+    'restore:0',
+    'validate:stored-tx',
+    'disconnect',
+  ]);
+  assert.equal(
+    JSON.parse(await pendingBuyStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY)).transactionId,
+    storedPurchase.transactionId,
+  );
+
+  const notFoundRestoreStorage = createMemoryPurchaseStorage();
+  await notFoundRestoreStorage.setItemAsync(REMOVE_ADS_STORAGE_KEY, storedRecord());
+  const notFoundRestoreProvider = createProvider({
+    restoreSequences: [[], [storedPurchase]],
+  });
+  const notFoundRestore = await restoreRemoveAdsPurchase({
+    provider: notFoundRestoreProvider.provider,
+    storage: notFoundRestoreStorage,
+  });
+
+  assert.equal(notFoundRestore.status, 'not_found');
+  assert.equal(notFoundRestore.entitlements.adsDisabled, true);
+  assert.deepEqual(notFoundRestoreProvider.events, [
+    'connect',
+    'restore:0',
+    'restore:1',
+    'validate:stored-tx',
+    'disconnect',
+  ]);
+
+  const nonMatchingStorage = createMemoryPurchaseStorage();
+  await nonMatchingStorage.setItemAsync(REMOVE_ADS_STORAGE_KEY, storedRecord());
+  const nonMatchingProvider = createProvider({ restoreSequences: [[differentPurchase]] });
+  const nonMatchingPendingBuy = await buyRemoveAds({
+    provider: nonMatchingProvider.provider,
+    storage: nonMatchingStorage,
+  });
+
+  assert.equal(nonMatchingPendingBuy.status, 'pending');
+  assert.equal(nonMatchingPendingBuy.entitlements.adsDisabled, false);
+  assert.deepEqual(nonMatchingProvider.events, ['connect', 'request', 'restore:0', 'disconnect']);
+  assert.equal(await nonMatchingStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
 });
 
 test('remove-ads paywall is surfaced near an ad placement and wired to purchase helpers', () => {
