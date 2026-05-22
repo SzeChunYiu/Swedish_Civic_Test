@@ -810,6 +810,11 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'launchAdLoadTimeout',
+    flags: ['--focus-launch-ad-load-timeout'],
+    summaryKeys: ['launchAdLoadTimeoutRulesValidated', 'launchAdLoadTimeoutParityValidated'],
+  },
+  {
     id: 'learnFlashcardSource',
     flags: ['--focus-learn-flashcard-source'],
     summaryKeys: [

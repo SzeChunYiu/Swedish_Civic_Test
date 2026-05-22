@@ -4,6 +4,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 
+const { FOCUSED_VALIDATION_REGISTRY_BY_ID } = require('../scripts/validate-content-focus-registry');
+
 const repoRoot = path.resolve(__dirname, '..');
 const expectedSuppressedRoutes = [
   '/exam',
@@ -24,6 +26,12 @@ const expectedSuppressedRoutes = [
 
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+}
+
+function parseJsonSummary(output, label) {
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, `${label} should print a JSON summary`);
+  return JSON.parse(match[0]);
 }
 
 function launchSuppressedRoutes(source = read('lib/monetization/ads.ts')) {
@@ -181,7 +189,7 @@ test('launch popup parity rejects missing native load timeout cleanup', () => {
       `
 const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
-process.argv.push('--focus-launch-ad-deferral');
+process.argv.push('--focus-launch-ad-load-timeout');
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
   if (normalizedPath.endsWith('/components/monetization/LaunchPopupAd.native.tsx')) {
@@ -202,6 +210,26 @@ require('./scripts/validate-content.js');
     `${result.stdout}\n${result.stderr}`,
     /native LaunchPopupAd must clear the in-flight flag when load callbacks stall/,
   );
+});
+
+test('native launch popup load timeout focused validator reports only timeout coverage', () => {
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('launchAdLoadTimeout');
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-launch-ad-load-timeout'],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const summary = parseJsonSummary(result.stdout, 'launch load timeout focused validation');
+  assert.deepEqual(registryEntry.flags, ['--focus-launch-ad-load-timeout']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'launchAdLoadTimeoutRulesValidated',
+    'launchAdLoadTimeoutParityValidated',
+  ]);
+  assert.deepEqual(Object.keys(summary).sort(), registryEntry.summaryKeys.slice().sort());
+  assert.equal(summary.launchAdLoadTimeoutRulesValidated, 10);
+  assert.equal(summary.launchAdLoadTimeoutParityValidated, true);
 });
 
 test('native first-run deferral stays wired to the eligible app-open path', () => {
@@ -246,6 +274,9 @@ test('native first-run deferral stays wired to the eligible app-open path', () =
     /native launch ad must defer the first-run About modal only after consent yields a launch ad unit/,
   );
   assert.match(validatorSource, /--focus-launch-ad-deferral/);
+  assert.match(validatorSource, /--focus-launch-ad-load-timeout/);
   assert.match(validatorSource, /launchAdFirstRunDeferralRulesValidated/);
   assert.match(validatorSource, /launchAdFirstRunDeferralParityValidated/);
+  assert.match(validatorSource, /launchAdLoadTimeoutRulesValidated/);
+  assert.match(validatorSource, /launchAdLoadTimeoutParityValidated/);
 });
