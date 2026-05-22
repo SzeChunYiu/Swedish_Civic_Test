@@ -186,6 +186,87 @@
     return Boolean(supaUrl() && supaKey());
   }
 
+  const SIGNIN_RETURN_ROUTE_KEY = 'smt_signin_return_route';
+  const SIGNIN_RETURN_ROUTE_TTL_MS = 30 * 60 * 1000;
+  const STATIC_RETURN_ROUTE_PATHS = new Set([
+    '/',
+    '/practice',
+    '/dashboard',
+    '/mock',
+    '/ebook',
+    '/privacy',
+    '/support',
+    '/terms',
+    '/sources',
+  ]);
+
+  function normalizeSigninReturnRoute(value) {
+    const raw = typeof value === 'string' ? value.trim() : '';
+    if (!raw) return '#/';
+    if (/^[a-z][a-z0-9+.-]*:/i.test(raw) || raw.startsWith('//')) return '#/';
+    const hashRoute = raw.startsWith('#') ? raw : `#${raw.startsWith('/') ? raw : `/${raw}`}`;
+    const body = hashRoute.slice(1) || '/';
+    const routeEndIndexes = [body.indexOf('?'), body.indexOf('#')].filter((index) => index >= 0);
+    const routeEnd = routeEndIndexes.length ? Math.min(...routeEndIndexes) : body.length;
+    const path = body.slice(0, routeEnd) || '/';
+    const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+    const suffix = body.slice(routeEnd);
+
+    if (!STATIC_RETURN_ROUTE_PATHS.has(normalizedPath)) return '#/';
+    if (suffix && !/^[?#][A-Za-z0-9._~!$&()*+,;=:@/%#-]*$/.test(suffix)) return '#/';
+    return `#${normalizedPath}${suffix}`;
+  }
+
+  function encodeSigninReturnRoute(route) {
+    return JSON.stringify({ route, storedAt: Date.now() });
+  }
+
+  function decodeSigninReturnRoute(value) {
+    const raw = typeof value === 'string' ? value : '';
+    if (!raw) return '';
+    try {
+      const payload = JSON.parse(raw);
+      const storedAt = Number(payload && payload.storedAt);
+      if (!Number.isFinite(storedAt) || Date.now() - storedAt > SIGNIN_RETURN_ROUTE_TTL_MS) {
+        return '';
+      }
+      return normalizeSigninReturnRoute(payload.route);
+    } catch {
+      return normalizeSigninReturnRoute(raw);
+    }
+  }
+
+  function captureSigninReturnRoute() {
+    const route = normalizeSigninReturnRoute(location.hash || '#/');
+    const payload = encodeSigninReturnRoute(route);
+    try {
+      sessionStorage.setItem(SIGNIN_RETURN_ROUTE_KEY, payload);
+    } catch {}
+    try {
+      localStorage.setItem(SIGNIN_RETURN_ROUTE_KEY, payload);
+    } catch {}
+    return route;
+  }
+
+  function consumeSigninReturnRoute() {
+    let storedRoute = '';
+    try {
+      storedRoute = sessionStorage.getItem(SIGNIN_RETURN_ROUTE_KEY) || '';
+      sessionStorage.removeItem(SIGNIN_RETURN_ROUTE_KEY);
+    } catch {}
+    try {
+      storedRoute = storedRoute || localStorage.getItem(SIGNIN_RETURN_ROUTE_KEY) || '';
+      localStorage.removeItem(SIGNIN_RETURN_ROUTE_KEY);
+    } catch {}
+    return decodeSigninReturnRoute(storedRoute);
+  }
+
+  function restoreSigninReturnRoute() {
+    const route = consumeSigninReturnRoute();
+    if (route && location.hash !== route) location.hash = route;
+    return route;
+  }
+
   // Lazy singleton Supabase client. The SDK is only fetched from the CDN when
   // configured AND a provider/magic-link action is taken (or on load to pick
   // up an existing session). Unconfigured visitors never touch the network.
@@ -241,6 +322,7 @@
     } else {
       localize();
     }
+    if (nowSignedIn) restoreSigninReturnRoute();
   }
 
   function redirectTarget() {
@@ -352,6 +434,7 @@
             return;
           } // SDK failed to load → safe fallback
           if (prov === 'google' || prov === 'apple') {
+            captureSigninReturnRoute();
             client.auth
               .signInWithOAuth({
                 provider: prov,
@@ -367,6 +450,7 @@
               if (input) input.focus();
               return;
             }
+            captureSigninReturnRoute();
             client.auth
               .signInWithOtp({
                 email,
@@ -443,4 +527,8 @@
   window.smtOpenSignin = open;
   window.smtIsSignedIn = signedIn;
   window.smtGetSupabaseClient = getClient;
+  window.smtSigninCaptureReturnRoute = captureSigninReturnRoute;
+  window.smtSigninRedirectTarget = redirectTarget;
+  window.smtSigninRestoreReturnRoute = restoreSigninReturnRoute;
+  window.smtNormalizeSigninReturnRoute = normalizeSigninReturnRoute;
 })();
