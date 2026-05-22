@@ -484,19 +484,19 @@ export function previewLocalStudyDataImport(rawText: string): LocalStudyDataImpo
 
 export function applyLocalStudyDataImport(
   preview: LocalStudyDataImportPreview,
-): LocalStudyDataImportSummary {
-  if (preview.sections.progress) importProgressSnapshot(preview.progress);
-  if (preview.sections.mistakeReview) importMistakeReviewSnapshot(preview.mistakeReview);
-  if (preview.sections.reviews) importReviewSnapshot(preview.reviews);
-  if (preview.sections.settings) importSettingsSnapshot(preview.settings);
+): LocalStudyDataImportApplyResult {
+  const warnings: LocalStudyDataImportApplyWarning[] = [];
+  const recordWarning = (
+    section: LocalStudyDataImportSection,
+    warning: RecoverablePersistenceWarning | null | void,
+  ) => {
+    if (warning) warnings.push({ section, warning });
+  };
+
   if (preview.sections.accessibility) {
     importAccessibilityPreferencesSnapshot(preview.accessibility);
   }
   if (preview.sections.companion) importCompanionSnapshot(preview.companion);
-  if (preview.sections.citizenshipRequirements) {
-    importCitizenshipRequirementsChecklistSnapshot(preview.citizenshipRequirements);
-  }
-  if (preview.sections.highlights) importHighlightsSnapshot(preview.highlights);
 
   if (preview.sections.progress) {
     recordWarning('progress', importProgressSnapshot(preview.progress));

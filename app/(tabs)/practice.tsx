@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'expo-router';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Link, useLocalSearchParams } from 'expo-router';
 import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AudioButton } from '../../components/learning/AudioButton';
@@ -29,6 +29,7 @@ import {
   stopSpeech,
 } from '../../lib/audio/speak';
 import { filterQuestionsByProvenance } from '../../lib/content/provenance';
+import { buildDailyChallenge } from '../../lib/learning/dailyChallenge';
 import { calculateStreak } from '../../lib/learning/streaks';
 import { calculateAnswerXp, calculateLevel } from '../../lib/learning/xp';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
@@ -392,7 +393,13 @@ export default function Screen() {
     setAnswerXpAwardedForSelection(0);
   }, [question?.id, shuffleSessionId]);
 
-  const startPracticeScope = (nextScope: PracticeScope) => {
+  useEffect(() => {
+    if (!routeLaunchMode || consumedRouteLaunchModeRef.current === routeLaunchMode) return;
+
+    const nextScope: PracticeScope =
+      routeLaunchMode === 'challenge'
+        ? { type: 'challenge', questionIds: dailyChallenge.questionIds }
+        : { type: 'quick', limit: 10 };
     const nextQuestionBank = getQuestionsForPracticeScope(filteredQuestions, nextScope);
     if (nextQuestionBank.length === 0) return;
 

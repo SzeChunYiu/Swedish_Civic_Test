@@ -2987,6 +2987,39 @@ function universalHumanRightsStatementEn(answer: string): string | null {
   return null;
 }
 
+
+function constitution1809ChangeStatementSv(answer: string): string | null {
+  if (/^Kungens makt begränsades$/i.test(answer)) {
+    return '1809 års nya grundlag begränsade kungens makt';
+  }
+  if (/^Sverige gick med i EU$/i.test(answer)) {
+    return '1809 års nya grundlag innebar inte att Sverige gick med i EU';
+  }
+  if (/^Kvinnor fick rösträtt direkt$/i.test(answer)) {
+    return '1809 års nya grundlag gav inte kvinnor rösträtt direkt';
+  }
+  if (/^Riksdagen avskaffades$/i.test(answer)) {
+    return '1809 års nya grundlag avskaffade inte riksdagen';
+  }
+  return null;
+}
+
+function constitution1809ChangeStatementEn(answer: string): string | null {
+  if (/^The king’s power was limited$/i.test(answer)) {
+    return "The 1809 constitution limited the king's power";
+  }
+  if (/^Sweden joined the EU$/i.test(answer)) {
+    return 'The 1809 constitution did not make Sweden join the EU';
+  }
+  if (/^Women received the right to vote immediately$/i.test(answer)) {
+    return 'The 1809 constitution did not immediately give women the right to vote';
+  }
+  if (/^The Riksdag was abolished$/i.test(answer)) {
+    return 'The 1809 constitution did not abolish the Riksdag';
+  }
+  return null;
+}
+
 function politicalDemocracyRightStatementSv(answer: string): string | null {
   if (/^(?:Att\s+)?försöka övertyga andra om sina politiska idéer$/i.test(answer)) {
     return 'I en demokrati får människor, grupper och partier försöka övertyga andra om sina politiska idéer';

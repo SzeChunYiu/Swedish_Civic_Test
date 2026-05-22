@@ -155,6 +155,35 @@ const localizedHomeChapterElevenCitizenshipSnippets: Record<ExtraLocale, RegExp>
   tr: /vatandaşlık\s*\(medborgarskap\)/i,
   uk: /громадянством\s*\(medborgarskap\)/i,
 };
+const q050RenderedSourceCriticismLocales = ['zh-Hans', 'ar', 'pl', 'so', 'tr', 'uk'] as const;
+type Q050RenderedSourceCriticismLocale = (typeof q050RenderedSourceCriticismLocales)[number];
+const localizedQ050SourceCriticismTerms: Record<Q050RenderedSourceCriticismLocale, RegExp> = {
+  'zh-Hans': /来源批判/,
+  ar: /نقد المصادر/,
+  pl: /krytyka źródeł/i,
+  so: /qiimeynta ilaha/i,
+  tr: /kaynak eleştirisi/i,
+  uk: /критика джерел/i,
+};
+const forbiddenQ050SourceCriticismStaleTerms =
+  /具有(?:來|来)源批判意識|أن تكون ناقدًا للمصادر|krytyczne podejście do źródeł|si naqdineed loo eego ilaha|kaynaklara eleştirel yaklaşmak|критично ставитися до джерел/i;
+
+type StaticQ050RenderedCopy = {
+  question: string;
+  explanation: string;
+  answer: number;
+  chapterIndex: number;
+  source: {
+    title?: string;
+    chapter?: string;
+    section?: string;
+    page?: number;
+  };
+};
+
+const copiedTurkishPurchaseText =
+  /Yalnızca|Satın alma|Web yükseltmeleri|Reklamsız|Reklamları kaldır|Google Play ile devam et|Ömür boyu|tek seferlik|Yükseltmenin|satın almaya hazır|Önce giriş yapın|Satın alma aktarım|Hesaba bağlı|Satın alma başlatılamadı/i;
+
 const supportMetadataValueKeys = ['support.meta1.v', 'support.meta2.v', 'support.meta3.v'] as const;
 const supportMetadataEnglishFallbacks: Record<(typeof supportMetadataValueKeys)[number], RegExp> = {
   'support.meta1.v': /~2 business days/i,
@@ -366,6 +395,13 @@ async function switchToTermsRoute(page: Page) {
   await expect(page.locator('[data-page="/terms"]')).toHaveClass(/is-active/);
 }
 
+async function switchToSourcesRoute(page: Page) {
+  await page.evaluate(() => {
+    window.location.hash = '#/sources';
+  });
+  await expect(page.locator('[data-page="/sources"]')).toHaveClass(/is-active/);
+}
+
 async function switchToSupportRoute(page: Page) {
   await page.evaluate(() => {
     window.location.hash = '#/support';
@@ -419,6 +455,29 @@ async function assertLongFormRouteCopy(page: Page, locale: ExtraLocale) {
   await expectLegalReadingTime(page, locale, 'terms.meta3.v');
   await expect(page.locator('[data-page="/terms"] h1')).not.toContainText(/Plain rules/i);
   await switchToHomeRoute(page);
+}
+
+async function assertSourcesRouteCopy(page: Page, locale: ExtraLocale, settingsSourceHint: string) {
+  await switchToSourcesRoute(page);
+
+  for (const key of sourceRouteCopyKeys) {
+    await expectDictionaryRenderedText(page, locale, key);
+  }
+
+  const sourceRouteText = await page.locator('[data-page="/sources"]').innerText();
+  const sourceCopySurface = `${sourceRouteText}\n${settingsSourceHint}`;
+  const metaText = await page.locator(i18nSelector('sources.meta3.v')).innerText();
+
+  expect(sourceRouteText).toContain('179');
+  expect(sourceRouteText).toContain('716');
+  expect(sourceRouteText).toMatch(/\bUHR\b/);
+  expect(settingsSourceHint).toContain('179');
+  expect(metaText.trim()).not.toBe('Sverige i fokus');
+  expect(sourceCopySurface).not.toMatch(/169|۱۶۹/);
+
+  for (const staleFragment of staleExtraSourceFragments[locale]) {
+    expect(sourceCopySurface).not.toMatch(new RegExp(escapeRegExp(staleFragment)));
+  }
 }
 
 async function assertSupportRouteCopy(page: Page, locale: ExtraLocale) {
