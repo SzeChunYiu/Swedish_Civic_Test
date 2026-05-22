@@ -1542,8 +1542,13 @@ test('question-bank CSV focus registry matches focused validator output', () => 
   for (const key of registryEntry.summaryKeys) {
     assert.ok(Object.prototype.hasOwnProperty.call(summary, key), `${key} is present`);
   }
+  const csvHeaderColumns = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/, 1)[0]
+    .split(',');
+
   assert.ok(summary.questions >= summary.publishedQuestions);
-  assert.equal(summary.questionBankCsvHeaderColumnsValidated, 21);
+  assert.equal(summary.questionBankCsvHeaderColumnsValidated, csvHeaderColumns.length);
   assert.equal(summary.questionBankCsvUniqueHeaderNamesValidated, true);
   assert.equal(summary.questionBankCsvRowsValidated, summary.publishedQuestions);
   assert.equal(summary.questionBankCsvUhrSourcePublisherRowsValidated, summary.publishedQuestions);
