@@ -2503,6 +2503,26 @@ const EXPECTED_QUIZ_ROUTE_COPY_SNIPPETS = [
     'quiz back-to-practice link must expose localized accessibility copy',
   ],
   ['{copy.backToPractice}', 'quiz back-to-practice link must render localized copy'],
+  [
+    'const maxSearchReturnQueryLength = 120;',
+    'quiz route search backlink must define a bounded return query length',
+  ],
+  [
+    'return rawValue && rawValue.trim().length > 0 ? rawValue : null;',
+    'quiz route must trim blank search return params',
+  ],
+  [
+    'if (!normalizedValue || normalizedValue.length > maxSearchReturnQueryLength) return null;',
+    'quiz route search backlink must cap return query length',
+  ],
+  [
+    'const returnSearchQuery = normalizeSearchQueryParam(q) ?? normalizeSearchQueryParam(query);',
+    'quiz route must sanitize q/query search return params before building backlinks',
+  ],
+  [
+    "if (!searchQuery) return '/search';",
+    'quiz route malformed search params must fall back to /search',
+  ],
 ];
 const EXPECTED_NATIVE_QUIZ_CONTEXT_BROWSER_SNIPPETS = [
   ['/quiz/q001?chapterId=ch02', 'native quiz E2E must open a mismatched chapter-context URL'],

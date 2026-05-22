@@ -46,7 +46,18 @@ test('routed quiz shell copy follows the persisted settings language', () => {
   assert.match(source, /We could not find a practice question for this link\./);
   assert.match(source, /q\?: string \| string\[\];/);
   assert.match(source, /query\?: string \| string\[\];/);
+  assert.match(source, /const maxSearchReturnQueryLength = 120;/);
+  assert.match(source, /return rawValue && rawValue\.trim\(\)\.length > 0 \? rawValue : null;/);
+  assert.match(
+    source,
+    /if \(!normalizedValue \|\| normalizedValue\.length > maxSearchReturnQueryLength\) return null;/,
+  );
   assert.match(source, /const backToSearchHref = getBackToSearchHref\(returnSearchQuery\);/);
+  assert.match(
+    source,
+    /const returnSearchQuery = normalizeSearchQueryParam\(q\) \?\? normalizeSearchQueryParam\(query\);/,
+  );
+  assert.match(source, /if \(!searchQuery\) return '\/search';/);
   assert.match(source, /href=\{backToSearchHref\}/);
   assert.match(source, /return `\/search\?q=\$\{encodeURIComponent\(searchQuery\)\}` as Href;/);
   assert.equal(backToPracticeLinks.length, 3);
@@ -307,5 +318,107 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /routed quiz disclaimer must receive settings language/,
+  );
+});
+
+test('routed quiz copy parity rejects unbounded search backlink params', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/quiz/[sessionId].tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'if (!normalizedValue || normalizedValue.length > maxSearchReturnQueryLength) return null;',
+        'if (!normalizedValue) return null;',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-native-quiz-copy');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /quiz route search backlink must cap return query length/,
+  );
+});
+
+test('routed quiz copy parity rejects blank search backlink params', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/quiz/[sessionId].tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'return rawValue && rawValue.trim().length > 0 ? rawValue : null;',
+        'return rawValue ?? null;',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-native-quiz-copy');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /quiz route must trim blank search return params/,
+  );
+});
+
+test('routed quiz copy parity rejects dropping fallback search hrefs', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/quiz/[sessionId].tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        "if (!searchQuery) return '/search';",
+        "if (!searchQuery) return '/search?q=' as Href;",
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-native-quiz-copy');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /quiz route malformed search params must fall back to \/search/,
   );
 });
