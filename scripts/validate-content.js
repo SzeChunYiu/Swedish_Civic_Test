@@ -1353,6 +1353,50 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
       /await municipalityInput\.fill\('parliament'\)[\s\S]*?expectSearchUrlWithoutQueryParams\(page\)/,
     message: 'search query e2e must prove English manual typing stays URL-local',
   },
+  {
+    file: 'tests/e2e/search-query-hydration.spec.ts',
+    pattern:
+      /search route submits manual typing via Enter before URL hydration and clears empty stale query/,
+    message: 'search query e2e must cover manual Enter submit URL updates',
+  },
+  {
+    file: 'tests/e2e/search-query-hydration.spec.ts',
+    pattern: /const manualSubmitQuery = 'mänskliga rättigheter';/,
+    message: 'search query e2e must use a non-ASCII submitted query',
+  },
+  {
+    file: 'tests/e2e/search-query-hydration.spec.ts',
+    pattern: /const encodedManualSubmitQuery = encodeURIComponent\(manualSubmitQuery\);/,
+    message: 'search query e2e must assert encoded submitted query URLs',
+  },
+  {
+    file: 'tests/e2e/search-query-hydration.spec.ts',
+    pattern:
+      /await input\.fill\(manualSubmitQuery\)[\s\S]*?expectSearchUrlWithoutQueryParams\(page\)/,
+    message: 'search query e2e must prove manual typing is URL-local before submit',
+  },
+  {
+    file: 'tests/e2e/search-query-hydration.spec.ts',
+    pattern: /await input\.press\('Enter'\)/,
+    message: 'search query e2e must submit typed search with Enter',
+  },
+  {
+    file: 'tests/e2e/search-query-hydration.spec.ts',
+    pattern: /await expectSearchUrlWithQParam\(page, manualSubmitQuery\)/,
+    message: 'search query e2e must assert submitted q URL state',
+  },
+  {
+    file: 'tests/e2e/search-query-hydration.spec.ts',
+    pattern:
+      /await page\.reload\(\{ waitUntil: 'networkidle' \}\)[\s\S]*?await expectSearchState\(page, manualSubmitQuery\)/,
+    message: 'search query e2e must prove submitted URLs hydrate after reload',
+  },
+  {
+    file: 'tests/e2e/search-query-hydration.spec.ts',
+    pattern:
+      /await hydratedInput\.fill\('   '\)[\s\S]*?await hydratedInput\.press\('Enter'\)[\s\S]*?expectSearchUrlWithoutQueryParams\(page\)/,
+    message: 'search query e2e must clear stale q params on empty submit',
+  },
 ]);
 const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
   sv: [
