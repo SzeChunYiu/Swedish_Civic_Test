@@ -1796,6 +1796,19 @@ const EXPECTED_WEB_DOCUMENT_METADATA_DESCRIPTION_LANGUAGES = ['sv', 'en'];
 const EXPECTED_APP_NATIVE_IDENTIFIER = 'com.billyyiu.almostswedish';
 const EXPECTED_TRACKING_PERMISSION =
   'This identifier may be used to deliver relevant study app ads after consent.';
+const REAL_ADS_ENABLED_ENV_KEY = 'EXPO_PUBLIC_REAL_ADS_ENABLED';
+const REAL_ADMOB_APP_ID_ENV_KEYS = {
+  android: 'EXPO_PUBLIC_ADMOB_ANDROID_APP_ID',
+  ios: 'EXPO_PUBLIC_ADMOB_IOS_APP_ID',
+};
+const GOOGLE_SAMPLE_ADMOB_APP_IDS = {
+  android: 'ca-app-pub-3940256099942544~3347511713',
+  ios: 'ca-app-pub-3940256099942544~1458002511',
+};
+const VALIDATOR_REAL_ADMOB_APP_IDS = {
+  android: 'ca-app-pub-1234567890123456~1111111111',
+  ios: 'ca-app-pub-1234567890123456~2222222222',
+};
 const EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTES = [
   '/exam',
   '/practice',
@@ -9386,6 +9399,8 @@ let chapterExactSchemaKeysValidated = 0;
 let validationScriptSyntaxChecksValidated = 0;
 let appConfigPluginsValidated = 0;
 let appConfigSchemaValidated = false;
+let appConfigAdMobAppIdsValidated = 0;
+let appConfigAdMobRealFlagRejectsSampleAppIds = false;
 let launchAdSuppressedRoutesValidated = 0;
 let launchAdRouteSuppressionParityValidated = false;
 let launchAdFirstRunDeferralRulesValidated = 0;
@@ -10226,6 +10241,8 @@ if (process.argv.includes('--focus-app-config-schema')) {
     validationScriptSyntaxChecksValidated,
     appConfigPluginsValidated,
     appConfigSchemaValidated,
+    appConfigAdMobAppIdsValidated,
+    appConfigAdMobRealFlagRejectsSampleAppIds,
     staticHeadMetadataTitleValidated,
     staticHeadMetadataDescriptionValidated,
     staticHeadMetadataOutcomeClaimPatternsValidated,
@@ -11201,6 +11218,53 @@ function getPluginConfig(pluginEntry) {
     : undefined;
 }
 
+function envWithOverrides(overrides) {
+  const env = { ...process.env };
+  for (const [key, value] of Object.entries(overrides)) {
+    if (value === undefined) {
+      delete env[key];
+    } else {
+      env[key] = value;
+    }
+  }
+  return env;
+}
+
+function readResolvedExpoConfig(overrides = {}) {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const { getConfig } = require('@expo/config');
+const config = getConfig(process.cwd(), { skipSDKVersionRequirement: true });
+process.stdout.write(JSON.stringify(config.exp));
+`,
+    ],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      env: envWithOverrides(overrides),
+    },
+  );
+
+  if (result.status !== 0) {
+    return {
+      ok: false,
+      message: `${result.stdout || ''}\n${result.stderr || ''}`.trim(),
+    };
+  }
+
+  try {
+    return { ok: true, expo: JSON.parse(result.stdout) };
+  } catch (error) {
+    return {
+      ok: false,
+      message: `resolved Expo config did not return JSON: ${error.message}`,
+    };
+  }
+}
+
 function loadWebDocumentMetadataModule() {
   const metadataModulePath = path.join(repoRoot, 'lib/scaffold/webDocumentMetadata.js');
   delete require.cache[require.resolve(metadataModulePath)];
@@ -11293,6 +11357,72 @@ function validateWebDocumentMetadataParity(expo, reject) {
   }
 }
 
+function validateResolvedGoogleMobileAdsAppIds(reject) {
+  const fallbackResult = readResolvedExpoConfig({
+    [REAL_ADS_ENABLED_ENV_KEY]: undefined,
+    [REAL_ADMOB_APP_ID_ENV_KEYS.android]: undefined,
+    [REAL_ADMOB_APP_ID_ENV_KEYS.ios]: undefined,
+  });
+
+  if (!fallbackResult.ok) {
+    reject(`app.config.ts default Expo config must resolve: ${fallbackResult.message}`);
+  } else {
+    const fallbackConfig = getPluginConfig(
+      getExpoPluginEntry(fallbackResult.expo.plugins ?? [], 'react-native-google-mobile-ads'),
+    );
+    if (fallbackConfig?.androidAppId !== GOOGLE_SAMPLE_ADMOB_APP_IDS.android) {
+      reject('app.config.ts must keep the Google sample Android App ID when real ads are disabled');
+    } else {
+      appConfigAdMobAppIdsValidated += 1;
+    }
+    if (fallbackConfig?.iosAppId !== GOOGLE_SAMPLE_ADMOB_APP_IDS.ios) {
+      reject('app.config.ts must keep the Google sample iOS App ID when real ads are disabled');
+    } else {
+      appConfigAdMobAppIdsValidated += 1;
+    }
+  }
+
+  const realResult = readResolvedExpoConfig({
+    [REAL_ADS_ENABLED_ENV_KEY]: 'true',
+    [REAL_ADMOB_APP_ID_ENV_KEYS.android]: VALIDATOR_REAL_ADMOB_APP_IDS.android,
+    [REAL_ADMOB_APP_ID_ENV_KEYS.ios]: VALIDATOR_REAL_ADMOB_APP_IDS.ios,
+  });
+
+  if (!realResult.ok) {
+    reject(`app.config.ts real-ad Expo config must resolve: ${realResult.message}`);
+  } else {
+    const realConfig = getPluginConfig(
+      getExpoPluginEntry(realResult.expo.plugins ?? [], 'react-native-google-mobile-ads'),
+    );
+    if (realConfig?.androidAppId !== VALIDATOR_REAL_ADMOB_APP_IDS.android) {
+      reject('app.config.ts must use EXPO_PUBLIC_ADMOB_ANDROID_APP_ID when real ads are enabled');
+    } else {
+      appConfigAdMobAppIdsValidated += 1;
+    }
+    if (realConfig?.iosAppId !== VALIDATOR_REAL_ADMOB_APP_IDS.ios) {
+      reject('app.config.ts must use EXPO_PUBLIC_ADMOB_IOS_APP_ID when real ads are enabled');
+    } else {
+      appConfigAdMobAppIdsValidated += 1;
+    }
+  }
+
+  const sampleResult = readResolvedExpoConfig({
+    [REAL_ADS_ENABLED_ENV_KEY]: 'true',
+    [REAL_ADMOB_APP_ID_ENV_KEYS.android]: GOOGLE_SAMPLE_ADMOB_APP_IDS.android,
+    [REAL_ADMOB_APP_ID_ENV_KEYS.ios]: GOOGLE_SAMPLE_ADMOB_APP_IDS.ios,
+  });
+
+  if (sampleResult.ok) {
+    reject('app.config.ts must reject Google sample App IDs when real ads are enabled');
+  } else if (/must not use Google's sample AdMob publisher id/.test(sampleResult.message)) {
+    appConfigAdMobRealFlagRejectsSampleAppIds = true;
+  } else {
+    reject(
+      `app.config.ts sample App ID rejection must name the sample AdMob publisher: ${sampleResult.message}`,
+    );
+  }
+}
+
 function validateAppConfigSchema() {
   let valid = true;
 
@@ -11371,6 +11501,8 @@ function validateAppConfigSchema() {
         reject('app.json Google ads tracking usage description must match ATT permission copy');
       }
     }
+
+    validateResolvedGoogleMobileAdsAppIds(reject);
 
     const trackingConfig = getPluginConfig(
       getExpoPluginEntry(plugins, 'expo-tracking-transparency'),
@@ -24581,6 +24713,8 @@ console.log(
       validationScriptSyntaxChecksValidated,
       appConfigPluginsValidated,
       appConfigSchemaValidated,
+      appConfigAdMobAppIdsValidated,
+      appConfigAdMobRealFlagRejectsSampleAppIds,
       launchAdSuppressedRoutesValidated,
       launchAdRouteSuppressionParityValidated,
       launchAdFirstRunDeferralRulesValidated,
