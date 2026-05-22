@@ -2,13 +2,42 @@ import { expect, test, type Page } from '@playwright/test';
 
 import { dismissBlockingModals, markAboutTheTestSeen, seedSettingsLanguage } from './browserLaunch';
 
-async function expectSearchState(page: Page, expectedQuery: string) {
-  const input = page.getByRole('textbox', { name: 'Sök samhällsbegrepp och övningsfrågor' });
+type SearchStateCopy = {
+  allTermsSummaryPattern: RegExp;
+  clearButtonName: string;
+  filteredSummaryPattern: RegExp;
+  inputName: string;
+  questionLinkName: RegExp;
+};
+
+const searchStateCopy: Record<'sv' | 'en', SearchStateCopy> = {
+  sv: {
+    allTermsSummaryPattern: /\d+ samhällsbegrepp i referensen/,
+    clearButtonName: 'Rensa sökfältet',
+    filteredSummaryPattern: /\d+ av \d+ begrepp och \d+ övningsfrågor matchar/,
+    inputName: 'Sök samhällsbegrepp och övningsfrågor',
+    questionLinkName: /Öppna övningsfrågan:/,
+  },
+  en: {
+    allTermsSummaryPattern: /\d+ civic reference terms/,
+    clearButtonName: 'Clear the search field',
+    filteredSummaryPattern: /\d+ of \d+ terms and \d+ practice questions match/,
+    inputName: 'Search civic terms and practice questions',
+    questionLinkName: /Open practice question:/,
+  },
+};
+
+async function expectSearchState(
+  page: Page,
+  expectedQuery: string,
+  copy: SearchStateCopy = searchStateCopy.sv,
+) {
+  const input = page.getByRole('textbox', { name: copy.inputName });
   await expect(input).toBeVisible();
   await expect(input).toHaveValue(expectedQuery);
-  await expect(page.getByText(/\d+ av \d+ begrepp och \d+ övningsfrågor matchar/)).toBeVisible();
+  await expect(page.getByText(copy.filteredSummaryPattern)).toBeVisible();
   await expect(page.getByText(new RegExp(expectedQuery, 'i')).first()).toBeVisible();
-  await expect(page.getByRole('link', { name: /Öppna övningsfrågan:/ }).first()).toBeVisible();
+  await expect(page.getByRole('link', { name: copy.questionLinkName }).first()).toBeVisible();
 
   return input;
 }
@@ -21,11 +50,16 @@ function expectSearchUrlWithoutQueryParams(page: Page) {
   expect(url.searchParams.has('query')).toBe(false);
 }
 
-async function expectHydratedSearch(page: Page, url: string, expectedQuery: string) {
+async function expectHydratedSearch(
+  page: Page,
+  url: string,
+  expectedQuery: string,
+  copy: SearchStateCopy = searchStateCopy.sv,
+) {
   await page.goto(url, { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
 
-  return expectSearchState(page, expectedQuery);
+  return expectSearchState(page, expectedQuery, copy);
 }
 
 function escapeRegExp(value: string) {
@@ -139,23 +173,73 @@ test('search route hydrates q and query URL parameters before typing', async ({ 
   await markAboutTheTestSeen(page);
 
   const riksdagInput = await expectHydratedSearch(page, '/search?q=riksdag', 'riksdag');
-  await page.getByRole('button', { name: 'Rensa sökfältet' }).click();
+  await page.getByRole('button', { name: searchStateCopy.sv.clearButtonName }).click();
   await expect(riksdagInput).toHaveValue('');
   expectSearchUrlWithoutQueryParams(page);
-  await expect(page.getByText(/\d+ samhällsbegrepp i referensen/)).toBeVisible();
+  await expect(page.getByText(searchStateCopy.sv.allTermsSummaryPattern)).toBeVisible();
 
   await page.reload({ waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
   await expect(riksdagInput).toHaveValue('');
-  await expect(page.getByText(/\d+ samhällsbegrepp i referensen/)).toBeVisible();
+  await expect(page.getByText(searchStateCopy.sv.allTermsSummaryPattern)).toBeVisible();
 
   const kommunInput = await expectHydratedSearch(page, '/search?query=kommun', 'kommun');
-  await page.getByRole('button', { name: 'Rensa sökfältet' }).click();
+  await page.getByRole('button', { name: searchStateCopy.sv.clearButtonName }).click();
   await expect(kommunInput).toHaveValue('');
   expectSearchUrlWithoutQueryParams(page);
 
   await kommunInput.fill('demokrati');
   await expect(kommunInput).toHaveValue('demokrati');
+  expectSearchUrlWithoutQueryParams(page);
+
+  expect(consoleErrors).toEqual([]);
+});
+
+test('English search route hydrates and clears q/query URL parameters before typing', async ({
+  page,
+}) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await seedSettingsLanguage(page, 'en');
+  await markAboutTheTestSeen(page);
+
+  const democracyInput = await expectHydratedSearch(
+    page,
+    '/search?q=democracy',
+    'democracy',
+    searchStateCopy.en,
+  );
+  await expect(page.getByRole('textbox', { name: searchStateCopy.sv.inputName })).toHaveCount(0);
+  await page.getByRole('button', { name: searchStateCopy.en.clearButtonName }).click();
+  await expect(democracyInput).toHaveValue('');
+  expectSearchUrlWithoutQueryParams(page);
+  await expect(page.getByText(searchStateCopy.en.allTermsSummaryPattern)).toBeVisible();
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+  await expect(democracyInput).toHaveValue('');
+  await expect(page.getByText(searchStateCopy.en.allTermsSummaryPattern)).toBeVisible();
+
+  const municipalityInput = await expectHydratedSearch(
+    page,
+    '/search?query=municipality',
+    'municipality',
+    searchStateCopy.en,
+  );
+  await expect(page.getByRole('button', { name: searchStateCopy.sv.clearButtonName })).toHaveCount(
+    0,
+  );
+  await page.getByRole('button', { name: searchStateCopy.en.clearButtonName }).click();
+  await expect(municipalityInput).toHaveValue('');
+  expectSearchUrlWithoutQueryParams(page);
+
+  await municipalityInput.fill('parliament');
+  await expect(municipalityInput).toHaveValue('parliament');
   expectSearchUrlWithoutQueryParams(page);
 
   expect(consoleErrors).toEqual([]);
@@ -182,7 +266,7 @@ test('search route resyncs when URL query params change after mount', async ({ p
 
   await expectSearchState(page, 'kommun');
 
-  await page.getByRole('button', { name: 'Rensa sökfältet' }).click();
+  await page.getByRole('button', { name: searchStateCopy.sv.clearButtonName }).click();
   await expect(input).toHaveValue('');
   await expect(page).toHaveURL(/\/search$/);
 

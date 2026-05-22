@@ -1233,6 +1233,51 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
       /await input\.fill\('lokal text'\)[\s\S]*?window\.dispatchEvent\(new PopStateEvent\('popstate'\)\);[\s\S]*?await expect\(input\)\.toHaveValue\('lokal text'\)/,
     message: 'search query e2e must prove unchanged route params do not overwrite typing',
   },
+  {
+    file: 'tests/e2e/search-query-hydration.spec.ts',
+    pattern: /type SearchStateCopy = \{/,
+    message: 'search query e2e must type localized search labels',
+  },
+  {
+    file: 'tests/e2e/search-query-hydration.spec.ts',
+    pattern:
+      /en: \{[\s\S]*?clearButtonName: 'Clear the search field'[\s\S]*?inputName: 'Search civic terms and practice questions'[\s\S]*?questionLinkName: \/Open practice question:\//,
+    message: 'search query e2e must define English search labels',
+  },
+  {
+    file: 'tests/e2e/search-query-hydration.spec.ts',
+    pattern: /English search route hydrates and clears q\/query URL parameters before typing/,
+    message: 'search query e2e must run the clear URL proof in English',
+  },
+  {
+    file: 'tests/e2e/search-query-hydration.spec.ts',
+    pattern: /await seedSettingsLanguage\(page, 'en'\)/,
+    message: 'search query e2e must switch to English before the English proof',
+  },
+  {
+    file: 'tests/e2e/search-query-hydration.spec.ts',
+    pattern:
+      /expectHydratedSearch\([\s\S]*?'\/search\?q=democracy'[\s\S]*?'democracy'[\s\S]*?searchStateCopy\.en/,
+    message: 'search query e2e must hydrate English q URLs through English labels',
+  },
+  {
+    file: 'tests/e2e/search-query-hydration.spec.ts',
+    pattern:
+      /expectHydratedSearch\([\s\S]*?'\/search\?query=municipality'[\s\S]*?'municipality'[\s\S]*?searchStateCopy\.en/,
+    message: 'search query e2e must hydrate English query URLs through English labels',
+  },
+  {
+    file: 'tests/e2e/search-query-hydration.spec.ts',
+    pattern:
+      /name: searchStateCopy\.sv\.inputName[\s\S]*?toHaveCount\(0\)[\s\S]*?name: searchStateCopy\.sv\.clearButtonName[\s\S]*?toHaveCount\(\s*0/,
+    message: 'search query e2e must reject Swedish control-label leakage in English',
+  },
+  {
+    file: 'tests/e2e/search-query-hydration.spec.ts',
+    pattern:
+      /await municipalityInput\.fill\('parliament'\)[\s\S]*?expectSearchUrlWithoutQueryParams\(page\)/,
+    message: 'search query e2e must prove English manual typing stays URL-local',
+  },
 ]);
 const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
   sv: [
