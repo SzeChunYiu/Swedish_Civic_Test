@@ -2765,6 +2765,121 @@ test('AdConsentRegion runtime normalization fails closed for invalid Mobile Ads 
   }
 });
 
+test('Mobile Ads consent collector gates UMP by normalized region before SDK init', async () => {
+  const { collectMobileAdsConsentState, initializeGoogleMobileAdsAfterConsent } = loadTs(
+    'lib/monetization/mobileAdsConsent.ts',
+  );
+  const baseOptions = {
+    entitlements: { adsDisabled: false },
+    googleMobileAdsEnabled: true,
+    realAdsEnabled: true,
+  };
+
+  const invalidRegionCalls = [];
+  const invalidRegionResult = await initializeGoogleMobileAdsAfterConsent({
+    ...baseOptions,
+    region: 'banana',
+    runtime: {
+      async gatherUmpConsent() {
+        invalidRegionCalls.push('ump:invalid');
+        return { canRequestAds: true, status: 'OBTAINED' };
+      },
+      async initializeGoogleMobileAds() {
+        invalidRegionCalls.push('ads:init:invalid');
+      },
+      platform: 'android',
+    },
+  });
+
+  assert.equal(invalidRegionResult.initialized, true);
+  assert.equal(invalidRegionResult.state.region, 'unknown');
+  assert.equal(invalidRegionResult.state.umpConsentStatus, 'obtained');
+  assert.deepEqual(invalidRegionCalls, ['ump:invalid', 'ads:init:invalid']);
+
+  for (const region of ['us', 'other']) {
+    const calls = [];
+    const result = await initializeGoogleMobileAdsAfterConsent({
+      ...baseOptions,
+      region,
+      runtime: {
+        async gatherUmpConsent() {
+          calls.push(`ump:${region}`);
+          throw new Error(`${region} should not gather UMP consent`);
+        },
+        async initializeGoogleMobileAds() {
+          calls.push(`ads:init:${region}`);
+        },
+        platform: 'android',
+      },
+    });
+
+    assert.equal(result.initialized, true);
+    assert.equal(result.state.region, region);
+    assert.equal(result.state.umpConsentStatus, 'not_required');
+    assert.deepEqual(calls, [`ads:init:${region}`]);
+  }
+
+  for (const region of ['eea', 'uk', 'unknown']) {
+    const calls = [];
+    const result = await initializeGoogleMobileAdsAfterConsent({
+      ...baseOptions,
+      region,
+      runtime: {
+        async gatherUmpConsent() {
+          calls.push(`ump:${region}`);
+          return { canRequestAds: true, status: 'OBTAINED' };
+        },
+        async initializeGoogleMobileAds() {
+          calls.push(`ads:init:${region}`);
+        },
+        platform: 'android',
+      },
+    });
+
+    assert.equal(result.initialized, true);
+    assert.equal(result.state.region, region);
+    assert.equal(result.state.umpConsentStatus, 'obtained');
+    assert.deepEqual(calls, [`ump:${region}`, `ads:init:${region}`]);
+  }
+
+  const removeAdsCalls = [];
+  const removeAdsResult = await initializeGoogleMobileAdsAfterConsent({
+    ...baseOptions,
+    entitlements: { adsDisabled: true },
+    region: 'eea',
+    runtime: {
+      async gatherUmpConsent() {
+        removeAdsCalls.push('ump:remove-ads');
+        return { canRequestAds: true, status: 'OBTAINED' };
+      },
+      async initializeGoogleMobileAds() {
+        removeAdsCalls.push('ads:init:remove-ads');
+      },
+      platform: 'android',
+    },
+  });
+
+  assert.equal(removeAdsResult.initialized, false);
+  assert.equal(removeAdsResult.decision.blockReason, 'remove_ads_entitlement');
+  assert.equal(removeAdsResult.state.umpConsentStatus, 'not_required');
+  assert.deepEqual(removeAdsCalls, []);
+
+  const removeAdsState = await collectMobileAdsConsentState({
+    ...baseOptions,
+    entitlements: { adsDisabled: true },
+    region: 'unknown',
+    runtime: {
+      async gatherUmpConsent() {
+        throw new Error('Remove Ads should bypass UMP collection');
+      },
+      platform: 'android',
+    },
+  });
+
+  assert.equal(removeAdsState.region, 'unknown');
+  assert.equal(removeAdsState.umpConsentStatus, 'not_required');
+});
+
 test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', async () => {
   const appJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'app.json'), 'utf8'));
   const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
