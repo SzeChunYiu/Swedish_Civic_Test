@@ -26,6 +26,7 @@ const includeSupplementaryKey = 'includeSupplementaryQuestions';
 const hasSeenAboutTheTestKey = 'hasSeenAboutTheTest';
 const studyPlanTestDateIsoKey = 'studyPlanTestDateIso';
 const studyPlanIntensityKey = 'studyPlanIntensity';
+const mockExamRealisticModeKey = 'mockExamRealisticMode';
 const settingsStorageId = 'settings';
 const defaultDailyGoalAnswers = 10;
 const defaultStudyPlanIntensity: StudyIntensity = 'regular';
@@ -146,6 +147,11 @@ function readIncludeSupplementary(): boolean {
   return storedValue ?? false;
 }
 
+function readMockExamRealisticMode(): boolean {
+  const storedValue = readStorageBoolean(mockExamRealisticModeKey);
+  return storedValue ?? false;
+}
+
 function readHasSeenAboutTheTest(): boolean {
   const storedValue = readStorageBoolean(hasSeenAboutTheTestKey);
   return storedValue ?? false;
@@ -166,6 +172,7 @@ type SettingsState = {
   audioEnabled: boolean;
   dailyGoalAnswers: number;
   includeSupplementaryQuestions: boolean;
+  mockExamRealisticMode: boolean;
   hasSeenAboutTheTest: boolean;
   studyPlanTestDateIso: string | null;
   studyPlanIntensity: StudyIntensity;
@@ -174,6 +181,7 @@ type SettingsState = {
   setAudioEnabled: (enabled: boolean) => void;
   setDailyGoalAnswers: (answerCount: number) => void;
   setIncludeSupplementaryQuestions: (include: boolean) => void;
+  setMockExamRealisticMode: (enabled: boolean) => void;
   setStudyPlanTestDateIso: (testDateIso: string | null) => void;
   setStudyPlanIntensity: (intensity: StudyIntensity) => void;
   markAboutTheTestSeen: () => void;
@@ -187,6 +195,7 @@ export type ImportableSettings = Partial<
     | 'audioEnabled'
     | 'dailyGoalAnswers'
     | 'includeSupplementaryQuestions'
+    | 'mockExamRealisticMode'
     | 'hasSeenAboutTheTest'
     | 'studyPlanTestDateIso'
     | 'studyPlanIntensity'
@@ -210,6 +219,9 @@ export function normalizeImportedSettings(value: unknown): ImportableSettings {
   }
   if (typeof candidate.includeSupplementaryQuestions === 'boolean') {
     settings.includeSupplementaryQuestions = candidate.includeSupplementaryQuestions;
+  }
+  if (typeof candidate.mockExamRealisticMode === 'boolean') {
+    settings.mockExamRealisticMode = candidate.mockExamRealisticMode;
   }
   if (typeof candidate.hasSeenAboutTheTest === 'boolean') {
     settings.hasSeenAboutTheTest = candidate.hasSeenAboutTheTest;
@@ -235,6 +247,7 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   audioEnabled: readAudioEnabled(),
   dailyGoalAnswers: readDailyGoalAnswers(),
   includeSupplementaryQuestions: readIncludeSupplementary(),
+  mockExamRealisticMode: readMockExamRealisticMode(),
   hasSeenAboutTheTest: readHasSeenAboutTheTest(),
   studyPlanTestDateIso: readStudyPlanTestDateIso(),
   studyPlanIntensity: readStudyPlanIntensity(),
@@ -279,6 +292,16 @@ export const useSettingsStore = create<SettingsState>((set) => ({
       include,
     );
     set({ includeSupplementaryQuestions: include, persistenceWarning });
+  },
+  setMockExamRealisticMode: (mockExamRealisticMode) => {
+    if (typeof mockExamRealisticMode !== 'boolean') return;
+    const persistenceWarning = writeRecoverably(
+      settingsStorage,
+      settingsStorageId,
+      mockExamRealisticModeKey,
+      mockExamRealisticMode,
+    );
+    set({ mockExamRealisticMode, persistenceWarning });
   },
   setStudyPlanTestDateIso: (studyPlanTestDateIso) => {
     const normalizedDateIso = normalizeStudyPlanTestDateIso(studyPlanTestDateIso);
@@ -354,6 +377,15 @@ export function importSettingsSnapshot(
         settingsStorageId,
         includeSupplementaryKey,
         normalizedSettings.includeSupplementaryQuestions,
+      ) ?? persistenceWarning;
+  }
+  if (normalizedSettings.mockExamRealisticMode !== undefined) {
+    persistenceWarning =
+      writeRecoverably(
+        settingsStorage,
+        settingsStorageId,
+        mockExamRealisticModeKey,
+        normalizedSettings.mockExamRealisticMode,
       ) ?? persistenceWarning;
   }
   if (normalizedSettings.hasSeenAboutTheTest !== undefined) {

@@ -464,7 +464,7 @@ test('exam route pauses active timer and answer timing while hidden or backgroun
   assert.match(examRouteSource, /const \[examPaused, setExamPaused\] = useState\(false\);/);
   assert.match(
     examRouteSource,
-    /const \[examPauseStatus, setExamPauseStatus\] = useState<'paused' \| 'resumed' \| null>\(null\);/,
+    /const \[examPauseStatus, setExamPauseStatus\] = useState<\s*'paused' \| 'resumed' \| 'focusBreak' \| null\s*>\(null\);/,
   );
   assert.match(examRouteSource, /AppState\.addEventListener\('change', handleAppStateChange\)/);
   assert.match(examRouteSource, /document\.addEventListener\('visibilitychange'/);
@@ -484,6 +484,47 @@ test('exam route pauses active timer and answer timing while hidden or backgroun
   assert.match(examRouteSource, /Tiden fortsätter nu\. Paustiden räknades inte\./);
   assert.match(examRouteSource, /aria-live="polite"/);
   assert.match(autoSubmitCall, /examActive: examUnlocked && !examPaused/);
+});
+
+test('mock exam realistic mode counts focus breaks without pausing the timer', () => {
+  const examRouteSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+  const progressStoreSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/storage/progressStore.ts'),
+    'utf8',
+  );
+  const settingsStoreSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/storage/settingsStore.ts'),
+    'utf8',
+  );
+  const progressRecordCall =
+    examRouteSource.match(/recordMockExamSession\(\{[\s\S]*?\n\s*\}\);/)?.[0] ?? '';
+
+  assert.match(settingsStoreSource, /const mockExamRealisticModeKey = 'mockExamRealisticMode';/);
+  assert.match(settingsStoreSource, /mockExamRealisticMode: readMockExamRealisticMode\(\)/);
+  assert.match(settingsStoreSource, /setMockExamRealisticMode: \(mockExamRealisticMode\) =>/);
+  assert.match(examRouteSource, /const mockExamRealisticMode = useSettingsStore/);
+  assert.match(examRouteSource, /const setMockExamRealisticMode = useSettingsStore/);
+  assert.match(examRouteSource, /accessibilityRole="switch"/);
+  assert.match(examRouteSource, /Realistic mode keeps the timer running and counts focus breaks/);
+  assert.match(examRouteSource, /Realistiskt läge låter timern fortsätta och räknar fokusbyten/);
+  assert.match(examRouteSource, /const focusBreakStartedAtMsRef = useRef<number \| null>\(null\);/);
+  assert.match(examRouteSource, /const focusBreakActiveRef = useRef\(false\);/);
+  assert.match(examRouteSource, /const focusBreaksRef = useRef\(0\);/);
+  assert.match(examRouteSource, /const \[focusBreaks, setFocusBreaks\] = useState\(0\);/);
+  assert.match(
+    examRouteSource,
+    /const shouldPause = canPause && !mockExamRealisticMode && awayFromExam;/,
+  );
+  assert.match(examRouteSource, /recordFocusBreakStart\(\);/);
+  assert.match(examRouteSource, /focusBreakActiveRef\.current = true;/);
+  assert.match(examRouteSource, /focusBreaksRef\.current = nextFocusBreaks;/);
+  assert.match(examRouteSource, /setRemainingSeconds\(\(current\) =>/);
+  assert.match(examRouteSource, /setExamPauseStatus\('focusBreak'\);/);
+  assert.match(examRouteSource, /focusBreaks: focusBreaksRef\.current/);
+  assert.match(progressRecordCall, /focusBreaks: focusBreaksRef\.current/);
+  assert.match(progressStoreSource, /focusBreaks: number;/);
+  assert.match(progressStoreSource, /focusBreaks\?: number;/);
+  assert.match(progressStoreSource, /focusBreaks: normalizeNonNegativeInteger/);
 });
 
 test('exam route keeps flag-for-review state local to the current attempt', () => {

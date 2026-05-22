@@ -757,6 +757,7 @@ test('local study data export round-trips citizenship requirements without purch
   );
   sourceStorageById.settings.set('language', 'en');
   sourceStorageById.settings.set('dailyGoalAnswers', 20);
+  sourceStorageById.settings.set('mockExamRealisticMode', true);
   sourceStorageById.accessibility.set('a11y.easyReadFont.v1', true);
   sourceStorageById.accessibility.set('a11y.fontSizeStep.v1', 2);
   sourceStorageById.accessibility.set('a11y.audioPlaybackRate.v1', 1.25);
@@ -780,6 +781,7 @@ test('local study data export round-trips citizenship requirements without purch
   );
   assert.equal(snapshot.settings.language, 'en');
   assert.equal(snapshot.settings.dailyGoalAnswers, 20);
+  assert.equal(snapshot.settings.mockExamRealisticMode, true);
   assert.deepEqual(snapshot.accessibility, {
     easyReadFont: true,
     fontSizeStep: 2,
@@ -800,7 +802,7 @@ test('local study data export round-trips citizenship requirements without purch
   assert.equal(previewResult.ok, true);
   assert.equal(previewResult.preview.summary.citizenshipRequirementChecklistCount, 3);
   assert.equal(previewResult.preview.summary.highlightCount, 1);
-  assert.equal(previewResult.preview.summary.settingCount, 5);
+  assert.equal(previewResult.preview.summary.settingCount, 6);
   assert.equal(previewResult.preview.summary.accessibilityPreferenceCount, 5);
   assert.equal(previewResult.preview.summary.companionPreferenceCount, 1);
   applyLocalStudyDataImport(previewResult.preview);
