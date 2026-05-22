@@ -468,8 +468,17 @@ test('private welfare source and exports use natural tax-funding English', () =>
       privateWelfareTaxFundingStiltedEnglishPattern.test(textForQuestion(question)),
     )
     .map((question) => question.id);
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
   const q155 = generatedSiteBank.find((question) => question.id === 'q155');
-  const welfareVariantIds = ['q155', 'q776', 'q777', 'q778', 'q779'];
+  const welfareVariantIds = [
+    'q155',
+    generatedQuestionId(sourceQuestions, 'q155', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q155', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q155', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q155', 'judgement'),
+  ];
   const welfareVariants = generatedSiteBank.filter((question) =>
     welfareVariantIds.includes(question.id),
   );
@@ -789,15 +798,21 @@ test('tradition prompts avoid literal common-to-do English', () => {
   assert.ok(q104, 'q104 should be published in the site bank');
   assert.equal(q097.q.en, 'How is New Year’s Eve on 31 December commonly celebrated in Sweden?');
   assert.equal(q104.q.en, 'How is All Saints’ Day commonly observed in Sweden?');
-  assert.equal(q097SingleChoice?.q.en, 'On New Year’s Eve, 31 December, it is common to ...?');
+  assert.equal(
+    q097SingleChoice?.q.en,
+    'What is correct about New Year’s Eve on 31 December traditions in Sweden?',
+  );
   assert.equal(
     q097Judgement?.q.en,
-    'Which fact is correct regarding how New Year’s Eve on 31 December is commonly celebrated in Sweden?',
+    'Which fact is correct about New Year’s Eve on 31 December traditions in Sweden?',
   );
-  assert.equal(q104SingleChoice?.q.en, 'On All Saints’ Day, it is common to ...?');
+  assert.equal(
+    q104SingleChoice?.q.en,
+    'What is correct about All Saints’ Day traditions in Sweden?',
+  );
   assert.equal(
     q104Judgement?.q.en,
-    'Which fact is correct regarding how All Saints’ Day is commonly observed in Sweden?',
+    'Which fact is correct about All Saints’ Day traditions in Sweden?',
   );
 });
 
@@ -840,7 +855,10 @@ test('Christmas tree prompts keep natural English wording', () => {
   assert.deepEqual(fileFindings, []);
   assert.deepEqual(bankFindings, []);
   assert.equal(q138?.q.en, 'What do many people do with a Christmas tree at Christmas in Sweden?');
-  assert.equal(q138SingleChoice?.q.en, 'In Sweden, at Christmas, many people ...?');
+  assert.equal(
+    q138SingleChoice?.q.en,
+    'What is correct about a Christmas tree at Christmas in Sweden?',
+  );
   assert.equal(
     q138TrueStatement?.q.en,
     'In Sweden, at Christmas, many people bring a Christmas tree into the home and decorate it with strings of lights, baubles, and tinsel.',
@@ -851,7 +869,7 @@ test('Christmas tree prompts keep natural English wording', () => {
   );
   assert.equal(
     q138Judgement?.q.en,
-    'Which fact is correct regarding what many people do with a Christmas tree at Christmas in Sweden?',
+    'Which fact is correct about a Christmas tree at Christmas in Sweden?',
   );
 });
 
@@ -1768,7 +1786,7 @@ test('source-criticism source and single-choice exports use natural English', ()
   assert.ok(q050SingleChoice, 'q050 generated single-choice variant should be published');
   assert.equal(q050SingleChoice.q.en, 'What is meant by source criticism?');
   assert.ok(q050Judgement, 'q050 generated judgement variant should be published');
-  assert.equal(q050Judgement.q.en, 'Which description is correct for source criticism?');
+  assert.equal(q050Judgement.q.en, 'What is correct about source criticism?');
 });
 
 test('source-criticism English naturalness guard rejects source-critical wording', () => {
@@ -1782,16 +1800,22 @@ const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
   const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
-    return String(contents)
-      .replace(
-        'What does source criticism mean?',
-        'What does it mean to be source-critical?',
-      )
-      .replace(
-        'Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct.',
-        'Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct.',
-      );
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  question.id === 'q050'",
+        "    ? {",
+        "        ...question,",
+        "        questionEn: 'What does it mean to be source-critical?',",
+        "        explanationEn: 'Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct.',",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
   }
   return contents;
 };
@@ -2253,7 +2277,7 @@ test('public-sector source and generated exports use direct English propositions
     },
     {
       id: generatedQuestionId(sourceQuestions, 'q062', 'singleChoice'),
-      q: 'The public sector in Sweden consists of ...?',
+      q: 'What is correct about the public sector in Sweden?',
       why: expectedExplanation,
     },
     {
@@ -2268,7 +2292,7 @@ test('public-sector source and generated exports use direct English propositions
     },
     {
       id: generatedQuestionId(sourceQuestions, 'q062', 'judgement'),
-      q: 'Which fact is correct regarding what the public sector in Sweden is?',
+      q: 'Which fact is correct about the public sector in Sweden?',
       why: expectedExplanation,
     },
   ];
@@ -2911,16 +2935,22 @@ test('municipal responsibilities source and generated prompts ask directly about
   assert.equal(q026.q.sv, 'Vilka vardagstjänster ansvarar kommuner för?');
   assert.equal(q026.q.en, 'Which everyday services are municipalities responsible for?');
   assert.ok(q026SectionPractice, 'q026 section-practice generated variant should be published');
-  assert.equal(q026SectionPractice.q.sv, 'Kommuner ansvarar för ...?');
-  assert.equal(q026SectionPractice.q.en, 'Municipalities are responsible for ...?');
+  assert.equal(
+    q026SectionPractice.q.sv,
+    'Vad stämmer om vardagstjänster som kommuner ansvarar för?',
+  );
+  assert.equal(
+    q026SectionPractice.q.en,
+    'What is correct about the everyday services municipalities are responsible for?',
+  );
   assert.ok(q026Judgement, 'q026 judgement generated variant should be published');
   assert.equal(
     q026Judgement.q.sv,
-    'Vilken uppgift stämmer när det gäller vilka vardagstjänster kommuner ansvarar för?',
+    'Vilken uppgift stämmer om vardagstjänster som kommuner ansvarar för?',
   );
   assert.equal(
     q026Judgement.q.en,
-    'Which fact is correct regarding which everyday services municipalities are responsible for?',
+    'Which fact is correct about the everyday services municipalities are responsible for?',
   );
   assert.equal(
     q026True?.q.sv,
@@ -3022,11 +3052,11 @@ test('Christmas celebration source and generated prompts use a direct civic ques
     'How do many people in Sweden celebrate Christmas even when it has no religious meaning for them?',
   );
   assert.ok(q140SectionPractice, 'q140 section-practice generated variant should be published');
-  assert.match(q140SectionPractice.q.sv, /Hur firar många jul i Sverige/);
-  assert.match(q140SectionPractice.q.en, /How do many people in Sweden celebrate Christmas/);
+  assert.equal(q140SectionPractice.q.sv, 'Vad stämmer om firandet av jul i Sverige?');
+  assert.equal(q140SectionPractice.q.en, 'What is correct about Christmas celebrations in Sweden?');
   assert.ok(q140Judgement, 'q140 judgement generated variant should be published');
-  assert.match(q140Judgement.q.sv, /Hur firar många jul i Sverige/);
-  assert.match(q140Judgement.q.en, /How do many people in Sweden celebrate Christmas/);
+  assert.equal(q140Judgement.q.sv, 'Vilken uppgift stämmer om firandet av jul i Sverige?');
+  assert.equal(q140Judgement.q.en, 'Which fact is correct about Christmas celebrations in Sweden?');
   assert.equal(
     q140True?.q.sv,
     'Många firar jul som en familjehögtid även när julen inte har religiös betydelse för dem.',
@@ -3277,7 +3307,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "        ...question,",
         "        options: question.options.map((option, index) =>",
         "          index === 0",
-        "            ? { ...option, text: { ...option.text, en: 'Template drift' } }",
+        "            ? { ...option, textEn: 'Template drift', text: { ...option.text, en: 'Template drift' } }",
         "            : option,",
         "        ),",
         "      }",
@@ -3288,6 +3318,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('scripts/validate-content.js', '--focus-generated-localization-template-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -3741,15 +3772,21 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
   const contents = originalReadFileSync.call(this, filePath, ...args);
   if (normalizedPath.endsWith('/data/questions.ts')) {
-    return String(contents)
-      .replace(
-        'Var ligger Sverige?',
-        'Vilket svar stämmer bäst? Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
-      )
-      .replace(
-        'Where is Sweden located?',
-        'Which answer best matches? True or false: Sweden is in northern Europe.',
-      );
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  question.id === 'q001'",
+        "    ? {",
+        "        ...question,",
+        "        questionSv: 'Vilket svar stämmer bäst? Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',",
+        "        questionEn: 'Which answer best matches? True or false: Sweden is in northern Europe.',",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
   }
   return contents;
 };
@@ -3778,15 +3815,21 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
   const contents = originalReadFileSync.call(this, filePath, ...args);
   if (normalizedPath.endsWith('/data/questions.ts')) {
-    return String(contents)
-      .replace(
-        'Var ligger Sverige?',
-        'Vilket alternativ motsvarar rätt bedömning av påståendet? Var ligger Sverige?',
-      )
-      .replace(
-        'Where is Sweden located?',
-        'Which option gives the correct judgment of the statement? Where is Sweden located?',
-      );
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  question.id === 'q001'",
+        "    ? {",
+        "        ...question,",
+        "        questionSv: 'Vilket alternativ motsvarar rätt bedömning av påståendet? Var ligger Sverige?',",
+        "        questionEn: 'Which option gives the correct judgment of the statement? Where is Sweden located?',",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
   }
   return contents;
 };
@@ -3808,6 +3851,14 @@ test('published question schema guards generated statement-choice meta prompts a
     path.join(repoRoot, 'scripts/validate-content.js'),
     'utf8',
   );
+  const derivedSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/content/derivedQuestions.ts'),
+    'utf8',
+  );
+  const trueFalsePatternSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/generated-true-false-naturalness-patterns.js'),
+    'utf8',
+  );
 
   assert.match(validatorSource, /Vilket påstående är korrekt/);
   assert.match(validatorSource, /Vilket påstående stämmer bäst/);
@@ -3815,10 +3866,11 @@ test('published question schema guards generated statement-choice meta prompts a
   assert.match(validatorSource, /Which statement best matches/);
   assert.match(validatorSource, /påståendet som motsvarar den uppgiften/);
   assert.match(validatorSource, /statement that matches that fact/);
-  assert.match(validatorSource, /universalHumanRightsStatementSv/);
-  assert.match(validatorSource, /Mänskliga rättigheter gäller varje människa/);
-  assert.match(validatorSource, /Human rights apply to every person/);
-  assert.match(validatorSource, /That human rights apply to everyone means/);
+  assert.match(derivedSource, /universalHumanRightsStatementSv/);
+  assert.match(derivedSource, /Mänskliga rättigheter gäller varje människa/);
+  assert.match(derivedSource, /Human rights apply to every person/);
+  assert.doesNotMatch(derivedSource, /That human rights apply to everyone means/);
+  assert.match(trueFalsePatternSource, /That human rights apply to everyone means/);
 });
 
 test('published question schema rejects generated true/false grammar-splice stems', () => {
@@ -6056,9 +6108,15 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "  question.id === generatedFixtureId('q001', 0)",
         "    ? {",
         "        ...question,",
-        "        questionSv: 'Vilket svar är korrekt? Var ligger Sverige?',",
-        "        questionEn: 'Which answer is correct? Where is Sweden located?',",
+        "        questionSv: 'Sverige ligger ...?',",
+        "        questionEn: 'Sweden is located ...?',",
         "      }",
+        "    : question.id === generatedFixtureId('q001', 3)",
+        "      ? {",
+        "          ...question,",
+        "          questionSv: 'Vilken uppgift stämmer när det gäller var Sverige ligger?',",
+        "          questionEn: 'Which fact is correct regarding where Sweden is located?',",
+        "        }",
         "    : question,",
         ").map(applyQuestionLocalizationPilot);",
       ].join('\\n'),
@@ -6076,6 +6134,10 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /generated variant\[0\] uses generated single-choice meta-stem wording/,
+  );
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /generated variant\[3\] uses generated single-choice meta-stem wording/,
   );
 });
 

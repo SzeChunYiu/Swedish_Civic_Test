@@ -90,14 +90,14 @@ test('derivePublishedQuestions creates four published UHR-referenced variants pe
   assert.ok(derived.every((question) => question.uhrReference.section === 'Geografi'));
   assert.ok(derived.some((question) => question.type === 'true_false'));
   assert.ok(derived.every((question) => question.tags.length === new Set(question.tags).size));
-  assert.equal(derived[0].questionSv, 'Sverige ligger ...?');
-  assert.equal(derived[0].questionEn, 'Sweden is located ...?');
+  assert.equal(derived[0].questionSv, 'Vad stämmer om Sveriges läge?');
+  assert.equal(derived[0].questionEn, "What is correct about Sweden's location?");
   assert.equal(derived[1].questionSv, 'Sverige ligger i Norden.');
   assert.equal(derived[1].questionEn, 'Sweden is located in the Nordic region.');
   assert.equal(derived[2].questionSv, 'Sverige ligger i Asien.');
   assert.equal(derived[2].questionEn, 'Sweden is located in Asia.');
-  assert.equal(derived[3].questionSv, 'Vilken uppgift stämmer när det gäller var Sverige ligger?');
-  assert.equal(derived[3].questionEn, 'Which fact is correct regarding where Sweden is located?');
+  assert.equal(derived[3].questionSv, 'Vilken uppgift stämmer om Sveriges läge?');
+  assert.equal(derived[3].questionEn, "Which fact is correct about Sweden's location?");
   assert.deepEqual(
     derived[3].options.map((option) => option.textEn),
     ['In the Nordic region', 'In Asia', 'In Africa', 'In South America'],
@@ -537,8 +537,8 @@ test('derivePublishedQuestions renders how-can-affect true/false as standalone p
   };
 
   const derived = derivePublishedQuestions([source], 901);
-  const trueStatement = derived.find((question) => question.id === 'q902');
-  const falseStatement = derived.find((question) => question.id === 'q903');
+  const trueStatement = derived[1];
+  const falseStatement = derived[2];
   const staleSplicePattern = /\b(?:när\s+[^.?!]+?\spåverkar|when\s+[^.?!]+?\saffects)\b/i;
 
   assert.equal(
