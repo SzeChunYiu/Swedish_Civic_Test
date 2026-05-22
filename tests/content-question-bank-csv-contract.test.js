@@ -64,8 +64,10 @@ test('question-bank CSV keeps its public row contract', () => {
 
   const summary = JSON.parse(match[0]);
   assert.equal(summary.questionBankCsvRowsValidated, summary.publishedQuestions);
-  assert.equal(summary.questionBankCsvHeaderColumnsValidated, 26);
+  assert.equal(summary.questionBankCsvHeaderColumnsValidated, 28);
   assert.equal(summary.questionBankCsvUniqueHeaderNamesValidated, true);
+  assert.equal(summary.questionBankCsvUhrCitationRowsValidated, summary.publishedQuestions);
+  assert.equal(summary.questionBankCsvUhrCitationParityValidated, true);
   assert.equal(summary.questionBankCsvUhrSourcePublisherRowsValidated, summary.publishedQuestions);
   assert.equal(summary.questionBankCsvUhrSourcePublisherParityValidated, true);
   assert.equal(summary.questionBankCsvSupplementalSourceRowsValidated, 15);
@@ -357,7 +359,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /content\/question-bank\.csv row 2 has 27 columns, expected 26/,
+    /content\/question-bank\.csv row 2 has 29 columns, expected 28/,
   );
 });
 
@@ -509,6 +511,71 @@ test('question-bank CSV exposes UHR source metadata with no blank cells', () => 
       `every row should export ${field}`,
     );
   }
+});
+
+test('question-bank CSV exposes localized user-visible UHR citation strings', () => {
+  const output = runQuestionBankCsvValidation();
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'validation should print JSON summary');
+
+  const summary = JSON.parse(match[0]);
+  assert.equal(summary.questionBankCsvUhrCitationRowsValidated, summary.publishedQuestions);
+  assert.equal(summary.questionBankCsvUhrCitationParityValidated, true);
+
+  const csv = fs.readFileSync(path.join(repoRoot, 'content', 'question-bank.csv'), 'utf8');
+  const lines = csv.trimEnd().split('\n');
+  const header = parseExportedCsvLine(lines[0]);
+  const rows = lines.slice(1).map(parseExportedCsvLine);
+  const idIndex = header.indexOf('id');
+  const citationSvIndex = header.indexOf('uhrCitationSv');
+  const citationEnIndex = header.indexOf('uhrCitationEn');
+  assert.notEqual(citationSvIndex, -1, 'uhrCitationSv column should exist');
+  assert.notEqual(citationEnIndex, -1, 'uhrCitationEn column should exist');
+
+  const q001 = rows.find((row) => row[idIndex] === 'q001');
+  assert.ok(q001, 'q001 should be exported');
+  assert.equal(
+    q001[citationSvIndex],
+    'Källa: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, s. 5',
+  );
+  assert.equal(
+    q001[citationEnIndex],
+    'Source: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, p. 5',
+  );
+  assert.ok(rows.every((row) => row[citationSvIndex] && row[citationEnIndex]));
+});
+
+test('question-bank CSV contract rejects localized UHR citation drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/content/question-bank.csv')) {
+    return String(contents).replace(
+      'Source: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, p. 5',
+      'Source: Sverige i fokus, Landet Sverige, wrong section, p. 5',
+    );
+  }
+  return contents;
+};
+process.argv.push('--focus-question-bank-csv');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /content\/question-bank\.csv row 2 q001 uhrCitationEn is "Source: Sverige i fokus, Landet Sverige, wrong section, p\. 5", expected "Source: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, p\. 5"/,
+  );
 });
 
 test('question-bank CSV exposes Valmyndigheten supplemental source metadata for voting-rights rows', () => {
