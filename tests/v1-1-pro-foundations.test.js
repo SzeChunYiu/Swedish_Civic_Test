@@ -630,6 +630,48 @@ test('tierComparison: pass-probability promise stays hidden until a route fulfil
   );
 });
 
+test('tierComparison: native-language explanation promise stays hidden until a route fulfills it', () => {
+  const tier = loadTs('lib/monetization/tierComparison.ts');
+  const premium = loadTs('lib/monetization/premium.ts');
+  const paywallSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/ProPaywall.tsx'),
+    'utf8',
+  );
+  const rowIds = tier.TIER_ROWS.map((row) => row.id);
+  const rowFlags = tier.TIER_ROWS.map((row) => row.flag).filter(Boolean);
+  const rowLabels = tier.TIER_ROWS.map((row) => `${row.labelSv}\n${row.labelEn}`).join('\n');
+
+  assert.equal(rowIds.includes('nativeLangExplanations'), false);
+  assert.equal(rowFlags.includes('nativeLangExplanations'), false);
+  assert.doesNotMatch(
+    rowLabels,
+    /Förklaringar på modersmål|Native-language explanations|zh \/ ar \/ fa \/ so \/ ti \/ uk/i,
+  );
+  assert.doesNotMatch(paywallSource, /fler språkstöd|broader language support/i);
+  assert.equal(premium.PRO_LIFETIME_ENTITLEMENTS.nativeLangExplanations, false);
+  assert.equal(
+    premium.unionEntitlements(
+      {
+        adsDisabled: false,
+        unlimitedMockExams: false,
+        fullMistakeReview: false,
+        spacedRepetition: false,
+        nativeLangExplanations: false,
+        customStudyPlan: false,
+        notesExport: false,
+        predictedPassProbability: false,
+        confidenceSlider: false,
+        multiColorHighlights: false,
+      },
+      {
+        nativeLangExplanations: true,
+        spacedRepetition: true,
+      },
+    ).nativeLangExplanations,
+    false,
+  );
+});
+
 test('tierComparison: Pro Lifetime includes ad-free study while Remove Ads stays non-Pro', () => {
   const tier = loadTs('lib/monetization/tierComparison.ts');
   const premium = loadTs('lib/monetization/premium.ts');

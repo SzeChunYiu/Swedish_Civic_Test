@@ -133,15 +133,6 @@ export const TIER_ROWS: readonly TierRow[] = [
     pro: CHECK,
   },
   {
-    id: 'nativeLangExplanations',
-    labelSv: 'Förklaringar på modersmål',
-    labelEn: 'Native-language explanations',
-    flag: 'nativeLangExplanations',
-    free: { kind: 'text', sv: 'sv / en', en: 'sv / en' },
-    adFree: { kind: 'text', sv: 'sv / en', en: 'sv / en' },
-    pro: { kind: 'text', sv: '+ zh / ar / fa / so / ti / uk', en: '+ zh / ar / fa / so / ti / uk' },
-  },
-  {
     id: 'customStudyPlan',
     labelSv: 'Anpassad studieplan (provdatum)',
     labelEn: 'Custom study plan (test date)',

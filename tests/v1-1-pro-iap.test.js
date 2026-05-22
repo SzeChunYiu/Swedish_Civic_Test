@@ -495,7 +495,7 @@ test('mergeWithRemoveAds: Pro purchase preserves shipped flags even if Remove-Ad
     unlimitedMockExams: true,
     fullMistakeReview: true,
     spacedRepetition: true,
-    nativeLangExplanations: true,
+    nativeLangExplanations: false,
     customStudyPlan: true,
     notesExport: true,
     predictedPassProbability: false,
@@ -506,6 +506,7 @@ test('mergeWithRemoveAds: Pro purchase preserves shipped flags even if Remove-Ad
   assert.equal(merged.adsDisabled, true);
   assert.equal(merged.spacedRepetition, true);
   assert.equal(merged.unlimitedMockExams, true);
+  assert.equal(merged.nativeLangExplanations, false);
   assert.equal(merged.predictedPassProbability, false);
 });
 

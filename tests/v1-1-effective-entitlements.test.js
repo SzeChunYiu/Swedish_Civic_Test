@@ -27,7 +27,7 @@ const PRO_LIFETIME_SNAP = {
   unlimitedMockExams: true,
   fullMistakeReview: true,
   spacedRepetition: true,
-  nativeLangExplanations: true,
+  nativeLangExplanations: false,
   customStudyPlan: true,
   notesExport: true,
   predictedPassProbability: false,
@@ -64,6 +64,7 @@ test('resolveEffectiveEntitlement: Pro Lifetime → shipped flags + pro-lifetime
   assert.equal(r.primarySource, 'pro-lifetime');
   assert.equal(r.entitlements.spacedRepetition, true);
   assert.equal(r.entitlements.adsDisabled, true);
+  assert.equal(r.entitlements.nativeLangExplanations, false);
 });
 
 test('resolveEffectiveEntitlement: Remove-Ads only does NOT grant Pro flags', () => {
