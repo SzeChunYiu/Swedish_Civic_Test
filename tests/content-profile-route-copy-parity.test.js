@@ -161,16 +161,16 @@ test('profile premium banner keeps current Remove Ads purchase and recovery cont
   assert.match(bannerSource, /purchased: 'Annonser är avstängda på den här enheten\.'/);
   assert.match(
     bannerSource,
-    /purchaseUnavailable[\s\S]*copy\.webUnavailableBody\(REMOVE_ADS_PRICE_LABEL\)[\s\S]*copy\.body\(REMOVE_ADS_PRICE_LABEL\)/,
+    /purchaseUnavailable[\s\S]*copy\.webUnavailableBody\(resolvedPriceLabel\)[\s\S]*copy\.body\(resolvedPriceLabel\)/,
   );
   assert.match(
     bannerSource,
-    /accessibilityState=\{\{[\s\S]*busy: activeAction === 'buy'[\s\S]*disabled: actionsDisabled[\s\S]*\}\}[\s\S]*disabled=\{activeAction !== null \|\| adsDisabled \|\| purchaseUnavailable\}[\s\S]*copy\.buyIdle\(REMOVE_ADS_PRICE_LABEL\)/,
+    /accessibilityState=\{\{[\s\S]*busy: activeAction === 'buy'[\s\S]*disabled: actionsDisabled[\s\S]*\}\}[\s\S]*disabled=\{actionsDisabled\}[\s\S]*copy\.buyIdle\(resolvedPriceLabel\)/,
   );
   assert.match(bannerSource, /accessibilityLabel=\{copy\.restoreAccessibilityLabel\}/);
   assert.match(
     bannerSource,
-    /accessibilityState=\{\{ busy: activeAction === 'restore', disabled: actionsDisabled \}\}[\s\S]*disabled=\{activeAction !== null \|\| adsDisabled \|\| purchaseUnavailable\}[\s\S]*copy\.restoreIdle/,
+    /accessibilityState=\{\{ busy: activeAction === 'restore', disabled: actionsDisabled \}\}[\s\S]*disabled=\{actionsDisabled\}[\s\S]*copy\.restoreIdle/,
   );
   assert.match(
     bannerSource,

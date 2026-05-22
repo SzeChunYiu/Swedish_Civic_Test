@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { buyRemoveAds, restoreRemoveAdsPurchase } from '../../lib/monetization/purchases';
 import {
-  REMOVE_ADS_PRICE_LABEL,
-  buyRemoveAds,
-  restoreRemoveAdsPurchase,
-} from '../../lib/monetization/purchases';
-import { createDefaultPurchaseRuntimeOptions } from '../../lib/monetization/useRemoveAdsEntitlements';
+  createDefaultPurchaseRuntimeOptions,
+  useRemoveAdsPriceLabel,
+} from '../../lib/monetization/useRemoveAdsEntitlements';
 import type {
   PurchaseRuntimeOptions,
   RemoveAdsPurchaseStatus,
@@ -129,11 +128,13 @@ export function PremiumBanner({
   entitlements,
   language = 'sv',
   onEntitlementsChange,
+  priceLabel,
   runtimeOptions,
 }: {
   entitlements: PremiumEntitlements;
   language?: AppLanguage;
   onEntitlementsChange?: (entitlements: PremiumEntitlements) => void;
+  priceLabel?: string;
   runtimeOptions?: PurchaseRuntimeOptions;
 }) {
   const copy = premiumBannerCopy[language];
@@ -143,6 +144,7 @@ export function PremiumBanner({
     if (runtimeOptions) return runtimeOptions;
     return createDefaultPurchaseRuntimeOptions(entitlements.adsDisabled === true);
   }, [entitlements.adsDisabled, runtimeOptions]);
+  const resolvedPriceLabel = useRemoveAdsPriceLabel(purchaseRuntime, priceLabel);
   const [currentEntitlements, setCurrentEntitlements] = useState(entitlements);
   const [activeAction, setActiveAction] = useState<PurchaseAction | null>(null);
   const [status, setStatus] = useState<PurchaseUiStatus>('idle');
@@ -207,15 +209,15 @@ export function PremiumBanner({
       </Text>
       <Text style={styles.meta}>
         {purchaseUnavailable
-          ? copy.webUnavailableBody(REMOVE_ADS_PRICE_LABEL)
-          : copy.body(REMOVE_ADS_PRICE_LABEL)}
+          ? copy.webUnavailableBody(resolvedPriceLabel)
+          : copy.body(resolvedPriceLabel)}
       </Text>
       <View style={styles.actions}>
         <Button
           accessibilityHint={
             purchaseUnavailable ? copy.webUnavailableAccessibilityHint : copy.buyAccessibilityHint
           }
-          accessibilityLabel={copy.buyAccessibilityLabel(REMOVE_ADS_PRICE_LABEL)}
+          accessibilityLabel={copy.buyAccessibilityLabel(resolvedPriceLabel)}
           accessibilityRole="button"
           accessibilityState={{
             busy: activeAction === 'buy',
@@ -229,7 +231,7 @@ export function PremiumBanner({
             ? copy.buying
             : purchaseUnavailable
               ? copy.buyUnavailable
-              : copy.buyIdle(REMOVE_ADS_PRICE_LABEL)}
+              : copy.buyIdle(resolvedPriceLabel)}
         </Button>
         <Button
           accessibilityHint={

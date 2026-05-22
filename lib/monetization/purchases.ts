@@ -32,6 +32,13 @@ export interface RemoveAdsPurchaseRecord {
   raw?: unknown;
 }
 
+export interface RemoveAdsProductMetadata {
+  displayPrice: string;
+  localizedPrice?: string | null;
+  productId: typeof REMOVE_ADS_PRODUCT_ID;
+  storeProductId: typeof REMOVE_ADS_IOS_PRODUCT_ID | typeof REMOVE_ADS_ANDROID_PRODUCT_ID;
+}
+
 export type RemoveAdsReceiptValidationStatus = 'valid' | 'invalid' | 'pending';
 
 export interface RemoveAdsReceiptValidationResult {
@@ -58,6 +65,7 @@ export interface StoredRemoveAdsEntitlementRecord {
 export interface RemoveAdsPurchaseProvider {
   connect(): Promise<void>;
   disconnect?(): Promise<void>;
+  fetchRemoveAdsProductMetadata?(productId: string): Promise<RemoveAdsProductMetadata | null>;
   finishPurchase?(purchase: RemoveAdsPurchaseRecord): Promise<void>;
   validateRemoveAdsReceipt?(
     purchase: RemoveAdsPurchaseRecord,
@@ -141,6 +149,12 @@ function optionalStoredString(value: unknown): string | null | undefined {
   return typeof value === 'string' ? value : undefined;
 }
 
+function compactString(value: unknown): string | undefined {
+  if (typeof value !== 'string') return undefined;
+  const trimmed = value.trim();
+  return trimmed ? trimmed : undefined;
+}
+
 export function isCanonicalUtcIsoTimestamp(value: unknown): value is string {
   if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value)) {
     return false;
@@ -206,6 +220,47 @@ export function getRemoveAdsStoreProductId(
 function getPurchaseStoreProductId(productId: string, platform: RemoveAdsStorePlatform): string {
   if (productId === REMOVE_ADS_PRODUCT_ID) return getRemoveAdsStoreProductId(platform);
   return productId;
+}
+
+function getStoreProductId(product: unknown): string | undefined {
+  if (!isRecord(product)) return undefined;
+  return (
+    compactString(product.id) ?? compactString(product.productId) ?? compactString(product.sku)
+  );
+}
+
+function getStoreDisplayPrice(product: unknown): string | undefined {
+  if (!isRecord(product)) return undefined;
+  return (
+    compactString(product.displayPrice) ??
+    compactString(product.localizedPrice) ??
+    compactString(product.price)
+  );
+}
+
+function createRemoveAdsProductMetadata({
+  displayPrice = REMOVE_ADS_PRICE_LABEL,
+  localizedPrice,
+  storeProductId,
+}: {
+  displayPrice?: string;
+  localizedPrice?: string | null;
+  storeProductId: typeof REMOVE_ADS_IOS_PRODUCT_ID | typeof REMOVE_ADS_ANDROID_PRODUCT_ID;
+}): RemoveAdsProductMetadata {
+  return {
+    displayPrice,
+    localizedPrice: localizedPrice ?? displayPrice,
+    productId: REMOVE_ADS_PRODUCT_ID,
+    storeProductId,
+  };
+}
+
+function createFallbackRemoveAdsProductMetadata(
+  platform: string = 'ios',
+): RemoveAdsProductMetadata {
+  return createRemoveAdsProductMetadata({
+    storeProductId: getRemoveAdsStoreProductId(platform),
+  });
 }
 
 async function resolveNativeStorePlatform(
@@ -723,6 +778,28 @@ export function createNativePurchaseProvider({
       const iap = await getIap();
       await iap.endConnection();
     },
+    async fetchRemoveAdsProductMetadata(productId) {
+      const iap = await getIap();
+      const storePlatform = await resolveNativeStorePlatform(platform);
+      const storeProductId = getRemoveAdsStoreProductId(storePlatform);
+      const products = await iap.fetchProducts({
+        skus: [storeProductId],
+        type: 'in-app',
+      });
+      const productList = Array.isArray(products) ? products : [];
+      const product =
+        productList.find((candidate) => {
+          const candidateId = getStoreProductId(candidate);
+          return candidateId === storeProductId || candidateId === productId;
+        }) ?? productList[0];
+      const displayPrice = getStoreDisplayPrice(product);
+
+      return createRemoveAdsProductMetadata({
+        displayPrice: displayPrice ?? REMOVE_ADS_PRICE_LABEL,
+        localizedPrice: displayPrice ?? null,
+        storeProductId,
+      });
+    },
     async finishPurchase(purchase) {
       if (!purchase.raw) return;
       const iap = await getIap();
@@ -842,6 +919,10 @@ export function createMockPurchaseProvider({
     async disconnect() {
       connected = false;
     },
+    async fetchRemoveAdsProductMetadata() {
+      assertConnected();
+      return createFallbackRemoveAdsProductMetadata();
+    },
     async finishPurchase() {
       assertConnected();
     },
@@ -862,6 +943,34 @@ export function createMockPurchaseProvider({
       return [createMockPurchase('restore-remove-ads')];
     },
   };
+}
+
+export async function fetchRemoveAdsProductMetadata(
+  runtimeOptions: PurchaseRuntimeOptions = {},
+): Promise<RemoveAdsProductMetadata> {
+  const { purchaseUnavailableReason } = runtimeOptions;
+  const provider = runtimeOptions.provider ?? createNativePurchaseProvider();
+
+  if (purchaseUnavailableReason) {
+    return createFallbackRemoveAdsProductMetadata();
+  }
+
+  let connected = false;
+
+  try {
+    await provider.connect();
+    connected = true;
+    return (
+      (await provider.fetchRemoveAdsProductMetadata?.(REMOVE_ADS_PRODUCT_ID)) ??
+      createFallbackRemoveAdsProductMetadata()
+    );
+  } catch {
+    return createFallbackRemoveAdsProductMetadata();
+  } finally {
+    if (connected) {
+      await provider.disconnect?.();
+    }
+  }
 }
 
 async function validateRemoveAdsReceipt(

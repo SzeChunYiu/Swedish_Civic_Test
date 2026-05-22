@@ -35,6 +35,7 @@ import { countAnswersForLocalDate, getLocalDateKey } from '../../lib/learning/st
 import { calculateLevel } from '../../lib/learning/xp';
 import { showRewardedExtraExamAd } from '../../lib/monetization/rewardedAd';
 import { useMockExamAccess } from '../../lib/monetization/useMockExamAccess';
+import { useRemoveAdsPriceLabel } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { radius, space, typography, type ThemeColors } from '../../lib/theme';
@@ -469,6 +470,7 @@ export default function Screen() {
   const copy = homeCopy[language];
   const themeColors = useThemeColors();
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
+  const removeAdsPriceLabel = useRemoveAdsPriceLabel(purchaseRuntime);
   const todayKey = getLocalDateKey();
   const today = useMemo(() => new Date(`${todayKey}T12:00:00`), [todayKey]);
   const dailyChallenge = useMemo(
@@ -736,6 +738,7 @@ export default function Screen() {
           questionCount={questions.length}
           chapterCount={chapters.length}
           language={language}
+          priceLabel={removeAdsPriceLabel}
         />
       ) : null}
       <View style={styles.quickActions}>
@@ -846,6 +849,7 @@ export default function Screen() {
             entitlements={monetizationEntitlements}
             language={language}
             onEntitlementsChange={setMonetizationEntitlements}
+            priceLabel={removeAdsPriceLabel}
             runtimeOptions={purchaseRuntime}
           />
           <AdBanner entitlements={monetizationEntitlements} placement="home_banner" />

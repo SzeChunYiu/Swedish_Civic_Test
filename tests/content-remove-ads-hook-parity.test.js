@@ -244,7 +244,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/components/monetization/PremiumBanner.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('copy.webUnavailableBody(REMOVE_ADS_PRICE_LABEL)', 'copy.body(REMOVE_ADS_PRICE_LABEL)');
+      .replace('copy.webUnavailableBody(resolvedPriceLabel)', 'copy.body(resolvedPriceLabel)');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };

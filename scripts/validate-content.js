@@ -1865,11 +1865,19 @@ const EXPECTED_SETTINGS_STORE_FIELDS = [
   { name: 'dailyGoalAnswers', type: 'number', optional: false },
   { name: 'includeSupplementaryQuestions', type: 'boolean', optional: false },
   { name: 'hasSeenAboutTheTest', type: 'boolean', optional: false },
+  { name: 'studyPlanTestDateIso', type: 'string | null', optional: false },
+  { name: 'studyPlanIntensity', type: 'StudyIntensity', optional: false },
   { name: 'persistenceWarning', type: 'RecoverablePersistenceWarning | null', optional: false },
   { name: 'setLanguage', type: '(language: AppLanguage) => void', optional: false },
   { name: 'setAudioEnabled', type: '(enabled: boolean) => void', optional: false },
   { name: 'setDailyGoalAnswers', type: '(answerCount: number) => void', optional: false },
   { name: 'setIncludeSupplementaryQuestions', type: '(include: boolean) => void', optional: false },
+  {
+    name: 'setStudyPlanTestDateIso',
+    type: '(testDateIso: string | null) => void',
+    optional: false,
+  },
+  { name: 'setStudyPlanIntensity', type: '(intensity: StudyIntensity) => void', optional: false },
   { name: 'markAboutTheTestSeen', type: '() => void', optional: false },
   { name: 'clearPersistenceWarning', type: '() => void', optional: false },
 ];
@@ -1998,6 +2006,7 @@ const EXPECTED_RELEASE_MONETIZATION_POLICY_FIELDS = [
   'realAdsEnvFlag',
   'removeAdsPriceLabel',
   'removeAdsProductId',
+  'removeAdsStoreProductIds',
   'storeDisclosureTopics',
 ];
 const EXPECTED_RELEASE_CONSENT_PROMPTS = ['app_tracking_transparency', 'ump_consent_form'];
@@ -2039,7 +2048,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 15;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 32;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 35;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_RUNTIME_CASES = 9;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
@@ -5252,10 +5261,28 @@ const EXPECTED_PURCHASE_INTERFACES = [
     ],
   },
   {
+    name: 'RemoveAdsProductMetadata',
+    fields: [
+      { name: 'displayPrice', type: 'string', optional: false },
+      { name: 'localizedPrice', type: 'string | null', optional: true },
+      { name: 'productId', type: 'typeof REMOVE_ADS_PRODUCT_ID', optional: false },
+      {
+        name: 'storeProductId',
+        type: 'typeof REMOVE_ADS_IOS_PRODUCT_ID | typeof REMOVE_ADS_ANDROID_PRODUCT_ID',
+        optional: false,
+      },
+    ],
+  },
+  {
     name: 'RemoveAdsPurchaseProvider',
     fields: [
       { name: 'connect', type: '() => Promise<void>', optional: false },
       { name: 'disconnect', type: '() => Promise<void>', optional: true },
+      {
+        name: 'fetchRemoveAdsProductMetadata',
+        type: '(productId: string) => Promise<RemoveAdsProductMetadata | null>',
+        optional: true,
+      },
       {
         name: 'finishPurchase',
         type: '(purchase: RemoveAdsPurchaseRecord) => Promise<void>',
@@ -13095,6 +13122,7 @@ function validateReleaseMonetizationPolicyParity() {
     realAdsEnvFlag: EXPECTED_RELEASE_REAL_ADS_ENV_FLAG,
     removeAdsPriceLabel: REMOVE_ADS_PRICE_LABEL,
     removeAdsProductId: REMOVE_ADS_PRODUCT_ID,
+    removeAdsStoreProductIds: REMOVE_ADS_STORE_PRODUCT_IDS,
     storeDisclosureTopics: EXPECTED_RELEASE_STORE_DISCLOSURE_TOPICS,
   };
 
@@ -13279,13 +13307,15 @@ function validateRemoveAdsEntitlementHookParity() {
       'default web purchase runtime must fail closed without a public mock provider',
     ],
     [
-      normalizedHookSource.includes(
-        'provider: createNativePurchaseProvider({ platform: getNativePurchasePlatform() }),',
-      ) && normalizedHookSource.includes('storage: createSecureStorePurchaseStorage(),'),
+      normalizedHookSource.includes('const nativePlatform = getNativePurchasePlatform();') &&
+        normalizedHookSource.includes(
+          'provider: createNativePurchaseProvider({ platform: nativePlatform, receiptValidator, }),',
+        ) &&
+        normalizedHookSource.includes('storage: createSecureStorePurchaseStorage(),'),
       'native Remove Ads entitlement runtime must provide a native provider and secure storage',
     ],
     [
-      /defaultNativePurchaseRuntimeOptions\s*\?\?=\s*\{[\s\S]*provider:\s*createNativePurchaseProvider\(\{\s*platform:\s*getNativePurchasePlatform\(\)\s*\}\),[\s\S]*storage:\s*createSecureStorePurchaseStorage\(\),[\s\S]*\};/.test(
+      /defaultNativePurchaseRuntimeOptions\s*\?\?=\s*\{[\s\S]*provider:\s*createNativePurchaseProvider\(\{[\s\S]*platform:\s*nativePlatform,[\s\S]*receiptValidator,[\s\S]*\}\),[\s\S]*storage:\s*createSecureStorePurchaseStorage\(\),[\s\S]*\};/.test(
         hookSource,
       ),
       'native Remove Ads entitlement runtime must provide a native provider and secure storage',
@@ -13360,7 +13390,8 @@ function validateRemoveAdsEntitlementHookParity() {
       normalizedPremiumBannerSource.includes(
         "purchaseRuntime?.purchaseUnavailableReason === 'web_store_unavailable'",
       ) &&
-        normalizedPremiumBannerSource.includes('copy.webUnavailableBody(REMOVE_ADS_PRICE_LABEL)') &&
+        normalizedPremiumBannerSource.includes('copy.webUnavailableBody(resolvedPriceLabel)') &&
+        normalizedPremiumBannerSource.includes('copy.body(resolvedPriceLabel)') &&
         normalizedPremiumBannerSource.includes('copy.webUnavailableAccessibilityHint') &&
         normalizedPremiumBannerSource.includes('copy.buyUnavailable') &&
         normalizedPremiumBannerSource.includes('copy.restoreUnavailable') &&
@@ -13510,7 +13541,7 @@ function validatePremiumEntitlementParity() {
   }
 
   if (
-    !/return\s+entitlements\.unlimitedMockExams\s*===\s*true\s*&&\s*entitlements\.fullMistakeReview\s*===\s*true;/.test(
+    !/return\s*\(\s*isStrictEntitlementFlag\(entitlements\.unlimitedMockExams\)\s*&&\s*isStrictEntitlementFlag\(entitlements\.fullMistakeReview\)\s*\);/.test(
       premiumSource,
     )
   ) {
@@ -19312,9 +19343,11 @@ function validatePurchaseTypeSchemaParity() {
 }
 
 function validateRemoveAdsPurchaseRuntimeParity() {
+  let homeSource = '';
   let valid = true;
   let paywallSource = '';
   let placementCtaSource = '';
+  let pricingWedgeSource = '';
   let purchaseSource = '';
 
   function reject(message) {
@@ -19324,6 +19357,7 @@ function validateRemoveAdsPurchaseRuntimeParity() {
 
   try {
     purchaseSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/purchases.ts'), 'utf8');
+    homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
     placementCtaSource = fs.readFileSync(
       path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
       'utf8',
@@ -19332,14 +19366,20 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
       'utf8',
     );
+    pricingWedgeSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/PricingWedge.tsx'),
+      'utf8',
+    );
   } catch (error) {
     reject(`Remove Ads purchase runtime sources could not be read: ${error.message}`);
     return;
   }
 
+  const normalizedHomeSource = homeSource.replace(/\s+/g, ' ');
   const normalizedPurchaseSource = purchaseSource.replace(/\s+/g, ' ');
   const normalizedPaywallSource = paywallSource.replace(/\s+/g, ' ');
   const normalizedPlacementCtaSource = placementCtaSource.replace(/\s+/g, ' ');
+  const normalizedPricingWedgeSource = pricingWedgeSource.replace(/\s+/g, ' ');
   const paywallDisabledPropCount =
     paywallSource.match(/disabled=\{actionsDisabled\}/g)?.length ?? 0;
   const paywallDisabledStateCount =
@@ -19398,6 +19438,16 @@ function validateRemoveAdsPurchaseRuntimeParity() {
         purchaseSource,
       ),
       'Remove Ads purchase results must expose canonical price label and product id',
+    ],
+    [
+      normalizedPurchaseSource.includes('interface RemoveAdsProductMetadata') &&
+        normalizedPurchaseSource.includes('displayPrice: string;') &&
+        normalizedPurchaseSource.includes('localizedPrice?: string | null;') &&
+        normalizedPurchaseSource.includes('fetchRemoveAdsProductMetadata') &&
+        /fetchProducts\(\{[\s\S]*skus:\s*\[\s*storeProductId\s*\],[\s\S]*type:\s*'in-app'/.test(
+          purchaseSource,
+        ),
+      'Remove Ads runtime must fetch store product metadata with platform product id and expose display price',
     ],
     [
       normalizedPurchaseSource.includes(
@@ -19597,6 +19647,24 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       normalizedPaywallSource.includes('await buyRemoveAds(purchaseRuntime)') &&
         normalizedPaywallSource.includes('await restoreRemoveAdsPurchase(purchaseRuntime)'),
       'PremiumBanner must route buy and restore through the shared purchase runtime',
+    ],
+    [
+      normalizedPaywallSource.includes('useRemoveAdsPriceLabel(purchaseRuntime, priceLabel)') &&
+        normalizedPaywallSource.includes('copy.webUnavailableBody(resolvedPriceLabel)') &&
+        normalizedPaywallSource.includes('copy.body(resolvedPriceLabel)') &&
+        normalizedPaywallSource.includes('copy.buyAccessibilityLabel(resolvedPriceLabel)') &&
+        normalizedPaywallSource.includes('copy.buyIdle(resolvedPriceLabel)'),
+      'PremiumBanner must render the fetched Remove Ads display price with fallback',
+    ],
+    [
+      normalizedPricingWedgeSource.includes('priceLabel = REMOVE_ADS_PRICE_LABEL') &&
+        normalizedPricingWedgeSource.includes('const pitch = t.pitch(priceLabel);') &&
+        normalizedHomeSource.includes(
+          'const removeAdsPriceLabel = useRemoveAdsPriceLabel(purchaseRuntime);',
+        ) &&
+        /<PricingWedge[\s\S]*priceLabel=\{removeAdsPriceLabel\}/.test(homeSource) &&
+        /<PremiumBanner[\s\S]*priceLabel=\{removeAdsPriceLabel\}/.test(homeSource),
+      'Home PricingWedge and PremiumBanner must share the fetched Remove Ads price label',
     ],
     [
       normalizedPaywallSource.includes('accessibilityState={{') &&
@@ -20094,7 +20162,7 @@ function validateMobileAdsConsentRuntimeParity() {
   const runtimeCases = [
     [
       normalizedMobileConsentSource.includes(
-        'const shouldCollectConsent = googleMobileAdsEnabled && entitlements.adsDisabled !== true && realAdsEnabled;',
+        'const shouldCollectConsent = googleMobileAdsEnabled && !isStrictEntitlementFlag(entitlements.adsDisabled) && realAdsEnabled;',
       ),
       'Mobile Ads consent runtime must gate consent collection on ads config, real ads, and Remove Ads entitlements',
     ],
@@ -20191,7 +20259,7 @@ function validateMobileAdsConsentHookParity() {
   const hookCases = [
     [
       normalizedHookSource.includes(
-        'const shouldCollectConsent = adsConfig.googleMobileAdsEnabled && entitlements.adsDisabled !== true && adsConfig.realAdsEnabled;',
+        'const shouldCollectConsent = adsConfig.googleMobileAdsEnabled && !isStrictEntitlementFlag(entitlements.adsDisabled) && adsConfig.realAdsEnabled;',
       ) &&
         normalizedHookSource.includes('platform,') &&
         normalizedHookSource.includes(
@@ -20209,7 +20277,7 @@ function validateMobileAdsConsentHookParity() {
       'Mobile Ads consent hook must route initial state through the consent SDK decision helper',
     ],
     [
-      /if\s*\(\s*entitlements\.adsDisabled\s*===\s*true\s*\)\s*\{\s*return\s+initializeGoogleMobileAdsAfterConsent\(\{[\s\S]*entitlements,[\s\S]*runtime:\s*createNativeMobileAdsConsentRuntime\(platform\),[\s\S]*\}\);\s*\}/.test(
+      /if\s*\(\s*isStrictEntitlementFlag\(entitlements\.adsDisabled\)\s*\)\s*\{\s*return\s+initializeGoogleMobileAdsAfterConsent\(\{[\s\S]*entitlements,[\s\S]*runtime:\s*createNativeMobileAdsConsentRuntime\(platform\),[\s\S]*\}\);\s*\}/.test(
         hookSource,
       ),
       'Mobile Ads consent hook must bypass cached initialization when Remove Ads is active',
@@ -20230,7 +20298,7 @@ function validateMobileAdsConsentHookParity() {
       'Mobile Ads consent hook must reset shared initialization after blocked consent results without caching them',
     ],
     [
-      /if\s*\([\s\S]*entitlements\.adsDisabled\s*!==\s*true[\s\S]*cachedInitialization[\s\S]*cachedInitializationPlatform\s*===\s*platform[\s\S]*\)\s*\{\s*return\s+cachedInitialization;\s*\}/.test(
+      /if\s*\([\s\S]*!isStrictEntitlementFlag\(entitlements\.adsDisabled\)[\s\S]*cachedInitialization[\s\S]*cachedInitializationPlatform\s*===\s*platform[\s\S]*\)\s*\{\s*return\s+cachedInitialization;\s*\}/.test(
         hookSource,
       ) &&
         normalizedHookSource.includes('setResult(initialResult);') &&

@@ -4,10 +4,12 @@ import { Platform } from 'react-native';
 import type { PremiumEntitlements } from '../../types/monetization';
 import { FREE_ENTITLEMENTS } from './premium';
 import {
+  REMOVE_ADS_PRICE_LABEL,
   createNativePurchaseProvider,
   createMockPurchaseProvider,
   createSecureStorePurchaseStorage,
   createWebPurchaseStorage,
+  fetchRemoveAdsProductMetadata,
   getPurchaseEntitlements,
   type PurchaseRuntimeOptions,
   type RemoveAdsPurchaseProvider,
@@ -142,6 +144,39 @@ export function createDefaultPurchaseRuntimeOptions(
   };
 
   return defaultNativePurchaseRuntimeOptions;
+}
+
+export function useRemoveAdsPriceLabel(
+  runtimeOptions?: PurchaseRuntimeOptions,
+  overridePriceLabel?: string,
+): string {
+  const [priceLabel, setPriceLabel] = useState(overridePriceLabel ?? REMOVE_ADS_PRICE_LABEL);
+
+  useEffect(() => {
+    let isMounted = true;
+    if (overridePriceLabel) {
+      setPriceLabel(overridePriceLabel);
+      return () => {
+        isMounted = false;
+      };
+    }
+
+    setPriceLabel(REMOVE_ADS_PRICE_LABEL);
+
+    void fetchRemoveAdsProductMetadata(runtimeOptions)
+      .then((metadata) => {
+        if (isMounted) setPriceLabel(metadata.displayPrice || REMOVE_ADS_PRICE_LABEL);
+      })
+      .catch(() => {
+        if (isMounted) setPriceLabel(REMOVE_ADS_PRICE_LABEL);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [overridePriceLabel, runtimeOptions]);
+
+  return priceLabel;
 }
 
 export function useRemoveAdsEntitlements({

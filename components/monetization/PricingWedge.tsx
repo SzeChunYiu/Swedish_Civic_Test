@@ -13,6 +13,7 @@ export interface PricingWedgeProps {
   questionCount: number;
   chapterCount: number;
   language: 'sv' | 'en';
+  priceLabel?: string;
 }
 
 const copy = {
@@ -28,12 +29,17 @@ const copy = {
   },
 } as const;
 
-export function PricingWedge({ questionCount, chapterCount, language }: PricingWedgeProps) {
+export function PricingWedge({
+  questionCount,
+  chapterCount,
+  language,
+  priceLabel = REMOVE_ADS_PRICE_LABEL,
+}: PricingWedgeProps) {
   const t = copy[language];
   const themeColors = useThemeColors();
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const proof = t.proof(questionCount, chapterCount);
-  const pitch = t.pitch(REMOVE_ADS_PRICE_LABEL);
+  const pitch = t.pitch(priceLabel);
 
   return (
     <View
