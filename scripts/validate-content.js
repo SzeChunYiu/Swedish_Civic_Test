@@ -9830,6 +9830,8 @@ let launchAdSuppressedRoutesValidated = 0;
 let launchAdRouteSuppressionParityValidated = false;
 let launchAdFirstRunDeferralRulesValidated = 0;
 let launchAdFirstRunDeferralParityValidated = false;
+let launchAdLoadTimeoutRulesValidated = 0;
+let launchAdLoadTimeoutParityValidated = false;
 let tabNavigationRulesValidated = 0;
 let tabNavigationRoutesValidated = 0;
 let tabNavigationParityValidated = false;
@@ -11511,6 +11513,16 @@ if (process.argv.includes('--focus-launch-ad-deferral')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-launch-ad-load-timeout')) {
+  validateNativeLaunchAdLoadTimeoutParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    launchAdLoadTimeoutRulesValidated,
+    launchAdLoadTimeoutParityValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-remove-ads-hook-parity')) {
   validateRemoveAdsEntitlementHookParity();
   exitWithValidationFailures();
@@ -12489,6 +12501,101 @@ function validateLaunchAdFirstRunDeferralParity() {
 
   if (valid && launchAdFirstRunDeferralRulesValidated === expectedRules.length) {
     launchAdFirstRunDeferralParityValidated = true;
+  }
+}
+
+function validateNativeLaunchAdLoadTimeoutParity() {
+  let valid = true;
+  let nativeLaunchPopupAd = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  function acceptOrReject(condition, message) {
+    if (!condition) {
+      reject(message);
+      return;
+    }
+    launchAdLoadTimeoutRulesValidated += 1;
+  }
+
+  try {
+    nativeLaunchPopupAd = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/LaunchPopupAd.native.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`native launch load-timeout source could not be read: ${error.message}`);
+    return;
+  }
+
+  const timeoutIndex = nativeLaunchPopupAd.indexOf('loadTimeout = setTimeout(() => {');
+  const loadedListenerIndex = nativeLaunchPopupAd.indexOf('AdEventType.LOADED');
+  const loadIndex = nativeLaunchPopupAd.indexOf('appOpenAd.load();');
+  const capIndex = nativeLaunchPopupAd.indexOf(
+    'launchPopupShownThisRuntime = true;',
+    loadedListenerIndex,
+  );
+  const timeoutBlock =
+    timeoutIndex >= 0 && loadIndex > timeoutIndex
+      ? nativeLaunchPopupAd.slice(timeoutIndex, loadIndex)
+      : '';
+
+  const expectedRules = [
+    {
+      label: 'native LaunchPopupAd must define a bounded app-open load timeout',
+      pattern: /const LAUNCH_POPUP_AD_LOAD_TIMEOUT_MS = 15_000;/,
+    },
+    {
+      label: 'native LaunchPopupAd must keep a loadTimeout handle for cleanup',
+      pattern: /let loadTimeout: ReturnType<typeof setTimeout> \| undefined;/,
+    },
+    {
+      label: 'native LaunchPopupAd must clear and unset the load timeout handle',
+      pattern:
+        /const clearLoadTimeout = \(\) => \{[\s\S]*if \(loadTimeout == null\) return;[\s\S]*clearTimeout\(loadTimeout\);[\s\S]*loadTimeout = undefined;[\s\S]*\};/,
+    },
+    {
+      label: 'native LaunchPopupAd must clear the timeout when settling a load attempt',
+      pattern:
+        /const finishLoadAttempt = \(\) => \{[\s\S]*clearLoadTimeout\(\);[\s\S]*launchPopupLoadInFlight = false;[\s\S]*attemptSettled = true;[\s\S]*\};/,
+    },
+    {
+      label: 'native LaunchPopupAd must clear the in-flight flag when load callbacks stall',
+      pattern:
+        /loadTimeout = setTimeout\(\(\) => \{[\s\S]*if \(didReachShowPath \|\| attemptSettled\) return;[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*finishLoadAttempt\(\);[\s\S]*clearTentativeFirstRunDeferral\(\);[\s\S]*\}, LAUNCH_POPUP_AD_LOAD_TIMEOUT_MS\);/,
+    },
+    {
+      label: 'native LaunchPopupAd must clear the timeout after show-path cleanup',
+      pattern: /else \{[\s\S]*clearLoadTimeout\(\);[\s\S]*\}/,
+    },
+  ];
+
+  for (const expectedRule of expectedRules) {
+    acceptOrReject(expectedRule.pattern.test(nativeLaunchPopupAd), expectedRule.label);
+  }
+
+  acceptOrReject(
+    loadedListenerIndex >= 0 && timeoutIndex > loadedListenerIndex,
+    'native LaunchPopupAd must arm the load timeout after registering load listeners',
+  );
+  acceptOrReject(
+    timeoutIndex >= 0 && loadIndex > timeoutIndex,
+    'native LaunchPopupAd must arm the load timeout before requesting app-open load',
+  );
+  acceptOrReject(
+    capIndex > loadedListenerIndex && timeoutBlock.length > 0,
+    'native LaunchPopupAd must keep the one-per-runtime cap in the loaded handler',
+  );
+  acceptOrReject(
+    timeoutBlock.length > 0 && !/launchPopupShownThisRuntime = true;/.test(timeoutBlock),
+    'native LaunchPopupAd load timeout must not consume the one-per-runtime shown cap',
+  );
+
+  if (valid && launchAdLoadTimeoutRulesValidated === expectedRules.length + 4) {
+    launchAdLoadTimeoutParityValidated = true;
   }
 }
 
@@ -26097,6 +26204,7 @@ validateValidationScriptSyntax();
 validateAppConfigSchema();
 validateLaunchAdRouteSuppressionParity();
 validateLaunchAdFirstRunDeferralParity();
+validateNativeLaunchAdLoadTimeoutParity();
 validateTabNavigationParity();
 validateAdPlacementRouteParity();
 validateReleaseMonetizationPolicyParity();
@@ -26241,6 +26349,8 @@ console.log(
       launchAdRouteSuppressionParityValidated,
       launchAdFirstRunDeferralRulesValidated,
       launchAdFirstRunDeferralParityValidated,
+      launchAdLoadTimeoutRulesValidated,
+      launchAdLoadTimeoutParityValidated,
       tabNavigationRulesValidated,
       tabNavigationRoutesValidated,
       tabNavigationParityValidated,
