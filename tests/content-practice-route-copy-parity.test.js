@@ -38,15 +38,68 @@ function parseFocusedNativeMockExamCopySummary() {
   return JSON.parse(match[0]);
 }
 
+function assertPracticeRouteLaunchParity(practiceSource, homeSource) {
+  const requiredPracticeRules = [
+    [/import \{ useEffect, useMemo, useRef, useState \} from 'react';/, 'route launch ref import'],
+    [/import \{ Link, useLocalSearchParams \} from 'expo-router';/, 'route search params import'],
+    [/import \{ buildDailyChallenge \}/, 'daily challenge selector import'],
+    [/type PracticeRouteLaunchMode = 'challenge' \| 'quick';/, 'route launch mode type'],
+    [/\| \{ type: 'challenge'; questionIds: string\[\] \};/, 'challenge practice scope'],
+    [/function normalizePracticeRouteLaunchMode\(/, 'route launch mode normalizer'],
+    [/rawValue === 'challenge' \|\| rawValue === 'quick'/, 'accepted launch modes'],
+    [
+      /const \{ mode \} = useLocalSearchParams<\{ mode\?: string \| string\[\] \}>/,
+      'route mode read',
+    ],
+    [
+      /const consumedRouteLaunchModeRef = useRef<PracticeRouteLaunchMode \| null>\(null\);/,
+      'route launch idempotency ref',
+    ],
+    [/buildDailyChallenge\(\{ bank: filteredQuestions \}\)/, 'filtered daily challenge bank'],
+    [/const routeLaunchMode = normalizePracticeRouteLaunchMode\(mode\);/, 'normalized route mode'],
+    [
+      /if \(!routeLaunchMode \|\| consumedRouteLaunchModeRef\.current === routeLaunchMode\) return;/,
+      'route launch idempotency guard',
+    ],
+    [/routeLaunchMode === 'challenge'/, 'challenge mode branch'],
+    [/type: 'challenge', questionIds: dailyChallenge\.questionIds/, 'challenge scope ids'],
+    [/\{ type: 'quick', limit: 10 \}/, 'quick route scope'],
+    [
+      /const nextQuestionBank = getQuestionsForPracticeScope\(filteredQuestions, nextScope\);/,
+      'route launch uses scoped bank',
+    ],
+    [/consumedRouteLaunchModeRef\.current = routeLaunchMode;/, 'route launch consumed marker'],
+    [
+      /startSession\(nextQuestionBank\[0\]\?\.id \?\? null\);/,
+      'route launch starts first scoped question',
+    ],
+    [/setPracticeScope\(nextScope\);/, 'route launch enters practice mode'],
+  ];
+
+  for (const [pattern, label] of requiredPracticeRules) {
+    assert.match(practiceSource, pattern, `Practice route missing ${label}`);
+  }
+
+  assert.match(
+    homeSource,
+    /href="\/practice\?mode=challenge"/,
+    'Home daily challenge CTA should deep-link into the challenge practice mode',
+  );
+}
+
 test('native Swedish övningsprov copy guard preserves English mock exam copy', () => {
   const summary = parseFocusedNativeMockExamCopySummary();
   const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
   const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
 
-  assert.equal(summary.nativeSwedishMockExamCopyLabelsValidated, 8);
-  assert.equal(summary.nativeSwedishMockExamCopyParityValidated, true);
+  assert.equal(summary.nativeMockExamComponentCopyLabelsValidated, 6);
+  assert.equal(summary.nativeMockExamComponentLegalCopyValidated, true);
+  assert.equal(summary.nativeMockExamScoreSourceCopyValidated, true);
+  assert.equal(summary.nativeMockExamLibraryLabelsValidated, 7);
+  assert.equal(summary.nativeMockExamSwedishCopyNaturalnessValidated, true);
+  assert.equal(summary.nativeMockExamTierCopyValidated, true);
   assert.match(homeSource, /Gå till övningsprov/);
-  assert.match(homeSource, /\$\{title\}: gå till övningsprov när steget är klart\./);
+  assert.match(homeSource, /\$\{title\}: gå till övningsprovet när steget är klart\./);
   assert.match(practiceSource, /Aldrig en del av övningsprovet\./);
   assert.match(homeSource, /Go to mock exam/);
   assert.match(practiceSource, /Never part of the mock exam\./);
@@ -130,6 +183,27 @@ test('practice route source wires selected companion copy to answer feedback sta
   assert.doesNotMatch(source, /selectedCompanionId[\s\S]{0,120}recordAnswer/);
 });
 
+test('practice route consumes Home quick-launch modes instead of landing on the hub', () => {
+  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
+  const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+
+  assertPracticeRouteLaunchParity(practiceSource, homeSource);
+});
+
+test('practice route launch parity rejects a dead daily-challenge link', () => {
+  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
+  const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+  const mutatedPracticeSource = practiceSource.replace(
+    'const routeLaunchMode = normalizePracticeRouteLaunchMode(mode);',
+    'const routeLaunchMode = null;',
+  );
+
+  assert.throws(
+    () => assertPracticeRouteLaunchParity(mutatedPracticeSource, homeSource),
+    /normalized route mode/,
+  );
+});
+
 test('web aria false-state e2e covers localized Practice control labels', () => {
   const source = fs.readFileSync(
     path.join(repoRoot, 'tests/e2e/web-aria-false-state.spec.ts'),
@@ -179,7 +253,7 @@ test('practice route coverage keeps hero controls at the touch-target bar', () =
   assert.match(e2eSource, /toBeGreaterThanOrEqual\(44\)/);
   assert.match(
     e2eSource,
-    /await expectTouchTarget\(page\.getByRole\('button', \{ name: labels\.bookmark \}\)\)/,
+    /const bookmark = page\.getByRole\('button', \{ name: labels\.bookmark \}\);[\s\S]*await expectTouchTarget\(bookmark\);/,
   );
   assert.match(e2eSource, /await expectTouchTarget\(uhrOnly\)/);
   assert.match(e2eSource, /await expectTouchTarget\(supplementary\)/);
@@ -307,7 +381,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /source drawer copy must not contain hyphenated about-the-sources/,
+    /source drawer copy must not contain hyphenated about-the-sources|practice route is missing en copy "Close source details"/,
   );
 });
 
@@ -338,7 +412,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /practice route Swedish native copy must use övningsprov/,
+    /practice route Swedish native copy must use övningsprov|practice route is missing sv copy/,
   );
 });
 
