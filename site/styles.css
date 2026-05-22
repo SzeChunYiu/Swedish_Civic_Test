@@ -9059,3 +9059,133 @@ html[dir='rtl'] .lang-menu {
     border-radius: 16px;
   }
 }
+
+/* ------------------------------------------------------------------
+   MOCK HISTORY BOX OPTIMIZATION ROUND
+   Turns past timed-practice attempts into compact result receipts so
+   learners can scan progress without the list feeling like plain rows.
+------------------------------------------------------------------ */
+
+.mock-history {
+  background:
+    linear-gradient(135deg, rgba(0, 106, 167, 0.06), rgba(254, 204, 0, 0.05)),
+    rgba(255, 255, 255, 0.42);
+  border: 1px solid rgba(0, 106, 167, 0.12);
+  border-radius: 24px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.28),
+    0 18px 46px -34px rgba(11, 31, 51, 0.68);
+  margin-top: 52px;
+  overflow: hidden;
+  padding: 20px;
+  position: relative;
+}
+
+.mock-history::before {
+  background: var(--card-rail);
+  content: '';
+  inset: 0 auto 0 0;
+  opacity: 0.82;
+  position: absolute;
+  width: 6px;
+}
+
+.mock-history h3 {
+  align-items: center;
+  background: rgba(0, 106, 167, 0.08);
+  border: 1px solid rgba(0, 106, 167, 0.14);
+  border-radius: 999px;
+  color: var(--blue-ink);
+  display: inline-flex;
+  gap: 8px;
+  margin: 0 0 14px 6px;
+  padding: 6px 10px;
+}
+
+.mock-history h3::before {
+  background: var(--gold);
+  border-radius: 999px;
+  box-shadow: 0 0 0 3px rgba(254, 204, 0, 0.18);
+  content: '';
+  height: 7px;
+  width: 7px;
+}
+
+.mock-history ul {
+  display: grid;
+  gap: 10px;
+}
+
+.mock-history li {
+  background: rgba(255, 255, 255, 0.52);
+  border: 1px solid rgba(0, 106, 167, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 10px 28px -26px rgba(11, 31, 51, 0.7);
+  padding: 12px 14px;
+}
+
+.mock-history__date,
+.mock-history__pct {
+  background: rgba(255, 255, 255, 0.58);
+  border: 1px solid rgba(0, 106, 167, 0.1);
+  border-radius: 999px;
+  padding: 3px 8px;
+}
+
+.mock-history__score {
+  color: var(--ink);
+}
+
+.mock-history__pct.pass {
+  background: rgba(30, 135, 75, 0.11);
+  border-color: rgba(30, 135, 75, 0.22);
+  color: #176b3d;
+}
+
+.mock-history__pct.fail {
+  background: rgba(194, 65, 12, 0.1);
+  border-color: rgba(194, 65, 12, 0.22);
+  color: #a2360a;
+}
+
+.mock-history__verdict {
+  background: rgba(254, 204, 0, 0.14);
+  border: 1px solid rgba(217, 169, 0, 0.2);
+  border-radius: 999px;
+  color: var(--ink);
+  padding: 4px 8px;
+}
+
+:root[data-theme='dark'] .mock-history,
+:root[data-theme='dark'] .mock-history li,
+:root[data-theme='dark'] .mock-history h3,
+:root[data-theme='dark'] .mock-history__date,
+:root[data-theme='dark'] .mock-history__pct,
+:root[data-theme='dark'] .mock-history__verdict {
+  background: rgba(255, 255, 255, 0.045);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme='dark'] .mock-history h3,
+:root[data-theme='dark'] .mock-history__verdict,
+:root[data-theme='dark'] .mock-history__score {
+  color: var(--ink);
+}
+
+@media (max-width: 640px) {
+  .mock-history {
+    border-radius: 20px;
+    padding: 16px 14px 16px 18px;
+  }
+  .mock-history li {
+    grid-template-columns: 1fr auto;
+    gap: 8px 10px;
+    padding: 12px;
+  }
+  .mock-history__score {
+    justify-self: end;
+  }
+  .mock-history__pct {
+    justify-self: start;
+  }
+}
