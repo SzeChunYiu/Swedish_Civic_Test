@@ -1714,6 +1714,10 @@ function generatedSingleChoicePromptFromSourceSv(
   variant: 'section-practice' | 'judgement',
 ): string | null {
   const q = stripFinalPunctuation(source.questionSv);
+  if (source.id === 'q062' && variant === 'judgement') {
+    return 'Vilken uppgift om offentlig sektor i Sverige stämmer?';
+  }
+
   let match = q.match(/^Vilket påstående beskriver (.+)$/i);
   if (match) {
     return variant === 'judgement'
@@ -1868,6 +1872,10 @@ function generatedSingleChoicePromptFromSourceEn(
   variant: 'section-practice' | 'judgement',
 ): string | null {
   const q = stripFinalPunctuation(source.questionEn);
+  if (source.id === 'q062' && variant === 'judgement') {
+    return "Which statement about Sweden's public sector is correct?";
+  }
+
   let match = q.match(/^Which statement describes (.+)$/i);
   if (match) {
     return variant === 'judgement'
