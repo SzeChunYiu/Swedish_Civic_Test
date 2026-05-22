@@ -37,7 +37,8 @@ export function AdBanner({
       Platform.OS,
     );
 
-  if (!visible || !unitId) return null;
+  if (!visible) return null;
+  if (!unitId) return null;
 
   const placementLabel = copy.placementLabels[placement];
   const adStatusLabel = getAdBannerStatusLabel(copy, unit);

@@ -286,6 +286,37 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('ad placement route parity rejects native banner missing unitId render guard', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/AdBanner.native.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('if (!unitId) return null;', '');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-ad-placement-route-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /AdBanner native placement must return null before rendering BannerAd without a platform unit id/,
+  );
+});
+
 test('ad placement route parity rejects native banner shouldShowAd platform drift', () => {
   const result = spawnSync(
     process.execPath,

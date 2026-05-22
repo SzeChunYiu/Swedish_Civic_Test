@@ -12015,9 +12015,25 @@ function validateAdPlacementRouteParity() {
     }
   }
 
+  function validateNativeAdBannerUnitIdRenderGuard(source) {
+    const guardIndex = source.search(/if\s*\(\s*!unitId\s*\)\s*return\s+null\s*;/);
+    const bannerIndex = source.indexOf('<BannerAd');
+    const unitIdPropIndex = source.indexOf('unitId={unitId}', bannerIndex);
+
+    if (guardIndex === -1 || bannerIndex === -1 || guardIndex > bannerIndex) {
+      reject(
+        'AdBanner native placement must return null before rendering BannerAd without a platform unit id',
+      );
+    }
+    if (unitIdPropIndex === -1) {
+      reject('AdBanner native placement must pass the resolved platform unit id to BannerAd');
+    }
+  }
+
   if (!nativeAdBannerSource.includes('getPlatformAdUnitId(placement, Platform.OS)')) {
     reject('AdBanner native placement must resolve banner units by Platform.OS');
   }
+  validateNativeAdBannerUnitIdRenderGuard(nativeAdBannerSource);
   if (
     !/shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/.test(
       nativeAdBannerSource,
