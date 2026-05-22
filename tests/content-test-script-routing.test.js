@@ -5,7 +5,10 @@ const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
 
-const { FOCUSED_VALIDATION_REGISTRY_BY_ID } = require('../scripts/validate-content-focus-registry');
+const {
+  FOCUSED_VALIDATION_REGISTRY,
+  FOCUSED_VALIDATION_REGISTRY_BY_ID,
+} = require('../scripts/validate-content-focus-registry');
 const {
   MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES,
   MALFORMED_ADAPTIVE_PRACTICE_SIZE_CASES,
@@ -93,6 +96,49 @@ function assertFocusedValidationSummary(flag, expectedSummaryKeys) {
 
   return summary;
 }
+
+function validateContentFocusFlags() {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  return Array.from(
+    new Set(
+      Array.from(validatorSource.matchAll(/['"`](--focus-[a-z0-9-]+)['"`]/g)).map(
+        (match) => match[1],
+      ),
+    ),
+  ).sort();
+}
+
+const registryCompletenessFocusIds = [
+  'appConfigSchema',
+  'generatedLocalizationTemplateParity',
+  'generatedSwedenScopeParity',
+  'progressBarAccessibility',
+  'proLifetimeRelaunchParity',
+  'staticEbookFootnoteHashParity',
+  'streakFreezeNormalizerParity',
+];
+
+test('focused validation registry covers every validate-content focus flag', () => {
+  const registeredFlags = new Set(FOCUSED_VALIDATION_REGISTRY.flatMap((entry) => entry.flags));
+  const shippedFlags = validateContentFocusFlags();
+  const missingFlags = shippedFlags.filter((flag) => !registeredFlags.has(flag));
+
+  assert.deepEqual(missingFlags, []);
+});
+
+test('newly registered focus modes expose advertised summary keys', () => {
+  for (const id of registryCompletenessFocusIds) {
+    const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get(id);
+
+    assert.ok(registryEntry, `${id} focus mode must be registered`);
+    for (const flag of registryEntry.flags) {
+      assertFocusedValidationSummary(flag, registryEntry.summaryKeys);
+    }
+  }
+});
 
 test('npm test keeps selector routing in the project dispatcher', () => {
   const pkg = readPackageJson();
@@ -831,7 +877,10 @@ test('generated localization overlay parity uses focused content validation rout
   );
 
   assert.ok(registryEntry, 'generated localization focus mode must be registered');
-  assert.deepEqual(registryEntry.flags, ['--focus-generated-localization-template-parity']);
+  assert.deepEqual(registryEntry.flags, [
+    '--focus-generated-localization-template-parity',
+    '--focus-generated-localization',
+  ]);
   assert.deepEqual(registryEntry.summaryKeys, [
     'generatedLocalizationTemplateParityValidated',
     'generatedPromptTemplateParityValidated',
