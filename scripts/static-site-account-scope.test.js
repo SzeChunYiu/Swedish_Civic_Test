@@ -174,19 +174,54 @@ function createEbookToolsHarness() {
   };
 }
 
-test('static site exposes no reachable sign-in, OAuth, or magic-link surface', () => {
+test('static optional account surface preserves anonymous local study boundaries', () => {
   const index = read('site/index.html');
   const app = read('site/app.js');
   const extras = read('site/i18n-extras.js');
   const styles = read('site/styles.css');
   const ebookTools = read('site/ebook-tools.js');
+  const purchase = read('site/purchase.js');
+  const signin = read('site/signin.js');
 
   const staticSurface = [index, app, extras, styles, ebookTools].join('\n');
 
-  assert.doesNotMatch(index, /id="signin-open"|id="signin-modal"|signin\.js/);
-  assert.doesNotMatch(staticSurface, /Continue with Google|Continue with Apple|Send magic link/i);
-  assert.doesNotMatch(staticSurface, /smtOpenSignin|smt_signed_in|signin__/);
-  assert.doesNotMatch(staticSurface, /Sign in to (?:sync|highlight)|Logga in for att markera/i);
+  assert.match(index, /id="signin-open"/);
+  assert.match(index, /id="signin-modal"/);
+  assert.match(index, /<script src="signin\.js"><\/script>/);
+  assert.match(staticSurface, /Continue with Google|Forts[aä]tt med Google/i);
+  assert.match(staticSurface, /Continue with Apple|Forts[aä]tt med Apple/i);
+  assert.match(staticSurface, /Email me a magic link|Mejla mig en magisk l[aä]nk/i);
+  assert.match(app, /No — you can do everything without registering/);
+  assert.match(app, /Signing in is optional, but it unlocks more/);
+  assert.match(app, /Study progress stays local/);
+  assert.match(app, /Dina framsteg sparas lokalt/);
+
+  assert.match(index, /window\.SMT_SITE_ORIGIN = 'https:\/\/almostswedish\.se'/);
+  assert.match(
+    index,
+    /window\.SMT_SUPABASE_URL\s*=\s*\n\s*window\.SMT_SUPABASE_URL \|\| 'https:\/\/uesfowwijbdlffyweyum\.supabase\.co'/,
+  );
+  assert.match(
+    index,
+    /window\.SMT_SUPABASE_ANON_KEY\s*=\s*\n\s*window\.SMT_SUPABASE_ANON_KEY \|\| 'sb_publishable_/,
+  );
+  assert.doesNotMatch(index, /intentionally LEFT EMPTY|leave EMPTY|no CDN is contacted/i);
+  assert.doesNotMatch(index, /<script[^>]+supabase-js/i);
+
+  assert.match(signin, /function\s+isConfigured\(\)/);
+  assert.match(signin, /if\s*\(!isConfigured\(\)\)\s+return Promise\.resolve\(null\)/);
+  assert.match(signin, /import\('https:\/\/esm\.sh\/@supabase\/supabase-js@2'\)/);
+  assert.match(signin, /if\s*\(!isConfigured\(\)\)\s+return;\s*\n\s*getClient\(\)\.then/);
+  assert.match(signin, /window\.smtOpenSignin = open/);
+  assert.match(signin, /window\.smtIsSignedIn = signedIn/);
+
+  assert.match(purchase, /account\.id === 'local-demo'/);
+  assert.match(purchase, /purchase\.status\.realSignin/);
+  assert.match(purchase, /window\.smtOpenSignin\(\)/);
+
+  assert.doesNotMatch(ebookTools, /isSignedIn|showSigninNudge|data-act="signin"/);
+  assert.doesNotMatch(ebookTools, /smtOpenSignin|smt_signed_in|signin__/);
+  assert.doesNotMatch(staticSurface, /Sign in to highlight|Logga in f[oö]r att markera/i);
 });
 
 test('ebook highlights and notes stay local without account prompts', () => {

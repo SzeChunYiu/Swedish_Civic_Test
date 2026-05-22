@@ -1482,13 +1482,19 @@
       ============================================================
       SUPABASE AUTH CONFIG (PUBLIC values — safe to ship in client JS)
       ============================================================
-      These two values are intentionally LEFT EMPTY. While they are empty
-      strings, signin.js keeps its safe local-only stub behaviour (clicking a
-      provider button just flips a localStorage flag). NOTHING breaks, no CDN
-      is contacted, no console spam. Real Google/Apple OAuth only activates
-      once BOTH values below are filled in.
+      The hosted static site intentionally ships public Supabase values so the
+      optional Google, Apple, and magic-link sign-in can sync highlights, notes,
+      and dashboard state across devices. Anonymous study still works without
+      an account: Practice, Mock exam, Ebook reading, and local progress remain
+      available before sign-in. The Supabase client is loaded lazily only for
+      configured sign-in/session handling.
 
-      To make "Continue with Google" perform a REAL sign-in, the operator must:
+      For local development without Supabase, set BOTH values below to empty
+      strings. signin.js then keeps its local-only demo stub for sign-in UI
+      testing, and purchase handoff still rejects that demo account.
+
+      To keep "Continue with Google" performing a real sign-in, the operator
+      must keep the Supabase project configured:
 
         1. Create a Supabase project (https://supabase.com/dashboard).
            Copy its Project URL and anon/public API key (Project Settings ->
@@ -1514,10 +1520,10 @@
            and paste the credentials there. The "Continue with Apple" button
            is already wired to provider 'apple'.
 
-      Then paste the Project URL and anon key into the two strings below.
+      Keep the Project URL and anon/public key below in sync with that project.
     -->
     <script>
-      // PUBLIC config — leave EMPTY to keep the safe local-only stub active.
+      // PUBLIC config for the hosted optional-account surface.
       window.SMT_SITE_ORIGIN = 'https://almostswedish.se';
       window.SMT_SUPABASE_URL =
         window.SMT_SUPABASE_URL || 'https://uesfowwijbdlffyweyum.supabase.co';
