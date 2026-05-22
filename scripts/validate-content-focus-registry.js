@@ -392,8 +392,15 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
   },
   {
     id: 'religiousFreedomParallelism',
-    flags: ['--focus-religious-freedom-parallelism'],
-    summaryKeys: ['publishedQuestions', 'questionReligiousFreedomParallelismValidated'],
+    flags: [
+      '--focus-religious-freedom-option-parallelism',
+      '--focus-religious-freedom-parallelism',
+    ],
+    summaryKeys: [
+      'publishedQuestions',
+      'questionReligiousFreedomParallelismValidated',
+      'questionReligiousFreedomParallelismTargetRowsValidated',
+    ],
   },
   {
     id: 'religiousFreedom1951Naturalness',

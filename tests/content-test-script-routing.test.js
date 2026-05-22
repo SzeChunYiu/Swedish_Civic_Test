@@ -851,14 +851,26 @@ test('religious-freedom option parallelism uses focused content validation routi
     'utf8',
   );
 
-  assert.match(validatorSource, /--focus-religious-freedom-parallelism/);
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('religiousFreedomParallelism');
+
+  assert.ok(registryEntry, 'religious-freedom option parallelism focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, [
+    '--focus-religious-freedom-option-parallelism',
+    '--focus-religious-freedom-parallelism',
+  ]);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'publishedQuestions',
+    'questionReligiousFreedomParallelismValidated',
+    'questionReligiousFreedomParallelismTargetRowsValidated',
+  ]);
+  assert.match(validatorSource, /--focus-religious-freedom-option-parallelism/);
   assert.match(
     validatorSource,
-    /validateQuestionReligiousFreedomParallelism\(\);[\s\S]*questionReligiousFreedomParallelismValidated/,
+    /validateQuestionReligiousFreedomParallelism\(\);[\s\S]*questionReligiousFreedomParallelismValidated[\s\S]*questionReligiousFreedomParallelismTargetRowsValidated/,
   );
   assert.match(
     publishedQuestionTestSource,
-    /religious-freedom option parallelism guard rejects the old wording[\s\S]*--focus-religious-freedom-parallelism/,
+    /religious-freedom option parallelism guard rejects the old wording[\s\S]*--focus-religious-freedom-option-parallelism/,
   );
 });
 
@@ -1615,12 +1627,12 @@ test('religious-freedom option parallelism uses focused content validation routi
     'utf8',
   );
 
-  assert.match(validatorSource, /--focus-religious-freedom-parallelism/);
+  assert.match(validatorSource, /--focus-religious-freedom-option-parallelism/);
   assert.match(
     validatorSource,
-    /validateQuestionReligiousFreedomParallelism\(\);[\s\S]*questionReligiousFreedomParallelismValidated/,
+    /validateQuestionReligiousFreedomParallelism\(\);[\s\S]*questionReligiousFreedomParallelismValidated[\s\S]*questionReligiousFreedomParallelismTargetRowsValidated/,
   );
-  assert.match(publishedQuestionTestSource, /--focus-religious-freedom-parallelism/);
+  assert.match(publishedQuestionTestSource, /--focus-religious-freedom-option-parallelism/);
 });
 
 test('question-bank CSV focus registry matches focused validator output', () => {
