@@ -52,6 +52,14 @@ export const EBOOK_SOURCE_NOTES = {
 export type EbookSourceKey = keyof typeof EBOOK_SOURCE_NOTES;
 export type EbookSourceNote = (typeof EBOOK_SOURCE_NOTES)[EbookSourceKey];
 
+export function getSafeEbookSourceUrl(source: EbookSourceNote): string | null {
+  try {
+    return new URL(source.url).protocol === 'https:' ? source.url : null;
+  } catch {
+    return null;
+  }
+}
+
 export type EbookArticle = {
   chapterId: string | null;
   kicker: LocalizedText;

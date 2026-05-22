@@ -1393,13 +1393,38 @@ test('native ebook sections carry and render explicit source provenance', () => 
   );
   assert.match(contentSource, /sourceNoteKeys:\s*studyMaterialSourceKeys/);
   assert.match(contentSource, /getEbookSectionSourceNotes/);
+  assert.match(contentSource, /export function getSafeEbookSourceUrl/);
+  assert.match(contentSource, /new URL\(source\.url\)\.protocol === 'https:'/);
 
+  assert.match(
+    routeSource,
+    /import \{ Link, useLocalSearchParams, useRouter \} from 'expo-router';/,
+  );
+  assert.match(routeSource, /getSafeEbookSourceUrl,/);
   assert.match(routeSource, /getEbookSectionSourceNotes,/);
   assert.match(routeSource, /const sectionSources = getEbookSectionSourceNotes\(section\);/);
   assert.match(routeSource, /sectionSourcesHeading: \(count\)/);
   assert.match(routeSource, /Källor för avsnittet/);
   assert.match(routeSource, /Section sources/);
+  assert.match(
+    routeSource,
+    /sourceLinkAccessibilityLabel: \(label, url\) => `Öppna källa: \$\{label\}\. \$\{url\}`/,
+  );
+  assert.match(
+    routeSource,
+    /sourceLinkAccessibilityLabel: \(label, url\) => `Open source: \$\{label\}\. \$\{url\}`/,
+  );
+  assert.match(routeSource, /const safeSourceUrl = getSafeEbookSourceUrl\(source\);/);
+  assert.match(
+    routeSource,
+    /accessibilityLabel=\{copy\.sourceLinkAccessibilityLabel\(sourceLabel, safeSourceUrl\)\}/,
+  );
+  assert.match(routeSource, /accessibilityRole="link"/);
+  assert.match(routeSource, /href=\{safeSourceUrl\}/);
+  assert.match(routeSource, /rel="noreferrer"/);
+  assert.match(routeSource, /target="_blank"/);
   assert.match(routeSource, /styles\.sectionSources/);
+  assert.match(routeSource, /minHeight: space\[6\]/);
   assert.match(routeSource, /sectionSources\.map\(\(source\) =>/);
 });
 
