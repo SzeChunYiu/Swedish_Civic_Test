@@ -72,7 +72,8 @@ export type RemoveAdsPurchaseStatus =
   | 'pending'
   | 'restored'
   | 'not_found'
-  | 'persistence_failed';
+  | 'persistence_failed'
+  | 'finish_failed';
 
 export interface RemoveAdsPurchaseResult {
   entitlements: PremiumEntitlements;
@@ -907,7 +908,12 @@ export async function buyRemoveAds({
       return createResult('persistence_failed', persistenceResult.entitlements, purchase);
     }
 
-    await provider.finishPurchase?.(purchase);
+    try {
+      await provider.finishPurchase?.(purchase);
+    } catch {
+      return createResult('finish_failed', persistenceResult.entitlements, purchase);
+    }
+
     return createResult('purchased', persistenceResult.entitlements, purchase);
   } finally {
     await provider.disconnect?.();
