@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
+import { AuthProviderButton } from '../components/auth/AuthProviderButton';
+import { GoogleLogo } from '../components/auth/GoogleLogo';
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
 import { QuestionDisclaimer } from '../components/quiz/QuestionDisclaimer';
 import { RouteLink } from '../components/ui/RouteLink';
+import { useAuth, type AuthProviderId } from '../lib/auth/AuthContext';
 import { formatExamDate, type StudyIntensity } from '../lib/learning/examDate';
 import {
   normalizeStudyPlanTestDateIso,
@@ -35,6 +38,13 @@ type OnboardingGoalPresetCopy = {
 type OnboardingCopy = {
   adjustSettings: string;
   adjustSettingsAccessibilityLabel: string;
+  authApple: string;
+  authBody: string;
+  authGoogle: string;
+  authTitle: string;
+  authUnavailable: string;
+  authWithoutAccount: string;
+  authWithoutAccountAccessibilityLabel: string;
   dailyGoalPresets: Record<DailyGoalPresetValue, OnboardingGoalPresetCopy>;
   dailyGoalSubtitle: string;
   dailyGoalTitle: string;
@@ -60,6 +70,15 @@ const onboardingCopy: Record<AppLanguage, OnboardingCopy> = {
   sv: {
     adjustSettings: 'Justera inställningar',
     adjustSettingsAccessibilityLabel: 'Öppna inställningar',
+    authApple: 'Fortsätt med Apple',
+    authBody:
+      'Konto är frivilligt. Dina övningssvar och studieframsteg sparas lokalt även om du fortsätter utan konto.',
+    authGoogle: 'Fortsätt med Google',
+    authTitle: 'Välj hur du vill börja',
+    authUnavailable:
+      'Inloggning är inte aktiverad i den här versionen. Du kan fortsätta utan konto.',
+    authWithoutAccount: 'Fortsätt utan konto',
+    authWithoutAccountAccessibilityLabel: 'Fortsätt till startsidan utan konto',
     dailyGoalPresets: {
       10: {
         accessibilityLabel: 'Välj lugnt dagligt mål med 10 svar',
@@ -109,6 +128,14 @@ const onboardingCopy: Record<AppLanguage, OnboardingCopy> = {
   en: {
     adjustSettings: 'Adjust settings',
     adjustSettingsAccessibilityLabel: 'Adjust settings',
+    authApple: 'Continue with Apple',
+    authBody:
+      'Accounts are optional. Your practice answers and study progress stay local even when you continue without an account.',
+    authGoogle: 'Continue with Google',
+    authTitle: 'Choose how to start',
+    authUnavailable: 'Sign-in is not enabled on this build. You can continue without an account.',
+    authWithoutAccount: 'Continue without an account',
+    authWithoutAccountAccessibilityLabel: 'Continue to home without an account',
     dailyGoalPresets: {
       10: {
         accessibilityLabel: 'Choose casual daily goal with 10 answers',
@@ -163,6 +190,7 @@ function studyIntensityForDailyGoal(goal: DailyGoalPresetValue): StudyIntensity 
 }
 
 export default function Screen() {
+  const { isAuthConfigured, signInWithApple, signInWithGoogle } = useAuth();
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const language = useSettingsStore((state) => state.language);
   const setDailyGoalAnswers = useSettingsStore((state) => state.setDailyGoalAnswers);
@@ -177,6 +205,7 @@ export default function Screen() {
   const [testDateFeedback, setTestDateFeedback] = useState<'idle' | 'invalid' | 'saved'>(
     studyPlanTestDateIso ? 'saved' : 'idle',
   );
+  const [busyProvider, setBusyProvider] = useState<AuthProviderId | null>(null);
   const copy = onboardingCopy[language];
   const testDateFeedbackText =
     testDateFeedback === 'invalid'
@@ -223,6 +252,21 @@ export default function Screen() {
     setTestDateFeedback('idle');
   };
 
+  const handleAuthChoice = (provider: AuthProviderId) => async () => {
+    setBusyProvider(provider);
+    try {
+      if (provider === 'google') await signInWithGoogle();
+      else await signInWithApple();
+    } catch (error) {
+      Alert.alert(
+        language === 'sv' ? 'Inloggning inte tillgänglig' : 'Sign-in unavailable',
+        error instanceof Error ? error.message : copy.authUnavailable,
+      );
+    } finally {
+      setBusyProvider(null);
+    }
+  };
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.hero} testID="onboarding-hero">
@@ -240,6 +284,37 @@ export default function Screen() {
             <Text style={styles.stepText}>{step}</Text>
           </View>
         ))}
+      </View>
+
+      <View style={styles.accountSection} testID="onboarding-account-section">
+        <Text accessibilityRole="header" style={styles.goalTitle}>
+          {copy.authTitle}
+        </Text>
+        <Text style={styles.goalSubtitle}>{copy.authBody}</Text>
+        {!isAuthConfigured ? <Text style={styles.authStatus}>{copy.authUnavailable}</Text> : null}
+        <View style={styles.accountButtons}>
+          <AuthProviderButton
+            disabled={busyProvider !== null}
+            icon={<GoogleLogo />}
+            label={copy.authGoogle}
+            onPress={handleAuthChoice('google')}
+            testID="onboarding-google"
+          />
+          <AuthProviderButton
+            disabled={busyProvider !== null}
+            label={copy.authApple}
+            onPress={handleAuthChoice('apple')}
+            testID="onboarding-apple"
+          />
+          <RouteLink
+            accessibilityLabel={copy.authWithoutAccountAccessibilityLabel}
+            href="/home"
+            style={styles.accountSkipLink}
+            variant="secondary"
+          >
+            {copy.authWithoutAccount}
+          </RouteLink>
+        </View>
       </View>
 
       <View style={styles.goalSection} testID="onboarding-goal-section">
@@ -532,6 +607,33 @@ function createStyles(themeColors: ThemeColors) {
       flexDirection: 'row',
       flexWrap: 'wrap',
       gap: space[1.5],
+    },
+    accountButtons: {
+      gap: space[1],
+    },
+    accountSection: {
+      backgroundColor: themeColors.surfaceWarm,
+      borderColor: themeColors.border,
+      borderRadius: radius.card,
+      borderWidth: space.hairline,
+      gap: space[1.5],
+      padding: space[2],
+    },
+    accountSkipLink: {
+      alignItems: 'center',
+      display: 'flex',
+      justifyContent: 'center',
+      minHeight: space[6],
+    },
+    authStatus: {
+      backgroundColor: themeColors.warningSoft,
+      borderColor: themeColors.warning,
+      borderRadius: radius.card,
+      borderWidth: space.hairline,
+      color: themeColors.warning,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+      padding: space[1.25],
     },
     primaryLink: {
       alignItems: 'center',
