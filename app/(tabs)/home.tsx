@@ -24,13 +24,14 @@ import {
   dailyChallengeBannerCopy,
   isDailyChallengeCompleted,
 } from '../../lib/learning/dailyChallenge';
-import { findWeakChapterIds } from '../../lib/learning/mastery';
+import { buildChapterQuestionIndex, findWeakChapterIds } from '../../lib/learning/mastery';
 import {
+  buildReadinessQuestionBankIndex,
   computeReadinessFromQuestionProgress,
   type ReadinessVerdict,
 } from '../../lib/learning/readiness';
 import { calculateStreakWithFreeze, freezeBannerCopy } from '../../lib/learning/streakWithFreeze';
-import { countAnswersForLocalDate } from '../../lib/learning/streaks';
+import { countAnswersForLocalDate, getLocalDateKey } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
 import { showRewardedExtraExamAd } from '../../lib/monetization/rewardedAd';
 import { useMockExamAccess } from '../../lib/monetization/useMockExamAccess';
@@ -443,11 +444,6 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
   },
 };
 
-const QUESTION_CHAPTER_INDEX: Record<string, string> = Object.fromEntries(
-  questions.map((question) => [question.id, question.chapterId]),
-);
-const QUESTION_IDS_IN_BANK = new Set(questions.map((question) => question.id));
-
 export default function Screen() {
   const [rewardPreviewCompleted, setRewardPreviewCompleted] = useState(false);
   const [rewardUnlockInFlight, setRewardUnlockInFlight] = useState(false);
@@ -473,19 +469,27 @@ export default function Screen() {
   const copy = homeCopy[language];
   const themeColors = useThemeColors();
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
-  const dailyChallenge = useMemo(() => buildDailyChallenge({ bank: questions }), []);
-  const dailyChallengeCompletionKeys = useMemo(
+  const todayKey = getLocalDateKey();
+  const today = useMemo(() => new Date(`${todayKey}T12:00:00`), [todayKey]);
+  const dailyChallenge = useMemo(
+    () => buildDailyChallenge({ bank: questions, now: today }),
+    [today],
+  );
+  const dailyChallengeCompletedKeys = useMemo(
     () => Object.keys(dailyChallengeCompletions),
     [dailyChallengeCompletions],
   );
   const dailyChallengeCompleted = useMemo(
-    () => isDailyChallengeCompleted(dailyChallengeCompletionKeys),
-    [dailyChallengeCompletionKeys],
+    () => isDailyChallengeCompleted(dailyChallengeCompletedKeys, today),
+    [dailyChallengeCompletedKeys, today],
   );
-  const dailyChallengeCopy = dailyChallengeBannerCopy(dailyChallengeCompleted, language);
+  const dailyChallengeCopy = useMemo(
+    () => dailyChallengeBannerCopy(dailyChallengeCompleted, language),
+    [dailyChallengeCompleted, language],
+  );
   const completedToday = useMemo(
-    () => Math.min(countAnswersForLocalDate(questionProgress), dailyGoalAnswers),
-    [dailyGoalAnswers, questionProgress],
+    () => Math.min(countAnswersForLocalDate(questionProgress, today), dailyGoalAnswers),
+    [dailyGoalAnswers, questionProgress, today],
   );
   const progress = dailyGoalAnswers > 0 ? completedToday / dailyGoalAnswers : 0;
   const streakWithFreeze = useMemo(
@@ -503,9 +507,11 @@ export default function Screen() {
       ? copy.dayStreakFreezeHelper(streakWithFreeze.freezeState.available)
       : copy.dayStreakHelper;
   const level = calculateLevel(totalXp);
+  const chapterQuestionIndex = useMemo(() => buildChapterQuestionIndex(questions), []);
+  const readinessQuestionBankIndex = useMemo(() => buildReadinessQuestionBankIndex(questions), []);
   const weakChapterCount = useMemo(
-    () => findWeakChapterIds(questions, questionProgress, 0.6).length,
-    [questionProgress],
+    () => findWeakChapterIds(questions, questionProgress, 0.6, chapterQuestionIndex).length,
+    [chapterQuestionIndex, questionProgress],
   );
   const nextAction = weakChapterCount > 0 ? copy.reviewWeakChapters : copy.startPracticeSet;
   const readiness = useMemo(
@@ -514,11 +520,10 @@ export default function Screen() {
         questionProgress,
         questions,
         chapters,
-        questionChapterIndex: QUESTION_CHAPTER_INDEX,
-        questionIdsInBank: QUESTION_IDS_IN_BANK,
         mockExamSessions,
+        questionBankIndex: readinessQuestionBankIndex,
       }),
-    [mockExamSessions, questionProgress],
+    [mockExamSessions, questionProgress, readinessQuestionBankIndex],
   );
   const readinessVerdict = copy.readinessVerdicts[readiness.verdict];
   const readinessDetails = copy.readinessDetails(

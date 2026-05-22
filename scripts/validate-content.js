@@ -1588,6 +1588,26 @@ const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
     'home route must derive the readiness indicator from stored progress',
   ],
   [
+    '() => buildDailyChallenge({ bank: questions, now: today }),',
+    'home route must memoize the day-stable challenge selector',
+  ],
+  [
+    'const chapterQuestionIndex = useMemo(() => buildChapterQuestionIndex(questions), []);',
+    'home route must reuse a prebuilt chapter question index',
+  ],
+  [
+    'const readinessQuestionBankIndex = useMemo(() => buildReadinessQuestionBankIndex(questions), []);',
+    'home route must reuse a prebuilt readiness question bank index',
+  ],
+  [
+    'findWeakChapterIds(questions, questionProgress, 0.6, chapterQuestionIndex)',
+    'home route weak-chapter selector must use the chapter index',
+  ],
+  [
+    'questionBankIndex: readinessQuestionBankIndex,',
+    'home route readiness selector must use the prebuilt question bank index',
+  ],
+  [
     'const mockExamSessions = useProgressStore((state) => state.mockExamSessions);',
     'home route must read persisted mock exam scores',
   ],

@@ -182,6 +182,25 @@ export interface ReadinessInput {
   now?: Date;
 }
 
+export interface ReadinessQuestionBankIndex {
+  questionChapterIndex: Record<string, string>;
+  questionIdsInBank: ReadonlySet<string>;
+}
+
+export function buildReadinessQuestionBankIndex(
+  questions: readonly Pick<PracticeQuestion, 'id' | 'chapterId'>[],
+): ReadinessQuestionBankIndex {
+  const questionChapterIndex: Record<string, string> = {};
+  const questionIdsInBank = new Set<string>();
+
+  for (const q of questions) {
+    questionChapterIndex[q.id] = q.chapterId;
+    questionIdsInBank.add(q.id);
+  }
+
+  return { questionChapterIndex, questionIdsInBank };
+}
+
 // Adapter: called by home.tsx with the flat store slices it already holds.
 export function computeReadinessFromQuestionProgress(input: {
   questionProgress: Record<string, UserQuestionProgress>;
@@ -190,21 +209,24 @@ export function computeReadinessFromQuestionProgress(input: {
   questionChapterIndex?: Record<string, string>;
   questionIdsInBank?: ReadonlySet<string>;
   mockExamSessions?: readonly MockExamProgress[];
+  questionBankIndex?: ReadinessQuestionBankIndex;
   now?: Date;
 }): ReadinessScore {
   // Build a minimal UserProgress so computeReadinessScore can run unchanged.
-  const questionChapterIndex =
-    input.questionChapterIndex ?? buildQuestionChapterIndex(input.questions);
-  const questionIdsInBank = input.questionIdsInBank ?? new Set(input.questions.map((q) => q.id));
+  const now = input.now ?? new Date();
+  const questionBankIndex =
+    input.questionBankIndex ?? {
+      questionChapterIndex:
+        input.questionChapterIndex ?? buildQuestionChapterIndex(input.questions),
+      questionIdsInBank: input.questionIdsInBank ?? new Set(input.questions.map((q) => q.id)),
+    };
+  const { questionChapterIndex, questionIdsInBank } = questionBankIndex;
   const studyAnswers: QuizAnswer[] = [];
   for (const [questionId, progress] of Object.entries(input.questionProgress)) {
     if (!questionIdsInBank.has(questionId)) continue;
 
     const answeredAt = progress.lastAnsweredAt;
-    if (
-      typeof answeredAt !== 'string' ||
-      validAnswerTimestampMs(answeredAt, input.now ?? new Date()) === null
-    ) {
+    if (typeof answeredAt !== 'string' || validAnswerTimestampMs(answeredAt, now) === null) {
       continue;
     }
 
@@ -247,7 +269,7 @@ export function computeReadinessFromQuestionProgress(input: {
       : [];
 
   const mockSessions: QuizSession[] = (input.mockExamSessions ?? []).flatMap((s) => {
-    if (validAnswerTimestampMs(s.completedAt, input.now ?? new Date()) === null) return [];
+    if (validAnswerTimestampMs(s.completedAt, now) === null) return [];
     const totalCount = boundedSyntheticCount(
       finiteNonNegativeInteger(s.totalCount) ?? 0,
       defaultMockExamConfig.questionCount,
@@ -295,7 +317,7 @@ export function computeReadinessFromQuestionProgress(input: {
     progress,
     chapters: input.chapters,
     questionChapterIndex,
-    now: input.now,
+    now,
   });
 }
 

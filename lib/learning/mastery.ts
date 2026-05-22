@@ -25,6 +25,8 @@ type ChapterMasteryTotals = {
 
 const DEFAULT_WEAK_MASTERY_THRESHOLD = 0.6;
 
+export type ChapterQuestionIndex = Record<string, QuestionLike[]>;
+
 function roundScore(score: number): number {
   return Math.round(score * 100) / 100;
 }
@@ -66,28 +68,44 @@ function validProgressCounts(item: ProgressLike | undefined) {
   return { correctCount, seenCount };
 }
 
+export function buildChapterQuestionIndex(
+  questions: readonly QuestionLike[],
+): ChapterQuestionIndex {
+  const index: ChapterQuestionIndex = {};
+
+  for (const question of questions) {
+    const chapterQuestions = index[question.chapterId] ?? [];
+    chapterQuestions.push(question);
+    index[question.chapterId] = chapterQuestions;
+  }
+
+  return index;
+}
+
 function emptyChapterMasteryTotals(): ChapterMasteryTotals {
   return { correctCount: 0, seenCount: 0, totalQuestions: 0, recent: false };
 }
 
 function chapterMasteryTotalsById(
-  questions: QuestionLike[],
+  chapterQuestionIndex: ChapterQuestionIndex,
   progress: Record<string, ProgressLike>,
 ): Map<string, ChapterMasteryTotals> {
   const totalsByChapter = new Map<string, ChapterMasteryTotals>();
 
-  for (const question of questions) {
-    const totals = totalsByChapter.get(question.chapterId) ?? emptyChapterMasteryTotals();
-    totals.totalQuestions += 1;
+  for (const [chapterId, chapterQuestions] of Object.entries(chapterQuestionIndex)) {
+    const totals = emptyChapterMasteryTotals();
+    totals.totalQuestions = chapterQuestions.length;
 
-    const item = validProgressCounts(progress[question.id]);
-    if (item) {
-      totals.correctCount += item.correctCount;
-      totals.seenCount += item.seenCount;
-      if (item.seenCount > 0) totals.recent = true;
+    for (const question of chapterQuestions) {
+      const item = validProgressCounts(progress[question.id]);
+      if (item) {
+        totals.correctCount += item.correctCount;
+        totals.seenCount += item.seenCount;
+        if (item.seenCount > 0) totals.recent = true;
+      }
     }
 
-    totalsByChapter.set(question.chapterId, totals);
+    totalsByChapter.set(chapterId, totals);
   }
 
   return totalsByChapter;
@@ -118,10 +136,11 @@ export function calculateMastery({
 
 export function calculateChapterMastery(
   chapterId: string,
-  questions: QuestionLike[],
+  questions: readonly QuestionLike[],
   progress: Record<string, ProgressLike>,
+  chapterQuestionIndex = buildChapterQuestionIndex(questions),
 ): number {
-  const totals = chapterMasteryTotalsById(questions, progress).get(chapterId);
+  const totals = chapterMasteryTotalsById(chapterQuestionIndex, progress).get(chapterId);
 
   return calculateMastery({
     correctCount: totals?.correctCount ?? 0,
@@ -132,14 +151,15 @@ export function calculateChapterMastery(
 }
 
 export function findWeakChapterIds(
-  questions: QuestionLike[],
+  questions: readonly QuestionLike[],
   progress: Record<string, ProgressLike>,
   threshold = DEFAULT_WEAK_MASTERY_THRESHOLD,
+  chapterQuestionIndex = buildChapterQuestionIndex(questions),
 ): string[] {
   const safeThreshold = normalizeThreshold(threshold);
   const weakChapterIds: string[] = [];
 
-  for (const [chapterId, totals] of chapterMasteryTotalsById(questions, progress)) {
+  for (const [chapterId, totals] of chapterMasteryTotalsById(chapterQuestionIndex, progress)) {
     if (totals.seenCount <= 0) continue;
     const mastery = calculateMastery({
       correctCount: totals.correctCount,
