@@ -44,6 +44,8 @@ test('content TypeScript schema stays in parity with runtime validator expectati
   assert.match(contentTypes, /nameText\?: LocalizedContentTextOverrides;/);
   assert.match(contentTypes, /descriptionText\?: LocalizedContentTextOverrides;/);
   assert.match(contentTypes, /export interface GlossaryTerm/);
+  assert.match(contentTypes, /provenance: QuestionProvenance;/);
+  assert.match(contentTypes, /source: OfficialSourceReference;/);
   assert.match(contentTypes, /chapterId\?: string;/);
 });
 

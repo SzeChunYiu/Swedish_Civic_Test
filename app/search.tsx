@@ -26,6 +26,7 @@ import {
 import { useAccessibilityStore } from '../lib/storage/accessibilityStore';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colorsForThemeMode, radius, space, typography } from '../lib/theme';
+import type { OfficialSourceReference, QuestionProvenance } from '../types/content';
 import type { ThemeColors } from '../lib/theme';
 
 type SearchRouteParams = {
@@ -181,10 +182,18 @@ export default function SearchScreen() {
             const primaryTerm = language === 'en' ? term.termEn : term.termSv;
             const secondaryTerm = language === 'en' ? term.termSv : term.termEn;
             const explanation = language === 'en' ? term.explanationEn : term.explanationSv;
+            const sourceTitle = getSourceDisplayTitle(term.source);
+            const termProvenanceLabel = copy.termProvenanceLabel(term.provenance);
+            const termSourceText = copy.termSourceText({
+              provenanceLabel: termProvenanceLabel,
+              publisher: term.source.publisher,
+              title: sourceTitle,
+            });
             const termSummary = copy.termAccessibilityLabel({
               chapterName,
               explanation,
               primaryTerm,
+              sourceText: termSourceText,
             });
             const termSummaryId = `search-term-summary-${term.id}`;
 
@@ -213,6 +222,7 @@ export default function SearchScreen() {
                   ) : null}
                 </View>
                 <Text style={styles.explanation}>{explanation}</Text>
+                <Text style={styles.termSource}>{termSourceText}</Text>
               </Card>
             );
           })
@@ -382,14 +392,26 @@ type SearchRouteCopy = {
   submitSearch: string;
   submitSearchAccessibilityLabel: string;
   subtitle: string;
+  termProvenanceLabel: (provenance: QuestionProvenance) => string;
   termAccessibilityLabel: ({
     chapterName,
     explanation,
     primaryTerm,
+    sourceText,
   }: {
     chapterName?: string;
     explanation: string;
     primaryTerm: string;
+    sourceText: string;
+  }) => string;
+  termSourceText: ({
+    provenanceLabel,
+    publisher,
+    title,
+  }: {
+    provenanceLabel: string;
+    publisher: string;
+    title: string;
   }) => string;
   title: string;
 };
@@ -450,10 +472,22 @@ const searchRouteCopy: Record<AppLanguage, SearchRouteCopy> = {
     submitSearchAccessibilityLabel: 'Sök med den inskrivna texten',
     subtitle:
       'En snabb sökning för centrala samhällsbegrepp, källbaserade frågor och förklaringar.',
-    termAccessibilityLabel: ({ chapterName, explanation, primaryTerm }) =>
-      chapterName
-        ? `${primaryTerm}. ${explanation}. Kopplat kapitel: ${chapterName}.`
-        : `${primaryTerm}. ${explanation}.`,
+    termProvenanceLabel: (provenance) =>
+      provenance === 'uhr'
+        ? 'UHR-källa'
+        : provenance === 'derived'
+          ? 'Tillägg'
+          : 'redaktionell sammanfattning',
+    termAccessibilityLabel: ({ chapterName, explanation, primaryTerm, sourceText }) =>
+      [
+        `${primaryTerm}. ${explanation}.`,
+        chapterName ? `Kopplat kapitel: ${chapterName}.` : '',
+        sourceText,
+      ]
+        .filter(Boolean)
+        .join(' '),
+    termSourceText: ({ provenanceLabel, publisher, title }) =>
+      `Källa: ${publisher}, ${title} · ${provenanceLabel}`,
     title: 'Sök begrepp, frågor och förklaringar',
   },
   en: {
@@ -510,10 +544,22 @@ const searchRouteCopy: Record<AppLanguage, SearchRouteCopy> = {
     submitSearch: 'Search',
     submitSearchAccessibilityLabel: 'Submit the typed search',
     subtitle: 'A quick search for key civic terms, source-backed questions, and explanations.',
-    termAccessibilityLabel: ({ chapterName, explanation, primaryTerm }) =>
-      chapterName
-        ? `${primaryTerm}. ${explanation}. Linked chapter: ${chapterName}.`
-        : `${primaryTerm}. ${explanation}.`,
+    termProvenanceLabel: (provenance) =>
+      provenance === 'uhr'
+        ? 'UHR source'
+        : provenance === 'derived'
+          ? 'supplementary'
+          : 'editorial summary',
+    termAccessibilityLabel: ({ chapterName, explanation, primaryTerm, sourceText }) =>
+      [
+        `${primaryTerm}. ${explanation}.`,
+        chapterName ? `Linked chapter: ${chapterName}.` : '',
+        sourceText,
+      ]
+        .filter(Boolean)
+        .join(' '),
+    termSourceText: ({ provenanceLabel, publisher, title }) =>
+      `Source: ${publisher}, ${title} · ${provenanceLabel}`,
     title: 'Search terms, questions, and explanations',
   },
 };
@@ -526,6 +572,10 @@ function getFirstSearchParamValue(value: string | string[] | undefined) {
 
 function getRouteSearchQuery(params: SearchRouteParams) {
   return getFirstSearchParamValue(params.q) || getFirstSearchParamValue(params.query);
+}
+
+function getSourceDisplayTitle(source: OfficialSourceReference) {
+  return source.title.startsWith('Sverige i fokus') ? 'Sverige i fokus' : source.title;
 }
 
 function createStyles(themeColors: ThemeColors) {
@@ -613,6 +663,11 @@ function createStyles(themeColors: ThemeColors) {
       color: themeColors.textSecondary,
       fontSize: typography.body.fontSize,
       lineHeight: typography.body.lineHeight,
+    },
+    termSource: {
+      color: themeColors.textMuted,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
     },
     chapterLink: {
       borderColor: themeColors.focus,

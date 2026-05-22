@@ -1323,6 +1323,65 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
   },
   {
     file: 'app/search.tsx',
+    pattern: /const sourceTitle = getSourceDisplayTitle\(term\.source\);/,
+    message: 'search route glossary results must derive display source titles',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /const termProvenanceLabel = copy\.termProvenanceLabel\(term\.provenance\);/,
+    message: 'search route glossary results must localize term provenance',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern:
+      /const termSourceText = copy\.termSourceText\(\{[\s\S]*?publisher: term\.source\.publisher,[\s\S]*?title: sourceTitle,[\s\S]*?\}\);/,
+    message: 'search route glossary results must compose visible source text',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /sourceText: termSourceText,/,
+    message: 'search route glossary accessible summaries must include source text',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /<Text style=\{styles\.termSource\}>\{termSourceText\}<\/Text>/,
+    message: 'search route glossary cards must render visible source text',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /termProvenanceLabel: \(provenance\) =>[\s\S]*?'redaktionell sammanfattning'/,
+    message: 'search route must include Swedish editorial glossary provenance copy',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /termProvenanceLabel: \(provenance\) =>[\s\S]*?'editorial summary'/,
+    message: 'search route must include English editorial glossary provenance copy',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern:
+      /termSourceText: \(\{ provenanceLabel, publisher, title \}\) =>[\s\S]*?`Källa: \$\{publisher\}, \$\{title\} · \$\{provenanceLabel\}`/,
+    message: 'search route must include Swedish glossary source copy',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern:
+      /termSourceText: \(\{ provenanceLabel, publisher, title \}\) =>[\s\S]*?`Source: \$\{publisher\}, \$\{title\} · \$\{provenanceLabel\}`/,
+    message: 'search route must include English glossary source copy',
+  },
+  {
+    file: 'types/content.ts',
+    pattern: /provenance: QuestionProvenance;[\s\S]*?source: OfficialSourceReference;/,
+    message: 'GlossaryTerm must require source and provenance metadata',
+  },
+  {
+    file: 'data/glossary.ts',
+    pattern:
+      /function editorialGlossaryTerm\([\s\S]*?provenance: 'editorial',[\s\S]*?source: UHR_SVERIGE_I_FOKUS_SOURCE,/,
+    message: 'glossary terms must be constructed with editorial provenance and UHR source',
+  },
+  {
+    file: 'app/search.tsx',
     rejectPattern: /function normalizeSearchText/,
     message: 'search route must not use a route-local glossary normalizer',
   },
@@ -5269,6 +5328,8 @@ const EXPECTED_CONTENT_INTERFACES = [
       { name: 'termEn', type: 'string', optional: false },
       { name: 'explanationSv', type: 'string', optional: false },
       { name: 'explanationEn', type: 'string', optional: false },
+      { name: 'provenance', type: 'QuestionProvenance', optional: false },
+      { name: 'source', type: 'OfficialSourceReference', optional: false },
       { name: 'chapterId', type: 'string', optional: true },
     ],
   },
@@ -11278,10 +11339,13 @@ if (process.argv.includes('--focus-legal-section-rendering')) {
 }
 
 if (process.argv.includes('--focus-search-route-query-hydration')) {
+  validateGlossaryTerms();
   validateSearchRouteQueryHydrationParity();
   validateSearchQuestionPunctuationParity();
   exitWithValidationFailures();
   printValidationSummary({
+    glossaryTermsValidated,
+    glossaryTermExactSchemaKeysValidated,
     searchRouteQueryHydrationRulesValidated,
     searchRouteQueryHydrationParityValidated,
     searchQuestionPunctuationRulesValidated,
@@ -22142,6 +22206,7 @@ function validateGlossaryTerms() {
   const seenTermsSv = new Set();
   const seenTermsEn = new Set();
   const chapterIds = new Set(Array.isArray(chapters) ? chapters.map((chapter) => chapter.id) : []);
+  const supportedProvenance = new Set(['uhr', 'derived', 'editorial']);
 
   glossaryTerms.forEach((term, index) => {
     const label = hasText(term?.id) ? term.id : `glossary term[${index}]`;
@@ -22199,6 +22264,41 @@ function validateGlossaryTerms() {
           reject(`${label} chapterId must be trimmed and single-spaced`);
         } else if (chapterIds.size && !chapterIds.has(term.chapterId)) {
           reject(`${label} references unknown chapter ${term.chapterId}`);
+        }
+      }
+
+      if (!supportedProvenance.has(term.provenance)) {
+        reject(`${label} provenance must be one of uhr, derived, editorial`);
+      }
+
+      const source = term.source;
+      if (!source || typeof source !== 'object' || Array.isArray(source)) {
+        reject(`${label} source must be an object`);
+      } else {
+        for (const field of ['title', 'publisher', 'url', 'retrievedDate']) {
+          if (!hasText(source[field])) {
+            reject(`${label} source.${field} must be non-empty`);
+          } else if (!textIsTrimmedSingleSpaced(source[field])) {
+            reject(`${label} source.${field} must be trimmed and single-spaced`);
+          }
+        }
+
+        if (source.title && !source.title.includes(EXPECTED_UHR_SOURCE.titleKeyword)) {
+          reject(`${label} source.title must reference ${EXPECTED_UHR_SOURCE.titleKeyword}`);
+        }
+        if (source.publisher !== EXPECTED_UHR_SOURCE.publisher) {
+          reject(`${label} source.publisher must be ${EXPECTED_UHR_SOURCE.publisher}`);
+        }
+        if (source.url !== EXPECTED_UHR_SOURCE.url) {
+          reject(`${label} source.url must be ${EXPECTED_UHR_SOURCE.url}`);
+        }
+        if (source.retrievedDate && !/^\d{4}-\d{2}-\d{2}$/.test(source.retrievedDate)) {
+          reject(`${label} source.retrievedDate must be YYYY-MM-DD`);
+        }
+        for (const key of Object.keys(source)) {
+          if (!['title', 'publisher', 'url', 'publishedDate', 'retrievedDate'].includes(key)) {
+            reject(`${label} source has unsupported key ${key}`);
+          }
         }
       }
 

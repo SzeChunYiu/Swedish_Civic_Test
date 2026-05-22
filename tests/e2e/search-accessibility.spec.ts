@@ -17,6 +17,8 @@ const copy = {
     questionLink: /Öppna övningsfrågan:/,
     query: 'riksdag',
     sourceNote: /^Källanteckning:/,
+    termSource:
+      /Källa: Universitets- och högskolerådet \(UHR\), Sverige i fokus · redaktionell sammanfattning/,
     termName: 'Kommun',
     browseChapters: 'Gå till alla kapitel',
   },
@@ -31,6 +33,8 @@ const copy = {
     questionLink: /Open practice question:/,
     query: 'municipality',
     sourceNote: /^Source note:/,
+    termSource:
+      /Source: Universitets- och högskolerådet \(UHR\), Sverige i fokus · editorial summary/,
     termName: 'Riksdag',
     browseChapters: 'Go to all chapters',
   },
@@ -140,6 +144,7 @@ for (const language of ['sv', 'en'] as const satisfies readonly Language[]) {
     await expect(liveSummary).toHaveText(t.filteredSummary);
     await expect(page.getByText(t.questionShown)).toBeVisible();
     await expect(page.getByText(t.termName, { exact: true }).first()).toBeVisible();
+    await expect(page.getByText(t.termSource).first()).toBeVisible();
     await expect(
       page.getByRole('link', { name: /Öppna kapitlet|Open the chapter/ }).first(),
     ).toBeVisible();

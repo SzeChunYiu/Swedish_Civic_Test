@@ -81,5 +81,7 @@ export interface GlossaryTerm {
   termEn: string;
   explanationSv: string;
   explanationEn: string;
+  provenance: QuestionProvenance;
+  source: OfficialSourceReference;
   chapterId?: string;
 }
