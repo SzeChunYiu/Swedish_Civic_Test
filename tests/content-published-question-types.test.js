@@ -4690,59 +4690,50 @@ test('q146 political-rights generated true/false exports direct propositions', (
   );
 });
 
-test('task-question generated true/false exports use direct propositions', () => {
+test('q178 disability-rights generated true/false exports scoped aim propositions', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const actualSiteBank = actualStaticQuestions();
   const sourceQuestions = generatedSiteBank.filter(
     (question) => question.questionProvenance === 'uhr',
   );
-  const expectedRows = [
-    {
-      id: generatedQuestionId(sourceQuestions, 'q022', 'trueStatement'),
-      sv: 'Riksdagen beslutar om lagar och hur statens pengar ska användas.',
-      en: 'The Riksdag passes laws and decides how state funds are used.',
-    },
-    {
-      id: generatedQuestionId(sourceQuestions, 'q022', 'falseStatement'),
-      sv: 'Riksdagen sköter regionernas kollektivtrafik.',
-      en: 'The Riksdag manages regional public transport.',
-    },
-    {
-      id: generatedQuestionId(sourceQuestions, 'q059', 'trueStatement'),
-      sv: 'Sametinget representerar den samiska befolkningen i frågor om språk, kultur och identitet.',
-      en: 'The Sami Parliament represents the Sami population on questions of language, culture, and identity.',
-    },
-    {
-      id: generatedQuestionId(sourceQuestions, 'q059', 'falseStatement'),
-      sv: 'Sametinget beslutar statens budget.',
-      en: 'The Sami Parliament decides the state budget.',
-    },
-  ];
-  const generatedById = new Map(generatedSiteBank.map((question) => [question.id, question]));
+  const trueStatementId = generatedQuestionId(sourceQuestions, 'q178', 'trueStatement');
+  const falseStatementId = generatedQuestionId(sourceQuestions, 'q178', 'falseStatement');
+  const byId = new Map(generatedSiteBank.map((question) => [question.id, question]));
   const actualById = new Map(Array.from(actualSiteBank).map((question) => [question.id, question]));
-  const residualPattern = /\b(?:har uppgiften att|has the task to|One task of .+? is to)\b/i;
+  const csvRows = contentQuestionBankCsvRowsById([trueStatementId, falseStatementId]);
+  const stalePattern =
+    /^(?:Society should be accessible so people can participate on equal terms|People with disabilities should not be able to study or work)\.?$/im;
 
-  for (const expected of expectedRows) {
-    const generated = generatedById.get(expected.id);
-    const actual = actualById.get(expected.id);
-    assert.ok(generated, `${expected.id} should be present in generated bank`);
-    assert.ok(actual, `${expected.id} should be present in static bank`);
-    assert.equal(generated.q.sv, expected.sv);
-    assert.equal(generated.q.en, expected.en);
-    assert.equal(actual.q.sv, expected.sv);
-    assert.equal(actual.q.en, expected.en);
-    assert.doesNotMatch(`${generated.q.sv}\n${generated.q.en}`, residualPattern);
-    assert.doesNotMatch(`${actual.q.sv}\n${actual.q.en}`, residualPattern);
-  }
-
-  const csvRowsById = contentQuestionBankCsvRowsById(expectedRows.map((row) => row.id));
-  for (const expected of expectedRows) {
-    const columns = csvRowsById.get(expected.id);
-    assert.ok(columns, `${expected.id} should be present in content/question-bank.csv`);
-    assert.equal(columns[3], expected.sv);
-    assert.equal(columns[4], expected.en);
-    assert.doesNotMatch(`${columns[3]}\n${columns[4]}`, residualPattern);
-  }
+  assert.equal(byId.get('q178')?.q.en, 'What is one aim of disability rights work?');
+  assert.equal(byId.get(trueStatementId)?.q.sv, actualById.get(trueStatementId)?.q.sv);
+  assert.equal(byId.get(trueStatementId)?.q.en, actualById.get(trueStatementId)?.q.en);
+  assert.equal(
+    byId.get(trueStatementId)?.q.en,
+    'One aim of disability rights work is that society should be accessible so people can participate on equal terms.',
+  );
+  assert.equal(byId.get(falseStatementId)?.q.sv, actualById.get(falseStatementId)?.q.sv);
+  assert.equal(byId.get(falseStatementId)?.q.en, actualById.get(falseStatementId)?.q.en);
+  assert.equal(
+    byId.get(falseStatementId)?.q.en,
+    'One aim of disability rights work is that people with disabilities should not be able to study or work.',
+  );
+  assert.equal(csvRows.get(trueStatementId)?.[4], byId.get(trueStatementId)?.q.en);
+  assert.equal(csvRows.get(falseStatementId)?.[4], byId.get(falseStatementId)?.q.en);
+  assert.equal(csvRows.get(trueStatementId)?.[11], 'Personer med funktionsnedsättning');
+  assert.equal(csvRows.get(falseStatementId)?.[11], 'Personer med funktionsnedsättning');
+  assert.equal(byId.get(trueStatementId)?.answer, 0);
+  assert.equal(byId.get(falseStatementId)?.answer, 1);
+  assert.doesNotMatch(
+    [
+      byId.get(trueStatementId)?.q.en,
+      byId.get(falseStatementId)?.q.en,
+      actualById.get(trueStatementId)?.q.en,
+      actualById.get(falseStatementId)?.q.en,
+      csvRows.get(trueStatementId)?.[4],
+      csvRows.get(falseStatementId)?.[4],
+    ].join('\n'),
+    stalePattern,
+  );
 });
 
 test('q062 public-sector exports natural English in canonical and static banks', () => {

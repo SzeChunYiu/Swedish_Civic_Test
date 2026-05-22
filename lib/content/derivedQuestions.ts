@@ -3297,6 +3297,9 @@ export function deriveCivicStatementEn(source: PracticeQuestion, option: Questio
   match = q.match(/^What is one goal of (.+)$/i);
   if (match) return `One goal of ${match[1]} is to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
 
+  match = q.match(/^What is one aim of (.+)$/i);
+  if (match) return `One aim of ${match[1]} is that ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+
   match = q.match(/^When were (.+?) built$/i);
   if (match) return `${upperFirst(match[1])} were built ${lowerFirst(answer)}`;
 

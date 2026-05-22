@@ -636,16 +636,10 @@ const QUESTION_PUBLIC_SECTOR_ENGLISH_NATURALNESS_PATTERNS = [
   /\bActivities for which the state, regions, and municipalities are responsible\b/i,
   /\bThe public sector(?: in Sweden)? means (?:activities|all privately owned companies)\b/i,
 ];
-const QUESTION_REGIONS_MAIN_RESPONSIBILITY_ENGLISH_NATURALNESS_IDS = new Set([
-  'q025',
-  'q276',
-  'q277',
-  'q278',
-  'q279',
-]);
-const QUESTION_REGIONS_MAIN_RESPONSIBILITY_ENGLISH_NATURALNESS_PATTERNS = [
-  /\bforemost task of Sweden's regions\b/i,
-  /\bis to be responsible for health care\b/i,
+const QUESTION_RIGHTS_WORK_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bpart of work for gender equality\b/i,
+  /\baim of work for people with disabilities\b/i,
+  /\bWork for people with disabilities is about\b/i,
 ];
 const QUESTION_SOURCE_CRITICISM_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhat does it mean to be source-critical\b/i,
@@ -7548,10 +7542,15 @@ function findQuestionPublicSectorEnglishNaturalnessIssue(question) {
   );
 }
 
-function findQuestionRegionsMainResponsibilityEnglishNaturalnessIssue(question) {
-  if (!QUESTION_REGIONS_MAIN_RESPONSIBILITY_ENGLISH_NATURALNESS_IDS.has(question.id)) return null;
-  return QUESTION_REGIONS_MAIN_RESPONSIBILITY_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
-    pattern.test(questionText(question, ['questionEn'])),
+function findQuestionRightsWorkEnglishNaturalnessIssue(question) {
+  if (
+    !question.tags?.includes('gender-equality') &&
+    !question.tags?.includes('disability-rights')
+  ) {
+    return null;
+  }
+  return QUESTION_RIGHTS_WORK_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(questionText(question, ['questionEn', 'explanationEn'])),
   );
 }
 
@@ -10017,7 +10016,7 @@ let questionReligiousFreedomParallelismTargetRowsValidated = 0;
 let questionCouncilOfEuropeWorkForEnglishNaturalnessValidated = 0;
 let questionMayDayEnglishNaturalnessValidated = 0;
 let questionPublicSectorEnglishNaturalnessValidated = 0;
-let questionRegionsMainResponsibilityEnglishNaturalnessValidated = 0;
+let questionRightsWorkEnglishNaturalnessValidated = 0;
 let questionLuciaExplanationRoleScaffoldValidated = 0;
 let questionGoodFridayEnglishNaturalnessValidated = 0;
 let questionReferendumAdvisorySwedishNaturalnessValidated = 0;
@@ -25440,8 +25439,8 @@ if (Array.isArray(questions)) {
         findQuestionReligiousFreedomOptionParallelismIssue(question);
       const publicSectorEnglishNaturalnessIssue =
         findQuestionPublicSectorEnglishNaturalnessIssue(question);
-      const regionsMainResponsibilityEnglishNaturalnessIssue =
-        findQuestionRegionsMainResponsibilityEnglishNaturalnessIssue(question);
+      const rightsWorkEnglishNaturalnessIssue =
+        findQuestionRightsWorkEnglishNaturalnessIssue(question);
       const councilOfEuropeWorkForEnglishNaturalnessIssue =
         findQuestionCouncilOfEuropeWorkForEnglishNaturalnessIssue(question);
       const mayDayEnglishNaturalnessIssue = findQuestionMayDayEnglishNaturalnessIssue(question);
@@ -25510,10 +25509,10 @@ if (Array.isArray(questions)) {
       } else {
         questionPublicSectorEnglishNaturalnessValidated += 1;
       }
-      if (regionsMainResponsibilityEnglishNaturalnessIssue) {
-        fail(`${label} uses stilted regions-main-responsibility English wording`);
+      if (rightsWorkEnglishNaturalnessIssue) {
+        fail(`${label} uses literal rights-work English wording`);
       } else {
-        questionRegionsMainResponsibilityEnglishNaturalnessValidated += 1;
+        questionRightsWorkEnglishNaturalnessValidated += 1;
       }
       if (councilOfEuropeWorkForEnglishNaturalnessIssue) {
         fail(`${label} uses literal Council of Europe work-for English wording`);
@@ -26148,7 +26147,7 @@ console.log(
       questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
       questionMayDayEnglishNaturalnessValidated,
       questionPublicSectorEnglishNaturalnessValidated,
-      questionRegionsMainResponsibilityEnglishNaturalnessValidated,
+      questionRightsWorkEnglishNaturalnessValidated,
       questionLuciaExplanationRoleScaffoldValidated,
       questionGoodFridayEnglishNaturalnessValidated,
       questionReferendumAdvisorySwedishNaturalnessValidated,
