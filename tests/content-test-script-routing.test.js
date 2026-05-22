@@ -769,6 +769,47 @@ test('Flashcard accessibility parity uses focused content validation routing', (
     'Flashcard accessibility tests must not route through full content validation',
   );
 });
+test('Flashcard deck strict-date runtime uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const learningTestSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/learning.test.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('flashcardDeckDateRuntime');
+
+  assert.ok(registryEntry, 'flashcard deck date runtime focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-flashcard-deck-date-runtime']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'flashcardDeckStrictDateRuntimeCasesValidated',
+    'flashcardDeckStrictDateRuntimeParityValidated',
+  ]);
+  assert.match(validatorSource, /--focus-flashcard-deck-date-runtime/);
+  assert.match(
+    validatorSource,
+    /validateFlashcardDeckStrictDateRuntimeGuard\(\);[\s\S]*flashcardDeckStrictDateRuntimeCasesValidated[\s\S]*flashcardDeckStrictDateRuntimeParityValidated/,
+  );
+  assert.match(learningTestSource, /--focus-flashcard-deck-date-runtime/);
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-flashcard-deck-date-runtime'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const summary = parseJsonSummary(result.stdout, 'flashcard deck date runtime focused validation');
+
+  assert.deepEqual(Object.keys(summary).sort(), registryEntry.summaryKeys.slice().sort());
+  assert.equal(summary.flashcardDeckStrictDateRuntimeCasesValidated, 8);
+  assert.equal(summary.flashcardDeckStrictDateRuntimeParityValidated, true);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
+});
 test('question disclaimer parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),

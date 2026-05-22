@@ -964,6 +964,14 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'flashcardDeckDateRuntime',
+    flags: ['--focus-flashcard-deck-date-runtime'],
+    summaryKeys: [
+      'flashcardDeckStrictDateRuntimeCasesValidated',
+      'flashcardDeckStrictDateRuntimeParityValidated',
+    ],
+  },
+  {
     id: 'questionDisclaimerParity',
     flags: ['--focus-question-disclaimer-parity'],
     summaryKeys: ['questionDisclaimerRoutesValidated', 'questionDisclaimerCopyValidated'],
