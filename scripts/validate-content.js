@@ -640,6 +640,8 @@ const QUESTION_COUNCIL_OF_EUROPE_WORK_FOR_ENGLISH_NATURALNESS_PATTERNS = [
 const QUESTION_SALTSJOBADEN_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhat did the 1938 Saltsj(?:ö|o)baden Agreement become important for\??/i,
   /\bbecame important for\b/i,
+  /\bThe Saltsj(?:ö|o)baden Agreement was made in 1938\b/i,
+  /\bwas made in 1938 between employers and trade unions\b/i,
 ];
 const QUESTION_SUFFRAGE_1921_ENGLISH_NATURALNESS_PATTERNS = [
   /\b1921 is the year of the election asked about here\b/i,
@@ -6067,7 +6069,7 @@ function translationNaturalnessGuardParityIsValidated() {
     questionGeneratedTrueFalseNaturalnessValidated === publishedQuestions &&
     questionLuciaRoleEnglishNaturalnessValidated === publishedQuestions &&
     questionEuCooperationEnglishNaturalnessValidated === publishedQuestions &&
-    questionOlderSickEnglishNaturalnessValidated === publishedQuestions &&
+    questionSaltsjobadenEnglishNaturalnessValidated === publishedQuestions &&
     questionCouncilOfEuropeWorkForEnglishNaturalnessValidated === publishedQuestions &&
     questionMayDayEnglishNaturalnessValidated === publishedQuestions &&
     questionPublicSectorEnglishNaturalnessValidated === publishedQuestions &&
@@ -10308,7 +10310,7 @@ let somaliHolidayFoodNaturalnessStaticRowsValidated = 0;
 let somaliHolidayFoodNaturalnessParityValidated = false;
 let questionLuciaRoleEnglishNaturalnessValidated = 0;
 let questionEuCooperationEnglishNaturalnessValidated = 0;
-let questionOlderSickEnglishNaturalnessValidated = 0;
+let questionSaltsjobadenEnglishNaturalnessValidated = 0;
 let questionReligiousFreedom1951NaturalnessValidated = 0;
 let questionReligiousFreedomParallelismValidated = 0;
 let questionReligiousFreedomParallelismTargetRowsValidated = 0;
@@ -25925,8 +25927,8 @@ if (Array.isArray(questions)) {
         findQuestionLuciaRoleEnglishNaturalnessIssue(question);
       const euCooperationEnglishNaturalnessIssue =
         findQuestionEuCooperationEnglishNaturalnessIssue(question);
-      const olderSickEnglishNaturalnessIssue =
-        findQuestionOlderSickEnglishNaturalnessIssue(question);
+      const saltsjobadenEnglishNaturalnessIssue =
+        findQuestionSaltsjobadenEnglishNaturalnessIssue(question);
       const religiousFreedomParallelismIssue =
         findQuestionReligiousFreedomOptionParallelismIssue(question);
       const publicSectorEnglishNaturalnessIssue =
@@ -25994,10 +25996,10 @@ if (Array.isArray(questions)) {
       } else {
         questionEuCooperationEnglishNaturalnessValidated += 1;
       }
-      if (olderSickEnglishNaturalnessIssue) {
-        fail(`${label} uses literal older-and-sick English wording`);
+      if (saltsjobadenEnglishNaturalnessIssue) {
+        fail(`${label} uses stilted Saltsjöbaden Agreement English wording`);
       } else {
-        questionOlderSickEnglishNaturalnessValidated += 1;
+        questionSaltsjobadenEnglishNaturalnessValidated += 1;
       }
       if (religiousFreedomParallelismIssue) {
         fail(`${label} uses nonparallel religious-freedom option wording`);
@@ -26669,7 +26671,7 @@ console.log(
       somaliHolidayFoodNaturalnessParityValidated,
       questionLuciaRoleEnglishNaturalnessValidated,
       questionEuCooperationEnglishNaturalnessValidated,
-      questionOlderSickEnglishNaturalnessValidated,
+      questionSaltsjobadenEnglishNaturalnessValidated,
       questionReligiousFreedom1951NaturalnessValidated,
       questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
       questionMayDayEnglishNaturalnessValidated,
