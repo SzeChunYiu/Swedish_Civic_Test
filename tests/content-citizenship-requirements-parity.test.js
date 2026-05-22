@@ -293,6 +293,8 @@ test('citizenship requirements cards surface precise source titles and currentne
   const routeSource = read('app/citizenship-requirements.tsx');
   const sourceHrefCount = (routeSource.match(/href=\{source\.url\}/g) || []).length;
   const sourceRefRowStyle = extractNamedStyle(routeSource, 'sourceRefRow');
+  const sourceRefRowFocusedStyle = extractNamedStyle(routeSource, 'sourceRefRowFocused');
+  const sourceRowFocusedStyle = extractNamedStyle(routeSource, 'sourceRowFocused');
 
   assert.match(routeSource, /areaSourceAccessibilityPrefix/);
   assert.match(routeSource, /areaSourceAccessibilityPrefix: 'Källa för'/);
@@ -303,10 +305,25 @@ test('citizenship requirements cards surface precise source titles and currentne
   assert.match(routeSource, /source\.retrievedDate/);
   assert.match(routeSource, /source\.url/);
   assert.match(routeSource, /styles\.sourceRefRow/);
+  assert.match(routeSource, /const \[focusedSourceRow, setFocusedSourceRow\] = useState/);
+  assert.match(routeSource, /onFocus=\{\(\) => setFocusedSourceRow\(sourceFocusKey\)\}/);
+  assert.match(routeSource, /onBlur=\{\(\) => setFocusedSourceRow\(null\)\}/);
+  assert.match(
+    routeSource,
+    /focusedSourceRow === sourceFocusKey \? styles\.sourceRefRowFocused : null/,
+  );
+  assert.match(
+    routeSource,
+    /focusedSourceRow === sourceFocusKey \? styles\.sourceRowFocused : null/,
+  );
   assert.match(routeSource, /accessibilityRole="link"/);
   assert.match(routeSource, /rel="noreferrer"/);
   assert.match(routeSource, /target="_blank"/);
   assert.match(sourceRefRowStyle, /minHeight: space\[6\]/);
+  assert.match(sourceRefRowFocusedStyle, /backgroundColor: themeColors\.focusSoft/);
+  assert.match(sourceRefRowFocusedStyle, /borderColor: themeColors\.focus/);
+  assert.match(sourceRowFocusedStyle, /backgroundColor: themeColors\.focusSoft/);
+  assert.match(sourceRowFocusedStyle, /borderColor: themeColors\.focus/);
   assert.equal(
     sourceHrefCount >= 2,
     true,

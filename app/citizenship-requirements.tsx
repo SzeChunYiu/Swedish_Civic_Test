@@ -1,11 +1,12 @@
 import { Link } from 'expo-router';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { PersistenceWarningNotice } from '../components/storage/PersistenceWarningNotice';
 import { QuestionDisclaimer } from '../components/quiz/QuestionDisclaimer';
 import { Badge } from '../components/ui/Badge';
 import { Card } from '../components/ui/Card';
+import { RouteLink } from '../components/ui/RouteLink';
 import { ScreenShell, SectionHeader } from '../components/ui/ScreenShell';
 import {
   CITIZENSHIP_REQUIREMENTS_EFFECTIVE_DATE,
@@ -203,6 +204,7 @@ export default function CitizenshipRequirementsScreen() {
   const copy = copyByLanguage[language];
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const checkedIds = useMemo(() => new Set(checkedAreaIds), [checkedAreaIds]);
+  const [focusedSourceRow, setFocusedSourceRow] = useState<string | null>(null);
 
   const missingAreas = useMemo(
     () => citizenshipRequirementAreas.filter((area) => !checkedIds.has(area.id)),
@@ -274,27 +276,36 @@ export default function CitizenshipRequirementsScreen() {
               <View style={styles.sourceRefs}>
                 <Text style={styles.sourceRefsLabel}>{copy.sourceRefsLabel}</Text>
                 <View style={styles.sourceRefList}>
-                  {areaSources.map((source) => (
-                    <Link
-                      key={`${area.id}-${source.id}`}
-                      accessibilityHint={copy.openSourceHint}
-                      accessibilityLabel={buildAreaSourceAccessibilityLabel(
-                        copy,
-                        area.title[language],
-                        source,
-                        language,
-                      )}
-                      accessibilityRole="link"
-                      href={source.url}
-                      rel="noreferrer"
-                      style={styles.sourceRefRow}
-                      target="_blank"
-                    >
-                      <Text style={styles.sourceRefTitle}>{source.title[language]}</Text>
-                      <Text style={styles.sourceRefMeta}>{formatSourceMeta(source, copy)}</Text>
-                      <Text style={styles.sourceRefUrl}>{source.url}</Text>
-                    </Link>
-                  ))}
+                  {areaSources.map((source) => {
+                    const sourceFocusKey = `area:${area.id}:${source.id}`;
+
+                    return (
+                      <RouteLink
+                        key={`${area.id}-${source.id}`}
+                        accessibilityHint={copy.openSourceHint}
+                        accessibilityLabel={buildAreaSourceAccessibilityLabel(
+                          copy,
+                          area.title[language],
+                          source,
+                          language,
+                        )}
+                        href={source.url}
+                        onBlur={() => setFocusedSourceRow(null)}
+                        onFocus={() => setFocusedSourceRow(sourceFocusKey)}
+                        rel="noreferrer"
+                        style={[
+                          styles.sourceRefRow,
+                          focusedSourceRow === sourceFocusKey ? styles.sourceRefRowFocused : null,
+                        ]}
+                        target="_blank"
+                        variant="card"
+                      >
+                        <Text style={styles.sourceRefTitle}>{source.title[language]}</Text>
+                        <Text style={styles.sourceRefMeta}>{formatSourceMeta(source, copy)}</Text>
+                        <Text style={styles.sourceRefUrl}>{source.url}</Text>
+                      </RouteLink>
+                    );
+                  })}
                 </View>
               </View>
               <Pressable
@@ -337,22 +348,31 @@ export default function CitizenshipRequirementsScreen() {
         </Text>
         <Text style={styles.sourcesSubtitle}>{copy.sourceListSubtitle}</Text>
         <View style={styles.sourceList}>
-          {citizenshipRequirementSources.map((source) => (
-            <Link
-              key={source.id}
-              accessibilityHint={copy.openSourceHint}
-              accessibilityLabel={`${copy.openSourceHint}: ${source.title[language]}`}
-              accessibilityRole="link"
-              href={source.url}
-              rel="noreferrer"
-              style={styles.sourceRow}
-              target="_blank"
-            >
-              <Text style={styles.sourceTitle}>{source.title[language]}</Text>
-              <Text style={styles.sourceMeta}>{formatSourceMeta(source, copy)}</Text>
-              <Text style={styles.sourceUrl}>{source.url}</Text>
-            </Link>
-          ))}
+          {citizenshipRequirementSources.map((source) => {
+            const sourceFocusKey = `source:${source.id}`;
+
+            return (
+              <RouteLink
+                key={source.id}
+                accessibilityHint={copy.openSourceHint}
+                accessibilityLabel={`${copy.openSourceHint}: ${source.title[language]}`}
+                href={source.url}
+                onBlur={() => setFocusedSourceRow(null)}
+                onFocus={() => setFocusedSourceRow(sourceFocusKey)}
+                rel="noreferrer"
+                style={[
+                  styles.sourceRow,
+                  focusedSourceRow === sourceFocusKey ? styles.sourceRowFocused : null,
+                ]}
+                target="_blank"
+                variant="card"
+              >
+                <Text style={styles.sourceTitle}>{source.title[language]}</Text>
+                <Text style={styles.sourceMeta}>{formatSourceMeta(source, copy)}</Text>
+                <Text style={styles.sourceUrl}>{source.url}</Text>
+              </RouteLink>
+            );
+          })}
         </View>
       </Card>
 
@@ -543,6 +563,10 @@ function createStyles(themeColors: ThemeColors) {
       gap: space[0.5],
       minHeight: space[6],
       padding: space[1.25],
+    },
+    sourceRowFocused: {
+      backgroundColor: themeColors.focusSoft,
+      borderColor: themeColors.focus,
     },
     sourceRowPressed: {
       backgroundColor: themeColors.surfaceMuted,
