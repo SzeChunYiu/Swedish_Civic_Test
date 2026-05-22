@@ -100,17 +100,99 @@ const staleChildApplicationClaimPatterns = [
 const staleCitizenshipConductClaimPatterns = [
   /Have led an orderly life\s*[—-]\s*no significant criminal record/i,
   /Standard residence requirement:\s*5 years/i,
+  /no significant criminal record/i,
   /Standardowy wymóg pobytu:\s*5 lat/i,
+  /niekaralnoś|rejestr karn|karalnoś/i,
   /Standart ikamet şartı:\s*5 yıl/i,
+  /sabıka kayd|adli sicil|önemli suç kaydı/i,
   /Стандартна вимога щодо проживання:\s*5 років/i,
+  /судиміст|кримінальн.{0,24}запис|відсутність.{0,40}правопоруш/i,
   /شرط الإقامة المعتاد:\s*5 سنوات/i,
+  /سجل جنائي|سوابق جنائية|لا[^.؟<]{0,40}جنائي/i,
   /شرط اقامت استاندارد:\s*5 سال/i,
+  /سوءپیشینه|سابقهٔ کیفری|سابقه کیفری/i,
   /标准居留要求：5 年/i,
+  /无(?:重大)?犯罪记录|無(?:重大)?犯罪記錄|犯罪纪录|犯罪紀錄/i,
   /標準居留要求：5 年/i,
   /Shuruudda deganaanshaha caadiga ah:\s*5 sano/i,
+  /diiwaan dembi|diiwaan ciqaab/i,
   /مەرجی نیشتەجێبوونی ستاندارد:\s*5 ساڵ/i,
+  /تۆماری تاوان|پێشینەی تاوان/i,
   /ስሩዕ ረቛሒ መንበሪ፦\s*5 ዓመት/i,
+  /መዝገብ.{0,20}ገበን|ዘይ.{0,20}ገበን/i,
 ];
+const staticEbookChapter11ConductCurrentnessByLocale = {
+  'zh-Hans': {
+    date: /2026 年 6 月 6 日/,
+    residence: /主要规则为八年|主要居留规则：8 年/,
+    conduct: /更严格的行为要求/,
+    waiting: /更长的等待期|等待期更长/,
+    decision: /逐案决定|裁定机关：Migrationsverket/,
+  },
+  'zh-Hant': {
+    date: /2026 年 6 月 6 日/,
+    residence: /主要規則為八年|主要居留規則：8 年/,
+    conduct: /更嚴格的行為要求/,
+    waiting: /更長的等待期|等待期更長/,
+    decision: /逐案決定|裁定機關：Migrationsverket/,
+  },
+  ar: {
+    date: /6 يونيو 2026/,
+    residence: /ثماني سنوات|8 سنوات/,
+    conduct: /شرط السلوك الأكثر صرامة|شرط سلوك أكثر صرامة/,
+    waiting: /فترة انتظار أطول|فترات انتظار أطول/,
+    decision: /كل حالة على حدة|الجهة صاحبة القرار:\s*Migrationsverket/,
+  },
+  ckb: {
+    date: /6ی حوزەیرانی 2026/,
+    residence: /هەشت ساڵ|8 ساڵ/,
+    conduct: /مەرجی ڕەفتاری توندتر/,
+    waiting: /ماوەی چاوەڕوانیی درێژتر|چاوەڕوانیی درێژتر/,
+    decision: /هەر دۆسیەیەک|دەسەڵاتی بڕیاردان:\s*Migrationsverket/,
+  },
+  fa: {
+    date: /6 ژوئن 2026/,
+    residence: /هشت سال|8 سال/,
+    conduct: /شرط سخت‌گیرانه‌تر مربوط به رفتار/,
+    waiting: /دورهٔ انتظار طولانی‌تر|دوره‌های انتظار طولانی‌تر/,
+    decision: /هر پرونده|مرجع تصمیم‌گیری:\s*Migrationsverket/,
+  },
+  pl: {
+    date: /6 czerwca 2026/,
+    residence: /osiem lat|8 lat/,
+    conduct: /surowszy wymóg dotyczący prowadzenia się|Surowszy wymóg prowadzenia się/,
+    waiting: /dłuższy okres oczekiwania|dłuższe okresy oczekiwania/,
+    decision: /indywidualne sprawy|Organ decyzyjny:\s*Migrationsverket/,
+  },
+  so: {
+    date: /6 Juun 2026/,
+    residence: /siddeed sano|8 sano/,
+    conduct: /shuruudda dhaqanka oo la adkeeyay|Shuruud dhaqan oo la adkeeyay/,
+    waiting: /muddo sugitaan oo dheer|sugitaan dheer/,
+    decision: /kiis kasta|Maamulka go'aaminta:\s*Migrationsverket/,
+  },
+  ti: {
+    date: /6 ሰነ 2026/,
+    residence: /ሸሞንተ ዓመት|8 ዓመት/,
+    conduct: /ዝተጠናኸረ ናይ ጠባይ ረቛሒ/,
+    waiting: /ዝነውሐ ግዜ ምጽባይ|ድሕሪ ገበናት ዝነውሐ ምጽባይ/,
+    decision: /ነፍሲ ወከፍ ጉዳይ|ወሳኒ ኣካል፦\s*Migrationsverket/,
+  },
+  tr: {
+    date: /6 Haziran 2026/,
+    residence: /sekiz yıldır|8 yıl/,
+    conduct: /Daha sıkı davranış şartı|daha sıkı davranış şartını/,
+    waiting: /daha uzun bekleme süresi|daha uzun bekleme süreleri/,
+    decision: /her dosyayı ayrı değerlendirir|Karar makamı:\s*Migrationsverket/,
+  },
+  uk: {
+    date: /6 червня 2026/,
+    residence: /вісім років|8 років/,
+    conduct: /суворішій вимозі щодо поведінки|Суворіша вимога щодо поведінки/,
+    waiting: /довший період очікування|довші строки очікування/,
+    decision: /кожну справу окремо|Орган, що ухвалює рішення:\s*Migrationsverket/,
+  },
+};
 const migrationsverketCitizenshipRulesUrl =
   'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html';
 const officialPracticalTestSourceUrls = [
@@ -1146,6 +1228,32 @@ test('static ebook chapter 11 keeps conduct requirement current and decision-saf
 
   assert.match(englishHtml, /data-source-keys="migrationsverketCitizenshipRules"/);
   assert.match(swedishHtml, /migrationsverketCitizenshipRules/);
+});
+
+test('static ebook chapter 11 extra locales keep citizenship conduct rules current', () => {
+  const harness = createEbookHarness();
+
+  for (const lang of staticEbookExtraLanguages) {
+    const expectations = staticEbookChapter11ConductCurrentnessByLocale[lang];
+    assert.ok(expectations, `${lang} should have chapter 11 conduct currentness expectations`);
+
+    const html = renderChapter(harness, lang, '11');
+    assertNoStaleCitizenshipConductClaim(html);
+
+    for (const [label, pattern] of Object.entries(expectations)) {
+      assert.match(
+        html,
+        pattern,
+        `${lang} chapter 11 should preserve the ${label} citizenship-rule concept`,
+      );
+    }
+
+    assert.match(
+      html,
+      /data-source-keys="migrationsverketCitizenshipRules"/,
+      `${lang} chapter 11 citizenship conduct rows should carry the Migrationsverket source key`,
+    );
+  }
 });
 
 test('native ebook study article audio narrates article prose with persisted rate', () => {
