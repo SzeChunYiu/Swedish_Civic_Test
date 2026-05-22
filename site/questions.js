@@ -13315,7 +13315,7 @@
         "uk": "У новорічну ніч 31 грудня"
       },
       {
-        "en": "On Lucia Day on 13 December",
+        "en": "On Lucia Day, 13 December",
         "sv": "På luciadagen den 13 december",
         "zh-Hant": "12 月 13 日 Lucia 日",
         "zh-Hans": "12 月 13 日 Lucia 日",
@@ -50861,7 +50861,7 @@
         "uk": "У новорічну ніч 31 грудня"
       },
       {
-        "en": "On Lucia Day on 13 December",
+        "en": "On Lucia Day, 13 December",
         "sv": "På luciadagen den 13 december",
         "zh-Hant": "12 月 13 日 Lucia 日",
         "zh-Hans": "12 月 13 日 Lucia 日",
@@ -51032,7 +51032,7 @@
         "uk": "У новорічну ніч 31 грудня"
       },
       {
-        "en": "On Lucia Day on 13 December",
+        "en": "On Lucia Day, 13 December",
         "sv": "På luciadagen den 13 december",
         "zh-Hant": "12 月 13 日 Lucia 日",
         "zh-Hans": "12 月 13 日 Lucia 日",

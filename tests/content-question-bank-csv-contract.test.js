@@ -67,7 +67,7 @@ test('question-bank CSV keeps its public row contract', () => {
   assert.equal(summary.questionBankCsvVotingRightsSupplementalSourceParityValidated, true);
 });
 
-test("question-bank CSV keeps q128 New Year's Eve option date appositive", () => {
+test('question-bank CSV keeps q128 holiday date options appositive', () => {
   const rowsById = loadQuestionBankRowsById();
   const relevantIds = ['q128', 'q688', 'q689', 'q690', 'q691'];
   const relevantRows = relevantIds.map((id) => rowsById.get(id));
@@ -80,7 +80,9 @@ test("question-bank CSV keeps q128 New Year's Eve option date appositive", () =>
       optionEn.find((option) => option.id === 'c')?.text,
       "On New Year's Eve, 31 December",
     );
+    assert.equal(optionEn.find((option) => option.id === 'd')?.text, 'On Lucia Day, 13 December');
     assert.doesNotMatch(row.optionEn, /New Year(?:’|')s Eve on 31 December/i);
+    assert.doesNotMatch(row.optionEn, /Lucia Day on 13 December/i);
   }
 
   assert.equal(rowsById.get('q128').correctOptionId, 'a');
@@ -91,6 +93,10 @@ test("question-bank CSV keeps q128 New Year's Eve option date appositive", () =>
   assert.doesNotMatch(
     relevantRows.map((row) => JSON.stringify(row)).join('\n'),
     /New Year(?:’|')s Eve on 31 December/i,
+  );
+  assert.doesNotMatch(
+    relevantRows.map((row) => JSON.stringify(row)).join('\n'),
+    /Lucia Day on 13 December/i,
   );
 });
 

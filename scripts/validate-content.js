@@ -594,6 +594,7 @@ const QUESTION_TRADITION_COMMON_TO_DO_ENGLISH_PATTERNS = [
 const QUESTION_NEW_YEARS_EVE_DATE_ENGLISH_NATURALNESS_PATTERNS = [
   /\bOn New Year(?:’|')s Eve on 31 December\b/i,
 ];
+const QUESTION_LUCIA_DAY_DATE_ENGLISH_NATURALNESS_PATTERNS = [/\bOn Lucia Day on 13 December\b/i];
 const QUESTION_MAY_DAY_ENGLISH_NATURALNESS_PATTERNS = [/\bFirst of May\b/i];
 const QUESTION_REFERENDUM_ADVISORY_SWEDISH_NATURALNESS_PATTERNS = [
   /\bmåste inte följa resultatet\b/i,
@@ -5675,6 +5676,7 @@ function translationNaturalnessGuardParityIsValidated() {
     questionLargestLakesEnglishNaturalnessValidated === publishedQuestions &&
     questionNationalMinoritiesEnglishNaturalnessValidated === publishedQuestions &&
     questionNewYearsEveDateEnglishNaturalnessValidated === publishedQuestions &&
+    questionLuciaDayDateEnglishNaturalnessValidated === publishedQuestions &&
     questionRecordYearsEnglishNaturalnessValidated === publishedQuestions &&
     questionSuffrage1921EnglishNaturalnessValidated === publishedQuestions &&
     questionLuciaExplanationRoleScaffoldValidated === publishedQuestions &&
@@ -7323,6 +7325,12 @@ function findQuestionNationalMinoritiesEnglishNaturalnessIssue(question) {
 
 function findQuestionNewYearsEveDateEnglishNaturalnessIssue(question) {
   return QUESTION_NEW_YEARS_EVE_DATE_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(questionText(question, ['questionEn', 'explanationEn'])),
+  );
+}
+
+function findQuestionLuciaDayDateEnglishNaturalnessIssue(question) {
+  return QUESTION_LUCIA_DAY_DATE_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
     pattern.test(questionText(question, ['questionEn', 'explanationEn'])),
   );
 }
@@ -9745,6 +9753,7 @@ let questionPublicServiceBroadcasterEnglishNaturalnessValidated = 0;
 let questionLargestLakesEnglishNaturalnessValidated = 0;
 let questionNationalMinoritiesEnglishNaturalnessValidated = 0;
 let questionNewYearsEveDateEnglishNaturalnessValidated = 0;
+let questionLuciaDayDateEnglishNaturalnessValidated = 0;
 let questionRecordYearsEnglishNaturalnessValidated = 0;
 let questionSuffrage1921EnglishNaturalnessValidated = 0;
 let questionLuciaExplanationRoleScaffoldValidated = 0;
@@ -24074,6 +24083,10 @@ function validatePublishedQuestionNaturalnessGuards() {
         `${label} uses redundant New Year's Eve date English wording`,
       ],
       [
+        findQuestionLuciaDayDateEnglishNaturalnessIssue(question),
+        `${label} uses redundant Lucia Day date English wording`,
+      ],
+      [
         findQuestionRecordYearsEnglishNaturalnessIssue(question),
         `${label} uses stilted record-years English wording`,
       ],
@@ -24377,6 +24390,8 @@ if (Array.isArray(questions)) {
         findQuestionNationalMinoritiesEnglishNaturalnessIssue(question);
       const newYearsEveDateEnglishNaturalnessIssue =
         findQuestionNewYearsEveDateEnglishNaturalnessIssue(question);
+      const luciaDayDateEnglishNaturalnessIssue =
+        findQuestionLuciaDayDateEnglishNaturalnessIssue(question);
       const recordYearsEnglishNaturalnessIssue =
         findQuestionRecordYearsEnglishNaturalnessIssue(question);
       const suffrage1921EnglishNaturalnessIssue =
@@ -24463,6 +24478,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses redundant New Year's Eve date English wording`);
       } else {
         questionNewYearsEveDateEnglishNaturalnessValidated += 1;
+      }
+      if (luciaDayDateEnglishNaturalnessIssue) {
+        fail(`${label} uses redundant Lucia Day date English wording`);
+      } else {
+        questionLuciaDayDateEnglishNaturalnessValidated += 1;
       }
       if (recordYearsEnglishNaturalnessIssue) {
         fail(`${label} uses stilted record-years English wording`);
@@ -25101,6 +25121,7 @@ console.log(
       questionLargestLakesEnglishNaturalnessValidated,
       questionNationalMinoritiesEnglishNaturalnessValidated,
       questionNewYearsEveDateEnglishNaturalnessValidated,
+      questionLuciaDayDateEnglishNaturalnessValidated,
       questionRecordYearsEnglishNaturalnessValidated,
       questionSuffrage1921EnglishNaturalnessValidated,
       questionLuciaExplanationRoleScaffoldValidated,

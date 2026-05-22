@@ -50,6 +50,7 @@ test('TRANSLATE-COMPLETE P0 has explicit SV/EN completeness and naturalness clos
     summary.questionNewYearsEveDateEnglishNaturalnessValidated,
     summary.publishedQuestions,
   );
+  assert.equal(summary.questionLuciaDayDateEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(summary.questionRecordYearsEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(summary.questionSuffrage1921EnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(summary.questionLuciaExplanationRoleScaffoldValidated, summary.publishedQuestions);
@@ -73,4 +74,10 @@ test("TRANSLATE-COMPLETE q128 New Year's Eve date naturalness guard is summarize
     summary.questionNewYearsEveDateEnglishNaturalnessValidated,
     summary.publishedQuestions,
   );
+});
+
+test('TRANSLATE-COMPLETE q128 Lucia Day date naturalness guard is summarized', () => {
+  const summary = validateContentSummary();
+
+  assert.equal(summary.questionLuciaDayDateEnglishNaturalnessValidated, summary.publishedQuestions);
 });
