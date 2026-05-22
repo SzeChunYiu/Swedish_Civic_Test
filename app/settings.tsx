@@ -15,6 +15,7 @@ import {
   previewLocalStudyDataImport,
   type LocalStudyDataImportErrorCode,
   type LocalStudyDataImportPreview,
+  type LocalStudyDataImportSection,
   type LocalStudyDataImportSummary,
 } from '../lib/storage/localStudyDataImport';
 import type { ThemeMode } from '../lib/storage/accessibilityStore';
@@ -50,6 +51,7 @@ type SettingsCopy = {
   importErrorMessage: (code: LocalStudyDataImportErrorCode, detail?: string) => string;
   importPasteLabel: string;
   importPastePlaceholder: string;
+  importPersistenceWarning: (sections: string) => string;
   importPreview: string;
   importPreviewAccessibilityLabel: string;
   importPurchasesNote: string;
@@ -68,6 +70,7 @@ type SettingsCopy = {
   importSummaryTitle: string;
   importSummaryWrongAnswers: (count: number) => string;
   importTitle: string;
+  importWarningSectionLabel: (section: LocalStudyDataImportSection) => string;
   languageAccessibilityLabel: (label: string) => string;
   studyLanguageTitle: string;
   studyControlsFocusLabel: string;
@@ -94,6 +97,20 @@ function formatCount(count: number, labels: CountLabels): string {
 
 function formatImportByteCount(byteCount: number, language: AppLanguage): string {
   return new Intl.NumberFormat(language === 'sv' ? 'sv-SE' : 'en-US').format(byteCount);
+}
+
+function formatImportWarningSectionList(sections: string[], language: AppLanguage): string {
+  const uniqueSections = [...new Set(sections)];
+  if (uniqueSections.length <= 1) return uniqueSections[0] ?? '';
+  if (uniqueSections.length === 2) {
+    return uniqueSections.join(language === 'sv' ? ' och ' : ' and ');
+  }
+
+  const separator = language === 'sv' ? ', ' : ', ';
+  const conjunction = language === 'sv' ? ' och ' : ', and ';
+  return `${uniqueSections.slice(0, -1).join(separator)}${conjunction}${
+    uniqueSections[uniqueSections.length - 1]
+  }`;
 }
 
 function appendImportErrorDetail(
@@ -164,6 +181,8 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     },
     importPasteLabel: 'Klistra in JSON-export',
     importPastePlaceholder: 'Klistra in exporten här',
+    importPersistenceWarning: (sections) =>
+      `Importen lades in, men kunde inte sparas varaktigt för: ${sections}. Den datan finns bara i minnet tills appen stängs.`,
     importPreview: 'Förhandsgranska import',
     importPreviewAccessibilityLabel: 'Förhandsgranska lokal studiedataimport',
     importPurchasesNote:
@@ -194,6 +213,14 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     importSummaryWrongAnswers: (count) =>
       formatCount(count, { one: 'granskning av fel svar', other: 'granskningar av fel svar' }),
     importTitle: 'Importera studiedata',
+    importWarningSectionLabel: (section) => {
+      if (section === 'progress') return 'progression';
+      if (section === 'mistakeReview') return 'granskningar av fel svar';
+      if (section === 'reviews') return 'repetitionskort';
+      if (section === 'settings') return 'inställningar';
+      if (section === 'citizenshipRequirements') return 'kravchecklista';
+      return 'e-boksmarkeringar';
+    },
     languageAccessibilityLabel: (label) => `Byt studiespråk till ${label}`,
     studyLanguageTitle: 'Studiespråk',
     studyControlsFocusLabel: 'Studieinställningarna från profilen är markerade här.',
@@ -257,6 +284,8 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     },
     importPasteLabel: 'Paste JSON export',
     importPastePlaceholder: 'Paste the export here',
+    importPersistenceWarning: (sections) =>
+      `Import applied, but durable storage failed for: ${sections}. That data is only in memory until the app closes.`,
     importPreview: 'Preview import',
     importPreviewAccessibilityLabel: 'Preview local study data import',
     importPurchasesNote:
@@ -290,6 +319,14 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     importSummaryWrongAnswers: (count) =>
       formatCount(count, { one: 'wrong-answer review', other: 'wrong-answer reviews' }),
     importTitle: 'Import study data',
+    importWarningSectionLabel: (section) => {
+      if (section === 'progress') return 'progress';
+      if (section === 'mistakeReview') return 'wrong-answer reviews';
+      if (section === 'reviews') return 'review cards';
+      if (section === 'settings') return 'settings';
+      if (section === 'citizenshipRequirements') return 'requirements checklist';
+      return 'ebook highlights';
+    },
     languageAccessibilityLabel: (label) => `Set study language to ${label}`,
     studyLanguageTitle: 'Study language',
     studyControlsFocusLabel: 'The study setup controls from Profile are highlighted here.',
@@ -307,7 +344,7 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
 };
 
 type ImportFeedback = {
-  tone: 'error' | 'success';
+  tone: 'error' | 'success' | 'warning';
   text: string;
 };
 
@@ -579,9 +616,21 @@ export default function Screen() {
 
   const handleConfirmImport = () => {
     if (!importPreview) return;
-    applyLocalStudyDataImport(importPreview);
+    const applyResult = applyLocalStudyDataImport(importPreview);
     setImportText('');
     setImportPreview(null);
+    if (applyResult.warnings.length > 0) {
+      const sectionList = formatImportWarningSectionList(
+        applyResult.warnings.map((item) => copy.importWarningSectionLabel(item.section)),
+        language,
+      );
+      setImportFeedback({
+        tone: 'warning',
+        text: copy.importPersistenceWarning(sectionList),
+      });
+      return;
+    }
+
     setImportFeedback({ tone: 'success', text: copy.importSuccess });
   };
 
@@ -902,10 +951,12 @@ export default function Screen() {
         ) : null}
         {importFeedback ? (
           <Text
-            accessibilityRole={importFeedback.tone === 'error' ? 'alert' : 'text'}
+            accessibilityLiveRegion="polite"
+            accessibilityRole={importFeedback.tone === 'success' ? 'text' : 'alert'}
+            aria-live="polite"
             style={[
               styles.feedbackText,
-              importFeedback.tone === 'error' ? styles.feedbackError : styles.feedbackSuccess,
+              importFeedback.tone === 'success' ? styles.feedbackSuccess : styles.feedbackWarning,
             ]}
           >
             {importFeedback.text}
@@ -1142,6 +1193,9 @@ function createStyles(themeColors: ThemeColors) {
     },
     feedbackSuccess: {
       color: themeColors.success,
+    },
+    feedbackWarning: {
+      color: themeColors.warning,
     },
   });
 }

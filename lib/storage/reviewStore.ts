@@ -289,11 +289,11 @@ export function reviewStats(state: PersistedReviews): ReviewStats {
   return { totalCards, masteredCards, reviewDaysCount };
 }
 
-export function importReviewSnapshot(value: unknown): PersistedReviews {
+export function importReviewSnapshot(value: unknown): RecoverablePersistenceWarning | null {
   const importedReviews = normalizeImportedReviewState(value);
   const currentReviews = normalize(useReviewStore.getState());
   const nextReviews = mergeReviews(currentReviews, importedReviews);
   const persistenceWarning = write(nextReviews);
   useReviewStore.setState({ ...nextReviews, persistenceWarning });
-  return nextReviews;
+  return persistenceWarning;
 }

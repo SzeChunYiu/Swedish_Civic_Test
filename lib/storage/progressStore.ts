@@ -703,8 +703,11 @@ export const useProgressStore = create<ProgressState>((set) => ({
   clearPersistenceWarning: () => set({ persistenceWarning: null }),
 }));
 
-export function importProgressSnapshot(progress: PersistedProgress): void {
+export function importProgressSnapshot(
+  progress: PersistedProgress,
+): RecoverablePersistenceWarning | null {
   const normalizedProgress = normalizeImportedProgress(progress);
   const persistedProgress = writeProgress(normalizedProgress);
   useProgressStore.setState(persistedProgress);
+  return persistedProgress.persistenceWarning;
 }

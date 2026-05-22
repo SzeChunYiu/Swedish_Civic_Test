@@ -28,6 +28,7 @@ import {
   normalizeImportedCitizenshipRequirementsChecklist,
   type PersistedCitizenshipRequirementsChecklist,
 } from './citizenshipRequirementsStore';
+import type { RecoverablePersistenceWarning } from './persistenceWarning';
 
 export const LOCAL_STUDY_DATA_IMPORT_VERSION = 1;
 export const LOCAL_STUDY_DATA_IMPORT_MAX_BYTES = 1024 * 1024;
@@ -71,6 +72,24 @@ export type LocalStudyDataImportPreview = {
     highlights: boolean;
   };
   summary: LocalStudyDataImportSummary;
+};
+
+export type LocalStudyDataImportSection =
+  | 'progress'
+  | 'mistakeReview'
+  | 'reviews'
+  | 'settings'
+  | 'citizenshipRequirements'
+  | 'highlights';
+
+export type LocalStudyDataImportApplyWarning = {
+  section: LocalStudyDataImportSection;
+  warning: RecoverablePersistenceWarning;
+};
+
+export type LocalStudyDataImportApplyResult = {
+  summary: LocalStudyDataImportSummary;
+  warnings: LocalStudyDataImportApplyWarning[];
 };
 
 export type LocalStudyDataImportResult =
@@ -411,15 +430,39 @@ export function previewLocalStudyDataImport(rawText: string): LocalStudyDataImpo
 
 export function applyLocalStudyDataImport(
   preview: LocalStudyDataImportPreview,
-): LocalStudyDataImportSummary {
-  if (preview.sections.progress) importProgressSnapshot(preview.progress);
-  if (preview.sections.mistakeReview) importMistakeReviewSnapshot(preview.mistakeReview);
-  if (preview.sections.reviews) importReviewSnapshot(preview.reviews);
-  if (preview.sections.settings) importSettingsSnapshot(preview.settings);
-  if (preview.sections.citizenshipRequirements) {
-    importCitizenshipRequirementsChecklistSnapshot(preview.citizenshipRequirements);
-  }
-  if (preview.sections.highlights) importHighlightsSnapshot(preview.highlights);
+): LocalStudyDataImportApplyResult {
+  const warnings: LocalStudyDataImportApplyWarning[] = [];
+  const recordWarning = (
+    section: LocalStudyDataImportSection,
+    warning: RecoverablePersistenceWarning | null,
+  ) => {
+    if (warning) warnings.push({ section, warning });
+  };
 
-  return preview.summary;
+  if (preview.sections.progress) {
+    recordWarning('progress', importProgressSnapshot(preview.progress));
+  }
+  if (preview.sections.mistakeReview) {
+    recordWarning('mistakeReview', importMistakeReviewSnapshot(preview.mistakeReview));
+  }
+  if (preview.sections.reviews) {
+    recordWarning('reviews', importReviewSnapshot(preview.reviews));
+  }
+  if (preview.sections.settings) {
+    recordWarning('settings', importSettingsSnapshot(preview.settings));
+  }
+  if (preview.sections.citizenshipRequirements) {
+    recordWarning(
+      'citizenshipRequirements',
+      importCitizenshipRequirementsChecklistSnapshot(preview.citizenshipRequirements),
+    );
+  }
+  if (preview.sections.highlights) {
+    recordWarning('highlights', importHighlightsSnapshot(preview.highlights));
+  }
+
+  return {
+    summary: preview.summary,
+    warnings,
+  };
 }

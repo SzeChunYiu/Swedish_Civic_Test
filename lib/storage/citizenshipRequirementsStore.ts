@@ -172,10 +172,9 @@ export const useCitizenshipRequirementsStore = useCitizenshipRequirementsCheckli
 
 export function importCitizenshipRequirementsChecklistSnapshot(
   value: unknown,
-): PersistedCitizenshipRequirementsChecklist {
+): RecoverablePersistenceWarning | null {
   const normalized = normalizeImportedCitizenshipRequirementsChecklist(value);
-  useCitizenshipRequirementsChecklistStore.setState(
-    persistCheckedAreaIds(normalized.checkedAreaIds),
-  );
-  return normalized;
+  const persisted = persistCheckedAreaIds(normalized.checkedAreaIds);
+  useCitizenshipRequirementsChecklistStore.setState(persisted);
+  return persisted.persistenceWarning;
 }

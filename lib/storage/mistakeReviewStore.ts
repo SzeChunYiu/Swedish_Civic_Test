@@ -164,8 +164,11 @@ export const useMistakeReviewStore = create<MistakeReviewState>((set) => ({
   clearPersistenceWarning: () => set({ persistenceWarning: null }),
 }));
 
-export function importMistakeReviewSnapshot(review: PersistedMistakeReview): void {
+export function importMistakeReviewSnapshot(
+  review: PersistedMistakeReview,
+): RecoverablePersistenceWarning | null {
   const normalizedReview = normalizeImportedMistakeReview(review);
   const persistenceWarning = writeMistakeReview(normalizedReview);
   useMistakeReviewStore.setState({ ...normalizedReview, persistenceWarning });
+  return persistenceWarning;
 }

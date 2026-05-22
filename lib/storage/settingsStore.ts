@@ -225,7 +225,9 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   clearPersistenceWarning: () => set({ persistenceWarning: null }),
 }));
 
-export function importSettingsSnapshot(settings: ImportableSettings): void {
+export function importSettingsSnapshot(
+  settings: ImportableSettings,
+): RecoverablePersistenceWarning | null {
   const normalizedSettings = normalizeImportedSettings(settings);
   let persistenceWarning: RecoverablePersistenceWarning | null = null;
   if (normalizedSettings.language !== undefined) {
@@ -274,4 +276,5 @@ export function importSettingsSnapshot(settings: ImportableSettings): void {
       ) ?? persistenceWarning;
   }
   useSettingsStore.setState({ ...normalizedSettings, persistenceWarning });
+  return persistenceWarning;
 }
