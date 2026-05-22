@@ -223,6 +223,12 @@ test('first-run about modal exposes only real guide actions on web', async ({ pa
   });
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
+  await page.addInitScript(() => {
+    window.localStorage.clear();
+    window.sessionStorage.clear();
+    window.localStorage.setItem('settings\\hasCompletedOnboarding', 'true');
+  });
+
   await page.goto('/practice', { waitUntil: 'networkidle' });
 
   const dialogs = page.locator('[role="dialog"][aria-modal="true"]');

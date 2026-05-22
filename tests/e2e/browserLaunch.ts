@@ -16,10 +16,12 @@ export type BlockingModalDismissal = {
 const settingsStorageId = 'settings';
 const settingsLanguageKey = 'language';
 const settingsSeenAboutKey = 'hasSeenAboutTheTest';
+const settingsCompletedOnboardingKey = 'hasCompletedOnboarding';
 const progressStorageId = 'progress';
 const progressStateKey = 'progressState';
 export const currentSettingsLanguageStorageKey = `${settingsStorageId}\\${settingsLanguageKey}`;
 export const currentSettingsSeenAboutStorageKey = `${settingsStorageId}\\${settingsSeenAboutKey}`;
+export const currentSettingsCompletedOnboardingStorageKey = `${settingsStorageId}\\${settingsCompletedOnboardingKey}`;
 export const currentProgressStateStorageKey = `${progressStorageId}\\${progressStateKey}`;
 const settingsLanguageStorageKeys = [
   settingsLanguageKey,
@@ -28,6 +30,10 @@ const settingsLanguageStorageKeys = [
 const settingsSeenAboutStorageKeys = [
   settingsSeenAboutKey,
   currentSettingsSeenAboutStorageKey,
+] as const;
+const settingsCompletedOnboardingStorageKeys = [
+  settingsCompletedOnboardingKey,
+  currentSettingsCompletedOnboardingStorageKey,
 ] as const;
 
 // Selector for blocking dialog/menu overlays in the rendered app.
@@ -96,12 +102,24 @@ export async function seedSettingsLanguage(page: Page, language: AppLanguage): P
 
 export async function markAboutTheTestSeen(page: Page): Promise<void> {
   await page.addInitScript(
-    ({ seenKeys }: { seenKeys: readonly string[] }) => {
+    ({
+      completedOnboardingKeys,
+      seenKeys,
+    }: {
+      completedOnboardingKeys: readonly string[];
+      seenKeys: readonly string[];
+    }) => {
+      for (const completedOnboardingKey of completedOnboardingKeys) {
+        window.localStorage.setItem(completedOnboardingKey, 'true');
+      }
       for (const seenKey of seenKeys) {
         window.localStorage.setItem(seenKey, 'true');
       }
     },
-    { seenKeys: settingsSeenAboutStorageKeys },
+    {
+      completedOnboardingKeys: settingsCompletedOnboardingStorageKeys,
+      seenKeys: settingsSeenAboutStorageKeys,
+    },
   );
 }
 
@@ -124,6 +142,7 @@ export async function seedFreshSettingsLanguageAndAboutSeenWithStorage(
   await page.addInitScript(
     ({
       language: seededLanguage,
+      completedOnboardingKeys,
       languageKeys,
       reseedOnNavigation,
       seenKeys,
@@ -131,6 +150,7 @@ export async function seedFreshSettingsLanguageAndAboutSeenWithStorage(
       windowValues,
     }: {
       language: AppLanguage;
+      completedOnboardingKeys: readonly string[];
       languageKeys: readonly string[];
       reseedOnNavigation: boolean;
       seenKeys: readonly string[];
@@ -151,6 +171,9 @@ export async function seedFreshSettingsLanguageAndAboutSeenWithStorage(
       for (const seenKey of seenKeys) {
         window.localStorage.setItem(seenKey, 'true');
       }
+      for (const completedOnboardingKey of completedOnboardingKeys) {
+        window.localStorage.setItem(completedOnboardingKey, 'true');
+      }
       for (const [key, value] of Object.entries(storageValues)) {
         window.localStorage.setItem(key, value);
       }
@@ -160,6 +183,7 @@ export async function seedFreshSettingsLanguageAndAboutSeenWithStorage(
     },
     {
       language,
+      completedOnboardingKeys: settingsCompletedOnboardingStorageKeys,
       languageKeys: settingsLanguageStorageKeys,
       reseedOnNavigation,
       seenKeys: settingsSeenAboutStorageKeys,
@@ -272,11 +296,13 @@ export async function seedFreshFirstRunSettingsLanguage(
   await page.addInitScript(
     ({
       language: seededLanguage,
+      completedOnboardingKeys,
       languageKeys,
       seenKeys,
     }: {
       language: AppLanguage;
       languageKeys: readonly string[];
+      completedOnboardingKeys: readonly string[];
       seenKeys: readonly string[];
     }) => {
       window.localStorage.clear();
@@ -287,8 +313,12 @@ export async function seedFreshFirstRunSettingsLanguage(
       for (const seenKey of seenKeys) {
         window.localStorage.removeItem(seenKey);
       }
+      for (const completedOnboardingKey of completedOnboardingKeys) {
+        window.localStorage.removeItem(completedOnboardingKey);
+      }
     },
     {
+      completedOnboardingKeys: settingsCompletedOnboardingStorageKeys,
       language,
       languageKeys: settingsLanguageStorageKeys,
       seenKeys: settingsSeenAboutStorageKeys,

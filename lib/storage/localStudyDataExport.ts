@@ -87,6 +87,7 @@ function settingsSnapshot(): ImportableSettings {
     includeSupplementaryQuestions: state.includeSupplementaryQuestions,
     mockExamRealisticMode: state.mockExamRealisticMode,
     hasSeenAboutTheTest: state.hasSeenAboutTheTest,
+    hasCompletedOnboarding: state.hasCompletedOnboarding,
   });
 }
 

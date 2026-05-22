@@ -60,6 +60,8 @@ type ProfileCopy = {
   questionsHelper: string;
   removeAdsFocusCue: string;
   streakFreezeBadge: string;
+  studySetupOnboardingAccessibilityLabel: string;
+  studySetupOnboardingCta: string;
   studySetupCta: string;
   studySetupSubtitle: string;
   studySetupTitle: string;
@@ -95,6 +97,8 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     questionsHelper: 'frågor',
     removeAdsFocusCue: 'Ta bort annonser är markerat. Köp- och återställningsknapparna finns här.',
     streakFreezeBadge: 'Svitskydd',
+    studySetupOnboardingAccessibilityLabel: 'Öppna introduktionen igen',
+    studySetupOnboardingCta: 'Gå igenom starten igen',
     studySetupCta: 'Ändra mål, språk och ljud',
     studySetupSubtitle: 'Små dagliga mål är lättare att hålla än långa maratonpass.',
     studySetupTitle: 'Studieinställningar',
@@ -133,6 +137,8 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     questionsHelper: 'questions',
     removeAdsFocusCue: 'Remove Ads is highlighted. Buy and Restore controls are here.',
     streakFreezeBadge: 'Streak freeze',
+    studySetupOnboardingAccessibilityLabel: 'Open onboarding setup again',
+    studySetupOnboardingCta: 'Revisit setup',
     studySetupCta: 'Adjust goal, language, and audio',
     studySetupSubtitle: 'Small daily goals are easier to keep than long cram sessions.',
     studySetupTitle: 'Study setup',
@@ -271,6 +277,21 @@ export default function Screen() {
             style={styles.settingsLink}
           >
             {copy.studySetupCta}
+          </Button>
+        </Link>
+        <Link
+          accessibilityLabel={copy.studySetupOnboardingAccessibilityLabel}
+          accessibilityRole="link"
+          asChild
+          href="/onboarding"
+        >
+          <Button
+            accessibilityLabel={copy.studySetupOnboardingAccessibilityLabel}
+            accessibilityRole="link"
+            style={styles.settingsLink}
+            variant="secondary"
+          >
+            {copy.studySetupOnboardingCta}
           </Button>
         </Link>
       </Card>

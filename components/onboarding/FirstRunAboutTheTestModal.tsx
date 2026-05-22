@@ -72,6 +72,7 @@ export function FirstRunAboutTheTestModal({
   const router = useRouter();
   const settingsLanguage = useSettingsStore((state) => state.language);
   const hasSeen = useSettingsStore((state) => state.hasSeenAboutTheTest);
+  const hasCompletedOnboarding = useSettingsStore((state) => state.hasCompletedOnboarding);
   const markSeen = useSettingsStore((state) => state.markAboutTheTestSeen);
   const reduceMotion = useReducedMotion();
   const resolvedThemeColors = useResolvedThemeColors(themeColors);
@@ -88,6 +89,7 @@ export function FirstRunAboutTheTestModal({
     [],
   );
 
+  if (!hasCompletedOnboarding) return null;
   if (hasSeen) return null;
   if (shouldSuppressFirstRunAboutModalForPath(pathname, suppressedPathPrefixes)) return null;
   if (deferWhenLaunchPopupAdShown && launchPopupAdDeferred) return null;

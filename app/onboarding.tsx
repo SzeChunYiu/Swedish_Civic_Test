@@ -194,6 +194,7 @@ export default function Screen() {
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const language = useSettingsStore((state) => state.language);
   const setDailyGoalAnswers = useSettingsStore((state) => state.setDailyGoalAnswers);
+  const markOnboardingComplete = useSettingsStore((state) => state.markOnboardingComplete);
   const setStudyPlanIntensity = useSettingsStore((state) => state.setStudyPlanIntensity);
   const setStudyPlanTestDateIso = useSettingsStore((state) => state.setStudyPlanTestDateIso);
   const studyPlanTestDateIso = useSettingsStore((state) => state.studyPlanTestDateIso);
@@ -250,6 +251,10 @@ export default function Screen() {
     setTestDateInput('');
     setStudyPlanTestDateIso(null);
     setTestDateFeedback('idle');
+  };
+
+  const handleCompleteOnboarding = () => {
+    markOnboardingComplete();
   };
 
   const handleAuthChoice = (provider: AuthProviderId) => async () => {
@@ -309,6 +314,7 @@ export default function Screen() {
           <RouteLink
             accessibilityLabel={copy.authWithoutAccountAccessibilityLabel}
             href="/home"
+            onPress={handleCompleteOnboarding}
             style={styles.accountSkipLink}
             variant="secondary"
           >
@@ -369,6 +375,7 @@ export default function Screen() {
         <RouteLink
           accessibilityLabel={copy.decideLaterAccessibilityLabel}
           href="/home"
+          onPress={handleCompleteOnboarding}
           style={styles.decideLaterLink}
           variant="text"
         >
@@ -416,6 +423,7 @@ export default function Screen() {
         <RouteLink
           accessibilityLabel={copy.startStudyingAccessibilityLabel}
           href="/home"
+          onPress={handleCompleteOnboarding}
           style={styles.primaryLink}
           variant="primary"
         >
@@ -424,6 +432,7 @@ export default function Screen() {
         <RouteLink
           accessibilityLabel={copy.adjustSettingsAccessibilityLabel}
           href="/settings"
+          onPress={handleCompleteOnboarding}
           style={styles.secondaryLink}
           variant="secondary"
         >

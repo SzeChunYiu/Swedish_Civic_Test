@@ -120,6 +120,8 @@ type HomeCopy = {
   rewardedExamUnlockedCta: string;
   rewardedExamUnlockedStatus: string;
   reviewWeakChapters: string;
+  revisitSetup: string;
+  revisitSetupAccessibilityLabel: string;
   startPractice: string;
   startPracticeAccessibilityLabel: string;
   startPracticeSet: string;
@@ -261,6 +263,8 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     rewardedExamUnlockedCta: 'Starta upplåst övningsprov',
     rewardedExamUnlockedStatus: 'Extra övningsprov upplåst.',
     reviewWeakChapters: 'Repetera svaga kapitel',
+    revisitSetup: 'Gå igenom starten igen',
+    revisitSetupAccessibilityLabel: 'Öppna introduktionen igen',
     startPractice: 'Starta övning',
     startPracticeAccessibilityLabel: 'Starta den rekommenderade övningen',
     startPracticeSet: 'Starta en 5-minutersövning',
@@ -424,6 +428,8 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     rewardedExamUnlockedCta: 'Start unlocked mock exam',
     rewardedExamUnlockedStatus: 'Extra mock exam unlocked.',
     reviewWeakChapters: 'Review weak chapters',
+    revisitSetup: 'Revisit setup',
+    revisitSetupAccessibilityLabel: 'Open onboarding setup again',
     startPractice: 'Start practice',
     startPracticeAccessibilityLabel: 'Start the recommended practice session',
     startPracticeSet: 'Start a 5-minute practice set',
@@ -837,6 +843,14 @@ export default function Screen() {
           variant="secondary"
         >
           {copy.dashboardLink}
+        </RouteLink>
+        <RouteLink
+          accessibilityLabel={copy.revisitSetupAccessibilityLabel}
+          href="/onboarding"
+          style={styles.quickActionLink}
+          variant="text"
+        >
+          {copy.revisitSetup}
         </RouteLink>
       </View>
 
