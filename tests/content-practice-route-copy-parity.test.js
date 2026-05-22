@@ -111,7 +111,7 @@ test('practice route shell copy follows the persisted settings language', () => 
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
 
-  assert.equal(summary.practiceRouteCopyLabelsValidated, 70);
+  assert.equal(summary.practiceRouteCopyLabelsValidated, 76);
   assert.equal(summary.practiceRouteCopyParityValidated, true);
   assert.equal(summary.provenanceAuthorityCopyFilesValidated, 8);
   assert.equal(summary.provenanceAuthorityCopyParityValidated, true);
@@ -120,6 +120,23 @@ test('practice route shell copy follows the persisted settings language', () => 
   assert.match(source, /const copy = practiceCopy\[language\];/);
   assert.match(source, /5-minutersövning/);
   assert.match(source, /const filteredQuestions = useMemo\(/);
+  assert.match(source, /import \{ explainAdaptivePick \}/);
+  assert.match(
+    source,
+    /const answeredQuestionIds = usePracticeSessionStore\(\(state\) => state\.answeredQuestionIds\);/,
+  );
+  assert.match(source, /buildAdaptivePracticeProgress\(questionProgress, answerHistory\)/);
+  assert.match(
+    source,
+    /getAvailableQuestionsForPracticeSession\(practiceQuestionBank, answeredQuestionIds\)/,
+  );
+  assert.match(source, /explainAdaptivePick\(\{[\s\S]*bank: adaptiveSummaryQuestionBank/);
+  assert.match(source, /accessibilityLabel=\{adaptiveSummaryAccessibilityLabel\}/);
+  assert.match(source, /accessibilityLiveRegion="polite"/);
+  assert.match(source, /aria-live="polite"/);
+  assert.match(source, /nativeID="practice-adaptive-summary-status"/);
+  assert.match(source, /\{copy\.adaptiveSummaryTitle\}/);
+  assert.match(source, /\{adaptiveSummaryText\}/);
   assert.match(
     source,
     /getCompletedQuestionIdsForQuestionBank\(practiceQuestionBank, completedQuestionIds\)/,
