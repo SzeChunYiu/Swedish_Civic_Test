@@ -133,6 +133,34 @@ test('chapter selection starts a chapter-scoped practice loop', async ({ page })
   expect(consoleErrors).toEqual([]);
 });
 
+test('chapterId route param starts only a valid visible chapter practice loop', async ({
+  page,
+}) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await seedEnglishHub(page);
+  await page.goto('/practice?chapterId=__proto__', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  await expect(page).toHaveURL(/\/practice\?chapterId=__proto__/);
+  await expect(page.getByRole('heading', { name: 'Choose how to practise' })).toBeVisible();
+  await expect(page.getByText('Question 1')).toHaveCount(0);
+
+  await page.goto('/practice?chapterId=ch02', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  await expect(page).toHaveURL(/\/practice\?chapterId=ch02/);
+  await expect(page.getByText('Question 1')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'What does democracy mean?' })).toBeVisible();
+  await expect(page.getByText('Choose how to practise')).toHaveCount(0);
+  expect(consoleErrors).toEqual([]);
+});
+
 test('practice hub reflects chapter progress and starts the next unanswered chapter question', async ({
   page,
 }) => {

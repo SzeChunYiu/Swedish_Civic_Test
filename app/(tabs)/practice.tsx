@@ -69,7 +69,14 @@ type PracticeScope =
   | { type: 'chapter'; chapterId: string }
   | { type: 'challenge'; questionIds: string[] };
 
+type ChapterPracticeScope = Extract<PracticeScope, { type: 'chapter' }>;
+
 type PracticeRouteLaunchMode = 'challenge' | 'quick';
+
+type PracticeRouteLaunchRequest = {
+  key: string;
+  scope: PracticeScope;
+};
 
 type PracticeAdaptiveSummary = {
   recentlyWrong: number;
@@ -252,6 +259,19 @@ function normalizePracticeRouteLaunchMode(
   return rawValue === 'challenge' || rawValue === 'quick' ? rawValue : null;
 }
 
+function normalizePracticeChapterRouteScope(
+  value: string | string[] | undefined,
+  questionBank: PracticeQuestion[],
+): ChapterPracticeScope | null {
+  const rawValue = Array.isArray(value) ? value[0] : value;
+  const chapterId = typeof rawValue === 'string' ? rawValue.trim() : '';
+  if (!chapterId) return null;
+
+  return questionBank.some((question) => question.chapterId === chapterId)
+    ? { type: 'chapter', chapterId }
+    : null;
+}
+
 function getLocalizedChapterName(chapter: Chapter, language: AppLanguage): string {
   return chapter.nameText?.[language] ?? (language === 'sv' ? chapter.nameSv : chapter.nameEn);
 }
@@ -343,8 +363,11 @@ function buildAdaptivePracticeProgress(
 }
 
 export default function Screen() {
-  const { mode } = useLocalSearchParams<{ mode?: string | string[] }>();
-  const consumedRouteLaunchModeRef = useRef<PracticeRouteLaunchMode | null>(null);
+  const { chapterId, mode } = useLocalSearchParams<{
+    chapterId?: string | string[];
+    mode?: string | string[];
+  }>();
+  const consumedRouteLaunchKeyRef = useRef<string | null>(null);
   const answerXpAwardedKey = usePracticeSessionStore((state) => state.answerXpAwardedKey);
   const activeQuestionId = usePracticeSessionStore((state) => state.activeQuestionId);
   const answeredQuestionIds = usePracticeSessionStore((state) => state.answeredQuestionIds);
@@ -410,6 +433,28 @@ export default function Screen() {
     [filteredQuestions],
   );
   const routeLaunchMode = normalizePracticeRouteLaunchMode(mode);
+  const routeChapterScope = useMemo(
+    () => normalizePracticeChapterRouteScope(chapterId, filteredQuestions),
+    [chapterId, filteredQuestions],
+  );
+  const routeLaunchRequest: PracticeRouteLaunchRequest | null = useMemo(() => {
+    if (routeChapterScope) {
+      return {
+        key: `chapter:${routeChapterScope.chapterId}`,
+        scope: routeChapterScope,
+      };
+    }
+
+    if (!routeLaunchMode) return null;
+
+    return {
+      key: `mode:${routeLaunchMode}`,
+      scope:
+        routeLaunchMode === 'challenge'
+          ? { type: 'challenge', questionIds: dailyChallenge.questionIds }
+          : { type: 'quick', limit: 10 },
+    };
+  }, [dailyChallenge.questionIds, routeChapterScope, routeLaunchMode]);
   const practiceQuestionBank = useMemo(
     () => getQuestionsForPracticeScope(filteredQuestions, practiceScope),
     [filteredQuestions, practiceScope],
@@ -507,21 +552,22 @@ export default function Screen() {
   }, [question?.id, shuffleSessionId]);
 
   useEffect(() => {
-    if (!routeLaunchMode || consumedRouteLaunchModeRef.current === routeLaunchMode) return;
+    if (!routeLaunchRequest || consumedRouteLaunchKeyRef.current === routeLaunchRequest.key) {
+      return;
+    }
 
-    const nextScope: PracticeScope =
-      routeLaunchMode === 'challenge'
-        ? { type: 'challenge', questionIds: dailyChallenge.questionIds }
-        : { type: 'quick', limit: 10 };
-    const nextQuestionBank = getQuestionsForPracticeScope(filteredQuestions, nextScope);
+    const nextQuestionBank = getQuestionsForPracticeScope(
+      filteredQuestions,
+      routeLaunchRequest.scope,
+    );
     if (nextQuestionBank.length === 0) return;
 
-    consumedRouteLaunchModeRef.current = routeLaunchMode;
+    consumedRouteLaunchKeyRef.current = routeLaunchRequest.key;
     startSession(nextQuestionBank[0]?.id ?? null);
     setAboutSourcesOpen(false);
     setSelectedConfidenceRating(null);
-    setPracticeScope(nextScope);
-  }, [dailyChallenge.questionIds, filteredQuestions, routeLaunchMode, startSession]);
+    setPracticeScope(routeLaunchRequest.scope);
+  }, [filteredQuestions, routeLaunchRequest, startSession]);
 
   const startPracticeScope = (nextScope: PracticeScope) => {
     const nextQuestionBank = getQuestionsForPracticeScope(filteredQuestions, nextScope);
