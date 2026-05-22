@@ -1795,6 +1795,38 @@ test('static ebook footnote hash parity uses focused content validation routing'
   );
 });
 
+test('static ebook chapter 12 heading parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const staticEbookTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-static-site-ebook-parity.test.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('staticEbookCh12Heading');
+
+  assert.ok(registryEntry, 'static ebook chapter 12 heading focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-static-ebook-ch12-heading-parity']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'staticEbookCh12HeadingLocalesValidated',
+    'staticEbookCh12HeadingParityValidated',
+  ]);
+  assert.match(validatorSource, /--focus-static-ebook-ch12-heading-parity/);
+  assert.match(
+    validatorSource,
+    /validateStaticEbookChapter12HeadingParity\(\);[\s\S]*staticEbookCh12HeadingLocalesValidated[\s\S]*staticEbookCh12HeadingParityValidated/,
+  );
+  assert.match(staticEbookTestSource, /--focus-static-ebook-ch12-heading-parity/);
+
+  const summary = assertFocusedValidationSummary('--focus-static-ebook-ch12-heading-parity', [
+    'staticEbookCh12HeadingLocalesValidated',
+    'staticEbookCh12HeadingParityValidated',
+  ]);
+  assert.equal(summary.staticEbookCh12HeadingLocalesValidated, 2);
+  assert.equal(summary.staticEbookCh12HeadingParityValidated, true);
+});
+
 test('static ebook provenance umbrella focus routes only static ebook provenance guards', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
