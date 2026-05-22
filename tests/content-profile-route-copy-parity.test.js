@@ -132,6 +132,21 @@ test('profile route keeps Pro comparison separate from the Remove Ads purchase f
   assert.match(proPaywallSource, /Köper Pro Lifetime med annonsfri studie/);
   assert.match(proPaywallSource, /Pro also includes ad-free study/);
   assert.match(proPaywallSource, /Pro innehåller också annonsfri studie/);
+  assert.match(
+    proPaywallSource,
+    /purchaseRuntime\.purchaseUnavailableReason === 'web_store_unavailable'/,
+  );
+  assert.match(
+    proPaywallSource,
+    /Pro Lifetime for \$\{PRO_LIFETIME_PRICE_LABEL\} is a mobile app store purchase/,
+  );
+  assert.match(proPaywallSource, /Pro Lifetime kan köpas eller återställas i mobilappen/);
+  assert.match(proPaywallSource, /Buy in mobile app/);
+  assert.match(proPaywallSource, /Restore in mobile app/);
+  assert.match(
+    proPaywallSource,
+    /const actionsDisabled = activeAction !== null \|\| purchaseUnavailable;/,
+  );
   assert.match(proPaywallSource, /<View style=\{styles\.table\}>/);
   assert.match(proPaywallSource, /<View style=\{styles\.actions\}>/);
   assert.match(proPaywallSource, /aria-live="polite"/);

@@ -176,6 +176,34 @@ test('ProPaywall buy suppresses rapid duplicate Pro Lifetime store calls', async
   expect(consoleErrors.get()).toEqual([]);
 });
 
+test('ProPaywall default web runtime disables mobile-app-only Pro purchases', async ({ page }) => {
+  const consoleErrors = collectConsoleAndPageErrors(page);
+  await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, 'en', {
+    windowValues: {
+      __SMT_E2E__: true,
+      __SMT_ENABLE_PRO_RUNTIME_SCOPE__: true,
+    },
+  });
+  await openProfile(page);
+
+  await expect(
+    page.getByText('Pro Lifetime for 59 SEK is a mobile app store purchase.'),
+  ).toBeVisible();
+  const proBuyButton = page.getByRole('button', { name: /Buy Pro.*59 SEK/ });
+  const proRestoreButton = page.getByRole('button', { name: 'Restore Pro purchase' });
+
+  await expect(proBuyButton).toContainText('Buy in mobile app');
+  await expect(proRestoreButton).toContainText('Restore in mobile app');
+  await expect(
+    page.getByLabel('Pro status: Pro Lifetime can be bought or restored in the mobile app.'),
+  ).toBeVisible();
+  await expect(proBuyButton).toBeDisabled();
+  await expect(proRestoreButton).toBeDisabled();
+  expect(await purchaseCallCount(page, 'proLifetime.buy')).toBe(0);
+  expect(await purchaseCallCount(page, 'proLifetime.restore')).toBe(0);
+  expect(consoleErrors.get()).toEqual([]);
+});
+
 test('ProPaywall buy suppresses rapid Enter keyboard purchase in-flight calls', async ({
   page,
 }) => {

@@ -182,6 +182,25 @@ test('restoreProLifetime: with no prior purchase returns not_found', async () =>
   assert.equal(result.entitlements.spacedRepetition, false);
 });
 
+test('Pro Lifetime unavailable runtime does not fall back to native IAP', async () => {
+  const { buyProLifetime, restoreProLifetime } = loadTs('lib/monetization/proLifetimePurchase.ts');
+  const storage = makeMemoryStorage();
+
+  const buyResult = await buyProLifetime({
+    purchaseUnavailableReason: 'web_store_unavailable',
+    storage,
+  });
+  const restoreResult = await restoreProLifetime({
+    purchaseUnavailableReason: 'web_store_unavailable',
+    storage,
+  });
+
+  assert.equal(buyResult.status, 'unavailable');
+  assert.equal(buyResult.entitlements.spacedRepetition, false);
+  assert.equal(restoreResult.status, 'unavailable');
+  assert.equal(restoreResult.entitlements.spacedRepetition, false);
+});
+
 test('restoreProLifetime: with prior purchase persists entitlement', async () => {
   const { PRO_LIFETIME_STORAGE_KEY, restoreProLifetime } = loadTs(
     'lib/monetization/proLifetimePurchase.ts',
@@ -547,6 +566,40 @@ test('ProPaywall: buy and restore actions use the shared in-flight guard contrac
       awaitedCalls: ['await buyProLifetime(', 'await restoreProLifetime('],
       surfaceName: 'ProPaywall',
     }),
+  );
+});
+
+test('ProPaywall: default web runtime renders mobile-app-only unavailable copy', () => {
+  const paywallSource = read('components/monetization/ProPaywall.tsx');
+  const hookSource = read('lib/monetization/useProLifetimeEntitlements.ts');
+  const runtimeSource = read('lib/monetization/proLifetimePurchase.ts');
+
+  assert.match(
+    runtimeSource,
+    /purchaseUnavailableReason\?: 'web_store_unavailable' \| 'native_receipt_validator_unavailable'/,
+  );
+  assert.match(runtimeSource, /\|\s*'unavailable';/);
+  assert.match(
+    runtimeSource,
+    /if \(purchaseUnavailableReason\) \{[\s\S]*return createResult\([\s\S]*'unavailable'[\s\S]*getProLifetimeEntitlement\(\{ provider: runtimeProvider, storage \}\)/,
+  );
+  assert.match(hookSource, /function createUnavailableWebProLifetimePurchaseProvider/);
+  assert.match(hookSource, /provider: createUnavailableWebProLifetimePurchaseProvider\(\)/);
+  assert.match(hookSource, /purchaseUnavailableReason: 'web_store_unavailable'/);
+  assert.match(
+    paywallSource,
+    /purchaseRuntime\.purchaseUnavailableReason === 'web_store_unavailable'/,
+  );
+  assert.match(
+    paywallSource,
+    /Pro Lifetime for \$\{PRO_LIFETIME_PRICE_LABEL\} is a mobile app store purchase/,
+  );
+  assert.match(paywallSource, /Pro Lifetime kan köpas eller återställas i mobilappen/);
+  assert.match(paywallSource, /Buy in mobile app/);
+  assert.match(paywallSource, /Restore in mobile app/);
+  assert.match(
+    paywallSource,
+    /const actionsDisabled = activeAction !== null \|\| purchaseUnavailable;/,
   );
 });
 

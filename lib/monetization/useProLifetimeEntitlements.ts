@@ -6,6 +6,7 @@ import {
   createNativePurchaseProvider,
   createSecureStorePurchaseStorage,
   createWebPurchaseStorage,
+  type RemoveAdsPurchaseProvider,
 } from './purchases';
 import { createInstrumentedE2EPurchaseRuntimeOptions } from './e2ePurchaseRuntime';
 import { getProLifetimeEntitlement, type ProLifetimeRuntimeOptions } from './proLifetimePurchase';
@@ -32,6 +33,22 @@ function getNativePurchasePlatform() {
   return Platform.OS === 'android' ? 'android' : 'ios';
 }
 
+function createUnavailableWebProLifetimePurchaseProvider(): RemoveAdsPurchaseProvider {
+  return {
+    async connect() {},
+    async disconnect() {},
+    async validateRemoveAdsReceipt() {
+      return { status: 'invalid' };
+    },
+    async requestRemoveAdsPurchase() {
+      return null;
+    },
+    async restorePurchases() {
+      return [];
+    },
+  };
+}
+
 export function createDefaultProLifetimeRuntimeOptions(): ProLifetimeRuntimeOptions {
   if (Platform.OS !== 'web') {
     return {
@@ -49,6 +66,8 @@ export function createDefaultProLifetimeRuntimeOptions(): ProLifetimeRuntimeOpti
   if (instrumentedRuntimeOptions) return instrumentedRuntimeOptions;
 
   return {
+    provider: createUnavailableWebProLifetimePurchaseProvider(),
+    purchaseUnavailableReason: 'web_store_unavailable',
     storage: createWebPurchaseStorage(),
   };
 }
