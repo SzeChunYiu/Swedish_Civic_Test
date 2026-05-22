@@ -27,10 +27,7 @@ export const REAL_ADMOB_APP_ID_ENV_KEYS = {
   ios: 'EXPO_PUBLIC_ADMOB_IOS_APP_ID',
 } as const;
 
-export const EXPECTED_REAL_ADMOB_APP_IDS = {
-  android: 'ca-app-pub-2451892671779738~5027760693',
-  ios: 'ca-app-pub-2451892671779738~8452000382',
-} as const;
+export const ADMOB_APP_ID_PATTERN = /^ca-app-pub-\d{16}~\d{10}$/;
 
 function readBooleanFlag(value: string | undefined, defaultValue: boolean): boolean {
   const normalized = value?.trim().toLowerCase();
@@ -46,27 +43,25 @@ function readEnvString(key: string, env: NodeJS.ProcessEnv): string | undefined 
 }
 
 function assertRealAdMobAppId(
-  platform: keyof typeof EXPECTED_REAL_ADMOB_APP_IDS,
+  platform: keyof typeof REAL_ADMOB_APP_ID_ENV_KEYS,
   env: NodeJS.ProcessEnv,
 ): string {
   const envKey = REAL_ADMOB_APP_ID_ENV_KEYS[platform];
   const value = readEnvString(envKey, env);
-  const expectedValue = EXPECTED_REAL_ADMOB_APP_IDS[platform];
 
   if (!value) {
-    throw new Error(`${REAL_ADS_ENABLED_ENV_KEY}=true requires ${envKey}=${expectedValue}`);
+    throw new Error(`${REAL_ADS_ENABLED_ENV_KEY}=true requires ${envKey}`);
   }
 
-  if (!/^ca-app-pub-\d{16}~\d{10}$/.test(value)) {
+  if (!ADMOB_APP_ID_PATTERN.test(value)) {
     throw new Error(`${envKey} must be a Google Mobile Ads app id`);
   }
 
-  if (value.includes(GOOGLE_SAMPLE_ADMOB_PUBLISHER_ID)) {
+  if (
+    value === GOOGLE_SAMPLE_ADMOB_APP_IDS[platform] ||
+    value.includes(GOOGLE_SAMPLE_ADMOB_PUBLISHER_ID)
+  ) {
     throw new Error(`${envKey} must not use Google's sample AdMob publisher id`);
-  }
-
-  if (value !== expectedValue) {
-    throw new Error(`${envKey} must match publishing/admob-progress.md (${expectedValue})`);
   }
 
   return value;

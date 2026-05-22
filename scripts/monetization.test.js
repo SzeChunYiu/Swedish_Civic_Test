@@ -1,4 +1,5 @@
 const assert = require('node:assert/strict');
+const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
@@ -37,6 +38,30 @@ function withEnv(overrides, fn) {
       }
     }
   }
+}
+
+function readGoogleMobileAdsPluginConfig() {
+  const output = execFileSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const { getConfig } = require('@expo/config');
+const config = getConfig(process.cwd(), { skipSDKVersionRequirement: true });
+const plugin = config.exp.plugins.find(
+  (entry) => Array.isArray(entry) && entry[0] === 'react-native-google-mobile-ads',
+);
+process.stdout.write(JSON.stringify(plugin && plugin[1]));
+`,
+    ],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      env: process.env,
+    },
+  );
+
+  return JSON.parse(output);
 }
 
 function makeNativeIapProductFixture({ availablePurchases = [] } = {}) {
@@ -103,6 +128,19 @@ const REAL_AD_UNIT_ENV_KEYS = {
     android: 'EXPO_PUBLIC_ADMOB_ANDROID_REWARDED_EXTRA_EXAM_UNIT_ID',
     ios: 'EXPO_PUBLIC_ADMOB_IOS_REWARDED_EXTRA_EXAM_UNIT_ID',
   },
+};
+const REAL_ADS_ENABLED_ENV_KEY = 'EXPO_PUBLIC_REAL_ADS_ENABLED';
+const REAL_ADMOB_APP_ID_ENV_KEYS = {
+  android: 'EXPO_PUBLIC_ADMOB_ANDROID_APP_ID',
+  ios: 'EXPO_PUBLIC_ADMOB_IOS_APP_ID',
+};
+const GOOGLE_SAMPLE_ADMOB_APP_IDS = {
+  android: 'ca-app-pub-3940256099942544~3347511713',
+  ios: 'ca-app-pub-3940256099942544~1458002511',
+};
+const VALIDATOR_REAL_ADMOB_APP_IDS = {
+  android: 'ca-app-pub-1234567890123456~1111111111',
+  ios: 'ca-app-pub-1234567890123456~2222222222',
 };
 const MONETIZATION_THEME_SURFACE_CONTRACTS = {
   'components/monetization/AdBanner.tsx': [
@@ -1237,16 +1275,40 @@ test('ad rendering flag disables all placements even for free users', () => {
   );
 });
 
-test('app config registers the Google Mobile Ads Expo plugin with test app ids', () => {
+test('app config registers the Google Mobile Ads Expo plugin with env-driven App IDs', () => {
   const appJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'app.json'), 'utf8'));
+  const appConfigSource = fs.readFileSync(path.join(repoRoot, 'app.config.ts'), 'utf8');
   const plugin = appJson.expo.plugins.find(
     (entry) => Array.isArray(entry) && entry[0] === 'react-native-google-mobile-ads',
   );
+  const fallbackConfig = withEnv(
+    {
+      [REAL_ADS_ENABLED_ENV_KEY]: undefined,
+      [REAL_ADMOB_APP_ID_ENV_KEYS.android]: undefined,
+      [REAL_ADMOB_APP_ID_ENV_KEYS.ios]: undefined,
+    },
+    () => readGoogleMobileAdsPluginConfig(),
+  );
+  const realConfig = withEnv(
+    {
+      [REAL_ADS_ENABLED_ENV_KEY]: 'true',
+      [REAL_ADMOB_APP_ID_ENV_KEYS.android]: VALIDATOR_REAL_ADMOB_APP_IDS.android,
+      [REAL_ADMOB_APP_ID_ENV_KEYS.ios]: VALIDATOR_REAL_ADMOB_APP_IDS.ios,
+    },
+    () => readGoogleMobileAdsPluginConfig(),
+  );
 
   assert.ok(plugin, 'react-native-google-mobile-ads plugin should be configured');
-  assert.match(plugin[1].androidAppId, /^ca-app-pub-/);
-  assert.match(plugin[1].iosAppId, /^ca-app-pub-/);
+  assert.equal(plugin[1].androidAppId, GOOGLE_SAMPLE_ADMOB_APP_IDS.android);
+  assert.equal(plugin[1].iosAppId, GOOGLE_SAMPLE_ADMOB_APP_IDS.ios);
   assert.equal(plugin[1].delayAppMeasurementInit, true);
+  assert.equal(fallbackConfig.androidAppId, GOOGLE_SAMPLE_ADMOB_APP_IDS.android);
+  assert.equal(fallbackConfig.iosAppId, GOOGLE_SAMPLE_ADMOB_APP_IDS.ios);
+  assert.equal(realConfig.androidAppId, VALIDATOR_REAL_ADMOB_APP_IDS.android);
+  assert.equal(realConfig.iosAppId, VALIDATOR_REAL_ADMOB_APP_IDS.ios);
+  assert.match(appConfigSource, /EXPO_PUBLIC_ADMOB_ANDROID_APP_ID/);
+  assert.match(appConfigSource, /EXPO_PUBLIC_ADMOB_IOS_APP_ID/);
+  assert.match(appConfigSource, /must not use Google's sample AdMob publisher id/);
   assert.ok(appJson.expo.plugins.includes('expo-secure-store'));
   assert.ok(appJson.expo.plugins.includes('react-native-iap'));
 });
