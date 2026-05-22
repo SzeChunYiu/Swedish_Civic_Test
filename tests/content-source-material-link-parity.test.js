@@ -187,6 +187,28 @@ test('sources parity rejects source-authority phrasing in authority-boundary cop
   );
 });
 
+test('source material e2e covers Sources route wrapped focus-visible links', () => {
+  const e2eSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/e2e/legal-external-links.spec.ts'),
+    'utf8',
+  );
+
+  assert.match(e2eSource, /type LegalSourceMaterialLinkLayoutFixture = \{[\s\S]*'\/sources'/);
+  assert.match(
+    e2eSource,
+    /path: '\/sources'[\s\S]*sectionTitle: 'Primärt studiematerial'[\s\S]*visibleLabel: 'UHR: Utbildningsmaterial om det svenska samhället'/,
+  );
+  assert.match(
+    e2eSource,
+    /path: '\/sources'[\s\S]*sectionTitle: 'Primary study material'[\s\S]*visibleLabel: 'UHR: Study material about Swedish society'/,
+  );
+  assert.match(e2eSource, /for \(const viewport of legalSourceMaterialViewports\)/);
+  assert.match(e2eSource, /expectLinkTextSegmentsStayInsideBox\(link, \[/);
+  assert.match(e2eSource, /focusLinkWithKeyboard\(page, link, fixture\.actionLabel\)/);
+  assert.match(e2eSource, /expectKeyboardFocusVisible\(link, fixture\.actionLabel\)/);
+  assert.match(e2eSource, /expectNoHorizontalOverflow\(page\)/);
+});
+
 test('source material parity rejects Disclaimer body source-authority phrasing', () => {
   const englishResult = runValidationWithRoutePatch(
     'app/disclaimer.tsx',
