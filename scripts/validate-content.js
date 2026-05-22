@@ -624,6 +624,15 @@ const QUESTION_REFERENDUM_ADVISORY_SWEDISH_NATURALNESS_PATTERNS = [
   /\bmåste inte följa resultatet\b/i,
   /\bbetyder att politikerna måste (?:inte|alltid) följa resultatet\b/i,
 ];
+const GENERATED_SINGLE_CHOICE_MEANING_CLAUSE_SOURCE_IDS = [
+  'q020',
+  'q027',
+  'q092',
+  'q145',
+  'q175',
+];
+const GENERATED_SINGLE_CHOICE_MEANING_CLAUSE_PROMPT_PATTERN =
+  /^\s*Which meaning is correct for\b/i;
 const QUESTION_GOOD_FRIDAY_ENGLISH_NATURALNESS_PATTERNS = [
   /\bGood Friday remembers Jesus' death and Easter Sunday his resurrection\b/i,
 ];
@@ -8040,6 +8049,54 @@ function findGeneratedSingleChoiceMetaStemIssue(question) {
   );
 }
 
+function validateGeneratedSingleChoiceMeaningClauseFocus() {
+  if (!Array.isArray(sourceQuestions) || !Array.isArray(questions)) {
+    fail('generated single-choice meaning-clause focus requires loaded source and question banks');
+    return;
+  }
+
+  const expectedRows = GENERATED_SINGLE_CHOICE_MEANING_CLAUSE_SOURCE_IDS.map((sourceId) => ({
+    sourceId,
+    generatedId: generatedQuestionId(sourceQuestions, sourceId, 'judgement'),
+  }));
+  const expectedIds = new Set(expectedRows.map((row) => row.generatedId));
+  const rowsById = new Map(
+    questions
+      .filter((question) => expectedIds.has(question.id))
+      .map((question) => [question.id, question]),
+  );
+
+  for (const { sourceId, generatedId } of expectedRows) {
+    const question = rowsById.get(generatedId);
+    if (!question) {
+      fail(`${sourceId} meaning-clause judgement variant ${generatedId} is missing`);
+      continue;
+    }
+    if (question.type !== 'single_choice') {
+      fail(`${generatedId} meaning-clause judgement variant must be single_choice`);
+      continue;
+    }
+    if (!isGeneratedPublishedVariant(question) || !question.tags?.includes('judgement')) {
+      fail(`${generatedId} meaning-clause row must be a generated judgement variant`);
+      continue;
+    }
+    if (GENERATED_SINGLE_CHOICE_MEANING_CLAUSE_PROMPT_PATTERN.test(question.questionEn || '')) {
+      fail(`${generatedId} uses a generated single-choice meaning-clause meta-stem`);
+      continue;
+    }
+
+    generatedSingleChoiceMeaningClausePromptsValidated += 1;
+  }
+
+  generatedSingleChoiceMeaningClauseFocusValidated =
+    generatedSingleChoiceMeaningClausePromptsValidated === expectedRows.length;
+  if (!generatedSingleChoiceMeaningClauseFocusValidated) {
+    fail(
+      `generated single-choice meaning-clause focus validated ${generatedSingleChoiceMeaningClausePromptsValidated} rows, expected ${expectedRows.length}`,
+    );
+  }
+}
+
 function singleChoiceHasTrueFalseOptionLabels(question) {
   if (question.type !== 'single_choice' || !Array.isArray(question.options)) return false;
 
@@ -10436,6 +10493,8 @@ let generatedLocalizationTemplateParityValidated = 0;
 let generatedOptionSourceMaterialWordingValidated = 0;
 let generatedSingleChoiceFillerOptionsValidated = 0;
 let generatedSingleChoiceMetaStemsValidated = 0;
+let generatedSingleChoiceMeaningClausePromptsValidated = 0;
+let generatedSingleChoiceMeaningClauseFocusValidated = false;
 let generatedSingleChoiceExplanationLabelsValidated = 0;
 let generatedTrueFalseExplanationMetaValidated = 0;
 let generatedTagTemplateParityValidated = 0;
@@ -11286,6 +11345,16 @@ if (process.argv.includes('--focus-generated-true-false-naturalness')) {
   printValidationSummary({
     generatedTrueFalseNaturalnessFocusValidated: true,
     questionGeneratedTrueFalseNaturalnessValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-generated-single-choice-meaning-clause')) {
+  validateGeneratedSingleChoiceMeaningClauseFocus();
+  exitWithValidationFailures();
+  printValidationSummary({
+    generatedSingleChoiceMeaningClausePromptsValidated,
+    generatedSingleChoiceMeaningClauseFocusValidated,
   });
   process.exit(0);
 }

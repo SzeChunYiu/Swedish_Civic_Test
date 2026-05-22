@@ -926,6 +926,40 @@ test('generated localization overlay parity uses focused content validation rout
   );
 });
 
+test('generated single-choice meaning-clause prompts use focused validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const publishedQuestionTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-published-question-types.test.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get(
+    'generatedSingleChoiceMeaningClause',
+  );
+
+  assert.ok(registryEntry, 'generated single-choice meaning-clause focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-generated-single-choice-meaning-clause']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'generatedSingleChoiceMeaningClausePromptsValidated',
+    'generatedSingleChoiceMeaningClauseFocusValidated',
+  ]);
+  assert.match(validatorSource, /--focus-generated-single-choice-meaning-clause/);
+  assert.match(
+    validatorSource,
+    /validateGeneratedSingleChoiceMeaningClauseFocus\(\);[\s\S]*generatedSingleChoiceMeaningClausePromptsValidated[\s\S]*generatedSingleChoiceMeaningClauseFocusValidated/,
+  );
+  assert.match(publishedQuestionTestSource, /--focus-generated-single-choice-meaning-clause/);
+
+  const summary = assertFocusedValidationSummary(
+    '--focus-generated-single-choice-meaning-clause',
+    registryEntry.summaryKeys,
+  );
+  assert.equal(summary.generatedSingleChoiceMeaningClausePromptsValidated, 5);
+  assert.equal(summary.generatedSingleChoiceMeaningClauseFocusValidated, true);
+});
+
 test('Search route query hydration parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
