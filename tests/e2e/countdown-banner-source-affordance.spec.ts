@@ -1,6 +1,11 @@
 import { expect, test } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
-import { dismissBlockingModals, mockBrowserDate } from './browserLaunch';
+import {
+  dismissBlockingModals,
+  mockBrowserDate,
+  seedFreshSettingsLanguageAndAboutSeen,
+  type AppLanguage,
+} from './browserLaunch';
 
 import { CITIZENSHIP_TIMELINE_SOURCE_URLS } from '../../lib/learning/examDate';
 
@@ -9,10 +14,18 @@ type BoundingBox = NonNullable<Awaited<ReturnType<Locator['boundingBox']>>>;
 const expectedSources = [
   {
     label: 'Migrationsverket',
+    roleName: {
+      en: 'Open the Swedish Migration Agency source about new citizenship rules',
+      sv: 'Migrationsverket',
+    },
     url: CITIZENSHIP_TIMELINE_SOURCE_URLS.rulesEffectiveDate,
   },
   {
     label: 'UHR',
+    roleName: {
+      en: 'Open the UHR source about the first civic-knowledge test',
+      sv: 'UHR',
+    },
     url: CITIZENSHIP_TIMELINE_SOURCE_URLS.civicKnowledgeTestFirstSitting,
   },
 ] as const;
@@ -44,17 +57,19 @@ function collectConsoleErrors(page: Page) {
   return consoleErrors;
 }
 
-async function openHomeAndDismissModals(page: Page) {
+async function openHomeAndDismissModals(page: Page, language: AppLanguage = 'sv') {
+  await seedFreshSettingsLanguageAndAboutSeen(page, language);
   await page.goto('/home', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
 }
 
-async function expectSourceLinksVisible(page: Page) {
+async function expectSourceLinksVisible(page: Page, language: AppLanguage = 'sv') {
   for (const source of expectedSources) {
-    const link = page.getByRole('link', { name: source.label });
+    const link = page.getByRole('link', { name: source.roleName[language] });
     await expect(link).toBeVisible();
     await expect(link).toHaveAttribute('href', source.url);
     await expect(link).toHaveAttribute('target', '_blank');
+    await expect(link).toContainText(source.label);
   }
 }
 
@@ -113,6 +128,50 @@ test('home countdown banner shows the civic-test phase after the new rules date'
   ).toBeVisible();
   await expect(page.getByText('till första provet').first()).toBeVisible();
   await expectSourceLinksVisible(page);
+
+  expect(consoleErrors).toEqual([]);
+});
+
+test('home countdown banner shows the civic-test phase in English support mode', async ({
+  page,
+}) => {
+  const consoleErrors = collectConsoleErrors(page);
+
+  await mockBrowserDate(page, '2026-06-07T12:00:00.000Z');
+  await openHomeAndDismissModals(page, 'en');
+
+  await expect(
+    page
+      .getByText(
+        /The new citizenship rules have applied since 6 June 2026\. The next key phase is the civic-knowledge test:/,
+      )
+      .first(),
+  ).toBeVisible();
+  await expect(page.getByText('until first test').first()).toBeVisible();
+  await expect(page.getByText('Official date sources:', { exact: true })).toBeVisible();
+  await expectSourceLinksVisible(page, 'en');
+  await expect(page.getByText(/De nya medborgarskapsreglerna gäller nu sedan/)).toHaveCount(0);
+  await expect(page.getByText('till första provet')).toHaveCount(0);
+  await expect(page.getByText('Officiella datumkällor:', { exact: true })).toHaveCount(0);
+
+  expect(consoleErrors).toEqual([]);
+});
+
+test('home countdown banner disappears after the first civic-test sitting in English support mode', async ({
+  page,
+}) => {
+  const consoleErrors = collectConsoleErrors(page);
+
+  await mockBrowserDate(page, '2026-08-16T12:00:00.000Z');
+  await openHomeAndDismissModals(page, 'en');
+
+  await expect(page.getByText('Study dashboard').first()).toBeVisible();
+  await expect(page.getByText(/New citizenship rules apply from/)).toHaveCount(0);
+  await expect(page.getByText(/The new citizenship rules have applied since/)).toHaveCount(0);
+  await expect(page.getByText('Official date sources:', { exact: true })).toHaveCount(0);
+  await expect(page.getByText(/Nya medborgarskapsregler gäller från/)).toHaveCount(0);
+  await expect(page.getByText(/De nya medborgarskapsreglerna gäller nu sedan/)).toHaveCount(0);
+  await expect(page.getByText('Officiella datumkällor:', { exact: true })).toHaveCount(0);
 
   expect(consoleErrors).toEqual([]);
 });
