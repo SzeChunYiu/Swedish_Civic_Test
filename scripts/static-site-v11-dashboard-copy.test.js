@@ -66,7 +66,7 @@ function visibleText(node) {
   return [node.textContent, ...node.children.map(visibleText)].filter(Boolean).join(' ');
 }
 
-function renderDashboard(language, storageOverrides = []) {
+function renderDashboard(language, storageOverrides = [], chaptersMeta = null) {
   const dashboard = new Element('div');
   const dashboardEyebrow = new Element('span');
   const today = dateKey(new Date());
@@ -137,7 +137,7 @@ function renderDashboard(language, storageOverrides = []) {
   };
 
   sandbox.window = sandbox;
-  sandbox.window.SMT_CHAPTERS_META = [
+  sandbox.window.SMT_CHAPTERS_META = chaptersMeta || [
     { id: 1, title: 'Landet Sverige', questionCount: 40 },
     { id: 2, title: 'Demokrati', questionCount: 40 },
   ];
@@ -301,6 +301,37 @@ test('static v1.1 dashboard renders localized local-practice caveats', () => {
   [englishText, swedishText].forEach((text) => {
     assert.doesNotMatch(text, /Readiness|Din beredskap|Almost ready|Nästan redo/);
   });
+});
+
+test('static v1.1 dashboard weak chapter titles resolve from the active locale', () => {
+  const source = read('site/v11.js');
+  const chaptersMeta = [
+    {
+      id: 1,
+      title: { en: 'English weak chapter one', sv: 'Svenskt svagt kapitel ett' },
+      questionCount: 40,
+    },
+    {
+      id: 2,
+      title: { en: 'English weak chapter two', sv: 'Svenskt svagt kapitel två' },
+      questionCount: 40,
+    },
+  ];
+
+  assert.doesNotMatch(
+    source,
+    /ch\.title\[l\]/,
+    'weak chapter titles must not read an undeclared l',
+  );
+  assert.match(source, /ch\.title\[lang\(\)\] \|\| ch\.title\.en/);
+
+  const englishText = renderDashboard('en', [], chaptersMeta);
+  const swedishText = renderDashboard('sv', [], chaptersMeta);
+
+  assert.match(englishText, /English weak chapter/);
+  assert.doesNotMatch(englishText, /Svenskt svagt kapitel/);
+  assert.match(swedishText, /Svenskt svagt kapitel/);
+  assert.doesNotMatch(swedishText, /English weak chapter/);
 });
 
 test('static v1.1 dashboard uses natural Swedish streak protection copy', () => {
