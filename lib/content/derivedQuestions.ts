@@ -1532,6 +1532,38 @@ function politicalDemocracyRightStatementEn(answer: string): string | null {
   return null;
 }
 
+function constitution1809ChangeStatementSv(answer: string): string | null {
+  if (/^Kungens makt begränsades$/i.test(answer)) {
+    return '1809 års nya grundlag begränsade kungens makt';
+  }
+  if (/^Sverige gick med i EU$/i.test(answer)) {
+    return '1809 års nya grundlag innebar inte att Sverige gick med i EU';
+  }
+  if (/^Kvinnor fick rösträtt direkt$/i.test(answer)) {
+    return '1809 års nya grundlag gav inte kvinnor rösträtt direkt';
+  }
+  if (/^Riksdagen avskaffades$/i.test(answer)) {
+    return '1809 års nya grundlag avskaffade inte riksdagen';
+  }
+  return null;
+}
+
+function constitution1809ChangeStatementEn(answer: string): string | null {
+  if (/^The king’s power was limited$/i.test(answer)) {
+    return "The 1809 constitution limited the king's power";
+  }
+  if (/^Sweden joined the EU$/i.test(answer)) {
+    return 'The 1809 constitution did not make Sweden join the EU';
+  }
+  if (/^Women received the right to vote immediately$/i.test(answer)) {
+    return 'The 1809 constitution did not immediately give women the right to vote';
+  }
+  if (/^The Riksdag was abolished$/i.test(answer)) {
+    return 'The 1809 constitution did not abolish the Riksdag';
+  }
+  return null;
+}
+
 export function deriveCivicStatementSv(source: PracticeQuestion, option: QuestionOption): string {
   if (isTrueFalseSource(source)) {
     return trueFalseSourceStatementSv(source, option.id === source.correctOptionId);
@@ -1895,6 +1927,11 @@ export function deriveCivicStatementSv(source: PracticeQuestion, option: Questio
 
   match = q.match(/^Vilket svar ger exempel på (.+)$/i);
   if (match) return `${upperFirst(answer)} är exempel på ${match[1]}`;
+
+  if (source.id === 'q078') {
+    const statement = constitution1809ChangeStatementSv(answer);
+    if (statement) return statement;
+  }
 
   match = q.match(/^Vad förändrades genom (.+)$/i);
   if (match)
@@ -2539,6 +2576,11 @@ export function deriveCivicStatementEn(source: PracticeQuestion, option: Questio
 
   match = q.match(/^Which answer gives examples of (.+)$/i);
   if (match) return `${upperFirst(answer)} are examples of ${match[1]}`;
+
+  if (source.id === 'q078') {
+    const statement = constitution1809ChangeStatementEn(answer);
+    if (statement) return statement;
+  }
 
   match = q.match(/^What changed through (.+)$/i);
   if (match) return `The change through ${match[1]} was that ${lowerLeadingEnglishArticle(answer)}`;
