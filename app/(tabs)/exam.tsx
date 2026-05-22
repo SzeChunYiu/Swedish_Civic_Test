@@ -754,6 +754,7 @@ export default function Screen() {
             accessibilityLabel={copy.realisticModeLabel}
             accessibilityRole="switch"
             accessibilityState={{ checked: mockExamRealisticMode }}
+            aria-checked={mockExamRealisticMode}
             onPress={() => setMockExamRealisticMode(!mockExamRealisticMode)}
             style={[styles.modeToggle, mockExamRealisticMode ? styles.modeToggleActive : null]}
           >

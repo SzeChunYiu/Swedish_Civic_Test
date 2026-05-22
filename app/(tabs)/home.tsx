@@ -467,6 +467,12 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
   },
 };
 
+function waitForRewardedExamBusyState(): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, 0);
+  });
+}
+
 export default function Screen() {
   const [rewardPreviewCompleted, setRewardPreviewCompleted] = useState(false);
   const [rewardUnlockInFlight, setRewardUnlockInFlight] = useState(false);
@@ -595,6 +601,7 @@ export default function Screen() {
     setRewardUnlockMessage(null);
 
     try {
+      await waitForRewardedExamBusyState();
       const result = await showRewardedExtraExamAd({
         confirmReward: () => rewardPreviewCompleted,
         entitlements: monetizationEntitlements,
