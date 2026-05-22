@@ -1,4 +1,4 @@
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Button } from '../components/Button';
@@ -17,6 +17,7 @@ import {
   getEbookSectionSourceNotes,
   getEbookSourceNotes,
   getLocalizedText,
+  getSafeEbookSourceUrl,
   type EbookArticle,
   type EbookSourceNote,
 } from '../lib/content/ebookContent';
@@ -37,6 +38,7 @@ type EbookRouteCopy = {
   sectionSubtitle: string;
   sectionSourcesHeading: (count: number) => string;
   sectionTitle: string;
+  sourceLinkAccessibilityLabel: (label: string, url: string) => string;
   sourceHeading: (date: string) => string;
   sourcesCta: string;
   sourcesCtaAccessibilityLabel: string;
@@ -61,6 +63,7 @@ const ebookRouteCopy: Record<AppLanguage, EbookRouteCopy> = {
     sectionSourcesHeading: (count) =>
       count === 1 ? 'Källa för avsnittet' : 'Källor för avsnittet',
     sectionTitle: 'Studieartiklar',
+    sourceLinkAccessibilityLabel: (label, url) => `Öppna källa: ${label}. ${url}`,
     sourceHeading: (date) => `Källor hämtade ${date}`,
     sourcesCta: 'Öppna källor',
     sourcesCtaAccessibilityLabel: 'Öppna källsidan',
@@ -83,6 +86,7 @@ const ebookRouteCopy: Record<AppLanguage, EbookRouteCopy> = {
       'Read a short article offline, then jump straight into practice from the same question bank.',
     sectionSourcesHeading: (count) => (count === 1 ? 'Section source' : 'Section sources'),
     sectionTitle: 'Study articles',
+    sourceLinkAccessibilityLabel: (label, url) => `Open source: ${label}. ${url}`,
     sourceHeading: (date) => `Sources accessed ${date}`,
     sourcesCta: 'Open sources',
     sourcesCtaAccessibilityLabel: 'Open the Sources page',
@@ -97,11 +101,31 @@ function navigateToArticle(router: ReturnType<typeof useRouter>, article: EbookA
 }
 
 function SourceNoteLine({ language, source }: { language: AppLanguage; source: EbookSourceNote }) {
+  const copy = ebookRouteCopy[language];
+  const sourceLabel = getLocalizedText(source.label, language);
+  const safeSourceUrl = getSafeEbookSourceUrl(source);
+
+  if (!safeSourceUrl) {
+    return (
+      <View accessibilityLabel={`${sourceLabel}. ${source.url}`} style={styles.sourceLine}>
+        <Text style={styles.sourceLabel}>{sourceLabel}</Text>
+        <Text style={styles.sourceUrl}>{source.url}</Text>
+      </View>
+    );
+  }
+
   return (
-    <View style={styles.sourceLine}>
-      <Text style={styles.sourceLabel}>{getLocalizedText(source.label, language)}</Text>
-      <Text style={styles.sourceUrl}>{source.url}</Text>
-    </View>
+    <Link
+      accessibilityLabel={copy.sourceLinkAccessibilityLabel(sourceLabel, safeSourceUrl)}
+      accessibilityRole="link"
+      href={safeSourceUrl}
+      rel="noreferrer"
+      style={styles.sourceLine}
+      target="_blank"
+    >
+      <Text style={styles.sourceLabel}>{sourceLabel}</Text>
+      <Text style={styles.sourceUrl}>{safeSourceUrl}</Text>
+    </Link>
   );
 }
 
@@ -428,7 +452,14 @@ const styles = StyleSheet.create({
     lineHeight: typography.bodyLarge.lineHeight,
   },
   sourceLine: {
+    borderColor: colors.border,
+    borderRadius: radius.small,
+    borderWidth: space.hairline,
     gap: space[0.5],
+    minHeight: space[6],
+    paddingHorizontal: space[1],
+    paddingVertical: space[0.75],
+    textDecorationLine: 'none',
   },
   sourceLabel: {
     color: colors.textSecondary,

@@ -25,6 +25,20 @@ test('learn links to native study articles and back to chapter practice', async 
   await expect(page.locator('body')).toContainText('Källor hämtade 2026-05-19');
   await expect(page.locator('body')).toContainText('UHR:s offentliga utbildningsmaterial');
   await expect(page.locator('body')).toContainText('Källa för avsnittet');
+  const introSectionSourceLink = page
+    .getByRole('link', {
+      name: /Öppna källa: UHR:s offentliga utbildningsmaterial\./,
+    })
+    .first();
+  await expect(introSectionSourceLink).toBeVisible();
+  await expect(introSectionSourceLink).toHaveAttribute(
+    'href',
+    'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
+  );
+  await expect(introSectionSourceLink).toHaveAttribute('target', '_blank');
+  await expect(introSectionSourceLink).toHaveAttribute('rel', 'noreferrer');
+  const sectionSourceBox = await introSectionSourceLink.boundingBox();
+  expect(sectionSourceBox?.height ?? 0).toBeGreaterThanOrEqual(44);
   await expect(page.getByRole('button', { name: 'Lyssna på artikeln' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Lyssna på avsnittet' }).first()).toBeVisible();
 
