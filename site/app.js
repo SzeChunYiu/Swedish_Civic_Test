@@ -75,6 +75,155 @@ function smtEnsureQuestionBankForRoute(path) {
 }
 window.smtEnsureQuestionBankForRoute = smtEnsureQuestionBankForRoute;
 
+const SMT_EBOOK_SCRIPT_SOURCES = Object.freeze(['ebook-tools.js', 'ebook.js']);
+const SMT_EBOOK_LOAD_STATE = {
+  loaded: false,
+  promise: null,
+};
+
+function smtIsEbookRoute() {
+  return smtStaticRoutePath() === '/ebook';
+}
+
+function smtRenderEbookRouteStatus(kind) {
+  const reader = document.getElementById('ebook-reader');
+  if (!reader || !smtIsEbookRoute()) return;
+  if (kind === 'loading' && reader.children.length > 0) return;
+
+  const copy =
+    kind === 'error'
+      ? {
+          title: smtTr({
+            sv: 'E-boken kunde inte laddas',
+            en: 'Ebook could not load',
+            'zh-Hans': '电子书无法加载',
+            'zh-Hant': '電子書無法載入',
+            ar: 'تعذّر تحميل الكتاب الإلكتروني',
+            ckb: 'ئیبووکەکە بار نەکرا',
+            fa: 'کتاب الکترونیکی بار نشد',
+            pl: 'Nie udało się wczytać e-booka',
+            so: 'Ebook-ka lama soo dejin karin',
+            ti: 'እቲ ኢ-መጽሓፍ ክጽዓን ኣይከኣለን',
+            tr: 'E-kitap yüklenemedi',
+            uk: 'Не вдалося завантажити е-книгу',
+          }),
+          body: smtTr({
+            sv: 'Kontrollera anslutningen och öppna e-boken igen.',
+            en: 'Check your connection and open the ebook again.',
+            'zh-Hans': '请检查连接后重新打开电子书。',
+            'zh-Hant': '請檢查連線後重新開啟電子書。',
+            ar: 'تحقّق من الاتصال وافتح الكتاب الإلكتروني مرة أخرى.',
+            ckb: 'پەیوەندییەکەت بپشکنە و ئیبووکەکە دووبارە بکەرەوە.',
+            fa: 'اتصال را بررسی کنید و کتاب الکترونیکی را دوباره باز کنید.',
+            pl: 'Sprawdź połączenie i otwórz e-book ponownie.',
+            so: 'Hubi xiriirkaaga oo mar kale fur ebook-ka.',
+            ti: 'ርክብካ ኣረጋግጽ እሞ ነቲ ኢ-መጽሓፍ ደጊምካ ክፈቶ።',
+            tr: 'Bağlantınızı kontrol edip e-kitabı yeniden açın.',
+            uk: 'Перевірте з’єднання і відкрийте е-книгу ще раз.',
+          }),
+        }
+      : {
+          title: smtTr({
+            sv: 'E-boken laddas',
+            en: 'Ebook loading',
+            'zh-Hans': '电子书正在加载',
+            'zh-Hant': '電子書正在載入',
+            ar: 'جارٍ تحميل الكتاب الإلكتروني',
+            ckb: 'ئیبووکەکە بار دەکرێت',
+            fa: 'کتاب الکترونیکی در حال بارگیری است',
+            pl: 'E-book się wczytuje',
+            so: 'Ebook-ka waa la soo dejinayaa',
+            ti: 'እቲ ኢ-መጽሓፍ ይጽዓን ኣሎ',
+            tr: 'E-kitap yükleniyor',
+            uk: 'Е-книга завантажується',
+          }),
+          body: smtTr({
+            sv: 'Läsaren öppnas strax.',
+            en: 'The reader will open shortly.',
+            'zh-Hans': '阅读器即将打开。',
+            'zh-Hant': '閱讀器即將開啟。',
+            ar: 'سيفتح القارئ بعد لحظات.',
+            ckb: 'خوێنەرەکە بەم زووانە دەکرێتەوە.',
+            fa: 'خواننده تا لحظاتی دیگر باز می‌شود.',
+            pl: 'Czytnik zaraz się otworzy.',
+            so: 'Akhristaha dhawaan ayuu furmi doonaa.',
+            ti: 'እቲ ኣንባቢ ብቐረባ ክኽፈት እዩ።',
+            tr: 'Okuyucu birazdan açılacak.',
+            uk: 'Читалка скоро відкриється.',
+          }),
+        };
+
+  const wrap = document.createElement('div');
+  wrap.className = 'ebook__stub ebook__route-status';
+  wrap.setAttribute('role', 'status');
+  wrap.setAttribute('aria-live', 'polite');
+  const heading = document.createElement('h3');
+  heading.textContent = copy.title;
+  const para = document.createElement('p');
+  para.textContent = copy.body;
+  wrap.append(heading, para);
+  reader.replaceChildren(wrap);
+}
+
+function smtLoadStaticScript(src) {
+  return new Promise((resolve, reject) => {
+    const existing = document.querySelector(`script[data-smt-lazy-script="${src}"]`);
+    if (existing?.dataset.smtLoaded === 'true') {
+      resolve();
+      return;
+    }
+    if (existing?.dataset.smtFailed === 'true') existing.remove();
+
+    const script =
+      existing?.dataset.smtFailed === 'true' || !existing
+        ? document.createElement('script')
+        : existing;
+    script.async = false;
+    script.src = src;
+    script.dataset.smtLazyScript = src;
+    script.addEventListener('load', () => {
+      script.dataset.smtLoaded = 'true';
+      resolve();
+    });
+    script.addEventListener('error', () => {
+      script.dataset.smtFailed = 'true';
+      reject(new Error(`Could not load ${src}`));
+    });
+    if (!existing || existing.dataset.smtFailed === 'true') document.body.appendChild(script);
+  });
+}
+
+function smtEnsureEbookScripts() {
+  if (!smtIsEbookRoute()) return Promise.resolve(false);
+  if (window.smtEbookRender) {
+    window.smtEbookRender();
+    return Promise.resolve(true);
+  }
+  if (SMT_EBOOK_LOAD_STATE.loaded) return Promise.resolve(true);
+
+  smtRenderEbookRouteStatus('loading');
+
+  if (!SMT_EBOOK_LOAD_STATE.promise) {
+    SMT_EBOOK_LOAD_STATE.promise = SMT_EBOOK_SCRIPT_SOURCES.reduce(
+      (chain, src) => chain.then(() => smtLoadStaticScript(src)),
+      Promise.resolve(),
+    )
+      .then(() => {
+        SMT_EBOOK_LOAD_STATE.loaded = true;
+        if (smtIsEbookRoute() && window.smtEbookRender) window.smtEbookRender();
+        return true;
+      })
+      .catch(() => {
+        SMT_EBOOK_LOAD_STATE.promise = null;
+        smtRenderEbookRouteStatus('error');
+        return false;
+      });
+  }
+
+  return SMT_EBOOK_LOAD_STATE.promise;
+}
+window.smtEnsureEbookScripts = smtEnsureEbookScripts;
+
 function route() {
   const hash = (location.hash || '#/').replace(/^#/, '');
   const routeEndIndexes = [hash.indexOf('?'), hash.indexOf('#')].filter((index) => index >= 0);
@@ -112,6 +261,7 @@ function route() {
   }
   smtSetMobileNav(false);
   smtEnsureQuestionBankForRoute(path);
+  if (path === '/ebook') smtEnsureEbookScripts();
 }
 
 window.addEventListener('hashchange', route);
