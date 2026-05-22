@@ -600,6 +600,7 @@ export default function Screen() {
         language={language}
         onDismiss={clearPersistenceWarning}
         warning={persistenceWarning}
+        warningScope="settingsPreferences"
       />
       <PersistenceWarningNotice
         language={language}

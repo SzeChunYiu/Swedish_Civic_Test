@@ -16051,6 +16051,22 @@ function validateSettingsStoreSchemaParity() {
       'dailyGoalAnswers: readDailyGoalAnswers()',
       'SettingsState must initialize dailyGoalAnswers from persisted storage',
     ],
+    [
+      'readRecoverably(settingsStorage, settingsStorageId, key',
+      'settings primitive reads must use recoverable read warnings',
+    ],
+    [
+      'rememberInitialReadWarning(result.warning);',
+      'settings primitive reads must remember recoverable read warnings',
+    ],
+    [
+      'let initialPersistenceWarning: RecoverablePersistenceWarning | null = null;',
+      'settings store must retain the first startup read warning',
+    ],
+    [
+      'persistenceWarning: initialPersistenceWarning',
+      'SettingsState must expose startup read warnings instead of silently clearing them',
+    ],
     ['settingsStorageId, languageKey, language,', 'setLanguage must persist through languageKey'],
     [
       'settingsStorageId, audioEnabledKey, audioEnabled,',
@@ -16067,6 +16083,15 @@ function validateSettingsStoreSchemaParity() {
       reject(message);
     }
   });
+
+  const recoverablePrimitiveReads =
+    normalizedSettingsStore.match(/readRecoverably\(settingsStorage, settingsStorageId, key/g)
+      ?.length ?? 0;
+  if (recoverablePrimitiveReads !== 3) {
+    reject(
+      `settings primitive read helpers using readRecoverably: ${recoverablePrimitiveReads}, expected 3`,
+    );
+  }
 
   if (valid && settingsStoreFieldsValidated === EXPECTED_SETTINGS_STORE_FIELDS.length) {
     settingsStoreSchemaParityValidated = true;
@@ -16119,6 +16144,25 @@ function validatePersistenceWarningScopeParity() {
     },
     {
       language: 'sv',
+      scope: 'settingsPreferences',
+      operation: 'read',
+      snippets: [
+        'Inställningar kunde inte läsas',
+        'Sparade inställningar kunde inte läsas',
+        'standardval för språk, ljud, dagligt mål och kompletterande frågor',
+      ],
+    },
+    {
+      language: 'sv',
+      scope: 'settingsPreferences',
+      operation: 'write',
+      snippets: [
+        'Inställningen kunde inte sparas',
+        'Prova samma inställning igen när lagringen fungerar',
+      ],
+    },
+    {
+      language: 'sv',
       scope: 'studyData',
       operation: 'read',
       snippets: ['Lokal studiedata kunde inte läsas', 'tomt tillfälligt läge i den här sessionen'],
@@ -16145,6 +16189,25 @@ function validatePersistenceWarningScopeParity() {
       snippets: [
         'Accessibility preferences could not be saved',
         'The theme, text, or audio change works now',
+      ],
+    },
+    {
+      language: 'en',
+      scope: 'settingsPreferences',
+      operation: 'read',
+      snippets: [
+        'Settings could not be loaded',
+        'Saved settings could not be loaded',
+        'default choices for language, audio, daily goal, and supplementary questions',
+      ],
+    },
+    {
+      language: 'en',
+      scope: 'settingsPreferences',
+      operation: 'write',
+      snippets: [
+        'The setting could not be saved',
+        'Try the same setting again when storage is available',
       ],
     },
     {
@@ -16176,11 +16239,13 @@ function validatePersistenceWarningScopeParity() {
   }
 
   if (
-    !/PersistenceWarningNoticeScope\s*=\s*'accessibilityPreferences'\s*\|\s*'studyData'/.test(
+    !/PersistenceWarningNoticeScope\s*=[\s\S]*?'accessibilityPreferences'[\s\S]*?'settingsPreferences'[\s\S]*?'studyData'/.test(
       componentSource,
     )
   ) {
-    reject('PersistenceWarningNoticeScope must expose accessibilityPreferences and studyData');
+    reject(
+      'PersistenceWarningNoticeScope must expose accessibilityPreferences, settingsPreferences, and studyData',
+    );
   }
 
   for (const copyCase of expectedCopyCases) {
@@ -16203,10 +16268,9 @@ function validatePersistenceWarningScopeParity() {
   }
 
   if (
-    !/warning=\{persistenceWarning\}/.test(settingsSource) ||
-    /warning=\{persistenceWarning\}[\s\S]{0,160}?warningScope=/.test(settingsSource)
+    !/warning=\{persistenceWarning\}[\s\S]*?warningScope="settingsPreferences"/.test(settingsSource)
   ) {
-    reject('Settings study-data warnings must keep the default studyData scope');
+    reject('Settings must pass warningScope="settingsPreferences" for settings warnings');
   }
 
   if (/warningScope="accessibilityPreferences"/.test(practiceSource)) {

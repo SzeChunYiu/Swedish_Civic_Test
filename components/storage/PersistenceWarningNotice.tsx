@@ -11,7 +11,10 @@ export type PersistenceWarningNoticeCopy = {
   title: string;
 };
 
-export type PersistenceWarningNoticeScope = 'accessibilityPreferences' | 'studyData';
+export type PersistenceWarningNoticeScope =
+  | 'accessibilityPreferences'
+  | 'settingsPreferences'
+  | 'studyData';
 
 const persistenceWarningNoticeCopy: Record<
   AppLanguage,
@@ -33,6 +36,22 @@ const persistenceWarningNoticeCopy: Record<
         accessibilityLabel:
           'Tillgänglighetsinställningar kunde inte sparas. Ändringen fungerar tillfälligt i den här sessionen.',
         body: 'Ändringen för tema, text eller ljud fungerar nu, men kunde inte sparas på enheten. Prova samma ändring igen när lagringen fungerar.',
+        dismiss: 'Jag förstår',
+        title: 'Inställningen sparades bara tillfälligt',
+      },
+    },
+    settingsPreferences: {
+      read: {
+        accessibilityLabel:
+          'Inställningar kunde inte läsas. Appen använder standardval i den här sessionen.',
+        body: 'Sparade inställningar kunde inte läsas. Appen använder standardval för språk, ljud, dagligt mål och kompletterande frågor i den här sessionen tills lagringen fungerar igen.',
+        dismiss: 'Jag förstår',
+        title: 'Inställningar kunde inte läsas',
+      },
+      write: {
+        accessibilityLabel:
+          'Inställningen kunde inte sparas. Ändringen fungerar tillfälligt i den här sessionen.',
+        body: 'Ändringen fungerar nu, men kunde inte sparas på enheten. Prova samma inställning igen när lagringen fungerar.',
         dismiss: 'Jag förstår',
         title: 'Inställningen sparades bara tillfälligt',
       },
@@ -69,6 +88,22 @@ const persistenceWarningNoticeCopy: Record<
         body: 'The theme, text, or audio change works now, but could not be saved on this device. Try the same change again when storage is available.',
         dismiss: 'Got it',
         title: 'Preference saved only for this session',
+      },
+    },
+    settingsPreferences: {
+      read: {
+        accessibilityLabel:
+          'Settings could not be loaded. The app is using default choices for this session.',
+        body: 'Saved settings could not be loaded. The app is using default choices for language, audio, daily goal, and supplementary questions for this session until storage is available again.',
+        dismiss: 'Got it',
+        title: 'Settings could not be loaded',
+      },
+      write: {
+        accessibilityLabel:
+          'The setting could not be saved. The change is available temporarily in this session.',
+        body: 'The change works now, but could not be saved on this device. Try the same setting again when storage is available.',
+        dismiss: 'Got it',
+        title: 'Setting saved only for this session',
       },
     },
     studyData: {
