@@ -115,6 +115,20 @@ function assertFocusedValidationSummary(flag, expectedSummaryKeys) {
   return summary;
 }
 
+function assertSomaliHolidayFoodFocusMutationFails({ label, targetFile, mutateSource, expected }) {
+  const result = runFocusedValidatorMutation({
+    focusFlag: '--focus-somali-holiday-food-naturalness',
+    targetFile,
+    mutateSource,
+  });
+  const output = `${result.stdout}\n${result.stderr}`;
+
+  assert.equal(result.status, 1, `${label} should fail focused validation\n${output}`);
+  assert.match(output, /Content validation failed:/);
+  assert.match(output, expected);
+  assert.doesNotMatch(output, /questionSchemasValidated/);
+}
+
 const staticEbookProvenanceUmbrellaConstituents = [
   'staticEbookOutcomeClaimParityValidated',
   'staticEbookPracticalTestCurrentnessValidated',
@@ -1122,6 +1136,39 @@ test('Somali holiday-food naturalness uses focused content validation routing', 
   assert.equal(summary.somaliHolidayFoodNaturalnessStaticRowsValidated, 6);
   assert.equal(summary.somaliHolidayFoodNaturalnessParityValidated, true);
   assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
+});
+
+test('Somali holiday-food focused validation rejects omitted canonical or static rows', () => {
+  assertSomaliHolidayFoodFocusMutationFails({
+    label: 'omitted canonical Somali holiday-food id',
+    targetFile: 'scripts/check-question-i18n-v8.js',
+    expected:
+      /Somali holiday-food naturalness guard must include exactly q099, q101, q125, q131, q135, q141/,
+    mutateSource: (source) => {
+      const needle =
+        "const SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS = ['q099', 'q101', 'q125', 'q131', 'q135', 'q141'];";
+      if (!source.includes(needle)) {
+        throw new Error('Somali holiday-food id list fixture not found');
+      }
+      return source.replace(
+        needle,
+        "const SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS = ['q099', 'q101', 'q125', 'q131', 'q135'];",
+      );
+    },
+  });
+
+  assertSomaliHolidayFoodFocusMutationFails({
+    label: 'omitted static Somali holiday-food row',
+    targetFile: 'site/questions.js',
+    expected: /static site q141\.somaliHolidayFoodNaturalness missing/,
+    mutateSource: (source) => {
+      const needle = '"id": "q141"';
+      if (!source.includes(needle)) {
+        throw new Error('static q141 fixture not found');
+      }
+      return source.replace(needle, '"id": "q141-omitted"');
+    },
+  });
 });
 
 test('generated localization overlay parity rejects typoed focus flags', () => {

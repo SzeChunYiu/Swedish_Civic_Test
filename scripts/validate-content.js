@@ -66,6 +66,14 @@ const speechMock = {
 const QUESTION_TYPE_VALUES = ['single_choice', 'true_false', 'flashcard'];
 const REVIEW_STATUS_VALUES = ['draft', 'reviewed', 'published'];
 const DIFFICULTY_VALUES = ['easy', 'medium', 'hard'];
+const REQUIRED_SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS = Object.freeze([
+  'q099',
+  'q101',
+  'q125',
+  'q131',
+  'q135',
+  'q141',
+]);
 const QUESTION_TYPES = new Set(QUESTION_TYPE_VALUES);
 const PUBLISHED_QUESTION_TYPES = new Set(['single_choice', 'true_false']);
 const DIFFICULTIES = new Set(DIFFICULTY_VALUES);
@@ -10655,21 +10663,35 @@ function validateSomaliGeographyNaturalnessParity() {
   }
 }
 
+function validateExactSomaliHolidayFoodNaturalnessIds() {
+  const actual = SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS;
+  const expected = REQUIRED_SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS;
+  const matches =
+    actual.length === expected.length && expected.every((id, index) => actual[index] === id);
+
+  if (!matches) {
+    fail(`Somali holiday-food naturalness guard must include exactly ${expected.join(', ')}`);
+  }
+
+  return matches;
+}
+
 function validateSomaliHolidayFoodNaturalnessParity() {
   const failureCountBefore = failures.length;
+  const exactIdsValidated = validateExactSomaliHolidayFoodNaturalnessIds();
   const canonicalSummary = summarizeSomaliHolidayFoodNaturalness(
     questions,
-    SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS,
+    REQUIRED_SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS,
   );
   canonicalSummary.errors.forEach(fail);
   somaliHolidayFoodNaturalnessCasesValidated = canonicalSummary.casesValidated;
 
   const staticQuestions = loadCommittedStaticSiteQuestions()
-    .filter((question) => SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS.includes(question.id))
+    .filter((question) => REQUIRED_SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS.includes(question.id))
     .map(toStaticSomaliNaturalnessQuestion);
   const staticSummary = summarizeSomaliHolidayFoodNaturalness(
     staticQuestions,
-    SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS,
+    REQUIRED_SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS,
   );
   staticSummary.errors.forEach((error) => fail(`static site ${error}`));
   somaliHolidayFoodNaturalnessStaticRowsValidated = staticSummary.casesValidated;
@@ -10677,10 +10699,13 @@ function validateSomaliHolidayFoodNaturalnessParity() {
   const guardFailed = failures.length !== failureCountBefore;
   somaliHolidayFoodNaturalnessParityValidated =
     !guardFailed &&
+    exactIdsValidated &&
     canonicalSummary.parityValidated &&
     staticSummary.parityValidated &&
-    somaliHolidayFoodNaturalnessCasesValidated === SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS.length &&
-    somaliHolidayFoodNaturalnessStaticRowsValidated === SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS.length;
+    somaliHolidayFoodNaturalnessCasesValidated ===
+      REQUIRED_SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS.length &&
+    somaliHolidayFoodNaturalnessStaticRowsValidated ===
+      REQUIRED_SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS.length;
 
   if (!somaliHolidayFoodNaturalnessParityValidated) {
     fail(
