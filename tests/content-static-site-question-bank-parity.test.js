@@ -40,10 +40,9 @@ const SUFFRAGE_1921_EXPECTED_STATIC_EXPLANATION =
   "the first Riksdag election with both women's and men's voting rights and women's eligibility was held in 1921";
 const SOURCE_CRITICISM_STALE_STATIC_PATTERN =
   /具有(?:來|来)源批判意識|أن تكون ناقدًا للمصادر|سەرچاوە-ڕەخنەیی|منبع‌سنج بودن|krytyczne podejście do źródeł|si naqdineed loo eego ilaha|ንምንጭታት ብነቐፌታዊ መንገዲ ምርኣይ|kaynaklara eleştirel yaklaşmak|критично ставитися до джерел/i;
-const Q075_AGRICULTURAL_STALE_STATIC_PATTERN =
-  /worked by farming and caring for animals,\s*cities were small/i;
-const Q075_AGRICULTURAL_REVISED_STATIC_PATTERN =
-  /worked on farms, growing crops and caring for animals\.\s+Cities were small/i;
+const Q080_SUFFRAGE_STALE_STATIC_PATTERN = /(?:the election asked about here|asked about here)/i;
+const Q080_SUFFRAGE_REVISED_STATIC_PATTERN =
+  /the first Riksdag election held after those reforms was in 1921/i;
 const BASE_LOCALES = new Set(['sv', 'en']);
 
 function withSvEn(localizedText, sv, en) {
@@ -379,17 +378,17 @@ test('static site question bank keeps q050 source-criticism i18n noun-based', ()
   assert.doesNotMatch(staticQuestionVisibleText(q050), SOURCE_CRITICISM_STALE_STATIC_PATTERN);
 });
 
-test('static site question bank keeps q075 agricultural Sweden English grammatical', () => {
+test('static site question bank keeps q080 suffrage explanation learner-facing', () => {
   const expectedBank = buildSiteQuestionBank();
   const sourceQuestions = expectedBank.questions.filter(
     (question) => question.questionProvenance === 'uhr',
   );
   const expectedIds = [
-    'q075',
-    generatedQuestionId(sourceQuestions, 'q075', 'singleChoice'),
-    generatedQuestionId(sourceQuestions, 'q075', 'trueStatement'),
-    generatedQuestionId(sourceQuestions, 'q075', 'falseStatement'),
-    generatedQuestionId(sourceQuestions, 'q075', 'judgement'),
+    'q080',
+    generatedQuestionId(sourceQuestions, 'q080', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q080', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q080', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q080', 'judgement'),
   ];
   const context = { window: {} };
   vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
@@ -400,8 +399,8 @@ test('static site question bank keeps q075 agricultural Sweden English grammatic
   for (const id of expectedIds) {
     const question = questionsById.get(id);
     assert.ok(question, `${id} should be present in static question bank`);
-    assert.doesNotMatch(question.why.en, Q075_AGRICULTURAL_STALE_STATIC_PATTERN);
-    assert.match(question.why.en, Q075_AGRICULTURAL_REVISED_STATIC_PATTERN);
+    assert.doesNotMatch(question.why.en, Q080_SUFFRAGE_STALE_STATIC_PATTERN);
+    assert.match(question.why.en, Q080_SUFFRAGE_REVISED_STATIC_PATTERN);
   }
 });
 

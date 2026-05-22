@@ -641,6 +641,11 @@ const QUESTION_SALTSJOBADEN_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhat did the 1938 Saltsj(?:ö|o)baden Agreement become important for\??/i,
   /\bbecame important for\b/i,
 ];
+const QUESTION_SUFFRAGE_1921_ENGLISH_NATURALNESS_PATTERNS = [
+  /\b1921 is the year of the election asked about here\b/i,
+  /\bthe election asked about here\b/i,
+  /\basked about here\b/i,
+];
 const QUESTION_RELIGIOUS_FREEDOM_1951_ENGLISH_NATURALNESS_PATTERNS = [/\bcompletely freely\b/i];
 const QUESTION_PUBLIC_SECTOR_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhat is meant by the public sector in Sweden\b/i,
@@ -7628,6 +7633,13 @@ function findQuestionSaltsjobadenEnglishNaturalnessIssue(question) {
   );
 }
 
+function findQuestionSuffrage1921EnglishNaturalnessIssue(question) {
+  if (!question.tags?.includes('suffrage')) return null;
+  return QUESTION_SUFFRAGE_1921_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(questionText(question, ['questionEn', 'explanationEn'])),
+  );
+}
+
 function findQuestionReligiousFreedom1951EnglishNaturalnessIssue(question) {
   return QUESTION_RELIGIOUS_FREEDOM_1951_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
     pattern.test(question.explanationEn || ''),
@@ -10307,6 +10319,7 @@ let questionPublicServiceBroadcasterEnglishNaturalnessValidated = 0;
 let questionAgriculturalSwedenEnglishNaturalnessValidated = 0;
 let questionLargestLakesEnglishNaturalnessValidated = 0;
 let questionRecordYearsEnglishNaturalnessValidated = 0;
+let questionSuffrage1921EnglishNaturalnessValidated = 0;
 let questionLuciaExplanationRoleScaffoldValidated = 0;
 let questionGoodFridayEnglishNaturalnessValidated = 0;
 let questionReferendumAdvisorySwedishNaturalnessValidated = 0;
@@ -25621,6 +25634,10 @@ function validatePublishedQuestionNaturalnessGuards() {
         `${label} uses stilted record-years English wording`,
       ],
       [
+        findQuestionSuffrage1921EnglishNaturalnessIssue(question),
+        `${label} uses meta suffrage-1921 English wording`,
+      ],
+      [
         findQuestionReligiousFreedomOptionParallelismIssue(question),
         `${label} uses nonparallel religious-freedom option wording`,
       ],
@@ -25922,6 +25939,8 @@ if (Array.isArray(questions)) {
         findQuestionLargestLakesEnglishNaturalnessIssue(question);
       const recordYearsEnglishNaturalnessIssue =
         findQuestionRecordYearsEnglishNaturalnessIssue(question);
+      const suffrage1921EnglishNaturalnessIssue =
+        findQuestionSuffrage1921EnglishNaturalnessIssue(question);
       const councilOfEuropeWorkForEnglishNaturalnessIssue =
         findQuestionCouncilOfEuropeWorkForEnglishNaturalnessIssue(question);
       const mayDayEnglishNaturalnessIssue = findQuestionMayDayEnglishNaturalnessIssue(question);
@@ -26009,6 +26028,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses stilted record-years English wording`);
       } else {
         questionRecordYearsEnglishNaturalnessValidated += 1;
+      }
+      if (suffrage1921EnglishNaturalnessIssue) {
+        fail(`${label} uses meta suffrage-1921 English wording`);
+      } else {
+        questionSuffrage1921EnglishNaturalnessValidated += 1;
       }
       if (councilOfEuropeWorkForEnglishNaturalnessIssue) {
         fail(`${label} uses literal Council of Europe work-for English wording`);
@@ -26654,6 +26678,7 @@ console.log(
       questionAgriculturalSwedenEnglishNaturalnessValidated,
       questionLargestLakesEnglishNaturalnessValidated,
       questionRecordYearsEnglishNaturalnessValidated,
+      questionSuffrage1921EnglishNaturalnessValidated,
       questionLuciaExplanationRoleScaffoldValidated,
       questionGoodFridayEnglishNaturalnessValidated,
       questionReferendumAdvisorySwedishNaturalnessValidated,

@@ -8,10 +8,9 @@ const { buildSiteQuestionBank } = require('../scripts/export-site-question-bank'
 const { generatedQuestionId } = require('../scripts/generated-question-fixture-ids');
 
 const repoRoot = path.resolve(__dirname, '..');
-const Q075_AGRICULTURAL_STALE_PATTERN =
-  /worked by farming and caring for animals,\s*cities were small/i;
-const Q075_AGRICULTURAL_REVISED_PATTERN =
-  /worked on farms, growing crops and caring for animals\.\s+Cities were small/i;
+const Q080_SUFFRAGE_STALE_PATTERN = /(?:the election asked about here|asked about here)/i;
+const Q080_SUFFRAGE_REVISED_PATTERN =
+  /the first Riksdag election held after those reforms was in 1921/i;
 
 function parseExportedCsvLine(line) {
   return [...line.matchAll(/"((?:""|[^"])*)"(?:,|$)/g)].map((match) =>
@@ -229,13 +228,13 @@ test('question-bank CSV has unique public header names', () => {
   assert.equal(header.filter((field) => field === 'supplementalSourcePublisher').length, 1);
 });
 
-test('question-bank CSV keeps q075 agricultural Sweden English explanation grammatical', () => {
+test('question-bank CSV keeps q080 suffrage explanation learner-facing', () => {
   const csv = fs.readFileSync(path.join(repoRoot, 'content', 'question-bank.csv'), 'utf8');
   const lines = csv.trimEnd().split('\n');
   const header = parseExportedCsvLine(lines[0]);
   const idIndex = header.indexOf('id');
   const explanationEnIndex = header.indexOf('explanationEn');
-  const expectedIds = new Set(['q075', 'q476', 'q477', 'q478', 'q479']);
+  const expectedIds = new Set(['q080', 'q496', 'q497', 'q498', 'q499']);
   const rowsById = new Map(
     lines.slice(1).map((line) => {
       const row = parseExportedCsvLine(line);
@@ -246,8 +245,8 @@ test('question-bank CSV keeps q075 agricultural Sweden English explanation gramm
   for (const id of expectedIds) {
     const row = rowsById.get(id);
     assert.ok(row, `${id} should be exported to content/question-bank.csv`);
-    assert.doesNotMatch(row[explanationEnIndex], Q075_AGRICULTURAL_STALE_PATTERN);
-    assert.match(row[explanationEnIndex], Q075_AGRICULTURAL_REVISED_PATTERN);
+    assert.doesNotMatch(row[explanationEnIndex], Q080_SUFFRAGE_STALE_PATTERN);
+    assert.match(row[explanationEnIndex], Q080_SUFFRAGE_REVISED_PATTERN);
   }
 });
 

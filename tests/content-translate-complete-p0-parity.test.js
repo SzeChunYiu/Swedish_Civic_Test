@@ -159,7 +159,7 @@ test('TRANSLATE-COMPLETE P0 has explicit SV/EN completeness and naturalness clos
   assert.equal(summary.somaliHolidayFoodNaturalnessParityValidated, true);
 });
 
-test('TRANSLATE-COMPLETE rejects q075 agricultural Sweden comma-splice English', () => {
+test('TRANSLATE-COMPLETE rejects q080 suffrage explanation meta wording', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -172,8 +172,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   const contents = originalReadFileSync.call(this, filePath, ...args);
   if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
     return String(contents).replace(
-      'Almost the whole population lived in the countryside and worked on farms, growing crops and caring for animals. Cities were small, and Sweden was poor compared with other European countries.',
-      'Almost the whole population lived in the countryside and worked by farming and caring for animals, cities were small, and Sweden was poor compared with other European countries.',
+      'Almost all men had gained suffrage in 1909, and the decision on universal suffrage came in 1918, but the first Riksdag election held after those reforms was in 1921.',
+      'Almost all men had gained suffrage in 1909 and the decision on universal suffrage came in 1918, but 1921 is the year of the election asked about here.',
     );
   }
   return contents;
@@ -187,6 +187,6 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /q075 uses stilted agricultural Sweden English wording/,
+    /q080 uses meta suffrage-1921 English wording/,
   );
 });
