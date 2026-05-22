@@ -506,7 +506,7 @@ export default function Screen() {
     readinessVerdict,
     readinessDetails,
   );
-  const showRemoveAdsOffer = entitlementsReady && !monetizationEntitlements.adsDisabled;
+  const showRemoveAdsOffer = entitlementsReady && monetizationEntitlements.adsDisabled !== true;
   const rewardedExamUnlocked = accessDecision.reason === 'rewarded_exam_credit';
   const showRewardedExamOffer =
     accessReady && entitlementsReady && (accessDecision.canOfferRewardedAd || rewardedExamUnlocked);

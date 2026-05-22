@@ -29,11 +29,11 @@ test('mobile ads consent hook fails closed around Remove Ads and cached initiali
 
   assert.equal(summary.mobileAdsConsentHookCasesValidated, 6);
   assert.equal(summary.mobileAdsConsentHookParityValidated, true);
-  assert.match(hookSource, /!entitlements\.adsDisabled && adsConfig\.realAdsEnabled/);
+  assert.match(hookSource, /entitlements\.adsDisabled !== true &&\s*adsConfig\.realAdsEnabled/);
   assert.match(hookSource, /trackingTransparencyStatus:/);
   assert.match(hookSource, /umpConsentStatus:/);
   assert.match(hookSource, /getAdSdkInitializationDecision\(state\)/);
-  assert.match(hookSource, /!entitlements\.adsDisabled[\s\S]*cachedInitialization/);
+  assert.match(hookSource, /entitlements\.adsDisabled !== true[\s\S]*cachedInitialization/);
   assert.match(hookSource, /cachedInitializationPlatform\s*===\s*platform/);
   assert.match(
     hookSource,
@@ -57,7 +57,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace(
-        'adsConfig.googleMobileAdsEnabled && !entitlements.adsDisabled && adsConfig.realAdsEnabled;',
+        'adsConfig.googleMobileAdsEnabled &&\\n    entitlements.adsDisabled !== true &&\\n    adsConfig.realAdsEnabled;',
         'adsConfig.googleMobileAdsEnabled && adsConfig.realAdsEnabled;'
       );
   }

@@ -11352,7 +11352,7 @@ function validateAdPlacementRouteParity() {
     if (spec.file === 'app/(tabs)/home.tsx') {
       const homeAdWaitsForEntitlements =
         source.includes(
-          'const showRemoveAdsOffer = entitlementsReady && !monetizationEntitlements.adsDisabled;',
+          'const showRemoveAdsOffer = entitlementsReady && monetizationEntitlements.adsDisabled !== true;',
         ) &&
         /\{entitlementsReady\s*\?\s*\([\s\S]{0,1200}<PremiumBanner[\s\S]{0,1200}<AdBanner\s+entitlements=\{monetizationEntitlements\}\s+placement="home_banner"\s*\/>/.test(
           source,
@@ -11944,15 +11944,15 @@ function validateRemoveAdsEntitlementHookParity() {
       'failed Remove Ads entitlement reads must stay ad-blocked and expose read_failed state',
     ],
     [
-      /if\s*\(\s*hasExplicitEntitlements\s*\)\s*\{\s*return\s*\{[\s\S]*entitlements:\s*explicitEntitlements,[\s\S]*entitlementsReady:\s*true,[\s\S]*entitlementStatus:\s*'ready'\s+as\s+const,?[\s\S]*\};\s*\}/.test(
+      /if\s*\(\s*hasExplicitEntitlements\s*\)\s*\{\s*return\s*\{[\s\S]*entitlements:\s*normalizedExplicitEntitlements\s*\?\?\s*FREE_ENTITLEMENTS,[\s\S]*entitlementsReady:\s*true,[\s\S]*entitlementStatus:\s*'ready'\s+as\s+const,?[\s\S]*\};\s*\}/.test(
         hookSource,
-      ),
+      ) && /adsDisabled:\s*explicitEntitlements\.adsDisabled\s*===\s*true/.test(hookSource),
       'explicit ad entitlements must bypass async purchase loading as ready',
     ],
     [
       /skipPurchaseRuntime\s*=\s*false/.test(hookSource) &&
         /function\s+useRemoveAdsEntitlementsRuntime\(/.test(hookSource) &&
-        /purchaseRuntimeEnabled\s*\?\s*\(?runtimeOptions\s*\?\?\s*createDefaultPurchaseRuntimeOptions\(initialEntitlements\.adsDisabled\)\)?\s*:\s*undefined/.test(
+        /purchaseRuntimeEnabled\s*\?\s*\(?runtimeOptions\s*\?\?\s*createDefaultPurchaseRuntimeOptions\(initialEntitlements\.adsDisabled\s*===\s*true\)\)?\s*:\s*undefined/.test(
           hookSource,
         ) &&
         /if\s*\(\s*!purchaseRuntimeEnabled\s*\|\|\s*!purchaseRuntime\s*\)\s*\{[\s\S]*applyEntitlements\(initialEntitlements\);[\s\S]*return\s*\(\)\s*=>\s*\{[\s\S]*isMounted\s*=\s*false;[\s\S]*\};[\s\S]*\}/.test(
@@ -11978,7 +11978,7 @@ function validateRemoveAdsEntitlementHookParity() {
     [
       /\bentitlementsReady\b/.test(homeSource) &&
         normalizedHomeSource.includes(
-          'const showRemoveAdsOffer = entitlementsReady && !monetizationEntitlements.adsDisabled;',
+          'const showRemoveAdsOffer = entitlementsReady && monetizationEntitlements.adsDisabled !== true;',
         ) &&
         /\{showRemoveAdsOffer\s*\?\s*\([\s\S]{0,420}<PricingWedge/.test(homeSource) &&
         /\{entitlementsReady\s*\?\s*\([\s\S]{0,1200}<PremiumBanner[\s\S]{0,1200}<AdBanner\s+entitlements=\{monetizationEntitlements\}\s+placement="home_banner"\s*\/>/.test(
@@ -12092,6 +12092,9 @@ function validatePremiumEntitlementParity() {
     if (hasAdsDisabled(REMOVE_ADS_ENTITLEMENTS) !== true) {
       reject('hasAdsDisabled must return true for REMOVE_ADS_ENTITLEMENTS');
     }
+    if (hasAdsDisabled({ adsDisabled: 'yes' }) !== false) {
+      reject('hasAdsDisabled must require adsDisabled === true');
+    }
   }
 
   if (typeof isPremiumUser === 'function') {
@@ -12113,6 +12116,15 @@ function validatePremiumEntitlementParity() {
     ) {
       reject('isPremiumUser must stay decoupled from adsDisabled');
     }
+    if (
+      isPremiumUser({
+        adsDisabled: false,
+        unlimitedMockExams: true,
+        fullMistakeReview: 1,
+      }) !== false
+    ) {
+      reject('isPremiumUser must require strict boolean premium flags');
+    }
   }
 
   if (typeof shouldShowAd === 'function' && shouldShowAd('home_banner', REMOVE_ADS_ENTITLEMENTS)) {
@@ -12128,11 +12140,11 @@ function validatePremiumEntitlementParity() {
   }
 
   if (
-    !/return\s+entitlements\.unlimitedMockExams\s*&&\s*entitlements\.fullMistakeReview;/.test(
+    !/return\s+entitlements\.unlimitedMockExams\s*===\s*true\s*&&\s*entitlements\.fullMistakeReview\s*===\s*true;/.test(
       premiumSource,
     )
   ) {
-    reject('isPremiumUser must depend on premium capabilities rather than adsDisabled');
+    reject('isPremiumUser must depend on strict premium capabilities rather than adsDisabled');
   }
 
   if (valid && premiumEntitlementStatesValidated === EXPECTED_PREMIUM_ENTITLEMENT_STATES.length) {
@@ -18114,7 +18126,7 @@ function validateMobileAdsConsentRuntimeParity() {
   const runtimeCases = [
     [
       normalizedMobileConsentSource.includes(
-        'const shouldCollectConsent = googleMobileAdsEnabled && !entitlements.adsDisabled && realAdsEnabled;',
+        'const shouldCollectConsent = googleMobileAdsEnabled && entitlements.adsDisabled !== true && realAdsEnabled;',
       ),
       'Mobile Ads consent runtime must gate consent collection on ads config, real ads, and Remove Ads entitlements',
     ],
@@ -18198,7 +18210,7 @@ function validateMobileAdsConsentHookParity() {
   const hookCases = [
     [
       normalizedHookSource.includes(
-        'const shouldCollectConsent = adsConfig.googleMobileAdsEnabled && !entitlements.adsDisabled && adsConfig.realAdsEnabled;',
+        'const shouldCollectConsent = adsConfig.googleMobileAdsEnabled && entitlements.adsDisabled !== true && adsConfig.realAdsEnabled;',
       ) &&
         normalizedHookSource.includes('platform,') &&
         normalizedHookSource.includes(
@@ -18216,7 +18228,7 @@ function validateMobileAdsConsentHookParity() {
       'Mobile Ads consent hook must route initial state through the consent SDK decision helper',
     ],
     [
-      /if\s*\(\s*entitlements\.adsDisabled\s*\)\s*\{\s*return\s+initializeGoogleMobileAdsAfterConsent\(\{[\s\S]*entitlements,[\s\S]*runtime:\s*createNativeMobileAdsConsentRuntime\(platform\),[\s\S]*\}\);\s*\}/.test(
+      /if\s*\(\s*entitlements\.adsDisabled\s*===\s*true\s*\)\s*\{\s*return\s+initializeGoogleMobileAdsAfterConsent\(\{[\s\S]*entitlements,[\s\S]*runtime:\s*createNativeMobileAdsConsentRuntime\(platform\),[\s\S]*\}\);\s*\}/.test(
         hookSource,
       ),
       'Mobile Ads consent hook must bypass cached initialization when Remove Ads is active',
@@ -18237,7 +18249,7 @@ function validateMobileAdsConsentHookParity() {
       'Mobile Ads consent hook must reset shared initialization after blocked consent results without caching them',
     ],
     [
-      /if\s*\([\s\S]*!entitlements\.adsDisabled[\s\S]*cachedInitialization[\s\S]*cachedInitializationPlatform\s*===\s*platform[\s\S]*\)\s*\{\s*return\s+cachedInitialization;\s*\}/.test(
+      /if\s*\([\s\S]*entitlements\.adsDisabled\s*!==\s*true[\s\S]*cachedInitialization[\s\S]*cachedInitializationPlatform\s*===\s*platform[\s\S]*\)\s*\{\s*return\s+cachedInitialization;\s*\}/.test(
         hookSource,
       ) &&
         normalizedHookSource.includes('setResult(initialResult);') &&

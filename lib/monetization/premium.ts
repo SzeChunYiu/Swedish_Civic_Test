@@ -39,14 +39,14 @@ export const PRO_LIFETIME_ENTITLEMENTS: ProTierEntitlements = {
 };
 
 export function hasAdsDisabled(entitlements: Pick<PremiumEntitlements, 'adsDisabled'>): boolean {
-  return entitlements.adsDisabled;
+  return entitlements.adsDisabled === true;
 }
 
 // Legacy gate — preserved verbatim so the pinned parity test
 // (tests/content-premium-entitlements-parity.test.js) keeps passing.
 // New gating code should call hasProEntitlement() instead.
 export function isPremiumUser(entitlements: PremiumEntitlements): boolean {
-  return entitlements.unlimitedMockExams && entitlements.fullMistakeReview;
+  return entitlements.unlimitedMockExams === true && entitlements.fullMistakeReview === true;
 }
 
 // Pro-tier gate. Distinct from isPremiumUser so we can evolve the gate-set
@@ -54,8 +54,8 @@ export function isPremiumUser(entitlements: PremiumEntitlements): boolean {
 // flag — Remove-Ads buyers do NOT pass this gate.
 export function hasProEntitlement(entitlements: ProTierEntitlements): boolean {
   return (
-    entitlements.unlimitedMockExams &&
-    entitlements.fullMistakeReview &&
+    entitlements.unlimitedMockExams === true &&
+    entitlements.fullMistakeReview === true &&
     entitlements.spacedRepetition === true
   );
 }

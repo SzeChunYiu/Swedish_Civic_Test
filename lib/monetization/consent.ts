@@ -82,7 +82,7 @@ function hasSatisfiedUmpRequirement(state: AdConsentState): boolean {
 }
 
 export function getAdConsentDecision(state: AdConsentState): AdConsentDecision {
-  if (!state.googleMobileAdsEnabled || state.entitlements.adsDisabled) {
+  if (!state.googleMobileAdsEnabled || state.entitlements.adsDisabled === true) {
     return {
       adServingAllowed: false,
       canRequestNonPersonalizedAds: false,
@@ -120,7 +120,7 @@ export function getAdSdkInitializationDecision(state: AdConsentState): AdSdkInit
     };
   }
 
-  if (state.entitlements.adsDisabled) {
+  if (state.entitlements.adsDisabled === true) {
     return {
       blockReason: 'remove_ads_entitlement',
       canInitializeGoogleMobileAds: false,

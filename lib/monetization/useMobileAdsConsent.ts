@@ -26,7 +26,9 @@ function createInitialResult(
   platform: string,
 ): MobileAdsConsentInitializationResult {
   const shouldCollectConsent =
-    adsConfig.googleMobileAdsEnabled && !entitlements.adsDisabled && adsConfig.realAdsEnabled;
+    adsConfig.googleMobileAdsEnabled &&
+    entitlements.adsDisabled !== true &&
+    adsConfig.realAdsEnabled;
   const state: AdConsentState = createInitialAdConsentState({
     entitlements,
     googleMobileAdsEnabled: adsConfig.googleMobileAdsEnabled,
@@ -63,7 +65,7 @@ function initializeOnce(
   entitlements: Pick<PremiumEntitlements, 'adsDisabled'>,
   platform: string,
 ): Promise<MobileAdsConsentInitializationResult> {
-  if (entitlements.adsDisabled) {
+  if (entitlements.adsDisabled === true) {
     return initializeGoogleMobileAdsAfterConsent({
       entitlements,
       runtime: createNativeMobileAdsConsentRuntime(platform),
@@ -95,7 +97,7 @@ export function useMobileAdsConsent(
   const platform = options.platform ?? Platform.OS;
   const initialResult = useMemo(() => {
     if (
-      !entitlements.adsDisabled &&
+      entitlements.adsDisabled !== true &&
       cachedInitialization &&
       cachedInitializationPlatform === platform
     ) {

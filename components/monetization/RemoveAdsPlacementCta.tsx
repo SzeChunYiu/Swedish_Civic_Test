@@ -109,7 +109,7 @@ export function RemoveAdsPlacementCta({ placement }: { placement: AdPlacement })
   const [status, setStatus] = useState<PlacementPurchaseStatus | null>(null);
   const purchaseActionInFlightRef = useRef(false);
 
-  if (!entitlementsReady || entitlements.adsDisabled) return null;
+  if (!entitlementsReady || entitlements.adsDisabled === true) return null;
   const purchaseUnavailable =
     purchaseRuntime?.purchaseUnavailableReason === 'web_store_unavailable';
 

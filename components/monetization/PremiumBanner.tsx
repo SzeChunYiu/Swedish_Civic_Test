@@ -137,13 +137,13 @@ export function PremiumBanner({
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const purchaseRuntime = useMemo<PurchaseRuntimeOptions | undefined>(() => {
     if (runtimeOptions) return runtimeOptions;
-    return createDefaultPurchaseRuntimeOptions(entitlements.adsDisabled);
+    return createDefaultPurchaseRuntimeOptions(entitlements.adsDisabled === true);
   }, [entitlements.adsDisabled, runtimeOptions]);
   const [currentEntitlements, setCurrentEntitlements] = useState(entitlements);
   const [activeAction, setActiveAction] = useState<PurchaseAction | null>(null);
   const [status, setStatus] = useState<PurchaseUiStatus>('idle');
   const purchaseActionInFlightRef = useRef(false);
-  const adsDisabled = currentEntitlements.adsDisabled;
+  const adsDisabled = currentEntitlements.adsDisabled === true;
   const purchaseUnavailable =
     purchaseRuntime?.purchaseUnavailableReason === 'web_store_unavailable';
   const updateEntitlements = useCallback(

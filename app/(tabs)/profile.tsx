@@ -321,7 +321,7 @@ export default function Screen() {
       {!removeAdsFocused ? removeAdsPaywall : null}
       {entitlementsReady && proRuntimeScopeEnabled ? (
         <ProPaywall
-          alreadyAdFree={monetizationEntitlements.adsDisabled}
+          alreadyAdFree={monetizationEntitlements.adsDisabled === true}
           language={language}
           onEntitlementsChange={(nextEntitlements) => setMonetizationEntitlements(nextEntitlements)}
         />
