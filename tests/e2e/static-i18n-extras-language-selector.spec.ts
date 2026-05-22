@@ -430,10 +430,13 @@ async function assertLongFormRouteCopy(page: Page, locale: ExtraLocale) {
   await expectLegalReadingTime(page, locale, 'privacy.meta3.v');
   await switchToTermsRoute(page);
   await expectDictionaryText(page, locale, 'terms.kicker');
+  await expectDictionaryText(page, locale, 'terms.h1a');
+  await expectDictionaryText(page, locale, 'terms.h1b');
   await expect(page.locator(i18nSelector('terms.lede'))).toContainText(
     await dictionaryText(page, locale, 'terms.lede'),
   );
   await expectLegalReadingTime(page, locale, 'terms.meta3.v');
+  await expect(page.locator('[data-page="/terms"] h1')).not.toContainText(/Plain rules/i);
   await switchToHomeRoute(page);
 }
 
@@ -548,7 +551,7 @@ test.afterAll(async () => {
   await staticSite.close();
 });
 
-test('static Settings selects extra languages with localized legal metadata without overflow or outcome slogans', async ({
+test('static Settings selects extra languages with localized Terms legal metadata without overflow or outcome slogans', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });

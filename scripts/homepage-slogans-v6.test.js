@@ -25,6 +25,18 @@ const homepageLocales = [
 ];
 const rtlLocales = new Set(['ar', 'fa', 'ckb']);
 const oldHomepageFragments = [/Plain rules,/i, /Brag at midsommar/i, /Skryt på midsommar/i];
+const expectedExtraLocaleTermsH1a = {
+  'zh-Hans': '规则清楚，',
+  'zh-Hant': '規則清楚，',
+  ar: 'قواعد واضحة،',
+  ckb: 'ڕێساکان ڕوونن،',
+  fa: 'قوانین روشن،',
+  pl: 'Jasne zasady,',
+  so: 'Xeerar cad,',
+  ti: 'ንጹር ሕግታት፣',
+  tr: 'Açık kurallar,',
+  uk: 'Чіткі правила,',
+};
 
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
@@ -224,6 +236,26 @@ test('homepage slogans v6 keeps Chinese locale split and blocks old outcome slog
       joinedHomeCopy,
       pattern,
       `homepage copy contains outcome promise ${pattern}`,
+    );
+  }
+});
+
+test('extra locale Terms headline keeps localized h1a copy', () => {
+  const dictionaries = loadStaticDictionaries();
+
+  for (const [locale, expectedText] of Object.entries(expectedExtraLocaleTermsH1a)) {
+    const dictionary = dictionaries[locale];
+    assert.equal(typeof dictionary, 'object', `missing ${locale} dictionary`);
+    assert.equal(dictionary['terms.h1a'], expectedText, `${locale}.terms.h1a`);
+    assert.doesNotMatch(
+      dictionary['terms.h1a'],
+      /Plain rules/i,
+      `${locale}.terms.h1a kept the English fallback`,
+    );
+    assert.doesNotMatch(
+      dictionary['terms.h1b'],
+      /plainly written/i,
+      `${locale}.terms.h1b kept the English fallback`,
     );
   }
 });
