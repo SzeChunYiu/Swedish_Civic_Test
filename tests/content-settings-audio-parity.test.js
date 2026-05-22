@@ -201,15 +201,19 @@ test('settings store schema stays in parity with persisted settings state', () =
     'utf8',
   );
 
-  assert.equal(summary.settingsStoreFieldsValidated, 12);
+  assert.equal(summary.settingsStoreFieldsValidated, 16);
   assert.equal(summary.settingsStoreSchemaParityValidated, true);
   assert.match(settingsStore, /type SettingsState = \{/);
   assert.match(settingsStore, /language: AppLanguage;/);
   assert.match(settingsStore, /audioEnabled: boolean;/);
   assert.match(settingsStore, /dailyGoalAnswers: number;/);
+  assert.match(settingsStore, /studyPlanTestDateIso: string \| null;/);
+  assert.match(settingsStore, /studyPlanIntensity: StudyIntensity;/);
   assert.match(settingsStore, /setLanguage: \(language: AppLanguage\) => void;/);
   assert.match(settingsStore, /setAudioEnabled: \(enabled: boolean\) => void;/);
   assert.match(settingsStore, /setDailyGoalAnswers: \(answerCount: number\) => void;/);
+  assert.match(settingsStore, /setStudyPlanTestDateIso: \(testDateIso: string \| null\) => void;/);
+  assert.match(settingsStore, /setStudyPlanIntensity: \(intensity: StudyIntensity\) => void;/);
   assert.match(settingsStore, /createMMKV\(\{ id: 'settings' \}\)/);
 });
 

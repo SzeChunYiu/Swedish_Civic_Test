@@ -13,6 +13,8 @@ const seededOnceMarkerKey = '__onboardingDailyGoalPersistenceSeeded';
 const settingsDailyGoalKey = 'settings\\dailyGoalAnswers';
 const settingsLanguageKey = 'settings\\language';
 const settingsSeenAboutKey = 'settings\\hasSeenAboutTheTest';
+const settingsStudyPlanIntensityKey = 'settings\\studyPlanIntensity';
+const settingsStudyPlanTestDateIsoKey = 'settings\\studyPlanTestDateIso';
 const legacySettingsLanguageKey = 'language';
 const legacySettingsSeenAboutKey = 'hasSeenAboutTheTest';
 
@@ -188,6 +190,8 @@ test('Onboarding actions keep mobile-safe targets and daily goal selection', asy
     page.getByRole('heading', { name: 'Förbered dig lugnt för samhällskunskapsprovet' }),
   ).toBeVisible();
   await expect(page.getByRole('radiogroup', { name: 'Välj ett mjukt dagligt mål' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'När är ditt prov?' })).toBeVisible();
+  await expect(page.getByRole('textbox', { name: 'Ange provdatum som ÅÅÅÅ-MM-DD' })).toBeVisible();
 
   for (const link of onboardingActionLinks) {
     const target = page.getByRole('link', { exact: true, name: link.label });
@@ -206,7 +210,78 @@ test('Onboarding actions keep mobile-safe targets and daily goal selection', asy
   await regularGoal.click();
   await expect(regularGoal).toHaveAttribute('aria-checked', 'true');
 
+  const testDateInput = page.getByRole('textbox', { name: 'Ange provdatum som ÅÅÅÅ-MM-DD' });
+  await expectMinimumTargetSize(testDateInput, 'Test date input');
+  await testDateInput.fill('2026-08-15');
+  await expect(page.getByText(/Sparat provdatum:/)).toBeVisible();
+
+  const skipTestDate = page.getByRole('button', { name: 'Fortsätt utan bokat provdatum' });
+  await expect(skipTestDate).toContainText('Jag har inte bokat än');
+  await expectMinimumTargetSize(skipTestDate, 'Skip test date');
+
   await expectNoHorizontalOverflow(page);
+  expect(consoleErrors).toEqual([]);
+});
+
+test('Onboarding optional test date persists locally and skip clears it without plan details', async ({
+  page,
+}) => {
+  const consoleErrors = collectConsoleErrors(page);
+
+  await seedFreshSettingsLanguageAndAboutSeenOnce(page, 'en');
+  await page.goto('/onboarding', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  await expect(page.getByRole('heading', { name: 'When is your test?' })).toBeVisible();
+  await expect(page.getByText(/Get a daily plan|59 kr|questions\/day|mocks this week/)).toHaveCount(
+    0,
+  );
+
+  const seriousGoal = page.getByRole('radio', {
+    exact: true,
+    name: 'Choose serious daily goal with 40 answers',
+  });
+  await seriousGoal.click();
+  await expect(seriousGoal).toHaveAttribute('aria-checked', 'true');
+  await expect
+    .poll(() => page.evaluate((key) => window.localStorage.getItem(key), settingsDailyGoalKey))
+    .toBe('40');
+  await expect
+    .poll(() =>
+      page.evaluate((key) => window.localStorage.getItem(key), settingsStudyPlanIntensityKey),
+    )
+    .toBe('serious');
+
+  const testDateInput = page.getByRole('textbox', { name: 'Enter test date as YYYY-MM-DD' });
+  await testDateInput.fill('2026-08-15');
+  await expect(page.getByText('Test date saved: 15 August 2026.')).toBeVisible();
+  await expect
+    .poll(() =>
+      page.evaluate((key) => window.localStorage.getItem(key), settingsStudyPlanTestDateIsoKey),
+    )
+    .toBe('2026-08-15T00:00:00.000Z');
+
+  await testDateInput.fill('2026-02-31');
+  await expect(page.getByText("Use YYYY-MM-DD, or skip until you've booked.")).toBeVisible();
+  await expect
+    .poll(() =>
+      page.evaluate((key) => window.localStorage.getItem(key), settingsStudyPlanTestDateIsoKey),
+    )
+    .toBe('2026-08-15T00:00:00.000Z');
+
+  await page.getByRole('button', { name: 'Continue without a booked test date' }).click();
+  await expect(testDateInput).toHaveValue('');
+  await expect
+    .poll(() =>
+      page.evaluate((key) => window.localStorage.getItem(key), settingsStudyPlanTestDateIsoKey),
+    )
+    .toBe('');
+
+  await page.goto('/home', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+  await expect(page.getByRole('heading', { name: "Today's goal" })).toBeVisible();
+  await expect(page.getByText('0/40')).toBeVisible();
+
   expect(consoleErrors).toEqual([]);
 });
 

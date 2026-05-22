@@ -197,6 +197,8 @@ test('settings read failures fall back to defaults with a recoverable warning', 
   assert.equal(state.dailyGoalAnswers, 10);
   assert.equal(state.includeSupplementaryQuestions, false);
   assert.equal(state.hasSeenAboutTheTest, false);
+  assert.equal(state.studyPlanTestDateIso, null);
+  assert.equal(state.studyPlanIntensity, 'regular');
   assert.equal(state.persistenceWarning.recoverable, true);
   assert.equal(state.persistenceWarning.operation, 'read');
   assert.equal(state.persistenceWarning.storageId, 'settings');
