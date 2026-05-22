@@ -1249,7 +1249,7 @@
     },
     "opts": [
       {
-        "en": "Contact politicians, demonstrate, or sign a petition",
+        "en": "Contact politicians, join a demonstration, or sign a petition",
         "sv": "Kontakta politiker, demonstrera eller skriva på en namninsamling",
         "zh-Hant": "聯絡政治人物、示威或簽署請願書",
         "zh-Hans": "联系政治人物、示威或签署请愿书",
@@ -1307,7 +1307,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "People can influence and participate in society in several democratic ways, including contacting politicians, demonstrating, and starting or signing a petition. The other options would stop people from voting, expressing opinions, or taking part in democracy.",
+      "en": "People can influence and participate in society in several democratic ways, including contacting politicians, joining a demonstration, and starting or signing a petition. The other options would stop people from voting, expressing opinions, or taking part in democracy.",
       "sv": "Det finns flera demokratiska sätt att påverka och delta i samhället, till exempel att kontakta politiker, demonstrera och starta eller skriva på en namninsamling. De andra alternativen skulle hindra människor från att rösta, uttrycka åsikter eller delta i demokratin.",
       "zh-Hant": "影響並參與社會有多種民主方式，例如聯絡政治人物、示威，以及發起或簽署請願書。其他選項會阻礙人們投票、表達意見或參與民主。",
       "zh-Hans": "影响并参与社会有多种民主方式，例如联系政治人物、示威，以及发起或签署请愿书。其他选项会阻碍人们投票、表达意见或参与民主。",
@@ -21787,7 +21787,7 @@
     },
     "opts": [
       {
-        "en": "Contact politicians, demonstrate, or sign a petition",
+        "en": "Contact politicians, join a demonstration, or sign a petition",
         "sv": "Kontakta politiker, demonstrera eller skriva på en namninsamling",
         "zh-Hant": "聯絡政治人物、示威或簽署請願書",
         "zh-Hans": "联系政治人物、示威或签署请愿书",
@@ -21845,7 +21845,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "People can influence and participate in society in several democratic ways, including contacting politicians, demonstrating, and starting or signing a petition. The other options would stop people from voting, expressing opinions, or taking part in democracy.",
+      "en": "People can influence and participate in society in several democratic ways, including contacting politicians, joining a demonstration, and starting or signing a petition. The other options would stop people from voting, expressing opinions, or taking part in democracy.",
       "sv": "Det finns flera demokratiska sätt att påverka och delta i samhället, till exempel att kontakta politiker, demonstrera och starta eller skriva på en namninsamling. De andra alternativen skulle hindra människor från att rösta, uttrycka åsikter eller delta i demokratin."
     },
     "source": {
@@ -21870,7 +21870,7 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "People can influence society and participate in democracy by contacting politicians, demonstrating, or signing a petition.",
+      "en": "People can influence society and participate in democracy by contacting politicians, joining a demonstration, or signing a petition.",
       "sv": "Människor kan påverka samhället och delta i demokratin genom att kontakta politiker, demonstrera eller skriva på en namninsamling."
     },
     "opts": [
@@ -21885,7 +21885,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "People can influence and participate in society in several democratic ways, including contacting politicians, demonstrating, and starting or signing a petition. The other options would stop people from voting, expressing opinions, or taking part in democracy.",
+      "en": "People can influence and participate in society in several democratic ways, including contacting politicians, joining a demonstration, and starting or signing a petition. The other options would stop people from voting, expressing opinions, or taking part in democracy.",
       "sv": "Det finns flera demokratiska sätt att påverka och delta i samhället, till exempel att kontakta politiker, demonstrera och starta eller skriva på en namninsamling. De andra alternativen skulle hindra människor från att rösta, uttrycka åsikter eller delta i demokratin."
     },
     "source": {
@@ -21925,7 +21925,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "People can influence and participate in society in several democratic ways, including contacting politicians, demonstrating, and starting or signing a petition. The other options would stop people from voting, expressing opinions, or taking part in democracy.",
+      "en": "People can influence and participate in society in several democratic ways, including contacting politicians, joining a demonstration, and starting or signing a petition. The other options would stop people from voting, expressing opinions, or taking part in democracy.",
       "sv": "Det finns flera demokratiska sätt att påverka och delta i samhället, till exempel att kontakta politiker, demonstrera och starta eller skriva på en namninsamling. De andra alternativen skulle hindra människor från att rösta, uttrycka åsikter eller delta i demokratin."
     },
     "source": {
@@ -21955,7 +21955,7 @@
     },
     "opts": [
       {
-        "en": "Contact politicians, demonstrate, or sign a petition",
+        "en": "Contact politicians, join a demonstration, or sign a petition",
         "sv": "Kontakta politiker, demonstrera eller skriva på en namninsamling",
         "zh-Hant": "聯絡政治人物、示威或簽署請願書",
         "zh-Hans": "联系政治人物、示威或签署请愿书",
@@ -22013,7 +22013,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "People can influence and participate in society in several democratic ways, including contacting politicians, demonstrating, and starting or signing a petition. The other options would stop people from voting, expressing opinions, or taking part in democracy.",
+      "en": "People can influence and participate in society in several democratic ways, including contacting politicians, joining a demonstration, and starting or signing a petition. The other options would stop people from voting, expressing opinions, or taking part in democracy.",
       "sv": "Det finns flera demokratiska sätt att påverka och delta i samhället, till exempel att kontakta politiker, demonstrera och starta eller skriva på en namninsamling. De andra alternativen skulle hindra människor från att rösta, uttrycka åsikter eller delta i demokratin."
     },
     "source": {

@@ -2738,7 +2738,7 @@ test('participation source prompts ask the civic concept directly in exports', (
   );
   assert.equal(
     q013True.q.en,
-    'People can influence society and participate in democracy by contacting politicians, demonstrating, or signing a petition.',
+    'People can influence society and participate in democracy by contacting politicians, joining a demonstration, or signing a petition.',
   );
   assert.ok(q013False, 'q013 false generated variant should be published');
   assert.equal(
