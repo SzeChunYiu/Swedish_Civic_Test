@@ -91,6 +91,35 @@ test('about-the-test route uses cautious current official-detail copy', () => {
   assert.doesNotMatch(source, /dator i en\s+provlokal|computer at a\s+test centre/i);
 });
 
+test('about-the-test official source e2e covers wrapped focus-visible links', () => {
+  const e2eSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/e2e/legal-external-links.spec.ts'),
+    'utf8',
+  );
+
+  assert.match(e2eSource, /about-the-test official source layout/);
+  assert.match(e2eSource, /ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS/);
+  assert.match(
+    e2eSource,
+    /https:\/\/www\.migrationsverket\.se\/nyheter\/nyhetsarkiv\/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026\.html/,
+  );
+  assert.match(
+    e2eSource,
+    /expectLinkTextSegmentsStayInsideBox\(link, \[[\s\S]*`\$\{fixture\.urlLabel\}: \$\{url\}`/,
+  );
+  assert.match(
+    e2eSource,
+    /focusLinkWithKeyboard\(page, link, `\$\{fixture\.openPrefix\}: \$\{sourceTitle\}`\)/,
+  );
+  assert.match(
+    e2eSource,
+    /expectKeyboardFocusVisible\(link, `\$\{fixture\.openPrefix\}: \$\{sourceTitle\}`\)/,
+  );
+  assert.match(e2eSource, /await expect\(link\)\.toHaveAttribute\('target', '_blank'\)/);
+  assert.match(e2eSource, /await expect\(link\)\.toHaveAttribute\('rel', 'noreferrer'\)/);
+  assert.match(e2eSource, /expectNoHorizontalOverflow\(page\)/);
+});
+
 test('about-the-test route copy parity rejects bypassing the settings language', () => {
   const result = spawnSync(
     process.execPath,

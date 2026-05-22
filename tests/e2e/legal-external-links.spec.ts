@@ -23,7 +23,7 @@ type LegalExternalLinkFixture = {
 type LegalSourceMaterialLinkLayoutFixture = {
   actionLabel: string;
   language: AppLanguage;
-  path: '/disclaimer' | '/terms';
+  path: '/disclaimer' | '/sources' | '/terms';
   publisherLabel: string;
   retrievedLabel: string;
   sectionTitle: string;
@@ -170,6 +170,28 @@ const legalExternalLinkFixtures: LegalExternalLinkFixture[] = [
 ];
 
 const legalSourceMaterialLinkLayoutFixtures: LegalSourceMaterialLinkLayoutFixture[] = [
+  {
+    actionLabel: 'Öppna UHR:s utbildningsmaterial',
+    language: 'sv',
+    path: '/sources',
+    publisherLabel: 'Utgivare',
+    retrievedLabel: 'Hämtad',
+    sectionTitle: 'Primärt studiematerial',
+    title: 'Källor',
+    urlLabel: 'URL',
+    visibleLabel: 'UHR: Utbildningsmaterial om det svenska samhället',
+  },
+  {
+    actionLabel: 'Open UHR education material',
+    language: 'en',
+    path: '/sources',
+    publisherLabel: 'Publisher',
+    retrievedLabel: 'Retrieved',
+    sectionTitle: 'Primary study material',
+    title: 'Sources',
+    urlLabel: 'URL',
+    visibleLabel: 'UHR: Study material about Swedish society',
+  },
   {
     actionLabel: 'Öppna UHR:s utbildningsmaterial',
     language: 'sv',
@@ -478,7 +500,7 @@ async function focusLinkWithKeyboard(page: Page, link: Locator, label: string) {
     }
   });
 
-  for (let index = 0; index < 12; index += 1) {
+  for (let index = 0; index < 24; index += 1) {
     await page.keyboard.press('Tab');
     if (await link.evaluate((element) => document.activeElement === element)) return;
   }
@@ -687,6 +709,66 @@ for (const fixture of citizenshipRequirementsOfficialSourceFixtures) {
     await popup.close();
 
     expect(pageErrors).toEqual([]);
+  });
+}
+
+for (const viewport of legalSourceMaterialViewports) {
+  test.describe(`${viewport.label} about-the-test official source layout`, () => {
+    test.use({ viewport: viewport.size });
+
+    for (const fixture of aboutTheTestOfficialSourceFixtures) {
+      test(`/about-the-test keeps ${fixture.language} official source link text wrapped and focus-visible`, async ({
+        page,
+      }) => {
+        const pageErrors = collectPageErrors(page);
+        await stubExternalDestinations(page);
+        await seedCleanLanguage(page, fixture.language);
+
+        await page.goto('/about-the-test', { waitUntil: 'networkidle' });
+        await dismissBlockingModals(page);
+
+        await expect(page.getByRole('heading', { name: fixture.pageTitle }).last()).toBeVisible();
+        await expect(
+          page.getByRole('heading', { name: fixture.sourceHeading }).last(),
+        ).toBeVisible();
+
+        for (const [index, sourceTitle] of fixture.sourceTitles.entries()) {
+          const url = ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS[index];
+          const publisher = url.includes('migrationsverket.se')
+            ? 'Migrationsverket'
+            : 'Universitets- och högskolerådet (UHR)';
+          const link = page
+            .getByRole('link', { name: `${fixture.openPrefix}: ${sourceTitle}` })
+            .first();
+
+          await expect(link).toBeVisible();
+          await expectLinkTextSegmentsStayInsideBox(link, [
+            sourceTitle,
+            `${fixture.publisherLabel}: ${publisher}`,
+            `${fixture.retrievedLabel}: ${OFFICIAL_SOURCE_RETRIEVED_DATE}`,
+            `${fixture.urlLabel}: ${url}`,
+          ]);
+          await expect(link).toHaveAttribute('href', url);
+          await expect(link).toHaveAttribute('target', '_blank');
+          await expect(link).toHaveAttribute('rel', 'noreferrer');
+
+          const linkBox = await expectRenderedBox(
+            link,
+            `/about-the-test ${fixture.language} official source link ${index + 1}`,
+          );
+          expect(linkBox.width, `${sourceTitle} width`).toBeGreaterThanOrEqual(44);
+          expect(linkBox.height, `${sourceTitle} height`).toBeGreaterThanOrEqual(44);
+
+          await focusLinkWithKeyboard(page, link, `${fixture.openPrefix}: ${sourceTitle}`);
+          await expectKeyboardFocusVisible(link, `${fixture.openPrefix}: ${sourceTitle}`);
+        }
+
+        await expectExternalLinksAreTouchSafe(page);
+        await expectNoHorizontalOverflow(page);
+
+        expect(pageErrors).toEqual([]);
+      });
+    }
   });
 }
 
