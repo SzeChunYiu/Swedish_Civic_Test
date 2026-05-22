@@ -43,6 +43,27 @@ const chapterMeta = [
   },
 ];
 
+function unsafeQuestion() {
+  return {
+    ...sampleQuestion,
+    q: {
+      en: 'Where <img src=x onerror=alert(1)> is Sweden?',
+      sv: 'Var <img src=x onerror=alert(1)> ligger Sverige?',
+    },
+    opts: [
+      { en: 'Southern <b>Europe</b> & "near"', sv: 'Södra <b>Europa</b> & "nära"' },
+      {
+        en: 'Northern <span data-x="1">Europe</span>',
+        sv: 'Norra <span data-x="1">Europa</span>',
+      },
+    ],
+    why: {
+      en: 'Use <script>alert("x")</script> & civic sources.',
+      sv: 'Använd <script>alert("x")</script> & samhällskällor.',
+    },
+  };
+}
+
 function staticMockQuestion({ id, chapterId = 1, tags = [], questionProvenance }) {
   return {
     ...sampleQuestion,
@@ -179,6 +200,33 @@ test('static Practice answer feedback renders citation and independent-study dis
   assert.match(html, /Independent study practice, not a real exam or an official UHR question\./);
 });
 
+test('static Practice escapes question-bank prompt, option, and explanation HTML', () => {
+  const question = unsafeQuestion();
+  const { sandbox, element } = createRenderContext({
+    hash: '#/practice?c=1',
+    language: 'en',
+    questions: [question],
+  });
+  vm.runInContext(read('site/app.js'), sandbox, { timeout: 3000 });
+  vm.runInContext('smtQuizRender(); SMT_QUIZ.answers[0] = 0; smtQuizRender();', sandbox, {
+    timeout: 3000,
+  });
+
+  const html = element('quiz-stage').innerHTML;
+  assert.match(html, /Where &lt;img src=x onerror=alert\(1\)&gt; is Sweden\?/);
+  assert.match(html, /Southern &lt;b&gt;Europe&lt;\/b&gt; &amp; &quot;near&quot;/);
+  assert.match(html, /Northern &lt;span data-x=&quot;1&quot;&gt;Europe&lt;\/span&gt;/);
+  assert.match(
+    html,
+    /Use &lt;script&gt;alert\(&quot;x&quot;\)&lt;\/script&gt; &amp; civic sources\./,
+  );
+  assert.doesNotMatch(html, /<img src=x/);
+  assert.doesNotMatch(html, /<script>/);
+  assert.doesNotMatch(html, /<b>Europe<\/b>/);
+  assert.match(html, /class="quiz__provenance quiz__provenance--uhr"/);
+  assert.match(html, /Source: Sverige i fokus, Landet Sverige, Geografi, p\. 7/);
+});
+
 test('static provenance badge copy avoids positive UHR authority wording', () => {
   const source = read('site/practice.js');
 
@@ -301,6 +349,28 @@ test('static Mock landing renders neutral timed-practice copy', () => {
     .forEach((phrase) => assert.doesNotMatch(html, new RegExp(phrase, 'i')));
 });
 
+test('static Mock landing escapes chapter metadata rendered as chooser chips', () => {
+  const { sandbox, element } = createRenderContext({ hash: '#/mock', language: 'en' });
+  sandbox.window.SMT_CHAPTERS_META = [
+    {
+      id: 1,
+      emoji: '<i>01</i>',
+      title: { en: 'Sweden <img src=x onerror=alert(2)>', sv: 'Sverige' },
+    },
+  ];
+  const source = read('site/practice.js').replace(
+    /\}\)\(\);\s*$/,
+    ['renderMockLanding();', '})();'].join('\n'),
+  );
+  vm.runInContext(source, sandbox, { timeout: 3000 });
+
+  const html = element('mock-stage').innerHTML;
+  assert.match(html, /&lt;i&gt;01&lt;\/i&gt;/);
+  assert.match(html, /Sweden &lt;img src=x onerror=alert\(2\)&gt;/);
+  assert.doesNotMatch(html, /<i>01<\/i>/);
+  assert.doesNotMatch(html, /<img src=x/);
+});
+
 test('static active Mock question renders citation and independent-study disclaimer', () => {
   const { sandbox, element } = createRenderContext({ hash: '#/mock?run=1', language: 'en' });
   const source = read('site/practice.js').replace(
@@ -325,6 +395,44 @@ test('static active Mock question renders citation and independent-study disclai
     html,
     /class="quiz__disclaimer">Independent study practice, not a real exam or an official UHR question\.<\/p>/,
   );
+});
+
+test('static active Mock question escapes prompt, options, and chapter labels', () => {
+  const { sandbox, element } = createRenderContext({
+    hash: '#/mock?run=1',
+    language: 'en',
+    questions: [unsafeQuestion()],
+  });
+  sandbox.window.SMT_CHAPTERS_META = [
+    {
+      id: 1,
+      emoji: '01',
+      title: { en: 'Sweden <img src=x onerror=alert(3)>', sv: 'Sverige' },
+    },
+  ];
+  const source = read('site/practice.js').replace(
+    /\}\)\(\);\s*$/,
+    [
+      'MOCK.questions = window.SMT_QUESTIONS;',
+      'MOCK.answers = [null];',
+      'MOCK.startedAt = 123456;',
+      'MOCK.endsAt = Date.now() + 120000;',
+      'MOCK.submitted = false;',
+      'renderMockExam();',
+      '})();',
+    ].join('\n'),
+  );
+  vm.runInContext(source, sandbox, { timeout: 3000 });
+
+  const html = element('mock-stage').innerHTML;
+  assert.match(html, /Sweden &lt;img src=x onerror=alert\(3\)&gt;/);
+  assert.match(html, /Where &lt;img src=x onerror=alert\(1\)&gt; is Sweden\?/);
+  assert.match(html, /Southern &lt;b&gt;Europe&lt;\/b&gt; &amp; &quot;near&quot;/);
+  assert.match(html, /Northern &lt;span data-x=&quot;1&quot;&gt;Europe&lt;\/span&gt;/);
+  assert.doesNotMatch(html, /<img src=x/);
+  assert.doesNotMatch(html, /<b>Europe<\/b>/);
+  assert.match(html, /class="quiz__provenance quiz__provenance--uhr"/);
+  assert.match(html, /Source: Sverige i fokus, Landet Sverige, Geografi, p\. 7/);
 });
 
 test('static Mock question navigation dots expose localized answer-state labels', () => {

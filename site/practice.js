@@ -762,10 +762,12 @@
     const chapterChips = meta
       .map((c) => {
         const on = selectedChapters.includes(c.id);
+        const emoji = escapeHtml(c.emoji || '');
+        const title = escapeHtml((c.title && (c.title[lang()] || c.title.en)) || '');
         return `<button class="mock-chip ${on ? 'is-on' : ''}" data-chip="${c.id}">
-        <span class="mock-chip__emoji">${c.emoji}</span>
+        <span class="mock-chip__emoji">${emoji}</span>
         <span class="mock-chip__num">CH ${String(c.id).padStart(2, '0')}</span>
-        <span class="mock-chip__t">${c.title[lang()] || c.title.en}</span>
+        <span class="mock-chip__t">${title}</span>
       </button>`;
       })
       .join('');
@@ -1019,7 +1021,7 @@
         return `
         <button class="mock-opt ${cls}" data-pick="${originalIndex}">
           <span class="key">${String.fromCharCode(65 + displayIndex)}</span>
-          <span>${o[lang()] || o.en}</span>
+          <span>${escapeHtml(o[lang()] || o.en)}</span>
         </button>
       `;
       })
@@ -1046,7 +1048,7 @@
         <p class="quiz__disclaimer">${escapeHtml(questionReviewDisclaimer())}</p>
         <div class="mock-card">
           <div class="quiz__crumb">${escapeHtml(chapterLabel(q))}</div>
-          <h2 class="quiz__q">${q.q[lang()] || q.q.en}</h2>
+          <h2 class="quiz__q">${escapeHtml(q.q[lang()] || q.q.en)}</h2>
           ${questionSourceRow(q)}
           <div class="quiz__opts">${opts}</div>
         </div>
