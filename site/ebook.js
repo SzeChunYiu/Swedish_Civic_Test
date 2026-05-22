@@ -71,8 +71,8 @@
       label: 'UHR: Frågor och svar',
       url: 'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
       retrievedDate: '2026-05-19',
-      claimEn: 'Seats are limited',
-      claimSv: 'Antalet platser är begränsat',
+      claimEn: 'Seats are limited; the citizenship test can only be taken in Swedish',
+      claimSv: 'Antalet platser är begränsat; medborgarskapsprovet kan bara göras på svenska',
     },
     {
       label: 'UHR: Anmälan',
@@ -3338,6 +3338,7 @@
         en: `
           <h2>Current official status</h2>
           <p>The first civic-knowledge sitting will be held on 15 August 2026 in Stockholm. A Migrationsverket letter is required: only people who receive a letter from Migrationsverket can sign up.</p>
+          <p>The civic-knowledge test itself can only be taken in Swedish. That is separate from the Swedish-language tests that are introduced later.</p>
           <p>Seats are limited. The August sitting is free of charge, and participants will have generous time.</p>
           <h2>Practical details pending from UHR</h2>
           <p>UHR has not yet published the exact time and place. Use this app for unofficial practice, and use UHR and Migrationsverket for instructions that affect your own case.</p>
@@ -3353,6 +3354,7 @@
         sv: `
           <h2>Aktuell officiell status</h2>
           <p>Det första samhällskunskapsprovet inom medborgarskapsprovet hålls den 15 augusti 2026 i Stockholm. Anmälan kräver brev från Migrationsverket.</p>
+          <p>Själva samhällskunskapsprovet kan bara göras på svenska. Det är skilt från de prov i svenska som införs senare.</p>
           <p>Antalet platser är begränsat. Augustiprovet är kostnadsfritt, och deltagarna får generöst med tid.</p>
           <h2>Praktiska detaljer väntar hos UHR</h2>
           <p>UHR har ännu inte publicerat exakt tid och plats. Använd appen som inofficiell övning, och använd UHR och Migrationsverket för instruktioner som påverkar ditt eget ärende.</p>

@@ -21,6 +21,7 @@ const expectedSourceIds = [
   'migrationsverketAdultApplication',
   'migrationsverketRules2026',
   'uhrCivicTestOverview',
+  'uhrCivicTestFaq',
   'uhrCivicTestRegistration',
   'uhrCivicStudyMaterial',
   'governmentCivicTestSchedule',
@@ -31,6 +32,7 @@ const expectedOfficialUrls = [
   'https://www.migrationsverket.se/du-vill-ansoka/svenskt-medborgarskap/medborgarskap-for-vuxna/medborgarskap-for-vuxna.html',
   'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html',
   'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
+  'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
   'https://www.uhr.se/medborgarskapsprovet/anmalan/',
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
   'https://www.regeringen.se/regeringsuppdrag/2026/02/andring-av-uppdraget-till-goteborgs-universitet-och-stockholms-universitet-att-bista-universitets--och-hogskoleradet-med-utvecklingen-av-ett-medborgarskapsprov/',
@@ -125,6 +127,10 @@ test('citizenship requirements data covers seven sourced bilingual planning area
     areas.find((area) => area.id === 'civicKnowledge').detail.sv,
     /Anmälan öppnar i början av juni 2026/,
   );
+  assert.match(
+    areas.find((area) => area.id === 'civicKnowledge').detail.sv,
+    /samhällskunskapsprovet kan bara göras på svenska/,
+  );
   assert.doesNotMatch(areas.find((area) => area.id === 'civicKnowledge').detail.sv, /UHR säger/);
   assert.match(
     areas.find((area) => area.id === 'civicKnowledge').detail.sv,
@@ -133,6 +139,10 @@ test('citizenship requirements data covers seven sourced bilingual planning area
   assert.match(
     areas.find((area) => area.id === 'civicKnowledge').detail.en,
     /Registration opens in early June 2026/,
+  );
+  assert.match(
+    areas.find((area) => area.id === 'civicKnowledge').detail.en,
+    /civic-knowledge test itself can only be taken in Swedish/,
   );
   assert.doesNotMatch(areas.find((area) => area.id === 'civicKnowledge').detail.en, /UHR says/);
   assert.match(areas.find((area) => area.id === 'civicKnowledge').detail.en, /Seats are limited/);
@@ -211,6 +221,9 @@ test('citizenship requirement area copy states sourced facts without UHR-says ph
 
   assert.match(civicKnowledge.detail.sv, /Anmälan öppnar i början av juni 2026/);
   assert.match(civicKnowledge.detail.en, /Registration opens in early June 2026/);
+  assert.match(civicKnowledge.detail.sv, /skilt från de prov i svenska som införs senare/);
+  assert.match(civicKnowledge.detail.en, /separate from the Swedish-language tests/);
+  assert.ok(civicKnowledge.sourceIds.includes('uhrCivicTestFaq'));
   assert.ok(civicKnowledge.sourceIds.includes('uhrCivicTestRegistration'));
 });
 

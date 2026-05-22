@@ -55,6 +55,10 @@ test('about-the-test route uses cautious current official-detail copy', () => {
   assert.doesNotMatch(source, /UHR beskriver|UHR describes|described by UHR/);
   assert.match(source, /Anmälan öppnar i början av juni 2026/);
   assert.match(source, /Registration opens in early June 2026/);
+  assert.match(source, /samhällskunskapsprovet kan bara göras på svenska/);
+  assert.match(source, /civic-knowledge test itself can only be taken in Swedish/);
+  assert.match(source, /skilt från de prov i svenska som införs senare/);
+  assert.match(source, /separate from the Swedish-language tests introduced later/);
   assert.match(source, /brev från Migrationsverket/);
   assert.match(source, /letter from Migrationsverket/);
   assert.match(source, /Antalet platser är begränsat/);
