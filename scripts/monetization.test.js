@@ -607,6 +607,14 @@ test('native AdBanner uses platform-aware unit lookup and shouldShowAd gate', ()
   );
 
   assert.match(nativeBannerSource, /getPlatformAdUnitId\(placement, Platform\.OS\)/);
+  const unitIdGuardIndex = nativeBannerSource.search(/if\s*\(\s*!unitId\s*\)\s*return\s+null\s*;/);
+  const bannerRenderIndex = nativeBannerSource.indexOf('<BannerAd');
+  assert.ok(unitIdGuardIndex >= 0, 'native AdBanner should null-render without a unit id');
+  assert.ok(
+    unitIdGuardIndex < bannerRenderIndex,
+    'native AdBanner should guard unitId before rendering BannerAd',
+  );
+  assert.match(nativeBannerSource, /unitId=\{unitId\}/);
   assert.match(
     nativeBannerSource,
     /shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
