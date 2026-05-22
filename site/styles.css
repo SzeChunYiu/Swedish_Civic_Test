@@ -106,7 +106,7 @@ img {
   font-family: var(--display);
   font-weight: 700;
   font-size: 19px;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   color: var(--ink);
 }
 .brand [data-i18n='brand'] {
@@ -330,7 +330,7 @@ img {
   font-weight: 700;
   font-size: clamp(48px, 7vw, 96px);
   line-height: 1;
-  letter-spacing: -0.035em;
+  letter-spacing: 0;
   margin: 22px 0 28px;
   color: var(--ink);
   text-wrap: balance;
@@ -434,7 +434,7 @@ h2.headline {
   font-weight: 700;
   font-size: clamp(38px, 4.6vw, 64px);
   line-height: 1.02;
-  letter-spacing: -0.03em;
+  letter-spacing: 0;
   margin: 16px 0 22px;
   max-width: 20ch;
   text-wrap: balance;
@@ -489,7 +489,7 @@ p.deck {
   font-weight: 700;
   font-size: 26px;
   line-height: 1.18;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   margin: 8px 0 22px;
   text-wrap: balance;
 }
@@ -627,7 +627,7 @@ p.deck {
   font-family: var(--display);
   font-weight: 600;
   font-size: clamp(20px, 2.2vw, 26px);
-  letter-spacing: -0.015em;
+  letter-spacing: 0;
   color: var(--ink);
   transition: padding-left 0.2s;
 }
@@ -691,7 +691,7 @@ p.deck {
   font-weight: 700;
   font-size: 22px;
   line-height: 1.2;
-  letter-spacing: -0.015em;
+  letter-spacing: 0;
   list-style: none;
   cursor: pointer;
   text-wrap: balance;
@@ -776,7 +776,7 @@ p.deck {
   font-family: var(--display);
   font-size: 28px;
   line-height: 1.1;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   font-weight: 700;
   max-width: 22ch;
 }
@@ -835,7 +835,7 @@ p.deck {
   font-weight: 700;
   font-size: clamp(40px, 4.5vw, 64px);
   line-height: 1.04;
-  letter-spacing: -0.025em;
+  letter-spacing: 0;
   margin: 14px 0 22px;
   max-width: 16ch;
   text-wrap: balance;
@@ -917,7 +917,7 @@ p.deck {
   font-weight: 700;
   font-size: 28px;
   line-height: 1.18;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   margin: 48px 0 14px;
   padding-top: 30px;
   border-top: 1px solid var(--line);
@@ -993,7 +993,7 @@ p.deck {
   font-weight: 700;
   font-size: clamp(40px, 5vw, 64px);
   line-height: 1.02;
-  letter-spacing: -0.03em;
+  letter-spacing: 0;
   margin: 12px 0 0;
   text-wrap: balance;
 }
@@ -1221,7 +1221,7 @@ button.quiz__dot:focus-visible {
   font-weight: 700;
   font-size: clamp(22px, 2.8vw, 30px);
   line-height: 1.2;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   margin: 10px 0 12px;
   text-wrap: balance;
 }
@@ -1404,7 +1404,7 @@ button.quiz__dot:focus-visible {
   font-weight: 700;
   font-size: clamp(56px, 7vw, 96px);
   line-height: 0.95;
-  letter-spacing: -0.04em;
+  letter-spacing: 0;
   color: var(--blue);
   margin: 0;
 }
@@ -1418,7 +1418,7 @@ button.quiz__dot:focus-visible {
   font-family: var(--display);
   font-weight: 700;
   font-size: clamp(22px, 2.4vw, 28px);
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   margin: 8px 0 18px;
   text-wrap: balance;
 }
@@ -2559,7 +2559,7 @@ button.quiz__dot:focus-visible {
   font-family: var(--display);
   font-weight: 700;
   font-size: 22px;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
 }
 .modal__close {
   background: transparent;
@@ -2854,7 +2854,7 @@ button.quiz__dot:focus-visible {
   font-weight: 700;
   font-size: clamp(34px, 4.4vw, 52px);
   line-height: 1.04;
-  letter-spacing: -0.025em;
+  letter-spacing: 0;
   margin: 14px 0 18px;
   text-wrap: balance;
 }
@@ -2876,7 +2876,7 @@ button.quiz__dot:focus-visible {
   font-weight: 700;
   font-size: 26px;
   line-height: 1.18;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   margin: 44px 0 12px;
   padding-top: 28px;
   border-top: 1px solid var(--line);
@@ -3619,7 +3619,7 @@ button.quiz__dot:focus-visible {
   font-family: var(--display);
   font-weight: 700;
   font-size: 11.5px;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   line-height: 1.1;
 }
 .buddy-card__sub {
@@ -4067,7 +4067,7 @@ button.quiz__dot:focus-visible {
   font-weight: 700;
   font-size: clamp(36px, 4.4vw, 56px);
   line-height: 1;
-  letter-spacing: -0.03em;
+  letter-spacing: 0;
   color: #f1ede0;
   margin: 22px 0 22px;
   text-wrap: balance;
@@ -4226,7 +4226,7 @@ button.quiz__dot:focus-visible {
   font-family: var(--display);
   font-weight: 700;
   font-size: 24px;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   margin: 0 0 18px;
 }
 .cheats__panel ul {
@@ -4404,7 +4404,7 @@ img.ebook__brand-mark {
   font-family: var(--display, 'Bricolage Grotesque', system-ui, sans-serif);
   font-weight: 700;
   font-size: 12px;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   line-height: 1.1;
   max-width: 100%;
   overflow: hidden;
@@ -4540,7 +4540,7 @@ img.ebook__brand-mark {
   font-weight: 700;
   font-size: 14px;
   color: var(--ink, #0b1f33);
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
 }
 .ebook__ad-ph-copy span {
   font-size: 13px;
@@ -4558,7 +4558,7 @@ img.ebook__brand-mark {
   font-weight: 700;
   font-size: 12.5px;
   white-space: nowrap;
-  letter-spacing: -0.005em;
+  letter-spacing: 0;
 }
 .ebook__ad-ph-cta:hover {
   background: var(--blue, #006aa7);
@@ -4612,7 +4612,7 @@ img.ebook__brand-mark {
   font-weight: 700;
   color: var(--blue, #006aa7);
   font-size: 13px;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   text-align: right;
 }
 .ebook__footnote-body {
@@ -5236,7 +5236,7 @@ html[dir='rtl'] .lang-menu {
 .purchase__card h3 {
   font-family: var(--display);
   font-size: 28px;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   line-height: 1.1;
   margin: 0;
 }
@@ -6289,7 +6289,7 @@ html[dir='rtl'] .lang-menu {
 }
 
 .consent__copy b {
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
 }
 
 .consent__actions {
@@ -12604,7 +12604,7 @@ img.ebook__brand-mark {
 
 .hub__statvalue {
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.035em;
+  letter-spacing: 0;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.48);
 }
 

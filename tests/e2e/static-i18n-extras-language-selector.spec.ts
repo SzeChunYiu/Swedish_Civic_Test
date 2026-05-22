@@ -427,6 +427,14 @@ async function switchToSourcesRoute(page: Page) {
   await expect(page.locator('[data-page="/sources"]')).toHaveClass(/is-active/);
 }
 
+async function switchToEbookRoute(page: Page) {
+  await page.evaluate(() => {
+    window.location.hash = '#/ebook?c=12';
+  });
+  await expect(page.locator('[data-page="/ebook"]')).toHaveClass(/is-active/);
+  await expect(page.locator('.ebook__brand [data-i18n="ebook.title"]')).toBeVisible();
+}
+
 async function switchToSupportRoute(page: Page) {
   await page.evaluate(() => {
     window.location.hash = '#/support';
@@ -451,6 +459,19 @@ async function switchToPracticeChapter(page: Page, chapter: number | 'mix') {
   }, `#/practice?c=${chapter}`);
   await expect(page.locator('[data-page="/practice"]')).toHaveClass(/is-active/);
   await expect(page.locator('#quiz-stage .quiz__q')).toBeVisible();
+}
+
+async function expectNonnegativeLetterSpacing(page: Page, selector: string, label: string) {
+  const letterSpacing = await page
+    .locator(selector)
+    .first()
+    .evaluate((element) => {
+      const value = window.getComputedStyle(element).letterSpacing;
+      return value === 'normal' ? 0 : Number.parseFloat(value);
+    });
+
+  expect(Number.isFinite(letterSpacing), `${label} letter-spacing should be measurable`).toBe(true);
+  expect(letterSpacing, `${label} letter-spacing`).toBeGreaterThanOrEqual(0);
 }
 
 async function expectLegalReadingTime(page: Page, locale: ExtraLocale, key: string) {
@@ -682,6 +703,34 @@ test('static Settings selects extra languages with localized legal and Support m
   }
 
   expect(pageErrors).toEqual([]);
+});
+
+test('static typography keeps nonnegative tracking across primary routes', async ({ page }) => {
+  const staticSite = await startStaticSiteServer();
+  try {
+    await openStaticHome(page, staticSite.baseUrl);
+    await expectNonnegativeLetterSpacing(page, '.hero h1', 'Home hero heading');
+    await expectNoHorizontalOverflow(page);
+
+    await switchToPracticeChapter(page, 'mix');
+    await expectNonnegativeLetterSpacing(page, '.practice__title', 'Practice title');
+    await expectNonnegativeLetterSpacing(page, '#quiz-stage .quiz__q', 'Practice question');
+    await expectNoHorizontalOverflow(page);
+
+    await switchToSourcesRoute(page);
+    await expectNonnegativeLetterSpacing(page, '[data-page="/sources"] h1', 'Sources title');
+    await expectNoHorizontalOverflow(page);
+
+    await switchToEbookRoute(page);
+    await expectNonnegativeLetterSpacing(
+      page,
+      '.ebook__brand [data-i18n="ebook.title"]',
+      'Ebook title label',
+    );
+    await expectNoHorizontalOverflow(page);
+  } finally {
+    await staticSite.close();
+  }
 });
 
 test('static footer extra languages render footer.app links without Roadmap dictionary-only coverage', async ({
