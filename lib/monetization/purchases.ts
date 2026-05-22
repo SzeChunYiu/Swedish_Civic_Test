@@ -68,6 +68,7 @@ export interface RemoveAdsPurchaseProvider {
 }
 
 export type RemoveAdsPurchaseStatus =
+  | 'unavailable'
   | 'purchased'
   | 'pending'
   | 'restored'
@@ -84,7 +85,7 @@ export interface RemoveAdsPurchaseResult {
 }
 
 export interface PurchaseRuntimeOptions {
-  purchaseUnavailableReason?: 'web_store_unavailable';
+  purchaseUnavailableReason?: 'web_store_unavailable' | 'native_receipt_validator_unavailable';
   provider?: RemoveAdsPurchaseProvider;
   storage?: PurchaseStorage;
 }
@@ -873,10 +874,20 @@ async function validateRemoveAdsReceipt(
   return isValidatedRemoveAdsReceipt(receiptValidation) ? receiptValidation : null;
 }
 
-export async function buyRemoveAds({
-  provider = createNativePurchaseProvider(),
-  storage = createSecureStorePurchaseStorage(),
-}: PurchaseRuntimeOptions = {}): Promise<RemoveAdsPurchaseResult> {
+export async function buyRemoveAds(
+  runtimeOptions: PurchaseRuntimeOptions = {},
+): Promise<RemoveAdsPurchaseResult> {
+  const { purchaseUnavailableReason, storage = createSecureStorePurchaseStorage() } =
+    runtimeOptions;
+  const provider = runtimeOptions.provider ?? createNativePurchaseProvider();
+
+  if (purchaseUnavailableReason) {
+    return createResult(
+      'unavailable',
+      await getFailClosedPurchaseEntitlements({ provider, storage }),
+    );
+  }
+
   await provider.connect();
 
   try {
@@ -914,10 +925,20 @@ export async function buyRemoveAds({
   }
 }
 
-export async function restoreRemoveAdsPurchase({
-  provider = createNativePurchaseProvider(),
-  storage = createSecureStorePurchaseStorage(),
-}: PurchaseRuntimeOptions = {}): Promise<RemoveAdsPurchaseResult> {
+export async function restoreRemoveAdsPurchase(
+  runtimeOptions: PurchaseRuntimeOptions = {},
+): Promise<RemoveAdsPurchaseResult> {
+  const { purchaseUnavailableReason, storage = createSecureStorePurchaseStorage() } =
+    runtimeOptions;
+  const provider = runtimeOptions.provider ?? createNativePurchaseProvider();
+
+  if (purchaseUnavailableReason) {
+    return createResult(
+      'unavailable',
+      await getFailClosedPurchaseEntitlements({ provider, storage }),
+    );
+  }
+
   await provider.connect();
 
   try {
