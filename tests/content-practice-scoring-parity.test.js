@@ -4,6 +4,7 @@ const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
+const tscScript = require.resolve('typescript/bin/tsc');
 
 test('practice scoring parity validates scoreAnswers rule cases', () => {
   const output = execFileSync(
@@ -79,4 +80,28 @@ require('./scripts/validate-content.js');
     `${result.stdout}\n${result.stderr}`,
     /scoreAnswers TypeScript signature must accept unknown runtime input/,
   );
+});
+
+test('practice scoring type contract accepts unknown runtime inputs', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      tscScript,
+      '--noEmit',
+      '--pretty',
+      'false',
+      '--strict',
+      '--skipLibCheck',
+      '--moduleResolution',
+      'bundler',
+      '--module',
+      'preserve',
+      '--target',
+      'ES2022',
+      'tests/scoreAnswers-runtime-input-type-contract.ts',
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
 });
