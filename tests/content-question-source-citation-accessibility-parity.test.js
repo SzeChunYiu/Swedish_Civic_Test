@@ -52,15 +52,27 @@ test('QuestionSourceCitation keeps wrapper accessibility and citation helper par
   const summary = parseValidationSummary();
   const source = readQuestionSourceCitationSource();
 
-  assert.equal(summary.questionSourceCitationAccessibilityRulesValidated, 15);
+  assert.equal(summary.questionSourceCitationAccessibilityRulesValidated, 23);
   assert.equal(summary.questionSourceCitationAccessibilityParityValidated, true);
-  assert.match(source, /import \{ getQuestionSourceCitation \}/);
+  assert.match(source, /import \{ Link \} from 'expo-router';/);
+  assert.match(
+    source,
+    /getQuestionPrimarySourceCitation,[\s\S]*getQuestionSourceCitation,[\s\S]*getQuestionSupplementalSourceCitations,/,
+  );
   assert.match(source, /import \{ SourceCitation \}/);
   assert.match(source, /label: 'Källhänvisning'/);
   assert.match(source, /label: 'Source citation'/);
   assert.match(
     source,
     /const sourceCitation = citationText \?\? getQuestionSourceCitation\(question, language\);/,
+  );
+  assert.match(
+    source,
+    /const primarySourceCitation =[\s\S]*getQuestionPrimarySourceCitation\(question, language\)/,
+  );
+  assert.match(
+    source,
+    /const supplementalSourceCitations = getQuestionSupplementalSourceCitations\(question, language\);/,
   );
   assert.match(
     source,
@@ -76,8 +88,14 @@ test('QuestionSourceCitation keeps wrapper accessibility and citation helper par
   assert.match(source, /\{hasCustomBody \? \(/);
   assert.match(
     source,
-    /<NativeText style=\{\[styles\.body, bodyStyle\]\}>\{sourceCitation\}<\/NativeText>/,
+    /<NativeText style=\{\[styles\.body, bodyStyle\]\}>\{primarySourceCitation\}<\/NativeText>/,
   );
+  assert.match(source, /supplementalSourceCitations\.map\(\(source\) => \(/);
+  assert.match(source, /<Link[\s\S]*accessibilityLabel=\{source\.accessibilityLabel\}/);
+  assert.match(source, /<Link[\s\S]*accessibilityRole="link"/);
+  assert.match(source, /<Link[\s\S]*href=\{source\.url as Href\}/);
+  assert.match(source, /<Link[\s\S]*target="_blank"/);
+  assert.match(source, /\{source\.label\}: \{source\.title\}[\s\S]*\{source\.meta\}/);
 });
 
 test('QuestionSourceCitation accessibility parity rejects label fallback drift', () => {
@@ -125,5 +143,17 @@ test('QuestionSourceCitation accessibility parity rejects custom body drift', ()
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /QuestionSourceCitation missing custom body rendering/,
+  );
+});
+
+test('QuestionSourceCitation accessibility parity rejects supplemental source row drift', () => {
+  const result = runValidationWithQuestionSourcePatch(
+    `replace('const supplementalSourceCitations = getQuestionSupplementalSourceCitations(question, language);', 'const supplementalSourceCitations = [];')`,
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /QuestionSourceCitation missing structured supplemental source derivation/,
   );
 });

@@ -81,7 +81,10 @@ test('quiz QuestionCard keeps question text and accessibility summary in parity'
   assert.match(source, /<Text style=\{styles\.label\}>\{difficultyLabel\}<\/Text>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.question\}>/);
   assert.match(source, /\{questionText\}/);
-  assert.match(source, /<Text style=\{styles\.sourceCitation\}>\{sourceCitation\}<\/Text>/);
+  assert.match(
+    source,
+    /<QuestionSourceCitation[\s\S]*accessibilityLabel=\{`\$\{copy\.sourceCitationLabel\}: \$\{sourceCitation\}`\}[\s\S]*question=\{question\}/,
+  );
   assert.match(source, /\{questionTranslation\}/);
   assert.match(provenanceSource, /import \{ useEffect, useMemo, useRef, useState \} from 'react';/);
   assert.match(
@@ -256,7 +259,10 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/components/quiz/QuestionCard.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('<Text style={styles.sourceCitation}>{sourceCitation}</Text>', 'null');
+      .replace(
+        '        question={question}\\n        style={styles.sourceCitationSurface}',
+        '        question={undefined}\\n        style={styles.sourceCitationSurface}',
+      );
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -270,7 +276,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /QuestionCard missing visible source citation line for accessibility parity/,
+    /QuestionCard missing visible source citation component for accessibility parity/,
   );
 });
 

@@ -603,6 +603,40 @@ test('practice question source citation prefix follows the selected language', a
   expect(consoleErrors).toEqual([]);
 });
 
+test('practice question source citation renders supplemental official source as a secondary link', async ({
+  page,
+}) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await seedFreshSettingsLanguageAndAboutSeen(page, 'en');
+  await page.goto('/quiz/q019', { waitUntil: 'networkidle' });
+  await closeLaunchAdIfPresent(page);
+  await dismissBlockingModals(page);
+
+  await expect(
+    page.getByText('Source: Sverige i fokus, Politiska val och partier, Val och röstning, p. 14', {
+      exact: true,
+    }),
+  ).toBeVisible();
+  await expect(page.getByText('Additional source: Rösträtten i svenska val')).toBeVisible();
+  await expect(
+    page.getByText('Valmyndigheten, published 2025-11-21, retrieved 2026-05-22'),
+  ).toBeVisible();
+  await expect(page.getByText(/https:\/\/www\.val\.se/)).toHaveCount(0);
+  await expect(
+    page.getByRole('link', {
+      name: /Additional source, Rösträtten i svenska val, Valmyndigheten, published 2025-11-21, retrieved 2026-05-22, https:\/\/www\.val\.se/,
+    }),
+  ).toBeVisible();
+
+  expect(consoleErrors).toEqual([]);
+});
+
 test('practice provenance source note collapses when advancing to a new question', async ({
   page,
 }) => {

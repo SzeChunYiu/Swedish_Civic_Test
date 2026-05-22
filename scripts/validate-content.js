@@ -4053,7 +4053,7 @@ const EXPECTED_FLASHCARD_ACCESSIBILITY_RULES = [
   {
     label: 'visible source citation component wiring',
     pattern:
-      /import \{ QuestionSourceCitation \}[\s\S]*<QuestionSourceCitation[\s\S]*citationText=\{sourceCitation\}[\s\S]*language=\{resolvedLanguage\}[\s\S]*question=\{question\}/,
+      /import \{ QuestionSourceCitation \}[\s\S]*<QuestionSourceCitation[\s\S]*language=\{resolvedLanguage\}[\s\S]*question=\{question\}/,
   },
 ];
 const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
@@ -4250,8 +4250,8 @@ const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
     pattern: /<Text accessibilityRole="header" style=\{styles\.question\}>/,
   },
   {
-    label: 'visible source citation line',
-    pattern: /<Text style=\{styles\.sourceCitation\}>\{sourceCitation\}<\/Text>/,
+    label: 'visible source citation component',
+    pattern: /<QuestionSourceCitation[\s\S]*accessibilityLabel=\{`\$\{copy\.sourceCitationLabel\}: \$\{sourceCitation\}`\}[\s\S]*question=\{question\}/,
   },
   {
     label: 'visible display-safe English translation',
@@ -17972,8 +17972,13 @@ function validateQuestionSourceCitationAccessibilityParity() {
 
   const expectedRules = [
     {
-      label: 'source citation helper import',
-      pattern: /import \{ getQuestionSourceCitation \}/,
+      label: 'expo link import',
+      pattern: /import \{ Link \} from 'expo-router';/,
+    },
+    {
+      label: 'source citation helper imports',
+      pattern:
+        /getQuestionPrimarySourceCitation,[\s\S]*getQuestionSourceCitation,[\s\S]*getQuestionSupplementalSourceCitations,/,
     },
     { label: 'SourceCitation wrapper import', pattern: /import \{ SourceCitation \}/ },
     { label: 'localized Swedish label', pattern: /label: 'Källhänvisning'/ },
@@ -17982,6 +17987,16 @@ function validateQuestionSourceCitationAccessibilityParity() {
       label: 'helper-derived citation fallback',
       pattern:
         /const sourceCitation = citationText \?\? getQuestionSourceCitation\(question, language\);/,
+    },
+    {
+      label: 'primary source citation rendering',
+      pattern:
+        /const primarySourceCitation =[\s\S]*getQuestionPrimarySourceCitation\(question, language\)/,
+    },
+    {
+      label: 'structured supplemental source derivation',
+      pattern:
+        /const supplementalSourceCitations = getQuestionSupplementalSourceCitations\(question, language\);/,
     },
     {
       label: 'localized label fallback',
@@ -18015,7 +18030,28 @@ function validateQuestionSourceCitationAccessibilityParity() {
     { label: 'custom body rendering', pattern: /\{hasCustomBody \? \(/ },
     {
       label: 'helper citation body rendering',
-      pattern: /<NativeText style=\{\[styles\.body, bodyStyle\]\}>\{sourceCitation\}<\/NativeText>/,
+      pattern:
+        /<NativeText style=\{\[styles\.body, bodyStyle\]\}>\{primarySourceCitation\}<\/NativeText>/,
+    },
+    {
+      label: 'structured supplemental source rows',
+      pattern: /supplementalSourceCitations\.map\(\(source\) => \(/,
+    },
+    {
+      label: 'supplemental source accessibility link labels',
+      pattern: /<Link[\s\S]*accessibilityLabel=\{source\.accessibilityLabel\}/,
+    },
+    {
+      label: 'supplemental source link role',
+      pattern: /<Link[\s\S]*accessibilityRole="link"/,
+    },
+    {
+      label: 'supplemental source external href',
+      pattern: /<Link[\s\S]*href=\{source\.url as Href\}/,
+    },
+    {
+      label: 'supplemental source visible label and meta',
+      pattern: /\{source\.label\}: \{source\.title\}[\s\S]*\{source\.meta\}/,
     },
     {
       label: 'disclaimer typography color',

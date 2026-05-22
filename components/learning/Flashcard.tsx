@@ -81,7 +81,6 @@ export function Flashcard({ front, back, language, question }: FlashcardProps) {
       </Text>
       <Text style={styles.answer}>{answer}</Text>
       <QuestionSourceCitation
-        citationText={sourceCitation}
         language={resolvedLanguage}
         question={question}
         style={styles.sourceCitationSurface}

@@ -37,7 +37,7 @@ import {
   scoreExam,
   shouldAutoSubmitExam,
 } from '../../lib/quiz/examGenerator';
-import { getQuestionDisplayText, getQuestionSourceCitation } from '../../lib/quiz/questionText';
+import { getQuestionDisplayText } from '../../lib/quiz/questionText';
 import { useMockExamAccess } from '../../lib/monetization/useMockExamAccess';
 import type { MockExamAccessReason } from '../../lib/monetization/rewardedExam';
 import { useProgressStore } from '../../lib/storage/progressStore';
@@ -962,7 +962,6 @@ export default function Screen() {
               <Text style={styles.questionText}>{getQuestionDisplayText(item, language)}</Text>
               <QuestionSourceCitation
                 bodyStyle={styles.questionSourceCitation}
-                citationText={getQuestionSourceCitation(item, language)}
                 language={language}
                 question={item}
               />
@@ -1087,7 +1086,6 @@ export default function Screen() {
             <Text style={styles.questionText}>{getQuestionDisplayText(question, language)}</Text>
             <QuestionSourceCitation
               bodyStyle={styles.questionSourceCitation}
-              citationText={getQuestionSourceCitation(question, language)}
               language={language}
               question={question}
             />

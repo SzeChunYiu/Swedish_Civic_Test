@@ -46,7 +46,9 @@ function loadTs(relativePath, exportName) {
 test('question text helper localizes fallback, source citation, and secondary text', () => {
   const {
     getQuestionDisplayText,
+    getQuestionPrimarySourceCitation,
     getQuestionSourceCitation,
+    getQuestionSupplementalSourceCitations,
     getQuestionTranslationText,
     stripSourceAuthorityPhrasing,
   } = loadTs('lib/quiz/questionText.ts');
@@ -87,6 +89,21 @@ test('question text helper localizes fallback, source citation, and secondary te
     getQuestionSourceCitation(question, 'en'),
     'Source: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, p. 5; Additional source: Rösträtten i svenska val, Valmyndigheten, published 2025-11-21, retrieved 2026-05-22, https://www.val.se/det-svenska-valsystemet/sa-funkar-rostning-i-svenska-val/rostratten-i-svenska-val',
   );
+  assert.equal(
+    getQuestionPrimarySourceCitation(question, 'en'),
+    'Source: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, p. 5',
+  );
+  assert.deepEqual(getQuestionSupplementalSourceCitations(question, 'en'), [
+    {
+      accessibilityLabel:
+        'Additional source, Rösträtten i svenska val, Valmyndigheten, published 2025-11-21, retrieved 2026-05-22, https://www.val.se/det-svenska-valsystemet/sa-funkar-rostning-i-svenska-val/rostratten-i-svenska-val',
+      label: 'Additional source',
+      meta: 'Valmyndigheten, published 2025-11-21, retrieved 2026-05-22',
+      publisher: 'Valmyndigheten',
+      title: 'Rösträtten i svenska val',
+      url: 'https://www.val.se/det-svenska-valsystemet/sa-funkar-rostning-i-svenska-val/rostratten-i-svenska-val',
+    },
+  ]);
   assert.equal(getQuestionSourceCitation(undefined, 'sv'), 'Källhänvisning saknas');
   assert.equal(getQuestionSourceCitation(undefined, 'en'), 'Source citation unavailable');
 });
