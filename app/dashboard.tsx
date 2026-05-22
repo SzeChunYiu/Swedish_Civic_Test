@@ -18,6 +18,10 @@ import {
   perChapterProgress,
   xpSparkline,
 } from '../lib/learning/dashboardStats';
+import {
+  formatDashboardSummaryAccessibilityLabel,
+  formatDashboardSummaryLine,
+} from '../lib/learning/dashboardSummaryCopy';
 import { formatDashboardCompletedDate } from '../lib/learning/dashboardDateFormat';
 import { buildDashboardProgressSnapshot } from '../lib/learning/dashboardProgressSnapshot';
 import { calculateStreakWithFreeze } from '../lib/learning/streakWithFreeze';
@@ -183,9 +187,14 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
     },
     subtitle: 'Se var du har varit aktiv, vilka kapitel du täcker och hur din svit växer.',
     summaryAccessibilityLabel: (questionsAnswered, touchedChapters, unresolved) =>
-      `Framstegsöversikt: ${questionsAnswered} svar den här veckan, ${touchedChapters} kapitel provade, ${unresolved} olösta misstag.`,
+      formatDashboardSummaryAccessibilityLabel(
+        'sv',
+        questionsAnswered,
+        touchedChapters,
+        unresolved,
+      ),
     summaryLine: (questionsAnswered, touchedChapters, unresolved) =>
-      `${questionsAnswered} svar den här veckan · ${touchedChapters} kapitel provade · ${unresolved} olösta misstag`,
+      formatDashboardSummaryLine('sv', questionsAnswered, touchedChapters, unresolved),
     title: 'Framstegsöversikt',
   },
   en: {
@@ -267,9 +276,14 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
     subtitle:
       'See where you have been active, which chapters you cover, and how your streak grows.',
     summaryAccessibilityLabel: (questionsAnswered, touchedChapters, unresolved) =>
-      `Progress dashboard: ${questionsAnswered} answers this week, ${touchedChapters} chapters tried, ${unresolved} unresolved mistakes.`,
+      formatDashboardSummaryAccessibilityLabel(
+        'en',
+        questionsAnswered,
+        touchedChapters,
+        unresolved,
+      ),
     summaryLine: (questionsAnswered, touchedChapters, unresolved) =>
-      `${questionsAnswered} answers this week · ${touchedChapters} chapters tried · ${unresolved} unresolved mistakes`,
+      formatDashboardSummaryLine('en', questionsAnswered, touchedChapters, unresolved),
     title: 'Progress dashboard',
   },
 };
