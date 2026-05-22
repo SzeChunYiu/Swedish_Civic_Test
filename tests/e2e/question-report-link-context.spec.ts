@@ -119,6 +119,12 @@ test('support question report context shows rejected direct URL params without r
   await dismissBlockingModals(page);
 
   await expect(page.getByRole('heading', { name: 'Support och återkoppling' })).toBeVisible();
+  const rejectedNotice = page.getByRole('region', {
+    name: 'Frågerapportens länk kunde inte användas',
+  });
+  await expect(rejectedNotice).toBeVisible();
+  await expect(rejectedNotice).toHaveAttribute('aria-live', 'polite');
+  await expect(rejectedNotice).toBeFocused();
   await expect(page.getByText('Frågekontexten kunde inte användas')).toBeVisible();
   await expect(
     page.getByText(
@@ -165,6 +171,12 @@ test('support question report context shows English rejected-context notice with
   await dismissBlockingModals(page);
 
   await expect(page.getByRole('heading', { name: 'Support and feedback' })).toBeVisible();
+  const rejectedNotice = page.getByRole('region', {
+    name: 'Question report link context could not be used',
+  });
+  await expect(rejectedNotice).toBeVisible();
+  await expect(rejectedNotice).toHaveAttribute('aria-live', 'polite');
+  await expect(rejectedNotice).toBeFocused();
   await expect(page.getByText('Question context could not be used')).toBeVisible();
   await expect(
     page.getByText(
@@ -185,6 +197,12 @@ test('support question report context rejects unsupported language-only params',
   await dismissBlockingModals(page);
 
   await expect(page.getByRole('heading', { name: 'Support and feedback' })).toBeVisible();
+  const rejectedNotice = page.getByRole('region', {
+    name: 'Question report link context could not be used',
+  });
+  await expect(rejectedNotice).toBeVisible();
+  await expect(rejectedNotice).toHaveAttribute('aria-live', 'polite');
+  await expect(rejectedNotice).toBeFocused();
   await expect(page.getByText('Question context could not be used')).toBeVisible();
   await expect(
     page.getByText(

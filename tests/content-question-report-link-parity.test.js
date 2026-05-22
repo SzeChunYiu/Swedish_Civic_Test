@@ -62,6 +62,11 @@ const supportModuleMocks = {
       return 'sv';
     },
   },
+  '../lib/scaffold/publicUrls': {
+    publicUrls: {
+      support: 'https://support.example.test',
+    },
+  },
   '../lib/theme': {
     colors: {
       border: '#d6d3d1',
@@ -241,7 +246,7 @@ test('question report CTA is wired from question surfaces to support context', (
   const supportSource = fs.readFileSync(path.join(repoRoot, 'app/support.tsx'), 'utf8');
   const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
 
-  assert.equal(summary.questionReportLinkRulesValidated, 29);
+  assert.equal(summary.questionReportLinkRulesValidated, 30);
   assert.equal(summary.questionReportLinkParityValidated, true);
   assert.match(componentSource, /Rapportera den här frågan/);
   assert.match(componentSource, /Report this question/);
@@ -272,6 +277,11 @@ test('question report CTA is wired from question surfaces to support context', (
   assert.match(supportSource, /Question context could not be used/);
   assert.match(supportSource, /avvisade värden/);
   assert.match(supportSource, /rejected values are not shown/);
+  assert.match(supportSource, /const noticeRef = useRef<View \| null>\(null\);/);
+  assert.match(supportSource, /noticeRef\.current\?\.focus\?\.\(\);/);
+  assert.match(supportSource, /accessibilityLiveRegion="polite"/);
+  assert.match(supportSource, /aria-live="polite"/);
+  assert.match(supportSource, /tabIndex: -1/);
   assert.match(supportSource, /getQuestionReportContextResult/);
   assert.match(supportSource, /getReportScreenSearchParam/);
   assert.match(supportSource, /hasQuestionReportSearchParams/);
@@ -689,5 +699,39 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /QuestionReportLink missing support rejected context notice/,
+  );
+});
+
+test('question report parity rejects removing rejected-context focus announcement', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+process.argv.push('--focus-question-report-link-parity');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/support.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('noticeRef.current?.focus?.();', '')
+      .replace('accessibilityLiveRegion="polite"\\n      ', '')
+      .replace('aria-live="polite"\\n      ', '')
+      .replace('{...(Platform.OS === \\'web\\' ? { tabIndex: -1 } : {})}', '{}');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /QuestionReportLink missing support rejected context focus announcement/,
   );
 });
