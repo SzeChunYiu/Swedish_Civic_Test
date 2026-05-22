@@ -7,16 +7,21 @@ const test = require('node:test');
 const repoRoot = path.resolve(__dirname, '..');
 
 test('exam submission finality stays aligned with the result route', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-exam-submission-finality-parity'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
 
   const summary = JSON.parse(match[0]);
   const examRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
 
+  assert.deepEqual(Object.keys(summary), ['examSubmissionFinalityParityValidated']);
   assert.equal(summary.examSubmissionFinalityParityValidated, true);
   assert.match(examRoute, /Submitted results are final/);
   assert.match(
@@ -50,6 +55,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-exam-submission-finality-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -60,5 +66,9 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /exam result screen must tell users submitted results are final/,
+  );
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /exam result screen must not offer a back-to-answers control after submission/,
   );
 });

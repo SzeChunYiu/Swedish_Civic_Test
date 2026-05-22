@@ -1821,16 +1821,31 @@ test('exam submission finality parity uses focused content validation routing', 
     path.join(repoRoot, 'tests/content-progress-schema-parity.test.js'),
     'utf8',
   );
+  const examSubmissionTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-exam-submission-finality-parity.test.js'),
+    'utf8',
+  );
   const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('examSubmissionFinalityParity');
 
   assert.ok(registryEntry, 'exam submission finality focus mode must be registered');
   assert.deepEqual(registryEntry.flags, ['--focus-exam-submission-finality-parity']);
   assert.deepEqual(registryEntry.summaryKeys, ['examSubmissionFinalityParityValidated']);
   assert.match(progressSchemaTestSource, /--focus-exam-submission-finality-parity/);
+  assert.match(examSubmissionTestSource, /--focus-exam-submission-finality-parity/);
   assert.match(
     progressSchemaTestSource,
     /Object\.keys\(summary\)[\s\S]*\['examSubmissionFinalityParityValidated'\]/,
     'progress schema parity must assert the focused summary stays isolated',
+  );
+  assert.match(
+    examSubmissionTestSource,
+    /Object\.keys\(summary\)[\s\S]*\['examSubmissionFinalityParityValidated'\]/,
+    'exam submission standalone parity must assert the focused summary stays isolated',
+  );
+  assert.doesNotMatch(
+    examSubmissionTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'exam submission standalone parity must not route through full content validation',
   );
 
   const focusBlockMatch = validatorSource.match(
