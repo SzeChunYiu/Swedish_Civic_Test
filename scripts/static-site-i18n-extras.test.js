@@ -178,6 +178,16 @@ const expectedFooterRoadmapLabels = {
   so: 'Qorshaha horumarinta',
   ti: 'መደብ ምዕባለ',
 };
+const renderedFooterAppLinks = new Map([
+  ['footer.app.1', '#/'],
+  ['footer.app.2', '#/practice'],
+  ['footer.app.3', '#/ebook'],
+  ['footer.app.4', '#/mock'],
+]);
+const allowedUnusedFooterAppKeys = {
+  'footer.app.5':
+    'Roadmap copy is translated for the planned footer slot, but no public roadmap route ships yet.',
+};
 const expectedCentralKurdishLegalReadingTimes = {
   'privacy.meta3.v': '~3 خولەک',
   'terms.meta3.v': '~2 خولەک خوێندنەوە',
@@ -266,6 +276,74 @@ function withoutAllowedMarkupAndTokens(value) {
       ' ',
     );
 }
+
+function collectDictionaryFooterAppKeys(sourcePath) {
+  const source = fs.readFileSync(path.join(repoRoot, sourcePath), 'utf8');
+  const keys = new Set();
+
+  for (const match of source.matchAll(/['"](footer\.app\.\d+)['"]\s*:/g)) {
+    keys.add(match[1]);
+  }
+
+  return keys;
+}
+
+function collectRenderedFooterAppLinks() {
+  const html = fs.readFileSync(path.join(repoRoot, 'site/index.html'), 'utf8');
+  const footerStart = html.indexOf('<footer class="footer">');
+  assert.notEqual(footerStart, -1, 'site/index.html must include the static footer');
+  const footerEnd = html.indexOf('</footer>', footerStart);
+  assert.notEqual(footerEnd, -1, 'site/index.html static footer must close');
+  const footerHtml = html.slice(footerStart, footerEnd + '</footer>'.length);
+  const links = new Map();
+
+  for (const match of footerHtml.matchAll(
+    /<a\b(?=[^>]*\bhref="([^"]+)")(?=[^>]*\bdata-i18n="(footer\.app\.\d+)")[^>]*>/g,
+  )) {
+    links.set(match[2], match[1]);
+  }
+
+  return links;
+}
+
+test('static footer renders kept footer.app dictionary keys or documents unused keys', () => {
+  const renderedLinks = collectRenderedFooterAppLinks();
+  const allowedUnusedKeys = new Set(Object.keys(allowedUnusedFooterAppKeys));
+  const dictionarySources = {
+    'site/app.js': collectDictionaryFooterAppKeys('site/app.js'),
+    'site/i18n-extras.js': collectDictionaryFooterAppKeys('site/i18n-extras.js'),
+  };
+
+  assert.deepEqual(
+    [...renderedLinks.entries()].sort(),
+    [...renderedFooterAppLinks.entries()].sort(),
+    'footer.app rendered links must stay tied to real shipped footer routes',
+  );
+
+  for (const [key, rationale] of Object.entries(allowedUnusedFooterAppKeys)) {
+    assert.equal(typeof rationale, 'string', `${key} unused-key rationale must be text`);
+    assert.notEqual(rationale.trim(), '', `${key} unused-key rationale must explain the gap`);
+  }
+
+  for (const [sourcePath, keys] of Object.entries(dictionarySources)) {
+    assert.ok(keys.size > 0, `${sourcePath} must define footer.app dictionary keys`);
+
+    for (const key of keys) {
+      assert.ok(
+        renderedLinks.has(key) || allowedUnusedKeys.has(key),
+        `${sourcePath} keeps ${key}, but it is neither rendered in the footer nor allowlisted`,
+      );
+    }
+
+    for (const key of renderedLinks.keys()) {
+      assert.ok(keys.has(key), `${sourcePath} must translate rendered footer key ${key}`);
+    }
+
+    for (const key of allowedUnusedKeys) {
+      assert.ok(keys.has(key), `${sourcePath} must retain allowlisted footer key ${key}`);
+    }
+  }
+});
 
 test('Somali static-site high-frequency labels use reviewed local copy', () => {
   const extra = loadExtraI18n();
