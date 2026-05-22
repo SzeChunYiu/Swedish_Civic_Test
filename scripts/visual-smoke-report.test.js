@@ -120,18 +120,16 @@ test('visual smoke uses the shared route filename contract and blocking modal ov
   );
   assert.match(
     visualSmokeSource,
-    /import \{[\s\S]*blockingModalOverlayLocator,[\s\S]*dismissBlockingModals,[\s\S]*seedFreshFirstRunSettingsLanguage,[\s\S]*\} from '\.\/browserLaunch';/,
+    /import \{[\s\S]*blockingModalOverlayLocator[\s\S]*dismissBlockingModals[\s\S]*seedFreshFirstRunSettingsLanguage[\s\S]*\} from '\.\/browserLaunch';/,
   );
   assert.match(visualSmokeSource, /page\.locator\(blockingModalOverlayLocator\)/);
   assert.match(
     visualSmokeSource,
-    /visual smoke dismissal helper closes forced first-run guide and language picker blockers/,
+    /shared modal dismissal helper closes forced first-run guide and language picker/,
   );
-  assert.match(visualSmokeSource, /seedFreshFirstRunSettingsLanguage\(page, 'en'\)/);
-  assert.match(visualSmokeSource, /page\.goto\('\/settings'/);
-  assert.match(visualSmokeSource, /dispatchEvent\('click'\)/);
-  assert.match(visualSmokeSource, /dismissal\.firstRunAboutDismissed\)\.toBe\(true\)/);
-  assert.match(visualSmokeSource, /dismissal\.languagePickerDismissed\)\.toBe\(true\)/);
+  assert.match(visualSmokeSource, /seedFreshFirstRunSettingsLanguage\(page, 'sv'\)/);
+  assert.match(visualSmokeSource, /firstRunDismissal\.firstRunAboutDismissed/);
+  assert.match(visualSmokeSource, /languagePickerDismissal\.languagePickerDismissed/);
   assert.doesNotMatch(
     visualSmokeSource,
     /page\.locator\('\[role="dialog"\]\[aria-modal="true"\]'\)/,
@@ -375,6 +373,14 @@ test('visual smoke manifest matches the shared route list and screenshot filenam
     assert.ok(fs.statSync(screenshotPath).size > 10_000, `${route.file} should not be empty`);
     assert.equal(route.sha256, sha256File(screenshotPath), `${route.file} hash should match`);
   }
+  assert.ok(
+    routes.some((route) => route.firstRunAboutDismissed === false),
+    'ordinary visual-smoke baselines may record no first-run dismissal when no first-run guide is present',
+  );
+  assert.ok(
+    routes.some((route) => route.languagePickerDismissed === false),
+    'ordinary visual-smoke baselines may record no language-picker dismissal when no picker is present',
+  );
 
   const unexplainedDuplicates = findUnexplainedVisualSmokeDuplicateReports(routes);
 
