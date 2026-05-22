@@ -8440,3 +8440,100 @@ html[dir='rtl'] .lang-menu {
     grid-template-columns: auto 1fr auto;
   }
 }
+
+/* ------------------------------------------------------------------
+   TOAST + STATUS BOX OPTIMIZATION ROUND
+   Makes transient feedback and small status messages feel like clear,
+   contained UI notices rather than loose floating text.
+------------------------------------------------------------------ */
+
+#smt-toast-host {
+  max-width: min(calc(100vw - 28px), 520px);
+  width: max-content;
+}
+
+.smt-toast {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(254, 204, 0, 0.16), transparent 120px),
+    var(--card-surface);
+  border: 1px solid var(--card-border);
+  border-radius: 18px;
+  box-shadow: var(--card-shadow-hover);
+  color: var(--ink);
+  isolation: isolate;
+  max-width: 100%;
+  overflow: hidden;
+  padding: 13px 18px 13px 22px;
+  position: relative;
+  text-align: left;
+}
+
+.smt-toast::before {
+  background: var(--card-rail);
+  content: '';
+  inset: 0 auto 0 0;
+  opacity: 0.86;
+  position: absolute;
+  width: 5px;
+}
+
+.smt-toast--streak {
+  background:
+    linear-gradient(90deg, rgba(254, 204, 0, 0.2), rgba(254, 204, 0, 0.06)),
+    var(--card-surface);
+  border-color: rgba(217, 169, 0, 0.38);
+  color: var(--ink);
+}
+
+.smt-toast--win {
+  background:
+    linear-gradient(90deg, rgba(0, 106, 167, 0.14), rgba(30, 135, 75, 0.1)),
+    var(--card-surface);
+  border-color: rgba(0, 106, 167, 0.28);
+  color: var(--ink);
+}
+
+.purchase__status,
+.set-hint,
+.modal__hint {
+  background: rgba(0, 106, 167, 0.07);
+  border: 1px solid rgba(0, 106, 167, 0.12);
+  border-radius: 14px;
+  display: block;
+  line-height: 1.45;
+  padding: 10px 12px;
+}
+
+.purchase__status {
+  margin-top: 18px;
+}
+
+.modal__hint {
+  max-width: 32ch;
+}
+
+:root[data-theme='dark'] .smt-toast,
+:root[data-theme='dark'] .smt-toast--streak,
+:root[data-theme='dark'] .smt-toast--win {
+  background: var(--card-surface);
+  border-color: var(--card-border);
+  color: var(--ink);
+}
+
+:root[data-theme='dark'] .purchase__status,
+:root[data-theme='dark'] .set-hint,
+:root[data-theme='dark'] .modal__hint {
+  background: rgba(255, 255, 255, 0.045);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 520px) {
+  #smt-toast-host {
+    align-items: stretch !important;
+    width: min(calc(100vw - 28px), 520px);
+  }
+  .smt-toast {
+    border-radius: 16px;
+    width: 100%;
+  }
+}
