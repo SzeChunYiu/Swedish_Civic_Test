@@ -624,6 +624,9 @@ const QUESTION_LARGEST_LAKES_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhich fact is correct regarding which are Sweden's three largest lakes\b/i,
   /\bWhat is correct regarding what are Sweden's three largest lakes\b/i,
 ];
+const QUESTION_NATIONAL_MINORITIES_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bWhich fact is correct regarding which groups are Sweden's five national minorities\b/i,
+];
 const QUESTION_LARGEST_LAKES_ENGLISH_FRAGMENT_STEM_PATTERNS = [
   /^Vänern, Vättern, and Mälaren\.?$/i,
   /^The Baltic Sea, Kattegat, and Skagerrak\.?$/i,
@@ -5650,6 +5653,7 @@ function translationNaturalnessGuardParityIsValidated() {
     questionPublicSectorEnglishNaturalnessValidated === publishedQuestions &&
     questionPublicServiceBroadcasterEnglishNaturalnessValidated === publishedQuestions &&
     questionLargestLakesEnglishNaturalnessValidated === publishedQuestions &&
+    questionNationalMinoritiesEnglishNaturalnessValidated === publishedQuestions &&
     questionRecordYearsEnglishNaturalnessValidated === publishedQuestions &&
     questionLuciaExplanationRoleScaffoldValidated === publishedQuestions &&
     questionGoodFridayEnglishNaturalnessValidated === publishedQuestions &&
@@ -7285,6 +7289,13 @@ function findQuestionLargestLakesEnglishNaturalnessIssue(question) {
     QUESTION_LARGEST_LAKES_ENGLISH_FRAGMENT_STEM_PATTERNS.find((pattern) =>
       pattern.test(question.questionEn || ''),
     )
+  );
+}
+
+function findQuestionNationalMinoritiesEnglishNaturalnessIssue(question) {
+  if (!question.tags?.includes('national-minorities')) return null;
+  return QUESTION_NATIONAL_MINORITIES_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(question.questionEn || ''),
   );
 }
 
@@ -9695,6 +9706,7 @@ let questionMayDayEnglishNaturalnessValidated = 0;
 let questionPublicSectorEnglishNaturalnessValidated = 0;
 let questionPublicServiceBroadcasterEnglishNaturalnessValidated = 0;
 let questionLargestLakesEnglishNaturalnessValidated = 0;
+let questionNationalMinoritiesEnglishNaturalnessValidated = 0;
 let questionRecordYearsEnglishNaturalnessValidated = 0;
 let questionLuciaExplanationRoleScaffoldValidated = 0;
 let questionGoodFridayEnglishNaturalnessValidated = 0;
@@ -23898,6 +23910,10 @@ function validatePublishedQuestionNaturalnessGuards() {
         `${label} uses stilted largest-lakes English wording`,
       ],
       [
+        findQuestionNationalMinoritiesEnglishNaturalnessIssue(question),
+        `${label} uses stilted national-minorities English wording`,
+      ],
+      [
         findQuestionRecordYearsEnglishNaturalnessIssue(question),
         `${label} uses stilted record-years English wording`,
       ],
@@ -24197,6 +24213,8 @@ if (Array.isArray(questions)) {
         findQuestionPublicServiceBroadcasterEnglishNaturalnessIssue(question);
       const largestLakesEnglishNaturalnessIssue =
         findQuestionLargestLakesEnglishNaturalnessIssue(question);
+      const nationalMinoritiesEnglishNaturalnessIssue =
+        findQuestionNationalMinoritiesEnglishNaturalnessIssue(question);
       const recordYearsEnglishNaturalnessIssue =
         findQuestionRecordYearsEnglishNaturalnessIssue(question);
       const councilOfEuropeWorkForEnglishNaturalnessIssue =
@@ -24271,6 +24289,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses stilted largest-lakes English wording`);
       } else {
         questionLargestLakesEnglishNaturalnessValidated += 1;
+      }
+      if (nationalMinoritiesEnglishNaturalnessIssue) {
+        fail(`${label} uses stilted national-minorities English wording`);
+      } else {
+        questionNationalMinoritiesEnglishNaturalnessValidated += 1;
       }
       if (recordYearsEnglishNaturalnessIssue) {
         fail(`${label} uses stilted record-years English wording`);
@@ -24900,6 +24923,7 @@ console.log(
       questionPublicSectorEnglishNaturalnessValidated,
       questionPublicServiceBroadcasterEnglishNaturalnessValidated,
       questionLargestLakesEnglishNaturalnessValidated,
+      questionNationalMinoritiesEnglishNaturalnessValidated,
       questionRecordYearsEnglishNaturalnessValidated,
       questionLuciaExplanationRoleScaffoldValidated,
       questionGoodFridayEnglishNaturalnessValidated,

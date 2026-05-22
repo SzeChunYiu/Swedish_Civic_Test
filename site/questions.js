@@ -33150,8 +33150,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding which groups are Sweden's five national minorities?",
-      "sv": "Vilken uppgift stämmer när det gäller vilka Sveriges fem nationella minoriteter är?"
+      "en": "Which fact is correct about Sweden's five national minorities?",
+      "sv": "Vilken uppgift stämmer om Sveriges fem nationella minoriteter?"
     },
     "opts": [
       {

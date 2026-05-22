@@ -1848,7 +1848,7 @@ function generatedSingleChoicePromptFromSourceSv(
       : `Vilken regel gäller för ${match[1]}?`;
   }
 
-  match = source.id === 'q008' ? q.match(/^Vilka är (.+)$/i) : null;
+  match = q.match(/^Vilka är (.+)$/i);
   if (match && variant === 'judgement') {
     return `Vilken uppgift stämmer om ${match[1]}?`;
   }
@@ -1997,6 +1997,11 @@ function generatedSingleChoicePromptFromSourceEn(
   }
 
   match = q.match(/^What are (.+)$/i);
+  if (match && variant === 'judgement') {
+    return `Which fact is correct about ${match[1]}?`;
+  }
+
+  match = q.match(/^Which groups are (.+)$/i);
   if (match && variant === 'judgement') {
     return `Which fact is correct about ${match[1]}?`;
   }
