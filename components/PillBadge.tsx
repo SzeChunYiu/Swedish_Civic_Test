@@ -4,7 +4,7 @@ import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
 
 import { colors, radius, space, typography } from '../lib/theme';
 
-export type PillBadgeVariant = 'neutral' | 'accent' | 'success' | 'warning';
+export type PillBadgeVariant = 'neutral' | 'accent' | 'success' | 'warning' | 'danger';
 
 /**
  * Defaults: `variant="neutral"`, `accessible=true`,
@@ -78,6 +78,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.incorrectBg,
     borderColor: colors.warning,
   },
+  danger: {
+    backgroundColor: colors.dangerSoft,
+    borderColor: colors.danger,
+  },
   label: {
     ...typography.badge,
     textTransform: 'uppercase',
@@ -93,5 +97,8 @@ const styles = StyleSheet.create({
   },
   warningLabel: {
     color: colors.warning,
+  },
+  dangerLabel: {
+    color: colors.danger,
   },
 });

@@ -60,13 +60,34 @@ test('default mock exam timer stays in parity with configured duration', () => {
 
   const summary = JSON.parse(match[0]);
   const config = loadTs('data/mockExamConfig.ts', 'defaultMockExamConfig');
-  const { formatExamTime, shouldAutoSubmitExam } = loadTs('lib/quiz/examGenerator.ts');
+  const { formatExamTime, getMockExamTimerUrgency, shouldAutoSubmitExam } = loadTs(
+    'lib/quiz/examGenerator.ts',
+  );
+  const examRouteSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+  const statusBarSource = fs.readFileSync(
+    path.join(repoRoot, 'components/MockExamStatusBar.tsx'),
+    'utf8',
+  );
   const totalSeconds = config.durationMinutes * 60;
 
   assert.equal(summary.mockExamTimerParityValidated, true);
   assert.equal(formatExamTime(totalSeconds), expectedFormattedTime(totalSeconds));
+  assert.equal(getMockExamTimerUrgency({ remainingSeconds: totalSeconds, totalSeconds }), 'steady');
+  assert.equal(
+    getMockExamTimerUrgency({ remainingSeconds: totalSeconds * 0.5, totalSeconds }),
+    'warning',
+  );
+  assert.equal(
+    getMockExamTimerUrgency({ remainingSeconds: totalSeconds * 0.25 - 1, totalSeconds }),
+    'danger',
+  );
+  assert.match(examRouteSource, /<MockExamStatusBar/);
+  assert.match(examRouteSource, /timerUrgency=\{timerUrgency\}/);
+  assert.match(statusBarSource, /Time running low/);
+  assert.match(statusBarSource, /Kritiskt lite tid kvar/);
   assert.equal(
     shouldAutoSubmitExam({
+      examActive: true,
       remainingSeconds: totalSeconds,
       submitted: false,
       questionCount: config.questionCount,
@@ -75,6 +96,7 @@ test('default mock exam timer stays in parity with configured duration', () => {
   );
   assert.equal(
     shouldAutoSubmitExam({
+      examActive: true,
       remainingSeconds: 0,
       submitted: false,
       questionCount: config.questionCount,

@@ -27,6 +27,7 @@ depth — feels like a well-made Nordic civic product, not a flag.
 | border | #dbe3ec | standard border |
 | success/correctBg | #1e874b / #e6f4ec | correct answer |
 | warning/incorrectBg | #c77700 / #fdf0dd | incorrect (amber, distinct from gold) |
+| danger/dangerSoft | #b42318 / #fde8e5 | critical timer and destructive urgency |
 | navy | #003a5c | deep blue, secondary brand / headers |
 
 Rules: blue is the ONLY primary; gold ONLY for reward/highlight (never body

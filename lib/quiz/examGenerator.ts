@@ -53,6 +53,13 @@ export type ExamAutoSubmitState = {
   questionCount: number;
 };
 
+export type MockExamTimerUrgency = 'steady' | 'warning' | 'danger';
+
+export type MockExamTimerUrgencyInput = {
+  remainingSeconds: unknown;
+  totalSeconds: unknown;
+};
+
 export type BuildMockExamQuizSessionInput = {
   answers: ExamAnswerMap;
   completedAt: string;
@@ -87,6 +94,19 @@ export function shouldAutoSubmitExam({
   if (examActive !== true || submitted !== false) return false;
   if (!isFiniteNumber(remainingSeconds) || !isFiniteNumber(questionCount)) return false;
   return questionCount > 0 && remainingSeconds <= 0;
+}
+
+export function getMockExamTimerUrgency({
+  remainingSeconds,
+  totalSeconds,
+}: MockExamTimerUrgencyInput): MockExamTimerUrgency {
+  if (!isFiniteNumber(totalSeconds) || totalSeconds <= 0) return 'danger';
+  if (!isFiniteNumber(remainingSeconds)) return 'danger';
+
+  const ratio = normalizeRemainingSeconds(remainingSeconds) / Math.max(1, Math.floor(totalSeconds));
+  if (ratio < 0.25) return 'danger';
+  if (ratio <= 0.5) return 'warning';
+  return 'steady';
 }
 
 function normalizeTimeSpentSeconds(value: unknown): number {

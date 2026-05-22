@@ -29,6 +29,8 @@ const correctBg = successSoft;
 const warning = '#9a5c00' satisfies ColorToken;
 const warningSoft = '#fdf0dd' satisfies ColorToken;
 const incorrectBg = warningSoft;
+const danger = '#b42318' satisfies ColorToken;
+const dangerSoft = '#fde8e5' satisfies ColorToken;
 const teal = '#0e7c8a' satisfies ColorToken;
 const navy = '#003a5c' satisfies ColorToken;
 const purple = '#4b3f7a' satisfies ColorToken;
@@ -68,6 +70,8 @@ export const colors = {
   warning,
   warningSoft,
   incorrectBg,
+  danger,
+  dangerSoft,
   teal,
   navy,
   purple,
@@ -115,6 +119,8 @@ export const darkColors = {
   warning: '#ffd083',
   warningSoft: '#3b2a10',
   incorrectBg: '#3b2a10',
+  danger: '#ffb4ab',
+  dangerSoft: '#4a1512',
   teal: '#77d6e2',
   navy: '#80c7f2',
   purple: '#b9a8ff',

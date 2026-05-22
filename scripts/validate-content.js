@@ -2082,7 +2082,7 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
   sv: [
     'Övningsprov',
     'Tidsgräns ${durationMinutes} minuter · ${questionCount} UHR-baserade frågor · inga annonser under provet',
-    'Tid kvar ${remainingTime} · ${questionCount} UHR-baserade frågor · inga annonser under provet',
+    '${questionCount} UHR-baserade frågor · inga annonser under provet',
     'Fråga ${questionNumber} i övningsprovet',
     'Provåtkomst',
     'Kontrollerar provåtkomst.',
@@ -2120,7 +2120,7 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
   en: [
     'Mock exam',
     'Time limit ${durationMinutes} minutes · ${questionCount} UHR-based questions · no ads during exam',
-    'Time left ${remainingTime} · ${questionCount} UHR-based questions · no ads during exam',
+    '${questionCount} UHR-based questions · no ads during exam',
     'Question ${questionNumber} in mock exam',
     'Exam access',
     'Checking mock exam access.',
@@ -4647,6 +4647,8 @@ const EXPECTED_THEME_COLOR_TOKENS = [
   'warning',
   'warningSoft',
   'incorrectBg',
+  'danger',
+  'dangerSoft',
   'teal',
   'navy',
   'purple',
@@ -4756,6 +4758,8 @@ const REQUIRED_THEME_CONTRAST_PAIRS = [
   ['success', 'successSoft'],
   ['warning', 'surface'],
   ['warning', 'warningSoft'],
+  ['danger', 'surface'],
+  ['danger', 'dangerSoft'],
 ];
 const EXPECTED_PROGRESS_QUESTION_FIELDS = [
   'questionId',
@@ -9539,6 +9543,7 @@ const buildExamReviewItems = examGeneratorModule.buildExamReviewItems;
 const scoreExam = examGeneratorModule.scoreExam;
 const buildExamChapterBreakdownItems = examGeneratorModule.buildExamChapterBreakdownItems;
 const formatExamTime = examGeneratorModule.formatExamTime;
+const getMockExamTimerUrgency = examGeneratorModule.getMockExamTimerUrgency;
 const shouldAutoSubmitExam = examGeneratorModule.shouldAutoSubmitExam;
 const scoringModule = loadTs('lib/quiz/scoring.ts');
 const scoreAnswers = scoringModule.scoreAnswers;
@@ -11333,6 +11338,9 @@ if (typeof buildExamChapterBreakdownItems !== 'function') {
   fail('buildExamChapterBreakdownItems export is not a function');
 }
 if (typeof formatExamTime !== 'function') fail('formatExamTime export is not a function');
+if (typeof getMockExamTimerUrgency !== 'function') {
+  fail('getMockExamTimerUrgency export is not a function');
+}
 if (typeof shouldAutoSubmitExam !== 'function') {
   fail('shouldAutoSubmitExam export is not a function');
 }
@@ -13522,14 +13530,30 @@ function expectedFormattedExamTime(totalSeconds) {
 
 function validateMockExamTimerParity(config) {
   if (!config || typeof config !== 'object') return;
-  if (typeof formatExamTime !== 'function' || typeof shouldAutoSubmitExam !== 'function') return;
+  if (
+    typeof formatExamTime !== 'function' ||
+    typeof getMockExamTimerUrgency !== 'function' ||
+    typeof shouldAutoSubmitExam !== 'function'
+  ) {
+    return;
+  }
 
   const totalSeconds = config.durationMinutes * 60;
   let valid = true;
+  let examRoute = '';
+  let statusBar = '';
 
   function reject(message) {
     valid = false;
     fail(message);
+  }
+
+  try {
+    examRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+    statusBar = fs.readFileSync(path.join(repoRoot, 'components/MockExamStatusBar.tsx'), 'utf8');
+  } catch (error) {
+    reject(`mock exam timer source could not be read: ${error.message}`);
+    return;
   }
 
   if (!Number.isInteger(totalSeconds) || totalSeconds < 60) {
@@ -13582,6 +13606,45 @@ function validateMockExamTimerParity(config) {
   if (formatExamTime(-1) !== '00:00') {
     reject('formatExamTime must clamp negative remaining time to 00:00');
   }
+  const timerUrgencyCases = [
+    {
+      expected: 'steady',
+      input: { remainingSeconds: totalSeconds, totalSeconds },
+      label: 'start time',
+    },
+    {
+      expected: 'steady',
+      input: { remainingSeconds: Math.floor(totalSeconds * 0.5) + 1, totalSeconds },
+      label: 'above half time',
+    },
+    {
+      expected: 'warning',
+      input: { remainingSeconds: Math.floor(totalSeconds * 0.5), totalSeconds },
+      label: 'half time',
+    },
+    {
+      expected: 'warning',
+      input: { remainingSeconds: Math.ceil(totalSeconds * 0.25), totalSeconds },
+      label: 'quarter time',
+    },
+    {
+      expected: 'danger',
+      input: { remainingSeconds: Math.ceil(totalSeconds * 0.25) - 1, totalSeconds },
+      label: 'below quarter time',
+    },
+    {
+      expected: 'danger',
+      input: { remainingSeconds: Number.NaN, totalSeconds },
+      label: 'malformed remaining time',
+    },
+  ];
+  for (const { expected, input, label } of timerUrgencyCases) {
+    const actual = getMockExamTimerUrgency(input);
+    if (actual !== expected) {
+      reject(`getMockExamTimerUrgency returned ${actual} for ${label}, expected ${expected}`);
+      break;
+    }
+  }
   for (const malformedRemainingSeconds of [
     Number.NaN,
     Number.POSITIVE_INFINITY,
@@ -13609,6 +13672,78 @@ function validateMockExamTimerParity(config) {
       reject('shouldAutoSubmitExam must ignore malformed runtime timer state');
       break;
     }
+  }
+
+  const routeSnippets = [
+    [
+      "import { MockExamStatusBar } from '../../components/MockExamStatusBar';",
+      'active mock exam route must import the status bar',
+    ],
+    [
+      'getMockExamTimerUrgency',
+      'active mock exam route must derive timer urgency from the quiz helper',
+    ],
+    [
+      'const totalExamSeconds = defaultMockExamConfig.durationMinutes * 60;',
+      'active mock exam route must derive total timer seconds from mock exam config',
+    ],
+    [
+      'const timerUrgency = getMockExamTimerUrgency({',
+      'active mock exam route must derive urgency from remaining and total seconds',
+    ],
+    [
+      'totalSeconds: totalExamSeconds',
+      'active mock exam route urgency must use configured total seconds',
+    ],
+    ['<MockExamStatusBar', 'active mock exam route must render the status bar'],
+    ['timerUrgency={timerUrgency}', 'status bar must receive computed timer urgency'],
+    [
+      'timeValue={formatExamTime(remainingSeconds)}',
+      'status bar must keep the existing formatted timer text visible',
+    ],
+    [
+      'submitDisabled={!canSubmit}',
+      'status bar submit action must preserve all-answers-before-submit gating',
+    ],
+  ];
+  for (const [snippet, message] of routeSnippets) {
+    if (!examRoute.includes(snippet)) reject(message);
+  }
+
+  const statusBarSnippets = [
+    ['type MockExamStatusBarCopy = {', 'status bar must keep typed localized copy'],
+    ['timerUrgency: Record<MockExamTimerUrgency, string>;', 'status bar must type urgency copy'],
+    ["steady: 'Gott om tid'", 'status bar must include Swedish steady timer copy'],
+    ["warning: 'Tiden börjar ta slut'", 'status bar must include Swedish low-time timer copy'],
+    ["danger: 'Kritiskt lite tid kvar'", 'status bar must include Swedish critical timer copy'],
+    ["steady: 'Time steady'", 'status bar must include English steady timer copy'],
+    ["warning: 'Time running low'", 'status bar must include English low-time timer copy'],
+    ["danger: 'Critical time remaining'", 'status bar must include English critical timer copy'],
+    [
+      'const timerBadgeVariant: Record<MockExamTimerUrgency, PillBadgeVariant>',
+      'status bar must map urgency states to non-hardcoded badge variants',
+    ],
+    ["danger: 'danger'", 'status bar danger timer state must use the danger badge variant'],
+    [
+      'style={[styles.bar, styles[`${resolvedTimerUrgency}TimeBar`], style]}',
+      'status bar must expose urgency through tokenized styles',
+    ],
+    [
+      'backgroundColor: colors.dangerSoft',
+      'status bar danger timer state must use the semantic danger surface token',
+    ],
+    [
+      'borderColor: colors.danger',
+      'status bar danger timer state must use the semantic danger border token',
+    ],
+    [
+      'accessibilityLabel={`${resolvedTimeLabel}: ${timeValue}. ${resolvedTimerUrgencyLabel}`}',
+      'status bar timer badge must expose non-color urgency copy',
+    ],
+    ['{resolvedTimerUrgencyLabel}', 'status bar must render visible non-color timer urgency copy'],
+  ];
+  for (const [snippet, message] of statusBarSnippets) {
+    if (!statusBar.includes(snippet)) reject(message);
   }
 
   if (valid) mockExamTimerParityValidated = true;

@@ -496,8 +496,8 @@ test('exam route keeps flag-for-review state local to the current attempt', () =
     /accessibilityState=\{\{\s*selected:\s*(?:isFlagged|Boolean\(flaggedQuestionIds\[question\.id\]\))\s*\}\}/,
   );
   assert.match(examRouteSource, /minHeight: space\[6\]/);
-  assert.match(examRouteSource, /copy\.flagQuestionAccessibilityLabel\(index \+ 1\)/);
-  assert.match(examRouteSource, /copy\.unflagQuestionAccessibilityLabel\(index \+ 1\)/);
+  assert.match(examRouteSource, /copy\.flagQuestionAccessibilityLabel\(questionNumber\)/);
+  assert.match(examRouteSource, /copy\.unflagQuestionAccessibilityLabel\(questionNumber\)/);
   assert.match(examRouteSource, /\{flaggedQuestionIds\[item\.questionId\] \? \(/);
   assert.match(examRouteSource, /<Badge tone="warm">\{copy\.flaggedQuestionLabel\}<\/Badge>/);
   assert.doesNotMatch(
@@ -600,6 +600,27 @@ test('formatExamTime renders remaining seconds as mm:ss', () => {
     undefined,
   ]) {
     assert.equal(formatExamTime(malformedRemainingSeconds), '00:00');
+  }
+});
+
+test('getMockExamTimerUrgency follows the mock exam color-shift thresholds', () => {
+  const { getMockExamTimerUrgency } = loadTs('lib/quiz/examGenerator.ts');
+  const totalSeconds = 1800;
+
+  assert.equal(getMockExamTimerUrgency({ remainingSeconds: totalSeconds, totalSeconds }), 'steady');
+  assert.equal(getMockExamTimerUrgency({ remainingSeconds: 901, totalSeconds }), 'steady');
+  assert.equal(getMockExamTimerUrgency({ remainingSeconds: 900, totalSeconds }), 'warning');
+  assert.equal(getMockExamTimerUrgency({ remainingSeconds: 450, totalSeconds }), 'warning');
+  assert.equal(getMockExamTimerUrgency({ remainingSeconds: 449, totalSeconds }), 'danger');
+  assert.equal(getMockExamTimerUrgency({ remainingSeconds: 0, totalSeconds }), 'danger');
+
+  for (const malformedInput of [
+    { remainingSeconds: Number.NaN, totalSeconds },
+    { remainingSeconds: '900', totalSeconds },
+    { remainingSeconds: 900, totalSeconds: 0 },
+    { remainingSeconds: 900, totalSeconds: Number.POSITIVE_INFINITY },
+  ]) {
+    assert.equal(getMockExamTimerUrgency(malformedInput), 'danger');
   }
 });
 
