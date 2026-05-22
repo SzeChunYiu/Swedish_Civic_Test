@@ -650,6 +650,10 @@ const QUESTION_LARGEST_LAKES_ENGLISH_NATURALNESS_PATTERNS = [
 const QUESTION_NATIONAL_MINORITIES_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhich fact is correct regarding which groups are Sweden's five national minorities\b/i,
 ];
+const QUESTION_NESTED_WHICH_JUDGEMENT_PROMPT_PATTERNS = [
+  /\bVilken uppgift stämmer när det gäller\s+vilk/i,
+  /\bWhich fact is correct regarding\s+(?:which|in which)\b/i,
+];
 const QUESTION_LARGEST_LAKES_ENGLISH_FRAGMENT_STEM_PATTERNS = [
   /^Vänern, Vättern, and Mälaren\.?$/i,
   /^The Baltic Sea, Kattegat, and Skagerrak\.?$/i,
@@ -7601,6 +7605,13 @@ function findQuestionNationalMinoritiesEnglishNaturalnessIssue(question) {
   if (!question.tags?.includes('national-minorities')) return null;
   return QUESTION_NATIONAL_MINORITIES_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
     pattern.test(question.questionEn || ''),
+  );
+}
+
+function findQuestionNestedWhichJudgementPromptIssue(question) {
+  if (!isGeneratedPublishedVariant(question) || !question.tags?.includes('judgement')) return null;
+  return QUESTION_NESTED_WHICH_JUDGEMENT_PROMPT_PATTERNS.find((pattern) =>
+    pattern.test(`${question.questionSv || ''}\n${question.questionEn || ''}`),
   );
 }
 
@@ -25382,6 +25393,10 @@ function validatePublishedQuestionNaturalnessGuards() {
         `${label} uses stilted national-minorities English wording`,
       ],
       [
+        findQuestionNestedWhichJudgementPromptIssue(question),
+        `${label} uses a nested which-question judgement prompt`,
+      ],
+      [
         findQuestionNewYearsEveDateEnglishNaturalnessIssue(question),
         `${label} uses redundant New Year's Eve date English wording`,
       ],
@@ -25693,6 +25708,7 @@ if (Array.isArray(questions)) {
         findQuestionLargestLakesEnglishNaturalnessIssue(question);
       const nationalMinoritiesEnglishNaturalnessIssue =
         findQuestionNationalMinoritiesEnglishNaturalnessIssue(question);
+      const nestedWhichJudgementPromptIssue = findQuestionNestedWhichJudgementPromptIssue(question);
       const newYearsEveDateEnglishNaturalnessIssue =
         findQuestionNewYearsEveDateEnglishNaturalnessIssue(question);
       const luciaDayDateEnglishNaturalnessIssue =
@@ -25785,6 +25801,9 @@ if (Array.isArray(questions)) {
         fail(`${label} uses stilted national-minorities English wording`);
       } else {
         questionNationalMinoritiesEnglishNaturalnessValidated += 1;
+      }
+      if (nestedWhichJudgementPromptIssue) {
+        fail(`${label} uses a nested which-question judgement prompt`);
       }
       if (newYearsEveDateEnglishNaturalnessIssue) {
         fail(`${label} uses redundant New Year's Eve date English wording`);

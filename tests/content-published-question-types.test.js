@@ -537,15 +537,16 @@ test('private welfare source and exports use natural tax-funding English', () =>
       privateWelfareTaxFundingStiltedEnglishPattern.test(textForQuestion(question)),
     )
     .map((question) => question.id);
-  const sourceQuestions = generatedSiteBank.filter(
-    (question) => question.questionProvenance === 'uhr',
-  );
   const q155 = generatedSiteBank.find((question) => question.id === 'q155');
+  const trueStatementId = generatedQuestionId(sourceQuestions, 'q155', 'trueStatement');
+  const falseStatementId = generatedQuestionId(sourceQuestions, 'q155', 'falseStatement');
+  const trueStatement = generatedSiteBank.find((question) => question.id === trueStatementId);
+  const falseStatement = generatedSiteBank.find((question) => question.id === falseStatementId);
   const welfareVariantIds = [
     'q155',
     generatedQuestionId(sourceQuestions, 'q155', 'singleChoice'),
-    generatedQuestionId(sourceQuestions, 'q155', 'trueStatement'),
-    generatedQuestionId(sourceQuestions, 'q155', 'falseStatement'),
+    trueStatementId,
+    falseStatementId,
     generatedQuestionId(sourceQuestions, 'q155', 'judgement'),
   ];
   const welfareVariants = generatedSiteBank.filter((question) =>
@@ -5080,6 +5081,61 @@ test('national-minorities generated judgement exports natural English in canonic
   assert.equal(csvColumns[3], 'Vilken uppgift stämmer om Sveriges fem nationella minoriteter?');
   assert.equal(csvColumns[4], "Which fact is correct about Sweden's five national minorities?");
   assert.doesNotMatch(`${csvColumns[3]}\n${csvColumns[4]}`, stalePattern);
+});
+
+test('generated judgement prompts do not nest source which-questions', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const byId = new Map(generatedSiteBank.map((question) => [question.id, question]));
+  const actualById = new Map(Array.from(actualSiteBank).map((question) => [question.id, question]));
+  const expectedPrompts = {
+    [generatedQuestionId(sourceQuestions, 'q005', 'judgement')]: [
+      'Vilken uppgift stämmer om Sveriges största öar?',
+      "Which fact is correct about Sweden's largest islands?",
+    ],
+    [generatedQuestionId(sourceQuestions, 'q030', 'judgement')]: [
+      'Vilken uppgift stämmer om kraven för att rösta i Sveriges riksdagsval?',
+      'Which fact is correct about the requirements for voting in Sweden’s Riksdag election?',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q073', 'judgement')]: [
+      'Vilken uppgift stämmer om exempel på kommunal välfärd?',
+      'Which fact is correct about examples of municipal welfare?',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q079', 'judgement')]: [
+      'Vilken uppgift stämmer om folkrörelserna som var bland de största i Sverige under 1800-talet?',
+      'Which fact is correct about the popular movements that were among the largest in Sweden during the 19th century?',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q080', 'judgement')]: [
+      'Vilken uppgift stämmer om året då det första riksdagsvalet där både kvinnor och män fick rösta och kvinnor kunde bli riksdagsledamöter?',
+      'Which fact is correct about the year when the first Riksdag election was held with both women and men could vote and women could become members of the Riksdag?',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q093', 'judgement')]: [
+      'Vilken uppgift stämmer om lagen för religionsfrihetens slutliga genombrott 1951?',
+      'Which fact is correct about the law for the final breakthrough for religious freedom in 1951?',
+    ],
+  };
+  const stalePattern =
+    /Vilken uppgift stämmer när det gäller\s+vilk|Which fact is correct regarding\s+(?:which|in which)/i;
+  const csvRows = contentQuestionBankCsvRowsById(Object.keys(expectedPrompts));
+
+  for (const [id, [expectedSv, expectedEn]] of Object.entries(expectedPrompts)) {
+    const generated = byId.get(id);
+    const actual = actualById.get(id);
+    const csvColumns = csvRows.get(id);
+    assert.ok(generated, `${id} generated judgement variant should be published`);
+    assert.ok(actual, `${id} static judgement variant should be exported`);
+    assert.ok(csvColumns, `${id} judgement variant should be exported to CSV`);
+    assert.equal(generated?.q.sv, expectedSv);
+    assert.equal(generated?.q.en, expectedEn);
+    assert.equal(actual?.q.sv, expectedSv);
+    assert.equal(actual?.q.en, expectedEn);
+    assert.equal(csvColumns?.[3], expectedSv);
+    assert.equal(csvColumns?.[4], expectedEn);
+    assert.doesNotMatch(`${expectedSv}\n${expectedEn}`, stalePattern);
+  }
 });
 
 test('published question schema rejects generated true/false bare answer phrases', () => {
