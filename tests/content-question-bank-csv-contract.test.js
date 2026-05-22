@@ -100,6 +100,42 @@ test('question-bank CSV keeps q128 holiday date options appositive', () => {
   );
 });
 
+test('question-bank CSV keeps rule-of-law wording learner-facing while allowing internal tags', () => {
+  const rowsById = loadQuestionBankRowsById();
+  const relevantIds = [
+    'q014',
+    'q041',
+    'q232',
+    'q233',
+    'q234',
+    'q235',
+    'q340',
+    'q341',
+    'q342',
+    'q343',
+  ];
+
+  for (const id of relevantIds) {
+    const row = rowsById.get(id);
+    assert.ok(row, `${id} should exist in content/question-bank.csv`);
+
+    const learnerFacingEnglish = [
+      row.questionEn,
+      row.explanationEn,
+      row.optionEn,
+      row.correctOptionEn,
+    ].join(' ');
+
+    assert.doesNotMatch(
+      learnerFacingEnglish,
+      /\blegal certainty\b/i,
+      `${id} must not expose literal legal certainty English`,
+    );
+    assert.match(learnerFacingEnglish, /\bthe rule of law\b/i, `${id} should use rule of law`);
+    assert.match(row.tags, /\blegal-certainty\b/, `${id} keeps the internal tag`);
+  }
+});
+
 test('question provenance runtime guard validates invalid tags and provenance fallbacks', () => {
   const output = runQuestionProvenanceRuntimeValidation();
   const match = output.match(/\{[\s\S]*\}/);

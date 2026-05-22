@@ -643,6 +643,7 @@ const QUESTION_SUFFRAGE_1921_ENGLISH_NATURALNESS_PATTERNS = [
   /\b1921 is the year of the election asked about here\b/i,
   /\bthe year of the election asked about here\b/i,
 ];
+const QUESTION_RULE_OF_LAW_ENGLISH_NATURALNESS_PATTERNS = [/\blegal certainty\b/i];
 const QUESTION_SOURCE_CRITICISM_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhat does it mean to be source-critical\b/i,
   /\b(?:Being|To be) source-critical means\b/i,
@@ -5683,6 +5684,7 @@ function translationNaturalnessGuardParityIsValidated() {
     questionGoodFridayEnglishNaturalnessValidated === publishedQuestions &&
     questionReferendumAdvisorySwedishNaturalnessValidated === publishedQuestions &&
     questionSourceCriticismEnglishNaturalnessValidated === publishedQuestions &&
+    questionRuleOfLawEnglishNaturalnessValidated === publishedQuestions * 3 &&
     questionReligiousFreedomParallelismValidated === publishedQuestions * 2 &&
     somaliGeographyNaturalnessParityValidated === true &&
     somaliHolidayFoodNaturalnessParityValidated === true
@@ -7222,6 +7224,80 @@ function siteQuestionEnglishText(question) {
   ]
     .filter((value) => typeof value === 'string')
     .join(' ');
+}
+
+function questionLearnerFacingEnglishText(question) {
+  return [
+    question.questionEn,
+    question.explanationEn,
+    ...(Array.isArray(question.options) ? question.options.map((option) => option.textEn) : []),
+  ]
+    .filter((value) => typeof value === 'string')
+    .join(' ');
+}
+
+function textHasRuleOfLawEnglishNaturalnessIssue(text) {
+  return QUESTION_RULE_OF_LAW_ENGLISH_NATURALNESS_PATTERNS.some((pattern) => pattern.test(text));
+}
+
+function csvRowLearnerFacingEnglishText(row, header) {
+  return ['questionEn', 'explanationEn', 'optionEn', 'correctOptionEn']
+    .map((field) => row[header.indexOf(field)])
+    .filter((value) => typeof value === 'string')
+    .join(' ');
+}
+
+function findQuestionRuleOfLawEnglishNaturalnessIssue(question) {
+  return QUESTION_RULE_OF_LAW_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(questionLearnerFacingEnglishText(question)),
+  );
+}
+
+function validateQuestionRuleOfLawEnglishNaturalness() {
+  const expectedPublishedQuestions = countPublishedQuestions();
+
+  if (Array.isArray(questions)) {
+    questions
+      .filter((question) => question.reviewStatus === 'published')
+      .forEach((question) => {
+        if (findQuestionRuleOfLawEnglishNaturalnessIssue(question)) {
+          fail(`${question.id} uses literal legal certainty English for rättssäkerhet`);
+        } else {
+          questionRuleOfLawEnglishNaturalnessValidated += 1;
+        }
+      });
+  }
+
+  const csvRows = parseCsvRows(
+    fs.readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8'),
+  );
+  const csvHeader = csvRows[0] || [];
+  csvRows.slice(1).forEach((row) => {
+    const id = row[0] || 'unknown CSV row';
+    if (textHasRuleOfLawEnglishNaturalnessIssue(csvRowLearnerFacingEnglishText(row, csvHeader))) {
+      fail(`${id} uses literal legal certainty English in content/question-bank.csv`);
+    } else {
+      questionRuleOfLawEnglishNaturalnessValidated += 1;
+    }
+  });
+
+  const staticBank = parseStaticSiteQuestionBank(
+    fs.readFileSync(path.join(repoRoot, 'site/questions.js'), 'utf8'),
+  );
+  staticBank.questions.forEach((question) => {
+    if (textHasRuleOfLawEnglishNaturalnessIssue(siteQuestionEnglishText(question))) {
+      fail(`${question.id} uses literal legal certainty English in site/questions.js`);
+    } else {
+      questionRuleOfLawEnglishNaturalnessValidated += 1;
+    }
+  });
+
+  const expectedRows = expectedPublishedQuestions * 3;
+  if (questionRuleOfLawEnglishNaturalnessValidated !== expectedRows) {
+    fail(
+      `rule-of-law English naturalness coverage validated ${questionRuleOfLawEnglishNaturalnessValidated} rows, expected ${expectedRows}`,
+    );
+  }
 }
 
 function textHasReligiousFreedom1951EnglishNaturalnessIssue(text) {
@@ -9190,6 +9266,9 @@ function validateQuestionSchema(question, index) {
   if (findQuestionReligiousFreedom1951EnglishNaturalnessIssue(question)) {
     reject(`${label} uses stilted 1951 religious-freedom English wording`);
   }
+  if (findQuestionRuleOfLawEnglishNaturalnessIssue(question)) {
+    reject(`${label} uses literal legal certainty English for rättssäkerhet`);
+  }
   if (findQuestionPublicSectorEnglishNaturalnessIssue(question)) {
     reject(`${label} uses stilted public-sector English wording`);
   }
@@ -9760,6 +9839,7 @@ let questionLuciaExplanationRoleScaffoldValidated = 0;
 let questionGoodFridayEnglishNaturalnessValidated = 0;
 let questionReferendumAdvisorySwedishNaturalnessValidated = 0;
 let questionSourceCriticismEnglishNaturalnessValidated = 0;
+let questionRuleOfLawEnglishNaturalnessValidated = 0;
 let derivedCivicStatementPromptMirrorValidated = 0;
 let generatedWhyReasonTargetStemsValidated = 0;
 let generatedWhyReasonTargetStemParityValidated = false;
@@ -24063,6 +24143,10 @@ function validatePublishedQuestionNaturalnessGuards() {
         `${label} uses stilted 1951 religious-freedom English wording`,
       ],
       [
+        findQuestionRuleOfLawEnglishNaturalnessIssue(question),
+        `${label} uses literal legal certainty English for rättssäkerhet`,
+      ],
+      [
         findQuestionPublicSectorEnglishNaturalnessIssue(question),
         `${label} uses stilted public-sector English wording`,
       ],
@@ -24609,6 +24693,7 @@ if (Array.isArray(questions)) {
 
 validateQuestionReligiousFreedomParallelismArtifactText();
 validateQuestionReligiousFreedom1951Naturalness();
+validateQuestionRuleOfLawEnglishNaturalness();
 
 validateMockExamConfig(
   defaultMockExamConfig,
@@ -25128,6 +25213,7 @@ console.log(
       questionGoodFridayEnglishNaturalnessValidated,
       questionReferendumAdvisorySwedishNaturalnessValidated,
       questionSourceCriticismEnglishNaturalnessValidated,
+      questionRuleOfLawEnglishNaturalnessValidated,
       derivedCivicStatementPromptMirrorValidated,
       questionReligiousFreedomParallelismValidated,
       questionFalseAnswerExplanationsValidated,
