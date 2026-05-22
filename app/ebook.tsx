@@ -228,9 +228,15 @@ export default function EbookScreen() {
         {article.sections.map((section) => {
           const sectionSources = getEbookSectionSourceNotes(section);
           const sectionHeading = getLocalizedText(section.heading, language);
+          const sectionElementId = `ebook-section-${article.staticChapterId}-${section.blockId}`;
 
           return (
-            <View key={getLocalizedText(section.heading, 'en')} style={styles.sectionBlock}>
+            <View
+              key={section.blockId}
+              nativeID={sectionElementId}
+              style={styles.sectionBlock}
+              testID={sectionElementId}
+            >
               <Text accessibilityRole="header" style={styles.sectionHeading}>
                 {sectionHeading}
               </Text>
@@ -246,7 +252,7 @@ export default function EbookScreen() {
                 </Text>
                 {sectionSources.map((source) => (
                   <SourceNoteLine
-                    key={`${sectionHeading}-${source.key}`}
+                    key={`${section.blockId}-${source.key}`}
                     language={language}
                     source={source}
                   />
