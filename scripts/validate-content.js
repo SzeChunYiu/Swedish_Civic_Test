@@ -12210,6 +12210,16 @@ function validateQuestionDisclaimerParity() {
   });
 }
 
+if (process.argv.includes('--focus-question-disclaimer-parity')) {
+  validateQuestionDisclaimerParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    questionDisclaimerRoutesValidated,
+    questionDisclaimerCopyValidated,
+  });
+  process.exit(0);
+}
+
 function validateMockExamConfigTypeSchemaParity() {
   let valid = true;
   let mockExamConfigSource = '';

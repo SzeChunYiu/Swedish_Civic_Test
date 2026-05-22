@@ -5,15 +5,16 @@ const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
-const expectedDisclaimerRoutes = [
+const QUESTION_DISCLAIMER_FOCUS_FLAG = '--focus-question-disclaimer-parity';
+const expectedQuestionDisclaimerRoutes = [
   'app/onboarding.tsx',
-  'app/(tabs)/learn.tsx',
   'app/(tabs)/practice.tsx',
   'app/(tabs)/exam.tsx',
   'app/(tabs)/mistakes.tsx',
   'app/chapter/[chapterId].tsx',
   'app/quiz/[sessionId].tsx',
 ];
+const supplementalDisclaimerRoutes = ['app/(tabs)/learn.tsx'];
 const expectedDisclaimerCounts = new Map([
   ['app/onboarding.tsx', 1],
   ['app/(tabs)/learn.tsx', 1],
@@ -26,7 +27,6 @@ const expectedDisclaimerCounts = new Map([
 const expectedQuestionCardRoutes = [
   'app/(tabs)/practice.tsx',
   'app/(tabs)/mistakes.tsx',
-  'app/chapter/[chapterId].tsx',
   'app/quiz/[sessionId].tsx',
 ];
 
@@ -37,7 +37,7 @@ function countQuestionDisclaimerOccurrences(source) {
 test('question disclaimer coverage stays aligned across study surfaces', () => {
   const output = execFileSync(
     process.execPath,
-    ['scripts/validate-content.js', '--focus-learn-flashcard-source'],
+    ['scripts/validate-content.js', QUESTION_DISCLAIMER_FOCUS_FLAG],
     {
       cwd: repoRoot,
       encoding: 'utf8',
@@ -52,8 +52,9 @@ test('question disclaimer coverage stays aligned across study surfaces', () => {
     'utf8',
   );
 
-  assert.equal(summary.questionDisclaimerRoutesValidated, expectedDisclaimerRoutes.length);
+  assert.equal(summary.questionDisclaimerRoutesValidated, expectedQuestionDisclaimerRoutes.length);
   assert.equal(summary.questionDisclaimerCopyValidated, true);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
   assert.match(disclaimerSource, /useSettingsStore/);
   assert.match(disclaimerSource, /Oberoende studieverktyg/);
   assert.match(disclaimerSource, /inte riktiga provfrågor/);
@@ -61,7 +62,7 @@ test('question disclaimer coverage stays aligned across study surfaces', () => {
   assert.match(disclaimerSource, /Not official/);
   assert.match(disclaimerSource, /not real exam questions/);
 
-  for (const routeFile of expectedDisclaimerRoutes) {
+  for (const routeFile of [...expectedQuestionDisclaimerRoutes, ...supplementalDisclaimerRoutes]) {
     const source = fs.readFileSync(path.join(repoRoot, routeFile), 'utf8');
     assert.match(source, /QuestionDisclaimer/);
     assert.match(source, /<QuestionDisclaimer(?:\s+language=\{language\})?\s*\/>/);
@@ -96,6 +97,28 @@ test('question disclaimer stays separate from source citation rendering', () => 
     );
   }
 
+  const chapterSource = fs.readFileSync(path.join(repoRoot, 'app/chapter/[chapterId].tsx'), 'utf8');
+  assert.match(
+    chapterSource,
+    /const renderListHeader = \(\) => \([\s\S]*<QuestionDisclaimer \/>[\s\S]*\);/,
+    'app/chapter/[chapterId].tsx should render the disclaimer from the FlatList header',
+  );
+  assert.match(
+    chapterSource,
+    /const renderQuestionItem:[\s\S]*<QuestionCard question=\{question\} language=\{language\} \/>/,
+    'app/chapter/[chapterId].tsx should render question cards from the item renderer',
+  );
+  assert.match(
+    chapterSource,
+    /ListHeaderComponent=\{renderListHeader\}/,
+    'app/chapter/[chapterId].tsx should pass the disclaimer header to FlatList before items',
+  );
+  assert.match(
+    chapterSource,
+    /renderItem=\{renderQuestionItem\}/,
+    'app/chapter/[chapterId].tsx should keep question cards in the FlatList item renderer',
+  );
+
   const learnSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/learn.tsx'), 'utf8');
   assert.ok(
     learnSource.search(/<QuestionDisclaimer(?:\s+language=\{language\})?\s*\/>/) <
@@ -121,7 +144,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-learn-flashcard-source');
+process.argv.push('${QUESTION_DISCLAIMER_FOCUS_FLAG}');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -149,7 +172,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-learn-flashcard-source');
+process.argv.push('${QUESTION_DISCLAIMER_FOCUS_FLAG}');
 require('./scripts/validate-content.js');
 `,
     ],
