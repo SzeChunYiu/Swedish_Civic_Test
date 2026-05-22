@@ -15,10 +15,47 @@ function has(relativePath, pattern) {
   return pattern.test(read(relativePath));
 }
 
+function getGeneratedAt() {
+  if (process.env.UX_SIM_GENERATED_AT) return process.env.UX_SIM_GENERATED_AT;
+
+  try {
+    return JSON.parse(fs.readFileSync(jsonPath, 'utf8')).generatedAt;
+  } catch {
+    return new Date().toISOString();
+  }
+}
+
+function formatMarkdownTable(columns, rows) {
+  const widths = columns.map((column, columnIndex) =>
+    Math.max(column.label.length, ...rows.map((row) => String(row[columnIndex]).length)),
+  );
+  const formatCell = (value, columnIndex) => {
+    const text = String(value);
+    return columns[columnIndex].align === 'right'
+      ? text.padStart(widths[columnIndex], ' ')
+      : text.padEnd(widths[columnIndex], ' ');
+  };
+  const header = `| ${columns
+    .map((column, columnIndex) => formatCell(column.label, columnIndex))
+    .join(' | ')} |`;
+  const separator = `| ${columns
+    .map((column, columnIndex) =>
+      column.align === 'right'
+        ? `${'-'.repeat(widths[columnIndex] - 1)}:`
+        : '-'.repeat(widths[columnIndex]),
+    )
+    .join(' | ')} |`;
+  const body = rows.map((row) => `| ${row.map(formatCell).join(' | ')} |`);
+
+  return [header, separator, ...body].join('\n');
+}
+
 const featureEvidence = {
-  animatedProgress: has('components/ui/ProgressBar.tsx', /Animated\.timing/),
+  animatedProgress: has('components/ProgressBar.tsx', /Animated\.timing/),
   bookmarkPractice: has('app/(tabs)/practice.tsx', /toggleBookmark/),
-  bookmarkReview: has('app/(tabs)/mistakes.tsx', /bookmarkedQuestions/),
+  bookmarkReview:
+    has('app/(tabs)/mistakes.tsx', /bookmarkedReviewQuestions/) &&
+    has('app/(tabs)/mistakes.tsx', /questionProgress\[question\.id\]\?\.bookmarked/),
   sourceReference: has('app/(tabs)/practice.tsx', /UHRReferenceCard/),
   audioSupport: has('app/(tabs)/practice.tsx', /AudioButton/),
   googleAdsNative: fs.existsSync(
@@ -28,8 +65,13 @@ const featureEvidence = {
     has('components/monetization/AdBanner.tsx', /WEB_AD_FALLBACK_CONSENT_DECISION/) &&
     has('lib/monetization/adCopy.ts', /Sponsored ad preview/),
   homeNextAction: has('app/(tabs)/home.tsx', /nextAction/),
-  homeFeedbackCard: has('app/(tabs)/home.tsx', /10,000-learner feedback pass/),
-  settingsLink: has('app/(tabs)/profile.tsx', /Adjust settings/),
+  homeFeedbackCard:
+    has('app/(tabs)/home.tsx', /feedbackTitle/) &&
+    has('app/(tabs)/home.tsx', /feedbackLinkAccessibilityLabel/) &&
+    has('app/(tabs)/home.tsx', /href="\/mistakes"/),
+  settingsLink:
+    has('app/(tabs)/profile.tsx', /openSettingsAccessibilityLabel/) &&
+    has('app/(tabs)/profile.tsx', /pathname: '\/settings'/),
 };
 
 const personas = [
@@ -217,7 +259,7 @@ const topPainPoints = Object.entries(painPointCounts)
   .map(([label, count]) => ({ label, count }));
 
 const report = {
-  generatedAt: new Date().toISOString(),
+  generatedAt: getGeneratedAt(),
   simulatedUserCount: users.length,
   featureEvidence,
   averageSatisfaction,
@@ -233,16 +275,26 @@ const report = {
 fs.mkdirSync(reportDir, { recursive: true });
 fs.writeFileSync(jsonPath, `${JSON.stringify(report, null, 2)}\n`);
 
-const segmentRows = personas
-  .map((persona) => {
-    const matching = users.filter((user) => user.segment === persona.segment);
-    const avg = matching.reduce((sum, user) => sum + user.satisfaction, 0) / matching.length;
-    return `| ${persona.segment} | ${matching.length} | ${avg.toFixed(2)} |`;
-  })
-  .join('\n');
+const segmentRows = personas.map((persona) => {
+  const matching = users.filter((user) => user.segment === persona.segment);
+  const avg = matching.reduce((sum, user) => sum + user.satisfaction, 0) / matching.length;
+  return [persona.segment, matching.length, avg.toFixed(2)];
+});
 const painRows = topPainPoints.length
-  ? topPainPoints.map((item) => `| ${item.label} | ${item.count} |`).join('\n')
-  : '| None | 0 |';
+  ? topPainPoints.map((item) => [item.label, item.count])
+  : [['None', 0]];
+const segmentTable = formatMarkdownTable(
+  [
+    { label: 'Segment' },
+    { align: 'right', label: 'Users' },
+    { align: 'right', label: 'Avg satisfaction' },
+  ],
+  segmentRows,
+);
+const painTable = formatMarkdownTable(
+  [{ label: 'Pain point' }, { align: 'right', label: 'Users affected' }],
+  painRows,
+);
 
 fs.writeFileSync(
   markdownPath,
@@ -253,8 +305,8 @@ fs.writeFileSync(
     `- Average satisfaction: ${averageSatisfaction}/5\n` +
     `- Average task completion: ${averageTaskCompletion}%\n` +
     `- Recommendation: ${report.recommendationSummary}\n\n` +
-    `## Segment results\n\n| Segment | Users | Avg satisfaction |\n|---|---:|---:|\n${segmentRows}\n\n` +
-    `## Remaining pain points\n\n| Pain point | Users affected |\n|---|---:|\n${painRows}\n\n` +
+    `## Segment results\n\n${segmentTable}\n\n` +
+    `## Remaining pain points\n\n${painTable}\n\n` +
     `## Feature evidence checked\n\n\`\`\`json\n${JSON.stringify(featureEvidence, null, 2)}\n\`\`\`\n`,
 );
 
