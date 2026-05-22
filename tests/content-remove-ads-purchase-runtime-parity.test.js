@@ -27,6 +27,10 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
     path.join(repoRoot, 'lib/monetization/purchases.ts'),
     'utf8',
   );
+  const canonicalTimestampSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/time/canonicalTimestamp.ts'),
+    'utf8',
+  );
   const placementCtaSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
     'utf8',
@@ -57,8 +61,15 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.match(purchaseSource, /interface StoredRemoveAdsEntitlementRecord/);
   assert.match(purchaseSource, /receiptValidationStatus: 'valid'/);
   assert.match(purchaseSource, /receiptValidatedAt: string/);
-  assert.match(purchaseSource, /function isCanonicalUtcIsoTimestamp/);
-  assert.match(purchaseSource, /parsed\.toISOString\(\) === value/);
+  assert.match(
+    purchaseSource,
+    /import \{ isCanonicalUtcIsoTimestamp \} from '\.\.\/time\/canonicalTimestamp';/,
+  );
+  assert.match(purchaseSource, /export \{ isCanonicalUtcIsoTimestamp \};/);
+  assert.doesNotMatch(purchaseSource, /function isCanonicalUtcIsoTimestamp/);
+  assert.doesNotMatch(purchaseSource, /new Date\(value\)/);
+  assert.match(canonicalTimestampSource, /export function parseCanonicalUtcIsoTimestamp/);
+  assert.match(canonicalTimestampSource, /parsed\.toISOString\(\) !== value/);
   assert.doesNotMatch(purchaseSource, /function isValidIsoDate/);
   assert.match(purchaseSource, /parseStoredRemoveAdsEntitlementRecord\(storedValue\)/);
   assert.doesNotMatch(purchaseSource, /storedValue === STORED_TRUE/);
@@ -183,6 +194,38 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
       awaitedCalls: ['await buyRemoveAds(', 'await restoreRemoveAdsPurchase('],
       surfaceName: 'PremiumBanner',
     }),
+  );
+});
+
+test('Remove Ads purchase runtime parity rejects private canonical timestamp parser drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/monetization/purchases.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace("import { isCanonicalUtcIsoTimestamp } from '../time/canonicalTimestamp';\\n", '')
+      .replace("export { isCanonicalUtcIsoTimestamp };\\n\\n", "function isCanonicalUtcIsoTimestamp(value) {\\n  if (typeof value !== 'string' || !/^\\\\d{4}-\\\\d{2}-\\\\d{2}T\\\\d{2}:\\\\d{2}:\\\\d{2}\\\\.\\\\d{3}Z$/.test(value)) return false;\\n  const parsed = new Date(value);\\n  return Number.isFinite(parsed.getTime()) && parsed.toISOString() === value;\\n}\\n\\n");
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-remove-ads-purchase-runtime-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /Remove Ads timestamp validation must use the shared canonical UTC helper instead of a purchases\.ts-private parser/,
   );
 });
 

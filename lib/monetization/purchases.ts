@@ -1,7 +1,10 @@
 import type { Purchase } from 'react-native-iap';
 
 import type { PremiumEntitlements } from '../../types/monetization';
+import { isCanonicalUtcIsoTimestamp } from '../time/canonicalTimestamp';
 import { APP_NATIVE_IDENTIFIER } from './appStoreIdentity';
+
+export { isCanonicalUtcIsoTimestamp };
 
 export const REMOVE_ADS_PRODUCT_ID = `${APP_NATIVE_IDENTIFIER}.removeads` as const;
 export const REMOVE_ADS_IOS_PRODUCT_ID = REMOVE_ADS_PRODUCT_ID;
@@ -153,15 +156,6 @@ function compactString(value: unknown): string | undefined {
   if (typeof value !== 'string') return undefined;
   const trimmed = value.trim();
   return trimmed ? trimmed : undefined;
-}
-
-export function isCanonicalUtcIsoTimestamp(value: unknown): value is string {
-  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value)) {
-    return false;
-  }
-
-  const parsed = new Date(value);
-  return Number.isFinite(parsed.getTime()) && parsed.toISOString() === value;
 }
 
 function getBrowserPurchaseStorage(): BrowserPurchaseStorage | undefined {
