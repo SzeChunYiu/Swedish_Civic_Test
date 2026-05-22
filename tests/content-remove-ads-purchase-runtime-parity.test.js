@@ -40,7 +40,7 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
       /async validateRemoveAdsReceipt\(purchase, productId\) \{([\s\S]*?)\n    \},\n    async requestRemoveAdsPurchase/,
     )?.[1] ?? '';
 
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 27);
+  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 31);
   assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
   assert.match(purchaseSource, /REMOVE_ADS_RECORD_SCHEMA_VERSION = 1/);
   assert.match(purchaseSource, /REMOVE_ADS_IOS_PRODUCT_ID = REMOVE_ADS_PRODUCT_ID/);
@@ -64,6 +64,9 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.match(purchaseSource, /validateRemoveAdsReceipt\?\(/);
   assert.match(purchaseSource, /export type NativeRemoveAdsReceiptValidator =/);
   assert.match(purchaseSource, /receiptValidator\?: NativeRemoveAdsReceiptValidator/);
+  assert.match(purchaseSource, /native_receipt_validator_unavailable/);
+  assert.match(purchaseSource, /\| 'unavailable'/);
+  assert.match(purchaseSource, /createResult\(\s*'unavailable'/);
   assert.match(purchaseSource, /if \(!receiptValidator\) \{/);
   assert.match(purchaseSource, /status: 'pending'/);
   assert.doesNotMatch(nativeReceiptValidationBlock, /createReceiptValidationResult\s*\(/);

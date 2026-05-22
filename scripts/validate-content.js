@@ -2064,8 +2064,8 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
   },
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
-const EXPECTED_REMOVE_ADS_HOOK_CASES = 15;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 27;
+const EXPECTED_REMOVE_ADS_HOOK_CASES = 16;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 31;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_RUNTIME_CASES = 9;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
@@ -5351,14 +5351,7 @@ const EXPECTED_PURCHASE_TYPE_UNIONS = [
   },
   {
     typeName: 'RemoveAdsPurchaseStatus',
-    values: [
-      'purchased',
-      'pending',
-      'restored',
-      'not_found',
-      'persistence_failed',
-      'finish_failed',
-    ],
+    values: ['unavailable', 'purchased', 'pending', 'restored', 'not_found', 'persistence_failed'],
   },
 ];
 const EXPECTED_PURCHASE_INTERFACES = [
@@ -5434,7 +5427,11 @@ const EXPECTED_PURCHASE_INTERFACES = [
   {
     name: 'PurchaseRuntimeOptions',
     fields: [
-      { name: 'purchaseUnavailableReason', type: "'web_store_unavailable'", optional: true },
+      {
+        name: 'purchaseUnavailableReason',
+        type: "'web_store_unavailable' | 'native_receipt_validator_unavailable'",
+        optional: true,
+      },
       { name: 'provider', type: 'RemoveAdsPurchaseProvider', optional: true },
       { name: 'storage', type: 'PurchaseStorage', optional: true },
     ],
@@ -13135,16 +13132,25 @@ function validateRemoveAdsEntitlementHookParity() {
       'default web purchase runtime must fail closed without a public mock provider',
     ],
     [
-      normalizedHookSource.includes(
-        'provider: createNativePurchaseProvider({ platform: getNativePurchasePlatform() }),',
-      ) && normalizedHookSource.includes('storage: createSecureStorePurchaseStorage(),'),
-      'native Remove Ads entitlement runtime must provide a native provider and secure storage',
+      hookSource.includes('createNativeRemoveAdsReceiptValidator') &&
+        normalizedHookSource.includes(
+          'const receiptValidator = createNativeRemoveAdsReceiptValidator({ platform: nativePlatform });',
+        ) &&
+        normalizedHookSource.includes('receiptValidator,') &&
+        normalizedHookSource.includes('storage: createSecureStorePurchaseStorage(),'),
+      'native Remove Ads entitlement runtime must provide a native provider, receipt validator, and secure storage',
     ],
     [
-      /defaultNativePurchaseRuntimeOptions\s*\?\?=\s*\{[\s\S]*provider:\s*createNativePurchaseProvider\(\{\s*platform:\s*getNativePurchasePlatform\(\)\s*\}\),[\s\S]*storage:\s*createSecureStorePurchaseStorage\(\),[\s\S]*\};/.test(
+      /defaultNativePurchaseRuntimeOptions\s*\?\?=\s*\{[\s\S]*provider:\s*createNativePurchaseProvider\(\{[\s\S]*platform:\s*nativePlatform,[\s\S]*receiptValidator,[\s\S]*\}\),[\s\S]*purchaseUnavailableReason:\s*receiptValidator\s*\?\s*undefined\s*:\s*'native_receipt_validator_unavailable',[\s\S]*storage:\s*createSecureStorePurchaseStorage\(\),[\s\S]*\};/.test(
         hookSource,
       ),
-      'native Remove Ads entitlement runtime must provide a native provider and secure storage',
+      'native Remove Ads entitlement runtime must fail closed when receipt validator config is missing',
+    ],
+    [
+      normalizedHookSource.includes(
+        "purchaseUnavailableReason: receiptValidator ? undefined : 'native_receipt_validator_unavailable'",
+      ),
+      'native Remove Ads entitlement runtime must disable store purchase actions when receipt validator config is unavailable',
     ],
     [
       /if\s*\(\s*!runtime\.__SMT_E2E__\s*\|\|\s*typeof\s+runtime\.__SMT_REMOVE_ADS_MOCK_OWNED__\s*!==\s*'boolean'\s*\)\s*\{[\s\S]*return\s+undefined;[\s\S]*\}/.test(
@@ -19368,6 +19374,12 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       'Remove Ads purchase provider must expose a receipt validation hook',
     ],
     [
+      normalizedPurchaseSource.includes("'native_receipt_validator_unavailable'") &&
+        normalizedPurchaseSource.includes("| 'unavailable'") &&
+        /return createResult\(\s*'unavailable'/.test(purchaseSource),
+      'Remove Ads runtime must expose an unavailable result before native purchase requests when validation config is missing',
+    ],
+    [
       /if\s*\(\s*!receiptValidator\s*\)\s*\{\s*return\s*\{[\s\S]*productId,[\s\S]*purchaseToken:\s*purchase\.purchaseToken\s*\?\?\s*null,[\s\S]*status:\s*'pending',[\s\S]*transactionId:\s*purchase\.transactionId\s*\?\?\s*null,[\s\S]*\};\s*\}/.test(
         nativeReceiptValidationBlock,
       ) && !/createReceiptValidationResult\s*\(/.test(nativeReceiptValidationBlock),
@@ -19422,6 +19434,15 @@ function validateRemoveAdsPurchaseRuntimeParity() {
         normalizedPlacementCtaSource.includes("finish_failed: 'Ads are disabled.") &&
         normalizedPlacementCtaSource.includes("finish_failed: 'Annonser är avstängda."),
       'Remove Ads UI surfaces localized finish-failure copy while preserving the persisted adsDisabled entitlement',
+    ],
+    [
+      /if\s*\(\s*purchaseUnavailableReason\s*\)\s*\{[\s\S]*return createResult\(\s*'unavailable',[\s\S]*await getFailClosedPurchaseEntitlements\(\{\s*provider,\s*storage\s*\}\)[\s\S]*\);[\s\S]*\}[\s\S]*await provider\.connect\(\);[\s\S]*const purchase = await provider\.requestRemoveAdsPurchase\(REMOVE_ADS_PRODUCT_ID\);/.test(
+        purchaseSource,
+      ) &&
+        /if\s*\(\s*purchaseUnavailableReason\s*\)\s*\{[\s\S]*return createResult\(\s*'unavailable',[\s\S]*await getFailClosedPurchaseEntitlements\(\{\s*provider,\s*storage\s*\}\)[\s\S]*\);[\s\S]*\}[\s\S]*await provider\.connect\(\);[\s\S]*const purchases = await provider\.restorePurchases\(\[REMOVE_ADS_PRODUCT_ID\]\);/.test(
+          purchaseSource,
+        ),
+      'Remove Ads buy and restore flows must stop before store requests when purchase runtime is unavailable',
     ],
     [
       normalizedPlacementCtaSource.includes('restoreRemoveAdsPurchase') &&

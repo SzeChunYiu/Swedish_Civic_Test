@@ -1840,6 +1840,128 @@ test('native Remove Ads purchases require an injected receipt verifier', async (
   );
 });
 
+test('default native Remove Ads runtime requires receipt-validator config before store purchase', async () => {
+  const purchases = loadTs('lib/monetization/purchases.ts');
+  const moduleCache = new Map();
+  const { createDefaultPurchaseRuntimeOptions } = loadTs(
+    'lib/monetization/useRemoveAdsEntitlements.ts',
+    undefined,
+    moduleCache,
+    {
+      react: createReactHookStub(),
+      'react-native': { Platform: { OS: 'ios' } },
+    },
+  );
+
+  await withEnv({ EXPO_PUBLIC_REMOVE_ADS_RECEIPT_VALIDATOR_URL: undefined }, async () => {
+    const runtimeOptions = createDefaultPurchaseRuntimeOptions();
+
+    assert.equal(runtimeOptions.purchaseUnavailableReason, 'native_receipt_validator_unavailable');
+  });
+
+  const events = [];
+  const storage = purchases.createMemoryPurchaseStorage();
+  const unavailableResult = await purchases.buyRemoveAds({
+    purchaseUnavailableReason: 'native_receipt_validator_unavailable',
+    provider: {
+      async connect() {
+        events.push('connect');
+      },
+      async disconnect() {
+        events.push('disconnect');
+      },
+      async requestRemoveAdsPurchase() {
+        events.push('request');
+        throw new Error('requestPurchase must not run without receipt validation config');
+      },
+      async restorePurchases() {
+        events.push('restore');
+        return [];
+      },
+      async validateRemoveAdsReceipt() {
+        events.push('validate');
+        return { status: 'pending' };
+      },
+    },
+    storage,
+  });
+
+  assert.equal(unavailableResult.status, 'unavailable');
+  assert.equal(unavailableResult.entitlements.adsDisabled, false);
+  assert.deepEqual(events, []);
+});
+
+test('native Remove Ads receipt-validator adapter normalizes backend receipt responses', async () => {
+  const { createNativeRemoveAdsReceiptValidator, hasNativeRemoveAdsReceiptValidatorConfig } =
+    loadTs('lib/monetization/removeAdsReceiptValidator.native.ts');
+  const { REMOVE_ADS_PRODUCT_ID } = loadTs('lib/monetization/purchases.ts');
+  const requests = [];
+  const validator = createNativeRemoveAdsReceiptValidator({
+    endpointUrl: 'https://validator.example/remove-ads',
+    fetchImpl: async (url, init) => {
+      requests.push({
+        body: JSON.parse(init.body),
+        headers: init.headers,
+        method: init.method,
+        url,
+      });
+      return {
+        ok: true,
+        async json() {
+          return {
+            status: 'valid',
+            validatedAt: '2026-05-20T12:00:00.000Z',
+          };
+        },
+      };
+    },
+    platform: 'ios',
+  });
+
+  assert.equal(hasNativeRemoveAdsReceiptValidatorConfig({}), false);
+  assert.equal(
+    hasNativeRemoveAdsReceiptValidatorConfig({
+      EXPO_PUBLIC_REMOVE_ADS_RECEIPT_VALIDATOR_URL: 'https://validator.example/remove-ads',
+    }),
+    true,
+  );
+  assert.equal(typeof validator, 'function');
+
+  const result = await validator(
+    {
+      productId: REMOVE_ADS_PRODUCT_ID,
+      purchaseToken: 'tok-remove-ads',
+      transactionId: 'tx-remove-ads',
+    },
+    REMOVE_ADS_PRODUCT_ID,
+  );
+
+  assert.deepEqual(result, {
+    productId: REMOVE_ADS_PRODUCT_ID,
+    purchaseToken: 'tok-remove-ads',
+    status: 'valid',
+    transactionId: 'tx-remove-ads',
+    validatedAt: '2026-05-20T12:00:00.000Z',
+  });
+  assert.deepEqual(requests, [
+    {
+      body: {
+        platform: 'ios',
+        productId: REMOVE_ADS_PRODUCT_ID,
+        purchaseToken: 'tok-remove-ads',
+        raw: null,
+        transactionId: 'tx-remove-ads',
+      },
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      url: 'https://validator.example/remove-ads',
+    },
+  ]);
+});
+
 test('native purchase provider matches requested product ids instead of Remove Ads only', async () => {
   const { REMOVE_ADS_PRODUCT_ID, createNativePurchaseProvider } = loadTs(
     'lib/monetization/purchases.ts',

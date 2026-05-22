@@ -61,10 +61,10 @@ test('Remove Ads entitlement hook fails closed until purchase state resolves', (
   assert.match(hookSource, /storage: createWebPurchaseStorage\(false\)/);
   assert.doesNotMatch(hookSource, /provider: createMockPurchaseProvider\(\),/);
   assert.match(hookSource, /defaultNativePurchaseRuntimeOptions/);
-  assert.match(
-    hookSource,
-    /createNativePurchaseProvider\(\{ platform: getNativePurchasePlatform\(\) \}\)/,
-  );
+  assert.match(hookSource, /createNativeRemoveAdsReceiptValidator/);
+  assert.match(hookSource, /const nativePlatform = getNativePurchasePlatform\(\);/);
+  assert.match(hookSource, /receiptValidator,\s*\n\s*\}\)/);
+  assert.match(hookSource, /native_receipt_validator_unavailable/);
   assert.match(hookSource, /createSecureStorePurchaseStorage/);
   assert.doesNotMatch(hookSource, /if \(Platform\.OS !== 'web'\) return undefined;/);
   assert.match(hookSource, /getPurchaseEntitlements\(purchaseRuntime\)/);
@@ -306,7 +306,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/lib/monetization/useRemoveAdsEntitlements.ts')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('provider: createNativePurchaseProvider({ platform: getNativePurchasePlatform() }),', 'provider: createMockPurchaseProvider(),');
+      .replace('provider: createNativePurchaseProvider({', 'provider: createMockPurchaseProvider({');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -320,7 +320,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /native Remove Ads entitlement runtime must provide a native provider and secure storage/,
+    /native Remove Ads entitlement runtime must provide a native provider, receipt validator, and secure storage|native Remove Ads entitlement runtime must fail closed when receipt validator config is missing/,
   );
 });
 
