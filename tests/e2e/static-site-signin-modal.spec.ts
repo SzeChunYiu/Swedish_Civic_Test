@@ -58,11 +58,42 @@ test('static sign-in preserves a sanitized hash return route outside the Supabas
   });
   await returnPage.close();
 
+  const stalePage = await page.context().newPage();
+  const stalePageErrors = collectPageErrors(stalePage);
+  await stalePage.goto(
+    `${staticSite.baseUrl}/#access_token=fake-token&refresh_token=fake-refresh`,
+    {
+      waitUntil: 'domcontentloaded',
+    },
+  );
+  const staleRestore = await stalePage.evaluate(() => {
+    const staticWindow = window as typeof window & {
+      smtSigninRestoreReturnRoute: () => string;
+    };
+    localStorage.setItem(
+      'smt_signin_return_route',
+      JSON.stringify({
+        route: '#/dashboard',
+        storedAt: Date.now() - 31 * 60 * 1000,
+      }),
+    );
+    const restoredRoute = staticWindow.smtSigninRestoreReturnRoute();
+    return {
+      restoredHash: window.location.hash,
+      restoredRoute,
+      storedRouteAfterRestore: localStorage.getItem('smt_signin_return_route'),
+    };
+  });
+  await stalePage.close();
+
   expect(result.redirectedWithoutHash).toBe(`${staticSite.baseUrl}/`);
   expect(result.capturedRoute).toBe('#/ebook?c=ch04');
   expect(restored.restoredRoute).toBe('#/ebook?c=ch04');
   expect(restored.restoredHash).toBe('#/ebook?c=ch04');
   expect(restored.storedRouteAfterRestore).toBeNull();
+  expect(staleRestore.restoredRoute).toBe('');
+  expect(staleRestore.restoredHash).toBe('#access_token=fake-token&refresh_token=fake-refresh');
+  expect(staleRestore.storedRouteAfterRestore).toBeNull();
   expect(result.validDashboard).toBe('#/dashboard');
   expect(result.validPractice).toBe('#/practice?c=4');
   expect(result.validPurchaseAnchor).toBe('#/#purchase-account-gate');
@@ -71,4 +102,5 @@ test('static sign-in preserves a sanitized hash return route outside the Supabas
   expect(result.invalidMarkup).toBe('#/');
   expect(pageErrors).toEqual([]);
   expect(returnPageErrors).toEqual([]);
+  expect(stalePageErrors).toEqual([]);
 });
