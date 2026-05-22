@@ -628,6 +628,10 @@ const QUESTION_LARGEST_LAKES_ENGLISH_FRAGMENT_STEM_PATTERNS = [
   /^Vänern, Vättern, and Mälaren\.?$/i,
   /^The Baltic Sea, Kattegat, and Skagerrak\.?$/i,
 ];
+const QUESTION_RECORD_YEARS_ENGLISH_NATURALNESS_PATTERNS = [
+  /\blong-lasting strong economic growth\b/i,
+  /\bstrong economic growth for a long time\b/i,
+];
 const QUESTION_SOURCE_CRITICISM_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhat does it mean to be source-critical\b/i,
   /\b(?:Being|To be) source-critical means\b/i,
@@ -5646,6 +5650,7 @@ function translationNaturalnessGuardParityIsValidated() {
     questionPublicSectorEnglishNaturalnessValidated === publishedQuestions &&
     questionPublicServiceBroadcasterEnglishNaturalnessValidated === publishedQuestions &&
     questionLargestLakesEnglishNaturalnessValidated === publishedQuestions &&
+    questionRecordYearsEnglishNaturalnessValidated === publishedQuestions &&
     questionLuciaExplanationRoleScaffoldValidated === publishedQuestions &&
     questionGoodFridayEnglishNaturalnessValidated === publishedQuestions &&
     questionReferendumAdvisorySwedishNaturalnessValidated === publishedQuestions &&
@@ -7280,6 +7285,13 @@ function findQuestionLargestLakesEnglishNaturalnessIssue(question) {
     QUESTION_LARGEST_LAKES_ENGLISH_FRAGMENT_STEM_PATTERNS.find((pattern) =>
       pattern.test(question.questionEn || ''),
     )
+  );
+}
+
+function findQuestionRecordYearsEnglishNaturalnessIssue(question) {
+  if (!question.tags?.includes('record-years')) return null;
+  return QUESTION_RECORD_YEARS_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(questionText(question, ['questionEn', 'explanationEn'])),
   );
 }
 
@@ -9683,6 +9695,7 @@ let questionMayDayEnglishNaturalnessValidated = 0;
 let questionPublicSectorEnglishNaturalnessValidated = 0;
 let questionPublicServiceBroadcasterEnglishNaturalnessValidated = 0;
 let questionLargestLakesEnglishNaturalnessValidated = 0;
+let questionRecordYearsEnglishNaturalnessValidated = 0;
 let questionLuciaExplanationRoleScaffoldValidated = 0;
 let questionGoodFridayEnglishNaturalnessValidated = 0;
 let questionReferendumAdvisorySwedishNaturalnessValidated = 0;
@@ -23885,6 +23898,10 @@ function validatePublishedQuestionNaturalnessGuards() {
         `${label} uses stilted largest-lakes English wording`,
       ],
       [
+        findQuestionRecordYearsEnglishNaturalnessIssue(question),
+        `${label} uses stilted record-years English wording`,
+      ],
+      [
         findQuestionReligiousFreedomOptionParallelismIssue(question),
         `${label} uses nonparallel religious-freedom option wording`,
       ],
@@ -24180,6 +24197,8 @@ if (Array.isArray(questions)) {
         findQuestionPublicServiceBroadcasterEnglishNaturalnessIssue(question);
       const largestLakesEnglishNaturalnessIssue =
         findQuestionLargestLakesEnglishNaturalnessIssue(question);
+      const recordYearsEnglishNaturalnessIssue =
+        findQuestionRecordYearsEnglishNaturalnessIssue(question);
       const councilOfEuropeWorkForEnglishNaturalnessIssue =
         findQuestionCouncilOfEuropeWorkForEnglishNaturalnessIssue(question);
       const mayDayEnglishNaturalnessIssue = findQuestionMayDayEnglishNaturalnessIssue(question);
@@ -24252,6 +24271,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses stilted largest-lakes English wording`);
       } else {
         questionLargestLakesEnglishNaturalnessValidated += 1;
+      }
+      if (recordYearsEnglishNaturalnessIssue) {
+        fail(`${label} uses stilted record-years English wording`);
+      } else {
+        questionRecordYearsEnglishNaturalnessValidated += 1;
       }
       if (councilOfEuropeWorkForEnglishNaturalnessIssue) {
         fail(`${label} uses literal Council of Europe work-for English wording`);
@@ -24876,6 +24900,7 @@ console.log(
       questionPublicSectorEnglishNaturalnessValidated,
       questionPublicServiceBroadcasterEnglishNaturalnessValidated,
       questionLargestLakesEnglishNaturalnessValidated,
+      questionRecordYearsEnglishNaturalnessValidated,
       questionLuciaExplanationRoleScaffoldValidated,
       questionGoodFridayEnglishNaturalnessValidated,
       questionReferendumAdvisorySwedishNaturalnessValidated,

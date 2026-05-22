@@ -8418,7 +8418,7 @@
     },
     "opts": [
       {
-        "en": "Sweden had long-lasting strong economic growth and could carry out major reforms",
+        "en": "Sweden had sustained strong economic growth and could carry out major reforms",
         "sv": "Sverige hade långvarig stark ekonomisk tillväxt och kunde genomföra stora reformer",
         "zh-Hant": "瑞典長期有強勁經濟成長，並能實施重大改革",
         "zh-Hans": "瑞典长期有强劲经济增长，并能实施重大改革",
@@ -8476,7 +8476,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "After the Second World War, Sweden had strong economic growth for a long time. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible, so the answer about growth and reforms is correct.",
+      "en": "After the Second World War, Sweden had sustained strong economic growth. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible, so the answer about growth and reforms is correct.",
       "sv": "Efter andra världskriget hade Sverige stark ekonomisk tillväxt under lång tid. Arbetslösheten var mycket låg, industrin gick bra, levnadsstandarden ökade snabbt och den goda ekonomin gjorde stora reformer möjliga, därför är alternativet om tillväxt och reformer rätt.",
       "zh-Hant": "第二次世界大戰後，瑞典長期有強勁的經濟成長。失業率很低，工業發展良好，生活水準快速提高，良好的經濟也使重大改革成為可能；因此關於成長和改革的選項是正確的。",
       "zh-Hans": "第二次世界大战后，瑞典长期有强劲的经济增长。失业率很低，工业发展良好，生活水平快速提高，良好的经济也使重大改革成为可能；因此关于增长和改革的选项是正确的。",
@@ -39063,7 +39063,7 @@
     },
     "opts": [
       {
-        "en": "Sweden had long-lasting strong economic growth and could carry out major reforms",
+        "en": "Sweden had sustained strong economic growth and could carry out major reforms",
         "sv": "Sverige hade långvarig stark ekonomisk tillväxt och kunde genomföra stora reformer",
         "zh-Hant": "瑞典長期有強勁經濟成長，並能實施重大改革",
         "zh-Hans": "瑞典长期有强劲经济增长，并能实施重大改革",
@@ -39121,7 +39121,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "After the Second World War, Sweden had strong economic growth for a long time. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible, so the answer about growth and reforms is correct.",
+      "en": "After the Second World War, Sweden had sustained strong economic growth. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible, so the answer about growth and reforms is correct.",
       "sv": "Efter andra världskriget hade Sverige stark ekonomisk tillväxt under lång tid. Arbetslösheten var mycket låg, industrin gick bra, levnadsstandarden ökade snabbt och den goda ekonomin gjorde stora reformer möjliga, därför är alternativet om tillväxt och reformer rätt."
     },
     "source": {
@@ -39146,7 +39146,7 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "The period after the Second World War is often called the Swedish record years because Sweden had long-lasting strong economic growth and could carry out major reforms.",
+      "en": "The period after the Second World War is often called the Swedish record years because Sweden had sustained strong economic growth and could carry out major reforms.",
       "sv": "Tiden efter andra världskriget kallas ofta de svenska rekordåren eftersom Sverige hade långvarig stark ekonomisk tillväxt och kunde genomföra stora reformer."
     },
     "opts": [
@@ -39161,7 +39161,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "After the Second World War, Sweden had strong economic growth for a long time. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible, so the answer about growth and reforms is correct.",
+      "en": "After the Second World War, Sweden had sustained strong economic growth. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible, so the answer about growth and reforms is correct.",
       "sv": "Efter andra världskriget hade Sverige stark ekonomisk tillväxt under lång tid. Arbetslösheten var mycket låg, industrin gick bra, levnadsstandarden ökade snabbt och den goda ekonomin gjorde stora reformer möjliga, därför är alternativet om tillväxt och reformer rätt."
     },
     "source": {
@@ -39201,7 +39201,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "After the Second World War, Sweden had strong economic growth for a long time. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible, so the answer about growth and reforms is correct.",
+      "en": "After the Second World War, Sweden had sustained strong economic growth. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible, so the answer about growth and reforms is correct.",
       "sv": "Efter andra världskriget hade Sverige stark ekonomisk tillväxt under lång tid. Arbetslösheten var mycket låg, industrin gick bra, levnadsstandarden ökade snabbt och den goda ekonomin gjorde stora reformer möjliga, därför är alternativet om tillväxt och reformer rätt."
     },
     "source": {
@@ -39231,7 +39231,7 @@
     },
     "opts": [
       {
-        "en": "Sweden had long-lasting strong economic growth and could carry out major reforms",
+        "en": "Sweden had sustained strong economic growth and could carry out major reforms",
         "sv": "Sverige hade långvarig stark ekonomisk tillväxt och kunde genomföra stora reformer",
         "zh-Hant": "瑞典長期有強勁經濟成長，並能實施重大改革",
         "zh-Hans": "瑞典长期有强劲经济增长，并能实施重大改革",
@@ -39289,7 +39289,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "After the Second World War, Sweden had strong economic growth for a long time. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible, so the answer about growth and reforms is correct.",
+      "en": "After the Second World War, Sweden had sustained strong economic growth. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible, so the answer about growth and reforms is correct.",
       "sv": "Efter andra världskriget hade Sverige stark ekonomisk tillväxt under lång tid. Arbetslösheten var mycket låg, industrin gick bra, levnadsstandarden ökade snabbt och den goda ekonomin gjorde stora reformer möjliga, därför är alternativet om tillväxt och reformer rätt."
     },
     "source": {

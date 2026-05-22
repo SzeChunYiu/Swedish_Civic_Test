@@ -1672,7 +1672,7 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
     ],
     [generatedQuestionId(sourceQuestions, 'q082', 'trueStatement')]: [
       'Tiden efter andra världskriget kallas ofta de svenska rekordåren eftersom Sverige hade långvarig stark ekonomisk tillväxt och kunde genomföra stora reformer.',
-      'The period after the Second World War is often called the Swedish record years because Sweden had long-lasting strong economic growth and could carry out major reforms.',
+      'The period after the Second World War is often called the Swedish record years because Sweden had sustained strong economic growth and could carry out major reforms.',
     ],
     [generatedQuestionId(sourceQuestions, 'q082', 'falseStatement')]: [
       'Tiden efter andra världskriget kallas ofta de svenska rekordåren eftersom Sverige saknade nästan all industri.',

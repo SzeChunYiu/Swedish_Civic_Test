@@ -1431,7 +1431,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     [
       [
         'Sverige hade långvarig stark ekonomisk tillväxt och kunde genomföra stora reformer',
-        'Sweden had long-lasting strong economic growth and could carry out major reforms',
+        'Sweden had sustained strong economic growth and could carry out major reforms',
       ],
       ['Sverige saknade nästan all industri', 'Sweden had almost no industry'],
       ['Alla välfärdstjänster avskaffades', 'All welfare services were abolished'],
@@ -1442,7 +1442,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     ],
     0,
     'Efter andra världskriget hade Sverige stark ekonomisk tillväxt under lång tid. Arbetslösheten var mycket låg, industrin gick bra, levnadsstandarden ökade snabbt och den goda ekonomin gjorde stora reformer möjliga, därför är alternativet om tillväxt och reformer rätt.',
-    'After the Second World War, Sweden had strong economic growth for a long time. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible, so the answer about growth and reforms is correct.',
+    'After the Second World War, Sweden had sustained strong economic growth. Unemployment was very low, industry did well, living standards rose quickly, and the strong economy made major reforms possible, so the answer about growth and reforms is correct.',
     ['record-years', 'welfare', 'postwar'],
   ),
   single(
