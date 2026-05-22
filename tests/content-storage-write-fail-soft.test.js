@@ -1,4 +1,5 @@
 const assert = require('node:assert/strict');
+const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
@@ -46,6 +47,50 @@ function createFailOnceMMKV(message = 'disk full') {
       storage.set(key, value);
     },
   };
+}
+
+function runPersistenceWarningScopeMutation(mutations) {
+  return spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const mutations = ${JSON.stringify(mutations)};
+const originalReadFileSync = fs.readFileSync;
+
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const mutation = mutations.find((candidate) => normalizedPath.endsWith(candidate.file));
+
+  if (!mutation) return contents;
+
+  const isString = typeof contents === 'string';
+  let next = isString ? contents : contents.toString();
+
+  for (const replacement of mutation.replacements) {
+    next = next.split(replacement.from).join(replacement.to);
+  }
+
+  return isString ? next : Buffer.from(next);
+};
+
+process.argv.push('--focus-persistence-warning-scope');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+}
+
+function expectPersistenceWarningScopeMutationFailure(testName, mutations, expectedMessage) {
+  test(testName, () => {
+    const result = runPersistenceWarningScopeMutation(mutations);
+
+    assert.notEqual(result.status, 0);
+    assert.match(`${result.stdout}\n${result.stderr}`, expectedMessage);
+  });
 }
 
 test('progress writes keep in-memory answers and expose recoverable warnings', () => {
@@ -405,3 +450,67 @@ test('routes render localized storage warning notices with dismiss hooks', () =>
   assert.doesNotMatch(practiceSource, /warningScope="accessibilityPreferences"/);
   assert.doesNotMatch(mistakesSource, /warningScope="accessibilityPreferences"/);
 });
+
+expectPersistenceWarningScopeMutationFailure(
+  'persistence warning scope validator rejects missing Settings accessibility scope',
+  [
+    {
+      file: '/app/settings.tsx',
+      replacements: [
+        {
+          from: 'warningScope="accessibilityPreferences"',
+          to: 'warningScope="studyData"',
+        },
+      ],
+    },
+  ],
+  /Settings must pass warningScope="accessibilityPreferences" for accessibility warnings/,
+);
+
+expectPersistenceWarningScopeMutationFailure(
+  'persistence warning scope validator rejects a non-studyData default scope',
+  [
+    {
+      file: '/components/storage/PersistenceWarningNotice.tsx',
+      replacements: [
+        {
+          from: "warningScope = 'studyData'",
+          to: "warningScope = 'settingsPreferences'",
+        },
+      ],
+    },
+  ],
+  /PersistenceWarningNotice must keep studyData as the default warningScope/,
+);
+
+expectPersistenceWarningScopeMutationFailure(
+  'persistence warning scope validator rejects accessibility scope on Practice warnings',
+  [
+    {
+      file: '/app/(tabs)/practice.tsx',
+      replacements: [
+        {
+          from: 'warning={progressPersistenceWarning}',
+          to: 'warning={progressPersistenceWarning}\n        warningScope="accessibilityPreferences"',
+        },
+      ],
+    },
+  ],
+  /Practice persistence warnings must keep the default studyData scope/,
+);
+
+expectPersistenceWarningScopeMutationFailure(
+  'persistence warning scope validator rejects accessibility scope on Mistakes warnings',
+  [
+    {
+      file: '/app/(tabs)/mistakes.tsx',
+      replacements: [
+        {
+          from: 'warning={progressPersistenceWarning}',
+          to: 'warning={progressPersistenceWarning}\n        warningScope="accessibilityPreferences"',
+        },
+      ],
+    },
+  ],
+  /Mistakes persistence warnings must keep the default studyData scope/,
+);
