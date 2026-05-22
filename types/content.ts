@@ -30,6 +30,14 @@ export interface UHRReference {
   pageApprox: number;
 }
 
+export interface OfficialSourceReference {
+  title: string;
+  publisher: string;
+  url: string;
+  publishedDate?: string;
+  retrievedDate: string;
+}
+
 export interface QuestionOption {
   id: string;
   textSv: string;
@@ -50,6 +58,7 @@ export interface PracticeQuestion {
   explanationEn: string;
   explanationText?: LocalizedContentText;
   uhrReference: UHRReference;
+  supplementalSources?: OfficialSourceReference[];
   difficulty: Difficulty;
   reviewStatus: ReviewStatus;
   tags: string[];

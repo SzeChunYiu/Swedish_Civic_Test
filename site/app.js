@@ -1787,7 +1787,33 @@ function smtQuizSourceCitation(question, lang) {
     });
   }
   const copy = SMT_QUIZ_SOURCE_CITATION_COPY[lang] || SMT_QUIZ_SOURCE_CITATION_COPY.en;
-  return `${copy.source}: ${title}, ${source.chapter}, ${source.section}, ${copy.page} ${source.page}`;
+  const uhrCitation = `${copy.source}: ${title}, ${source.chapter}, ${source.section}, ${copy.page} ${source.page}`;
+  const supplementalCitations = Array.isArray(source.supplementalSources)
+    ? source.supplementalSources
+        .filter((supplementalSource) => supplementalSource && supplementalSource.title)
+        .map((supplementalSource) => {
+          const published = supplementalSource.publishedDate
+            ? lang === 'sv'
+              ? `publicerad ${supplementalSource.publishedDate}`
+              : `published ${supplementalSource.publishedDate}`
+            : '';
+          const retrieved = supplementalSource.retrievedDate
+            ? lang === 'sv'
+              ? `hämtad ${supplementalSource.retrievedDate}`
+              : `retrieved ${supplementalSource.retrievedDate}`
+            : '';
+          return [
+            `${copy.source}: ${supplementalSource.title}`,
+            supplementalSource.publisher,
+            published,
+            retrieved,
+            supplementalSource.url,
+          ]
+            .filter(Boolean)
+            .join(', ');
+        })
+    : [];
+  return [uhrCitation, ...supplementalCitations].join('; ');
 }
 
 function smtQuizQuestionDisclaimer(lang) {

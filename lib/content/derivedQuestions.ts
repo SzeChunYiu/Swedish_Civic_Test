@@ -103,6 +103,7 @@ function withSharedFields(
     explanationSv,
     explanationEn,
     uhrReference: source.uhrReference,
+    ...(source.supplementalSources ? { supplementalSources: source.supplementalSources } : {}),
     difficulty: source.difficulty,
     reviewStatus: 'published',
     tags: uniqueTags([...source.tags, ...extraTags]),

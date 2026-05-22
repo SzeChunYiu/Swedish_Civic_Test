@@ -1,6 +1,11 @@
 import { getLocale } from '../i18n/locales';
 import type { LocaleCode } from '../i18n/locales';
-import type { LocalizedContentText, QuestionOption, UHRReference } from '../../types/content';
+import type {
+  LocalizedContentText,
+  OfficialSourceReference,
+  QuestionOption,
+  UHRReference,
+} from '../../types/content';
 
 type QuestionTextSource = {
   questionEn?: string;
@@ -10,6 +15,7 @@ type QuestionTextSource = {
   explanationSv?: string;
   explanationText?: Partial<LocalizedContentText>;
   uhrReference?: UHRReference;
+  supplementalSources?: OfficialSourceReference[];
 };
 
 type QuestionTextLanguage = LocaleCode;
@@ -104,9 +110,12 @@ export function getQuestionSourceCitation(
   }
 
   const { chapter, pageApprox, section } = question.uhrReference;
-  return language === 'en'
-    ? `Source: Sverige i fokus, ${chapter}, ${section}, p. ${pageApprox}`
-    : `Källa: Sverige i fokus, ${chapter}, ${section}, s. ${pageApprox}`;
+  const uhrCitation =
+    language === 'en'
+      ? `Source: Sverige i fokus, ${chapter}, ${section}, p. ${pageApprox}`
+      : `Källa: Sverige i fokus, ${chapter}, ${section}, s. ${pageApprox}`;
+  const supplementalCitations = formatSupplementalSources(question.supplementalSources, language);
+  return [uhrCitation, ...supplementalCitations].join('; ');
 }
 
 export function getQuestionExplanationText(
@@ -139,6 +148,34 @@ function primaryLanguageFor(language: QuestionTextLanguage): PrimaryQuestionText
   if (language === 'sv') return 'sv';
   if (language === 'en') return 'en';
   return getLocale(language).fallback === 'sv' ? 'sv' : 'en';
+}
+
+function formatSupplementalSources(
+  sources: OfficialSourceReference[] | undefined,
+  language: QuestionTextLanguage,
+): string[] {
+  if (!Array.isArray(sources)) return [];
+
+  const isEnglish = primaryLanguageFor(language) === 'en';
+  return sources
+    .filter((source) => source && source.title && source.publisher && source.url)
+    .map((source) => {
+      const published = source.publishedDate
+        ? isEnglish
+          ? `published ${source.publishedDate}`
+          : `publicerad ${source.publishedDate}`
+        : '';
+      const retrieved = source.retrievedDate
+        ? isEnglish
+          ? `retrieved ${source.retrievedDate}`
+          : `hämtad ${source.retrievedDate}`
+        : '';
+      const dateParts = [published, retrieved].filter(Boolean).join(', ');
+      const prefix = isEnglish ? 'Additional source' : 'Kompletterande källa';
+      return [`${prefix}: ${source.title}`, source.publisher, dateParts, source.url]
+        .filter(Boolean)
+        .join(', ');
+    });
 }
 
 function resolveLocalizedText(

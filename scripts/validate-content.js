@@ -233,6 +233,11 @@ const QUESTION_BANK_CSV_HEADER = [
   'uhrSourcePublisher',
   'uhrSourceUrl',
   'uhrSourceRetrievedAt',
+  'supplementalSourceTitle',
+  'supplementalSourcePublisher',
+  'supplementalSourceUrl',
+  'supplementalSourcePublishedDate',
+  'supplementalSourceRetrievedDate',
   'difficulty',
   'reviewStatus',
   'tags',
@@ -4720,6 +4725,16 @@ const EXPECTED_CONTENT_INTERFACES = [
     ],
   },
   {
+    name: 'OfficialSourceReference',
+    fields: [
+      { name: 'title', type: 'string', optional: false },
+      { name: 'publisher', type: 'string', optional: false },
+      { name: 'url', type: 'string', optional: false },
+      { name: 'publishedDate', type: 'string', optional: true },
+      { name: 'retrievedDate', type: 'string', optional: false },
+    ],
+  },
+  {
     name: 'QuestionOption',
     fields: [
       { name: 'id', type: 'string', optional: false },
@@ -4743,6 +4758,7 @@ const EXPECTED_CONTENT_INTERFACES = [
       { name: 'explanationEn', type: 'string', optional: false },
       { name: 'explanationText', type: 'LocalizedContentText', optional: true },
       { name: 'uhrReference', type: 'UHRReference', optional: false },
+      { name: 'supplementalSources', type: 'OfficialSourceReference[]', optional: true },
       { name: 'difficulty', type: 'Difficulty', optional: false },
       { name: 'reviewStatus', type: 'ReviewStatus', optional: false },
       { name: 'tags', type: 'string[]', optional: false },
@@ -4778,6 +4794,8 @@ function expectedContentInterfaceKeys(interfaceName) {
   return interfaceSpec ? interfaceSpec.fields.map((field) => field.name) : [];
 }
 const EXPECTED_UHR_REFERENCE_KEYS = expectedContentInterfaceKeys('UHRReference');
+const EXPECTED_OFFICIAL_SOURCE_REFERENCE_KEYS =
+  expectedContentInterfaceKeys('OfficialSourceReference');
 const EXPECTED_QUESTION_OPTION_KEYS = expectedContentInterfaceKeys('QuestionOption');
 const EXPECTED_PRACTICE_QUESTION_KEYS = expectedContentInterfaceKeys('PracticeQuestion');
 const EXPECTED_CHAPTER_KEYS = expectedContentInterfaceKeys('Chapter');
@@ -4785,6 +4803,14 @@ const EXPECTED_GLOSSARY_TERM_KEYS = expectedContentInterfaceKeys('GlossaryTerm')
 const EXPECTED_UHR_SECTION_MAP_KEYS = ['source', 'chapters'];
 const EXPECTED_UHR_SECTION_MAP_SOURCE_KEYS = ['title', 'publisher', 'url', 'retrievedDate'];
 const EXPECTED_UHR_SECTION_MAP_CHAPTER_KEYS = ['id', 'chapter', 'startPage', 'endPage', 'sections'];
+const VOTING_RIGHTS_SOURCE_QUESTION_IDS = ['q019', 'q030', 'q166'];
+const EXPECTED_VALMYNDIGHETEN_VOTING_RIGHTS_SOURCE = {
+  title: 'Rösträtten i svenska val',
+  publisher: 'Valmyndigheten',
+  url: 'https://www.val.se/det-svenska-valsystemet/sa-funkar-rostning-i-svenska-val/rostratten-i-svenska-val',
+  publishedDate: '2025-11-21',
+  retrievedDate: '2026-05-22',
+};
 const EXPECTED_MOCK_EXAM_CONFIG_FIELDS = [
   { name: 'questionCount', type: 'number', optional: false },
   { name: 'durationMinutes', type: 'number', optional: false },
@@ -8302,6 +8328,19 @@ function questionExactSchemaKeyFailures(question, label) {
     ),
   );
 
+  if (Array.isArray(question?.supplementalSources)) {
+    question.supplementalSources.forEach((source, sourceIndex) => {
+      failures.push(
+        ...schemaKeyFailures(
+          source,
+          EXPECTED_OFFICIAL_SOURCE_REFERENCE_KEYS,
+          `${label} supplementalSources[${sourceIndex}]`,
+          'OfficialSourceReference',
+        ),
+      );
+    });
+  }
+
   return failures;
 }
 
@@ -8698,6 +8737,52 @@ function questionOptionPayload(question, field) {
   );
 }
 
+function questionSupplementalSourcePayload(question, field) {
+  const sources = Array.isArray(question?.supplementalSources) ? question.supplementalSources : [];
+  return sources.map((source) => source?.[field] || '').join('|');
+}
+
+function isValmyndighetenVotingRightsSource(source) {
+  return (
+    isObjectRecord(source) &&
+    source.title === EXPECTED_VALMYNDIGHETEN_VOTING_RIGHTS_SOURCE.title &&
+    source.publisher === EXPECTED_VALMYNDIGHETEN_VOTING_RIGHTS_SOURCE.publisher &&
+    source.url === EXPECTED_VALMYNDIGHETEN_VOTING_RIGHTS_SOURCE.url &&
+    source.publishedDate === EXPECTED_VALMYNDIGHETEN_VOTING_RIGHTS_SOURCE.publishedDate &&
+    source.retrievedDate === EXPECTED_VALMYNDIGHETEN_VOTING_RIGHTS_SOURCE.retrievedDate
+  );
+}
+
+function questionHasValmyndighetenVotingRightsSource(question) {
+  return (
+    Array.isArray(question?.supplementalSources) &&
+    question.supplementalSources.some(isValmyndighetenVotingRightsSource)
+  );
+}
+
+function requiredVotingRightsSupplementalQuestionIds() {
+  const ids = new Set(VOTING_RIGHTS_SOURCE_QUESTION_IDS);
+
+  if (!Array.isArray(sourceQuestions) || !Array.isArray(generatedPublishedQuestions)) {
+    return ids;
+  }
+
+  VOTING_RIGHTS_SOURCE_QUESTION_IDS.forEach((sourceId) => {
+    const sourceIndex = sourceQuestions.findIndex((question) => question.id === sourceId);
+    if (sourceIndex < 0) return;
+    generatedPublishedQuestions
+      .slice(
+        sourceIndex * GENERATED_VARIANTS_PER_SOURCE,
+        (sourceIndex + 1) * GENERATED_VARIANTS_PER_SOURCE,
+      )
+      .forEach((question) => {
+        if (hasText(question?.id)) ids.add(question.id);
+      });
+  });
+
+  return ids;
+}
+
 function optionIdsMatchQuestionType(question) {
   if (!Array.isArray(question.options)) return false;
   const optionIds = question.options.map((option) => option?.id);
@@ -8990,6 +9075,45 @@ function validateQuestionSchema(question, index) {
         reject(`${label} uhrReference.${field} must be trimmed and single-spaced`);
       }
     }
+  }
+
+  if (question.supplementalSources !== undefined) {
+    if (!Array.isArray(question.supplementalSources) || question.supplementalSources.length === 0) {
+      reject(`${label} supplementalSources must be a non-empty OfficialSourceReference array`);
+    } else {
+      question.supplementalSources.forEach((source, sourceIndex) => {
+        const sourceLabel = `${label} supplementalSources[${sourceIndex}]`;
+        if (!isObjectRecord(source)) {
+          reject(`${sourceLabel} must be an OfficialSourceReference object`);
+          return;
+        }
+        for (const field of ['title', 'publisher', 'url', 'retrievedDate']) {
+          if (!hasText(source[field])) {
+            reject(`${sourceLabel} missing ${field}`);
+          } else if (!textIsTrimmedSingleSpaced(source[field])) {
+            reject(`${sourceLabel} ${field} must be trimmed and single-spaced`);
+          }
+        }
+        if (source.publishedDate !== undefined && !hasText(source.publishedDate)) {
+          reject(`${sourceLabel} publishedDate must not be blank when present`);
+        }
+        if (hasText(source.url) && !isHttpsUrl(source.url)) {
+          reject(`${sourceLabel} url must be HTTPS`);
+        }
+        for (const field of ['publishedDate', 'retrievedDate']) {
+          if (source[field] !== undefined && !isIsoDate(source[field])) {
+            reject(`${sourceLabel} ${field} must use YYYY-MM-DD`);
+          }
+        }
+      });
+    }
+  }
+
+  if (
+    requiredVotingRightsSupplementalQuestionIds().has(question.id) &&
+    !questionHasValmyndighetenVotingRightsSource(question)
+  ) {
+    reject(`${label} voting-rights question must cite Valmyndigheten as a supplemental source`);
   }
 
   return valid;
@@ -9488,6 +9612,8 @@ let questionBankCsvHeaderColumnsValidated = 0;
 let questionBankCsvUniqueHeaderNamesValidated = false;
 let questionBankCsvUhrSourcePublisherRowsValidated = 0;
 let questionBankCsvUhrSourcePublisherParityValidated = false;
+let questionBankCsvSupplementalSourceRowsValidated = 0;
+let questionBankCsvVotingRightsSupplementalSourceParityValidated = false;
 let questionBankCsvProvenanceCounts = { uhr: 0, derived: 0, editorial: 0 };
 let questionProvenanceRuntimeCasesValidated = 0;
 let questionProvenanceRuntimeParityValidated = false;
@@ -22107,6 +22233,16 @@ function validateQuestionBankCsvContract() {
     uhrSourceUrl: 'url',
     uhrSourceRetrievedAt: 'retrievedDate',
   };
+  const requiredVotingRightsSupplementalIds = requiredVotingRightsSupplementalQuestionIds();
+  const expectedVotingRightsSupplementalRows =
+    VOTING_RIGHTS_SOURCE_QUESTION_IDS.length * (GENERATED_VARIANTS_PER_SOURCE + 1);
+  let votingRightsSupplementalRowsValidated = 0;
+
+  if (requiredVotingRightsSupplementalIds.size !== expectedVotingRightsSupplementalRows) {
+    fail(
+      `voting-rights supplemental source guard found ${requiredVotingRightsSupplementalIds.size} question ids, expected ${expectedVotingRightsSupplementalRows}`,
+    );
+  }
 
   dataRows.forEach((row, index) => {
     const question = questions[index];
@@ -22147,6 +22283,11 @@ function validateQuestionBankCsvContract() {
       uhrSectionMap?.source?.publisher,
       uhrSectionMap?.source?.url,
       uhrSectionMap?.source?.retrievedDate,
+      questionSupplementalSourcePayload(question, 'title'),
+      questionSupplementalSourcePayload(question, 'publisher'),
+      questionSupplementalSourcePayload(question, 'url'),
+      questionSupplementalSourcePayload(question, 'publishedDate'),
+      questionSupplementalSourcePayload(question, 'retrievedDate'),
       question.difficulty,
       question.reviewStatus,
       Array.isArray(question.tags) ? question.tags.join('|') : '',
@@ -22182,6 +22323,38 @@ function validateQuestionBankCsvContract() {
       questionBankCsvUhrSourcePublisherRowsValidated += 1;
     }
 
+    const supplementalPublisherIndex = QUESTION_BANK_CSV_HEADER.indexOf(
+      'supplementalSourcePublisher',
+    );
+    if (supplementalPublisherIndex >= 0 && hasText(row[supplementalPublisherIndex])) {
+      questionBankCsvSupplementalSourceRowsValidated += 1;
+    }
+
+    if (requiredVotingRightsSupplementalIds.has(question.id)) {
+      const supplementalFields = [
+        ['supplementalSourceTitle', EXPECTED_VALMYNDIGHETEN_VOTING_RIGHTS_SOURCE.title],
+        ['supplementalSourcePublisher', EXPECTED_VALMYNDIGHETEN_VOTING_RIGHTS_SOURCE.publisher],
+        ['supplementalSourceUrl', EXPECTED_VALMYNDIGHETEN_VOTING_RIGHTS_SOURCE.url],
+        [
+          'supplementalSourcePublishedDate',
+          EXPECTED_VALMYNDIGHETEN_VOTING_RIGHTS_SOURCE.publishedDate,
+        ],
+        [
+          'supplementalSourceRetrievedDate',
+          EXPECTED_VALMYNDIGHETEN_VOTING_RIGHTS_SOURCE.retrievedDate,
+        ],
+      ];
+      const sourceMatches = supplementalFields.every(([field, expectedValue]) => {
+        const fieldIndex = QUESTION_BANK_CSV_HEADER.indexOf(field);
+        return fieldIndex >= 0 && row[fieldIndex] === expectedValue;
+      });
+      if (sourceMatches) {
+        votingRightsSupplementalRowsValidated += 1;
+      } else {
+        reject(`${label} CSV row must export the Valmyndigheten voting-rights supplemental source`);
+      }
+    }
+
     const provenanceIndex = QUESTION_BANK_CSV_HEADER.indexOf('questionProvenance');
     const provenance = row[provenanceIndex];
     if (Object.prototype.hasOwnProperty.call(questionBankCsvProvenanceCounts, provenance)) {
@@ -22204,6 +22377,8 @@ function validateQuestionBankCsvContract() {
 
   questionBankCsvUhrSourcePublisherParityValidated =
     questionBankCsvUhrSourcePublisherRowsValidated === questions.length;
+  questionBankCsvVotingRightsSupplementalSourceParityValidated =
+    votingRightsSupplementalRowsValidated === expectedVotingRightsSupplementalRows;
 }
 
 function validateQuestionProvenanceRuntime() {
@@ -22497,6 +22672,7 @@ const PUBLISHED_SOURCE_PARITY_FIELDS = [
   'explanationSv',
   'explanationEn',
   'uhrReference',
+  'supplementalSources',
   'difficulty',
   'tags',
 ];
@@ -22789,7 +22965,7 @@ function validateGeneratedSourceMetadataParity() {
         reject(`${label} type is ${variant.type}, expected ${convention.type}`);
       }
 
-      for (const field of ['chapterId', 'difficulty', 'uhrReference']) {
+      for (const field of ['chapterId', 'difficulty', 'uhrReference', 'supplementalSources']) {
         if (!jsonEqual(variant[field], sourceQuestion[field])) {
           reject(`${label} ${field} does not match source question`);
         }
@@ -23459,6 +23635,8 @@ if (process.argv.includes('--focus-question-bank-csv')) {
         questionBankCsvUniqueHeaderNamesValidated,
         questionBankCsvUhrSourcePublisherRowsValidated,
         questionBankCsvUhrSourcePublisherParityValidated,
+        questionBankCsvSupplementalSourceRowsValidated,
+        questionBankCsvVotingRightsSupplementalSourceParityValidated,
         questionBankCsvProvenanceCounts,
         uhrMapExactSchemaKeysValidated,
         uhrSourceMaterialLinkParityValidated,
@@ -24377,6 +24555,8 @@ console.log(
       questionBankCsvUniqueHeaderNamesValidated,
       questionBankCsvUhrSourcePublisherRowsValidated,
       questionBankCsvUhrSourcePublisherParityValidated,
+      questionBankCsvSupplementalSourceRowsValidated,
+      questionBankCsvVotingRightsSupplementalSourceParityValidated,
       questionBankCsvProvenanceCounts,
       questionProvenanceRuntimeCasesValidated,
       questionProvenanceRuntimeParityValidated,

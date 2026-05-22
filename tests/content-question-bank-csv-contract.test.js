@@ -41,10 +41,12 @@ test('question-bank CSV keeps its public row contract', () => {
 
   const summary = JSON.parse(match[0]);
   assert.equal(summary.questionBankCsvRowsValidated, summary.publishedQuestions);
-  assert.equal(summary.questionBankCsvHeaderColumnsValidated, 21);
+  assert.equal(summary.questionBankCsvHeaderColumnsValidated, 26);
   assert.equal(summary.questionBankCsvUniqueHeaderNamesValidated, true);
   assert.equal(summary.questionBankCsvUhrSourcePublisherRowsValidated, summary.publishedQuestions);
   assert.equal(summary.questionBankCsvUhrSourcePublisherParityValidated, true);
+  assert.equal(summary.questionBankCsvSupplementalSourceRowsValidated, 15);
+  assert.equal(summary.questionBankCsvVotingRightsSupplementalSourceParityValidated, true);
 });
 
 test('question provenance runtime guard validates invalid tags and provenance fallbacks', () => {
@@ -105,6 +107,7 @@ test('question-bank CSV has unique public header names', () => {
 
   assert.deepEqual(duplicateHeaderNames, []);
   assert.equal(header.filter((field) => field === 'uhrSourcePublisher').length, 1);
+  assert.equal(header.filter((field) => field === 'supplementalSourcePublisher').length, 1);
 });
 
 test('question-bank CSV contract rejects public header drift', () => {
@@ -168,7 +171,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /content\/question-bank\.csv row 2 has 22 columns, expected 21/,
+    /content\/question-bank\.csv row 2 has 27 columns, expected 26/,
   );
 });
 
@@ -320,6 +323,60 @@ test('question-bank CSV exposes UHR source metadata with no blank cells', () => 
       `every row should export ${field}`,
     );
   }
+});
+
+test('question-bank CSV exposes Valmyndigheten supplemental source metadata for voting-rights rows', () => {
+  const output = runQuestionBankCsvValidation();
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'validation should print JSON summary');
+
+  const summary = JSON.parse(match[0]);
+  assert.equal(summary.questionBankCsvSupplementalSourceRowsValidated, 15);
+  assert.equal(summary.questionBankCsvVotingRightsSupplementalSourceParityValidated, true);
+
+  const csv = fs.readFileSync(path.join(repoRoot, 'content', 'question-bank.csv'), 'utf8');
+  const lines = csv.trimEnd().split('\n');
+  const header = parseExportedCsvLine(lines[0]);
+  const rows = lines.slice(1).map(parseExportedCsvLine);
+  const idIndex = header.indexOf('id');
+  const expectedRows = new Set([
+    'q019',
+    'q030',
+    'q166',
+    'q252',
+    'q253',
+    'q254',
+    'q255',
+    'q296',
+    'q297',
+    'q298',
+    'q299',
+    'q840',
+    'q841',
+    'q842',
+    'q843',
+  ]);
+  const expectedSource = {
+    supplementalSourceTitle: 'Rösträtten i svenska val',
+    supplementalSourcePublisher: 'Valmyndigheten',
+    supplementalSourceUrl:
+      'https://www.val.se/det-svenska-valsystemet/sa-funkar-rostning-i-svenska-val/rostratten-i-svenska-val',
+    supplementalSourcePublishedDate: '2025-11-21',
+    supplementalSourceRetrievedDate: '2026-05-22',
+  };
+
+  const rowsWithSupplementalSource = rows.filter((row) =>
+    Object.keys(expectedSource).some((field) => row[header.indexOf(field)]),
+  );
+  assert.deepEqual(new Set(rowsWithSupplementalSource.map((row) => row[idIndex])), expectedRows);
+
+  rowsWithSupplementalSource.forEach((row) => {
+    for (const [field, expected] of Object.entries(expectedSource)) {
+      const fieldIndex = header.indexOf(field);
+      assert.notEqual(fieldIndex, -1, `${field} column should exist`);
+      assert.equal(row[fieldIndex], expected, `${row[idIndex]} ${field}`);
+    }
+  });
 });
 
 test('question-bank CSV contract summarizes shared UHR source metadata drift', () => {

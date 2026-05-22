@@ -58,6 +58,15 @@ test('question text helper localizes fallback, source citation, and secondary te
       pageApprox: 5,
       section: 'Geografi, klimat och natur',
     },
+    supplementalSources: [
+      {
+        title: 'Rösträtten i svenska val',
+        publisher: 'Valmyndigheten',
+        url: 'https://www.val.se/det-svenska-valsystemet/sa-funkar-rostning-i-svenska-val/rostratten-i-svenska-val',
+        publishedDate: '2025-11-21',
+        retrievedDate: '2026-05-22',
+      },
+    ],
   };
 
   assert.equal(
@@ -72,11 +81,11 @@ test('question text helper localizes fallback, source citation, and secondary te
   assert.equal(getQuestionTranslationText(question, 'en'), 'Var ligger Sverige?');
   assert.equal(
     getQuestionSourceCitation(question, 'sv'),
-    'Källa: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, s. 5',
+    'Källa: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, s. 5; Kompletterande källa: Rösträtten i svenska val, Valmyndigheten, publicerad 2025-11-21, hämtad 2026-05-22, https://www.val.se/det-svenska-valsystemet/sa-funkar-rostning-i-svenska-val/rostratten-i-svenska-val',
   );
   assert.equal(
     getQuestionSourceCitation(question, 'en'),
-    'Source: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, p. 5',
+    'Source: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, p. 5; Additional source: Rösträtten i svenska val, Valmyndigheten, published 2025-11-21, retrieved 2026-05-22, https://www.val.se/det-svenska-valsystemet/sa-funkar-rostning-i-svenska-val/rostratten-i-svenska-val',
   );
   assert.equal(getQuestionSourceCitation(undefined, 'sv'), 'Källhänvisning saknas');
   assert.equal(getQuestionSourceCitation(undefined, 'en'), 'Source citation unavailable');

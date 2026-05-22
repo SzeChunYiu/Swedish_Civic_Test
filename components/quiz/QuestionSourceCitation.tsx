@@ -7,13 +7,14 @@ import { getQuestionSourceCitation } from '../../lib/quiz/questionText';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
 import { typography } from '../../lib/theme';
 import type { ThemeColors } from '../../lib/theme';
-import type { UHRReference } from '../../types/content';
+import type { OfficialSourceReference, UHRReference } from '../../types/content';
 import { useResolvedThemeColors } from '../useResolvedThemeColors';
 import { SourceCitation } from './SourceCitation';
 import type { SourceCitationProps } from './SourceCitation';
 
 export type QuestionSourceCitationQuestion = {
   uhrReference?: UHRReference;
+  supplementalSources?: OfficialSourceReference[];
 };
 
 type QuestionSourceCitationLabelCopy = {

@@ -1960,7 +1960,16 @@
       "title": "Sverige i fokus",
       "chapter": "Politiska val och partier",
       "section": "Val och röstning",
-      "page": 14
+      "page": 14,
+      "supplementalSources": [
+        {
+          "title": "Rösträtten i svenska val",
+          "publisher": "Valmyndigheten",
+          "url": "https://www.val.se/det-svenska-valsystemet/sa-funkar-rostning-i-svenska-val/rostratten-i-svenska-val",
+          "publishedDate": "2025-11-21",
+          "retrievedDate": "2026-05-22"
+        }
+      ]
     },
     "questionProvenance": "uhr",
     "difficulty": "easy",
@@ -3070,7 +3079,16 @@
       "title": "Sverige i fokus",
       "chapter": "Politiska val och partier",
       "section": "Val och röstning",
-      "page": 14
+      "page": 14,
+      "supplementalSources": [
+        {
+          "title": "Rösträtten i svenska val",
+          "publisher": "Valmyndigheten",
+          "url": "https://www.val.se/det-svenska-valsystemet/sa-funkar-rostning-i-svenska-val/rostratten-i-svenska-val",
+          "publishedDate": "2025-11-21",
+          "retrievedDate": "2026-05-22"
+        }
+      ]
     },
     "questionProvenance": "uhr",
     "difficulty": "medium",
@@ -17363,7 +17381,16 @@
       "title": "Sverige i fokus",
       "chapter": "Politiska val och partier",
       "section": "Val och röstning",
-      "page": 14
+      "page": 14,
+      "supplementalSources": [
+        {
+          "title": "Rösträtten i svenska val",
+          "publisher": "Valmyndigheten",
+          "url": "https://www.val.se/det-svenska-valsystemet/sa-funkar-rostning-i-svenska-val/rostratten-i-svenska-val",
+          "publishedDate": "2025-11-21",
+          "retrievedDate": "2026-05-22"
+        }
+      ]
     },
     "questionProvenance": "uhr",
     "difficulty": "medium",
@@ -23361,7 +23388,16 @@
       "title": "Sverige i fokus",
       "chapter": "Politiska val och partier",
       "section": "Val och röstning",
-      "page": 14
+      "page": 14,
+      "supplementalSources": [
+        {
+          "title": "Rösträtten i svenska val",
+          "publisher": "Valmyndigheten",
+          "url": "https://www.val.se/det-svenska-valsystemet/sa-funkar-rostning-i-svenska-val/rostratten-i-svenska-val",
+          "publishedDate": "2025-11-21",
+          "retrievedDate": "2026-05-22"
+        }
+      ]
     },
     "questionProvenance": "derived",
     "difficulty": "easy",
@@ -23401,7 +23437,16 @@
       "title": "Sverige i fokus",
       "chapter": "Politiska val och partier",
       "section": "Val och röstning",
-      "page": 14
+      "page": 14,
+      "supplementalSources": [
+        {
+          "title": "Rösträtten i svenska val",
+          "publisher": "Valmyndigheten",
+          "url": "https://www.val.se/det-svenska-valsystemet/sa-funkar-rostning-i-svenska-val/rostratten-i-svenska-val",
+          "publishedDate": "2025-11-21",
+          "retrievedDate": "2026-05-22"
+        }
+      ]
     },
     "questionProvenance": "derived",
     "difficulty": "easy",
@@ -23441,7 +23486,16 @@
       "title": "Sverige i fokus",
       "chapter": "Politiska val och partier",
       "section": "Val och röstning",
-      "page": 14
+      "page": 14,
+      "supplementalSources": [
+        {
+          "title": "Rösträtten i svenska val",
+          "publisher": "Valmyndigheten",
+          "url": "https://www.val.se/det-svenska-valsystemet/sa-funkar-rostning-i-svenska-val/rostratten-i-svenska-val",
+          "publishedDate": "2025-11-21",
+          "retrievedDate": "2026-05-22"
+        }
+      ]
     },
     "questionProvenance": "derived",
     "difficulty": "easy",
@@ -23529,7 +23583,16 @@
       "title": "Sverige i fokus",
       "chapter": "Politiska val och partier",
       "section": "Val och röstning",
-      "page": 14
+      "page": 14,
+      "supplementalSources": [
+        {
+          "title": "Rösträtten i svenska val",
+          "publisher": "Valmyndigheten",
+          "url": "https://www.val.se/det-svenska-valsystemet/sa-funkar-rostning-i-svenska-val/rostratten-i-svenska-val",
+          "publishedDate": "2025-11-21",
+          "retrievedDate": "2026-05-22"
+        }
+      ]
     },
     "questionProvenance": "derived",
     "difficulty": "easy",
@@ -26017,7 +26080,16 @@
       "title": "Sverige i fokus",
       "chapter": "Politiska val och partier",
       "section": "Val och röstning",
-      "page": 14
+      "page": 14,
+      "supplementalSources": [
+        {
+          "title": "Rösträtten i svenska val",
+          "publisher": "Valmyndigheten",
+          "url": "https://www.val.se/det-svenska-valsystemet/sa-funkar-rostning-i-svenska-val/rostratten-i-svenska-val",
+          "publishedDate": "2025-11-21",
+          "retrievedDate": "2026-05-22"
+        }
+      ]
     },
     "questionProvenance": "derived",
     "difficulty": "medium",
@@ -26057,7 +26129,16 @@
       "title": "Sverige i fokus",
       "chapter": "Politiska val och partier",
       "section": "Val och röstning",
-      "page": 14
+      "page": 14,
+      "supplementalSources": [
+        {
+          "title": "Rösträtten i svenska val",
+          "publisher": "Valmyndigheten",
+          "url": "https://www.val.se/det-svenska-valsystemet/sa-funkar-rostning-i-svenska-val/rostratten-i-svenska-val",
+          "publishedDate": "2025-11-21",
+          "retrievedDate": "2026-05-22"
+        }
+      ]
     },
     "questionProvenance": "derived",
     "difficulty": "medium",
@@ -26097,7 +26178,16 @@
       "title": "Sverige i fokus",
       "chapter": "Politiska val och partier",
       "section": "Val och röstning",
-      "page": 14
+      "page": 14,
+      "supplementalSources": [
+        {
+          "title": "Rösträtten i svenska val",
+          "publisher": "Valmyndigheten",
+          "url": "https://www.val.se/det-svenska-valsystemet/sa-funkar-rostning-i-svenska-val/rostratten-i-svenska-val",
+          "publishedDate": "2025-11-21",
+          "retrievedDate": "2026-05-22"
+        }
+      ]
     },
     "questionProvenance": "derived",
     "difficulty": "medium",
@@ -26185,7 +26275,16 @@
       "title": "Sverige i fokus",
       "chapter": "Politiska val och partier",
       "section": "Val och röstning",
-      "page": 14
+      "page": 14,
+      "supplementalSources": [
+        {
+          "title": "Rösträtten i svenska val",
+          "publisher": "Valmyndigheten",
+          "url": "https://www.val.se/det-svenska-valsystemet/sa-funkar-rostning-i-svenska-val/rostratten-i-svenska-val",
+          "publishedDate": "2025-11-21",
+          "retrievedDate": "2026-05-22"
+        }
+      ]
     },
     "questionProvenance": "derived",
     "difficulty": "medium",
@@ -60565,7 +60664,16 @@
       "title": "Sverige i fokus",
       "chapter": "Politiska val och partier",
       "section": "Val och röstning",
-      "page": 14
+      "page": 14,
+      "supplementalSources": [
+        {
+          "title": "Rösträtten i svenska val",
+          "publisher": "Valmyndigheten",
+          "url": "https://www.val.se/det-svenska-valsystemet/sa-funkar-rostning-i-svenska-val/rostratten-i-svenska-val",
+          "publishedDate": "2025-11-21",
+          "retrievedDate": "2026-05-22"
+        }
+      ]
     },
     "questionProvenance": "derived",
     "difficulty": "medium",
@@ -60606,7 +60714,16 @@
       "title": "Sverige i fokus",
       "chapter": "Politiska val och partier",
       "section": "Val och röstning",
-      "page": 14
+      "page": 14,
+      "supplementalSources": [
+        {
+          "title": "Rösträtten i svenska val",
+          "publisher": "Valmyndigheten",
+          "url": "https://www.val.se/det-svenska-valsystemet/sa-funkar-rostning-i-svenska-val/rostratten-i-svenska-val",
+          "publishedDate": "2025-11-21",
+          "retrievedDate": "2026-05-22"
+        }
+      ]
     },
     "questionProvenance": "derived",
     "difficulty": "medium",
@@ -60647,7 +60764,16 @@
       "title": "Sverige i fokus",
       "chapter": "Politiska val och partier",
       "section": "Val och röstning",
-      "page": 14
+      "page": 14,
+      "supplementalSources": [
+        {
+          "title": "Rösträtten i svenska val",
+          "publisher": "Valmyndigheten",
+          "url": "https://www.val.se/det-svenska-valsystemet/sa-funkar-rostning-i-svenska-val/rostratten-i-svenska-val",
+          "publishedDate": "2025-11-21",
+          "retrievedDate": "2026-05-22"
+        }
+      ]
     },
     "questionProvenance": "derived",
     "difficulty": "medium",
@@ -60736,7 +60862,16 @@
       "title": "Sverige i fokus",
       "chapter": "Politiska val och partier",
       "section": "Val och röstning",
-      "page": 14
+      "page": 14,
+      "supplementalSources": [
+        {
+          "title": "Rösträtten i svenska val",
+          "publisher": "Valmyndigheten",
+          "url": "https://www.val.se/det-svenska-valsystemet/sa-funkar-rostning-i-svenska-val/rostratten-i-svenska-val",
+          "publishedDate": "2025-11-21",
+          "retrievedDate": "2026-05-22"
+        }
+      ]
     },
     "questionProvenance": "derived",
     "difficulty": "medium",
