@@ -577,6 +577,64 @@ test('question localization v8 summarizes q050 source-criticism naturalness case
   assert.equal(summary.parityValidated, true);
 });
 
+function q166Q169KommunRegionFixture(id = 'q166', { stale = false } = {}) {
+  const staleQuestion = {
+    'zh-Hant': 'kommun 和 region 選舉',
+    'zh-Hans': 'kommun 和 region 选举',
+    pl: 'wybory do kommun i regionów',
+    so: 'doorashooyinka kommun iyo region',
+    ti: 'ምርጫታት kommun ከምኡውን region',
+    tr: 'kommun ve region seçimleri',
+    uk: 'вибори до kommun і region',
+  };
+  const naturalQuestion = {
+    'zh-Hant': '市鎮和大區選舉',
+    'zh-Hans': '市镇和大区选举',
+    pl: 'wybory gminne i regionalne',
+    so: 'doorashooyinka degmooyinka iyo gobollada',
+    ti: 'ምርጫታት ምምሕዳር ከባቢን ክልልን',
+    tr: 'belediye ve bölge seçimleri',
+    uk: 'муніципальні і регіональні вибори',
+  };
+  const localized = stale ? staleQuestion : naturalQuestion;
+
+  return {
+    id,
+    questionSv: 'Fråga?',
+    questionEn: 'Question?',
+    questionText: localized,
+    explanationSv: 'Förklaring.',
+    explanationEn: 'Explanation.',
+    explanationText: localized,
+    options: [{ id: 'a', textSv: 'Svar', textEn: 'Answer', text: localized }],
+    correctOptionId: 'a',
+  };
+}
+
+test('question localization v8 rejects bare kommun and region terms for q166/q169', () => {
+  const errors = checkQ166Q169KommunRegionNaturalness([
+    q166Q169KommunRegionFixture('q166', { stale: true }),
+    q166Q169KommunRegionFixture('q169', { stale: true }),
+  ]);
+
+  assert.ok(errors.includes('q166.questionText.zh-Hant uses bare kommun/region term'));
+  assert.ok(errors.includes('q166.explanationText.so uses bare kommun/region term'));
+  assert.ok(errors.includes('q166.options.a.text.tr uses bare kommun/region term'));
+  assert.ok(errors.includes('q169.questionText.uk uses bare kommun/region term'));
+});
+
+test('question localization v8 summarizes q166/q169 kommun-region naturalness cases', () => {
+  const summary = summarizeQ166Q169KommunRegionNaturalness(
+    [q166Q169KommunRegionFixture('q166'), q166Q169KommunRegionFixture('q169')],
+    Q166_Q169_KOMMUN_REGION_NATURALNESS_IDS,
+  );
+
+  assert.deepEqual(summary.errors, []);
+  assert.equal(summary.casesValidated, 2);
+  assert.equal(summary.expectedCases, 2);
+  assert.equal(summary.parityValidated, true);
+});
+
 test('question localization v8 rejects missing protected Swedish civic terms in target text', () => {
   const errors = checkQuestions(
     [

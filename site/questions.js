@@ -17293,16 +17293,16 @@
     "q": {
       "en": "What rules apply to voting rights in municipal and regional elections for people who are not Swedish citizens?",
       "sv": "Vilka regler gäller för rösträtt i kommun- och regionval för personer som inte är svenska medborgare?",
-      "zh-Hant": "對於非瑞典公民，哪項說法描述了他們在市鎮（kommun）和大區（region）選舉中的投票權？",
-      "zh-Hans": "对于非瑞典公民，哪项说法描述了他们在市镇（kommun）和大区（region）选举中的投票权？",
+      "zh-Hant": "對於非瑞典公民，哪項說法描述了他們在市鎮和大區選舉中的投票權？",
+      "zh-Hans": "对于非瑞典公民，哪项说法描述了他们在市镇和大区选举中的投票权？",
       "ar": "أيُّ إجابةٍ تصف حقّ التصويت في انتخابات البلديات (kommun) والأقاليم (region) لمن ليسوا مواطنين سويديين؟",
       "ckb": "کام وەڵام مافی دەنگدان لە هەڵبژاردنی شارەوانی (kommun) و هەرێم (region) بۆ ئەو کەسانەی هاووڵاتی سوید نین دەخاتە ڕوو؟",
-      "fa": "کدام پاسخ حق رأی در انتخابات شهرداری (kommun) و منطقه (region) را برای کسانی که شهروند سوئد نیستند توصیف می‌کند؟",
+      "fa": "کدام پاسخ حق رأی در انتخابات کمون (kommun) و منطقه (region) را برای کسانی که شهروند سوئد نیستند توصیف می‌کند؟",
       "pl": "Która odpowiedź opisuje prawo do głosowania w wyborach gminnych i regionalnych dla osób, które nie są obywatelami Szwecji?",
       "so": "Jawaabtee qeexaysa xaqa codbixinta ee doorashooyinka degmooyinka iyo gobollada ee dadka aan ahayn muwaadiniinta Iswiidhan?",
-      "ti": "ኣየናይ መልሲ ንዜጋታት ሽወደን ዘይኮኑ ሰባት ኣብ ምርጫታት ምምሕዳር ከባቢ (kommun) ከምኡ’ውን ዞባ (region) ዘሎ መሰል ምድማጽ ይገልጽ?",
-      "tr": "Hangi cevap, İsveç vatandaşı olmayan kişiler için belediye (kommun) ve bölge (region) seçimlerindeki oy kullanma hakkını tanımlar?",
-      "uk": "Який варіант відповіді описує право голосу на муніципальних (kommun) і регіональних (region) виборах для людей, які не є громадянами Швеції?"
+      "ti": "ኣየናይ መልሲ ንዜጋታት ሽወደን ዘይኮኑ ሰባት ኣብ ምርጫታት ምምሕዳር ከባቢን ክልልን ዘሎ መሰል ምድማጽ ይገልጽ?",
+      "tr": "Hangi cevap, İsveç vatandaşı olmayan kişiler için belediye ve bölge seçimlerindeki oy kullanma hakkını tanımlar?",
+      "uk": "Який варіант відповіді описує право голосу на муніципальних і регіональних виборах для людей, які не є громадянами Швеції?"
     },
     "opts": [
       {
@@ -17322,16 +17322,16 @@
       {
         "en": "No one without Swedish citizenship may vote in municipal or regional elections",
         "sv": "Ingen utan svenskt medborgarskap får rösta i kommun- eller regionval",
-        "zh-Hant": "沒有瑞典公民身分的人一律不得在市鎮（kommun）或大區（region）選舉中投票",
-        "zh-Hans": "没有瑞典公民身份的人一律不得在市镇（kommun）或大区（region）选举中投票",
+        "zh-Hant": "沒有瑞典公民身分的人一律不得在市鎮或大區選舉中投票",
+        "zh-Hans": "没有瑞典公民身份的人一律不得在市镇或大区选举中投票",
         "ar": "لا يحقّ لأحدٍ بلا جنسية سويدية التصويت في انتخابات البلديات (kommun) أو الأقاليم (region)",
         "ckb": "هیچ کەسێک بەبێ هاووڵاتیبوونی سوید بۆی نییە لە هەڵبژاردنی شارەوانی (kommun) یان هەرێم (region) دەنگ بدات",
-        "fa": "هیچ‌کس بدون شهروندی سوئد اجازهٔ رأی‌دادن در انتخابات شهرداری (kommun) یا منطقه (region) را ندارد",
+        "fa": "هیچ‌کس بدون شهروندی سوئد اجازهٔ رأی‌دادن در انتخابات کمون (kommun) یا منطقه (region) را ندارد",
         "pl": "Nikt bez obywatelstwa szwedzkiego nie może głosować w wyborach gminnych ani regionalnych",
         "so": "Cidna aan lahayn muwaadinimada Iswiidhan kuma codayn karto doorashooyinka degmooyinka ama gobollada",
-        "ti": "ዜግነት ሽወደን ዘይብሉ ዝኾነ ሰብ ኣብ ምርጫታት ምምሕዳር ከባቢ (kommun) ወይ ዞባ (region) ክመርጽ ኣይክእልን",
-        "tr": "İsveç vatandaşlığı olmayan hiç kimse belediye (kommun) veya bölge (region) seçimlerinde oy kullanamaz",
-        "uk": "Ніхто без шведського громадянства не може голосувати на муніципальних (kommun) чи регіональних (region) виборах"
+        "ti": "ዜግነት ሽወደን ዘይብሉ ዝኾነ ሰብ ኣብ ምርጫታት ምምሕዳር ከባቢ ወይ ክልል ክመርጽ ኣይክእልን",
+        "tr": "İsveç vatandaşlığı olmayan hiç kimse belediye veya bölge seçimlerinde oy kullanamaz",
+        "uk": "Ніхто без шведського громадянства не може голосувати на муніципальних чи регіональних виборах"
       },
       {
         "en": "All tourists may vote if they are in Sweden on election day",
@@ -17366,16 +17366,16 @@
     "why": {
       "en": "Swedish citizenship is not always required for municipal and regional elections. People who are not Swedish citizens may have the right to vote if they are registered as living in Sweden and meet the rules, such as three years of registration or special rules for EU and Nordic citizens.",
       "sv": "För kommun- och regionval krävs inte alltid svenskt medborgarskap. Personer som inte är svenska medborgare kan ha rösträtt om de är folkbokförda i Sverige och uppfyller reglerna, till exempel tre års folkbokföring eller särskilda regler för EU- och nordiska medborgare.",
-      "zh-Hant": "市鎮（kommun）和大區（region）選舉並不總是要求具有瑞典公民身分。非瑞典公民如果在瑞典登記戶籍（folkbokförd）並符合相關規定，就可能擁有投票權，例如登記戶籍滿三年，或適用於 EU 公民和北歐公民的特殊規定。",
-      "zh-Hans": "市镇（kommun）和大区（region）选举并不总是要求具有瑞典公民身份。非瑞典公民如果在瑞典登记户籍（folkbokförd）并符合相关规定，就可能拥有投票权，例如登记户籍满三年，或适用于 EU 公民和北欧公民的特殊规定。",
+      "zh-Hant": "市鎮和大區選舉並不總是要求具有瑞典公民身分。非瑞典公民如果在瑞典登記戶籍（folkbokförd）並符合相關規定，就可能擁有投票權，例如登記戶籍滿三年，或適用於 EU 公民和北歐公民的特殊規定。",
+      "zh-Hans": "市镇和大区选举并不总是要求具有瑞典公民身份。非瑞典公民如果在瑞典登记户籍（folkbokförd）并符合相关规定，就可能拥有投票权，例如登记户籍满三年，或适用于 EU 公民和北欧公民的特殊规定。",
       "ar": "لا تُشترَط دائمًا الجنسية السويدية لانتخابات البلديات (kommun) والأقاليم (region). فالأشخاص الذين ليسوا مواطنين سويديين قد يكون لهم حقّ التصويت إذا كانوا مسجّلين كمقيمين في السويد ويستوفون الشروط، مثل ثلاث سنوات من التسجيل أو قواعد خاصة لمواطني الاتحاد الأوروبي (EU) ومواطني دول الشمال.",
       "ckb": "بۆ هەڵبژاردنی شارەوانی (kommun) و هەرێم (region) هەمیشە هاووڵاتیبوونی سوید پێویست نییە. ئەو کەسانەی هاووڵاتی سوید نین لەوانەیە مافی دەنگدانیان هەبێت ئەگەر لە سوید وەک نیشتەجێ تۆمارکرابن و مەرجەکان بهێننە دی، وەک سێ ساڵ تۆمارکردن یان ڕێسای تایبەت بۆ هاووڵاتیانی EU و وڵاتانی باکووری ئەورووپا.",
-      "fa": "برای انتخابات شهرداری (kommun) و منطقه (region) همیشه شهروندی سوئد لازم نیست. کسانی که شهروند سوئد نیستند ممکن است حق رأی داشته باشند اگر در سوئد به‌عنوان مقیم ثبت شده باشند و شرایط را برآورده کنند، مانند سه سال ثبت اقامت یا قواعد ویژه برای شهروندان EU و کشورهای شمال اروپا.",
+      "fa": "برای انتخابات کمون (kommun) و منطقه (region) همیشه شهروندی سوئد لازم نیست. کسانی که شهروند سوئد نیستند ممکن است حق رأی داشته باشند اگر در سوئد به‌عنوان مقیم ثبت شده باشند و شرایط را برآورده کنند، مانند سه سال ثبت اقامت یا قواعد ویژه برای شهروندان EU و کشورهای شمال اروپا.",
       "pl": "W wyborach gminnych i regionalnych nie zawsze wymagane jest obywatelstwo szwedzkie. Osoby, które nie są obywatelami Szwecji, mogą mieć prawo do głosowania, jeśli są zameldowane (folkbokförda) w Szwecji i spełniają zasady, na przykład trzy lata zameldowania lub szczególne zasady dla obywateli EU i krajów nordyckich.",
       "so": "Doorashooyinka degmooyinka iyo gobollada had iyo jeer looma baahna muwaadinimada Iswiidhan. Dadka aan ahayn muwaadiniinta Iswiidhan waxay yeelan karaan xaqa codbixinta haddii ay ku diiwaangashan yihiin (folkbokförda) Iswiidhan oo ay buuxiyaan xeerarka, sida saddex sano oo diiwaangelin ah ama xeerar gaar ah oo loogu talagalay muwaadiniinta EU iyo kuwa waqooyiga Yurub.",
-      "ti": "ንምርጫታት ምምሕዳር ከባቢ (kommun) ከምኡ’ውን ዞባ (region) ኩሉ ግዜ ዜግነት ሽወደን ኣየድልን። ዜጋታት ሽወደን ዘይኮኑ ሰባት ኣብ ሽወደን ተመዝጊቦም (folkbokförda) እንተ ኣልዮምን ነቶም ሕግታት እንተ ኣማሊኦምን፣ ንኣብነት ሰለስተ ዓመት ምዝገባ ወይ ንዜጋታት EU ከምኡ’ውን ኖርዲክ ፍሉያት ሕግታት፣ መሰል ምድማጽ ክህልዎም ይኽእል።",
-      "tr": "Belediye (kommun) ve bölge (region) seçimleri için İsveç vatandaşlığı her zaman gerekli değildir. İsveç vatandaşı olmayan kişiler, İsveç'te kayıtlı (folkbokförda) iseler ve kuralları karşılıyorlarsa oy kullanma hakkına sahip olabilir; örneğin üç yıllık kayıt ya da EU ve İskandinav vatandaşları için özel kurallar.",
-      "uk": "Для муніципальних (kommun) і регіональних (region) виборів не завжди потрібне шведське громадянство. Особи, які не є громадянами Швеції, можуть мати право голосу, якщо вони зареєстровані за місцем проживання (folkbokförda) у Швеції та відповідають правилам, наприклад три роки реєстрації або особливі правила для громадян EU та країн Північної Європи."
+      "ti": "ንምርጫታት ምምሕዳር ከባቢን ክልልን ኩሉ ግዜ ዜግነት ሽወደን ኣየድልን። ዜጋታት ሽወደን ዘይኮኑ ሰባት ኣብ ሽወደን ተመዝጊቦም (folkbokförda) እንተ ኣልዮምን ነቶም ሕግታት እንተ ኣማሊኦምን፣ ንኣብነት ሰለስተ ዓመት ምዝገባ ወይ ንዜጋታት EU ከምኡ’ውን ኖርዲክ ፍሉያት ሕግታት፣ መሰል ምድማጽ ክህልዎም ይኽእል።",
+      "tr": "Belediye ve bölge seçimleri için İsveç vatandaşlığı her zaman gerekli değildir. İsveç vatandaşı olmayan kişiler, İsveç'te kayıtlı (folkbokförda) iseler ve kuralları karşılıyorlarsa oy kullanma hakkına sahip olabilir; örneğin üç yıllık kayıt ya da EU ve İskandinav vatandaşları için özel kurallar.",
+      "uk": "Для муніципальних і регіональних виборів не завжди потрібне шведське громадянство. Особи, які не є громадянами Швеції, можуть мати право голосу, якщо вони зареєстровані за місцем проживання (folkbokförda) у Швеції та відповідають правилам, наприклад три роки реєстрації або особливі правила для громадян EU та країн Північної Європи."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -17622,31 +17622,31 @@
     "q": {
       "en": "Which statement about special parties in municipal and regional elections is correct?",
       "sv": "Vilket påstående om särskilda partier i kommun- och regionval är korrekt?",
-      "zh-Hant": "關於市鎮（kommun）和大區（region）選舉中的特殊政黨，哪項說法是正確的？",
-      "zh-Hans": "关于市镇（kommun）和大区（region）选举中的特殊政党，哪项说法是正确的？",
+      "zh-Hant": "關於市鎮和大區選舉中的特殊政黨，哪項說法是正確的？",
+      "zh-Hans": "关于市镇和大区选举中的特殊政党，哪项说法是正确的？",
       "ar": "ما العبارة الصحيحة بشأن الأحزاب الخاصة في انتخابات البلديات (kommun) والأقاليم (region)؟",
       "ckb": "کام لێدوان دەربارەی پارتە تایبەتەکان لە هەڵبژاردنی شارەوانی (kommun) و هەرێم (region) ڕاستە؟",
-      "fa": "کدام گزاره دربارهٔ احزاب ویژه در انتخابات شهرداری (kommun) و منطقه (region) درست است؟",
+      "fa": "کدام گزاره دربارهٔ احزاب ویژه در انتخابات کمون (kommun) و منطقه (region) درست است؟",
       "pl": "Które stwierdzenie o lokalnych partiach w wyborach gminnych i regionalnych jest prawidłowe?",
       "so": "Hadalkee ku saabsan xisbiyada gaarka ah ee doorashooyinka degmooyinka iyo gobollada ayaa sax ah?",
-      "ti": "ኣብ ምርጫታት ምምሕዳር ከባቢ (kommun) ከምኡ’ውን ዞባ (region) ብዛዕባ ፍሉያት ሰልፍታት ኣየናይ ኣበሃህላ ቅኑዕ እዩ?",
-      "tr": "Belediye (kommun) ve bölge (region) seçimlerindeki özel partiler hakkında hangi ifade doğrudur?",
-      "uk": "Яке твердження про особливі партії на муніципальних (kommun) і регіональних (region) виборах є правильним?"
+      "ti": "ኣብ ምርጫታት ምምሕዳር ከባቢን ክልልን ብዛዕባ ፍሉያት ሰልፍታት ኣየናይ ኣበሃህላ ቅኑዕ እዩ?",
+      "tr": "Belediye ve bölge seçimlerindeki özel partiler hakkında hangi ifade doğrudur?",
+      "uk": "Яке твердження про особливі партії на муніципальних і регіональних виборах є правильним?"
     },
     "opts": [
       {
         "en": "They can have policies only for their own municipality or region",
         "sv": "De kan ha politik bara för den egna kommunen eller regionen",
-        "zh-Hant": "它們可以只針對本市鎮（kommun）或本大區（region）制定政策",
-        "zh-Hans": "它们可以只针对本市镇（kommun）或本大区（region）制定政策",
+        "zh-Hant": "它們可以只針對本市鎮或本大區制定政策",
+        "zh-Hans": "它们可以只针对本市镇或本大区制定政策",
         "ar": "يمكن أن تكون لها سياسات تخصّ بلديتها (kommun) أو إقليمها (region) وحده فقط",
         "ckb": "دەتوانن تەنها سیاسەتیان بۆ شارەوانی یان هەرێمی خۆیان هەبێت",
-        "fa": "می‌توانند سیاست‌هایی داشته باشند که تنها مربوط به شهرداری خودشان (kommun) یا منطقهٔ خودشان (region) است",
+        "fa": "می‌توانند سیاست‌هایی داشته باشند که تنها مربوط به کمون یا منطقهٔ خودشان است",
         "pl": "Mogą prowadzić politykę tylko dla własnej gminy lub własnego regionu",
-        "so": "Waxay siyaasad u yeelan karaan kaliya degmadooda ama gobolkooda",
-        "ti": "ንናይ ገዛእ ርእሶም ምምሕዳር ከባቢ (kommun) ወይ ዞባ (region) ጥራይ ፖሊሲ ክህልዎም ይኽእል",
-        "tr": "Yalnızca kendi belediyeleri (kommun) veya bölgeleri (region) için politikaları olabilir",
-        "uk": "Вони можуть мати політику лише для власного муніципалітету (kommun) чи власного регіону (region)"
+        "so": "Waxay siyaasad u yeelan karaan kaliya degmadooda ama gobolkooda gaarka ah",
+        "ti": "ንናይ ገዛእ ርእሶም ምምሕዳር ከባቢ ወይ ክልል ጥራይ ፖሊሲ ክህልዎም ይኽእል",
+        "tr": "Yalnızca kendi belediyeleri veya bölgeleri için politikaları olabilir",
+        "uk": "Вони можуть мати політику лише для власного муніципалітету чи регіону"
       },
       {
         "en": "They must always be parties in the Riksdag",
@@ -17695,16 +17695,16 @@
     "why": {
       "en": "Municipal and regional elections can include special parties with policies for their own municipality or region, not for the national level. Before elections, parties try to persuade voters through debates, meetings, political advertising, and campaigns.",
       "sv": "I kommun- och regionval kan det finnas särskilda partier som har politik för just sin kommun eller region, inte på riksnivå. Inför valen försöker partier övertyga väljare genom debatter, möten, politisk reklam och kampanjer.",
-      "zh-Hant": "在市鎮（kommun）和大區（region）選舉中，可能存在只針對本市鎮或本大區制定政策、而不在全國層面活動的特殊政黨。選舉前，各政黨透過辯論、集會、政治廣告和競選活動來爭取選民。",
-      "zh-Hans": "在市镇（kommun）和大区（region）选举中，可能存在只针对本市镇或本大区制定政策、而不在全国层面活动的特殊政党。选举前，各政党通过辩论、集会、政治广告和竞选活动来争取选民。",
+      "zh-Hant": "在市鎮和大區選舉中，可能存在只針對本市鎮或本大區制定政策、而不在全國層面活動的特殊政黨。選舉前，各政黨透過辯論、集會、政治廣告和競選活動來爭取選民。",
+      "zh-Hans": "在市镇和大区选举中，可能存在只针对本市镇或本大区制定政策、而不在全国层面活动的特殊政党。选举前，各政党通过辩论、集会、政治广告和竞选活动来争取选民。",
       "ar": "في انتخابات البلديات (kommun) والأقاليم (region) قد توجد أحزاب خاصة لها سياسات تخصّ بلديتها أو إقليمها وحده، لا على المستوى الوطني. وقبل الانتخابات تحاول الأحزاب إقناع الناخبين عبر المناظرات والاجتماعات والدعاية السياسية والحملات.",
       "ckb": "لە هەڵبژاردنی شارەوانی (kommun) و هەرێم (region) دەکرێت پارتە تایبەتەکان هەبن کە تەنها سیاسەتیان بۆ شارەوانی یان هەرێمی خۆیان هەیە، نەک لە ئاستی نیشتمانیدا. پێش هەڵبژاردنەکان پارتەکان هەوڵ دەدەن لە ڕێگەی گفتوگۆ، کۆبوونەوە، ڕیکلامی سیاسی و کەمپەینەوە دەنگدەران ڕازی بکەن.",
-      "fa": "در انتخابات شهرداری (kommun) و منطقه (region) ممکن است احزاب ویژه‌ای وجود داشته باشند که سیاست‌هایشان تنها مربوط به همان شهرداری یا منطقه است، نه در سطح ملی. پیش از انتخابات احزاب می‌کوشند با مناظره‌ها، نشست‌ها، تبلیغات سیاسی و کارزارها رأی‌دهندگان را متقاعد کنند.",
+      "fa": "در انتخابات کمون (kommun) و منطقه (region) ممکن است احزاب ویژه‌ای وجود داشته باشند که سیاست‌هایشان تنها مربوط به همان کمون یا منطقه است، نه در سطح ملی. پیش از انتخابات احزاب می‌کوشند با مناظره‌ها، نشست‌ها، تبلیغات سیاسی و کارزارها رأی‌دهندگان را متقاعد کنند.",
       "pl": "W wyborach gminnych i regionalnych mogą istnieć lokalne partie, które prowadzą politykę tylko dla swojej gminy lub swojego regionu, a nie na poziomie krajowym. Przed wyborami partie starają się przekonać wyborców za pomocą debat, spotkań, reklamy politycznej i kampanii.",
       "so": "Doorashooyinka degmooyinka iyo gobollada waxaa ku jiri kara xisbiyo gaar ah oo siyaasad u leh kaliya degmadooda ama gobolkooda, ee aan ahayn heer qaran. Doorashooyinka ka hor, xisbiyadu waxay isku dayaan inay codbixiyayaasha ku qanciyaan doodo, kulamo, xayeysiis siyaasadeed iyo ololeyaal.",
-      "ti": "ኣብ ምርጫታት ምምሕዳር ከባቢ (kommun) ከምኡ’ውን ዞባ (region)፣ ኣብ ሃገራዊ ደረጃ ዘይኮነ ንናይ ገዛእ ርእሶም ምምሕዳር ከባቢ ወይ ዞባ ጥራይ ፖሊሲ ዘለዎም ፍሉያት ሰልፍታት ክህልዉ ይኽእሉ። ቅድሚ ምርጫታት ሰልፍታት ንመረጽቲ ብክትዕ፣ ኣኼባታት፣ ፖለቲካዊ ምልክታን ወፍርታትን ከእምንዎም ይፍትኑ።",
-      "tr": "Belediye (kommun) ve bölge (region) seçimlerinde, ulusal düzeyde değil yalnızca kendi belediyesi veya bölgesi için politikası olan özel partiler bulunabilir. Seçimlerden önce partiler tartışmalar, toplantılar, siyasi reklamlar ve kampanyalarla seçmenleri ikna etmeye çalışır.",
-      "uk": "На муніципальних (kommun) і регіональних (region) виборах можуть існувати особливі партії, які мають політику лише для свого муніципалітету чи регіону, а не на загальнодержавному рівні. Перед виборами партії намагаються переконати виборців через дебати, зустрічі, політичну рекламу та кампанії."
+      "ti": "ኣብ ምርጫታት ምምሕዳር ከባቢን ክልልን፣ ኣብ ሃገራዊ ደረጃ ዘይኮነ ንናይ ገዛእ ርእሶም ምምሕዳር ከባቢ ወይ ክልል ጥራይ ፖሊሲ ዘለዎም ፍሉያት ሰልፍታት ክህልዉ ይኽእሉ። ቅድሚ ምርጫታት ሰልፍታት ንመረጽቲ ብክትዕ፣ ኣኼባታት፣ ፖለቲካዊ ምልክታን ወፍርታትን ከእምንዎም ይፍትኑ።",
+      "tr": "Belediye ve bölge seçimlerinde, ulusal düzeyde değil yalnızca kendi belediyesi veya bölgesi için politikası olan özel partiler bulunabilir. Seçimlerden önce partiler tartışmalar, toplantılar, siyasi reklamlar ve kampanyalarla seçmenleri ikna etmeye çalışır.",
+      "uk": "На муніципальних і регіональних виборах можуть існувати особливі партії, які мають політику лише для свого муніципалітету чи регіону, а не на загальнодержавному рівні. Перед виборами партії намагаються переконати виборців через дебати, зустрічі, політичну рекламу та кампанії."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -60615,16 +60615,16 @@
       {
         "en": "No one without Swedish citizenship may vote in municipal or regional elections",
         "sv": "Ingen utan svenskt medborgarskap får rösta i kommun- eller regionval",
-        "zh-Hant": "沒有瑞典公民身分的人一律不得在市鎮（kommun）或大區（region）選舉中投票",
-        "zh-Hans": "没有瑞典公民身份的人一律不得在市镇（kommun）或大区（region）选举中投票",
+        "zh-Hant": "沒有瑞典公民身分的人一律不得在市鎮或大區選舉中投票",
+        "zh-Hans": "没有瑞典公民身份的人一律不得在市镇或大区选举中投票",
         "ar": "لا يحقّ لأحدٍ بلا جنسية سويدية التصويت في انتخابات البلديات (kommun) أو الأقاليم (region)",
         "ckb": "هیچ کەسێک بەبێ هاووڵاتیبوونی سوید بۆی نییە لە هەڵبژاردنی شارەوانی (kommun) یان هەرێم (region) دەنگ بدات",
-        "fa": "هیچ‌کس بدون شهروندی سوئد اجازهٔ رأی‌دادن در انتخابات شهرداری (kommun) یا منطقه (region) را ندارد",
+        "fa": "هیچ‌کس بدون شهروندی سوئد اجازهٔ رأی‌دادن در انتخابات کمون (kommun) یا منطقه (region) را ندارد",
         "pl": "Nikt bez obywatelstwa szwedzkiego nie może głosować w wyborach gminnych ani regionalnych",
         "so": "Cidna aan lahayn muwaadinimada Iswiidhan kuma codayn karto doorashooyinka degmooyinka ama gobollada",
-        "ti": "ዜግነት ሽወደን ዘይብሉ ዝኾነ ሰብ ኣብ ምርጫታት ምምሕዳር ከባቢ (kommun) ወይ ዞባ (region) ክመርጽ ኣይክእልን",
-        "tr": "İsveç vatandaşlığı olmayan hiç kimse belediye (kommun) veya bölge (region) seçimlerinde oy kullanamaz",
-        "uk": "Ніхто без шведського громадянства не може голосувати на муніципальних (kommun) чи регіональних (region) виборах"
+        "ti": "ዜግነት ሽወደን ዘይብሉ ዝኾነ ሰብ ኣብ ምርጫታት ምምሕዳር ከባቢ ወይ ክልል ክመርጽ ኣይክእልን",
+        "tr": "İsveç vatandaşlığı olmayan hiç kimse belediye veya bölge seçimlerinde oy kullanamaz",
+        "uk": "Ніхто без шведського громадянства не може голосувати на муніципальних чи регіональних виборах"
       },
       {
         "en": "All tourists may vote if they are in Sweden on election day",
@@ -60813,16 +60813,16 @@
       {
         "en": "No one without Swedish citizenship may vote in municipal or regional elections",
         "sv": "Ingen utan svenskt medborgarskap får rösta i kommun- eller regionval",
-        "zh-Hant": "沒有瑞典公民身分的人一律不得在市鎮（kommun）或大區（region）選舉中投票",
-        "zh-Hans": "没有瑞典公民身份的人一律不得在市镇（kommun）或大区（region）选举中投票",
+        "zh-Hant": "沒有瑞典公民身分的人一律不得在市鎮或大區選舉中投票",
+        "zh-Hans": "没有瑞典公民身份的人一律不得在市镇或大区选举中投票",
         "ar": "لا يحقّ لأحدٍ بلا جنسية سويدية التصويت في انتخابات البلديات (kommun) أو الأقاليم (region)",
         "ckb": "هیچ کەسێک بەبێ هاووڵاتیبوونی سوید بۆی نییە لە هەڵبژاردنی شارەوانی (kommun) یان هەرێم (region) دەنگ بدات",
-        "fa": "هیچ‌کس بدون شهروندی سوئد اجازهٔ رأی‌دادن در انتخابات شهرداری (kommun) یا منطقه (region) را ندارد",
+        "fa": "هیچ‌کس بدون شهروندی سوئد اجازهٔ رأی‌دادن در انتخابات کمون (kommun) یا منطقه (region) را ندارد",
         "pl": "Nikt bez obywatelstwa szwedzkiego nie może głosować w wyborach gminnych ani regionalnych",
         "so": "Cidna aan lahayn muwaadinimada Iswiidhan kuma codayn karto doorashooyinka degmooyinka ama gobollada",
-        "ti": "ዜግነት ሽወደን ዘይብሉ ዝኾነ ሰብ ኣብ ምርጫታት ምምሕዳር ከባቢ (kommun) ወይ ዞባ (region) ክመርጽ ኣይክእልን",
-        "tr": "İsveç vatandaşlığı olmayan hiç kimse belediye (kommun) veya bölge (region) seçimlerinde oy kullanamaz",
-        "uk": "Ніхто без шведського громадянства не може голосувати на муніципальних (kommun) чи регіональних (region) виборах"
+        "ti": "ዜግነት ሽወደን ዘይብሉ ዝኾነ ሰብ ኣብ ምርጫታት ምምሕዳር ከባቢ ወይ ክልል ክመርጽ ኣይክእልን",
+        "tr": "İsveç vatandaşlığı olmayan hiç kimse belediye veya bölge seçimlerinde oy kullanamaz",
+        "uk": "Ніхто без шведського громадянства не може голосувати на муніципальних чи регіональних виборах"
       },
       {
         "en": "All tourists may vote if they are in Sweden on election day",
@@ -61413,16 +61413,16 @@
       {
         "en": "They can have policies only for their own municipality or region",
         "sv": "De kan ha politik bara för den egna kommunen eller regionen",
-        "zh-Hant": "它們可以只針對本市鎮（kommun）或本大區（region）制定政策",
-        "zh-Hans": "它们可以只针对本市镇（kommun）或本大区（region）制定政策",
+        "zh-Hant": "它們可以只針對本市鎮或本大區制定政策",
+        "zh-Hans": "它们可以只针对本市镇或本大区制定政策",
         "ar": "يمكن أن تكون لها سياسات تخصّ بلديتها (kommun) أو إقليمها (region) وحده فقط",
         "ckb": "دەتوانن تەنها سیاسەتیان بۆ شارەوانی یان هەرێمی خۆیان هەبێت",
-        "fa": "می‌توانند سیاست‌هایی داشته باشند که تنها مربوط به شهرداری خودشان (kommun) یا منطقهٔ خودشان (region) است",
+        "fa": "می‌توانند سیاست‌هایی داشته باشند که تنها مربوط به کمون یا منطقهٔ خودشان است",
         "pl": "Mogą prowadzić politykę tylko dla własnej gminy lub własnego regionu",
-        "so": "Waxay siyaasad u yeelan karaan kaliya degmadooda ama gobolkooda",
-        "ti": "ንናይ ገዛእ ርእሶም ምምሕዳር ከባቢ (kommun) ወይ ዞባ (region) ጥራይ ፖሊሲ ክህልዎም ይኽእል",
-        "tr": "Yalnızca kendi belediyeleri (kommun) veya bölgeleri (region) için politikaları olabilir",
-        "uk": "Вони можуть мати політику лише для власного муніципалітету (kommun) чи власного регіону (region)"
+        "so": "Waxay siyaasad u yeelan karaan kaliya degmadooda ama gobolkooda gaarka ah",
+        "ti": "ንናይ ገዛእ ርእሶም ምምሕዳር ከባቢ ወይ ክልል ጥራይ ፖሊሲ ክህልዎም ይኽእል",
+        "tr": "Yalnızca kendi belediyeleri veya bölgeleri için politikaları olabilir",
+        "uk": "Вони можуть мати політику лише для власного муніципалітету чи регіону"
       },
       {
         "en": "They must always be parties in the Riksdag",
@@ -61584,16 +61584,16 @@
       {
         "en": "They can have policies only for their own municipality or region",
         "sv": "De kan ha politik bara för den egna kommunen eller regionen",
-        "zh-Hant": "它們可以只針對本市鎮（kommun）或本大區（region）制定政策",
-        "zh-Hans": "它们可以只针对本市镇（kommun）或本大区（region）制定政策",
+        "zh-Hant": "它們可以只針對本市鎮或本大區制定政策",
+        "zh-Hans": "它们可以只针对本市镇或本大区制定政策",
         "ar": "يمكن أن تكون لها سياسات تخصّ بلديتها (kommun) أو إقليمها (region) وحده فقط",
         "ckb": "دەتوانن تەنها سیاسەتیان بۆ شارەوانی یان هەرێمی خۆیان هەبێت",
-        "fa": "می‌توانند سیاست‌هایی داشته باشند که تنها مربوط به شهرداری خودشان (kommun) یا منطقهٔ خودشان (region) است",
+        "fa": "می‌توانند سیاست‌هایی داشته باشند که تنها مربوط به کمون یا منطقهٔ خودشان است",
         "pl": "Mogą prowadzić politykę tylko dla własnej gminy lub własnego regionu",
-        "so": "Waxay siyaasad u yeelan karaan kaliya degmadooda ama gobolkooda",
-        "ti": "ንናይ ገዛእ ርእሶም ምምሕዳር ከባቢ (kommun) ወይ ዞባ (region) ጥራይ ፖሊሲ ክህልዎም ይኽእል",
-        "tr": "Yalnızca kendi belediyeleri (kommun) veya bölgeleri (region) için politikaları olabilir",
-        "uk": "Вони можуть мати політику лише для власного муніципалітету (kommun) чи власного регіону (region)"
+        "so": "Waxay siyaasad u yeelan karaan kaliya degmadooda ama gobolkooda gaarka ah",
+        "ti": "ንናይ ገዛእ ርእሶም ምምሕዳር ከባቢ ወይ ክልል ጥራይ ፖሊሲ ክህልዎም ይኽእል",
+        "tr": "Yalnızca kendi belediyeleri veya bölgeleri için politikaları olabilir",
+        "uk": "Вони можуть мати політику лише для власного муніципалітету чи регіону"
       },
       {
         "en": "They must always be parties in the Riksdag",

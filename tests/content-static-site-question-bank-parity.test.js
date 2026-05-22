@@ -40,9 +40,17 @@ const SUFFRAGE_1921_EXPECTED_STATIC_EXPLANATION =
   "the first Riksdag election with both women's and men's voting rights and women's eligibility was held in 1921";
 const SOURCE_CRITICISM_STALE_STATIC_PATTERN =
   /具有(?:來|来)源批判意識|أن تكون ناقدًا للمصادر|سەرچاوە-ڕەخنەیی|منبع‌سنج بودن|krytyczne podejście do źródeł|si naqdineed loo eego ilaha|ንምንጭታት ብነቐፌታዊ መንገዲ ምርኣይ|kaynaklara eleştirel yaklaşmak|критично ставитися до джерел/i;
-const Q080_SUFFRAGE_STALE_STATIC_PATTERN = /(?:the election asked about here|asked about here)/i;
-const Q080_SUFFRAGE_REVISED_STATIC_PATTERN =
-  /the first Riksdag election held after those reforms was in 1921/i;
+const KOMMUN_REGION_STATIC_LOCALE_PATTERNS = {
+  'zh-Hant': /\b(?:kommun|region)\b/i,
+  'zh-Hans': /\b(?:kommun|region)\b/i,
+  pl: /\bkommun\b/i,
+  so: /\b(?:kommun|region)\b/i,
+  ti: /\b(?:kommun|region)\b/i,
+  tr: /\b(?:kommun|region)\b/i,
+  uk: /\b(?:kommun|region)\b/i,
+};
+const NEW_YEARS_EVE_DATE_STALE_PATTERN = /\bNew Year(?:’|')s Eve on 31 December\b/i;
+const LUCIA_DAY_DATE_STALE_PATTERN = /\bLucia Day on 13 December\b/i;
 const BASE_LOCALES = new Set(['sv', 'en']);
 
 function withSvEn(localizedText, sv, en) {
@@ -102,6 +110,16 @@ function staticPublicServiceSegments(question) {
     const locale = String(segment).split('.').at(-1);
     return !BASE_LOCALES.has(locale);
   });
+}
+
+function staticLocalizedSegments(question, locales) {
+  return [
+    ...locales.map((locale) => [`${question.id}.q.${locale}`, question.q?.[locale]]),
+    ...locales.map((locale) => [`${question.id}.why.${locale}`, question.why?.[locale]]),
+    ...(question.opts || []).flatMap((option, index) =>
+      locales.map((locale) => [`${question.id}.opts.${index}.${locale}`, option?.[locale]]),
+    ),
+  ];
 }
 
 function staticQuestionToI18nQuestion(question) {
@@ -298,6 +316,55 @@ test('static site question bank keeps q062 public-sector i18n and generated vari
       );
     }
   }
+});
+
+test('static site question bank keeps q166/q169 kommun-region i18n target-language first', () => {
+  const expectedBank = buildSiteQuestionBank();
+  const sourceQuestions = expectedBank.questions.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const ids = [
+    'q166',
+    generatedQuestionId(sourceQuestions, 'q166', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q166', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q166', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q166', 'judgement'),
+    'q169',
+    generatedQuestionId(sourceQuestions, 'q169', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q169', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q169', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q169', 'judgement'),
+  ];
+  const context = { window: {} };
+  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
+  const questionsById = new Map(
+    context.window.SMT_QUESTIONS.map((question) => [question.id, question]),
+  );
+  const sourceRows = Q166_Q169_KOMMUN_REGION_NATURALNESS_IDS.map((id) =>
+    staticQuestionToI18nQuestion(questionsById.get(id)),
+  );
+
+  assert.deepEqual(
+    summarizeQ166Q169KommunRegionNaturalness(sourceRows, Q166_Q169_KOMMUN_REGION_NATURALNESS_IDS)
+      .errors,
+    [],
+  );
+
+  const offenders = [];
+  for (const id of ids) {
+    const question = questionsById.get(id);
+    assert.ok(question, `${id} should be present in static question bank`);
+
+    for (const [locale, pattern] of Object.entries(KOMMUN_REGION_STATIC_LOCALE_PATTERNS)) {
+      for (const [segment, value] of staticLocalizedSegments(question, [locale])) {
+        if (typeof value === 'string' && pattern.test(value)) {
+          offenders.push(segment);
+        }
+      }
+    }
+  }
+
+  assert.deepEqual(offenders, []);
 });
 
 test('static site question bank keeps q080 suffrage explanations learner-facing', () => {
