@@ -82,6 +82,7 @@ function renderDashboardArtifacts(language, storageOverrides = [], chaptersMeta 
   const today = dateKey(new Date());
   const storage = new Map([
     ['smt_lang', language],
+    ['smt_signed_in', '1'],
     [
       'smt_progress',
       JSON.stringify({
@@ -134,7 +135,7 @@ function renderDashboardArtifacts(language, storageOverrides = [], chaptersMeta 
         storage.set(key, String(value));
       },
     },
-    location: { hash: '#/' },
+    location: { hash: '#/dashboard' },
     requestAnimationFrame(callback) {
       callback();
       return 1;
@@ -189,7 +190,7 @@ function mondayKey(date) {
 function loadDashboardStorageSnapshot(storageEntries) {
   const dashboard = new Element('div');
   const dashboardEyebrow = new Element('span');
-  const storage = new Map([['smt_lang', 'en'], ...storageEntries]);
+  const storage = new Map([['smt_lang', 'en'], ['smt_signed_in', '1'], ...storageEntries]);
   const listeners = {};
   const sandbox = {
     Event: function Event(type) {
@@ -349,6 +350,32 @@ test('static v1.1 dashboard weak chapter titles resolve from the active locale',
   assert.doesNotMatch(englishText, /Svenskt svagt kapitel/);
   assert.match(swedishText, /Svenskt svagt kapitel/);
   assert.doesNotMatch(swedishText, /English weak chapter/);
+});
+
+test('static v1.1 signed-out dashboard renders a localized lock without progress leakage', () => {
+  const { dashboard, text } = renderDashboardArtifacts('sv', [
+    ['smt_signed_in', '0'],
+    [
+      'smt_progress',
+      JSON.stringify({
+        ch1: { answered: 30, correct: 24 },
+        ch2: { answered: 6, correct: 2 },
+      }),
+    ],
+    ['smt_mocks', JSON.stringify([{ t: Date.now(), total: 40, correct: 32, pct: 80 }])],
+  ]);
+
+  const grids = collectElementsByClass(dashboard, 'v11-grid');
+  const weakTitles = collectElementsByClass(dashboard, 'v11-weak-title');
+
+  assert.equal(grids.length, 1);
+  assert.equal(grids[0].attributes['aria-hidden'], 'true');
+  assert.equal(weakTitles.length, 0);
+  assert.match(text, /Logga in för att låsa upp din panel/);
+  assert.match(text, /Logga in för att visa/);
+  assert.match(text, /Dolda tills du loggar in/);
+  assert.doesNotMatch(text, /Landet Sverige|Demokrati|Rätt 80%|Practice accuracy|Mock average|80%/);
+  assert.doesNotMatch(text, /undefined|l is not defined/i);
 });
 
 test('static v1.1 dashboard uses natural Swedish streak protection copy', () => {

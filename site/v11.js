@@ -552,6 +552,56 @@
     return lock;
   }
 
+  function buildLockedDashboardShell() {
+    const grid = document.createElement('div');
+    grid.className = 'v11-grid';
+
+    [
+      {
+        className: 'v11-card v11-card--readiness',
+        label: {
+          sv: 'Lokal övningssignal',
+          en: 'Local practice signal',
+          'zh-Hans': '本机练习信号',
+          'zh-Hant': '本機練習信號',
+          ar: 'إشارة التدرّب المحلية',
+          ckb: 'سیگناڵی مەشقی ناوخۆیی',
+          fa: 'سیگنال تمرین محلی',
+          pl: 'Lokalny sygnał ćwiczeń',
+          so: 'Calaamadda tababarka maxalliga ah',
+          ti: 'ናይ ከባቢ ምልክት ምልምማድ',
+          tr: 'Yerel pratik sinyali',
+          uk: 'Локальний сигнал практики',
+        },
+        value: { sv: 'Låst', en: 'Locked' },
+      },
+      {
+        className: 'v11-card',
+        label: { sv: 'Veckosammanfattning', en: 'Weekly recap' },
+        value: { sv: 'Logga in för att visa', en: 'Sign in to view' },
+      },
+      {
+        className: 'v11-card v11-card--weak',
+        label: { sv: 'Öva mer på', en: 'Needs work' },
+        value: { sv: 'Dolda tills du loggar in', en: 'Hidden until you sign in' },
+      },
+    ].forEach(function (item) {
+      const card = document.createElement('div');
+      card.className = item.className;
+      const label = document.createElement('span');
+      label.className = 'v11-label';
+      label.textContent = dtr(item.label);
+      const value = document.createElement('strong');
+      value.className = 'v11-locked-placeholder';
+      value.textContent = dtr(item.value);
+      card.appendChild(label);
+      card.appendChild(value);
+      grid.appendChild(card);
+    });
+
+    return grid;
+  }
+
   function renderDashboard() {
     const el = document.getElementById('v11-dashboard');
     if (!el) return;
@@ -600,16 +650,21 @@
       }
     })();
 
-    const progress = getProgress();
-    const hasAnyProgress = Object.values(progress).some(function (ch) {
-      return (ch.answered || 0) > 0;
-    });
-
     // Always show the dashboard on the practice hub: a signed-in user sees their
     // panel (even at zero — it fills in as they practise); a signed-out user sees
     // the blurred shape behind the sign-in overlay. (Previously it vanished right
     // after sign-in when the new account had no local progress yet.)
     el.style.display = '';
+
+    if (!signedIn) {
+      el.textContent = '';
+      const lockedGrid = buildLockedDashboardShell();
+      lockedGrid.setAttribute('aria-hidden', 'true');
+      el.appendChild(lockedGrid);
+      el.classList.add('v11-dashboard--locked');
+      el.appendChild(buildLockOverlay());
+      return;
+    }
 
     const readiness = computeReadiness();
     const recap = computeWeeklyRecap();
@@ -1086,12 +1141,7 @@
 
     el.appendChild(grid);
 
-    // Signed out: blur the shape and overlay a localized sign-in prompt.
-    el.classList.toggle('v11-dashboard--locked', !signedIn);
-    if (!signedIn) {
-      grid.setAttribute('aria-hidden', 'true');
-      el.appendChild(buildLockOverlay());
-    }
+    el.classList.remove('v11-dashboard--locked');
   }
 
   /* ----------------------------------------------- hook into app lifecycle */
