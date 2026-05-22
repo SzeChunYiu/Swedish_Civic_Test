@@ -4,11 +4,45 @@ import {
   collectConsoleAndPageErrors,
   dismissBlockingModals,
   seedFreshSettingsLanguageAndAboutSeen,
+  seedFreshSettingsLanguageAndAboutSeenWithStorage,
 } from './browserLaunch';
 
 test.use({ viewport: { width: 390, height: 844 } });
 
 const minimumTargetSizePx = 44;
+const mockExamAccessStorageKey = 'monetization.mockExamAccess.v1';
+const rewardedUnlockDelayMs = 350;
+
+type RewardedExamLanguage = 'sv' | 'en';
+
+const rewardedExamCopy: Record<
+  RewardedExamLanguage,
+  {
+    examHeading: string;
+    heading: string;
+    previewButtonLabel: string;
+    unlockButtonLabel: string;
+    unlockedCtaLabel: string;
+    unlockedStatus: string;
+  }
+> = {
+  en: {
+    examHeading: 'Mock exam',
+    heading: 'Unlock an extra mock exam',
+    previewButtonLabel: 'Complete the sponsored preview for an extra mock exam',
+    unlockButtonLabel: 'Unlock an extra mock exam after the preview',
+    unlockedCtaLabel: 'Start the unlocked extra mock exam',
+    unlockedStatus: 'Extra mock exam unlocked.',
+  },
+  sv: {
+    examHeading: 'Övningsprov',
+    heading: 'Lås upp ett extra övningsprov',
+    previewButtonLabel: 'Slutför sponsrad förhandsvisning för ett extra övningsprov',
+    unlockButtonLabel: 'Lås upp ett extra övningsprov efter förhandsvisningen',
+    unlockedCtaLabel: 'Starta det upplåsta extra övningsprovet',
+    unlockedStatus: 'Extra övningsprov upplåst.',
+  },
+};
 
 const homeActionLinks = [
   {
@@ -60,6 +94,28 @@ async function expectMinimumTargetSize(locator: Locator, name: string): Promise<
       minimumTargetSizePx,
     );
   }
+}
+
+function localDateKey(date = new Date()): string {
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, '0'),
+    String(date.getDate()).padStart(2, '0'),
+  ].join('-');
+}
+
+function dailyFreeMockUsedAccessState(): string {
+  const dateKey = localDateKey();
+
+  return JSON.stringify({
+    completedMockExamSessionIdsByDate: {
+      [dateKey]: [`seeded-free-${dateKey}`],
+    },
+    completedMockExamsByDate: {
+      [dateKey]: 1,
+    },
+    rewardedExtraExamCredits: 0,
+  });
 }
 
 async function getInteractionStyle(locator: Locator) {
@@ -197,3 +253,61 @@ test('Home action links expose secondary keyboard pressed feedback before naviga
 
   expect(consoleErrors.get()).toEqual([]);
 });
+
+for (const language of ['sv', 'en'] as const) {
+  test(`Home rewarded extra exam accessibility state works in ${language.toUpperCase()}`, async ({
+    page,
+  }) => {
+    const consoleErrors = collectConsoleAndPageErrors(page);
+    const copy = rewardedExamCopy[language];
+
+    await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, language, {
+      localStorageValues: {
+        [mockExamAccessStorageKey]: dailyFreeMockUsedAccessState(),
+      },
+      windowValues: {
+        __SMT_E2E__: true,
+        __SMT_REWARDED_EXTRA_EXAM_DELAY_MS: rewardedUnlockDelayMs,
+      },
+    });
+    await page.goto('/home', { waitUntil: 'networkidle' });
+    await dismissBlockingModals(page);
+
+    await expect(page.getByRole('heading', { name: copy.heading })).toBeVisible();
+
+    const previewButton = page.getByRole('button', {
+      exact: true,
+      name: copy.previewButtonLabel,
+    });
+    const unlockButton = page.getByRole('button', {
+      exact: true,
+      name: copy.unlockButtonLabel,
+    });
+
+    await expectMinimumTargetSize(previewButton, `${language} rewarded preview button`);
+    await expectMinimumTargetSize(unlockButton, `${language} rewarded unlock button`);
+    await expect(previewButton).toBeEnabled();
+    await expect(unlockButton).toBeDisabled();
+
+    await previewButton.click();
+    await expect(previewButton).toBeDisabled();
+    await expect(unlockButton).toBeEnabled();
+
+    const unlockClick = unlockButton.click();
+    await expect(unlockButton).toBeDisabled();
+    await expect(unlockButton).toHaveAttribute('aria-busy', 'true');
+    await unlockClick;
+
+    await expect(page.getByText(copy.unlockedStatus)).toBeVisible();
+    const unlockedLink = page.getByRole('link', {
+      exact: true,
+      name: copy.unlockedCtaLabel,
+    });
+    await expectMinimumTargetSize(unlockedLink, `${language} rewarded unlocked link`);
+    await unlockedLink.click();
+    await expect(page).toHaveURL(/\/exam$/);
+    await expect(page.getByRole('heading', { name: copy.examHeading }).first()).toBeVisible();
+
+    expect(consoleErrors.get()).toEqual([]);
+  });
+}

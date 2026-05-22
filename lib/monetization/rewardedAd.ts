@@ -33,6 +33,30 @@ export type RewardedExtraExamAdOptions = {
   webConsentDecision?: RewardedExtraExamWebConsentDecision;
 };
 
+type RewardedExtraExamRuntime = typeof globalThis & {
+  __SMT_E2E__?: boolean;
+  __SMT_REWARDED_EXTRA_EXAM_DELAY_MS?: number;
+};
+
+function rewardedExtraExamE2EDelayMs(): number {
+  const runtime = globalThis as RewardedExtraExamRuntime;
+  if (runtime.__SMT_E2E__ !== true) return 0;
+
+  const delayMs = runtime.__SMT_REWARDED_EXTRA_EXAM_DELAY_MS;
+  if (typeof delayMs !== 'number' || !Number.isFinite(delayMs) || delayMs <= 0) return 0;
+
+  return Math.min(delayMs, 5_000);
+}
+
+function delayForRewardedExtraExamE2E(): Promise<void> {
+  const delayMs = rewardedExtraExamE2EDelayMs();
+  if (delayMs <= 0) return Promise.resolve();
+
+  return new Promise((resolve) => {
+    setTimeout(resolve, delayMs);
+  });
+}
+
 export async function showRewardedExtraExamAd({
   confirmReward,
   entitlements = { adsDisabled: false },
@@ -41,6 +65,8 @@ export async function showRewardedExtraExamAd({
   if (!shouldShowAd(REWARDED_EXTRA_EXAM_PLACEMENT, entitlements, webConsentDecision, 'web')) {
     return { status: 'unavailable' };
   }
+
+  await delayForRewardedExtraExamE2E();
 
   let rewardConfirmed = false;
   try {

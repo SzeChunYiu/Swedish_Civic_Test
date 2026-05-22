@@ -6,6 +6,7 @@ import { dismissBlockingModals, markAboutTheTestSeen, seedSettingsLanguage } fro
 type Language = 'sv' | 'en';
 
 const mockExamAccessStorageKey = 'monetization.mockExamAccess.v1';
+const rewardedUnlockDelayMs = 350;
 const totalQuestions = 20;
 
 const copy: Record<
@@ -83,14 +84,21 @@ async function expectButtonState(
   state: { busy: boolean; disabled: boolean },
   label: string,
 ) {
-  await expect(locator, `${label} disabled state`).toHaveAttribute(
-    'aria-disabled',
-    state.disabled ? 'true' : 'false',
-  );
-  await expect(locator, `${label} busy state`).toHaveAttribute(
-    'aria-busy',
-    state.busy ? 'true' : 'false',
-  );
+  if (state.disabled) {
+    await expect(locator, `${label} disabled interaction state`).toBeDisabled();
+  } else {
+    await expect(locator, `${label} enabled interaction state`).toBeEnabled();
+  }
+  await expect
+    .poll(async () => (await locator.getAttribute('aria-disabled')) ?? 'false', {
+      message: `${label} disabled aria state`,
+    })
+    .toBe(state.disabled ? 'true' : 'false');
+  await expect
+    .poll(async () => (await locator.getAttribute('aria-busy')) ?? 'false', {
+      message: `${label} busy aria state`,
+    })
+    .toBe(state.busy ? 'true' : 'false');
 }
 
 async function seedDailyFreeMockUsed(page: Page, language: Language) {
@@ -98,8 +106,15 @@ async function seedDailyFreeMockUsed(page: Page, language: Language) {
   await markAboutTheTestSeen(page);
 
   await page.addInitScript(
-    ({ accessStorageKey }: { accessStorageKey: string }) => {
+    ({ accessStorageKey, unlockDelayMs }: { accessStorageKey: string; unlockDelayMs: number }) => {
       window.sessionStorage.clear();
+      const runtime = window as typeof window & {
+        __SMT_E2E__?: boolean;
+        __SMT_REWARDED_EXTRA_EXAM_DELAY_MS?: number;
+      };
+      runtime.__SMT_E2E__ = true;
+      runtime.__SMT_REWARDED_EXTRA_EXAM_DELAY_MS = unlockDelayMs;
+
       const existingAccess = window.localStorage.getItem(accessStorageKey);
       if (existingAccess) {
         try {
@@ -131,6 +146,7 @@ async function seedDailyFreeMockUsed(page: Page, language: Language) {
     },
     {
       accessStorageKey: mockExamAccessStorageKey,
+      unlockDelayMs: rewardedUnlockDelayMs,
     },
   );
 }
