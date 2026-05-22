@@ -1323,12 +1323,17 @@ function smtLoadAdSense() {
   }
   smtConfigureAdSenseSlots();
   SMT_ADS.scriptLoaded = true;
-  const s = document.createElement('script');
-  s.async = true;
-  s.crossOrigin = 'anonymous';
-  s.src =
-    'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + SMT_ADS.publisherId;
-  document.head.appendChild(s);
+  // The loader may already be present in <head> (Google's required snippet). Only
+  // inject it here if it isn't, so we never load adsbygoogle.js twice.
+  if (!document.querySelector('script[src*="adsbygoogle.js"]')) {
+    const s = document.createElement('script');
+    s.async = true;
+    s.crossOrigin = 'anonymous';
+    s.src =
+      'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' +
+      SMT_ADS.publisherId;
+    document.head.appendChild(s);
+  }
   document
     .querySelectorAll('ins.adsbygoogle[data-ad-slot]:not([data-smt-pushed])')
     .forEach((el) => {
