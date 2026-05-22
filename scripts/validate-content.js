@@ -613,6 +613,15 @@ const QUESTION_PUBLIC_SECTOR_ENGLISH_NATURALNESS_PATTERNS = [
   /\bActivities for which the state, regions, and municipalities are responsible\b/i,
   /\bThe public sector(?: in Sweden)? means (?:activities|all privately owned companies)\b/i,
 ];
+const QUESTION_LARGEST_LAKES_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bWhich are Sweden's three largest lakes\b/i,
+  /\bWhich fact is correct regarding which are Sweden's three largest lakes\b/i,
+  /\bWhat is correct regarding what are Sweden's three largest lakes\b/i,
+];
+const QUESTION_LARGEST_LAKES_ENGLISH_FRAGMENT_STEM_PATTERNS = [
+  /^Vänern, Vättern, and Mälaren\.?$/i,
+  /^The Baltic Sea, Kattegat, and Skagerrak\.?$/i,
+];
 const QUESTION_SOURCE_CRITICISM_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhat does it mean to be source-critical\b/i,
   /\b(?:Being|To be) source-critical means\b/i,
@@ -5629,6 +5638,7 @@ function translationNaturalnessGuardParityIsValidated() {
     questionCouncilOfEuropeWorkForEnglishNaturalnessValidated === publishedQuestions &&
     questionMayDayEnglishNaturalnessValidated === publishedQuestions &&
     questionPublicSectorEnglishNaturalnessValidated === publishedQuestions &&
+    questionLargestLakesEnglishNaturalnessValidated === publishedQuestions &&
     questionLuciaExplanationRoleScaffoldValidated === publishedQuestions &&
     questionGoodFridayEnglishNaturalnessValidated === publishedQuestions &&
     questionReferendumAdvisorySwedishNaturalnessValidated === publishedQuestions &&
@@ -7244,6 +7254,18 @@ function findQuestionPublicSectorEnglishNaturalnessIssue(question) {
   if (!question.tags?.includes('public-sector')) return null;
   return QUESTION_PUBLIC_SECTOR_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
     pattern.test(questionText(question, ['questionEn', 'explanationEn'])),
+  );
+}
+
+function findQuestionLargestLakesEnglishNaturalnessIssue(question) {
+  if (!question.tags?.includes('lakes')) return null;
+  return (
+    QUESTION_LARGEST_LAKES_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+      pattern.test(question.questionEn || ''),
+    ) ||
+    QUESTION_LARGEST_LAKES_ENGLISH_FRAGMENT_STEM_PATTERNS.find((pattern) =>
+      pattern.test(question.questionEn || ''),
+    )
   );
 }
 
@@ -9091,6 +9113,9 @@ function validateQuestionSchema(question, index) {
   if (findQuestionPublicSectorEnglishNaturalnessIssue(question)) {
     reject(`${label} uses stilted public-sector English wording`);
   }
+  if (findQuestionLargestLakesEnglishNaturalnessIssue(question)) {
+    reject(`${label} uses stilted largest-lakes English wording`);
+  }
   if (findQuestionReligiousFreedomOptionParallelismIssue(question)) {
     reject(`${label} uses nonparallel religious-freedom option wording`);
   }
@@ -9642,6 +9667,7 @@ let questionReligiousFreedomParallelismValidated = 0;
 let questionCouncilOfEuropeWorkForEnglishNaturalnessValidated = 0;
 let questionMayDayEnglishNaturalnessValidated = 0;
 let questionPublicSectorEnglishNaturalnessValidated = 0;
+let questionLargestLakesEnglishNaturalnessValidated = 0;
 let questionLuciaExplanationRoleScaffoldValidated = 0;
 let questionGoodFridayEnglishNaturalnessValidated = 0;
 let questionReferendumAdvisorySwedishNaturalnessValidated = 0;
@@ -23815,6 +23841,10 @@ function validatePublishedQuestionNaturalnessGuards() {
         `${label} uses stilted public-sector English wording`,
       ],
       [
+        findQuestionLargestLakesEnglishNaturalnessIssue(question),
+        `${label} uses stilted largest-lakes English wording`,
+      ],
+      [
         findQuestionReligiousFreedomOptionParallelismIssue(question),
         `${label} uses nonparallel religious-freedom option wording`,
       ],
@@ -24106,6 +24136,8 @@ if (Array.isArray(questions)) {
         findQuestionReligiousFreedomOptionParallelismIssue(question);
       const publicSectorEnglishNaturalnessIssue =
         findQuestionPublicSectorEnglishNaturalnessIssue(question);
+      const largestLakesEnglishNaturalnessIssue =
+        findQuestionLargestLakesEnglishNaturalnessIssue(question);
       const councilOfEuropeWorkForEnglishNaturalnessIssue =
         findQuestionCouncilOfEuropeWorkForEnglishNaturalnessIssue(question);
       const mayDayEnglishNaturalnessIssue = findQuestionMayDayEnglishNaturalnessIssue(question);
@@ -24168,6 +24200,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses stilted public-sector English wording`);
       } else {
         questionPublicSectorEnglishNaturalnessValidated += 1;
+      }
+      if (largestLakesEnglishNaturalnessIssue) {
+        fail(`${label} uses stilted largest-lakes English wording`);
+      } else {
+        questionLargestLakesEnglishNaturalnessValidated += 1;
       }
       if (councilOfEuropeWorkForEnglishNaturalnessIssue) {
         fail(`${label} uses literal Council of Europe work-for English wording`);
@@ -24790,6 +24827,7 @@ console.log(
       questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
       questionMayDayEnglishNaturalnessValidated,
       questionPublicSectorEnglishNaturalnessValidated,
+      questionLargestLakesEnglishNaturalnessValidated,
       questionLuciaExplanationRoleScaffoldValidated,
       questionGoodFridayEnglishNaturalnessValidated,
       questionReferendumAdvisorySwedishNaturalnessValidated,

@@ -664,7 +664,7 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
       chapterId: 'ch01',
       type: 'single_choice',
       questionSv: 'Vilka är Sveriges tre största sjöar?',
-      questionEn: "Which are Sweden's three largest lakes?",
+      questionEn: "What are Sweden's three largest lakes?",
       options: [
         { id: 'a', textSv: 'Vänern, Vättern och Mälaren', textEn: 'Vänern, Vättern, and Mälaren' },
         {
@@ -907,6 +907,9 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
   ];
 
   const derived = derivePublishedQuestions(sources, 301);
+  const allText = derived
+    .map((question) => `${question.questionSv} ${question.questionEn}`)
+    .join('\n');
   const generatedTrueFalse = derived.filter((question) => question.type === 'true_false');
   const text = generatedTrueFalse
     .map((question) => `${question.questionSv} ${question.questionEn}`)
@@ -943,6 +946,11 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
   );
   assert.ok(
     text.includes("Sweden's three largest lakes are the Baltic Sea, Kattegat, and Skagerrak."),
+  );
+  assert.ok(allText.includes("Which fact is correct about Sweden's three largest lakes?"));
+  assert.doesNotMatch(
+    allText,
+    /Which fact is correct regarding which are Sweden's three largest lakes/i,
   );
   assert.ok(
     text.includes(
