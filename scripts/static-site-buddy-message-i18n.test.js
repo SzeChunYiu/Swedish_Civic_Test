@@ -30,3 +30,15 @@ test('quiz and practice buddy messages provide locale-map copy', () => {
     assert.doesNotMatch(source, /smtBuddyConsole\(\s*['"][^'"]+['"]\s*,\s*['"][^'"]+['"]\s*\)/);
   }
 });
+
+test('buddy bubble renders public runtime messages as text and keeps fact emphasis explicit', () => {
+  const buddiesSource = read('site/buddies.js');
+
+  assert.match(buddiesSource, /function renderBuddyMessage\(msg, message\)/);
+  assert.match(buddiesSource, /msg\.textContent\s*=\s*message == null \? '' : String\(message\)/);
+  assert.match(buddiesSource, /document\.createElement\(['"]em['"]\)/);
+  assert.match(buddiesSource, /document\.createTextNode\(message\.text \|\| ''\)/);
+  assert.match(buddiesSource, /kind:\s*['"]fact-tip['"]/);
+  assert.doesNotMatch(buddiesSource, /msg\.innerHTML\s*=/);
+  assert.doesNotMatch(buddiesSource, /return\s+`<em>\$\{prefix\}<\/em>\$\{randomFact\(lang\)\}`/);
+});

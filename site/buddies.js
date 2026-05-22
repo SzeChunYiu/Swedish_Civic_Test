@@ -711,12 +711,25 @@
 
   let hideTimer = null;
   let fadeTimer = null;
-  function showMessage(html, opts = {}) {
+  function factTipMessage(prefix, text) {
+    return { kind: 'fact-tip', prefix, text };
+  }
+  function renderBuddyMessage(msg, message) {
+    if (message && typeof message === 'object' && message.kind === 'fact-tip') {
+      msg.textContent = '';
+      const prefix = document.createElement('em');
+      prefix.textContent = message.prefix || '';
+      msg.append(prefix, document.createTextNode(message.text || ''));
+      return;
+    }
+    msg.textContent = message == null ? '' : String(message);
+  }
+  function showMessage(message, opts = {}) {
     const bubble = document.getElementById('dala-bubble');
     const msg = document.getElementById('dala-msg');
     const widget = document.getElementById('dala-buddy');
     if (!bubble || !msg || !widget || buddyDeferredForConsent()) return;
-    msg.innerHTML = html;
+    renderBuddyMessage(msg, message);
     clearTimeout(hideTimer);
     clearTimeout(fadeTimer);
     bubble.hidden = false;
@@ -752,7 +765,7 @@
     // 60% personality tip, 40% Swedish fact
     if (Math.random() < 0.4) {
       const prefix = b.factPrefix[lang] || buddyGenericCopy(lang).factPrefix;
-      return `<em>${prefix}</em>${randomFact(lang)}`;
+      return factTipMessage(prefix, randomFact(lang));
     }
     return tips[Math.floor(Math.random() * tips.length)];
   }
