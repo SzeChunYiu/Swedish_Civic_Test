@@ -76,7 +76,7 @@ const dashboardLocales: DashboardLocaleFixture[] = [
     nonEmptyChapterName: 'Landet Sverige',
     nonEmptyChapterProgressCoverageText: 'Täckning: 6%',
     nonEmptyStreakSummary: '30 XP de senaste 30 dagarna. 3 aktiva dagar. 3 dagars svit. Nivå 3.',
-    nonEmptySummaryLine: '4 svar den här veckan · 1 kapitel provade · 1 olösta misstag',
+    nonEmptySummaryLine: '4 svar den här veckan · 1 kapitel provat · 1 olöst misstag',
     mockHistoryAverage: 'Snitt',
     mockHistoryEmptyState:
       'Genomför ett övningsprov så visas tidigare resultat, tempo och bästa försök här.',
@@ -117,7 +117,7 @@ const dashboardLocales: DashboardLocaleFixture[] = [
     nonEmptyChapterName: 'The country of Sweden',
     nonEmptyChapterProgressCoverageText: 'Coverage: 6%',
     nonEmptyStreakSummary: '30 XP in the last 30 days. 3 active days. 3 day streak. Level 3.',
-    nonEmptySummaryLine: '4 answers this week · 1 chapters tried · 1 unresolved mistakes',
+    nonEmptySummaryLine: '4 answers this week · 1 chapter tried · 1 unresolved mistake',
     mockHistoryAverage: 'Average',
     mockHistoryEmptyState:
       'Finish a mock exam and your past scores, pacing, and best attempt will appear here.',

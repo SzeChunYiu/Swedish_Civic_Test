@@ -12,6 +12,7 @@ function read(relativePath) {
 
 const sourcePaths = {
   dashboard: 'app/dashboard.tsx',
+  dashboardSummaryCopy: 'lib/learning/dashboardSummaryCopy.ts',
   dashboardE2e: 'tests/e2e/dashboard-route.spec.ts',
   dashboardDateFormat: 'lib/learning/dashboardDateFormat.ts',
   history: 'components/dashboard/MockExamHistoryCard.tsx',
@@ -79,6 +80,62 @@ function assertNaturalSwedishDashboardCopy(sources) {
   assert.match(sources.dashboardE2e, /mockHistoryTrendLabel: 'Score trend'/);
 }
 
+function assertDashboardSummaryPluralization() {
+  const { formatDashboardSummaryAccessibilityLabel, formatDashboardSummaryLine } = loadTs(
+    'lib/learning/dashboardSummaryCopy.ts',
+  );
+
+  const cases = [
+    {
+      accessibilityLabel:
+        'Framstegsöversikt: 0 svar den här veckan, 0 kapitel provade, 0 olösta misstag.',
+      language: 'sv',
+      line: '0 svar den här veckan · 0 kapitel provade · 0 olösta misstag',
+      values: [0, 0, 0],
+    },
+    {
+      accessibilityLabel:
+        'Framstegsöversikt: 1 svar den här veckan, 1 kapitel provat, 1 olöst misstag.',
+      language: 'sv',
+      line: '1 svar den här veckan · 1 kapitel provat · 1 olöst misstag',
+      values: [1, 1, 1],
+    },
+    {
+      accessibilityLabel:
+        'Framstegsöversikt: 2 svar den här veckan, 2 kapitel provade, 2 olösta misstag.',
+      language: 'sv',
+      line: '2 svar den här veckan · 2 kapitel provade · 2 olösta misstag',
+      values: [2, 2, 2],
+    },
+    {
+      accessibilityLabel:
+        'Progress dashboard: 0 answers this week, 0 chapters tried, 0 unresolved mistakes.',
+      language: 'en',
+      line: '0 answers this week · 0 chapters tried · 0 unresolved mistakes',
+      values: [0, 0, 0],
+    },
+    {
+      accessibilityLabel:
+        'Progress dashboard: 1 answer this week, 1 chapter tried, 1 unresolved mistake.',
+      language: 'en',
+      line: '1 answer this week · 1 chapter tried · 1 unresolved mistake',
+      values: [1, 1, 1],
+    },
+    {
+      accessibilityLabel:
+        'Progress dashboard: 2 answers this week, 2 chapters tried, 2 unresolved mistakes.',
+      language: 'en',
+      line: '2 answers this week · 2 chapters tried · 2 unresolved mistakes',
+      values: [2, 2, 2],
+    },
+  ];
+
+  for (const { accessibilityLabel, language, line, values } of cases) {
+    assert.equal(formatDashboardSummaryLine(language, ...values), line);
+    assert.equal(formatDashboardSummaryAccessibilityLabel(language, ...values), accessibilityLabel);
+  }
+}
+
 function assertLocalizedMockHistoryDates(sources) {
   assert.match(sources.dashboard, /formatDashboardCompletedDate\(completedAt, 'sv'\)/);
   assert.match(sources.dashboard, /formatDashboardCompletedDate\(completedAt, 'en'\)/);
@@ -101,6 +158,17 @@ function assertLocalizedMockHistoryDates(sources) {
     'Dashboard browser fixture must not keep raw mock-history dates',
   );
 }
+
+test('dashboard summary count copy is singular and plural in Swedish and English', () => {
+  const sources = loadSources();
+
+  assert.match(sources.dashboard, /formatDashboardSummaryLine\('sv'/);
+  assert.match(sources.dashboard, /formatDashboardSummaryLine\('en'/);
+  assert.match(sources.dashboard, /formatDashboardSummaryAccessibilityLabel\(\s*'sv'/);
+  assert.match(sources.dashboard, /formatDashboardSummaryAccessibilityLabel\(\s*'en'/);
+  assert.doesNotMatch(sources.dashboard, /chapters tried, \$\{unresolved\} unresolved mistakes/);
+  assertDashboardSummaryPluralization();
+});
 
 test('dashboard and profile Swedish copy uses natural study-dashboard terms', () => {
   assertNaturalSwedishDashboardCopy(loadSources());
