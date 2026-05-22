@@ -38,12 +38,26 @@ test('exam route shell and review copy follows the persisted settings language',
   const summary = parseValidationSummary();
   const source = readExamRouteSource();
 
-  assert.equal(summary.examRouteCopyLabelsValidated, 68);
+  assert.equal(summary.examRouteCopyLabelsValidated, 72);
   assert.equal(summary.examRouteCopyParityValidated, true);
   assert.match(source, /const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = \{/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(source, /const copy = examRouteCopy\[language\];/);
   assert.match(source, /answerGroupAccessibilityLabel: \(questionNumber\) =>/);
+  assert.match(source, /activeQuestionRegionLabel: \(questionNumber\) =>/);
+  assert.match(source, /reviewQuestionRegionLabel: \(questionNumber\) =>/);
+  assert.match(source, /Fråga \$\{questionNumber\} i övningsprovet/);
+  assert.match(source, /Question \$\{questionNumber\} in mock exam/);
+  assert.match(source, /Genomgång för fråga \$\{questionNumber\}/);
+  assert.match(source, /Review for question \$\{questionNumber\}/);
+  assert.match(
+    source,
+    /const activeQuestionRegionLabel = copy\.activeQuestionRegionLabel\(questionNumber\);[\s\S]*accessibilityLabel=\{activeQuestionRegionLabel\}[\s\S]*accessibilityRole="summary"[\s\S]*aria-label=\{activeQuestionRegionLabel\}/,
+  );
+  assert.match(
+    source,
+    /const reviewQuestionRegionLabel = copy\.reviewQuestionRegionLabel\(questionNumber\);[\s\S]*accessibilityLabel=\{reviewQuestionRegionLabel\}[\s\S]*accessibilityRole="summary"[\s\S]*aria-label=\{reviewQuestionRegionLabel\}/,
+  );
   assert.match(source, /Svarsalternativ för fråga \$\{questionNumber\}/);
   assert.match(source, /Answer options for question \$\{questionNumber\}/);
   assert.match(

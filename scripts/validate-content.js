@@ -1965,6 +1965,7 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Övningsprov',
     'Tidsgräns ${durationMinutes} minuter · ${questionCount} UHR-baserade frågor · inga annonser under provet',
     'Tid kvar ${remainingTime} · ${questionCount} UHR-baserade frågor · inga annonser under provet',
+    'Fråga ${questionNumber} i övningsprovet',
     'Provåtkomst',
     'Kontrollerar provåtkomst.',
     'Det gick inte att läsa sparad övningsprovsstatus. Försök igen innan du startar.',
@@ -1993,6 +1994,7 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Rätt',
     'Skickade resultat är slutgiltiga. Starta ett nytt övningsprov för ett nytt försök.',
     'Förklaringar och genomgång visas först efter att provet har skickats in.',
+    'Genomgång för fråga ${questionNumber}',
     'Nästa prov',
     'Sparat',
     'Sparar',
@@ -2001,6 +2003,7 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Mock exam',
     'Time limit ${durationMinutes} minutes · ${questionCount} UHR-based questions · no ads during exam',
     'Time left ${remainingTime} · ${questionCount} UHR-based questions · no ads during exam',
+    'Question ${questionNumber} in mock exam',
     'Exam access',
     'Checking mock exam access.',
     'Stored mock exam access could not be read. Retry before starting.',
@@ -2029,6 +2032,7 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Correct',
     'Submitted results are final. Start another mock exam for a fresh attempt.',
     'Explanations and review are shown only after the exam is submitted.',
+    'Review for question ${questionNumber}',
     'Next exam',
     'Saved',
     'Saving',
@@ -2071,6 +2075,38 @@ const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
   [
     '{copy.activeHeroSubtitle(formatExamTime(remainingSeconds), examQuestions.length)}',
     'active exam hero subtitle must render localized copy',
+  ],
+  [
+    'activeQuestionRegionLabel: (questionNumber: number) => string;',
+    'exam route must type active question region labels',
+  ],
+  [
+    'reviewQuestionRegionLabel: (questionNumber: number) => string;',
+    'exam route must type review question region labels',
+  ],
+  [
+    'const activeQuestionRegionLabel = copy.activeQuestionRegionLabel(questionNumber);',
+    'active exam cards must derive localized region labels',
+  ],
+  [
+    'const reviewQuestionRegionLabel = copy.reviewQuestionRegionLabel(questionNumber);',
+    'submitted review cards must derive localized region labels',
+  ],
+  [
+    'accessibilityLabel={activeQuestionRegionLabel}',
+    'active exam cards must expose localized native region labels',
+  ],
+  [
+    'aria-label={activeQuestionRegionLabel}',
+    'active exam cards must expose localized web region labels',
+  ],
+  [
+    'accessibilityLabel={reviewQuestionRegionLabel}',
+    'submitted review cards must expose localized native region labels',
+  ],
+  [
+    'aria-label={reviewQuestionRegionLabel}',
+    'submitted review cards must expose localized web region labels',
   ],
   [
     '{copy.answeredCount(answeredCount, examQuestions.length)}',

@@ -58,6 +58,14 @@ function parseFocusedMockExamCopySummary() {
   return JSON.parse(match[0]);
 }
 
+function findFirstSectionStart(source, labels) {
+  for (const label of labels) {
+    const index = source.indexOf(label);
+    if (index >= 0) return index;
+  }
+  return -1;
+}
+
 test('default mock exam config generates a full UHR-based exam from bundled questions', () => {
   const output = execFileSync(
     process.execPath,
@@ -144,10 +152,16 @@ test('mock exam copy parity keeps Swedish övningsprov labels and English Mock E
 
 test('active mock exam keeps full UHR reference cards out of pre-submit questions', () => {
   const examRouteSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
-  const reviewSectionStart = examRouteSource.indexOf('{filteredReviewItems.map((item) => {');
-  const activeQuestionSectionStart = examRouteSource.indexOf(
+  const reviewSectionStart = findFirstSectionStart(examRouteSource, [
+    '{filteredReviewItems.map((item) => {',
+    'filteredReviewItems.map((item) => {',
+  ]);
+  const activeQuestionSectionStart = findFirstSectionStart(examRouteSource, [
+    '{examQuestions.map((question, index) => {',
     '{examQuestions.map((question, index) => (',
-  );
+    'examQuestions.map((question, index) => {',
+    'examQuestions.map((question, index) => (',
+  ]);
 
   assert.notEqual(reviewSectionStart, -1, 'submitted review section should be present');
   assert.notEqual(activeQuestionSectionStart, -1, 'active question section should be present');
@@ -164,6 +178,9 @@ test('active mock exam keeps full UHR reference cards out of pre-submit question
     /<UHRReferenceCard language=\{language\} reference=\{item\.uhrReference\} \/>/,
   );
   assert.match(activeQuestionSection, /<QuestionSourceCitation/);
+  assert.match(activeQuestionSection, /copy\.activeQuestionRegionLabel\(questionNumber\)/);
+  assert.match(activeQuestionSection, /accessibilityLabel=\{activeQuestionRegionLabel\}/);
+  assert.match(activeQuestionSection, /aria-label=\{activeQuestionRegionLabel\}/);
   assert.match(
     activeQuestionSection,
     /<ProvenanceBadge language=\{language\} question=\{question\} \/>/,

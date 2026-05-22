@@ -38,6 +38,7 @@ type ExamRouteCopy = {
   accessStatus: Record<MockExamAccessReason, string>;
   accessTitle: string;
   activeHeroSubtitle: (remainingTime: string, questionCount: number) => string;
+  activeQuestionRegionLabel: (questionNumber: number) => string;
   answerAccessibilityLabel: (optionText: string, questionNumber: number) => string;
   answerGroupAccessibilityLabel: (questionNumber: number) => string;
   answeredCount: (answeredCount: number, questionCount: number) => string;
@@ -62,6 +63,7 @@ type ExamRouteCopy = {
   resultBadge: string;
   resultNote: string;
   resultSubtitle: string;
+  reviewQuestionRegionLabel: (questionNumber: number) => string;
   reviewFilterAll: string;
   reviewFilterFlagged: (count: number) => string;
   reviewFilterSummary: (visibleCount: number, totalCount: number) => string;
@@ -103,6 +105,7 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     accessTitle: 'Provåtkomst',
     activeHeroSubtitle: (remainingTime, questionCount) =>
       `Tid kvar ${remainingTime} · ${questionCount} UHR-baserade frågor · inga annonser under provet`,
+    activeQuestionRegionLabel: (questionNumber) => `Fråga ${questionNumber} i övningsprovet`,
     answerAccessibilityLabel: (optionText, questionNumber) =>
       `Välj svaret ${optionText} för fråga ${questionNumber}`,
     answerGroupAccessibilityLabel: (questionNumber) =>
@@ -137,6 +140,7 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     resultNote:
       'Skickade resultat är slutgiltiga. Starta ett nytt övningsprov för ett nytt försök.',
     resultSubtitle: 'Förklaringar och genomgång visas först efter att provet har skickats in.',
+    reviewQuestionRegionLabel: (questionNumber) => `Genomgång för fråga ${questionNumber}`,
     reviewFilterAll: 'Visa alla frågor',
     reviewFilterFlagged: (count) => `Visa flaggade frågor (${count})`,
     reviewFilterSummary: (visibleCount, totalCount) =>
@@ -174,6 +178,7 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     accessTitle: 'Exam access',
     activeHeroSubtitle: (remainingTime, questionCount) =>
       `Time left ${remainingTime} · ${questionCount} UHR-based questions · no ads during exam`,
+    activeQuestionRegionLabel: (questionNumber) => `Question ${questionNumber} in mock exam`,
     answerAccessibilityLabel: (optionText, questionNumber) =>
       `Select answer ${optionText} for question ${questionNumber}`,
     answerGroupAccessibilityLabel: (questionNumber) =>
@@ -207,6 +212,7 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     resultBadge: 'Mock exam result',
     resultNote: 'Submitted results are final. Start another mock exam for a fresh attempt.',
     resultSubtitle: 'Explanations and review are shown only after the exam is submitted.',
+    reviewQuestionRegionLabel: (questionNumber) => `Review for question ${questionNumber}`,
     reviewFilterAll: 'Show all questions',
     reviewFilterFlagged: (count) => `Show flagged questions (${count})`,
     reviewFilterSummary: (visibleCount, totalCount) =>
@@ -727,10 +733,14 @@ export default function Screen() {
           const questionNumber =
             examQuestionNumberById.get(item.questionId) ??
             reviewItems.findIndex((reviewItem) => reviewItem.questionId === item.questionId) + 1;
+          const reviewQuestionRegionLabel = copy.reviewQuestionRegionLabel(questionNumber);
 
           return (
             <View
+              accessibilityLabel={reviewQuestionRegionLabel}
+              accessibilityRole="summary"
               accessibilityState={{ selected: focusedReviewQuestionId === item.questionId }}
+              aria-label={reviewQuestionRegionLabel}
               key={item.questionId}
               ref={(node) => {
                 reviewCardRefs.current[item.questionId] = node;
@@ -829,17 +839,25 @@ export default function Screen() {
 
       {examQuestions.map((question, index) => {
         const isFlagged = Boolean(flaggedQuestionIds[question.id]);
+        const questionNumber = index + 1;
+        const activeQuestionRegionLabel = copy.activeQuestionRegionLabel(questionNumber);
 
         return (
-          <View key={question.id} style={styles.questionCard}>
+          <View
+            accessibilityLabel={activeQuestionRegionLabel}
+            accessibilityRole="summary"
+            aria-label={activeQuestionRegionLabel}
+            key={question.id}
+            style={styles.questionCard}
+          >
             <View style={styles.questionHeader}>
-              <Text style={styles.questionMeta}>{copy.questionNumber(index + 1)}</Text>
+              <Text style={styles.questionMeta}>{copy.questionNumber(questionNumber)}</Text>
               <Pressable
                 aria-pressed={isFlagged}
                 accessibilityLabel={
                   isFlagged
-                    ? copy.unflagQuestionAccessibilityLabel(index + 1)
-                    : copy.flagQuestionAccessibilityLabel(index + 1)
+                    ? copy.unflagQuestionAccessibilityLabel(questionNumber)
+                    : copy.flagQuestionAccessibilityLabel(questionNumber)
                 }
                 accessibilityRole="button"
                 accessibilityState={{ checked: isFlagged }}
