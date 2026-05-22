@@ -498,8 +498,14 @@ test('routed quiz answer state resets when the shuffle session seed changes', ()
 test('home daily goal uses local-day answer progress instead of lifetime completions', () => {
   const source = read('app/(tabs)/home.tsx');
 
-  assert.match(source, /countAnswersForLocalDate/);
-  assert.match(source, /countAnswersForLocalDate\(questionProgress\)/);
+  assert.match(source, /countAnswerAttemptsForLocalDate/);
+  assert.match(
+    source,
+    /const answerHistory = useProgressStore\(\(state\) => state\.answerHistory\);/,
+  );
+  assert.match(source, /answerAttempts: answerHistory/);
+  assert.match(source, /questionProgress,/);
+  assert.doesNotMatch(source, /countAnswersForLocalDate\(questionProgress\)/);
   assert.doesNotMatch(source, /completedQuestionIds\.length,\s*dailyGoalAnswers/);
 });
 

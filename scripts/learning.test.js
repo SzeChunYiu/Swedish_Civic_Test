@@ -144,6 +144,7 @@ test('daily goal counts question answers for the requested local day only', () =
   const today = new Date(2026, 4, 17, 12);
   const yesterday = new Date(2026, 4, 16, 12);
   const tomorrow = new Date(2026, 4, 18, 12);
+  const laterToday = new Date(2026, 4, 17, 23, 59);
 
   assert.equal(
     countAnswersForLocalDate(
@@ -153,6 +154,7 @@ test('daily goal counts question answers for the requested local day only', () =
         q003: { lastAnsweredAt: tomorrow.toISOString() },
         q004: { lastAnsweredAt: 'not-a-date' },
         q005: {},
+        q006: { lastAnsweredAt: laterToday.toISOString() },
       },
       today,
     ),
@@ -178,6 +180,8 @@ test('daily goal prefers per-answer attempts and falls back for older progress s
         { questionId: 'q001', answeredAt: today.toISOString() },
         { questionId: 'q001', answeredAt: today.toISOString() },
         { questionId: 'q002', answeredAt: yesterday.toISOString() },
+        { questionId: 'q003', answeredAt: new Date(2026, 4, 17, 23, 59).toISOString() },
+        { questionId: 'q004', answeredAt: 'not-a-date' },
       ],
       questionProgress,
       date: today,
@@ -185,6 +189,10 @@ test('daily goal prefers per-answer attempts and falls back for older progress s
     3,
   );
   assert.equal(countAnswerAttemptsForLocalDate({ questionProgress, date: today }), 1);
+  assert.equal(
+    countAnswerAttemptsForLocalDate({ answerAttempts: [], questionProgress, date: today }),
+    1,
+  );
 });
 
 test('daily flashcard deck prioritizes unanswered, saved, wrong, and stale questions', () => {

@@ -30,7 +30,7 @@ import {
   type ReadinessVerdict,
 } from '../../lib/learning/readiness';
 import { calculateStreakWithFreeze, freezeBannerCopy } from '../../lib/learning/streakWithFreeze';
-import { countAnswersForLocalDate } from '../../lib/learning/streaks';
+import { countAnswerAttemptsForLocalDate } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
 import { showRewardedExtraExamAd } from '../../lib/monetization/rewardedAd';
 import { useMockExamAccess } from '../../lib/monetization/useMockExamAccess';
@@ -462,6 +462,7 @@ export default function Screen() {
     setEntitlements: setMonetizationEntitlements,
   } = useMockExamAccess();
   const questionProgress = useProgressStore((state) => state.questionProgress);
+  const answerHistory = useProgressStore((state) => state.answerHistory);
   const mockExamSessions = useProgressStore((state) => state.mockExamSessions);
   const totalXp = useProgressStore((state) => state.totalXp);
   const answerDates = useProgressStore((state) => state.answerDates);
@@ -484,8 +485,15 @@ export default function Screen() {
   );
   const dailyChallengeCopy = dailyChallengeBannerCopy(dailyChallengeCompleted, language);
   const completedToday = useMemo(
-    () => Math.min(countAnswersForLocalDate(questionProgress), dailyGoalAnswers),
-    [dailyGoalAnswers, questionProgress],
+    () =>
+      Math.min(
+        countAnswerAttemptsForLocalDate({
+          answerAttempts: answerHistory,
+          questionProgress,
+        }),
+        dailyGoalAnswers,
+      ),
+    [answerHistory, dailyGoalAnswers, questionProgress],
   );
   const progress = dailyGoalAnswers > 0 ? completedToday / dailyGoalAnswers : 0;
   const streakWithFreeze = useMemo(
