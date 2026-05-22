@@ -117,6 +117,7 @@ const registryCompletenessFocusIds = [
   'generatedSwedenScopeParity',
   'progressBarAccessibility',
   'proLifetimeRelaunchParity',
+  'settingsImportSummaryNonzero',
   'staticEbookFootnoteHashParity',
   'streakFreezeNormalizerParity',
 ];
@@ -655,6 +656,37 @@ test('Settings route scroll parity uses focused structural content validation ro
     /Pressable,\[\\s\\S\]\*ScrollView,\[\\s\\S\]\*StyleSheet/,
     'Settings route scroll validator must not require one exact react-native import order',
   );
+});
+
+test('Settings import summary nonzero parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const settingsRouteTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-settings-route-copy-parity.test.js'),
+    'utf8',
+  );
+  const localStudyImportTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-local-study-data-import-parity.test.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('settingsImportSummaryNonzero');
+
+  assert.ok(registryEntry, 'Settings import summary nonzero focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-settings-import-summary-nonzero']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'settingsImportSummaryNonzeroValidated',
+    'settingsImportSummaryLocalesValidated',
+    'settingsImportSummaryHiddenZeroRowsValidated',
+  ]);
+  assert.match(validatorSource, /--focus-settings-import-summary-nonzero/);
+  assert.match(
+    validatorSource,
+    /validateSettingsImportSummaryNonzeroParity\(\);[\s\S]*settingsImportSummaryNonzeroValidated[\s\S]*settingsImportSummaryLocalesValidated[\s\S]*settingsImportSummaryHiddenZeroRowsValidated/,
+  );
+  assert.match(settingsRouteTestSource, /--focus-settings-import-summary-nonzero/);
+  assert.match(localStudyImportTestSource, /--focus-settings-import-summary-nonzero/);
 });
 
 test('Badge accessibility parity uses focused content validation routing', () => {

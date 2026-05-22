@@ -34,6 +34,20 @@ function parseSettingsScrollValidationSummary() {
   return JSON.parse(match[0]);
 }
 
+function parseSettingsImportSummaryNonzeroValidationSummary() {
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-settings-import-summary-nonzero'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused import summary validation should print JSON summary');
+  return JSON.parse(match[0]);
+}
+
 function assertIncludes(source, text, context) {
   assert.ok(source.includes(text), `${context} must include ${text}`);
 }
@@ -279,7 +293,12 @@ require('./scripts/validate-content.js');
 });
 
 test('settings import summary copy keeps singular and plural labels for bookmark wrong-answer mock exam FSRS and citizenship rows', () => {
+  const summary = parseSettingsImportSummaryNonzeroValidationSummary();
   const settingsSource = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+  const summarySource = fs.readFileSync(
+    path.join(repoRoot, 'lib/storage/localStudyDataImportSummary.ts'),
+    'utf8',
+  );
   const e2eSource = fs.readFileSync(
     path.join(repoRoot, 'tests/e2e/settings-import-confirm-apply.spec.ts'),
     'utf8',
@@ -355,21 +374,30 @@ test('settings import summary copy keeps singular and plural labels for bookmark
     '0 marked requirements',
   ];
 
+  assert.equal(summary.settingsImportSummaryNonzeroValidated, true);
+  assert.equal(summary.settingsImportSummaryLocalesValidated, 2);
+  assert.equal(summary.settingsImportSummaryHiddenZeroRowsValidated, 4);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
   for (const snippet of labelSnippets) {
     assertIncludes(settingsSource, snippet, 'settings import summary copy');
   }
   assertIncludes(
-    settingsSource,
+    summarySource,
     'function addPositiveImportSummaryLine(',
     'settings import summary non-zero helper',
   );
   assertIncludes(
-    settingsSource,
+    summarySource,
     'if (count > 0) lines.push(formatLine(count));',
     'settings import summary non-zero helper',
   );
   assertIncludes(
     settingsSource,
+    'buildLocalStudyDataImportSummaryLines(copy, importPreview.summary)',
+    'settings import summary shared helper render',
+  );
+  assertIncludes(
+    summarySource,
     'if (summary.streakFreezeStateIncluded) lines.push(copy.importSummaryStreakFreeze);',
     'settings import summary streak row',
   );

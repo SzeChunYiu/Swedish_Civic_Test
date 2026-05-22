@@ -3072,7 +3072,10 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
 };
 const EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS = [
   ['import type { AppLanguage }', 'settings route must import AppLanguage'],
-  ['type SettingsCopy = {', 'settings route must define a typed copy contract'],
+  [
+    'type SettingsCopy = LocalStudyDataImportSummaryCopy & {',
+    'settings route must define a typed copy contract',
+  ],
   [
     'const settingsCopy: Record<AppLanguage, SettingsCopy> = {',
     'settings route copy must cover every AppLanguage value',
@@ -9819,6 +9822,7 @@ const uxBenchmarks = loadTs('data/uxBenchmarks.ts', 'uxBenchmarks');
 const defaultMockExamConfig = loadTs('data/mockExamConfig.ts', 'defaultMockExamConfig');
 const citizenshipRequirementsModule = loadTs('data/citizenshipRequirements.ts');
 const citizenshipRequirementAreas = citizenshipRequirementsModule.citizenshipRequirementAreas || [];
+const localStudyDataImportSummaryModule = loadTs('lib/storage/localStudyDataImportSummary.ts');
 const supportedLanguages = loadTs('lib/localization/language.ts', 'supportedLanguages');
 const localizationStrings = loadTs('lib/localization/strings.ts', 'strings');
 const examGeneratorModule = loadTs('lib/quiz/examGenerator.ts');
@@ -10045,6 +10049,9 @@ let settingsRouteHeadersValidated = 0;
 let settingsRouteHeaderParityValidated = false;
 let settingsRouteCopyLabelsValidated = 0;
 let settingsRouteCopyParityValidated = false;
+let settingsImportSummaryLocalesValidated = 0;
+let settingsImportSummaryHiddenZeroRowsValidated = 0;
+let settingsImportSummaryNonzeroValidated = false;
 let onboardingRouteHeadersValidated = 0;
 let onboardingRouteHeaderParityValidated = false;
 let onboardingRouteCopyLabelsValidated = 0;
@@ -11008,9 +11015,21 @@ if (process.argv.includes('--focus-settings-route-scroll')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-settings-import-summary-nonzero')) {
+  validateSettingsImportSummaryNonzeroParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    settingsImportSummaryNonzeroValidated,
+    settingsImportSummaryLocalesValidated,
+    settingsImportSummaryHiddenZeroRowsValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-settings-route')) {
   validateSettingsRouteHeaderParity();
   validateSettingsRouteCopyParity();
+  validateSettingsImportSummaryNonzeroParity();
   validateSettingsRouteScrollParity();
   exitWithValidationFailures();
   printValidationSummary({
@@ -11018,6 +11037,9 @@ if (process.argv.includes('--focus-settings-route')) {
     settingsRouteHeaderParityValidated,
     settingsRouteCopyLabelsValidated,
     settingsRouteCopyParityValidated,
+    settingsImportSummaryNonzeroValidated,
+    settingsImportSummaryLocalesValidated,
+    settingsImportSummaryHiddenZeroRowsValidated,
     settingsRouteScrollRulesValidated,
     settingsRouteScrollParityValidated,
   });
@@ -11027,6 +11049,7 @@ if (process.argv.includes('--focus-settings-route')) {
 if (process.argv.includes('--focus-settings-parity')) {
   validateSettingsRouteHeaderParity();
   validateSettingsRouteCopyParity();
+  validateSettingsImportSummaryNonzeroParity();
   validateSettingsRouteScrollParity();
   validateSettingsStoreSchemaParity();
   validateSettingsDailyGoalParity();
@@ -11037,6 +11060,9 @@ if (process.argv.includes('--focus-settings-parity')) {
     settingsRouteHeaderParityValidated,
     settingsRouteCopyLabelsValidated,
     settingsRouteCopyParityValidated,
+    settingsImportSummaryNonzeroValidated,
+    settingsImportSummaryLocalesValidated,
+    settingsImportSummaryHiddenZeroRowsValidated,
     settingsRouteScrollRulesValidated,
     settingsRouteScrollParityValidated,
     settingsStoreFieldsValidated,
@@ -16470,6 +16496,191 @@ function validateSettingsRouteCopyParity() {
   );
   if (valid && settingsRouteCopyLabelsValidated === expectedLabelCount) {
     settingsRouteCopyParityValidated = true;
+  }
+}
+
+function validateSettingsImportSummaryNonzeroParity() {
+  let valid = true;
+  let settingsRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    settingsRoute = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+  } catch (error) {
+    reject(`settings import summary source could not be read: ${error.message}`);
+    return;
+  }
+
+  const buildSummaryLines = localStudyDataImportSummaryModule.buildLocalStudyDataImportSummaryLines;
+  const formatSummaryCount = localStudyDataImportSummaryModule.formatImportSummaryCount;
+  if (typeof buildSummaryLines !== 'function' || typeof formatSummaryCount !== 'function') {
+    reject('settings import summary helper must export its formatter and line builder');
+    return;
+  }
+
+  if (
+    !settingsRoute.includes('buildLocalStudyDataImportSummaryLines(copy, importPreview.summary)')
+  ) {
+    reject('settings route import preview must render through the shared non-zero summary helper');
+  }
+  if (!settingsRoute.includes('formatImportSummaryCount(count,')) {
+    reject('settings route import summary copy must use the shared count formatter');
+  }
+
+  const copies = {
+    sv: {
+      importSummaryAccessibility: (count) =>
+        formatSummaryCount(count, { one: 'tillgänglighetsval', other: 'tillgänglighetsval' }),
+      importSummaryBookmarks: (count) =>
+        formatSummaryCount(count, { one: 'bokmärke', other: 'bokmärken' }),
+      importSummaryCitizenshipRequirements: (count) =>
+        formatSummaryCount(count, {
+          one: 'markerat kravområde',
+          other: 'markerade kravområden',
+        }),
+      importSummaryCompanion: (count) =>
+        formatSummaryCount(count, { one: 'vald studiekompis', other: 'valda studiekompisar' }),
+      importSummaryCompletedQuestions: (count) =>
+        formatSummaryCount(count, {
+          one: 'fråga med sparad progression',
+          other: 'frågor med sparad progression',
+        }),
+      importSummaryFsrsCards: (count) =>
+        formatSummaryCount(count, { one: 'repetitionskort', other: 'repetitionskort' }),
+      importSummaryFsrsDays: (count) =>
+        formatSummaryCount(count, { one: 'repetitionsdag', other: 'repetitionsdagar' }),
+      importSummaryHighlights: (count) =>
+        formatSummaryCount(count, {
+          one: 'markering i e-boken',
+          other: 'markeringar i e-boken',
+        }),
+      importSummaryMockExams: (count) =>
+        formatSummaryCount(count, {
+          one: 'genomfört övningsprov',
+          other: 'genomförda övningsprov',
+        }),
+      importSummarySettings: (count) =>
+        formatSummaryCount(count, { one: 'sparad inställning', other: 'sparade inställningar' }),
+      importSummaryStreakFreeze: 'Studiesvit och svitskydd ingår',
+      importSummaryWrongAnswers: (count) =>
+        formatSummaryCount(count, {
+          one: 'granskning av fel svar',
+          other: 'granskningar av fel svar',
+        }),
+    },
+    en: {
+      importSummaryAccessibility: (count) =>
+        formatSummaryCount(count, {
+          one: 'accessibility preference',
+          other: 'accessibility preferences',
+        }),
+      importSummaryBookmarks: (count) =>
+        formatSummaryCount(count, { one: 'bookmark', other: 'bookmarks' }),
+      importSummaryCitizenshipRequirements: (count) =>
+        formatSummaryCount(count, { one: 'marked requirement', other: 'marked requirements' }),
+      importSummaryCompanion: (count) =>
+        formatSummaryCount(count, {
+          one: 'selected study companion',
+          other: 'selected study companions',
+        }),
+      importSummaryCompletedQuestions: (count) =>
+        formatSummaryCount(count, {
+          one: 'question with saved progress',
+          other: 'questions with saved progress',
+        }),
+      importSummaryFsrsCards: (count) =>
+        formatSummaryCount(count, { one: 'FSRS review card', other: 'FSRS review cards' }),
+      importSummaryFsrsDays: (count) =>
+        formatSummaryCount(count, { one: 'FSRS review day', other: 'FSRS review days' }),
+      importSummaryHighlights: (count) =>
+        formatSummaryCount(count, { one: 'ebook highlight', other: 'ebook highlights' }),
+      importSummaryMockExams: (count) =>
+        formatSummaryCount(count, { one: 'completed mock exam', other: 'completed mock exams' }),
+      importSummarySettings: (count) =>
+        formatSummaryCount(count, { one: 'saved setting', other: 'saved settings' }),
+      importSummaryStreakFreeze: 'Study streak and freeze status included',
+      importSummaryWrongAnswers: (count) =>
+        formatSummaryCount(count, { one: 'wrong-answer review', other: 'wrong-answer reviews' }),
+    },
+  };
+  const fixtureSummary = {
+    completedQuestionCount: 3,
+    bookmarkedQuestionCount: 2,
+    wrongAnswerReviewCount: 2,
+    mockExamSessionCount: 2,
+    streakFreezeStateIncluded: true,
+    fsrsReviewCardCount: 2,
+    gradedReviewDayCount: 2,
+    settingCount: 5,
+    accessibilityPreferenceCount: 0,
+    companionPreferenceCount: 0,
+    citizenshipRequirementChecklistCount: 0,
+    highlightCount: 0,
+  };
+  const expectedVisibleRows = {
+    sv: [
+      '3 frågor med sparad progression',
+      '2 bokmärken',
+      '2 granskningar av fel svar',
+      '2 genomförda övningsprov',
+      '2 repetitionskort',
+      '2 repetitionsdagar',
+      '5 sparade inställningar',
+      'Studiesvit och svitskydd ingår',
+    ],
+    en: [
+      '3 questions with saved progress',
+      '2 bookmarks',
+      '2 wrong-answer reviews',
+      '2 completed mock exams',
+      '2 FSRS review cards',
+      '2 FSRS review days',
+      '5 saved settings',
+      'Study streak and freeze status included',
+    ],
+  };
+  const hiddenZeroRows = {
+    sv: ['0 markeringar i e-boken', '0 markerade kravområden'],
+    en: ['0 ebook highlights', '0 marked requirements'],
+  };
+
+  Object.entries(copies).forEach(([language, copy]) => {
+    const lines = buildSummaryLines(copy, fixtureSummary);
+    const withoutStreakLines = buildSummaryLines(copy, {
+      ...fixtureSummary,
+      streakFreezeStateIncluded: false,
+    });
+
+    expectedVisibleRows[language].forEach((row) => {
+      if (!lines.includes(row)) {
+        reject(`settings import summary ${language} fixture must include ${JSON.stringify(row)}`);
+      }
+    });
+    hiddenZeroRows[language].forEach((row) => {
+      if (lines.includes(row)) {
+        reject(
+          `settings import summary ${language} fixture must hide zero row ${JSON.stringify(row)}`,
+        );
+      } else {
+        settingsImportSummaryHiddenZeroRowsValidated += 1;
+      }
+    });
+    if (withoutStreakLines.includes(copy.importSummaryStreakFreeze)) {
+      reject(`settings import summary ${language} fixture must hide the streak row when absent`);
+    }
+    settingsImportSummaryLocalesValidated += 1;
+  });
+
+  if (
+    valid &&
+    settingsImportSummaryLocalesValidated === 2 &&
+    settingsImportSummaryHiddenZeroRowsValidated === 4
+  ) {
+    settingsImportSummaryNonzeroValidated = true;
   }
 }
 
@@ -26964,6 +27175,7 @@ validateLegalRouteHeaderParity();
 validateLegalSectionRenderingParity();
 validateSettingsRouteHeaderParity();
 validateSettingsRouteCopyParity();
+validateSettingsImportSummaryNonzeroParity();
 validatePersistenceWarningScopeParity();
 validateLocalStudyCorruptJsonWarnings();
 validateOnboardingRouteHeaderParity();
@@ -27182,6 +27394,9 @@ console.log(
       settingsRouteHeaderParityValidated,
       settingsRouteCopyLabelsValidated,
       settingsRouteCopyParityValidated,
+      settingsImportSummaryNonzeroValidated,
+      settingsImportSummaryLocalesValidated,
+      settingsImportSummaryHiddenZeroRowsValidated,
       onboardingRouteHeadersValidated,
       onboardingRouteHeaderParityValidated,
       onboardingRouteCopyLabelsValidated,

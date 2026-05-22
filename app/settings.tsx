@@ -17,8 +17,12 @@ import {
   type LocalStudyDataImportErrorCode,
   type LocalStudyDataImportPreview,
   type LocalStudyDataImportSection,
-  type LocalStudyDataImportSummary,
 } from '../lib/storage/localStudyDataImport';
+import {
+  buildLocalStudyDataImportSummaryLines,
+  formatImportSummaryCount,
+  type LocalStudyDataImportSummaryCopy,
+} from '../lib/storage/localStudyDataImportSummary';
 import type { ThemeMode } from '../lib/storage/accessibilityStore';
 import { useAccessibilityStore } from '../lib/storage/accessibilityStore';
 import { useCompanionStore } from '../lib/storage/companionStore';
@@ -28,7 +32,7 @@ import { motion, radius, shadows, space, typography } from '../lib/theme';
 import type { ThemeColors } from '../lib/theme';
 import { useTheme } from '../lib/theme/ThemeProvider';
 
-type SettingsCopy = {
+type SettingsCopy = LocalStudyDataImportSummaryCopy & {
   audioDisabledLabel: string;
   audioEnabledLabel: string;
   audioListenFirstDisabledLabel: string;
@@ -90,15 +94,6 @@ type SettingsCopy = {
   title: string;
 };
 
-type CountLabels = {
-  one: string;
-  other: string;
-};
-
-function formatCount(count: number, labels: CountLabels): string {
-  return `${count} ${count === 1 ? labels.one : labels.other}`;
-}
-
 function formatImportByteCount(byteCount: number, language: AppLanguage): string {
   return new Intl.NumberFormat(language === 'sv' ? 'sv-SE' : 'en-US').format(byteCount);
 }
@@ -127,14 +122,6 @@ function appendImportErrorDetail(
 }
 
 const localStudyDataImportMaxLabel = `${LOCAL_STUDY_DATA_IMPORT_MAX_BYTES / (1024 * 1024)} MB`;
-
-function addPositiveImportSummaryLine(
-  lines: string[],
-  count: number,
-  formatLine: (count: number) => string,
-) {
-  if (count > 0) lines.push(formatLine(count));
-}
 
 const settingsCopy: Record<AppLanguage, SettingsCopy> = {
   sv: {
@@ -196,31 +183,47 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     importSectionSubtitle: `Klistra in en lokal studiedataexport i JSON-format på högst ${localStudyDataImportMaxLabel}. Du får en sammanfattning innan något skrivs.`,
     importSuccess: 'Importen är klar.',
     importSummaryAccessibility: (count) =>
-      formatCount(count, { one: 'tillgänglighetsval', other: 'tillgänglighetsval' }),
-    importSummaryBookmarks: (count) => formatCount(count, { one: 'bokmärke', other: 'bokmärken' }),
+      formatImportSummaryCount(count, { one: 'tillgänglighetsval', other: 'tillgänglighetsval' }),
+    importSummaryBookmarks: (count) =>
+      formatImportSummaryCount(count, { one: 'bokmärke', other: 'bokmärken' }),
     importSummaryCitizenshipRequirements: (count) =>
-      formatCount(count, { one: 'markerat kravområde', other: 'markerade kravområden' }),
+      formatImportSummaryCount(count, {
+        one: 'markerat kravområde',
+        other: 'markerade kravområden',
+      }),
     importSummaryCompanion: (count) =>
-      formatCount(count, { one: 'vald studiekompis', other: 'valda studiekompisar' }),
+      formatImportSummaryCount(count, { one: 'vald studiekompis', other: 'valda studiekompisar' }),
     importSummaryCompletedQuestions: (count) =>
-      formatCount(count, {
+      formatImportSummaryCount(count, {
         one: 'fråga med sparad progression',
         other: 'frågor med sparad progression',
       }),
     importSummaryFsrsDays: (count) =>
-      formatCount(count, { one: 'repetitionsdag', other: 'repetitionsdagar' }),
+      formatImportSummaryCount(count, { one: 'repetitionsdag', other: 'repetitionsdagar' }),
     importSummaryFsrsCards: (count) =>
-      formatCount(count, { one: 'repetitionskort', other: 'repetitionskort' }),
+      formatImportSummaryCount(count, { one: 'repetitionskort', other: 'repetitionskort' }),
     importSummaryHighlights: (count) =>
-      formatCount(count, { one: 'markering i e-boken', other: 'markeringar i e-boken' }),
+      formatImportSummaryCount(count, {
+        one: 'markering i e-boken',
+        other: 'markeringar i e-boken',
+      }),
     importSummaryMockExams: (count) =>
-      formatCount(count, { one: 'genomfört övningsprov', other: 'genomförda övningsprov' }),
+      formatImportSummaryCount(count, {
+        one: 'genomfört övningsprov',
+        other: 'genomförda övningsprov',
+      }),
     importSummarySettings: (count) =>
-      formatCount(count, { one: 'sparad inställning', other: 'sparade inställningar' }),
+      formatImportSummaryCount(count, {
+        one: 'sparad inställning',
+        other: 'sparade inställningar',
+      }),
     importSummaryStreakFreeze: 'Studiesvit och svitskydd ingår',
     importSummaryTitle: 'Sammanfattning före import',
     importSummaryWrongAnswers: (count) =>
-      formatCount(count, { one: 'granskning av fel svar', other: 'granskningar av fel svar' }),
+      formatImportSummaryCount(count, {
+        one: 'granskning av fel svar',
+        other: 'granskningar av fel svar',
+      }),
     importTitle: 'Importera studiedata',
     importWarningSectionLabel: (section) => {
       if (section === 'progress') return 'progression';
@@ -304,34 +307,44 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     importSectionSubtitle: `Paste a local study data export in JSON format under ${localStudyDataImportMaxLabel}. You will see a summary before anything is written.`,
     importSuccess: 'Import complete.',
     importSummaryAccessibility: (count) =>
-      formatCount(count, { one: 'accessibility preference', other: 'accessibility preferences' }),
-    importSummaryBookmarks: (count) => formatCount(count, { one: 'bookmark', other: 'bookmarks' }),
+      formatImportSummaryCount(count, {
+        one: 'accessibility preference',
+        other: 'accessibility preferences',
+      }),
+    importSummaryBookmarks: (count) =>
+      formatImportSummaryCount(count, { one: 'bookmark', other: 'bookmarks' }),
     importSummaryCitizenshipRequirements: (count) =>
-      formatCount(count, { one: 'marked requirement', other: 'marked requirements' }),
+      formatImportSummaryCount(count, { one: 'marked requirement', other: 'marked requirements' }),
     importSummaryCompanion: (count) =>
-      formatCount(count, { one: 'selected study companion', other: 'selected study companions' }),
+      formatImportSummaryCount(count, {
+        one: 'selected study companion',
+        other: 'selected study companions',
+      }),
     importSummaryCompletedQuestions: (count) =>
-      formatCount(count, {
+      formatImportSummaryCount(count, {
         one: 'question with saved progress',
         other: 'questions with saved progress',
       }),
     importSummaryFsrsDays: (count) =>
-      formatCount(count, { one: 'FSRS review day', other: 'FSRS review days' }),
+      formatImportSummaryCount(count, { one: 'FSRS review day', other: 'FSRS review days' }),
     importSummaryFsrsCards: (count) =>
-      formatCount(count, { one: 'FSRS review card', other: 'FSRS review cards' }),
+      formatImportSummaryCount(count, { one: 'FSRS review card', other: 'FSRS review cards' }),
     importSummaryHighlights: (count) =>
-      formatCount(count, { one: 'ebook highlight', other: 'ebook highlights' }),
+      formatImportSummaryCount(count, { one: 'ebook highlight', other: 'ebook highlights' }),
     importSummaryMockExams: (count) =>
-      formatCount(count, {
+      formatImportSummaryCount(count, {
         one: 'completed mock exam',
         other: 'completed mock exams',
       }),
     importSummarySettings: (count) =>
-      formatCount(count, { one: 'saved setting', other: 'saved settings' }),
+      formatImportSummaryCount(count, { one: 'saved setting', other: 'saved settings' }),
     importSummaryStreakFreeze: 'Study streak and freeze status included',
     importSummaryTitle: 'Summary before import',
     importSummaryWrongAnswers: (count) =>
-      formatCount(count, { one: 'wrong-answer review', other: 'wrong-answer reviews' }),
+      formatImportSummaryCount(count, {
+        one: 'wrong-answer review',
+        other: 'wrong-answer reviews',
+      }),
     importTitle: 'Import study data',
     importWarningSectionLabel: (section) => {
       if (section === 'progress') return 'progress';
@@ -380,47 +393,6 @@ function getRadioArrowDirection(event: KeyboardEventLike): -1 | 1 | null {
   if (key === 'ArrowRight' || key === 'ArrowDown') return 1;
   if (key === 'ArrowLeft' || key === 'ArrowUp') return -1;
   return null;
-}
-
-function buildImportSummaryLines(
-  copy: SettingsCopy,
-  summary: LocalStudyDataImportSummary,
-): string[] {
-  const lines: string[] = [];
-
-  addPositiveImportSummaryLine(
-    lines,
-    summary.completedQuestionCount,
-    copy.importSummaryCompletedQuestions,
-  );
-  addPositiveImportSummaryLine(lines, summary.bookmarkedQuestionCount, copy.importSummaryBookmarks);
-  addPositiveImportSummaryLine(
-    lines,
-    summary.wrongAnswerReviewCount,
-    copy.importSummaryWrongAnswers,
-  );
-  addPositiveImportSummaryLine(lines, summary.mockExamSessionCount, copy.importSummaryMockExams);
-  addPositiveImportSummaryLine(lines, summary.fsrsReviewCardCount, copy.importSummaryFsrsCards);
-  addPositiveImportSummaryLine(lines, summary.gradedReviewDayCount, copy.importSummaryFsrsDays);
-  addPositiveImportSummaryLine(lines, summary.highlightCount, copy.importSummaryHighlights);
-  addPositiveImportSummaryLine(lines, summary.settingCount, copy.importSummarySettings);
-  addPositiveImportSummaryLine(
-    lines,
-    summary.accessibilityPreferenceCount,
-    copy.importSummaryAccessibility,
-  );
-  addPositiveImportSummaryLine(
-    lines,
-    summary.companionPreferenceCount,
-    copy.importSummaryCompanion,
-  );
-  addPositiveImportSummaryLine(
-    lines,
-    summary.citizenshipRequirementChecklistCount,
-    copy.importSummaryCitizenshipRequirements,
-  );
-  if (summary.streakFreezeStateIncluded) lines.push(copy.importSummaryStreakFreeze);
-  return lines;
 }
 
 export default function Screen() {
@@ -986,7 +958,7 @@ export default function Screen() {
             <Text accessibilityRole="header" style={styles.summaryTitle}>
               {copy.importSummaryTitle}
             </Text>
-            {buildImportSummaryLines(copy, importPreview.summary).map((line) => (
+            {buildLocalStudyDataImportSummaryLines(copy, importPreview.summary).map((line) => (
               <Text key={line} style={styles.summaryText}>
                 {line}
               </Text>

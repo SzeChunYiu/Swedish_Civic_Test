@@ -1,4 +1,5 @@
 const assert = require('node:assert/strict');
+const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
@@ -751,6 +752,28 @@ test('local study data import summary reports plural bookmark wrong-answer mock 
   assert.deepEqual(Object.keys(highlights.byChapter), ['ch01', 'ch02']);
   assert.equal(highlights.byChapter.ch01[0].note, 'First portable note');
   assert.equal(highlights.byChapter.ch02[0].note, 'Second portable note');
+});
+
+test('local study data import summary nonzero focus validates localized preview rows', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-settings-import-summary-nonzero'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+  const output = `${result.stdout}\n${result.stderr}`;
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+
+  assert.equal(result.status, 0, output);
+  assert.ok(match, 'focused import summary validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+  assert.equal(summary.settingsImportSummaryNonzeroValidated, true);
+  assert.equal(summary.settingsImportSummaryLocalesValidated, 2);
+  assert.equal(summary.settingsImportSummaryHiddenZeroRowsValidated, 4);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
+  assert.match(output, /settingsImportSummaryNonzeroValidated/);
 });
 
 test('local study data export round-trips citizenship requirements without purchase fields', () => {
