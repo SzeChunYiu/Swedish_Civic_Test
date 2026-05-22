@@ -10,6 +10,12 @@ const docNavCases = [
     headingId: 'p3',
   },
   {
+    route: '/support',
+    href: '#/support#s3',
+    heading: "Please don't include sensitive info",
+    headingId: 's3',
+  },
+  {
     route: '/terms',
     href: '#/terms#t3',
     heading: 'Content & accuracy',
@@ -33,7 +39,7 @@ test.afterAll(async () => {
   await staticSite.close();
 });
 
-test('Privacy, Terms, and Sources table of contents keep their hash routes active', async ({
+test('Privacy, Support, Terms, and Sources table of contents keep their hash routes active', async ({
   page,
 }) => {
   const pageErrors = collectPageErrors(page);

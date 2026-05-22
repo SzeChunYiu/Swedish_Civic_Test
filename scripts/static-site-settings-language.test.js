@@ -158,9 +158,11 @@ function createRenderContext({
   function element(id) {
     if (!elements.has(id)) {
       const attributes = new Map();
+      const classNames = new Set();
       const node = {
         id,
         attributes,
+        classNames,
         dataset: a11yControlKeys.has(id) ? { a11yLabel: a11yControlKeys.get(id) } : {},
         hidden: false,
         innerHTML: '',
@@ -168,7 +170,23 @@ function createRenderContext({
         style: {},
         textContent: '',
         value: id === 'cfg-count' ? '5' : '',
-        classList: { add() {}, remove() {}, toggle() {} },
+        classList: {
+          add(name) {
+            classNames.add(name);
+          },
+          contains(name) {
+            return classNames.has(name);
+          },
+          remove(name) {
+            classNames.delete(name);
+          },
+          toggle(name, on) {
+            const shouldAdd = on === undefined ? !classNames.has(name) : Boolean(on);
+            if (shouldAdd) classNames.add(name);
+            else classNames.delete(name);
+            return shouldAdd;
+          },
+        },
         addEventListener() {},
         setAttribute(name, value) {
           attributes.set(name, String(value));
@@ -713,11 +731,13 @@ test('Static Settings text size falls back for corrupt stored and clicked values
 test('Static document table-of-contents hashes preserve legal routes and focus headings', () => {
   const html = read('site/index.html');
   assert.match(html, /href="#\/privacy#p3" data-i18n="privacy\.s3\.t"/);
+  assert.match(html, /href="#\/support#s3" data-i18n="support\.s3\.t"/);
   assert.match(html, /href="#\/terms#t3" data-i18n="terms\.s3\.t"/);
   assert.match(html, /href="#\/sources#src2" data-i18n="sources\.s2\.t"/);
 
   for (const [hash, headingId] of [
     ['#/privacy#p3', 'p3'],
+    ['#/support#s3', 's3'],
     ['#/terms#t3', 't3'],
     ['#/sources#src2', 'src2'],
   ]) {
