@@ -72,7 +72,8 @@ async function activateBlockingModalControl(control: Locator): Promise<void> {
   try {
     await control.click({ timeout: 2_000 });
   } catch {
-    await control.dispatchEvent('click');
+    if ((await control.count()) === 0) return;
+    await control.dispatchEvent('click', undefined, { timeout: 2_000 });
   }
 }
 

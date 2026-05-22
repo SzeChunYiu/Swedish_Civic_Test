@@ -88,6 +88,46 @@ test('launch popup ad route suppression rejects root-layout bypass drift', () =>
   assert.doesNotMatch(mutated, /shouldSuppressLaunchPopupAdForPath\(pathname\)/);
 });
 
+test('rewarded preview E2E dismisses launch ad before sponsor completion clicks', () => {
+  const rewardedPreviewSpec = read('tests/e2e/rewarded-web-preview.spec.ts');
+  const browserLaunchSource = read('tests/e2e/browserLaunch.ts');
+  const storeCreditCase = rewardedPreviewSpec.match(
+    /Home rewarded preview stores an extra mock exam credit[\s\S]*?await completionButton\.click\(\);/,
+  )?.[0];
+  const accessibilityCase = rewardedPreviewSpec.match(
+    /Home rewarded extra exam accessibility states[\s\S]*?await completionButton\.click\(\);/,
+  )?.[0];
+
+  assert.match(rewardedPreviewSpec, /closeLaunchAdIfPresent/);
+  assert.match(
+    browserLaunchSource,
+    /control\.dispatchEvent\('click', undefined, \{ timeout: 2_000 \}\)/,
+    'launch ad dismissal fallback should not consume the full Playwright test timeout',
+  );
+  assert.ok(storeCreditCase, 'rewarded credit E2E case should be parseable');
+  assert.ok(accessibilityCase, 'rewarded accessibility E2E case should be parseable');
+  for (const [label, source] of [
+    ['rewarded credit case', storeCreditCase],
+    ['rewarded accessibility case', accessibilityCase],
+  ]) {
+    assert.ok(
+      source.indexOf('await closeLaunchAdIfPresent(page);') <
+        source.indexOf('await completionButton.click();'),
+      `${label} should dismiss the launch ad before clicking the sponsor completion CTA`,
+    );
+  }
+  assert.doesNotMatch(
+    rewardedPreviewSpec,
+    /completionButton\.click\(\{[^}]*force:\s*true|display:\s*['"]none|visibility:\s*['"]hidden/,
+    'rewarded preview tests should remove the launch overlay instead of forcing clicks or hiding rewarded UI',
+  );
+  assert.equal(
+    launchSuppressedRoutes().includes('/home'),
+    false,
+    'ordinary Home route launch-ad eligibility should remain available outside this fixture',
+  );
+});
+
 test('visual smoke report shares the launch popup suppression policy', () => {
   const reportSource = read('scripts/visual-smoke-report.test.js');
   const localRouteIncludesCall = ['includes', '(route.route)'].join('');
