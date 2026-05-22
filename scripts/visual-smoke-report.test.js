@@ -56,25 +56,33 @@ function loadTs(relativePath) {
 }
 
 function expectedVisualSmokeRoutes() {
-  const { visualSmokeRouteManifestEntries } = loadTs('tests/e2e/visualSmokeRoutes.ts');
+  const { assertValidVisualSmokeRouteEntries, visualSmokeRouteManifestEntries } = loadTs(
+    'tests/e2e/visualSmokeRoutes.ts',
+  );
+  const routes = visualSmokeRouteManifestEntries();
 
-  return visualSmokeRouteManifestEntries();
+  assertValidVisualSmokeRouteEntries(routes);
+  return routes;
 }
 
 function visualSmokeDuplicateContract() {
   const {
+    assertValidVisualSmokeRouteEntries,
     findUnexplainedVisualSmokeDuplicateReports,
     hasValidVisualSmokeDuplicateExplanation,
     isExplainedVisualSmokeDuplicate,
+    validateVisualSmokeRouteEntries,
     validateVisualSmokeDuplicateExplanations,
     visualSmokeDuplicateExplanationKey,
     visualSmokeDuplicateExplanations,
   } = loadTs('tests/e2e/visualSmokeRoutes.ts');
 
   return {
+    assertValidVisualSmokeRouteEntries,
     findUnexplainedVisualSmokeDuplicateReports,
     hasValidVisualSmokeDuplicateExplanation,
     isExplainedVisualSmokeDuplicate,
+    validateVisualSmokeRouteEntries,
     validateVisualSmokeDuplicateExplanations,
     visualSmokeDuplicateExplanationKey,
     visualSmokeDuplicateExplanations,
@@ -89,6 +97,7 @@ function loadLaunchAdSuppressionPolicy() {
 test('visual smoke uses the shared route filename contract and blocking modal overlay locator', () => {
   const browserLaunchSource = readRepoFile('tests/e2e/browserLaunch.ts');
   const visualSmokeSource = readRepoFile('tests/e2e/visual-smoke.spec.ts');
+  const visualSmokeReportSource = readRepoFile('scripts/visual-smoke-report.test.js');
   const visualSmokeRoutesSource = readRepoFile('tests/e2e/visualSmokeRoutes.ts');
 
   assert.match(browserLaunchSource, /export const blockingModalOverlayLocator/);
@@ -99,6 +108,7 @@ test('visual smoke uses the shared route filename contract and blocking modal ov
     /import \{[\s\S]*visualSmokeRouteManifestEntries[\s\S]*\} from '\.\/visualSmokeRoutes';/,
   );
   assert.match(visualSmokeSource, /visualSmokeRouteManifestEntries\(\)/);
+  assert.match(visualSmokeSource, /assertValidVisualSmokeRouteEntries\(routeEntries\)/);
   assert.match(visualSmokeSource, /visualSmokeDuplicateExplanations/);
   assert.match(visualSmokeSource, /findUnexplainedVisualSmokeDuplicateReports/);
   assert.doesNotMatch(visualSmokeSource, /const routes = \[/);
@@ -108,6 +118,8 @@ test('visual smoke uses the shared route filename contract and blocking modal ov
   assert.match(visualSmokeRoutesSource, /file: 'index\.png'/);
   assert.match(visualSmokeRoutesSource, /file: 'chapter-ch01\.png'/);
   assert.match(visualSmokeRoutesSource, /export function visualSmokeRouteManifestEntries/);
+  assert.match(visualSmokeRoutesSource, /export function validateVisualSmokeRouteEntries/);
+  assert.match(visualSmokeRoutesSource, /export function assertValidVisualSmokeRouteEntries/);
   assert.match(visualSmokeRoutesSource, /export const visualSmokeDuplicateExplanations/);
   assert.match(visualSmokeRoutesSource, /export function hasValidVisualSmokeDuplicateExplanation/);
   assert.match(visualSmokeRoutesSource, /export function validateVisualSmokeDuplicateExplanations/);
@@ -120,11 +132,76 @@ test('visual smoke uses the shared route filename contract and blocking modal ov
     visualSmokeSource,
     /import \{[\s\S]*blockingModalOverlayLocator[\s\S]*dismissBlockingModals[\s\S]*\} from '\.\/browserLaunch';/,
   );
+  assert.match(visualSmokeReportSource, /assertValidVisualSmokeRouteEntries\(routes\)/);
+  assert.match(visualSmokeReportSource, /validateVisualSmokeRouteEntries/);
   assert.match(visualSmokeSource, /page\.locator\(blockingModalOverlayLocator\)/);
   assert.doesNotMatch(
     visualSmokeSource,
     /page\.locator\('\[role="dialog"\]\[aria-modal="true"\]'\)/,
   );
+});
+
+test('visual smoke route entry validator rejects duplicate and unsafe entries', () => {
+  const { assertValidVisualSmokeRouteEntries, validateVisualSmokeRouteEntries } =
+    visualSmokeDuplicateContract();
+  const validRoutes = expectedVisualSmokeRoutes();
+
+  assert.deepEqual(validateVisualSmokeRouteEntries(validRoutes), []);
+  assert.doesNotThrow(() => assertValidVisualSmokeRouteEntries(validRoutes));
+
+  const invalidCases = [
+    {
+      label: 'blank route name',
+      routes: [{ ...validRoutes[0], name: '   ' }],
+      pattern: /blank route name/,
+    },
+    {
+      label: 'duplicate route name',
+      routes: [validRoutes[0], { ...validRoutes[1], name: validRoutes[0].name }],
+      pattern: /route name "index" is duplicated by entries 1, 2/,
+    },
+    {
+      label: 'duplicate route path',
+      routes: [validRoutes[0], { ...validRoutes[1], route: validRoutes[0].route }],
+      pattern: /route path "\/" is duplicated by entries 1, 2/,
+    },
+    {
+      label: 'duplicate screenshot file',
+      routes: [validRoutes[0], { ...validRoutes[1], file: validRoutes[0].file }],
+      pattern: /screenshot file "index\.png" is duplicated by entries 1, 2/,
+    },
+    {
+      label: 'unsafe nested screenshot file',
+      routes: [{ ...validRoutes[0], file: '../index.png' }],
+      pattern: /safe \.png basename/,
+    },
+    {
+      label: 'unsafe extension',
+      routes: [{ ...validRoutes[0], file: 'index.jpg' }],
+      pattern: /safe \.png basename/,
+    },
+    {
+      label: 'blank route path',
+      routes: [{ ...validRoutes[0], route: ' ' }],
+      pattern: /blank route path/,
+    },
+    {
+      label: 'relative route path',
+      routes: [{ ...validRoutes[0], route: 'home' }],
+      pattern: /must start with \//,
+    },
+  ];
+
+  for (const { label, routes, pattern } of invalidCases) {
+    const errors = validateVisualSmokeRouteEntries(routes).join('\n');
+
+    assert.match(errors, pattern, label);
+    assert.throws(
+      () => assertValidVisualSmokeRouteEntries(routes),
+      /Visual smoke route entries are invalid:/,
+      label,
+    );
+  }
 });
 
 test('visual smoke includes a focused proof for first-run and language picker dismissal', () => {
