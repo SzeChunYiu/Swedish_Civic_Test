@@ -6,6 +6,7 @@ const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
+const publicUrls = require('../config/publicUrls.json');
 
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
@@ -253,22 +254,13 @@ test('blocked local release evidence stubs model current ads and IAP posture', (
   assert.equal(storeRecords.status, 'blocked');
   assert.equal(storeRecords.bundleIdentifier, 'com.billyyiu.almostswedish');
   assert.equal(storeRecords.packageName, 'com.billyyiu.almostswedish');
-  assert.equal(
-    storeRecords.supportUrl,
-    'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/',
-  );
-  assert.equal(
-    storeRecords.privacyUrl,
-    'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/',
-  );
+  assert.equal(storeRecords.supportUrl, publicUrls.support);
+  assert.equal(storeRecords.privacyUrl, publicUrls.privacy);
   assert.equal(storeRecords.adMob.realAdsEnabled, true);
   assert.match(storeRecords.adMob.appId, /^ca-app-pub-\d{16}~\d{10}$/);
   assert.match(storeRecords.adMob.iosAppId, /^ca-app-pub-\d{16}~\d{10}$/);
   assert.match(storeRecords.adMob.androidAppId, /^ca-app-pub-\d{16}~\d{10}$/);
-  assert.equal(
-    storeRecords.adMob.appAdsTxtUrl,
-    'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/app-ads.txt',
-  );
+  assert.equal(storeRecords.adMob.appAdsTxtUrl, publicUrls.appAdsTxt);
   assert.equal(
     storeRecords.adMob.appAdsTxtPublisherLine,
     'google.com, pub-2451892671779738, DIRECT, f08c47fec0942fa0',

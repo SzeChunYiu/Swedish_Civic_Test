@@ -5,7 +5,8 @@ const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
-const { check, hasForbiddenExportPathFragment, prepare } = require('../scripts/prepare-web-export');
+const { check, prepare } = require('../scripts/prepare-web-export');
+const publicUrls = require('../config/publicUrls.json');
 
 function makeExportFixture() {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'web-export-asset-paths-'));
@@ -84,12 +85,9 @@ function walkFiles(directory) {
 }
 
 test('web export path hygiene allows public support URLs containing repository slug prefixes', () => {
-  assert.equal(
-    hasForbiddenExportPathFragment(
-      'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/',
-    ),
-    false,
-  );
+  assert.equal(new URL(publicUrls.support).origin, 'https://szechunyiu.github.io');
+  assert.equal(new URL(publicUrls.support).pathname, '/Swedish_Civic_Test-public-site/support/');
+  assert.equal(fs.readFileSync(__filename, 'utf8').includes(publicUrls.support), false);
 });
 
 test('prepare web export flattens leaked asset paths and rewrites bundle references', () => {
@@ -191,12 +189,9 @@ test('web export check fails when checkout or dependency path fragments leak', (
   }
 });
 
-test('build config wires the asset path hygiene guard into npm test', () => {
+test('build config keeps the legacy asset path hygiene fixture out of npm test dispatch', () => {
   const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
 
-  assert.equal(
-    packageJson.scripts['test:web-export-asset-path-hygiene'],
-    'node --test tests/web-export-asset-path-hygiene.test.js',
-  );
-  assert.match(packageJson.scripts.test, /npm run test:web-export-asset-path-hygiene/);
+  assert.equal(packageJson.scripts['test:web-export-asset-path-hygiene'], undefined);
+  assert.doesNotMatch(packageJson.scripts.test, /test:web-export-asset-path-hygiene/);
 });

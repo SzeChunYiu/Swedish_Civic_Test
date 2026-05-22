@@ -3,9 +3,11 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const supportUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/';
-const privacyUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/';
-const appAdsTxtUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/app-ads.txt';
+const publicUrls = require('../config/publicUrls.json');
+
+const supportUrl = publicUrls.support;
+const privacyUrl = publicUrls.privacy;
+const appAdsTxtUrl = publicUrls.appAdsTxt;
 const appAdsTxtPublisherLine = 'google.com, pub-2451892671779738, DIRECT, f08c47fec0942fa0';
 const appConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'app.json'), 'utf8')).expo;
 const bundleIdentifier = appConfig.ios.bundleIdentifier;
