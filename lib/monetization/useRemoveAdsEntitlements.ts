@@ -166,7 +166,8 @@ function useRemoveAdsEntitlementsRuntime({
   const purchaseRuntime = useMemo<PurchaseRuntimeOptions | undefined>(
     () =>
       purchaseRuntimeEnabled
-        ? (runtimeOptions ?? createDefaultPurchaseRuntimeOptions(initialEntitlements.adsDisabled))
+        ? (runtimeOptions ??
+          createDefaultPurchaseRuntimeOptions(initialEntitlements.adsDisabled === true))
         : undefined,
     [initialEntitlements.adsDisabled, purchaseRuntimeEnabled, runtimeOptions],
   );
@@ -250,13 +251,17 @@ export function useResolvedAdEntitlements(
   explicitEntitlements?: Pick<PremiumEntitlements, 'adsDisabled'>,
 ) {
   const hasExplicitEntitlements = explicitEntitlements !== undefined;
-  const initialEntitlements = useMemo(
-    () => ({
-      ...FREE_ENTITLEMENTS,
-      adsDisabled: explicitEntitlements?.adsDisabled ?? FREE_ENTITLEMENTS.adsDisabled,
-    }),
+  const normalizedExplicitEntitlements = useMemo(
+    () =>
+      explicitEntitlements
+        ? {
+            ...FREE_ENTITLEMENTS,
+            adsDisabled: explicitEntitlements.adsDisabled === true,
+          }
+        : undefined,
     [explicitEntitlements?.adsDisabled],
   );
+  const initialEntitlements = normalizedExplicitEntitlements ?? FREE_ENTITLEMENTS;
   const { entitlements, entitlementsReady, entitlementStatus } = useRemoveAdsEntitlementsRuntime({
     initialEntitlements,
     purchaseRuntimeEnabled: !hasExplicitEntitlements,
@@ -264,7 +269,7 @@ export function useResolvedAdEntitlements(
 
   if (hasExplicitEntitlements) {
     return {
-      entitlements: explicitEntitlements,
+      entitlements: normalizedExplicitEntitlements ?? FREE_ENTITLEMENTS,
       entitlementsReady: true,
       entitlementStatus: 'ready' as const,
     };

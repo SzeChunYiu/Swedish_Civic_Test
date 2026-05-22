@@ -63,7 +63,7 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   assert.equal(summary.adPlacementRouteParityValidated, true);
   assert.match(
     homeSource,
-    /const showRemoveAdsOffer = entitlementsReady && !monetizationEntitlements\.adsDisabled;/,
+    /const showRemoveAdsOffer = entitlementsReady && monetizationEntitlements\.adsDisabled !== true;/,
   );
   assert.match(homeSource, /\{showRemoveAdsOffer \? \([\s\S]*<PricingWedge/);
   assert.match(
@@ -496,7 +496,7 @@ test('Home ad placement waits for Remove Ads entitlements before rendering', () 
 
   assert.match(
     homeSource,
-    /const showRemoveAdsOffer = entitlementsReady && !monetizationEntitlements\.adsDisabled;/,
+    /const showRemoveAdsOffer = entitlementsReady && monetizationEntitlements\.adsDisabled !== true;/,
   );
   assert.match(homeSource, /\{showRemoveAdsOffer \? \([\s\S]*<PricingWedge/);
   assert.match(

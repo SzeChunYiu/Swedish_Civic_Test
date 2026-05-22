@@ -24,7 +24,7 @@ test('premium entitlement parity keeps Remove Ads decoupled from full premium', 
   assert.match(premiumSource, /unlimitedMockExams: false/);
   assert.match(
     premiumSource,
-    /return entitlements\.unlimitedMockExams && entitlements\.fullMistakeReview;/,
+    /return entitlements\.unlimitedMockExams === true && entitlements\.fullMistakeReview === true;/,
   );
 });
 
@@ -75,8 +75,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace(
-        'return entitlements.unlimitedMockExams && entitlements.fullMistakeReview;',
-        'return entitlements.adsDisabled && entitlements.unlimitedMockExams && entitlements.fullMistakeReview;',
+        'return entitlements.unlimitedMockExams === true && entitlements.fullMistakeReview === true;',
+        'return entitlements.adsDisabled === true && entitlements.unlimitedMockExams === true && entitlements.fullMistakeReview === true;',
       );
   }
   return originalReadFileSync.call(this, filePath, ...args);

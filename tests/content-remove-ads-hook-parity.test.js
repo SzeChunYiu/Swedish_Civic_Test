@@ -73,7 +73,8 @@ test('Remove Ads entitlement hook fails closed until purchase state resolves', (
   assert.match(hookSource, /setEntitlementStatus\('read_failed'\)/);
   assert.match(hookSource, /function useRemoveAdsEntitlementsRuntime/);
   assert.match(hookSource, /purchaseRuntimeEnabled:\s*!skipPurchaseRuntime/);
-  assert.match(hookSource, /entitlements: explicitEntitlements/);
+  assert.match(hookSource, /entitlements: normalizedExplicitEntitlements \?\? FREE_ENTITLEMENTS/);
+  assert.match(hookSource, /adsDisabled: explicitEntitlements\.adsDisabled === true/);
   assert.match(hookSource, /purchaseRuntimeEnabled:\s*!hasExplicitEntitlements/);
   assert.match(resolvedHookSource, /useRemoveAdsEntitlementsRuntime\(/);
   assert.doesNotMatch(resolvedHookSource, /useRemoveAdsEntitlements\(/);
@@ -100,7 +101,7 @@ test('Home Remove Ads surfaces wait for entitlement readiness before rendering',
 
   assert.match(
     homeSource,
-    /const showRemoveAdsOffer = entitlementsReady && !monetizationEntitlements\.adsDisabled;/,
+    /const showRemoveAdsOffer = entitlementsReady && monetizationEntitlements\.adsDisabled !== true;/,
   );
   assert.match(homeSource, /\{showRemoveAdsOffer \? \([\s\S]*<PricingWedge/);
   assert.match(
@@ -398,7 +399,10 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/lib/monetization/useRemoveAdsEntitlements.ts')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('entitlements: explicitEntitlements,', 'entitlements: AD_BLOCKED_PENDING_ENTITLEMENTS,');
+      .replace(
+        'entitlements: normalizedExplicitEntitlements ?? FREE_ENTITLEMENTS,',
+        'entitlements: AD_BLOCKED_PENDING_ENTITLEMENTS,',
+      );
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };

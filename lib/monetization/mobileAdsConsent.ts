@@ -148,7 +148,7 @@ export async function collectMobileAdsConsentState({
   const platform = normalizeAdConsentPlatform(runtime.platform);
   const normalizedRegion = normalizeAdConsentRegion(region);
   const shouldCollectConsent =
-    googleMobileAdsEnabled && !entitlements.adsDisabled && realAdsEnabled;
+    googleMobileAdsEnabled && entitlements.adsDisabled !== true && realAdsEnabled;
   const currentTrackingTransparencyStatus = await getCurrentTrackingTransparencyStatus(
     runtime,
     platform,
