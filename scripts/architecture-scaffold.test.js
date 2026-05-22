@@ -104,19 +104,6 @@ const releaseComplianceRouteFiles = [
   'app/terms.tsx',
 ];
 
-const routerShellRuntimeFiles = [
-  'app/index.tsx',
-  'app/_layout.tsx',
-  'app/(tabs)/_layout.tsx',
-  'app/search.tsx',
-  'app/dashboard.tsx',
-  'app/citizenship-requirements.tsx',
-  'app/+not-found.tsx',
-  'app/+html.tsx',
-  'app/+native-intent.ts',
-  'lib/scaffold/routerShellManifest.ts',
-];
-
 const complianceSupportComponentFiles = [
   'components/compliance/ComplianceLinks.tsx',
   'components/compliance/LegalPage.tsx',
@@ -264,6 +251,55 @@ function readText(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
+function uniqueValues(values) {
+  return Array.from(new Set(values));
+}
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function namedImportsFrom(source, moduleName) {
+  const match = source.match(
+    new RegExp(`import\\s+\\{([^}]*)\\}\\s+from ['"]${escapeRegExp(moduleName)}['"]`),
+  );
+
+  assert.notEqual(match, null, `${moduleName} should be imported with named imports`);
+
+  return match[1]
+    .split(',')
+    .map((importName) => importName.trim())
+    .filter(Boolean);
+}
+
+function routerShellRuntimeFilesFromManifests() {
+  const architectureManifest = readText('lib/scaffold/architectureManifest.ts');
+  const routerShellManifest = readText('lib/scaffold/routerShellManifest.ts');
+  const architectureRuntimeFiles = valuesInConstArray(
+    architectureManifest,
+    'architectureRouterShellRuntimeFiles',
+  );
+  const routerShellContractFiles = uniqueValues([
+    ...valuesForFieldInConstArray(routerShellManifest, 'expoRouterShellFiles', 'file'),
+    ...valuesForFieldInConstArray(routerShellManifest, 'expoRouterRootStackScreens', 'file'),
+    'lib/scaffold/routerShellManifest.ts',
+  ]);
+
+  assert.deepEqual(
+    [...architectureRuntimeFiles].sort(),
+    [...routerShellContractFiles].sort(),
+    'architectureRouterShellRuntimeFiles should mirror routerShellManifest shell and root-stack files',
+  );
+
+  return architectureRuntimeFiles;
+}
+
+function routerShellRootStackNamesFromManifest() {
+  const routerShellManifest = readText('lib/scaffold/routerShellManifest.ts');
+
+  return valuesForFieldInConstArray(routerShellManifest, 'expoRouterRootStackScreens', 'name');
+}
+
 function exists(relativePath) {
   return fs.existsSync(path.join(repoRoot, relativePath));
 }
@@ -355,7 +391,10 @@ test('product architecture manifest matches the target scaffold files', () => {
   assert.deepEqual(manifestDirectories, ['app', 'components', 'data', 'lib', 'types']);
   assert.deepEqual(manifestTabRoutes, architectureTabRouteFiles);
   assert.deepEqual(manifestSupplementalRoutes, releaseComplianceRouteFiles);
-  assert.deepEqual(manifestRouterShellRuntimeFiles, routerShellRuntimeFiles);
+  assert.deepEqual(
+    [...manifestRouterShellRuntimeFiles].sort(),
+    [...routerShellRuntimeFilesFromManifests()].sort(),
+  );
   assert.deepEqual(manifestComplianceSupportFiles, complianceSupportComponentFiles);
   assert.deepEqual(manifestDesignSystemSupportFiles, designSystemSupportComponentFiles);
   assert.deepEqual(manifestThemeRuntimeFiles, themeRuntimeFiles);
@@ -384,22 +423,21 @@ test('architecture compliance support files exist', () => {
 });
 
 test('architecture router shell runtime files exist', () => {
-  const routerShellManifest = readText('lib/scaffold/routerShellManifest.ts');
-  const routerShellContractFiles = [
-    ...valuesForFieldInConstArray(routerShellManifest, 'expoRouterShellFiles', 'file'),
-    ...valuesForFieldInConstArray(routerShellManifest, 'expoRouterRootStackScreens', 'file'),
-    'lib/scaffold/routerShellManifest.ts',
-  ];
+  const routerShellRuntimeFiles = routerShellRuntimeFilesFromManifests();
 
   assert.deepEqual(
     routerShellRuntimeFiles.filter((relativePath) => !exists(relativePath)),
     [],
   );
-  assert.deepEqual(
-    routerShellContractFiles.filter(
-      (relativePath) => !routerShellRuntimeFiles.includes(relativePath),
-    ),
-    [],
+});
+
+test('architecture router shell scaffold assertions derive from manifests', () => {
+  const scaffoldTestSource = readText('scripts/architecture-scaffold.test.js');
+
+  assert.doesNotMatch(scaffoldTestSource, /const\s+routerShellRuntimeFiles\s*=\s*\[/);
+  assert.doesNotMatch(
+    scaffoldTestSource,
+    /assert\.deepEqual\(\s*extractStackScreenNames\(rootLayout\)\.sort\(\),\s*\[\s*['"][^'"]+['"]/,
   );
 });
 
@@ -561,16 +599,12 @@ test('Expo Router tab scaffold titles follow the persisted settings language', (
 test('Expo Router root scaffold redirects into the tab shell', () => {
   const rootLayout = readText('app/_layout.tsx');
   const indexRoute = readText('app/index.tsx');
+  const rootStackNames = routerShellRootStackNamesFromManifest();
+  const expoRouterImports = namedImportsFrom(rootLayout, 'expo-router');
 
-  assert.match(rootLayout, /import\s+\{\s*Stack\s*,\s*usePathname\s*\}\s+from ['"]expo-router['"]/);
-  assert.deepEqual(extractStackScreenNames(rootLayout).sort(), [
-    '(tabs)',
-    '+not-found',
-    'citizenship-requirements',
-    'dashboard',
-    'index',
-    'search',
-  ]);
+  assert.equal(expoRouterImports.includes('Stack'), true);
+  assert.equal(expoRouterImports.includes('usePathname'), true);
+  assert.deepEqual(extractStackScreenNames(rootLayout).sort(), [...rootStackNames].sort());
   assert.match(
     rootLayout,
     /<Stack\s+screenOptions=\{\{[\s\S]*headerShown:\s*true,[\s\S]*headerTitle:\s*'',[\s\S]*headerRight:\s*\(\)\s*=>\s*<LanguagePicker\s*\/>,[\s\S]*\}\}/,
@@ -583,10 +617,13 @@ test('Expo Router root scaffold redirects into the tab shell', () => {
     rootLayout,
     /<Stack\.Screen\s+name=["']\(tabs\)["']\s+options=\{\{\s*headerShown:\s*false\s*\}\}\s*\/>/,
   );
-  assert.match(rootLayout, /<Stack\.Screen\s+name=["']search["']\s*\/>/);
-  assert.match(rootLayout, /<Stack\.Screen\s+name=["']dashboard["']\s*\/>/);
-  assert.match(rootLayout, /<Stack\.Screen\s+name=["']citizenship-requirements["']\s*\/>/);
-  assert.match(rootLayout, /<Stack\.Screen\s+name=["']\+not-found["']\s*\/>/);
+  for (const screenName of rootStackNames) {
+    assert.match(
+      rootLayout,
+      new RegExp(`<Stack\\.Screen\\s+name=["']${escapeRegExp(screenName)}["']`),
+    );
+  }
+
   assert.match(indexRoute, /import\s+\{\s*Redirect\s*\}\s+from ['"]expo-router['"]/);
   assert.match(indexRoute, /<Redirect\s+href=["']\/home["']\s*\/>/);
 });
