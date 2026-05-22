@@ -635,6 +635,49 @@ test('materializeMock: chapter distribution ignores unsafe and malformed chapter
   }
 });
 
+test('materializeMock: unsafe and malformed question ids cannot be emitted', () => {
+  const { materializeMock } = loadTs('lib/learning/mockExamLibrary.ts');
+  const bank = [
+    { id: ' q-valid ', difficulty: 'medium', chapterId: 'ch01' },
+    { id: 'q-valid', difficulty: 'medium', chapterId: 'ch02' },
+    { id: 'q-top-up', difficulty: 'easy', chapterId: 'ch03' },
+    { id: '__proto__', difficulty: 'medium', chapterId: 'ch04' },
+    { id: 'constructor', difficulty: 'medium', chapterId: 'ch05' },
+    { id: 'prototype', difficulty: 'medium', chapterId: 'ch06' },
+    { id: '   ', difficulty: 'medium', chapterId: 'ch07' },
+    { id: 17, difficulty: 'medium', chapterId: 'ch08' },
+    { id: { id: 'q-object' }, difficulty: 'medium', chapterId: 'ch09' },
+  ];
+
+  const mat = materializeMock({ mockId: 'mock-2', bank });
+  const questionIds = mat.questions.map((question) => question.questionId);
+
+  assert.deepEqual(questionIds.sort(), ['q-top-up', 'q-valid']);
+  assert.equal(new Set(questionIds).size, questionIds.length);
+  assert.ok(questionIds.every((questionId) => questionId === questionId.trim()));
+  for (const unsafeQuestionId of ['__proto__', 'constructor', 'prototype', '', '   ']) {
+    assert.equal(questionIds.includes(unsafeQuestionId), false);
+  }
+});
+
+test('materializeMock: top-up never duplicates a normalized question id', () => {
+  const { materializeMock } = loadTs('lib/learning/mockExamLibrary.ts');
+  const bank = [
+    { id: 'hard-1', difficulty: 'hard', chapterId: 'ch01' },
+    { id: 'hard-1 ', difficulty: 'easy', chapterId: 'ch01' },
+    { id: ' easy-1 ', difficulty: 'easy', chapterId: 'ch02' },
+    { id: 'easy-1', difficulty: 'easy', chapterId: 'ch02' },
+    { id: 'easy-2', difficulty: 'easy', chapterId: 'ch03' },
+  ];
+
+  const mat = materializeMock({ mockId: 'mock-5', bank });
+  const questionIds = mat.questions.map((question) => question.questionId);
+
+  assert.deepEqual([...new Set(questionIds)].sort(), ['easy-1', 'easy-2', 'hard-1']);
+  assert.equal(questionIds.length, 3);
+  assert.equal(mat.isUnderfilled, true);
+});
+
 test('materializeMock: unknown mock id → null', () => {
   const { materializeMock } = loadTs('lib/learning/mockExamLibrary.ts');
   const result = materializeMock({ mockId: 'mock-nonexistent', bank: [] });
