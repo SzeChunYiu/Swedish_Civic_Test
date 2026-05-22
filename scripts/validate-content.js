@@ -646,6 +646,7 @@ const QUESTION_LARGEST_LAKES_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhich are Sweden's three largest lakes\b/i,
   /\bWhich fact is correct regarding which are Sweden's three largest lakes\b/i,
   /\bWhat is correct regarding what are Sweden's three largest lakes\b/i,
+  /\bWhat is correct about what are Sweden's three largest lakes\b/i,
 ];
 const QUESTION_NATIONAL_MINORITIES_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhich fact is correct regarding which groups are Sweden's five national minorities\b/i,

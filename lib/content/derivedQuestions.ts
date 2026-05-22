@@ -2929,8 +2929,10 @@ function generatedSingleChoicePromptFromSourceEn(
   }
 
   match = q.match(/^What are (.+)$/i);
-  if (match && variant === 'judgement') {
-    return `Which fact is correct about ${match[1]}?`;
+  if (match) {
+    return variant === 'judgement'
+      ? `Which fact is correct about ${match[1]}?`
+      : `What is correct about ${match[1]}?`;
   }
 
   match = q.match(/^Which groups are (.+)$/i);
@@ -2986,7 +2988,6 @@ function universalHumanRightsStatementEn(answer: string): string | null {
   }
   return null;
 }
-
 
 function constitution1809ChangeStatementSv(answer: string): string | null {
   if (/^Kungens makt begränsades$/i.test(answer)) {

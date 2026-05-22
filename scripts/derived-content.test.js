@@ -955,9 +955,10 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
     text.includes("Sweden's three largest lakes are the Baltic Sea, Kattegat, and Skagerrak."),
   );
   assert.ok(allText.includes("Which fact is correct about Sweden's three largest lakes?"));
+  assert.ok(allText.includes("What is correct about Sweden's three largest lakes?"));
   assert.doesNotMatch(
     allText,
-    /Which fact is correct regarding which are Sweden's three largest lakes/i,
+    /(?:Which fact is correct regarding which|What is correct about what) are Sweden's three largest lakes/i,
   );
   assert.ok(
     text.includes(
