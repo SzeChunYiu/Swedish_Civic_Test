@@ -50,12 +50,30 @@ function validHighlight(overrides = {}) {
   };
 }
 
-function loadImportModule(storageById) {
-  return loadTsWithStorage(repoRoot, 'lib/storage/localStudyDataImport.ts', storageById);
+function loadImportModule(storageById, moduleStubs = {}) {
+  return loadTsWithStorage(
+    repoRoot,
+    'lib/storage/localStudyDataImport.ts',
+    storageById,
+    moduleStubs,
+  );
 }
 
 function loadExportModule(storageById) {
   return loadTsWithStorage(repoRoot, 'lib/storage/localStudyDataExport.ts', storageById);
+}
+
+function createSpeechStub() {
+  let stopCalls = 0;
+  return {
+    get stopCalls() {
+      return stopCalls;
+    },
+    speak() {},
+    stop() {
+      stopCalls += 1;
+    },
+  };
 }
 
 function listJavaScriptFiles(rootDir) {
@@ -210,7 +228,13 @@ test('local study data import summary keeps Swedish copy learner-facing', () => 
 
 test('local study data import previews and applies all learner snapshot sections', () => {
   const storageById = createStorageById();
-  const { applyLocalStudyDataImport, previewLocalStudyDataImport } = loadImportModule(storageById);
+  const speech = createSpeechStub();
+  const { applyLocalStudyDataImport, previewLocalStudyDataImport } = loadImportModule(
+    storageById,
+    {
+      'expo-speech': () => speech,
+    },
+  );
   const rawPayload = JSON.stringify({
     version: 1,
     progress: {
@@ -296,6 +320,7 @@ test('local study data import previews and applies all learner snapshot sections
 
   const previewResult = previewLocalStudyDataImport(rawPayload);
   assert.equal(previewResult.ok, true);
+  assert.equal(speech.stopCalls, 0);
   assert.deepEqual(previewResult.preview.summary, {
     completedQuestionCount: 2,
     bookmarkedQuestionCount: 1,
@@ -317,6 +342,7 @@ test('local study data import previews and applies all learner snapshot sections
   const applyResult = applyLocalStudyDataImport(previewResult.preview);
   assert.deepEqual(applyResult.summary, previewResult.preview.summary);
   assert.deepEqual(applyResult.warnings, []);
+  assert.equal(speech.stopCalls, 1);
 
   const progress = JSON.parse(storageById.progress.values.get('progressState'));
   assert.deepEqual(progress.completedQuestionIds, ['q001', 'q002']);
@@ -348,6 +374,84 @@ test('local study data import previews and applies all learner snapshot sections
     highlights.byChapter.ch01.map((highlight) => highlight.note),
     ['Portable margin note'],
   );
+});
+
+test('local study data import stops active speech once when imported audioEnabled is false', () => {
+  const storageById = createStorageById();
+  storageById.settings.set('audioEnabled', true);
+  const speech = createSpeechStub();
+  const { applyLocalStudyDataImport, previewLocalStudyDataImport } = loadImportModule(storageById, {
+    'expo-speech': () => speech,
+  });
+
+  const previewResult = previewLocalStudyDataImport(
+    JSON.stringify({
+      version: 1,
+      settings: {
+        audioEnabled: false,
+      },
+    }),
+  );
+
+  assert.equal(previewResult.ok, true);
+  assert.deepEqual(previewResult.preview.settings, { audioEnabled: false });
+  assert.equal(speech.stopCalls, 0);
+
+  applyLocalStudyDataImport(previewResult.preview);
+
+  assert.equal(speech.stopCalls, 1);
+  assert.equal(storageById.settings.values.get('audioEnabled'), false);
+});
+
+test('local study data import does not stop speech when audioEnabled is true absent or invalid', () => {
+  const cases = [
+    {
+      name: 'true',
+      settings: {
+        audioEnabled: true,
+      },
+    },
+    {
+      name: 'absent',
+      settings: {
+        language: 'en',
+      },
+    },
+    {
+      name: 'invalid',
+      settings: {
+        language: 'en',
+        audioEnabled: 'false',
+      },
+    },
+  ];
+
+  for (const { name, settings } of cases) {
+    const storageById = createStorageById();
+    storageById.settings.set('audioEnabled', true);
+    const speech = createSpeechStub();
+    const { applyLocalStudyDataImport, previewLocalStudyDataImport } = loadImportModule(
+      storageById,
+      {
+        'expo-speech': () => speech,
+      },
+    );
+
+    const previewResult = previewLocalStudyDataImport(
+      JSON.stringify({
+        version: 1,
+        settings,
+      }),
+    );
+
+    assert.equal(previewResult.ok, true, name);
+    assert.notEqual(previewResult.preview.settings.audioEnabled, false, name);
+
+    applyLocalStudyDataImport(previewResult.preview);
+
+    assert.equal(speech.stopCalls, 0, name);
+    assert.equal(storageById.settings.values.get('audioEnabled'), true, name);
+  }
 });
 
 test('local study data import apply result reports section write warnings', () => {
