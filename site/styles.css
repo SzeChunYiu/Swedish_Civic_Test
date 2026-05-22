@@ -9630,3 +9630,80 @@ button.quiz__dot.is-nav:hover {
     align-self: flex-start;
   }
 }
+
+/* ------------------------------------------------------------------
+   PRACTICE HEADER BOX OPTIMIZATION ROUND
+   Gives the practice intro a calm study-card frame so the first screen
+   feels anchored before the quiz, with responsive spacing on phones.
+------------------------------------------------------------------ */
+
+.practice__head {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(254, 204, 0, 0.18), transparent 34%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.64), rgba(255, 248, 228, 0.42));
+  border: 1px solid rgba(0, 106, 167, 0.1);
+  border-radius: 30px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.38),
+    0 20px 54px -44px rgba(11, 31, 51, 0.72);
+  margin: 0 auto 42px;
+  max-width: 760px;
+  padding: 30px clamp(22px, 5vw, 54px) 34px;
+  position: relative;
+  overflow: hidden;
+}
+
+.practice__head::after {
+  background: linear-gradient(180deg, var(--blue), var(--gold));
+  border-radius: 999px;
+  content: '';
+  height: 58px;
+  left: 20px;
+  opacity: 0.58;
+  position: absolute;
+  top: 26px;
+  width: 4px;
+}
+
+.practice__head > .eyebrow {
+  background: rgba(0, 106, 167, 0.08);
+  border: 1px solid rgba(0, 106, 167, 0.14);
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+  color: var(--blue);
+  display: inline-flex;
+  padding: 7px 12px;
+}
+
+.practice__head .practice__title {
+  margin-top: 16px;
+}
+
+:root[data-theme='dark'] .practice__head {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(254, 204, 0, 0.12), transparent 34%),
+    rgba(255, 255, 255, 0.045);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.055);
+}
+
+:root[data-theme='dark'] .practice__head > .eyebrow {
+  background: rgba(255, 255, 255, 0.055);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 640px) {
+  .practice__head {
+    border-radius: 22px;
+    margin-bottom: 30px;
+    padding: 24px 18px 28px;
+  }
+  .practice__head::after {
+    height: 44px;
+    left: 12px;
+    top: 22px;
+  }
+  .practice__head > .eyebrow {
+    padding: 6px 10px;
+  }
+}
