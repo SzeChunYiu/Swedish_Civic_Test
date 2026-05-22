@@ -158,8 +158,6 @@ test('daily goal counts question answers for the requested local day only', () =
       },
       today,
     ),
-    // `today` is a fixed past date, so its whole day is in range (validationNow =
-    // end of that day): both the noon (q001) and 23:59 (q006) answers count.
     2,
   );
   assert.equal(countAnswersForLocalDate({}, today), 0);
@@ -220,14 +218,9 @@ test('daily goal prefers per-answer attempts and falls back for older progress s
       questionProgress,
       date: today,
     }),
-    // `today` is a fixed past date, so all four valid same-day attempts count
-    // (three q001 + the 23:59 q003); only the malformed q004 is dropped.
     4,
   );
-  // Absent answerAttempts (older stores) falls back to questionProgress -> 1.
   assert.equal(countAnswerAttemptsForLocalDate({ questionProgress, date: today }), 1);
-  // A present-but-empty answerAttempts array is real data: zero attempts today -> 0
-  // (no fallback; falling back here would mis-report 0-answer days as non-zero).
   assert.equal(
     countAnswerAttemptsForLocalDate({ answerAttempts: [], questionProgress, date: today }),
     0,

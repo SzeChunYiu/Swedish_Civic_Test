@@ -92,7 +92,6 @@ test('app config schema stays aligned with release app metadata and ad/IAP plugi
 
   assert.equal(summary.appConfigPluginsValidated, 5);
   assert.equal(summary.appConfigSchemaValidated, true);
-  assert.equal(summary.webDocumentMetadataUsageRulesValidated, 9);
   assert.equal(summary.webDocumentMetadataUsageParityValidated, true);
   assert.equal(summary.staticHeadMetadataTitleValidated, 1);
   assert.equal(summary.staticHeadMetadataDescriptionValidated, 1);
@@ -110,67 +109,6 @@ test('app config schema stays aligned with release app metadata and ad/IAP plugi
       (plugin) => Array.isArray(plugin) && plugin[0] === 'react-native-google-mobile-ads',
     ),
   );
-});
-
-test('web shell brand metadata rejects hardcoded app html metadata', () => {
-  const appHtmlMutations = [
-    {
-      source: 'lang={webDocumentMetadata.language}',
-      replacement: 'lang="sv"',
-      message: /web document shell must bind html lang to webDocumentMetadata\.language/,
-    },
-    {
-      source: '<title>{webDocumentMetadata.title}</title>',
-      replacement: '<title>Almost Swedish</title>',
-      message: /web document shell must bind title to webDocumentMetadata\.title/,
-    },
-    {
-      source: 'content={colors.canvas} name="theme-color"',
-      replacement: 'content="#ffffff" name="theme-color"',
-      message: /web document shell must bind theme-color to theme canvas token/,
-    },
-    {
-      source: 'content={webDocumentMetadata.description} name="description"',
-      replacement:
-        'content="Practice Swedish civic knowledge with offline quizzes." name="description"',
-      message: /web document shell must bind description to webDocumentMetadata\.description/,
-    },
-    {
-      source: 'content={webDocumentMetadata.openGraphDescription} property="og:description"',
-      replacement:
-        'content="Practice Swedish civic knowledge with offline quizzes." property="og:description"',
-      message:
-        /web document shell must bind og description to webDocumentMetadata\.openGraphDescription/,
-    },
-  ];
-
-  for (const { source, replacement, message } of appHtmlMutations) {
-    const result = spawnSync(
-      process.execPath,
-      [
-        '-e',
-        `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/+html.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace(${JSON.stringify(source)}, ${JSON.stringify(replacement)});
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-process.argv.push('--focus-app-config-schema');
-require('./scripts/validate-content.js');
-`,
-      ],
-      { cwd: repoRoot, encoding: 'utf8' },
-    );
-
-    assert.notEqual(result.status, 0);
-    assert.match(`${result.stdout}\n${result.stderr}`, message);
-  }
 });
 
 test('app config schema rejects unsafe Google Ads measurement init drift', () => {

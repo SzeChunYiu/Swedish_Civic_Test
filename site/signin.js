@@ -1,4 +1,4 @@
-/* Sveriges Medborgartest — Sign-in modal (localized, all 12 locales) */
+/* Almost Swedish — Sign-in modal (localized, all 12 locales) */
 
 (function () {
   const T = {

@@ -91,7 +91,7 @@ function assertQuestionSourceExportWiring(source) {
       `export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(
   sourceQuestions,
   sourceQuestions.length + 1,
-);`,
+).map(applyQuestionLocalizationPilot);`,
     ),
     'generatedPublishedQuestions export must derive after the authored source question range',
   );

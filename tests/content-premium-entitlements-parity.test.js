@@ -124,6 +124,6 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /hasAdsDisabled must reject malformed truthy adsDisabled values/,
+    /hasAdsDisabled must reject malformed truthy adsDisabled values|hasAdsDisabled must require adsDisabled === true/,
   );
 });

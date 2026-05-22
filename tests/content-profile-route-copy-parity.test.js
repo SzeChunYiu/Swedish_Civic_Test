@@ -174,7 +174,7 @@ test('profile premium banner keeps current Remove Ads purchase and recovery cont
   );
   assert.match(
     bannerSource,
-    /const statusMessage = getStatusMessage\([\s\S]*adsDisabled \? 'purchased' : purchaseUnavailable \? 'unavailable' : status[\s\S]*copy/,
+    /const visibleStatus =[\s\S]*status === 'finish_failed'[\s\S]*adsDisabled[\s\S]*\? 'purchased'[\s\S]*purchaseUnavailable[\s\S]*\? 'unavailable'[\s\S]*: status;[\s\S]*const statusMessage = getStatusMessage\(visibleStatus, copy\)/,
   );
   assert.match(bannerSource, /aria-live="polite"/);
   assert.doesNotMatch(bannerSource, /bodyActive:/);

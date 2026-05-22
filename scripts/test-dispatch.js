@@ -27,7 +27,7 @@ const selectors = new Map([
   [
     'mobile-ads-consent',
     {
-      script: 'test:mobile-ads-consent',
+      scripts: ['test:mobile-ads-consent'],
       description: 'focused Mobile Ads consent runtime and schema gate',
     },
   ],
@@ -147,7 +147,8 @@ function runFocusedNodeTests(args) {
 const args = process.argv.slice(2).filter((arg) => arg !== '--');
 
 if (args.length === 0) {
-  runNpmScripts(['test:all']);
+  runNpmScript('test:all');
+  process.exit(0);
 }
 
 if (args[0] === 'content-focused') {

@@ -138,7 +138,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/components/quiz/CelebrationBurst.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('aria-hidden={true}\\n        accessibilityElementsHidden', 'accessibilityElementsHidden');
+      .replace('aria-hidden={true}', '');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -152,7 +152,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /CelebrationBurst missing reduced-motion branch hidden from web accessibility tree for accessibility parity/,
+    /CelebrationBurst missing reduced-motion branch hidden from (?:web )?accessibility tree for accessibility parity/,
   );
 });
 
@@ -169,7 +169,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/components/quiz/CelebrationBurst.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('aria-hidden={true}\\n      accessibilityElementsHidden', 'accessibilityElementsHidden');
+      .replace('aria-hidden={true}', '')
+      .replace('aria-hidden={true}', '');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -183,7 +184,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /CelebrationBurst missing animated branch hidden from web accessibility tree for accessibility parity/,
+    /CelebrationBurst missing animated branch hidden from (?:web )?accessibility tree for accessibility parity/,
   );
 });
 

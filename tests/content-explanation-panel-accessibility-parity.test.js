@@ -31,7 +31,7 @@ test('quiz ExplanationPanel keeps selected explanation text in accessibility par
   assert.equal(summary.explanationPanelAccessibilityParityValidated, true);
   assert.match(
     source,
-    /const explanation = getQuestionExplanationText\([\s\S]*explanationText[\s\S]*copy\.fallback/,
+    /const localizedExplanation = explanationText\?\.\[language\] \?\? explanationText\?\.sv;[\s\S]*const explanation =[\s\S]*localizedExplanation \?\?[\s\S]*copy\.fallback/,
   );
   assert.match(source, /const explanationPanelCopy: Record<AppLanguage, ExplanationPanelCopy>/);
   assert.match(source, /Förklaring saknas för den här frågan\./);

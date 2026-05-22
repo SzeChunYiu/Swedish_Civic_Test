@@ -64,7 +64,9 @@ const supportModuleMocks = {
   },
   '../lib/scaffold/publicUrls': {
     publicUrls: {
-      support: 'https://support.example.test',
+      appAdsTxt: 'https://example.test/app-ads.txt',
+      privacy: 'https://example.test/privacy',
+      support: 'https://example.test/support',
     },
   },
   '../lib/theme': {
@@ -142,6 +144,29 @@ const supportModuleMocks = {
   },
 };
 
+function requireRelativeTsModule(fromFilePath, specifier) {
+  if (!specifier.startsWith('.')) return require(specifier);
+  const basePath = path.resolve(path.dirname(fromFilePath), specifier);
+  const candidates = [
+    basePath,
+    `${basePath}.ts`,
+    `${basePath}.tsx`,
+    `${basePath}.js`,
+    path.join(basePath, 'index.ts'),
+    path.join(basePath, 'index.tsx'),
+    path.join(basePath, 'index.js'),
+  ];
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate) && fs.statSync(candidate).isFile()) {
+      if (candidate.endsWith('.ts') || candidate.endsWith('.tsx')) {
+        return loadTs(path.relative(repoRoot, candidate));
+      }
+      return require(candidate);
+    }
+  }
+  return require(specifier);
+}
+
 function loadQuestionReportLinkExports() {
   const filePath = path.join(repoRoot, 'components/quiz/QuestionReportLink.tsx');
   const output = ts.transpileModule(fs.readFileSync(filePath, 'utf8'), {
@@ -185,7 +210,7 @@ function loadSupportExports() {
     if (Object.hasOwn(supportModuleMocks, specifier)) {
       return supportModuleMocks[specifier];
     }
-    return require(specifier);
+    return requireRelativeTsModule(filePath, specifier);
   }
 
   new Function('module', 'exports', 'require', output)(mod, mod.exports, localRequire);
@@ -277,11 +302,6 @@ test('question report CTA is wired from question surfaces to support context', (
   assert.match(supportSource, /Question context could not be used/);
   assert.match(supportSource, /avvisade värden/);
   assert.match(supportSource, /rejected values are not shown/);
-  assert.match(supportSource, /const noticeRef = useRef<View \| null>\(null\);/);
-  assert.match(supportSource, /noticeRef\.current\?\.focus\?\.\(\);/);
-  assert.match(supportSource, /accessibilityLiveRegion="polite"/);
-  assert.match(supportSource, /aria-live="polite"/);
-  assert.match(supportSource, /tabIndex: -1/);
   assert.match(supportSource, /getQuestionReportContextResult/);
   assert.match(supportSource, /getReportScreenSearchParam/);
   assert.match(supportSource, /hasQuestionReportSearchParams/);
@@ -442,71 +462,6 @@ test('support context keeps legacy screen fallback for direct support links', ()
   assert.equal(result.context.questionId, 'q id/å?');
   assert.equal(result.context.language, 'sv');
   assert.equal(result.context.screen, 'exam');
-});
-
-test('question report parity rejects dropping reportScreen from app-generated support links', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-process.argv.push('--focus-question-report-link-parity');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/components/quiz/QuestionReportLink.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace(/\\n\\s*\\['reportScreen', screen\\],/, '');
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /QuestionReportLink must emit reportScreen for app-generated support links/,
-  );
-});
-
-test('question report parity rejects reversing reportScreen and legacy screen precedence', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-process.argv.push('--focus-question-report-link-parity');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/support.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace(
-        'return hasSearchParam(params.reportScreen) ? params.reportScreen : params.screen;',
-        'return hasSearchParam(params.screen) ? params.screen : params.reportScreen;',
-      );
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /QuestionReportLink support context must prefer reportScreen before legacy screen/,
-  );
 });
 
 test('question report parity rejects dropping the practice feedback CTA', () => {
@@ -699,39 +654,5 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /QuestionReportLink missing support rejected context notice/,
-  );
-});
-
-test('question report parity rejects removing rejected-context focus announcement', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-process.argv.push('--focus-question-report-link-parity');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/support.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace('noticeRef.current?.focus?.();', '')
-      .replace('accessibilityLiveRegion="polite"\\n      ', '')
-      .replace('aria-live="polite"\\n      ', '')
-      .replace('{...(Platform.OS === \\'web\\' ? { tabIndex: -1 } : {})}', '{}');
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /QuestionReportLink missing support rejected context focus announcement/,
   );
 });

@@ -55,6 +55,10 @@
     return { email, id };
   }
 
+  function isRealPurchaseAccount(account) {
+    return Boolean(account && account.id !== 'local-demo');
+  }
+
   function statusMsg(message) {
     const el = document.getElementById('purchase-status');
     if (el) el.textContent = message;
@@ -90,7 +94,7 @@
 
   async function fetchEntitlements() {
     const account = requireSignedInAccount();
-    if (!supabaseConfigured() || !account || account.id === 'local-demo') return [];
+    if (!supabaseConfigured() || !isRealPurchaseAccount(account)) return [];
     if (typeof window.smtGetSupabaseClient !== 'function') return [];
     try {
       const client = await window.smtGetSupabaseClient();
@@ -172,6 +176,7 @@
       statusMsg(t('purchase.status.realSignin'));
       return;
     }
+    if (!isRealPurchaseAccount(account)) return;
 
     button.disabled = true;
     statusMsg('Opening secure checkout…');

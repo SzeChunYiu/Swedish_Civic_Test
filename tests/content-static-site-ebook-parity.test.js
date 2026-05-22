@@ -763,7 +763,6 @@ test('static ebook chapter 12 official-test prose uses exact source-key footnote
   const englishBlocks = annotatedSourceClaimBlocks(englishHtml);
   const swedishBlocks = annotatedSourceClaimBlocks(swedishHtml);
 
-  assert.doesNotMatch(source, /uhrOfficialTestSources/);
   assert.match(source, /uhrOfficialTestAbout/);
   assert.match(source, /uhrOfficialTestFaq/);
   assert.match(source, /uhrOfficialTestSignup/);

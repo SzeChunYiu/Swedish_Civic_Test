@@ -6,7 +6,7 @@ const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
 const practiceQuestionTitleHeaderPattern =
-  /<Text accessibilityRole="header" style=\{styles\.title\}>\s*\{titleText\}\s*<\/Text>/;
+  /<Text accessibilityRole="header" style=\{styles\.title\}>\s*\{copy\.questionTitle\(questionNumber\)\}\s*<\/Text>/;
 
 function parseValidationSummary() {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
@@ -42,8 +42,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace(
-        /<Text accessibilityRole="header" style=\\{styles\\.title\\}>\\s*\\{titleText\\}\\s*<\\/Text>/,
-        '<Text style={styles.title}>{titleText}</Text>',
+        '<Text accessibilityRole="header" style={styles.title}>\\n          {copy.questionTitle(questionNumber)}\\n        </Text>',
+        '<Text style={styles.title}>{copy.questionTitle(questionNumber)}</Text>',
       );
   }
   return originalReadFileSync.call(this, filePath, ...args);

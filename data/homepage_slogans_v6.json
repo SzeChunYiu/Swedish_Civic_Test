@@ -5,7 +5,7 @@
   "locales": ["en", "sv", "zh-Hans", "zh-Hant", "ar", "ckb", "fa", "so", "ti", "pl", "tr", "uk"],
   "exactReplacementKeys": {
     "en": {
-      "hero.eyebrow": "Unofficial study tool · source-backed · no account",
+      "hero.eyebrow": "Unofficial study tool · source-backed · optional account",
       "hero.h1a": "Learn Sweden.",
       "hero.h1b": "Practise with sources.",
       "hero.h1c": "Go in prepared.",
@@ -22,7 +22,7 @@
       "chap.deck": "Each chapter keeps the official material close, while explaining Swedish words and ideas in everyday language."
     },
     "sv": {
-      "hero.eyebrow": "Fristående studieverktyg · källstött · inget konto",
+      "hero.eyebrow": "Fristående studieverktyg · källstött · valfritt konto",
       "hero.h1a": "Lär känna Sverige.",
       "hero.h1b": "Öva med källor.",
       "hero.h1c": "Känn dig förberedd.",

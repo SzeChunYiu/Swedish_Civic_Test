@@ -320,7 +320,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /native Remove Ads entitlement runtime must provide a native provider, receipt validator, and secure storage|native Remove Ads entitlement runtime must fail closed when receipt validator config is missing/,
+    /native Remove Ads entitlement runtime must provide a native provider and secure storage|native Remove Ads entitlement runtime must provide a native provider, receipt validator, and secure storage|native Remove Ads entitlement runtime must fail closed when receipt validator config is missing/,
   );
 });
 

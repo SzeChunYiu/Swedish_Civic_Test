@@ -9,6 +9,7 @@ const vm = require('node:vm');
 const repoRoot = path.resolve(__dirname, '..');
 let cachedSummary;
 const moduleCache = new Map();
+
 const learnerFacingLegalCertaintyPattern = /\blegal certainty\b/i;
 
 function resolveLocalModule(fromFilePath, request) {

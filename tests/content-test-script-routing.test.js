@@ -152,7 +152,7 @@ test('npm test keeps selector routing in the project dispatcher', () => {
   assert.equal(
     pkg.scripts['test:mobile-ads-consent'],
     [
-      'node --test tests/mobile-ads-consent-runtime.test.js tests/content-mobile-ads-consent-schema-parity.test.js --test-name-pattern "mobile ads consent|Mobile Ads consent runtime|focus-mobile-ads-consent|ATT|UMP|SDK init"',
+      'node --test tests/mobile-ads-consent-runtime.test.js tests/content-mobile-ads-consent-schema-parity.test.js --test-name-pattern "mobile ads consent|Mobile Ads consent runtime|ATT|UMP|SDK init|focus-mobile-ads-consent"',
       'node scripts/validate-content.js --focus-mobile-ads-consent',
     ].join(' && '),
   );
