@@ -1,12 +1,68 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
-import { dismissBlockingModals, markAboutTheTestSeen, seedSettingsLanguage } from './browserLaunch';
+import {
+  currentProgressStateStorageKey,
+  dismissBlockingModals,
+  markAboutTheTestSeen,
+  seedFreshSettingsLanguageAndAboutSeenWithStorage,
+  seedSettingsLanguage,
+} from './browserLaunch';
 
 test.use({ viewport: { width: 390, height: 844 } });
 
 async function seedEnglishHub(page: Page) {
   await seedSettingsLanguage(page, 'en');
   await markAboutTheTestSeen(page);
+}
+
+function seededChapterProgressState() {
+  const answeredAt = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+  const answerDate = answeredAt.slice(0, 10);
+
+  return {
+    answerDates: [answerDate],
+    answerHistory: [
+      { answeredAt, isCorrect: true, questionId: 'q011' },
+      { answeredAt, isCorrect: false, questionId: 'q012' },
+    ],
+    completedQuestionIds: ['q011', 'q012'],
+    dailyChallengeCompletions: {},
+    mockExamSessions: [],
+    questionProgress: {
+      q011: {
+        correctCount: 1,
+        correctStreak: 1,
+        lastAnsweredAt: answeredAt,
+        questionId: 'q011',
+        seenCount: 1,
+        wrongCount: 0,
+      },
+      q012: {
+        correctCount: 0,
+        correctStreak: 0,
+        lastAnsweredAt: answeredAt,
+        questionId: 'q012',
+        seenCount: 1,
+        wrongCount: 1,
+      },
+    },
+    streakFreezeState: {
+      available: 0,
+      lastEarnedAt: null,
+      lifetimeEarned: 0,
+      lifetimeSpent: 0,
+      rescuedDayKeys: [],
+    },
+    totalXp: 20,
+  };
+}
+
+async function seedEnglishHubWithChapterProgress(page: Page) {
+  await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, 'en', {
+    localStorageValues: {
+      [currentProgressStateStorageKey]: JSON.stringify(seededChapterProgressState()),
+    },
+  });
 }
 
 async function expectTapTarget(locator: Locator, label: string) {
@@ -74,6 +130,46 @@ test('chapter selection starts a chapter-scoped practice loop', async ({ page })
   await expect(page.getByText('Question 1')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'What does democracy mean?' })).toBeVisible();
   await expect(page.getByText('Choose how to practise')).toHaveCount(0);
+  expect(consoleErrors).toEqual([]);
+});
+
+test('practice hub reflects chapter progress and starts the next unanswered chapter question', async ({
+  page,
+}) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await seedEnglishHubWithChapterProgress(page);
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  await expect(page.getByText(/You have answered 2 of \d+ visible questions\./)).toBeVisible();
+
+  const chapterCard = page.getByRole('button', {
+    name: /Sweden's democratic system: 2 of \d+ questions answered, 50% accuracy\. Practise this chapter\./,
+  });
+  await expect(chapterCard).toBeVisible();
+  await expect(chapterCard.getByText(/2 of \d+ questions answered/)).toBeVisible();
+  await expect(chapterCard.getByText('50% accuracy')).toBeVisible();
+
+  await chapterCard.click();
+
+  await expect(page.getByText('Question 3', { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole('heading', {
+      name: 'How can people influence society and participate in democracy?',
+    }),
+  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'What does democracy mean?' })).toHaveCount(0);
+  await expect(
+    page.getByRole('heading', {
+      name: 'Which of the following is part of free elections in a democracy?',
+    }),
+  ).toHaveCount(0);
   expect(consoleErrors).toEqual([]);
 });
 
