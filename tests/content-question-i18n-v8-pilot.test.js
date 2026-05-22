@@ -6,12 +6,14 @@ const {
   Q050_SOURCE_CRITICISM_NATURALNESS_IDS,
   Q062_PUBLIC_SECTOR_NATURALNESS_IDS,
   Q093_RELIGIOUS_FREEDOM_1951_NATURALNESS_IDS,
+  Q115_RELIGIOUS_FREEDOM_1860_NATURALNESS_IDS,
   Q166_Q169_KOMMUN_REGION_NATURALNESS_IDS,
   checkQuestions,
   checkLocalizationSourceShape,
   checkQ050SourceCriticismNaturalness,
   checkQ062PublicSectorNaturalness,
   checkQ093ReligiousFreedom1951Naturalness,
+  checkQ115ReligiousFreedom1860Naturalness,
   checkQ166Q169KommunRegionNaturalness,
   checkSomaliGeographyNaturalness,
   checkSomaliHolidayFoodNaturalness,
@@ -23,6 +25,7 @@ const {
   summarizeQ050SourceCriticismNaturalness,
   summarizeQ062PublicSectorNaturalness,
   summarizeQ093ReligiousFreedom1951Naturalness,
+  summarizeQ115ReligiousFreedom1860Naturalness,
   summarizeQ166Q169KommunRegionNaturalness,
   summarizeSomaliGeographyNaturalness,
   summarizeSomaliHolidayFoodNaturalness,
@@ -462,6 +465,111 @@ test('question localization v8 summarizes q093 religious-freedom naturalness cas
   const summary = summarizeQ093ReligiousFreedom1951Naturalness(
     [q093ReligiousFreedomFixture()],
     Q093_RELIGIOUS_FREEDOM_1951_NATURALNESS_IDS,
+  );
+
+  assert.deepEqual(summary.errors, []);
+  assert.equal(summary.casesValidated, 1);
+  assert.equal(summary.expectedCases, 1);
+  assert.equal(summary.parityValidated, true);
+});
+
+function q115ReligiousFreedomFixture({ stale = false } = {}) {
+  return {
+    id: 'q115',
+    questionSv: 'Vad blev tillåtet för svenskar år 1860?',
+    questionEn: 'What became permitted for Swedes in 1860?',
+    explanationSv:
+      'År 1860 blev det tillåtet att lämna Svenska kyrkan om man gick med i ett annat kristet samfund.',
+    explanationEn:
+      'In 1860, it became permitted to leave the Church of Sweden if you joined another Christian community.',
+    explanationText: stale
+      ? {
+          'zh-Hant': '完全自由選擇宗教或不選宗教要到 1951 年才實現。',
+          'zh-Hans': '完全自由选择宗教或不选宗教要到 1951 年才实现。',
+          ar: 'أما الحرية الكاملة في اختيار دين فجاءت عام 1951.',
+          ckb: 'ئازادی تەواو بۆ هەڵبژاردنی ئایین لە 1951دا هات.',
+          fa: 'آزادی کامل برای انتخاب دین در سال ۱۹۵۱ آمد.',
+          pl: 'Pełna wolność wyboru religii przyszła w 1951 roku.',
+          so: 'Xorriyadda buuxda ee doorashada diin waxay timid 1951.',
+          ti: 'ሙሉእ ናጽነት ሃይማኖት ምምራጽ ብ1951 መጺኡ።',
+          tr: 'Tamamen özgürce din seçme hakkı 1951’de geldi.',
+          uk: 'Повна свобода обирати релігію з’явилася у 1951 році.',
+        }
+      : {
+          'zh-Hant': '選擇宗教或不屬於任何宗教的權利要到 1951 年後才有。',
+          'zh-Hans': '选择宗教或不属于任何宗教的权利要到 1951 年后才有。',
+          ar: 'أما حق اختيار دين أو عدم الانتماء إلى أي دين فجاء عام 1951.',
+          ckb: 'مافی هەڵبژاردنی ئایین یان سەر بە هیچ ئایینێک نەبوون لە 1951دا هات.',
+          fa: 'حق انتخاب دین یا نداشتن دین در سال ۱۹۵۱ آمد.',
+          pl: 'Prawo wyboru religii albo braku przynależności do religii przyszło w 1951 roku.',
+          so: 'Xuquuqda doorashada diin ama inaan diin lagu tirsan waxay timid 1951.',
+          ti: 'መሰል ሃይማኖት ምምራጽ ወይ ናብ ምንም ሃይማኖት ዘይምጽንባር ብ1951 መጺኡ።',
+          tr: 'Bir dini seçme ya da hiçbir dine mensup olmama hakkı 1951’de geldi.',
+          uk: 'Право обирати релігію або не належати до жодної релігії з’явилося у 1951 році.',
+        },
+    options: [
+      {
+        id: 'a',
+        textSv: 'Att lämna Svenska kyrkan om man gick med i ett annat kristet samfund',
+        textEn: 'To leave the Church of Sweden if you joined another Christian community',
+      },
+      {
+        id: 'b',
+        textSv: 'Att välja vilken religion som helst eller ingen religion',
+        textEn: 'To choose any religion or no religion',
+        text: stale
+          ? {
+              'zh-Hant': '完全自由選擇任何宗教或完全不選宗教',
+              'zh-Hans': '完全自由选择任何宗教或完全不选宗教',
+              ar: 'اختيار أي دين أو عدم اختيار أي دين بحرية كاملة',
+              ckb: 'بە تەواوی ئازادانە هەڵبژاردنی هەر ئایینێک',
+              fa: 'کاملاً آزادانه هر دینی را انتخاب کردن',
+              pl: 'Całkowicie swobodny wybór dowolnej religii',
+              so: 'In si buuxda xor loogu doorto diin kasta',
+              ti: 'ሙሉእ ብሙሉእ ብናጽነት ዝኾነ ሃይማኖት ምምራጽ',
+              tr: 'Herhangi bir dini tamamen özgürce seçmek',
+              uk: 'Повністю вільно обирати будь-яку релігію',
+            }
+          : {
+              'zh-Hant': '選擇任何宗教或不屬於任何宗教',
+              'zh-Hans': '选择任何宗教或不属于任何宗教',
+              ar: 'اختيار أي دين أو عدم الانتماء إلى أي دين',
+              ckb: 'هەڵبژاردنی هەر ئایینێک یان سەر بە هیچ ئایینێک نەبوون',
+              fa: 'انتخاب هر دینی یا وابسته نبودن به هیچ دینی',
+              pl: 'Wybór dowolnej religii albo brak przynależności do religii',
+              so: 'In la doorto diin kasta ama aan diin lagu tirsan',
+              ti: 'ዝኾነ ሃይማኖት ምምራጽ ወይ ናብ ምንም ሃይማኖት ዘይምጽንባር',
+              tr: 'Herhangi bir dini seçmek ya da hiçbir dine mensup olmamak',
+              uk: 'Обирати будь-яку релігію або не належати до жодної релігії',
+            },
+      },
+    ],
+    correctOptionId: 'a',
+  };
+}
+
+test('question localization v8 rejects over-intensified q115 religious-freedom wording', () => {
+  const errors = checkQ115ReligiousFreedom1860Naturalness([
+    q115ReligiousFreedomFixture({ stale: true }),
+  ]);
+
+  assert.ok(
+    errors.includes(
+      'q115.options.b.text.zh-Hant uses over-intensified 1860 religious-freedom wording',
+    ),
+  );
+  assert.ok(
+    errors.includes('q115.explanationText.ar uses over-intensified 1860 religious-freedom wording'),
+  );
+  assert.ok(
+    errors.includes('q115.options.b.text.tr uses over-intensified 1860 religious-freedom wording'),
+  );
+});
+
+test('question localization v8 summarizes q115 religious-freedom naturalness cases', () => {
+  const summary = summarizeQ115ReligiousFreedom1860Naturalness(
+    [q115ReligiousFreedomFixture()],
+    Q115_RELIGIOUS_FREEDOM_1860_NATURALNESS_IDS,
   );
 
   assert.deepEqual(summary.errors, []);

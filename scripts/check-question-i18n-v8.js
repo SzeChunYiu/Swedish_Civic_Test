@@ -211,6 +211,19 @@ const Q093_RELIGIOUS_FREEDOM_1951_STALE_PATTERNS = {
   tr: /tamamen özgürce/i,
   uk: /повністю вільно|взагалі/i,
 };
+const Q115_RELIGIOUS_FREEDOM_1860_NATURALNESS_IDS = ['q115'];
+const Q115_RELIGIOUS_FREEDOM_1860_STALE_PATTERNS = {
+  'zh-Hant': /完全(?:自由|不屬於|不選)/,
+  'zh-Hans': /完全(?:自由|不属于|不选)/,
+  ar: /بحرية كاملة|الحرية الكاملة|إطلاقًا/,
+  ckb: /بە تەواوی|تەواوی ئازادانە|ئازادی تەواو/,
+  fa: /کاملاً|آزادی کامل|اصلاً/,
+  pl: /całkowicie swobodny|pełna wolność/i,
+  so: /si buuxda xor|xorriyadda buuxda|haba yaraatee/i,
+  ti: /ሙሉእ|ብሙሉእ/,
+  tr: /tamamen özgürce/i,
+  uk: /повністю вільно|повна свобода|взагалі/i,
+};
 
 function checkLocalizedMap(map, path, errors) {
   for (const locale of REQUIRED_LOCALES) {
@@ -882,6 +895,71 @@ function checkQ093ReligiousFreedom1951Naturalness(
   return errors;
 }
 
+function q115ReligiousFreedom1860ErrorsForQuestion(question) {
+  const errors = [];
+  const explanationMap = localizedExplanationMap(question);
+  const option = (question.options || []).find((candidate) => candidate.id === 'b');
+  const optionMap = localizedOptionMap(option);
+
+  for (const [locale, stalePattern] of Object.entries(Q115_RELIGIOUS_FREEDOM_1860_STALE_PATTERNS)) {
+    const optionValue = optionMap[locale];
+    if (typeof optionValue === 'string' && stalePattern.test(optionValue)) {
+      errors.push(
+        `${question.id}.options.b.text.${locale} uses over-intensified 1860 religious-freedom wording`,
+      );
+    }
+
+    const explanationValue = explanationMap[locale];
+    if (typeof explanationValue === 'string' && stalePattern.test(explanationValue)) {
+      errors.push(
+        `${question.id}.explanationText.${locale} uses over-intensified 1860 religious-freedom wording`,
+      );
+    }
+  }
+
+  return errors;
+}
+
+function summarizeQ115ReligiousFreedom1860Naturalness(
+  questions,
+  ids = Q115_RELIGIOUS_FREEDOM_1860_NATURALNESS_IDS,
+) {
+  const errors = [];
+  const questionById = new Map(questions.map((question) => [question.id, question]));
+  let casesValidated = 0;
+
+  for (const id of ids) {
+    const question = questionById.get(id);
+    const errorCountBefore = errors.length;
+
+    if (!question) {
+      errors.push(`${id}.religiousFreedom1860Naturalness missing`);
+      continue;
+    }
+
+    errors.push(...q115ReligiousFreedom1860ErrorsForQuestion(question));
+
+    if (errors.length === errorCountBefore) {
+      casesValidated += 1;
+    }
+  }
+
+  return {
+    errors,
+    casesValidated,
+    expectedCases: ids.length,
+    parityValidated: errors.length === 0 && casesValidated === ids.length,
+  };
+}
+
+function checkQ115ReligiousFreedom1860Naturalness(
+  questions,
+  ids = Q115_RELIGIOUS_FREEDOM_1860_NATURALNESS_IDS,
+) {
+  const { errors } = summarizeQ115ReligiousFreedom1860Naturalness(questions, ids);
+  return errors;
+}
+
 function isSomaliGeographyNaturalnessId(id) {
   return SOMALI_GEOGRAPHY_NATURALNESS_IDS.includes(id);
 }
@@ -904,6 +982,10 @@ function isQ050SourceCriticismNaturalnessId(id) {
 
 function isQ093ReligiousFreedom1951NaturalnessId(id) {
   return Q093_RELIGIOUS_FREEDOM_1951_NATURALNESS_IDS.includes(id);
+}
+
+function isQ115ReligiousFreedom1860NaturalnessId(id) {
+  return Q115_RELIGIOUS_FREEDOM_1860_NATURALNESS_IDS.includes(id);
 }
 
 function checkQuestions(questions, ids = QUESTION_LOCALIZATION_PILOT_IDS) {
@@ -973,6 +1055,13 @@ function checkQuestions(questions, ids = QUESTION_LOCALIZATION_PILOT_IDS) {
   if (q093ReligiousFreedom1951Ids.length > 0) {
     errors.push(
       ...checkQ093ReligiousFreedom1951Naturalness(questions, q093ReligiousFreedom1951Ids),
+    );
+  }
+
+  const q115ReligiousFreedom1860Ids = ids.filter(isQ115ReligiousFreedom1860NaturalnessId);
+  if (q115ReligiousFreedom1860Ids.length > 0) {
+    errors.push(
+      ...checkQ115ReligiousFreedom1860Naturalness(questions, q115ReligiousFreedom1860Ids),
     );
   }
 
@@ -1099,6 +1188,7 @@ module.exports = {
   Q050_SOURCE_CRITICISM_NATURALNESS_IDS,
   Q062_PUBLIC_SECTOR_NATURALNESS_IDS,
   Q093_RELIGIOUS_FREEDOM_1951_NATURALNESS_IDS,
+  Q115_RELIGIOUS_FREEDOM_1860_NATURALNESS_IDS,
   Q166_Q169_KOMMUN_REGION_NATURALNESS_IDS,
   SOMALI_GEOGRAPHY_NATURALNESS_IDS,
   SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS,
@@ -1107,6 +1197,7 @@ module.exports = {
   checkQ050SourceCriticismNaturalness,
   checkQ062PublicSectorNaturalness,
   checkQ093ReligiousFreedom1951Naturalness,
+  checkQ115ReligiousFreedom1860Naturalness,
   checkQ166Q169KommunRegionNaturalness,
   checkSomaliGeographyNaturalness,
   checkSomaliHolidayFoodNaturalness,
@@ -1116,6 +1207,7 @@ module.exports = {
   summarizeQ050SourceCriticismNaturalness,
   summarizeQ062PublicSectorNaturalness,
   summarizeQ093ReligiousFreedom1951Naturalness,
+  summarizeQ115ReligiousFreedom1860Naturalness,
   summarizeQ166Q169KommunRegionNaturalness,
   summarizeSomaliGeographyNaturalness,
   summarizeSomaliHolidayFoodNaturalness,
