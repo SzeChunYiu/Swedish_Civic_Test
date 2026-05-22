@@ -622,6 +622,13 @@ function sourceBlockContaining(blocks, pattern, label) {
   return block;
 }
 
+function sourceBlockWithExactKeys(blocks, expectedKeys, label) {
+  const expectedJson = JSON.stringify(expectedKeys);
+  const block = blocks.find((candidate) => JSON.stringify(dataSourceKeys(candidate)) === expectedJson);
+  assert.ok(block, `missing source block for ${label} with keys ${expectedKeys.join(', ')}`);
+  return block;
+}
+
 function findFunctionCallArguments(source, functionName) {
   const calls = [];
   let searchFrom = 0;
@@ -839,6 +846,41 @@ test('static ebook chapter 12 official-test prose uses exact source-key footnote
     assert.match(englishFootnotes, new RegExp(url));
     assert.match(swedishFootnotes, new RegExp(url));
   });
+});
+
+test('static ebook chapter 12 extra locales keep exact official-test source keys', () => {
+  const harness = createEbookHarness();
+
+  for (const lang of staticEbookExtraLanguages) {
+    const html = renderChapter(harness, lang, '12');
+    const blocks = annotatedSourceClaimBlocks(html);
+    const signupBlock = sourceBlockWithExactKeys(
+      blocks,
+      officialPracticalTestSignupSourceKeys,
+      `${lang} official-test signup/current-status paragraph`,
+    );
+    const seatsBlock = sourceBlockWithExactKeys(
+      blocks,
+      officialPracticalTestSeatsSourceKeys,
+      `${lang} official-test limited-seats paragraph`,
+    );
+    const pendingBlock = sourceBlockWithExactKeys(
+      blocks,
+      officialPracticalTestPendingSourceKeys,
+      `${lang} official-test pending-details paragraph`,
+    );
+    const sourceNotesBlock = sourceBlockWithExactKeys(
+      blocks,
+      officialPracticalTestSourceKeys,
+      `${lang} official-test current source notes`,
+    );
+
+    [signupBlock, seatsBlock, pendingBlock, sourceNotesBlock].forEach((block) => {
+      assert.equal(dataSourceMetadata(block), 'inline', `${lang} official-test source metadata`);
+      assert.doesNotMatch(block, /\buhrStudyMaterial\b/, `${lang} official-test source keys`);
+    });
+    assertSafeOfficialTestSourceLinks(sourceNotesBlock, `${lang} current source note`);
+  }
 });
 
 test('static ebook Swedish mock-exam wording uses övningsprov and survival-guide heading', () => {
@@ -1145,6 +1187,15 @@ test('focus-static-ebook-provenance validator routes static ebook provenance gua
   assert.equal(summary.staticEbookFootnoteHashChaptersValidated, getExpectedChapterIds().length);
   assert.equal(summary.staticEbookFootnoteHashLanguagesValidated, 2);
   assert.equal(summary.staticEbookFootnoteHashParityValidated, true);
+  assert.equal(
+    summary.staticEbookChapter12OfficialTestExtraLocaleLanguagesValidated,
+    staticEbookExtraLanguages.length,
+  );
+  assert.equal(
+    summary.staticEbookChapter12OfficialTestExtraLocaleBlocksValidated,
+    staticEbookExtraLanguages.length * 4,
+  );
+  assert.equal(summary.staticEbookChapter12OfficialTestExtraLocaleParityValidated, true);
   assert.equal(summary.staticEbookProvenanceParityValidated, true);
   assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
   assert.equal(

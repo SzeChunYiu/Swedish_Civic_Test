@@ -272,6 +272,25 @@ const STATIC_EBOOK_PRACTICAL_TEST_SOURCE_URLS = [
   'https://www.uhr.se/medborgarskapsprovet/anmalan/',
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
 ];
+const STATIC_EBOOK_OFFICIAL_TEST_SOURCE_KEYS = [
+  'uhrOfficialTestAbout',
+  'uhrOfficialTestFaq',
+  'uhrOfficialTestSignup',
+  'uhrOfficialTestStudyMaterial',
+];
+const STATIC_EBOOK_OFFICIAL_TEST_SIGNUP_SOURCE_KEYS = [
+  'uhrOfficialTestAbout',
+  'uhrOfficialTestSignup',
+];
+const STATIC_EBOOK_OFFICIAL_TEST_SEATS_SOURCE_KEYS = [
+  'uhrOfficialTestAbout',
+  'uhrOfficialTestFaq',
+];
+const STATIC_EBOOK_OFFICIAL_TEST_PENDING_SOURCE_KEYS = [
+  'uhrOfficialTestAbout',
+  'uhrOfficialTestStudyMaterial',
+  'editorialCommentary',
+];
 const STATIC_EBOOK_PRACTICAL_TEST_REQUIRED_COPY = [
   'OFFICIAL_TEST_SOURCE_NOTES',
   'OFFICIAL_TEST_SIGNUP_SOURCE_KEYS',
@@ -6431,6 +6450,16 @@ function staticEbookDataSourceKeys(block) {
   return match ? match[1].split(/\s+/).filter(Boolean) : [];
 }
 
+function staticEbookDataSourceMetadata(block) {
+  const match = block.match(/\bdata-source-metadata="([^"]+)"/);
+  return match ? match[1] : '';
+}
+
+function staticEbookSourceBlockWithExactKeys(blocks, expectedKeys) {
+  const expectedJson = JSON.stringify(expectedKeys);
+  return blocks.find((block) => JSON.stringify(staticEbookDataSourceKeys(block)) === expectedJson);
+}
+
 function staticEbookSourceCountsFromBlocks(blocks) {
   const counts = {};
   blocks.forEach((block) => {
@@ -6584,6 +6613,84 @@ function validateStaticEbookFootnoteHashParity() {
       valid &&
       chaptersValidated === chapterIds.length &&
       Array.from(languageValid.values()).every(Boolean),
+  };
+}
+
+function validateStaticEbookChapter12ExtraLocaleOfficialTestSourceKeys() {
+  const harness = createStaticEbookValidationHarness(readStaticEbookChapterIds());
+  const expectedBlocks = [
+    {
+      keys: STATIC_EBOOK_OFFICIAL_TEST_SIGNUP_SOURCE_KEYS,
+      label: 'signup/current-status paragraph',
+    },
+    {
+      keys: STATIC_EBOOK_OFFICIAL_TEST_SEATS_SOURCE_KEYS,
+      label: 'limited-seats paragraph',
+    },
+    {
+      keys: STATIC_EBOOK_OFFICIAL_TEST_PENDING_SOURCE_KEYS,
+      label: 'pending-details paragraph',
+    },
+    {
+      keys: STATIC_EBOOK_OFFICIAL_TEST_SOURCE_KEYS,
+      label: 'current source notes',
+    },
+  ];
+  let blocksValidated = 0;
+  let languagesValidated = 0;
+  let valid = true;
+
+  STATIC_EBOOK_EXTRA_LOCALES.forEach((language) => {
+    const html = renderStaticEbookChapter(harness, language, '12');
+    const blocks = staticEbookAnnotatedSourceClaimBlocks(html);
+    let languageValid = true;
+
+    expectedBlocks.forEach(({ keys, label }) => {
+      const block = staticEbookSourceBlockWithExactKeys(blocks, keys);
+      if (!block) {
+        languageValid = false;
+        valid = false;
+        fail(
+          `static ebook chapter 12 ${language} missing official-test ${label} source keys: ${keys.join(
+            ', ',
+          )}`,
+        );
+        return;
+      }
+      if (staticEbookDataSourceMetadata(block) !== 'inline') {
+        languageValid = false;
+        valid = false;
+        fail(`static ebook chapter 12 ${language} ${label} must use inline source metadata`);
+      }
+      if (/\buhrStudyMaterial\b/.test(block)) {
+        languageValid = false;
+        valid = false;
+        fail(
+          `static ebook chapter 12 ${language} ${label} must not use broad uhrStudyMaterial source keys`,
+        );
+      }
+      blocksValidated += 1;
+    });
+
+    STATIC_EBOOK_PRACTICAL_TEST_SOURCE_URLS.forEach((url) => {
+      if (!html.includes(url)) {
+        languageValid = false;
+        valid = false;
+        fail(`static ebook chapter 12 ${language} missing official-test source link ${url}`);
+      }
+    });
+
+    if (languageValid) languagesValidated += 1;
+  });
+
+  return {
+    blocksExpected: STATIC_EBOOK_EXTRA_LOCALES.length * expectedBlocks.length,
+    blocksValidated,
+    languagesValidated,
+    parityValidated:
+      valid &&
+      languagesValidated === STATIC_EBOOK_EXTRA_LOCALES.length &&
+      blocksValidated === STATIC_EBOOK_EXTRA_LOCALES.length * expectedBlocks.length,
   };
 }
 
@@ -10302,6 +10409,9 @@ let staticEbookFootnoteHashParityValidated = false;
 let staticEbookProvenanceParityValidated = false;
 let staticEbookProseSourceMetadataRulesValidated = 0;
 let staticEbookProseSourceMetadataParityValidated = false;
+let staticEbookChapter12OfficialTestExtraLocaleLanguagesValidated = 0;
+let staticEbookChapter12OfficialTestExtraLocaleBlocksValidated = 0;
+let staticEbookChapter12OfficialTestExtraLocaleParityValidated = false;
 let staticEbookExtraLocaleHolidayGlossLanguagesValidated = 0;
 let staticEbookExtraLocaleHolidayGlossParityValidated = false;
 let staticHeadMetadataTitleValidated = 0;
@@ -10733,6 +10843,16 @@ if (process.argv.includes('--focus-static-ebook-provenance')) {
     staticEbookFoodBeverageSourcePatternsValidated = foodBeverageSourceValidation.patternsValidated;
     staticEbookFoodBeverageSourceParityValidated = foodBeverageSourceValidation.parityValidated;
   }
+  {
+    const officialTestExtraLocaleValidation =
+      validateStaticEbookChapter12ExtraLocaleOfficialTestSourceKeys();
+    staticEbookChapter12OfficialTestExtraLocaleLanguagesValidated =
+      officialTestExtraLocaleValidation.languagesValidated;
+    staticEbookChapter12OfficialTestExtraLocaleBlocksValidated =
+      officialTestExtraLocaleValidation.blocksValidated;
+    staticEbookChapter12OfficialTestExtraLocaleParityValidated =
+      officialTestExtraLocaleValidation.parityValidated;
+  }
   const civicTermGlossValidation = validateStaticEbookCivicTermGlosses();
   staticEbookCivicTermGlossesChecksValidated = civicTermGlossValidation.checksValidated;
   staticEbookCivicTermGlossesParityValidated = civicTermGlossValidation.parityValidated;
@@ -10745,6 +10865,7 @@ if (process.argv.includes('--focus-static-ebook-provenance')) {
     staticEbookSourceAuthorityCopyParityValidated &&
     staticEbookSomaliHolidayFoodParityValidated &&
     staticEbookFoodBeverageSourceParityValidated &&
+    staticEbookChapter12OfficialTestExtraLocaleParityValidated &&
     staticEbookCivicTermGlossesParityValidated;
   exitWithValidationFailures();
   printValidationSummary({
@@ -10773,6 +10894,9 @@ if (process.argv.includes('--focus-static-ebook-provenance')) {
     staticEbookFoodBeverageSourceChaptersValidated,
     staticEbookFoodBeverageSourcePatternsValidated,
     staticEbookFoodBeverageSourceParityValidated,
+    staticEbookChapter12OfficialTestExtraLocaleLanguagesValidated,
+    staticEbookChapter12OfficialTestExtraLocaleBlocksValidated,
+    staticEbookChapter12OfficialTestExtraLocaleParityValidated,
     staticEbookCivicTermGlossesChecksValidated,
     staticEbookCivicTermGlossesParityValidated,
     staticEbookProvenanceParityValidated,
@@ -11916,6 +12040,16 @@ staticEbookSourceAuthorityCopyParityValidated =
   staticEbookFoodBeverageSourceParityValidated = foodBeverageSourceValidation.parityValidated;
 }
 {
+  const officialTestExtraLocaleValidation =
+    validateStaticEbookChapter12ExtraLocaleOfficialTestSourceKeys();
+  staticEbookChapter12OfficialTestExtraLocaleLanguagesValidated =
+    officialTestExtraLocaleValidation.languagesValidated;
+  staticEbookChapter12OfficialTestExtraLocaleBlocksValidated =
+    officialTestExtraLocaleValidation.blocksValidated;
+  staticEbookChapter12OfficialTestExtraLocaleParityValidated =
+    officialTestExtraLocaleValidation.parityValidated;
+}
+{
   const proseValidation = validateStaticEbookProseSourceMetadata();
   staticEbookProseSourceMetadataRulesValidated = proseValidation.rulesValidated;
   staticEbookProseSourceMetadataParityValidated =
@@ -11940,7 +12074,8 @@ staticEbookProvenanceParityValidated =
   staticEbookProseSourceMetadataParityValidated &&
   staticEbookSourceAuthorityCopyParityValidated &&
   staticEbookSomaliHolidayFoodParityValidated &&
-  staticEbookFoodBeverageSourceParityValidated;
+  staticEbookFoodBeverageSourceParityValidated &&
+  staticEbookChapter12OfficialTestExtraLocaleParityValidated;
 {
   const arabicI18nValidation = validateStaticI18nArabicNaturalness();
   staticI18nArabicRequiredCopyValidated = arabicI18nValidation.requiredCopyValidated;
@@ -26850,6 +26985,9 @@ console.log(
       staticEbookFoodBeverageSourceChaptersValidated,
       staticEbookFoodBeverageSourcePatternsValidated,
       staticEbookFoodBeverageSourceParityValidated,
+      staticEbookChapter12OfficialTestExtraLocaleLanguagesValidated,
+      staticEbookChapter12OfficialTestExtraLocaleBlocksValidated,
+      staticEbookChapter12OfficialTestExtraLocaleParityValidated,
       staticEbookProseSourceMetadataRulesValidated,
       staticEbookProseSourceMetadataParityValidated,
       staticEbookExtraLocaleHolidayGlossLanguagesValidated,

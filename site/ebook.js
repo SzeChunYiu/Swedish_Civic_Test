@@ -21,20 +21,6 @@
       url: 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
       retrievedDate: '2026-05-19',
     },
-    uhrOfficialTestSources: {
-      label: 'UHR current medborgarskapsprovet source pages',
-      labels: {
-        en: 'UHR current medborgarskapsprovet source pages',
-        sv: 'UHR:s aktuella källsidor om medborgarskapsprovet',
-      },
-      mixLabel: 'UHR test status',
-      mixLabels: {
-        en: 'UHR test status',
-        sv: 'UHR:s provstatus',
-      },
-      url: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
-      retrievedDate: '2026-05-19',
-    },
     uhrOfficialTestAbout: {
       label: 'UHR: Om medborgarskapsprovet',
       labels: {
@@ -129,6 +115,10 @@
     ...EBOOK_FACTBOX_SOURCE_NOTES,
     editorialCommentary: {
       label: 'editorial commentary',
+      labels: {
+        en: 'editorial commentary',
+        sv: 'redaktionell kommentar',
+      },
       mixLabel: { en: 'Editorial', sv: 'Redaktionellt' },
       url: '#/sources',
       retrievedDate: 'editorial',
