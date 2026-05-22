@@ -10035,6 +10035,8 @@ let flashcardAccessibilityParityValidated = false;
 let swedishFlashcardCopyNaturalnessValidated = false;
 let audioButtonAccessibilityRulesValidated = 0;
 let audioButtonAccessibilityParityValidated = false;
+let topBarActionsAccessibilityRulesValidated = 0;
+let topBarActionsAccessibilityParityValidated = false;
 let questionCardAccessibilityRulesValidated = 0;
 let questionCardAccessibilityParityValidated = false;
 let questionReportLinkRulesValidated = 0;
@@ -10648,6 +10650,16 @@ if (process.argv.includes('--focus-audio-button-accessibility')) {
   printValidationSummary({
     audioButtonAccessibilityRulesValidated,
     audioButtonAccessibilityParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-topbar-actions-accessibility')) {
+  validateTopBarActionsAccessibilityParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    topBarActionsAccessibilityRulesValidated,
+    topBarActionsAccessibilityParityValidated,
   });
   process.exit(0);
 }
@@ -17109,6 +17121,188 @@ function validateAudioButtonAccessibilityParity() {
         EXPECTED_FEEDBACK_AUDIO_BUTTON_ACCESSIBILITY_RULES.length
   ) {
     audioButtonAccessibilityParityValidated = true;
+  }
+}
+
+function validateTopBarActionsAccessibilityParity() {
+  let valid = true;
+  let source = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    source = fs.readFileSync(path.join(repoRoot, 'components/ui/TopBarActions.tsx'), 'utf8');
+  } catch (error) {
+    reject(
+      `components/ui/TopBarActions.tsx could not be read for accessibility parity: ${error.message}`,
+    );
+    return;
+  }
+
+  const expectedRules = [
+    {
+      label: 'dedicated link component',
+      pattern: /function TopBarActionLink\(/,
+    },
+    {
+      label: 'native Expo Link anchor',
+      pattern: /<Link\s/,
+    },
+    {
+      label: 'theme colors hook',
+      pattern: /const themeColors = useThemeColors\(\);/,
+    },
+    {
+      label: 'memoized themed styles',
+      pattern: /const styles = useMemo\(\(\) => createStyles\(themeColors\), \[themeColors\]\);/,
+    },
+    {
+      label: 'typed themed style factory',
+      pattern: /function createStyles\(themeColors: ThemeColors\)/,
+    },
+    {
+      label: 'web style injection receives theme colors',
+      pattern: /useTopBarActionLinkWebStyles\(themeColors\)/,
+    },
+    {
+      label: 'native link accessibility role',
+      pattern: /accessibilityRole="link"/,
+    },
+    {
+      label: 'keyboard activation key set',
+      pattern: /keyboardActivationKeys = new Set\(\['Enter', ' ', 'Spacebar'\]\)/,
+    },
+    {
+      label: 'press-in feedback handler',
+      pattern: /onPressIn=\{\(\) => setIsPressed\(true\)\}/,
+    },
+    {
+      label: 'press-out feedback handler',
+      pattern: /onPressOut=\{\(\) => setIsPressed\(false\)\}/,
+    },
+    {
+      label: 'keyboard down pressed feedback',
+      pattern:
+        /onKeyDown: \(event: \{ key\?: string \}\) => \{[\s\S]*isKeyboardActivationKey\(event\.key\)[\s\S]*setIsPressed\(true\)/,
+    },
+    {
+      label: 'keyboard up pressed reset',
+      pattern:
+        /onKeyUp: \(event: \{ key\?: string \}\) => \{[\s\S]*isKeyboardActivationKey\(event\.key\)[\s\S]*setIsPressed\(false\)/,
+    },
+    {
+      label: 'mouse down feedback handler',
+      pattern: /onMouseDown: \(\) => setIsPressed\(true\)/,
+    },
+    {
+      label: 'mouse up feedback handler',
+      pattern: /onMouseUp: \(\) => setIsPressed\(false\)/,
+    },
+    {
+      label: 'hover enter feedback handler',
+      pattern: /onMouseEnter: \(\) => setIsHovered\(true\)/,
+    },
+    {
+      label: 'hover leave clears pressed state',
+      pattern: /setIsHovered\(false\);\s*setIsPressed\(false\);/,
+    },
+    {
+      label: 'blur clears pressed state',
+      pattern: /setIsFocused\(false\);\s*setIsPressed\(false\);/,
+    },
+    {
+      label: 'focus or hover applies link feedback',
+      pattern: /isFocused \|\| isHovered[\s\S]*styles\.iconLinkHover/,
+    },
+    {
+      label: 'reduced motion hook',
+      pattern: /const reduceMotion = useReducedMotion\(\);/,
+    },
+    {
+      label: 'reduced motion hover branch',
+      pattern: /reduceMotion[\s\S]*styles\.iconLinkHoverReducedMotion[\s\S]*styles\.iconLinkHover/,
+    },
+    {
+      label: 'reduced motion pressed branch',
+      pattern:
+        /isPressed[\s\S]*reduceMotion[\s\S]*styles\.iconLinkPressedReducedMotion[\s\S]*styles\.iconLinkPressed/,
+    },
+    {
+      label: 'minimum touch target height',
+      pattern: /minHeight: space\[6\]/,
+    },
+    {
+      label: 'minimum touch target width',
+      pattern: /minWidth: space\[6\]/,
+    },
+    {
+      label: 'web focus soft feedback',
+      pattern: /background-color: \$\{themeColors\.focusSoft\}/,
+    },
+    {
+      label: 'native hover focus soft feedback',
+      pattern: /iconLinkHover: \{\s*backgroundColor: themeColors\.focusSoft,/,
+    },
+    {
+      label: 'native hover token scale',
+      pattern: /transform: \[\{ scale: motion\.hoverScale \}\]/,
+    },
+    {
+      label: 'native hover reduced-motion feedback',
+      pattern: /iconLinkHoverReducedMotion: \{\s*backgroundColor: themeColors\.focusSoft,\s*\}/,
+    },
+    {
+      label: 'native pressed focus soft feedback',
+      pattern: /iconLinkPressed: \{\s*backgroundColor: themeColors\.focusSoft,/,
+    },
+    {
+      label: 'native pressed token scale',
+      pattern: /transform: \[\{ scale: motion\.pressedScale \}\]/,
+    },
+    {
+      label: 'web reduced-motion transform reset',
+      pattern: /@media \(prefers-reduced-motion: reduce\)[\s\S]*transform: none;/,
+    },
+  ];
+  const rejectedRules = [
+    {
+      label: 'Expo Link asChild bypass',
+      pattern: /<Link[^>]*\basChild\b/,
+    },
+    {
+      label: 'static light color import',
+      pattern: /import \{[^}]*\bcolors\b[^}]*\} from ['"]\.\.\/\.\.\/lib\/theme['"]/,
+    },
+    {
+      label: 'static light color token usage',
+      pattern: /\bcolors\./,
+    },
+  ];
+
+  expectedRules.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(source)) {
+      reject(`TopBarActions missing ${expectedRule.label} for accessibility parity`);
+      return;
+    }
+    topBarActionsAccessibilityRulesValidated += 1;
+  });
+
+  rejectedRules.forEach((rejectedRule) => {
+    if (rejectedRule.pattern.test(source)) {
+      reject(`TopBarActions must not include ${rejectedRule.label}`);
+      return;
+    }
+    topBarActionsAccessibilityRulesValidated += 1;
+  });
+
+  if (
+    valid &&
+    topBarActionsAccessibilityRulesValidated === expectedRules.length + rejectedRules.length
+  ) {
+    topBarActionsAccessibilityParityValidated = true;
   }
 }
 
@@ -26603,6 +26797,7 @@ validateBadgeAccessibilityParity();
 validateChapterCardAccessibilityParity();
 validateFlashcardAccessibilityParity();
 validateAudioButtonAccessibilityParity();
+validateTopBarActionsAccessibilityParity();
 validateQuestionCardAccessibilityParity();
 validateQuestionReportLinkParity();
 validateAnswerOptionAccessibilityParity();
@@ -26837,6 +27032,8 @@ console.log(
       swedishFlashcardCopyNaturalnessValidated,
       audioButtonAccessibilityRulesValidated,
       audioButtonAccessibilityParityValidated,
+      topBarActionsAccessibilityRulesValidated,
+      topBarActionsAccessibilityParityValidated,
       questionCardAccessibilityRulesValidated,
       questionCardAccessibilityParityValidated,
       questionReportLinkRulesValidated,
