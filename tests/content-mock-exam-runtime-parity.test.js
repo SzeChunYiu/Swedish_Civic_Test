@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
+const { getMockExamSourceCitationSections } = require('../scripts/mock-exam-source-sections');
 
 const repoRoot = path.resolve(__dirname, '..');
 const moduleCache = new Map();
@@ -233,26 +234,23 @@ test('mock exam copy focused guard rejects weakened English Mock Exam labels', (
 
 test('active mock exam keeps full UHR reference cards out of pre-submit questions', () => {
   const examRouteSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
-  const reviewSectionStart = examRouteSource.indexOf('{filteredReviewItems.map((item) => {');
-  const activeQuestionSectionStart = examRouteSource.indexOf(
-    '{examQuestions.map((question, index) => {',
-  );
-
-  assert.notEqual(reviewSectionStart, -1, 'submitted review section should be present');
-  assert.notEqual(activeQuestionSectionStart, -1, 'active question section should be present');
-  assert.ok(
-    reviewSectionStart < activeQuestionSectionStart,
-    'submitted review section should stay separate from active questions',
-  );
-
-  const reviewSection = examRouteSource.slice(reviewSectionStart, activeQuestionSectionStart);
-  const activeQuestionSection = examRouteSource.slice(activeQuestionSectionStart);
+  const { activeQuestionSection, reviewSection } =
+    getMockExamSourceCitationSections(examRouteSource);
 
   assert.match(
     reviewSection,
     /<UHRReferenceCard language=\{language\} reference=\{item\.uhrReference\} \/>/,
   );
-  assert.match(activeQuestionSection, /<QuestionSourceCitation/);
+  assert.match(reviewSection, /<ExplanationPanel[\s\S]*language=\{language\}/);
+  assert.match(reviewSection, /<QuestionSourceCitation[\s\S]*question=\{item\}/);
+  assert.match(
+    reviewSection,
+    /<QuestionReportLink[\s\S]*question=\{reviewQuestion\}[\s\S]*selectedOptionId=\{answers\[item\.questionId\]\}/,
+  );
+  assert.match(
+    activeQuestionSection,
+    /<QuestionSourceCitation[\s\S]*language=\{language\}[\s\S]*question=\{question\}/,
+  );
   assert.match(activeQuestionSection, /copy\.activeQuestionRegionLabel\(questionNumber\)/);
   assert.match(activeQuestionSection, /accessibilityLabel=\{activeQuestionRegionLabel\}/);
   assert.match(activeQuestionSection, /aria-label=\{activeQuestionRegionLabel\}/);
@@ -260,7 +258,18 @@ test('active mock exam keeps full UHR reference cards out of pre-submit question
     activeQuestionSection,
     /<ProvenanceBadge language=\{language\} question=\{question\} \/>/,
   );
-  assert.doesNotMatch(activeQuestionSection, /UHRReferenceCard/);
+  assert.match(
+    activeQuestionSection,
+    /<QuestionReportLink\s+language=\{language\}\s+question=\{question\}\s+screen="exam"\s+\/>/,
+  );
+  assert.match(
+    activeQuestionSection,
+    /const isFlagged = Boolean\(flaggedQuestionIds\[question\.id\]\);/,
+  );
+  assert.match(activeQuestionSection, /aria-pressed=\{isFlagged\}/);
+  assert.match(activeQuestionSection, /accessibilityState=\{\{ checked: isFlagged \}\}/);
+  assert.doesNotMatch(activeQuestionSection, /<UHRReferenceCard/);
+  assert.doesNotMatch(activeQuestionSection, /<ExplanationPanel/);
 });
 
 test('mock exam timer and auto-submit runtime guards reject malformed state', () => {
