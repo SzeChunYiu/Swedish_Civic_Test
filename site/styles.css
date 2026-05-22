@@ -9314,3 +9314,113 @@ html[dir='rtl'] .lang-menu {
     min-width: 44px;
   }
 }
+
+/* ------------------------------------------------------------------
+   MOCK CHAPTER CHIP BOX OPTIMIZATION ROUND
+   Refines the timed-practice chapter picker into compact selectable
+   study cards with clearer active states and safer narrow layouts.
+------------------------------------------------------------------ */
+
+.mock-chapters {
+  background: rgba(255, 255, 255, 0.34);
+  border: 1px solid rgba(0, 106, 167, 0.08);
+  border-radius: 20px;
+  gap: 10px;
+  padding: 10px;
+}
+
+.mock-chip {
+  background: rgba(255, 255, 255, 0.56);
+  border: 1px solid rgba(0, 106, 167, 0.12);
+  border-radius: 16px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.28),
+    0 12px 28px -26px rgba(11, 31, 51, 0.7);
+  min-height: 58px;
+  padding: 10px 12px;
+  position: relative;
+}
+
+.mock-chip::before {
+  background: var(--card-rail);
+  border-radius: 16px 0 0 16px;
+  content: '';
+  inset: 0 auto 0 0;
+  opacity: 0;
+  position: absolute;
+  transition: opacity 0.15s ease;
+  width: 4px;
+}
+
+.mock-chip:hover {
+  background: rgba(254, 204, 0, 0.13);
+  border-color: rgba(217, 169, 0, 0.28);
+}
+
+.mock-chip.is-on {
+  background:
+    linear-gradient(135deg, rgba(0, 106, 167, 0.18), rgba(254, 204, 0, 0.12)),
+    var(--card-surface);
+  border-color: rgba(0, 106, 167, 0.34);
+  box-shadow: var(--card-shadow);
+  color: var(--ink);
+}
+
+.mock-chip.is-on::before {
+  opacity: 0.9;
+}
+
+.mock-chip__emoji {
+  align-items: center;
+  background: rgba(254, 204, 0, 0.14);
+  border: 1px solid rgba(217, 169, 0, 0.18);
+  border-radius: 12px;
+  display: inline-flex;
+  height: 34px;
+  justify-content: center;
+  width: 34px;
+}
+
+.mock-chip__num {
+  background: rgba(0, 106, 167, 0.08);
+  border: 1px solid rgba(0, 106, 167, 0.12);
+  border-radius: 999px;
+  color: var(--blue-ink);
+  padding: 3px 7px;
+}
+
+.mock-chip.is-on .mock-chip__num {
+  background: rgba(254, 204, 0, 0.18);
+  border-color: rgba(217, 169, 0, 0.26);
+  color: var(--ink);
+}
+
+.mock-chip__t {
+  white-space: normal;
+  line-height: 1.25;
+}
+
+:root[data-theme='dark'] .mock-chapters,
+:root[data-theme='dark'] .mock-chip,
+:root[data-theme='dark'] .mock-chip.is-on,
+:root[data-theme='dark'] .mock-chip__emoji,
+:root[data-theme='dark'] .mock-chip__num {
+  background: rgba(255, 255, 255, 0.045);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: var(--ink);
+}
+
+@media (max-width: 640px) {
+  .mock-chapters {
+    grid-template-columns: 1fr;
+    padding: 8px;
+  }
+  .mock-chip {
+    min-height: 54px;
+    padding: 10px 11px;
+  }
+  .mock-chip__emoji {
+    height: 32px;
+    width: 32px;
+  }
+}
