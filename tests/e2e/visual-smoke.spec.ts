@@ -10,6 +10,7 @@ import {
 } from './browserLaunch';
 import { resolveVisualSmokeOutput } from './visualSmokeOutput';
 import {
+  assertValidVisualSmokeRouteEntries,
   findUnexplainedVisualSmokeDuplicateReports,
   visualSmokeDuplicateExplanations,
   visualSmokeRouteManifestEntries,
@@ -79,13 +80,16 @@ test('primary routes render and capture UI/UX screenshots', async ({ page }) => 
   fs.mkdirSync(screenshotDir, { recursive: true });
   const consoleErrors: string[] = [];
   const manifest: RouteCapture[] = [];
+  const routeEntries = visualSmokeRouteManifestEntries();
+
+  assertValidVisualSmokeRouteEntries(routeEntries);
 
   page.on('console', (message) => {
     if (message.type() === 'error') consoleErrors.push(message.text());
   });
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
-  for (const { file, name, route } of visualSmokeRouteManifestEntries()) {
+  for (const { file, name, route } of routeEntries) {
     await page.goto(route, { waitUntil: 'networkidle' });
     const dismissal = await dismissBlockingModals(page);
     const bodyText = await page.locator('body').innerText();

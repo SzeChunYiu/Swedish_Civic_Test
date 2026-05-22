@@ -15,6 +15,8 @@ export type VisualSmokeDuplicateExplanation = {
   reason: string;
 };
 
+const visualSmokeRouteFilePattern = /^[a-z0-9]+(?:-[a-z0-9]+)*\.png$/;
+
 export const visualSmokeRoutes = [
   { name: 'index', route: '/', file: 'index.png' },
   { name: 'onboarding', route: '/onboarding', file: 'onboarding.png' },
@@ -36,7 +38,12 @@ export const visualSmokeRoutes = [
 export function visualSmokeRouteManifestEntries(
   routes: readonly VisualSmokeRoute[] = visualSmokeRoutes,
 ): VisualSmokeRouteManifestEntry[] {
-  return routes.map(({ file, name, route }) => ({ file, name, route }));
+  assertValidVisualSmokeRouteEntries(routes);
+  return routes.map(({ file, name, route }) => ({
+    file: file.trim(),
+    name: name.trim(),
+    route: route.trim(),
+  }));
 }
 
 export const visualSmokeDuplicateExplanations = [
@@ -47,6 +54,86 @@ export const visualSmokeDuplicateExplanations = [
 ] as const satisfies readonly VisualSmokeDuplicateExplanation[];
 
 const minDuplicateExplanationReasonLength = 24;
+
+function routeEntryLabel(index: number): string {
+  return `visual smoke route entry ${index + 1}`;
+}
+
+function formatDuplicateIndexes(indexes: readonly number[]): string {
+  return indexes.map((index) => index + 1).join(', ');
+}
+
+function pushDuplicateValueErrors({
+  errors,
+  label,
+  values,
+}: {
+  errors: string[];
+  label: string;
+  values: ReadonlyMap<string, number[]>;
+}) {
+  for (const [value, indexes] of values.entries()) {
+    if (indexes.length > 1) {
+      errors.push(
+        `${label} "${value}" is duplicated by entries ${formatDuplicateIndexes(indexes)}`,
+      );
+    }
+  }
+}
+
+export function validateVisualSmokeRouteEntries(
+  routes: readonly Partial<VisualSmokeRoute>[] = visualSmokeRoutes,
+): string[] {
+  const errors: string[] = [];
+  const names = new Map<string, number[]>();
+  const routePaths = new Map<string, number[]>();
+  const files = new Map<string, number[]>();
+
+  routes.forEach((entry, index) => {
+    const label = routeEntryLabel(index);
+    const name = typeof entry.name === 'string' ? entry.name.trim() : '';
+    const route = typeof entry.route === 'string' ? entry.route.trim() : '';
+    const file = typeof entry.file === 'string' ? entry.file.trim() : '';
+
+    if (!name) {
+      errors.push(`${label} has a blank route name`);
+    } else {
+      names.set(name, [...(names.get(name) ?? []), index]);
+    }
+
+    if (!route) {
+      errors.push(`${label} has a blank route path`);
+    } else if (!route.startsWith('/')) {
+      errors.push(`${label} route "${route}" must start with /`);
+    } else {
+      routePaths.set(route, [...(routePaths.get(route) ?? []), index]);
+    }
+
+    if (!file) {
+      errors.push(`${label} has a blank screenshot file`);
+    } else if (!visualSmokeRouteFilePattern.test(file)) {
+      errors.push(`${label} file "${file}" must be a safe .png basename`);
+    } else {
+      files.set(file, [...(files.get(file) ?? []), index]);
+    }
+  });
+
+  pushDuplicateValueErrors({ errors, label: 'route name', values: names });
+  pushDuplicateValueErrors({ errors, label: 'route path', values: routePaths });
+  pushDuplicateValueErrors({ errors, label: 'screenshot file', values: files });
+
+  return errors;
+}
+
+export function assertValidVisualSmokeRouteEntries(
+  routes: readonly Partial<VisualSmokeRoute>[] = visualSmokeRoutes,
+): void {
+  const errors = validateVisualSmokeRouteEntries(routes);
+
+  if (errors.length > 0) {
+    throw new Error(`Visual smoke route entries are invalid:\n${errors.join('\n')}`);
+  }
+}
 
 export function visualSmokeDuplicateExplanationKey(names: readonly string[]): string {
   return [...names].sort().join(',');
