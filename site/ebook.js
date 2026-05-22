@@ -35,6 +35,20 @@
       url: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
       retrievedDate: '2026-05-19',
     },
+    uhrOfficialTestAbout: {
+      label: 'UHR: Om medborgarskapsprovet',
+      labels: {
+        en: 'UHR: About the citizenship test',
+        sv: 'UHR: Om medborgarskapsprovet',
+      },
+      mixLabel: 'UHR test overview',
+      mixLabels: {
+        en: 'UHR test overview',
+        sv: 'UHR:s provöversikt',
+      },
+      url: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
+      retrievedDate: '2026-05-19',
+    },
     uhrOfficialTestFaq: {
       label: 'UHR: Frågor och svar',
       mixLabel: 'UHR test FAQ',
@@ -198,7 +212,8 @@
     );
   }
 
-  function sourceAnchor(note, lang = 'en') {
+  function sourceAnchor(note) {
+    const lang = arguments.length > 1 ? arguments[1] : 'en';
     const safeExternalAttrs = /^https?:\/\//.test(note.url)
       ? ' target="_blank" rel="noreferrer"'
       : '';
@@ -216,7 +231,7 @@
   }
 
   function officialTestSourceLinks() {
-    return OFFICIAL_TEST_SOURCE_NOTES.map((note) => sourceAnchor(note)).join(' · ');
+    return OFFICIAL_TEST_SOURCE_NOTES.map(sourceAnchor).join(' · ');
   }
 
   function ebookLocalizedLabel(map, lang) {
@@ -429,7 +444,7 @@
         return `<li id="${footnote.id}" data-source-key="${sourceKeys}"><a href="${ebookRouteHash(chapterId, 'fnref', footnote.id)}"><span>${footnote.index}</span></a> ${sources}</li>`;
       })
       .join('');
-    return `<section class="ebook__footnotes" aria-label="${ariaLabel}"><h2>${heading}</h2><ol>${items}</ol></section>`;
+    return `<section class="ebook__footnotes" aria-label="${heading}"><h2>${heading}</h2><ol>${items}</ol></section>`;
   }
 
   function renderEbookProvenanceBadge(lang, footnotes) {
