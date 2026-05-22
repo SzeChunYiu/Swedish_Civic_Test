@@ -200,7 +200,11 @@ export default function SearchScreen() {
       />
 
       <Card themeColors={themeColors}>
-        <Text nativeID={searchDescriptionId} style={styles.accessibilitySummaryText}>
+        <Text
+          nativeID={searchDescriptionId}
+          style={styles.accessibilitySummaryText}
+          testID="search-accessibility-summary-spacer"
+        >
           {copy.searchCardAccessibilityLabel}
         </Text>
         <Text accessibilityRole="header" style={styles.searchLabel}>
@@ -219,6 +223,7 @@ export default function SearchScreen() {
           placeholderTextColor={themeColors.textPlaceholder}
           returnKeyType="search"
           style={styles.searchInput}
+          testID="search-input"
           value={query}
         />
         <View style={styles.searchActions}>

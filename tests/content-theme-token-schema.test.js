@@ -20,7 +20,7 @@ test('theme token schema validates the exported design-token catalog', () => {
   const shadowSource = fs.readFileSync(path.join(repoRoot, 'lib/theme/shadows.ts'), 'utf8');
   const spacingSource = fs.readFileSync(path.join(repoRoot, 'lib/theme/spacing.ts'), 'utf8');
 
-  assert.equal(summary.themeColorTokensValidated, 37);
+  assert.equal(summary.themeColorTokensValidated, 39);
   assert.equal(summary.themeSpaceTokensValidated, 25);
   assert.equal(summary.themeRadiusTokensValidated, 9);
   assert.equal(summary.themeTypographyTokensValidated, 22);
@@ -28,10 +28,10 @@ test('theme token schema validates the exported design-token catalog', () => {
   assert.equal(summary.themeMotionTokensValidated, 7);
   assert.ok(summary.themeBorderWidthTokenFilesValidated > 0);
   assert.equal(summary.themeBorderWidthTokenParityValidated, true);
-  assert.equal(summary.themeContrastPairsValidated, 20);
+  assert.equal(summary.themeContrastPairsValidated, 22);
   assert.equal(summary.themeContrastPairsAAValidated, true);
-  assert.equal(summary.themeDarkColorTokensValidated, 37);
-  assert.equal(summary.themeDarkContrastPairsValidated, 20);
+  assert.equal(summary.themeDarkColorTokensValidated, 39);
+  assert.equal(summary.themeDarkContrastPairsValidated, 22);
   assert.equal(summary.themeDarkContrastPairsAAValidated, true);
   assert.equal(summary.themeTokenSchemaValidated, true);
   assert.match(spacingSource, /hairline:\s*1,/);
@@ -130,6 +130,9 @@ test('search and language controls keep 2px divider layout token separate from h
   assert.match(settingsSource, /gap:\s*space\.divider/);
   assert.match(searchSource, /borderWidth:\s*space\.hairline/);
   assert.match(languageToggleSource, /borderWidth:\s*space\.hairline/);
+  assert.match(searchSource, /testID="search-input"/);
+  assert.match(searchSource, /testID="search-accessibility-summary-spacer"/);
+  assert.match(settingsSource, /testID=\{`daily-goal-option-\$\{goal\}`\}/);
 });
 
 test('theme token schema rejects spacing token drift', () => {

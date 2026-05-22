@@ -731,6 +731,7 @@ export default function Screen() {
                         : styles.controlPressed
                       : null,
                   ]}
+                  testID={`daily-goal-option-${goal}`}
                   {...getWebRadioKeyboardProps(
                     supportedDailyGoalAnswerOptions,
                     dailyGoalAnswers,
