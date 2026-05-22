@@ -83,6 +83,8 @@ const expectedSomaliCopy = {
   'settings.theme.auto': 'Si otomaatig ah',
   'settings.done': 'Dhammay',
 };
+const expectedSomaliAccountSyncFragment =
+  'calaamadahaaga, qoraalladaada iyo dashboard-kaaga ayaa la isku waafajinayaa dhammaan qalabkaaga';
 
 const expectedArabicCopy = {
   'hero.h1a': expectedHomepageSlogans.ar['hero.h1a'],
@@ -109,6 +111,7 @@ const forbiddenSomaliFragments = [
   'Gudaha',
   'qaab gaar ah',
   'ka yaraan cabsida ka yaraan',
+  'dhban',
 ];
 
 const forbiddenArabicFragments = [
@@ -322,6 +325,16 @@ test('Somali static-site labels reject known machine-like strings and English fa
       `Somali dictionary still contains ${fragment}`,
     );
   }
+});
+
+test('Somali optional account FAQ uses reviewed dashboard sync wording', () => {
+  const extra = loadExtraI18n();
+  const somali = extra?.so;
+
+  assert.equal(typeof somali, 'object');
+  assert.match(somali['faq.3.a'], new RegExp(expectedSomaliAccountSyncFragment));
+  assert.doesNotMatch(somali['faq.3.a'], /\bdhban\b/i);
+  assert.doesNotMatch(somali['faq.3.a'], /isugu\s+dhban/i);
 });
 
 test('Chinese static-site labels use script-native sentence punctuation', () => {

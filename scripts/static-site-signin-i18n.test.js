@@ -9,6 +9,9 @@ function read(filePath) {
   return fs.readFileSync(path.join(repoRoot, filePath), 'utf8');
 }
 
+const reviewedSomaliSignedInCopy =
+  'Waad gashay. Calaamadahaaga, qoraalladaada iyo dashboard-kaaga ayaa la isku waafajinayaa dhammaan qalabkaaga.';
+
 test('static sign-in trigger and modal copy are localized display text', () => {
   const index = read('site/index.html');
   const signin = read('site/signin.js');
@@ -33,4 +36,16 @@ test('static sign-in trigger and modal copy are localized display text', () => {
   assert.match(signin, /window\.addEventListener\('smt:languagechange', localize\)/);
   assert.match(signin, /btn\.title = triggerText/);
   assert.match(signin, /btn\.setAttribute\('aria-label', triggerText\)/);
+});
+
+test('Somali sign-in signed-in copy uses reviewed dashboard sync wording', () => {
+  const signin = read('site/signin.js');
+
+  assert.match(signin, /['"]signin\.signedin['"]/);
+  assert.match(
+    signin,
+    new RegExp(reviewedSomaliSignedInCopy.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')),
+  );
+  assert.doesNotMatch(signin, /\bdhban\b/i);
+  assert.doesNotMatch(signin, /isugu\s+dhban/i);
 });

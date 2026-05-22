@@ -53,7 +53,7 @@
       ckb: 'چوویتە ژوورەوە. هایلایت، تێبینی و داشبۆردەکەت لەنێوان ئامێرەکانت هاوکات دەبن.',
       fa: 'وارد شده‌ای. هایلایت‌ها، یادداشت‌ها و داشبوردت بین دستگاه‌هایت همگام می‌شوند.',
       pl: 'Jesteś zalogowany. Twoje zaznaczenia, notatki i panel synchronizują się między urządzeniami.',
-      so: 'Waad gashay. Calaamadahaaga, qoraalladaada iyo dashboard-kaaga ayaa isugu dhban qalabkaaga.',
+      so: 'Waad gashay. Calaamadahaaga, qoraalladaada iyo dashboard-kaaga ayaa la isku waafajinayaa dhammaan qalabkaaga.',
       ti: 'ኣቲኻ ኣለኻ። ምልክታትካ፣ መዘኻኸርን ዳሽቦርድካን ኣብ መሳርሕታትካ ይሳነዩ።',
       tr: 'Giriş yaptın. Vurguların, notların ve panon cihazlarında senkronize olur.',
       uk: 'Ви увійшли. Виділення, нотатки та панель синхронізуються між пристроями.',

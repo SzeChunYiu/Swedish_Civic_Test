@@ -2644,7 +2644,7 @@
         'Wuxuu kaa caawinayaa <em>barashada</em>. Inta kale waxay ku xiran tahay adiga, ilaha rasmiga ah iyo inta nasasho fika aad qaadato. Su’aalaha waxaan ka soo qaadnaa ilo dadweyne oo si fudud u sharaxnaa.',
       'faq.3.q': 'Akoon ma u baahanahay?',
       'faq.3.a':
-        'Maya — wax walba waad samayn kartaa adigoon diiwaangelin, horumarkaaguna wuxuu ku hadhaa qalabkaaga. Soo gelitaanku waa ikhtiyaari, laakiin wuxuu furaa wax dheeraad ah: calaamadahaaga, qoraalladaada iyo dashboard-kaaga ayaa isugu dhban dhammaan qalabkaaga.',
+        'Maya — wax walba waad samayn kartaa adigoon diiwaangelin, horumarkaaguna wuxuu ku hadhaa qalabkaaga. Soo gelitaanku waa ikhtiyaari, laakiin wuxuu furaa wax dheeraad ah: calaamadahaaga, qoraalladaada iyo dashboard-kaaga ayaa la isku waafajinayaa dhammaan qalabkaaga.',
       'faq.4.q': 'Ma bilaash baa?',
       'faq.4.a':
         'Bilaabid, barasho iyo imtixaannada tijaabada ah waa bilaash. Xayeysiisyadu waxay caawiyaan in app-ku sii furnaado; Ka saar xayeysiisyada waa iibsasho ikhtiyaari ah oo hal mar ah, 29 SEK.',
