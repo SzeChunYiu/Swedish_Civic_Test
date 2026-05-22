@@ -26,10 +26,10 @@ const selectors = new Map([
     },
   ],
   [
-    'architecture',
+    'mobile-ads-consent',
     {
-      scripts: ['test:architecture', 'test:router-shell'],
-      description: 'focused architecture scaffold and router shell release gate',
+      script: 'test:mobile-ads-consent',
+      description: 'focused Mobile Ads consent runtime and schema gate',
     },
   ],
 ]);

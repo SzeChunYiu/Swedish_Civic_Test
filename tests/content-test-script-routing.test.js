@@ -1877,8 +1877,8 @@ test('xp selector runs only the focused XP rules parity script', () => {
   }
 });
 
-test('architecture selector runs only architecture scaffold and router-shell gates', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-architecture-routing-'));
+test('mobile ads consent selector runs only the focused runtime and schema parity bundle', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-mobile-ads-routing-'));
   const npmLog = path.join(tmpDir, 'npm.log');
   const env = {
     ...process.env,
@@ -1888,20 +1888,19 @@ test('architecture selector runs only architecture scaffold and router-shell gat
   };
 
   try {
-    const selectedResult = runDispatcher(['--', 'architecture'], env);
+    const selectedResult = runDispatcher(['--', 'mobile-ads-consent'], env);
     assert.equal(selectedResult.status, 0, selectedResult.stderr || selectedResult.stdout);
-    assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:architecture\nrun test:router-shell\n');
+    assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:mobile-ads-consent\n');
 
     const pkg = readPackageJson();
-    assert.equal(
-      pkg.scripts['test:architecture'],
-      'node --test scripts/architecture-scaffold.test.js',
-    );
-    assert.equal(pkg.scripts['test:router-shell'], 'node --test scripts/router-shell.test.js');
+    const script = pkg.scripts['test:mobile-ads-consent'];
+    assert.match(script, /tests\/mobile-ads-consent-runtime\.test\.js/);
+    assert.match(script, /tests\/content-mobile-ads-consent-schema-parity\.test\.js/);
+    assert.match(script, /node scripts\/validate-content\.js --focus-mobile-ads-consent/);
+    assert.match(script, /mobile ads consent\|Mobile Ads consent runtime\|ATT\|UMP\|SDK init/);
     assert.doesNotMatch(
-      fs.readFileSync(path.join(repoRoot, 'scripts/test-dispatch.js'), 'utf8'),
-      /architecture[\s\S]{0,220}test:all/,
-      'architecture selector must not route through the full suite',
+      script,
+      /scripts\/monetization\.test\.js|npm run test:monetization|npm run test:content|npm run test:all|npm test/,
     );
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
@@ -1930,13 +1929,13 @@ test('package npm test selector enters the dispatcher before running suites', ()
     assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:correct-display-position\n');
 
     fs.writeFileSync(npmLog, '');
-    const architectureResult = runPackageTest(['architecture'], env);
+    const mobileAdsConsentResult = runPackageTest(['mobile-ads-consent'], env);
     assert.equal(
-      architectureResult.status,
+      mobileAdsConsentResult.status,
       0,
-      architectureResult.stderr || architectureResult.stdout,
+      mobileAdsConsentResult.stderr || mobileAdsConsentResult.stdout,
     );
-    assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:architecture\nrun test:router-shell\n');
+    assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:mobile-ads-consent\n');
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
   }
@@ -2089,6 +2088,7 @@ test('unsupported npm test selectors fail before running any suite', () => {
       /architecture -> npm run test:architecture && npm run test:router-shell/,
     );
     assert.match(result.stderr, /monetization -> npm run test:monetization/);
+    assert.match(result.stderr, /mobile-ads-consent -> npm run test:mobile-ads-consent/);
     assert.match(result.stderr, /xp -> npm run test:xp-rules/);
     assert.equal(fs.existsSync(npmLog), false);
   } finally {
