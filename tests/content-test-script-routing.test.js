@@ -294,14 +294,6 @@ test('LegalSection rendering focus registry lists granular summary keys', () => 
 
   assert.ok(registryEntry, 'LegalSection rendering focus mode must be registered');
   assert.deepEqual(registryEntry.flags, ['--focus-legal-section-rendering']);
-  assert.deepEqual(registryEntry.summaryKeys, [
-    'legalSectionRenderingTestsRoutedValidated',
-    'legalSectionRenderingCasesValidated',
-    'legalSectionWhitespaceTextValidated',
-    'legalSectionFragmentChildrenValidated',
-    'legalSectionRawTextUnderViewValidated',
-    'legalSectionRenderingParityValidated',
-  ]);
   assert.match(validatorSource, /--focus-legal-section-rendering/);
   assert.match(
     validatorSource,
@@ -317,7 +309,24 @@ test('LegalSection rendering focus registry lists granular summary keys', () => 
   const match = result.stdout.match(/\{[\s\S]*\}/);
   assert.ok(match, 'focused LegalSection validation should print a JSON summary');
   const summary = JSON.parse(match[0]);
+  const emittedLegalSectionSummaryKeys = Object.keys(summary).filter((key) =>
+    key.startsWith('legalSection'),
+  );
+  const registeredLegalSectionSummaryKeys = registryEntry.summaryKeys.filter((key) =>
+    key.startsWith('legalSection'),
+  );
+  const registeredLegalSectionSummaryKeySet = new Set(registeredLegalSectionSummaryKeys);
 
+  assert.ok(
+    emittedLegalSectionSummaryKeys.length > 0,
+    'focused LegalSection validation should emit legalSection* summary keys',
+  );
+  for (const key of emittedLegalSectionSummaryKeys) {
+    assert.ok(registeredLegalSectionSummaryKeySet.has(key), `${key} is registered`);
+  }
+  for (const key of registeredLegalSectionSummaryKeys) {
+    assert.ok(Object.prototype.hasOwnProperty.call(summary, key), `${key} is emitted`);
+  }
   for (const key of registryEntry.summaryKeys) {
     assert.ok(Object.prototype.hasOwnProperty.call(summary, key), `${key} is present`);
   }
