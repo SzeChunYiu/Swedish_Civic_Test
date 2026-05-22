@@ -70,8 +70,44 @@ function readCheckedAreaIds(): {
   checkedAreaIds: CitizenshipRequirementAreaId[];
   persistenceWarning: RecoverablePersistenceWarning | null;
 } {
-  let readKey = checkedAreaIdsKey;
-  let readResult = readRecoverably(
+  const readLegacyCheckedAreaIds = (
+    primaryPersistenceWarning: RecoverablePersistenceWarning | null,
+  ) => {
+    const legacyReadResult = readRecoverably(
+      citizenshipRequirementsStorage,
+      citizenshipRequirementsStorageId,
+      legacyChecklistStateKey,
+      () => citizenshipRequirementsStorage?.getString(legacyChecklistStateKey),
+    );
+
+    if (!legacyReadResult.value) {
+      return {
+        checkedAreaIds: [],
+        persistenceWarning: primaryPersistenceWarning ?? legacyReadResult.warning,
+      };
+    }
+
+    const legacyParseResult = parseJsonRecoverably(
+      legacyReadResult.value,
+      citizenshipRequirementsStorageId,
+      legacyChecklistStateKey,
+      (rawValue) => {
+        const parsed = JSON.parse(rawValue);
+        return Array.isArray(parsed)
+          ? normalizeCitizenshipRequirementAreaIds(parsed)
+          : normalizeImportedCitizenshipRequirementsChecklist(parsed).checkedAreaIds;
+      },
+      [],
+    );
+
+    return {
+      checkedAreaIds: legacyParseResult.value,
+      persistenceWarning:
+        primaryPersistenceWarning ?? legacyParseResult.warning ?? legacyReadResult.warning,
+    };
+  };
+
+  const readResult = readRecoverably(
     citizenshipRequirementsStorage,
     citizenshipRequirementsStorageId,
     checkedAreaIdsKey,
@@ -79,23 +115,13 @@ function readCheckedAreaIds(): {
   );
 
   if (!readResult.value) {
-    readKey = legacyChecklistStateKey;
-    readResult = readRecoverably(
-      citizenshipRequirementsStorage,
-      citizenshipRequirementsStorageId,
-      legacyChecklistStateKey,
-      () => citizenshipRequirementsStorage?.getString(legacyChecklistStateKey),
-    );
-  }
-
-  if (!readResult.value) {
-    return { checkedAreaIds: [], persistenceWarning: readResult.warning };
+    return readLegacyCheckedAreaIds(readResult.warning);
   }
 
   const parseResult = parseJsonRecoverably(
     readResult.value,
     citizenshipRequirementsStorageId,
-    readKey,
+    checkedAreaIdsKey,
     (rawValue) => {
       const parsed = JSON.parse(rawValue);
       return Array.isArray(parsed)
@@ -105,9 +131,13 @@ function readCheckedAreaIds(): {
     [],
   );
 
+  if (parseResult.warning) {
+    return readLegacyCheckedAreaIds(parseResult.warning);
+  }
+
   return {
     checkedAreaIds: parseResult.value,
-    persistenceWarning: parseResult.warning ?? readResult.warning,
+    persistenceWarning: readResult.warning,
   };
 }
 

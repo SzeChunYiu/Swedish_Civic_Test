@@ -3,9 +3,13 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
+const { createMemoryMMKV, loadTsWithStorage } = require('./helpers/storageStoreHarness.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
 const themeModeUtilityE2ePath = path.join(repoRoot, 'tests/e2e/theme-mode-utility-routes.spec.ts');
+const citizenshipRequirementsStorageId = 'citizenship-requirements';
+const checkedAreaIdsKey = 'citizenshipRequirements.checkedAreaIds.v1';
+const legacyChecklistStateKey = 'citizenshipRequirementsChecklistState';
 
 const expectedAreaIds = [
   'identity',
@@ -65,6 +69,18 @@ function loadTs(relativePath) {
   new Function('module', 'exports', output)(mod, mod.exports);
 
   return mod.exports;
+}
+
+function loadCitizenshipRequirementsStore(initialStorageValues) {
+  const storage = createMemoryMMKV(initialStorageValues);
+  const storeModule = loadTsWithStorage(repoRoot, 'lib/storage/citizenshipRequirementsStore.ts', {
+    [citizenshipRequirementsStorageId]: storage,
+  });
+
+  return {
+    storage,
+    store: storeModule.useCitizenshipRequirementsChecklistStore,
+  };
 }
 
 function extractNamedStyle(source, styleName) {
@@ -319,4 +335,35 @@ test('citizenship requirements route is discoverable from about-the-test copy', 
   assert.match(aboutSource, /Se kravguiden/);
   assert.match(aboutSource, /View requirements guide/);
   assert.match(aboutSource, /accessibilityLabel=\{copy\.openRequirementsAccessibilityLabel\}/);
+});
+
+test('citizenship requirements checklist reads valid primary state before legacy state', () => {
+  const { store } = loadCitizenshipRequirementsStore({
+    [checkedAreaIdsKey]: JSON.stringify(['conduct', 'identity', 'unknown', 'conduct']),
+    [legacyChecklistStateKey]: JSON.stringify({
+      checkedAreaIds: ['selfSupport', 'swedishLanguage'],
+    }),
+  });
+
+  const state = store.getState();
+
+  assert.deepEqual(state.checkedAreaIds, ['identity', 'conduct']);
+  assert.equal(state.persistenceWarning, null);
+});
+
+test('citizenship requirements checklist recovers legacy state when primary JSON is corrupt', () => {
+  const { store } = loadCitizenshipRequirementsStore({
+    [checkedAreaIdsKey]: '{not-json',
+    [legacyChecklistStateKey]: JSON.stringify({
+      checkedAreaIds: ['selfSupport', 'identity', 'prototype', 'swedishLanguage', 'identity'],
+    }),
+  });
+
+  const state = store.getState();
+
+  assert.deepEqual(state.checkedAreaIds, ['identity', 'selfSupport', 'swedishLanguage']);
+  assert.equal(state.persistenceWarning?.storageId, citizenshipRequirementsStorageId);
+  assert.equal(state.persistenceWarning?.key, checkedAreaIdsKey);
+  assert.equal(state.persistenceWarning?.operation, 'read');
+  assert.match(state.persistenceWarning?.errorMessage || '', /JSON|Unexpected|position/i);
 });
