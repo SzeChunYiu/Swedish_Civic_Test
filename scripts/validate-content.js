@@ -6159,7 +6159,7 @@ function validateStaticEbookProseSourceMetadata() {
       message: 'static ebook Swedish practice hints must be marked as editorial prose',
     },
     {
-      snippet: 'function sourceAnchor(note) {',
+      snippet: "function sourceAnchor(note, lang = 'en') {",
       message: 'static ebook must centralize source anchors for safe external-link attributes',
     },
     {
