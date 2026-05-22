@@ -6,6 +6,7 @@ import * as SystemUI from 'expo-system-ui';
 import { LaunchPopupAd } from '../components/monetization/LaunchPopupAd';
 import { FirstRunAboutTheTestModal } from '../components/onboarding/FirstRunAboutTheTestModal';
 import { LanguagePicker } from '../components/ui/LanguagePicker';
+import { AuthProvider } from '../lib/auth/AuthContext';
 import { shouldSuppressLaunchPopupAdForPath } from '../lib/monetization/ads';
 import { useRemoveAdsEntitlements } from '../lib/monetization/useRemoveAdsEntitlements';
 import {
@@ -63,6 +64,9 @@ function RootLayoutContent() {
       >
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        <Stack.Screen name="account" />
+        <Stack.Screen name="auth/callback" options={{ headerShown: false }} />
         <Stack.Screen name="search" />
         <Stack.Screen name="dashboard" />
         <Stack.Screen name="citizenship-requirements" />
@@ -80,7 +84,9 @@ function RootLayoutContent() {
 export default function RootLayout() {
   return (
     <ThemeProvider>
-      <RootLayoutContent />
+      <AuthProvider>
+        <RootLayoutContent />
+      </AuthProvider>
     </ThemeProvider>
   );
 }
