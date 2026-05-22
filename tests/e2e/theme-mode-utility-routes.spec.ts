@@ -7,78 +7,14 @@ import {
   seedFreshFirstRunSettingsLanguage,
   seedSettingsLanguage,
 } from './browserLaunch';
-
-type SourceAffordanceLanguage = 'sv' | 'en';
+import {
+  citizenshipSourceAffordanceCases,
+  searchSourceAffordanceCases,
+  type SourceAffordanceLanguage,
+} from './themeModeUtilitySourceAffordanceCases';
 
 const accessibilityThemeModeKey = 'accessibility\\a11y.themeMode.v1';
 const mobileViewport = { width: 390, height: 844 };
-
-const searchSourceAffordanceCases = [
-  {
-    language: 'sv',
-    chapterQuery: 'kommun',
-    chapterLinkName: /Öppna kapitlet/,
-    inputName: 'Sök samhällsbegrepp och övningsfrågor',
-    provenanceBadgeName: /Källtyp: UHR-källa/,
-    provenanceLabel: 'UHR-källa',
-    provenanceQuery: 'folkomröstning',
-    sourceNoteName: /^Källanteckning:/,
-  },
-  {
-    language: 'en',
-    chapterQuery: 'municipality',
-    chapterLinkName: /Open the chapter/,
-    inputName: 'Search civic terms and practice questions',
-    provenanceBadgeName: /Provenance: UHR source/,
-    provenanceLabel: 'UHR source',
-    provenanceQuery: 'municipality',
-    sourceNoteName: /^Source note:/,
-  },
-] as const satisfies readonly {
-  chapterLinkName: RegExp;
-  chapterQuery: string;
-  inputName: string;
-  language: SourceAffordanceLanguage;
-  provenanceBadgeName: RegExp;
-  provenanceLabel: string;
-  provenanceQuery: string;
-  sourceNoteName: RegExp;
-}[];
-
-const citizenshipSourceAffordanceCases = [
-  {
-    checkedCheckboxName: /Markerad:/,
-    checkboxName: /Ej markerad:/,
-    disclaimerBodyName: /^Oberoende studieverktyg\./,
-    disclaimerLabel: /Studieinformation: Oberoende studieverktyg/,
-    disclaimerTitle: 'Studieinformation',
-    language: 'sv',
-    practiceLinkName: 'Öppna övningsläget för samhällskunskap',
-    sourceLinkName: /Migrationsverket: Ansök om svenskt medborgarskap/,
-    sourceTitle: 'Ansök om svenskt medborgarskap',
-  },
-  {
-    checkedCheckboxName: /Marked:/,
-    checkboxName: /Not marked:/,
-    disclaimerBodyName: /^Independent study tool\./,
-    disclaimerLabel: /Study disclaimer: Independent study tool/,
-    disclaimerTitle: 'Study disclaimer',
-    language: 'en',
-    practiceLinkName: 'Open civic knowledge practice mode',
-    sourceLinkName: /Migrationsverket: Apply for Swedish citizenship/,
-    sourceTitle: 'Apply for Swedish citizenship',
-  },
-] as const satisfies readonly {
-  checkedCheckboxName: RegExp;
-  checkboxName: RegExp;
-  disclaimerBodyName: RegExp;
-  disclaimerLabel: RegExp;
-  disclaimerTitle: string;
-  language: SourceAffordanceLanguage;
-  practiceLinkName: string;
-  sourceLinkName: RegExp;
-  sourceTitle: string;
-}[];
 
 const firstRunAboutModalCases = [
   {
@@ -421,13 +357,13 @@ for (const testCase of citizenshipSourceAffordanceCases) {
       `Citizenship source titles should use the dark primary text token in ${testCase.language}`,
     );
     await expectComputedColor(
-      firstSourceLink.getByText('Migrationsverket').first(),
+      firstSourceLink.getByText(testCase.sourcePublisher).first(),
       'color',
       darkColors.textSecondary,
       `Citizenship source metadata should use the dark secondary text token in ${testCase.language}`,
     );
     await expectComputedColor(
-      firstSourceLink.getByText(/https:\/\/www\.migrationsverket\.se\//).first(),
+      firstSourceLink.getByText(testCase.sourceUrlName).first(),
       'color',
       darkColors.accent,
       `Citizenship source URLs should use the dark accent token in ${testCase.language}`,

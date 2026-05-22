@@ -7,6 +7,10 @@ const { createMemoryMMKV, loadTsWithStorage } = require('./helpers/storageStoreH
 
 const repoRoot = path.resolve(__dirname, '..');
 const themeModeUtilityE2ePath = path.join(repoRoot, 'tests/e2e/theme-mode-utility-routes.spec.ts');
+const themeModeUtilitySourceAffordanceCasesPath = path.join(
+  repoRoot,
+  'tests/e2e/themeModeUtilitySourceAffordanceCases.ts',
+);
 const citizenshipRequirementsStorageId = 'citizenship-requirements';
 const checkedAreaIdsKey = 'citizenshipRequirements.checkedAreaIds.v1';
 const legacyChecklistStateKey = 'citizenshipRequirementsChecklistState';
@@ -57,6 +61,10 @@ function read(relativePath) {
 
 function readThemeModeUtilityE2eSource() {
   return fs.readFileSync(themeModeUtilityE2ePath, 'utf8');
+}
+
+function readThemeModeUtilitySourceAffordanceCasesSource() {
+  return fs.readFileSync(themeModeUtilitySourceAffordanceCasesPath, 'utf8');
 }
 
 function loadTs(relativePath) {
@@ -321,29 +329,34 @@ test('citizenship requirements cards surface precise source titles and currentne
 });
 
 test('citizenship dark source-affordance e2e covers Swedish and English locale names', () => {
-  const source = readThemeModeUtilityE2eSource();
+  const specSource = readThemeModeUtilityE2eSource();
+  const caseSource = readThemeModeUtilitySourceAffordanceCasesSource();
 
-  assert.match(source, /const citizenshipSourceAffordanceCases = \[/);
-  assert.match(source, /for \(const testCase of citizenshipSourceAffordanceCases\)/);
+  assert.match(specSource, /from '\.\/themeModeUtilitySourceAffordanceCases';/);
+  assert.match(specSource, /for \(const testCase of citizenshipSourceAffordanceCases\)/);
+  assert.match(caseSource, /export const citizenshipSourceAffordanceCases = \[/);
   assert.match(
-    source,
+    caseSource,
     /checkboxName: \/Ej markerad:\/[\s\S]*disclaimerLabel: \/Studieinformation: Oberoende studieverktyg\/[\s\S]*language: 'sv'[\s\S]*practiceLinkName: 'Öppna övningsläget för samhällskunskap'[\s\S]*sourceLinkName: \/Migrationsverket: Ansök om svenskt medborgarskap\//,
   );
   assert.match(
-    source,
+    caseSource,
     /checkboxName: \/Not marked:\/[\s\S]*disclaimerLabel: \/Study disclaimer: Independent study tool\/[\s\S]*language: 'en'[\s\S]*practiceLinkName: 'Open civic knowledge practice mode'[\s\S]*sourceLinkName: \/Migrationsverket: Apply for Swedish citizenship\//,
   );
-  assert.match(source, /checkedCheckboxName: \/Markerad:\//);
-  assert.match(source, /checkedCheckboxName: \/Marked:\//);
-  assert.match(source, /citizenship-requirement-identity-checkbox/);
-  assert.match(source, /citizenship-requirement-identity-checkbox-box/);
-  assert.match(source, /citizenship-requirement-identity-checkbox-check/);
-  assert.match(source, /darkColors\.successSoft/);
-  assert.match(source, /darkColors\.success/);
-  assert.match(source, /darkColors\.surfaceWarm/);
-  assert.match(source, /darkColors\.textDisclaimer/);
-  assert.match(source, /darkColors\.accent/);
-  assert.match(source, /await expectNoHorizontalOverflow\(page\);/);
+  assert.match(caseSource, /checkedCheckboxName: \/Markerad:\//);
+  assert.match(caseSource, /checkedCheckboxName: \/Marked:\//);
+  assert.match(specSource, /testCase\.disclaimerLabel/);
+  assert.match(specSource, /testCase\.sourceLinkName/);
+  assert.match(specSource, /testCase\.sourceUrlName/);
+  assert.match(specSource, /citizenship-requirement-identity-checkbox/);
+  assert.match(specSource, /citizenship-requirement-identity-checkbox-box/);
+  assert.match(specSource, /citizenship-requirement-identity-checkbox-check/);
+  assert.match(specSource, /darkColors\.successSoft/);
+  assert.match(specSource, /darkColors\.success/);
+  assert.match(specSource, /darkColors\.surfaceWarm/);
+  assert.match(specSource, /darkColors\.textDisclaimer/);
+  assert.match(specSource, /darkColors\.accent/);
+  assert.match(specSource, /await expectNoHorizontalOverflow\(page\);/);
 });
 
 test('citizenship requirements route is discoverable from about-the-test copy', () => {
