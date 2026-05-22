@@ -1104,6 +1104,54 @@ test('spaced repetition schema parity uses focused content validation routing', 
   );
 });
 
+test('review-store due limit uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const reviewStoreTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/v1-1-review-store.test.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('reviewStoreDueLimit');
+
+  assert.ok(registryEntry, 'review-store due-limit focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-review-store-due-limit']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'reviewStoreDueLimitCasesValidated',
+    'reviewStoreDueLimitParityValidated',
+  ]);
+  assert.match(validatorSource, /--focus-review-store-due-limit/);
+  assert.match(
+    validatorSource,
+    /validateReviewStoreDueLimitRuntime\(\);[\s\S]*reviewStoreDueLimitCasesValidated[\s\S]*reviewStoreDueLimitParityValidated/,
+  );
+  assert.match(
+    validatorSource,
+    /validateSpacedRepetitionSchedule\(\);[\s\S]*validateReviewStoreDueLimitRuntime\(\);[\s\S]*validateFlashcardDeckStrictDateRuntimeGuard\(\);/,
+    'full content validation must still invoke the review-store due-limit guard',
+  );
+  assert.match(reviewStoreTestSource, /--focus-review-store-due-limit/);
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-review-store-due-limit'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused review-store due-limit validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.equal(summary.reviewStoreDueLimitCasesValidated, 12);
+  assert.equal(summary.reviewStoreDueLimitParityValidated, true);
+  assert.deepEqual(Object.keys(summary).sort(), registryEntry.summaryKeys.slice().sort());
+});
+
 test('XP rules parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
