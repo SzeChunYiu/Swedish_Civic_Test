@@ -19,6 +19,7 @@ const MONETIZATION_THEME_SURFACES = [
   'components/monetization/RemoveAdsPlacementCta.tsx',
 ];
 const HEADER_THEME_SURFACES = [
+  'components/ui/LanguageToggle.tsx',
   'components/ui/LanguagePicker.tsx',
   'components/ui/TopBarActions.tsx',
 ];

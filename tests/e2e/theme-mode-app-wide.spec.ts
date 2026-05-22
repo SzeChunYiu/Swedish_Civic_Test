@@ -1,6 +1,6 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
-import { darkColors, shadows } from '../../lib/theme';
+import { darkColors, shadows, space } from '../../lib/theme';
 import {
   dismissBlockingModals,
   seedFreshSettingsLanguageAndAboutSeenWithStorage,
@@ -31,6 +31,14 @@ async function computedColors(locator: Locator) {
   });
 }
 
+async function computedStyleValue(locator: Locator, property: keyof CSSStyleDeclaration) {
+  return locator.evaluate((element, propertyName) => {
+    const style = window.getComputedStyle(element);
+
+    return style[propertyName as keyof CSSStyleDeclaration];
+  }, property);
+}
+
 async function closestBoxShadow(locator: Locator) {
   return locator.evaluate((element) => {
     let current = element.parentElement;
@@ -53,6 +61,17 @@ function expectBoxShadowToMatchToken(actualBoxShadow: string, tokenBoxShadow: st
   for (const length of lengths.slice(1)) {
     expect(actualBoxShadow).toContain(length);
   }
+}
+
+async function expectComputedStyleValue(
+  locator: Locator,
+  property: keyof CSSStyleDeclaration,
+  expectedValue: string,
+  message: string,
+) {
+  await expect
+    .poll(async () => computedStyleValue(locator, property), { message })
+    .toBe(expectedValue);
 }
 
 async function expectComputedColor(
@@ -287,6 +306,70 @@ test('practice post-answer reward panel uses dark theme tokens', async ({ page }
     'color',
     darkColors.badgeBlueText,
     'Post-answer XP label should use the dark badge text token',
+  );
+});
+
+test('search and settings hairline/divider CSS widths stay correct in dark theme', async ({
+  page,
+}) => {
+  await seedDarkEnglishMonetization(page);
+  await page.goto('/search', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  const searchInput = page.getByTestId('search-input');
+  await expect(searchInput).toBeVisible();
+  await expectComputedStyleValue(
+    searchInput,
+    'borderTopWidth',
+    `${space.hairline}px`,
+    'Dark Search input should render the semantic hairline as 1px CSS',
+  );
+
+  const searchSummarySpacer = page.getByTestId('search-accessibility-summary-spacer');
+  await expectComputedStyleValue(
+    searchSummarySpacer,
+    'height',
+    `${space.divider}px`,
+    'Dark Search hidden summary spacer should keep the 2px divider height',
+  );
+  await expectComputedStyleValue(
+    searchSummarySpacer,
+    'width',
+    `${space.divider}px`,
+    'Dark Search hidden summary spacer should keep the 2px divider width',
+  );
+
+  await page.goto('/settings?focus=study', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  const studyControls = page.getByTestId('study-settings-controls');
+  await expect(studyControls).toBeVisible();
+  await expectComputedStyleValue(
+    studyControls,
+    'borderTopWidth',
+    `${space.hairline}px`,
+    'Dark focused Settings study controls should render the semantic hairline as 1px CSS',
+  );
+
+  const dailyGoalOption = page.getByTestId('daily-goal-option-5');
+  await expect(dailyGoalOption).toBeVisible();
+  await expectComputedStyleValue(
+    dailyGoalOption,
+    'borderTopWidth',
+    `${space.hairline}px`,
+    'Dark daily goal pill should render the semantic hairline as 1px CSS',
+  );
+  await expectComputedStyleValue(
+    dailyGoalOption,
+    'rowGap',
+    `${space.divider}px`,
+    'Dark daily goal pill should keep the intentional 2px divider row gap',
+  );
+  await expectComputedStyleValue(
+    dailyGoalOption,
+    'columnGap',
+    `${space.divider}px`,
+    'Dark daily goal pill should keep the intentional 2px divider column gap',
   );
 });
 

@@ -1,7 +1,9 @@
+import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, radius, space, typography } from '../../lib/theme';
+import { radius, space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 
 const OPTIONS: { value: AppLanguage; label: string }[] = [
   { value: 'sv', label: 'SV' },
@@ -42,6 +44,8 @@ export function LanguageToggle({ languageOverride }: LanguageToggleProps = {}) {
   const settingsLanguage = useSettingsStore((state) => state.language);
   const setLanguage = useSettingsStore((state) => state.setLanguage);
   const language = languageOverride ?? settingsLanguage;
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const copy = languageToggleCopy[language];
 
   return (
@@ -70,37 +74,39 @@ export function LanguageToggle({ languageOverride }: LanguageToggleProps = {}) {
   );
 }
 
-const styles = StyleSheet.create({
-  row: {
-    backgroundColor: colors.surfaceWarm,
-    borderColor: colors.border,
-    borderRadius: radius.pill,
-    borderWidth: space.hairline,
-    flexDirection: 'row',
-    overflow: 'hidden',
-    padding: space.divider,
-  },
-  button: {
-    borderRadius: radius.pill,
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[0.5],
-  },
-  buttonActive: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderWidth: space.hairline,
-  },
-  buttonPressed: {
-    backgroundColor: colors.focusSoft,
-  },
-  label: {
-    color: colors.textMuted,
-    fontFamily: typography.badge.fontFamily,
-    fontSize: typography.badge.fontSize,
-    fontWeight: typography.badge.fontWeight,
-    letterSpacing: typography.badge.letterSpacing,
-  },
-  labelActive: {
-    color: colors.text,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    row: {
+      backgroundColor: themeColors.surfaceWarm,
+      borderColor: themeColors.border,
+      borderRadius: radius.pill,
+      borderWidth: space.hairline,
+      flexDirection: 'row',
+      overflow: 'hidden',
+      padding: space.divider,
+    },
+    button: {
+      borderRadius: radius.pill,
+      paddingHorizontal: space[1.5],
+      paddingVertical: space[0.5],
+    },
+    buttonActive: {
+      backgroundColor: themeColors.surface,
+      borderColor: themeColors.border,
+      borderWidth: space.hairline,
+    },
+    buttonPressed: {
+      backgroundColor: themeColors.focusSoft,
+    },
+    label: {
+      color: themeColors.textMuted,
+      fontFamily: typography.badge.fontFamily,
+      fontSize: typography.badge.fontSize,
+      fontWeight: typography.badge.fontWeight,
+      letterSpacing: typography.badge.letterSpacing,
+    },
+    labelActive: {
+      color: themeColors.text,
+    },
+  });
+}
