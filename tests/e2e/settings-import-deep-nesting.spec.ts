@@ -1,10 +1,11 @@
-import { expect, test, type Locator, type Page } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 import {
   collectConsoleAndPageErrors,
   dismissBlockingModals,
   seedFreshSettingsLanguageAndAboutSeen,
 } from './browserLaunch';
+import { forceTextInputValue } from './helpers/textInput';
 
 const importedStorageKeys = [
   'progress\\progressState',
@@ -20,21 +21,6 @@ function deepSourcePayload(depth: number, leafJson: string): string {
     nestedJson = `{"level${index}":${nestedJson}}`;
   }
   return `{"version":1,"source":${nestedJson}}`;
-}
-
-async function forceTextInputValue(locator: Locator, value: string) {
-  await locator.evaluate((element, nextValue) => {
-    const target = element as HTMLInputElement | HTMLTextAreaElement;
-    const prototype =
-      target instanceof HTMLTextAreaElement
-        ? HTMLTextAreaElement.prototype
-        : HTMLInputElement.prototype;
-    const valueSetter = Object.getOwnPropertyDescriptor(prototype, 'value')?.set;
-
-    valueSetter?.call(target, nextValue);
-    target.dispatchEvent(new Event('input', { bubbles: true }));
-    target.dispatchEvent(new Event('change', { bubbles: true }));
-  }, value);
 }
 
 async function expectNoImportWrites(page: Page) {
