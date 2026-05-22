@@ -5203,7 +5203,15 @@ const EXPECTED_PURCHASE_TYPE_UNIONS = [
   },
   {
     typeName: 'RemoveAdsPurchaseStatus',
-    values: ['purchased', 'pending', 'restored', 'not_found', 'persistence_failed'],
+    values: [
+      'unavailable',
+      'purchased',
+      'pending',
+      'restored',
+      'not_found',
+      'persistence_failed',
+      'finish_failed',
+    ],
   },
 ];
 const EXPECTED_PURCHASE_INTERFACES = [
@@ -5279,7 +5287,11 @@ const EXPECTED_PURCHASE_INTERFACES = [
   {
     name: 'PurchaseRuntimeOptions',
     fields: [
-      { name: 'purchaseUnavailableReason', type: "'web_store_unavailable'", optional: true },
+      {
+        name: 'purchaseUnavailableReason',
+        type: "'web_store_unavailable' | 'native_receipt_validator_unavailable'",
+        optional: true,
+      },
       { name: 'provider', type: 'RemoveAdsPurchaseProvider', optional: true },
       { name: 'storage', type: 'PurchaseStorage', optional: true },
     ],
@@ -11430,6 +11442,20 @@ if (process.argv.includes('--focus-remove-ads-hook-parity')) {
   printValidationSummary({
     removeAdsEntitlementHookCasesValidated,
     removeAdsEntitlementHookParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-remove-ads-purchase-runtime-parity')) {
+  validatePurchaseTypeSchemaParity();
+  validateRemoveAdsPurchaseRuntimeParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    purchaseTypeUnionsValidated,
+    purchaseTypeInterfacesValidated,
+    purchaseTypeSchemaParityValidated,
+    removeAdsPurchaseRuntimeCasesValidated,
+    removeAdsPurchaseRuntimeParityValidated,
   });
   process.exit(0);
 }
@@ -19302,6 +19328,10 @@ function validateRemoveAdsPurchaseRuntimeParity() {
   const normalizedPurchaseSource = purchaseSource.replace(/\s+/g, ' ');
   const normalizedPaywallSource = paywallSource.replace(/\s+/g, ' ');
   const normalizedPlacementCtaSource = placementCtaSource.replace(/\s+/g, ' ');
+  const paywallDisabledPropCount =
+    paywallSource.match(/disabled=\{actionsDisabled\}/g)?.length ?? 0;
+  const paywallDisabledStateCount =
+    paywallSource.match(/disabled:\s*actionsDisabled/g)?.length ?? 0;
   const nativeReceiptValidationBlock =
     purchaseSource.match(
       /async validateRemoveAdsReceipt\(purchase, productId\) \{([\s\S]*?)\n    \},\n    async requestRemoveAdsPurchase/,
@@ -19469,10 +19499,10 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       'mock/provider flows must cover invalid receipt validation without direct entitlement writes',
     ],
     [
-      /const persistenceResult = await persistValidatedRemoveAdsEntitlement\(\{[\s\S]*source:\s*'purchase',[\s\S]*\}\);[\s\S]*if \(!persistenceResult\.persisted\) \{[\s\S]*return createResult\('persistence_failed',[\s\S]*\);[\s\S]*\}[\s\S]*await provider\.finishPurchase\?\.\(purchase\);[\s\S]*return createResult\('purchased', persistenceResult\.entitlements, purchase\);/.test(
+      /const persistenceResult = await persistValidatedRemoveAdsEntitlement\(\{[\s\S]*source:\s*'purchase',[\s\S]*\}\);[\s\S]*if \(!persistenceResult\.persisted\) \{[\s\S]*return createResult\('persistence_failed',[\s\S]*\);[\s\S]*\}[\s\S]*try \{[\s\S]*await provider\.finishPurchase\?\.\(purchase\);[\s\S]*\} catch \{[\s\S]*return createResult\('finish_failed', persistenceResult\.entitlements, purchase\);[\s\S]*\}[\s\S]*return createResult\('purchased', persistenceResult\.entitlements, purchase\);/.test(
         purchaseSource,
       ),
-      'Remove Ads buy flow must persist the entitlement before finishing the native transaction',
+      'Remove Ads buy flow must persist the entitlement before finishing the native transaction and recover from post-persistence finish failures',
     ],
     [
       normalizedPlacementCtaSource.includes('restoreRemoveAdsPurchase') &&
@@ -19560,8 +19590,12 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       normalizedPaywallSource.includes('accessibilityState={{') &&
         normalizedPaywallSource.includes("busy: activeAction === 'buy'") &&
         normalizedPaywallSource.includes("busy: activeAction === 'restore'") &&
-        normalizedPaywallSource.includes('disabled={activeAction !== null'),
-      'PremiumBanner must expose busy and disabled accessibility state during purchase actions',
+        normalizedPaywallSource.includes(
+          'const actionsDisabled = activeAction !== null || adsDisabled || purchaseUnavailable;',
+        ) &&
+        paywallDisabledPropCount === 2 &&
+        paywallDisabledStateCount === 2,
+      'PremiumBanner buy and restore actions must share actionsDisabled for disabled props and accessibility state',
     ],
     paywallInFlightCase,
   ];

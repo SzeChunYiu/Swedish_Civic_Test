@@ -458,7 +458,6 @@ export default function Screen() {
     setEntitlements: setMonetizationEntitlements,
   } = useMockExamAccess();
   const questionProgress = useProgressStore((state) => state.questionProgress);
-  const answerHistory = useProgressStore((state) => state.answerHistory);
   const mockExamSessions = useProgressStore((state) => state.mockExamSessions);
   const totalXp = useProgressStore((state) => state.totalXp);
   const answerDates = useProgressStore((state) => state.answerDates);
