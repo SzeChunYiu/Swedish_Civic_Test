@@ -2497,7 +2497,7 @@ test('public-sector source and generated exports use direct English propositions
     },
     {
       id: generatedQuestionId(sourceQuestions, 'q062', 'judgement'),
-      q: 'Which fact is correct about the public sector in Sweden?',
+      q: "Which statement about Sweden's public sector is correct?",
       why: expectedExplanation,
     },
   ];
