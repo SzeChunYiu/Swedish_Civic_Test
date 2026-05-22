@@ -36,6 +36,7 @@ import { calculateLevel } from '../../lib/learning/xp';
 import { showRewardedExtraExamAd } from '../../lib/monetization/rewardedAd';
 import { useMockExamAccess } from '../../lib/monetization/useMockExamAccess';
 import { useProgressStore } from '../../lib/storage/progressStore';
+import { dueCards, useReviewStore } from '../../lib/storage/reviewStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { radius, space, typography, type ThemeColors } from '../../lib/theme';
 import { useThemeColors } from '../../lib/theme/ThemeProvider';
@@ -107,6 +108,11 @@ type HomeCopy = {
   readinessSparseNote: string;
   readinessTitle: string;
   readinessVerdicts: Record<ReadinessVerdict, string>;
+  reviewDueAccessibilityLabel: (count: number) => string;
+  reviewDueBadge: string;
+  reviewDueCta: string;
+  reviewDueSubtitle: string;
+  reviewDueTitle: (count: number) => string;
   rewardedExamBody: string;
   rewardedExamHeading: string;
   rewardedExamPreviewAccessibilityLabel: string;
@@ -240,6 +246,12 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
       almost_ready: 'Stadig övning',
       strong_preparation: 'Stark övningsgrund',
     },
+    reviewDueAccessibilityLabel: (count) =>
+      `Öppna dagens repetition. ${count} repetitionskort väntar.`,
+    reviewDueBadge: 'Repetition',
+    reviewDueCta: 'Repetera nu',
+    reviewDueSubtitle: 'FSRS-kön samlar kort som är redo att repeteras idag.',
+    reviewDueTitle: (count) => `${count} repetitioner väntar idag`,
     rewardedExamBody:
       'När dagens kostnadsfria övningsprov är använt kan du låsa upp ett extra från startsidan. Krediten sparas först när den sponsrade förhandsvisningen är slutförd.',
     rewardedExamHeading: 'Lås upp ett extra övningsprov',
@@ -396,6 +408,11 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
       almost_ready: 'Steady practice',
       strong_preparation: 'Strong practice base',
     },
+    reviewDueAccessibilityLabel: (count) => `Open today's review. ${count} review cards are due.`,
+    reviewDueBadge: 'Review',
+    reviewDueCta: 'Review now',
+    reviewDueSubtitle: 'The FSRS queue collects cards that are ready to review today.',
+    reviewDueTitle: (count) => `${count} reviews due today`,
     rewardedExamBody:
       'When the daily free mock exam is used, unlock one extra from Home. The credit is stored only after the sponsored preview is completed.',
     rewardedExamHeading: 'Unlock an extra mock exam',
@@ -459,6 +476,7 @@ export default function Screen() {
   } = useMockExamAccess();
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const mockExamSessions = useProgressStore((state) => state.mockExamSessions);
+  const reviewCardsById = useReviewStore((state) => state.byId);
   const totalXp = useProgressStore((state) => state.totalXp);
   const answerDates = useProgressStore((state) => state.answerDates);
   const streakFreezeState = useProgressStore((state) => state.streakFreezeState);
@@ -534,6 +552,14 @@ export default function Screen() {
     readiness.score,
     readinessVerdict,
     readinessDetails,
+  );
+  const reviewDueCount = useMemo(
+    () =>
+      dueCards(
+        { byId: reviewCardsById },
+        { questionIdAllowlist: new Set(questions.map((question) => question.id)) },
+      ).length,
+    [reviewCardsById],
   );
   const showRemoveAdsOffer = entitlementsReady && monetizationEntitlements.adsDisabled !== true;
   const rewardedExamUnlocked = accessDecision.reason === 'rewarded_exam_credit';
@@ -619,6 +645,27 @@ export default function Screen() {
           tone="accent"
         />
       </View>
+      {reviewDueCount > 0 ? (
+        <Card
+          accessible
+          accessibilityLabel={copy.reviewDueAccessibilityLabel(reviewDueCount)}
+          style={styles.reviewDueCard}
+        >
+          <Badge tone="blue">{copy.reviewDueBadge}</Badge>
+          <Text accessibilityRole="header" style={styles.reviewDueTitle}>
+            {copy.reviewDueTitle(reviewDueCount)}
+          </Text>
+          <Text style={styles.reviewDueText}>{copy.reviewDueSubtitle}</Text>
+          <RouteLink
+            accessibilityLabel={copy.reviewDueAccessibilityLabel(reviewDueCount)}
+            href="/review"
+            style={styles.reviewDueLink}
+            variant="primary"
+          >
+            {copy.reviewDueCta}
+          </RouteLink>
+        </Card>
+      ) : null}
       <Card style={styles.readinessCard}>
         <View
           accessible
@@ -864,6 +911,23 @@ function createStyles(themeColors: ThemeColors) {
     },
     readinessCard: {
       gap: space[1.5],
+    },
+    reviewDueCard: {
+      gap: space[1],
+    },
+    reviewDueTitle: {
+      color: themeColors.text,
+      fontSize: typography.cardTitle.fontSize,
+      fontWeight: typography.cardTitle.fontWeight,
+      lineHeight: typography.cardTitle.lineHeight,
+    },
+    reviewDueText: {
+      color: themeColors.textSecondary,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+    reviewDueLink: {
+      alignSelf: 'flex-start',
     },
     readinessHeader: {
       alignItems: 'center',

@@ -11,6 +11,7 @@ import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/Button';
 import { Card } from '../../components/ui/Card';
 import { MetricCard } from '../../components/ui/MetricCard';
+import { RouteLink } from '../../components/ui/RouteLink';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
 import {
   deriveBadges,
@@ -26,6 +27,7 @@ import { calculateLevel } from '../../lib/learning/xp';
 import { isProRuntimeScopeEnabled } from '../../lib/monetization/releasePolicy';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useProgressStore } from '../../lib/storage/progressStore';
+import { reviewStats, useReviewStore } from '../../lib/storage/reviewStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 
@@ -58,6 +60,14 @@ type ProfileCopy = {
   noBadges: string;
   questionsHelper: string;
   removeAdsFocusCue: string;
+  reviewCardsMetric: string;
+  reviewCta: string;
+  reviewDaysMetric: string;
+  reviewLocalNote: string;
+  reviewMasteredMetric: string;
+  reviewStatsAccessibilityLabel: string;
+  reviewStatsSubtitle: string;
+  reviewStatsTitle: string;
   streakFreezeBadge: string;
   studySetupCta: string;
   studySetupSubtitle: string;
@@ -93,6 +103,15 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     openSettingsAccessibilityLabel: 'Öppna inställningar för dagligt mål, språk och ljud',
     questionsHelper: 'frågor',
     removeAdsFocusCue: 'Ta bort annonser är markerat. Köp- och återställningsknapparna finns här.',
+    reviewCardsMetric: 'repetitionskort',
+    reviewCta: 'Öppna repetition',
+    reviewDaysMetric: 'repetitionsdagar',
+    reviewLocalNote: 'Bygger på repetitionskort som sparas på den här enheten.',
+    reviewMasteredMetric: 'behärskade',
+    reviewStatsAccessibilityLabel: 'Öppna dagens repetition',
+    reviewStatsSubtitle:
+      'Se hur många FSRS-kort som finns, hur många som sitter och dina repetitionsdagar.',
+    reviewStatsTitle: 'Repetitionsstatistik',
     streakFreezeBadge: 'Svitskydd',
     studySetupCta: 'Ändra mål, språk och ljud',
     studySetupSubtitle: 'Små dagliga mål är lättare att hålla än långa maratonpass.',
@@ -131,6 +150,15 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     openSettingsAccessibilityLabel: 'Open settings for daily goal, language, and audio',
     questionsHelper: 'questions',
     removeAdsFocusCue: 'Remove Ads is highlighted. Buy and Restore controls are here.',
+    reviewCardsMetric: 'review cards',
+    reviewCta: 'Open review',
+    reviewDaysMetric: 'review days',
+    reviewLocalNote: 'Based on review cards stored on this device.',
+    reviewMasteredMetric: 'mastered',
+    reviewStatsAccessibilityLabel: "Open today's review",
+    reviewStatsSubtitle:
+      'See how many FSRS cards exist, how many are sticking, and your review days.',
+    reviewStatsTitle: 'Review stats',
     streakFreezeBadge: 'Streak freeze',
     studySetupCta: 'Adjust goal, language, and audio',
     studySetupSubtitle: 'Small daily goals are easier to keep than long cram sessions.',
@@ -157,6 +185,8 @@ export default function Screen() {
   } = useRemoveAdsEntitlements();
   const completedQuestionIds = useProgressStore((state) => state.completedQuestionIds);
   const questionProgress = useProgressStore((state) => state.questionProgress);
+  const reviewCardsById = useReviewStore((state) => state.byId);
+  const reviewGradedPerDay = useReviewStore((state) => state.gradedPerDay);
   const totalXp = useProgressStore((state) => state.totalXp);
   const answerDates = useProgressStore((state) => state.answerDates);
   const streakFreezeState = useProgressStore((state) => state.streakFreezeState);
@@ -194,6 +224,10 @@ export default function Screen() {
   };
   const allBadges = getAllBadges();
   const unlockedBadgeIds = new Set(deriveBadges(badgeInput).map((badge) => badge.id));
+  const fsrsReviewStats = useMemo(
+    () => reviewStats({ byId: reviewCardsById, gradedPerDay: reviewGradedPerDay }),
+    [reviewCardsById, reviewGradedPerDay],
+  );
 
   useEffect(() => {
     setStreakFreezeState(streakWithFreeze.freezeState);
@@ -291,6 +325,35 @@ export default function Screen() {
       </Card>
 
       <Card style={styles.cardWide}>
+        <SectionHeader title={copy.reviewStatsTitle} subtitle={copy.reviewStatsSubtitle} />
+        <View style={styles.statsRow}>
+          <MetricCard
+            label={copy.reviewCardsMetric}
+            value={fsrsReviewStats.totalCards}
+            helper={copy.reviewLocalNote}
+          />
+          <MetricCard
+            label={copy.reviewMasteredMetric}
+            value={fsrsReviewStats.masteredCards}
+            tone="blue"
+          />
+        </View>
+        <MetricCard
+          label={copy.reviewDaysMetric}
+          value={fsrsReviewStats.reviewDaysCount}
+          helper={copy.reviewLocalNote}
+        />
+        <RouteLink
+          accessibilityLabel={copy.reviewStatsAccessibilityLabel}
+          href="/review"
+          style={styles.reviewStatsLink}
+          variant="secondary"
+        >
+          {copy.reviewCta}
+        </RouteLink>
+      </Card>
+
+      <Card style={styles.cardWide}>
         <SectionHeader title={copy.badgesTitle} subtitle={copy.badgesSubtitle} />
         <View style={styles.badgeList}>
           {allBadges.length > 0 ? (
@@ -363,6 +426,9 @@ const styles = StyleSheet.create({
   settingsLink: {
     alignSelf: 'flex-start',
     minHeight: space[6],
+  },
+  reviewStatsLink: {
+    alignSelf: 'flex-start',
   },
   removeAdsPaywall: {
     gap: space[1],

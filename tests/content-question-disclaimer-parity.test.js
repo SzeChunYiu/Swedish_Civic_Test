@@ -11,6 +11,7 @@ const expectedQuestionDisclaimerRoutes = [
   'app/(tabs)/practice.tsx',
   'app/(tabs)/exam.tsx',
   'app/(tabs)/mistakes.tsx',
+  'app/review.tsx',
   'app/chapter/[chapterId].tsx',
   'app/quiz/[sessionId].tsx',
 ];
@@ -21,12 +22,14 @@ const expectedDisclaimerCounts = new Map([
   ['app/(tabs)/practice.tsx', 1],
   ['app/(tabs)/exam.tsx', 3],
   ['app/(tabs)/mistakes.tsx', 1],
+  ['app/review.tsx', 1],
   ['app/chapter/[chapterId].tsx', 1],
   ['app/quiz/[sessionId].tsx', 1],
 ]);
 const expectedQuestionCardRoutes = [
   'app/(tabs)/practice.tsx',
   'app/(tabs)/mistakes.tsx',
+  'app/review.tsx',
   'app/quiz/[sessionId].tsx',
 ];
 

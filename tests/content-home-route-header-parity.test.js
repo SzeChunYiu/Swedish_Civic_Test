@@ -41,11 +41,27 @@ test('home route title and dashboard card headings stay accessible as headers', 
 
   assert.equal(summary.homeRouteHeadersValidated, 5);
   assert.equal(summary.homeRouteHeaderParityValidated, true);
-  assert.equal(summary.homeRouteCopyLabelsValidated, 96);
+  assert.equal(summary.homeRouteCopyLabelsValidated, 106);
   assert.equal(summary.homeRouteCopyParityValidated, true);
   assert.match(source, /type HomeCopy =/);
   assert.match(source, /const homeCopy: Record<AppLanguage, HomeCopy>/);
   assert.match(source, /const copy = homeCopy\[language\]/);
+  assert.match(source, /import \{ dueCards, useReviewStore \}/);
+  assert.match(source, /const reviewCardsById = useReviewStore\(\(state\) => state\.byId\);/);
+  assert.match(source, /const reviewDueCount = useMemo\(/);
+  assert.match(source, /dueCards\(/);
+  assert.match(
+    source,
+    /questionIdAllowlist: new Set\(questions\.map\(\(question\) => question\.id\)\)/,
+  );
+  assert.match(source, /href="\/review"/);
+  assert.match(source, /\{copy\.reviewDueTitle\(reviewDueCount\)\}/);
+  assert.match(source, /Repetition/);
+  assert.match(source, /Review/);
+  assert.match(source, /\$\{count\} repetitioner väntar idag/);
+  assert.match(source, /\$\{count\} reviews due today/);
+  assert.match(source, /Repetera nu/);
+  assert.match(source, /Review now/);
   assert.match(source, /computeReadinessFromQuestionProgress/);
   assert.match(
     source,

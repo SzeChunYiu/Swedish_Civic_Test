@@ -1432,6 +1432,14 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Inga märken ännu',
     'Öppna inställningar för dagligt mål, språk och ljud',
     'Ändra mål, språk och ljud',
+    'Repetitionsstatistik',
+    'Se hur många FSRS-kort som finns, hur många som sitter och dina repetitionsdagar.',
+    'repetitionskort',
+    'behärskade',
+    'repetitionsdagar',
+    'Bygger på repetitionskort som sparas på den här enheten.',
+    'Öppna dagens repetition',
+    'Öppna repetition',
   ],
   en: [
     'Local profile',
@@ -1457,6 +1465,14 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'No badges yet',
     'Open settings for daily goal, language, and audio',
     'Adjust goal, language, and audio',
+    'Review stats',
+    'See how many FSRS cards exist, how many are sticking, and your review days.',
+    'review cards',
+    'mastered',
+    'review days',
+    'Based on review cards stored on this device.',
+    "Open today's review",
+    'Open review',
   ],
 };
 const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
@@ -1533,6 +1549,20 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
   ],
   ['href="/recap"', 'profile weekly recap link must route to the weekly recap screen'],
   ['label={copy.weeklyRecapCta}', 'profile weekly recap link must render localized copy'],
+  [
+    'reviewStats({ byId: reviewCardsById, gradedPerDay: reviewGradedPerDay })',
+    'profile review stats must derive from the FSRS review store',
+  ],
+  ['title={copy.reviewStatsTitle}', 'profile review stats title must render localized copy'],
+  [
+    'subtitle={copy.reviewStatsSubtitle}',
+    'profile review stats subtitle must render localized copy',
+  ],
+  ['label={copy.reviewCardsMetric}', 'profile review-card metric must render localized copy'],
+  ['label={copy.reviewMasteredMetric}', 'profile mastered-card metric must render localized copy'],
+  ['label={copy.reviewDaysMetric}', 'profile review-days metric must render localized copy'],
+  ['href="/review"', 'profile review stats link must route to the review screen'],
+  ['{copy.reviewCta}', 'profile review stats CTA must render localized copy'],
   ['language={language}', 'profile premium banner must receive the settings language'],
 ];
 const EXPECTED_HOME_ROUTE_COPY_LABELS = {
@@ -1554,6 +1584,11 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Starta ett tidsatt övningsprov från kortet Förberedelsesignal',
     'Starta ett tidsatt övningsprov från snabbåtgärderna',
     'Gör ett tidsatt övningsprov',
+    'Repetition',
+    '${count} repetitioner väntar idag',
+    'FSRS-kön samlar kort som är redo att repeteras idag.',
+    'Öppna dagens repetition. ${count} repetitionskort väntar.',
+    'Repetera nu',
     'Repetera svaga kapitel',
     'Starta en 5-minutersövning',
     'Starta den rekommenderade övningen',
@@ -1604,6 +1639,11 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Start a timed practice exam from the Preparation signal card',
     'Start a timed practice exam from quick actions',
     'Take a timed practice exam',
+    'Review',
+    '${count} reviews due today',
+    'The FSRS queue collects cards that are ready to review today.',
+    "Open today's review. ${count} review cards are due.",
+    'Review now',
     'Review weak chapters',
     'Start a 5-minute practice set',
     'Start the recommended practice session',
@@ -1714,6 +1754,15 @@ const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
     'accessibilityLabel={readinessAccessibilityLabel}',
     'home route readiness card must expose localized accessibility copy',
   ],
+  [
+    'const reviewCardsById = useReviewStore((state) => state.byId);',
+    'home route must read FSRS review cards from the review store',
+  ],
+  ['dueCards(', 'home route must derive due review cards with the FSRS selector'],
+  ['const reviewDueCount = useMemo(', 'home route must compute the due review count'],
+  ['href="/review"', 'home due review banner must link to the review route'],
+  ['{copy.reviewDueTitle(reviewDueCount)}', 'home due review banner must render localized title'],
+  ['{copy.reviewDueCta}', 'home due review CTA must render localized copy'],
   ['href="/exam"', 'home route readiness CTA must link to the mock exam flow'],
   ['eyebrow={copy.eyebrow}', 'home route eyebrow must render localized copy'],
   ['title={copy.title}', 'home route title must render localized copy'],
@@ -4505,6 +4554,7 @@ const EXPECTED_QUESTION_DISCLAIMER_ROUTES = [
   { route: '/practice', file: 'app/(tabs)/practice.tsx' },
   { route: '/exam', file: 'app/(tabs)/exam.tsx' },
   { route: '/mistakes', file: 'app/(tabs)/mistakes.tsx' },
+  { route: '/review', file: 'app/review.tsx' },
   { route: '/chapter/[chapterId]', file: 'app/chapter/[chapterId].tsx' },
   { route: '/quiz/[sessionId]', file: 'app/quiz/[sessionId].tsx' },
 ];
@@ -10733,6 +10783,20 @@ if (process.argv.includes('--focus-profile-route-copy')) {
     profileRouteCopyParityValidated,
     badgesValidated,
     badgeMilestoneParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-home-route-copy')) {
+  validateHomeRouteHeaderParity();
+  validateHomeRouteCopyParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    homeRouteHeadersValidated,
+    homeRouteHeaderParityValidated,
+    homeRouteCopyLabelsValidated,
+    homeRouteCopyParityValidated,
+    homeRouteInternalBenchmarkCopyValidated,
   });
   process.exit(0);
 }

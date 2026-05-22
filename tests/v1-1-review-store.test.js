@@ -228,6 +228,43 @@ test('reviewStats: counts mastered (stability >= 21) and review days', () => {
   assert.equal(stats.reviewDaysCount, 2); // days with > 0
 });
 
+test('review route, Home banner, and Profile stats consume the FSRS store', () => {
+  const reviewRouteSource = require('node:fs').readFileSync(
+    path.join(repoRoot, 'app/review.tsx'),
+    'utf8',
+  );
+  const homeSource = require('node:fs').readFileSync(
+    path.join(repoRoot, 'app/(tabs)/home.tsx'),
+    'utf8',
+  );
+  const profileSource = require('node:fs').readFileSync(
+    path.join(repoRoot, 'app/(tabs)/profile.tsx'),
+    'utf8',
+  );
+
+  assert.match(reviewRouteSource, /useReviewStore/);
+  assert.match(reviewRouteSource, /remainingDailyReviews/);
+  assert.match(reviewRouteSource, /FREE_DAILY_REVIEW_CAP/);
+  assert.match(reviewRouteSource, /REVIEW_GRADES\.AGAIN/);
+  assert.match(reviewRouteSource, /REVIEW_GRADES\.HARD/);
+  assert.match(reviewRouteSource, /REVIEW_GRADES\.GOOD/);
+  assert.match(reviewRouteSource, /REVIEW_GRADES\.EASY/);
+  assert.match(reviewRouteSource, /gradeReviewCard\(activeReviewCard\.questionId, grade\)/);
+  assert.match(reviewRouteSource, /hasProEntitlement/);
+  assert.match(reviewRouteSource, /isProRuntimeScopeEnabled/);
+  assert.match(reviewRouteSource, /<ProPaywall/);
+
+  assert.match(homeSource, /useReviewStore/);
+  assert.match(homeSource, /dueCards\(/);
+  assert.match(homeSource, /const reviewDueCount = useMemo\(/);
+  assert.match(homeSource, /href="\/review"/);
+
+  assert.match(profileSource, /useReviewStore/);
+  assert.match(profileSource, /reviewStats\(/);
+  assert.match(profileSource, /const fsrsReviewStats = useMemo\(/);
+  assert.match(profileSource, /href="\/review"/);
+});
+
 test('review store: throwing MMKV writes keep graded card in memory and record warning', () => {
   const storage = createThrowingSetMMKV('review disk full');
   const { useReviewStore } = loadTsWithStorage(repoRoot, 'lib/storage/reviewStore.ts', {

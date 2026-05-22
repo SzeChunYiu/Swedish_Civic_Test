@@ -25,12 +25,32 @@ test('profile route shell copy stays keyed by the settings language', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
 
-  assert.equal(summary.profileRouteCopyLabelsValidated, 46);
+  assert.equal(summary.profileRouteCopyLabelsValidated, 62);
   assert.equal(summary.profileRouteCopyParityValidated, true);
   assert.equal(summary.badgesValidated, 4);
   assert.equal(summary.badgeMilestoneParityValidated, true);
   assert.match(source, /type ProfileCopy =/);
   assert.match(source, /const profileCopy: Record<AppLanguage, ProfileCopy>/);
+  assert.match(source, /import \{ reviewStats, useReviewStore \}/);
+  assert.match(source, /const reviewCardsById = useReviewStore\(\(state\) => state\.byId\);/);
+  assert.match(
+    source,
+    /const reviewGradedPerDay = useReviewStore\(\(state\) => state\.gradedPerDay\);/,
+  );
+  assert.match(
+    source,
+    /reviewStats\(\{ byId: reviewCardsById, gradedPerDay: reviewGradedPerDay \}\)/,
+  );
+  assert.match(source, /Repetitionsstatistik/);
+  assert.match(source, /Review stats/);
+  assert.match(source, /repetitionskort/);
+  assert.match(source, /review cards/);
+  assert.match(source, /behärskade/);
+  assert.match(source, /mastered/);
+  assert.match(source, /repetitionsdagar/);
+  assert.match(source, /review days/);
+  assert.match(source, /href="\/review"/);
+  assert.match(source, /\{copy\.reviewCta\}/);
   assert.match(source, /getAllBadges,/);
   assert.match(source, /getBadgeTitle,/);
   assert.match(source, /getBadgeDescription,/);
