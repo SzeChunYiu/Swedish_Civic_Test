@@ -221,7 +221,7 @@ export function PremiumBanner({
             busy: activeAction === 'buy',
             disabled: actionsDisabled,
           }}
-          disabled={activeAction !== null || adsDisabled || purchaseUnavailable}
+          disabled={actionsDisabled}
           onPress={() => void runPurchaseAction('buy')}
           style={styles.actionButton}
         >
@@ -240,7 +240,7 @@ export function PremiumBanner({
           accessibilityLabel={copy.restoreAccessibilityLabel}
           accessibilityRole="button"
           accessibilityState={{ busy: activeAction === 'restore', disabled: actionsDisabled }}
-          disabled={activeAction !== null || adsDisabled || purchaseUnavailable}
+          disabled={actionsDisabled}
           onPress={() => void runPurchaseAction('restore')}
           style={styles.actionButton}
           variant="secondary"

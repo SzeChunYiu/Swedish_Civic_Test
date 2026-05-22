@@ -40,7 +40,7 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
       /async validateRemoveAdsReceipt\(purchase, productId\) \{([\s\S]*?)\n    \},\n    async requestRemoveAdsPurchase/,
     )?.[1] ?? '';
 
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 31);
+  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 32);
   assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
   assert.match(purchaseSource, /REMOVE_ADS_RECORD_SCHEMA_VERSION = 1/);
   assert.match(purchaseSource, /REMOVE_ADS_IOS_PRODUCT_ID = REMOVE_ADS_PRODUCT_ID/);
@@ -127,6 +127,16 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.match(paywallSource, /status === 'finish_failed'/);
   assert.match(paywallSource, /The store could not mark the purchase as finished/);
   assert.match(paywallSource, /Butiken kunde inte markera köpet som slutfört/);
+  assert.match(
+    paywallSource,
+    /const actionsDisabled = activeAction !== null \|\| adsDisabled \|\| purchaseUnavailable;/,
+  );
+  assert.equal(paywallSource.match(/disabled=\{actionsDisabled\}/g)?.length, 2);
+  assert.equal(paywallSource.match(/disabled: actionsDisabled/g)?.length, 2);
+  assert.doesNotMatch(
+    paywallSource,
+    /disabled=\{activeAction !== null \|\| adsDisabled \|\| purchaseUnavailable\}/,
+  );
   assert.match(placementCtaSource, /const purchaseActionInFlightRef = useRef\(false\);/);
   assert.match(placementCtaSource, /if \(purchaseActionInFlightRef\.current\) return;/);
   assert.match(placementCtaSource, /purchaseActionInFlightRef\.current = true;/);
@@ -205,6 +215,68 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /RemoveAdsPlacementCta must render localized mobile-app-only copy when web purchases are unavailable|RemoveAdsPlacementCta must disable buy and restore actions for unavailable web purchase runtime/,
+  );
+});
+
+test('Remove Ads purchase runtime parity rejects PremiumBanner disabled prop drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/PremiumBanner.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('disabled={actionsDisabled}', 'disabled={activeAction !== null || adsDisabled || purchaseUnavailable}');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-remove-ads-purchase-runtime-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /PremiumBanner buy and restore actions must share actionsDisabled for disabled props and accessibility state/,
+  );
+});
+
+test('Remove Ads purchase runtime parity rejects PremiumBanner disabled accessibility drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/PremiumBanner.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('disabled: actionsDisabled', 'disabled: activeAction !== null');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-remove-ads-purchase-runtime-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /PremiumBanner buy and restore actions must share actionsDisabled for disabled props and accessibility state/,
   );
 });
 
