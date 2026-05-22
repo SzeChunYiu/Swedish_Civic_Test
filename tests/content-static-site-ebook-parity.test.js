@@ -263,6 +263,22 @@ function runFocusedStaticEbookProvenanceValidator() {
   return JSON.parse(result.stdout.slice(jsonStart));
 }
 
+function runFocusedStaticEbookCh12HeadingValidator() {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-static-ebook-ch12-heading-parity'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      env: process.env,
+    },
+  );
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const jsonStart = result.stdout.indexOf('{');
+  assert.notEqual(jsonStart, -1, result.stdout);
+  return JSON.parse(result.stdout.slice(jsonStart));
+}
+
 function readStaticChapterMeta() {
   const context = { console, window: {} };
   context.globalThis = context;
@@ -1150,6 +1166,14 @@ test('focus-static-ebook-provenance validator routes static ebook provenance gua
     Object.prototype.hasOwnProperty.call(summary, 'staticFaqFallbackParityValidated'),
     false,
   );
+});
+
+test('focus-static-ebook-ch12 heading validator renders exact Swedish and English H1 copy', () => {
+  const summary = runFocusedStaticEbookCh12HeadingValidator();
+
+  assert.equal(summary.staticEbookCh12HeadingLocalesValidated, 2);
+  assert.equal(summary.staticEbookCh12HeadingParityValidated, true);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
 });
 
 test('static ebook prose source metadata is explicit or typed, never fallback annotation', () => {

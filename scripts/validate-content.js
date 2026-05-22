@@ -102,6 +102,10 @@ const TRUE_FALSE_OPTIONS = [
   { id: 'true', textSv: 'Sant', textEn: 'True' },
   { id: 'false', textSv: 'Falskt', textEn: 'False' },
 ];
+const STATIC_EBOOK_CH12_HEADING_EXPECTATIONS = Object.freeze({
+  en: { span: 'Mock exam', em: '& survival guide' },
+  sv: { span: 'Övningsprov', em: '& överlevnadsguide' },
+});
 const STATIC_VALIDATION_SYNTAX_FILES = Object.freeze([
   'scripts/static-outcome-copy-guard.js',
   'scripts/static-v11-readiness-copy-guard.js',
@@ -6393,6 +6397,42 @@ function renderStaticEbookChapter(harness, lang, chapterId) {
   return renderStaticEbookHash(harness, lang, `#/ebook?c=${encodeURIComponent(chapterId)}`).html;
 }
 
+function extractStaticEbookH1Parts(html) {
+  const match = html.match(/<h1 class="ebook__h1"><span>([^<]+)<\/span>\s*<em>([^<]+)<\/em><\/h1>/);
+  if (!match) return null;
+  return { em: match[2], span: match[1] };
+}
+
+function validateStaticEbookChapter12HeadingParity() {
+  const harness = createStaticEbookValidationHarness(readStaticEbookChapterIds());
+  let localesValidated = 0;
+
+  Object.entries(STATIC_EBOOK_CH12_HEADING_EXPECTATIONS).forEach(([language, expected]) => {
+    const html = renderStaticEbookChapter(harness, language, '12');
+    const actual = extractStaticEbookH1Parts(html);
+
+    if (!actual) {
+      fail(`static ebook chapter 12 ${language} render is missing the split H1 heading`);
+      return;
+    }
+
+    if (actual.span !== expected.span || actual.em !== expected.em) {
+      fail(
+        `static ebook chapter 12 ${language} H1 drifted: expected "${expected.span} ${expected.em}", got "${actual.span} ${actual.em}"`,
+      );
+      return;
+    }
+
+    localesValidated += 1;
+  });
+
+  return {
+    localesValidated,
+    parityValidated:
+      localesValidated === Object.keys(STATIC_EBOOK_CH12_HEADING_EXPECTATIONS).length,
+  };
+}
+
 function validateStaticEbookExtraLocaleHolidayGlosses() {
   const harness = createStaticEbookValidationHarness(readStaticEbookChapterIds());
   const offenders = [];
@@ -10311,6 +10351,8 @@ let staticEbookPracticalTestClaimPatternsValidated = 0;
 let staticEbookPracticalTestRequiredCopyValidated = 0;
 let staticEbookPracticalTestSourceUrlsValidated = 0;
 let staticEbookPracticalTestCurrentnessValidated = false;
+let staticEbookCh12HeadingLocalesValidated = 0;
+let staticEbookCh12HeadingParityValidated = false;
 let staticEbookFactboxClaimPatternsValidated = 0;
 let staticEbookFactboxRawParagraphsValidated = 0;
 let staticEbookFactboxRawParagraphsTotal = 0;
@@ -10742,6 +10784,18 @@ if (process.argv.includes('--focus-static-ebook-footnote-hash-parity')) {
     staticEbookFootnoteHeterogeneousChaptersValidated,
     staticEbookFootnoteHashLanguagesValidated,
     staticEbookFootnoteHashParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-static-ebook-ch12-heading-parity')) {
+  const headingValidation = validateStaticEbookChapter12HeadingParity();
+  staticEbookCh12HeadingLocalesValidated = headingValidation.localesValidated;
+  staticEbookCh12HeadingParityValidated = headingValidation.parityValidated;
+  exitWithValidationFailures();
+  printValidationSummary({
+    staticEbookCh12HeadingLocalesValidated,
+    staticEbookCh12HeadingParityValidated,
   });
   process.exit(0);
 }
@@ -11965,6 +12019,11 @@ staticEbookOutcomeClaimParityValidated =
     staticEbookPracticalTestRequiredCopyValidated ===
       STATIC_EBOOK_PRACTICAL_TEST_REQUIRED_COPY.length &&
     staticEbookPracticalTestSourceUrlsValidated === STATIC_EBOOK_PRACTICAL_TEST_SOURCE_URLS.length;
+}
+{
+  const headingValidation = validateStaticEbookChapter12HeadingParity();
+  staticEbookCh12HeadingLocalesValidated = headingValidation.localesValidated;
+  staticEbookCh12HeadingParityValidated = headingValidation.parityValidated;
 }
 {
   const factboxValidation = validateStaticEbookFactboxProvenance();
@@ -27437,6 +27496,8 @@ console.log(
       staticEbookPracticalTestRequiredCopyValidated,
       staticEbookPracticalTestSourceUrlsValidated,
       staticEbookPracticalTestCurrentnessValidated,
+      staticEbookCh12HeadingLocalesValidated,
+      staticEbookCh12HeadingParityValidated,
       staticEbookFactboxClaimPatternsValidated,
       staticEbookFactboxRawParagraphsValidated,
       staticEbookFactboxRawParagraphsTotal,

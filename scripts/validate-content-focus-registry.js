@@ -551,6 +551,14 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'staticEbookCh12Heading',
+    flags: ['--focus-static-ebook-ch12-heading-parity'],
+    summaryKeys: [
+      'staticEbookCh12HeadingLocalesValidated',
+      'staticEbookCh12HeadingParityValidated',
+    ],
+  },
+  {
     id: 'answerShuffleParity',
     flags: ['--focus-answer-shuffle-parity'],
     summaryKeys: [
