@@ -156,6 +156,20 @@
       tr: 'Giriş bağlantısı için e-postanı kontrol et.',
       uk: 'Перевірте пошту — там посилання для входу.',
     },
+    'signin.unavailable': {
+      en: 'Sign-in is unavailable right now. Please try again later.',
+      sv: 'Inloggning är inte tillgänglig just nu. Försök igen senare.',
+      'zh-Hans': '登录暂时不可用。请稍后再试。',
+      'zh-Hant': '登入暫時不可用。請稍後再試。',
+      ar: 'تسجيل الدخول غير متاح الآن. حاول مرة أخرى لاحقًا.',
+      ckb: 'چوونەژوورەوە ئێستا بەردەست نییە. دواتر دووبارە هەوڵ بدەوە.',
+      fa: 'ورود فعلاً در دسترس نیست. بعداً دوباره تلاش کن.',
+      pl: 'Logowanie jest teraz niedostępne. Spróbuj ponownie później.',
+      so: 'Soo gelistu hadda lama heli karo. Fadlan mar kale isku day goor dambe.',
+      ti: 'ምእታው ሕጂ ኣይርከብን። ጸኒሕካ ደጊምካ ፈትን።',
+      tr: 'Giriş şu anda kullanılamıyor. Lütfen daha sonra tekrar dene.',
+      uk: 'Вхід зараз недоступний. Спробуйте пізніше.',
+    },
     'signin.toast': {
       en: 'Signed in. Highlights & notes enabled.',
       sv: 'Inloggad. Markeringar och anteckningar är på.',
@@ -208,7 +222,7 @@
           // Don't spam: log once, then disable real auth for this page load.
           _clientPromise = null;
           if (window.console && console.warn)
-            console.warn('[signin] Supabase load failed; using local stub.', err);
+            console.warn('[signin] Supabase load failed; real auth unavailable.', err);
           return null;
         });
     }
@@ -270,10 +284,62 @@
   }
   function signedIn() {
     try {
+      const accountId = localStorage.getItem('smt_account_id') || '';
+      if (isConfigured() && accountId === 'local-demo') {
+        localStorage.removeItem('smt_signed_in');
+        localStorage.removeItem('smt_account_id');
+        localStorage.removeItem('smt_account_email');
+        return false;
+      }
       return localStorage.getItem('smt_signed_in') === '1';
     } catch {
       return false;
     }
+  }
+
+  function clearConfiguredLocalDemoSession() {
+    try {
+      if (isConfigured() && localStorage.getItem('smt_account_id') === 'local-demo') {
+        applySession(null);
+      }
+    } catch {}
+  }
+
+  function showSignedOutModalState() {
+    const m = document.getElementById('signin-modal');
+    if (!m) return;
+    const loginSec = m.querySelector('.signin__login');
+    const acctSec = m.querySelector('.signin__account');
+    if (loginSec) loginSec.hidden = false;
+    if (acctSec) acctSec.hidden = true;
+  }
+
+  function setAuthStatus(messageKey) {
+    const m = document.getElementById('signin-modal');
+    const loginSec = m && m.querySelector('.signin__login');
+    if (!loginSec) return;
+    let status = loginSec.querySelector('.signin__status');
+    if (!status) {
+      status = document.createElement('p');
+      status.className = 'signin__fineprint signin__status';
+      status.setAttribute('role', 'status');
+      status.setAttribute('aria-live', 'polite');
+      loginSec.appendChild(status);
+    }
+    status.textContent = t(messageKey);
+  }
+
+  function clearAuthStatus() {
+    const status = document.querySelector('#signin-modal .signin__status');
+    if (status) status.textContent = '';
+  }
+
+  function failClosedAuth(error) {
+    if (error && window.console && console.warn) console.warn('[signin] Auth unavailable', error);
+    applySession(null);
+    showSignedOutModalState();
+    setAuthStatus('signin.unavailable');
+    if (window.smtFx) window.smtFx.toast(t('signin.unavailable'), { duration: 2800 });
   }
 
   function open() {
@@ -316,6 +382,7 @@
   // Local-only stub used when Supabase is NOT configured. This preserves the
   // exact original behaviour: flip the flag, close, toast, notify.
   function stubSignIn() {
+    clearAuthStatus();
     try {
       localStorage.setItem('smt_signed_in', '1');
       localStorage.setItem('smt_account_id', 'local-demo');
@@ -346,20 +413,19 @@
       if (isConfigured()) {
         const magicBtn = e.target.closest('#signin-modal .signin__magic, #signin-modal .btn--gold');
         const prov = provBtn.getAttribute('data-prov'); // "google" | "apple" | null
+        clearAuthStatus();
         getClient().then((client) => {
           if (!client) {
-            stubSignIn();
+            failClosedAuth();
             return;
-          } // SDK failed to load → safe fallback
+          } // SDK failed to load → fail closed on configured auth
           if (prov === 'google' || prov === 'apple') {
             client.auth
               .signInWithOAuth({
                 provider: prov,
                 options: { redirectTo: redirectTarget() },
               })
-              .catch((err) => {
-                if (console && console.warn) console.warn('[signin] OAuth error', err);
-              });
+              .catch((err) => failClosedAuth(err));
           } else if (magicBtn) {
             const input = document.querySelector('#signin-modal .signin__input');
             const email = input && input.value ? input.value.trim() : '';
@@ -376,9 +442,7 @@
                 close();
                 if (window.smtFx) window.smtFx.toast(t('signin.magicsent'), { duration: 2800 });
               })
-              .catch((err) => {
-                if (console && console.warn) console.warn('[signin] OTP error', err);
-              });
+              .catch((err) => failClosedAuth(err));
           }
         });
         return;
@@ -423,14 +487,20 @@
   // no-op (getClient resolves null without touching the network).
   function initAuth() {
     if (!isConfigured()) return;
+    clearConfiguredLocalDemoSession();
     getClient().then((client) => {
-      if (!client) return;
+      if (!client) {
+        applySession(null);
+        return;
+      }
       client.auth
         .getSession()
         .then(({ data }) => {
           applySession(data && data.session ? data.session : null);
         })
-        .catch(() => {});
+        .catch((err) => {
+          failClosedAuth(err);
+        });
     });
   }
 

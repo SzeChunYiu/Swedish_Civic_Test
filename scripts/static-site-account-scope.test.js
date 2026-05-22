@@ -182,6 +182,7 @@ test('static optional account surface preserves anonymous local study boundaries
   const ebookTools = read('site/ebook-tools.js');
   const purchase = read('site/purchase.js');
   const signin = read('site/signin.js');
+  const v11 = read('site/v11.js');
 
   const staticSurface = [index, app, extras, styles, ebookTools].join('\n');
 
@@ -211,13 +212,27 @@ test('static optional account surface preserves anonymous local study boundaries
   assert.match(signin, /function\s+isConfigured\(\)/);
   assert.match(signin, /if\s*\(!isConfigured\(\)\)\s+return Promise\.resolve\(null\)/);
   assert.match(signin, /import\('https:\/\/esm\.sh\/@supabase\/supabase-js@2'\)/);
-  assert.match(signin, /if\s*\(!isConfigured\(\)\)\s+return;\s*\n\s*getClient\(\)\.then/);
+  assert.match(
+    signin,
+    /if\s*\(!isConfigured\(\)\)\s+return;[\s\S]*clearConfiguredLocalDemoSession\(\);[\s\S]*getClient\(\)\.then/,
+  );
   assert.match(signin, /window\.smtOpenSignin = open/);
   assert.match(signin, /window\.smtIsSignedIn = signedIn/);
+  assert.match(signin, /signin\.unavailable/);
+  assert.match(signin, /function\s+failClosedAuth\b/);
+  assert.match(signin, /if\s*\(!client\)\s*\{\s*failClosedAuth\(\);/);
+  assert.match(signin, /\.catch\(\(err\) => failClosedAuth\(err\)\)/);
+  assert.match(signin, /accountId === 'local-demo'/);
+  assert.match(signin, /localStorage\.removeItem\('smt_signed_in'\)/);
+  assert.doesNotMatch(signin, /Supabase load failed; using local stub/);
+  assert.doesNotMatch(signin, /if\s*\(!client\)\s*\{\s*stubSignIn\(\);/);
 
   assert.match(purchase, /account\.id === 'local-demo'/);
+  assert.match(purchase, /function\s+isRealPurchaseAccount\b/);
+  assert.match(purchase, /account\.id !== 'local-demo'/);
   assert.match(purchase, /purchase\.status\.realSignin/);
   assert.match(purchase, /window\.smtOpenSignin\(\)/);
+  assert.match(v11, /accountId !== 'local-demo'/);
 
   assert.doesNotMatch(ebookTools, /isSignedIn|showSigninNudge|data-act="signin"/);
   assert.doesNotMatch(ebookTools, /smtOpenSignin|smt_signed_in|signin__/);

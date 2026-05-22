@@ -37,6 +37,10 @@
     return { email, id };
   }
 
+  function isRealPurchaseAccount(account) {
+    return Boolean(account && account.id && account.id !== 'local-demo');
+  }
+
   function status(messageKey, replacements) {
     const message = t(messageKey, replacements);
     const el = document.getElementById('purchase-status');
@@ -47,7 +51,7 @@
   function setButtonState(button, account) {
     const kind = button.dataset.purchaseKind;
     const copy = PLAN_COPY[kind] || PLAN_COPY.remove_ads;
-    const locked = !account;
+    const locked = !isRealPurchaseAccount(account);
     button.dataset.purchaseLocked = locked ? 'true' : 'false';
     button.removeAttribute('aria-disabled');
     button.disabled = false;
@@ -59,7 +63,9 @@
     document.querySelectorAll('[data-purchase-kind]').forEach((button) => {
       setButtonState(button, account);
     });
-    if (account) status('purchase.status.ready', { account: account.email || account.id });
+    if (isRealPurchaseAccount(account)) {
+      status('purchase.status.ready', { account: account.email || account.id });
+    }
   }
 
   function supabaseConfigured() {
