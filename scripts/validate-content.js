@@ -235,6 +235,8 @@ const QUESTION_BANK_CSV_HEADER = [
   'uhrChapter',
   'uhrSection',
   'uhrPageApprox',
+  'uhrCitationSv',
+  'uhrCitationEn',
   'uhrSourceTitle',
   'uhrSourcePublisher',
   'uhrSourceUrl',
@@ -9939,6 +9941,8 @@ const appConfig = loadJson('app.json');
 const uhrSectionMap = loadJson('content/uhr-section-map.json');
 const provenanceModule = loadTs('lib/content/provenance.ts');
 const getQuestionProvenance = provenanceModule.getQuestionProvenance;
+const questionTextModule = loadTs('lib/quiz/questionText.ts');
+const getQuestionSourceCitation = questionTextModule.getQuestionSourceCitation;
 const adaptivePracticeModule = loadTs('lib/learning/adaptivePractice.ts');
 const pickAdaptiveSession = adaptivePracticeModule.pickAdaptiveSession;
 const explainAdaptivePick = adaptivePracticeModule.explainAdaptivePick;
@@ -10332,6 +10336,8 @@ let questionTagsValidated = 0;
 let questionBankCsvRowsValidated = 0;
 let questionBankCsvHeaderColumnsValidated = 0;
 let questionBankCsvUniqueHeaderNamesValidated = false;
+let questionBankCsvUhrCitationRowsValidated = 0;
+let questionBankCsvUhrCitationParityValidated = false;
 let questionBankCsvUhrSourcePublisherRowsValidated = 0;
 let questionBankCsvUhrSourcePublisherParityValidated = false;
 let questionBankCsvSupplementalSourceRowsValidated = 0;
@@ -25153,6 +25159,10 @@ function validateReadinessAdapterRules() {
 
 function validateQuestionBankCsvContract() {
   if (!Array.isArray(questions)) return;
+  if (typeof getQuestionSourceCitation !== 'function') {
+    fail('content/question-bank.csv citation guard cannot load getQuestionSourceCitation');
+    return;
+  }
 
   const csvPath = path.join(repoRoot, 'content/question-bank.csv');
   let rows = [];
@@ -25262,6 +25272,8 @@ function validateQuestionBankCsvContract() {
       question.uhrReference?.chapter,
       question.uhrReference?.section,
       String(question.uhrReference?.pageApprox),
+      expectedUhrCitation(question, 'sv'),
+      expectedUhrCitation(question, 'en'),
       uhrSectionMap?.source?.title,
       uhrSectionMap?.source?.publisher,
       uhrSectionMap?.source?.url,
@@ -25296,6 +25308,19 @@ function validateQuestionBankCsvContract() {
         }
       }
     });
+
+    const uhrCitationSvIndex = QUESTION_BANK_CSV_HEADER.indexOf('uhrCitationSv');
+    const uhrCitationEnIndex = QUESTION_BANK_CSV_HEADER.indexOf('uhrCitationEn');
+    if (
+      uhrCitationSvIndex >= 0 &&
+      uhrCitationEnIndex >= 0 &&
+      row[uhrCitationSvIndex] === expectedUhrCitation(question, 'sv') &&
+      row[uhrCitationEnIndex] === expectedUhrCitation(question, 'en') &&
+      hasText(row[uhrCitationSvIndex]) &&
+      hasText(row[uhrCitationEnIndex])
+    ) {
+      questionBankCsvUhrCitationRowsValidated += 1;
+    }
 
     const publisherIndex = QUESTION_BANK_CSV_HEADER.indexOf('uhrSourcePublisher');
     if (
@@ -25358,10 +25383,17 @@ function validateQuestionBankCsvContract() {
     metadataDriftFindings[field].forEach(fail);
   });
 
+  questionBankCsvUhrCitationParityValidated =
+    questionBankCsvUhrCitationRowsValidated === questions.length;
   questionBankCsvUhrSourcePublisherParityValidated =
     questionBankCsvUhrSourcePublisherRowsValidated === questions.length;
   questionBankCsvVotingRightsSupplementalSourceParityValidated =
     votingRightsSupplementalRowsValidated === expectedVotingRightsSupplementalRows;
+}
+
+function expectedUhrCitation(question, language) {
+  if (typeof getQuestionSourceCitation !== 'function') return '';
+  return getQuestionSourceCitation({ ...question, supplementalSources: [] }, language);
 }
 
 function validateQuestionProvenanceRuntime() {
@@ -26653,6 +26685,8 @@ if (process.argv.includes('--focus-question-bank-csv')) {
         questionBankCsvRowsValidated,
         questionBankCsvHeaderColumnsValidated,
         questionBankCsvUniqueHeaderNamesValidated,
+        questionBankCsvUhrCitationRowsValidated,
+        questionBankCsvUhrCitationParityValidated,
         questionBankCsvUhrSourcePublisherRowsValidated,
         questionBankCsvUhrSourcePublisherParityValidated,
         questionBankCsvSupplementalSourceRowsValidated,
@@ -27689,6 +27723,8 @@ console.log(
       questionBankCsvRowsValidated,
       questionBankCsvHeaderColumnsValidated,
       questionBankCsvUniqueHeaderNamesValidated,
+      questionBankCsvUhrCitationRowsValidated,
+      questionBankCsvUhrCitationParityValidated,
       questionBankCsvUhrSourcePublisherRowsValidated,
       questionBankCsvUhrSourcePublisherParityValidated,
       questionBankCsvSupplementalSourceRowsValidated,

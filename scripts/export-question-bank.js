@@ -64,6 +64,7 @@ const questions = loadTs('data/questions.ts', 'questions');
 const sourceQuestions = loadTs('data/questions.ts', 'sourceQuestions');
 const generatedPublishedQuestions = loadTs('data/questions.ts', 'generatedPublishedQuestions');
 const getQuestionProvenance = loadTs('lib/content/provenance.ts', 'getQuestionProvenance');
+const getQuestionSourceCitation = loadTs('lib/quiz/questionText.ts', 'getQuestionSourceCitation');
 const provenanceComposition = assertQuestionBankProvenanceComposition({
   questions,
   sourceQuestions,
@@ -76,6 +77,11 @@ const uhrSource = JSON.parse(
 const uhrSectionMap = JSON.parse(
   fs.readFileSync(path.join(repoRoot, 'content', 'uhr-section-map.json'), 'utf8'),
 );
+
+function uhrCitation(question, language) {
+  return getQuestionSourceCitation({ ...question, supplementalSources: [] }, language);
+}
+
 const rows = [
   [
     'id',
@@ -91,6 +97,8 @@ const rows = [
     'uhrChapter',
     'uhrSection',
     'uhrPageApprox',
+    'uhrCitationSv',
+    'uhrCitationEn',
     'uhrSourceTitle',
     'uhrSourcePublisher',
     'uhrSourceUrl',
@@ -119,6 +127,8 @@ const rows = [
     question.uhrReference.chapter,
     question.uhrReference.section,
     question.uhrReference.pageApprox,
+    uhrCitation(question, 'sv'),
+    uhrCitation(question, 'en'),
     uhrSource.title,
     uhrSource.publisher,
     uhrSource.url,
