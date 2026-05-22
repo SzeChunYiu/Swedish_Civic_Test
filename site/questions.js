@@ -1355,7 +1355,7 @@
     },
     "opts": [
       {
-        "en": "Legal certainty",
+        "en": "The rule of law",
         "sv": "Rättssäkerhet",
         "zh-Hant": "法律確定性",
         "zh-Hans": "法律确定性",
@@ -1413,7 +1413,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. Censorship, segregation, and monarchy mean other things.",
+      "en": "The rule of law means that laws apply to everyone and that no one can be convicted without a fair trial. Censorship, segregation, and monarchy mean other things.",
       "sv": "Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Censur, segregation och monarki betyder andra saker.",
       "zh-Hant": "法律確定性表示法律適用於所有人，任何人不得在沒有公平審判的情況下被定罪。審查制度、隔離和君主制是其他概念。",
       "zh-Hans": "法律确定性表示法律适用于所有人，任何人不得在没有公平审判的情况下被定罪。审查制度、隔离和君主制是其他概念。",
@@ -4136,7 +4136,7 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which statement describes legal certainty in Sweden?",
+      "en": "Which statement describes the rule of law in Sweden?",
       "sv": "Vilket påstående beskriver rättssäkerhet i Sverige?",
       "zh-Hant": "哪一個說法描述了瑞典的法律確定性？",
       "zh-Hans": "哪一个说法描述了瑞典的法律确定性？",
@@ -4193,7 +4193,7 @@
         "uk": "Людину можна засудити без перевірки доказів і фактів"
       },
       {
-        "en": "Legal certainty means that some people are above the law",
+        "en": "The rule of law means that some people are above the law",
         "sv": "Rättssäkerhet betyder att vissa personer står över lagen",
         "zh-Hant": "法律確定性表示某些人凌駕於法律之上",
         "zh-Hans": "法律确定性表示某些人凌驾于法律之上",
@@ -4209,7 +4209,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Legal certainty means everyone is treated equally before the law and receives a fair trial where evidence and facts are carefully reviewed. Courts are independent; the government and Riksdag may not decide how they judge cases, and the person concerned has the right to defend themselves with a lawyer and can appeal a judgment.",
+      "en": "The rule of law means everyone is treated equally before the law and receives a fair trial where evidence and facts are carefully reviewed. Courts are independent; the government and Riksdag may not decide how they judge cases, and the person concerned has the right to defend themselves with a lawyer and can appeal a judgment.",
       "sv": "Rättssäkerhet innebär att alla behandlas lika inför lagen och får en rättvis rättegång där bevis och fakta granskas noggrant. Domstolarna är oberoende; regering och riksdag får inte bestämma hur de ska döma, och den som berörs har rätt att försvara sig med advokat och kan överklaga en dom.",
       "zh-Hant": "法律確定性表示所有人在法律面前受到平等對待，並有公平審判，證據和事實會被仔細審查。法院是獨立的；政府和國會不得決定法院如何判案，受影響的人有權上訴。",
       "zh-Hans": "法律确定性表示所有人在法律面前受到平等对待，并有公平审判，证据和事实会被仔细审查。法院是独立的；政府和国会不得决定法院如何判案，受影响的人有权上诉。",
@@ -22043,7 +22043,7 @@
     },
     "opts": [
       {
-        "en": "Legal certainty",
+        "en": "The rule of law",
         "sv": "Rättssäkerhet",
         "zh-Hant": "法律確定性",
         "zh-Hans": "法律确定性",
@@ -22101,7 +22101,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. Censorship, segregation, and monarchy mean other things.",
+      "en": "The rule of law means that laws apply to everyone and that no one can be convicted without a fair trial. Censorship, segregation, and monarchy mean other things.",
       "sv": "Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Censur, segregation och monarki betyder andra saker."
     },
     "source": {
@@ -22126,7 +22126,7 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "When laws apply equally to everyone and no one can be convicted without a fair trial, it is called legal certainty.",
+      "en": "When laws apply equally to everyone and no one can be convicted without a fair trial, it is called the rule of law.",
       "sv": "När lagarna gäller lika för alla och ingen får dömas utan en rättvis rättegång kallas det rättssäkerhet."
     },
     "opts": [
@@ -22141,7 +22141,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. Censorship, segregation, and monarchy mean other things.",
+      "en": "The rule of law means that laws apply to everyone and that no one can be convicted without a fair trial. Censorship, segregation, and monarchy mean other things.",
       "sv": "Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Censur, segregation och monarki betyder andra saker."
     },
     "source": {
@@ -22181,7 +22181,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. Censorship, segregation, and monarchy mean other things.",
+      "en": "The rule of law means that laws apply to everyone and that no one can be convicted without a fair trial. Censorship, segregation, and monarchy mean other things.",
       "sv": "Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Censur, segregation och monarki betyder andra saker."
     },
     "source": {
@@ -22211,7 +22211,7 @@
     },
     "opts": [
       {
-        "en": "Legal certainty",
+        "en": "The rule of law",
         "sv": "Rättssäkerhet",
         "zh-Hant": "法律確定性",
         "zh-Hans": "法律确定性",
@@ -22269,7 +22269,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. Censorship, segregation, and monarchy mean other things.",
+      "en": "The rule of law means that laws apply to everyone and that no one can be convicted without a fair trial. Censorship, segregation, and monarchy mean other things.",
       "sv": "Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Censur, segregation och monarki betyder andra saker."
     },
     "source": {
@@ -28782,7 +28782,7 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "What is correct about legal certainty in Sweden?",
+      "en": "What is correct about the rule of law in Sweden?",
       "sv": "Vad gäller för rättssäkerhet i Sverige?"
     },
     "opts": [
@@ -28829,7 +28829,7 @@
         "uk": "Людину можна засудити без перевірки доказів і фактів"
       },
       {
-        "en": "Legal certainty means that some people are above the law",
+        "en": "The rule of law means that some people are above the law",
         "sv": "Rättssäkerhet betyder att vissa personer står över lagen",
         "zh-Hant": "法律確定性表示某些人凌駕於法律之上",
         "zh-Hans": "法律确定性表示某些人凌驾于法律之上",
@@ -28845,7 +28845,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Legal certainty means everyone is treated equally before the law and receives a fair trial where evidence and facts are carefully reviewed. Courts are independent; the government and Riksdag may not decide how they judge cases, and the person concerned has the right to defend themselves with a lawyer and can appeal a judgment.",
+      "en": "The rule of law means everyone is treated equally before the law and receives a fair trial where evidence and facts are carefully reviewed. Courts are independent; the government and Riksdag may not decide how they judge cases, and the person concerned has the right to defend themselves with a lawyer and can appeal a judgment.",
       "sv": "Rättssäkerhet innebär att alla behandlas lika inför lagen och får en rättvis rättegång där bevis och fakta granskas noggrant. Domstolarna är oberoende; regering och riksdag får inte bestämma hur de ska döma, och den som berörs har rätt att försvara sig med advokat och kan överklaga en dom."
     },
     "source": {
@@ -28885,7 +28885,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Legal certainty means everyone is treated equally before the law and receives a fair trial where evidence and facts are carefully reviewed. Courts are independent; the government and Riksdag may not decide how they judge cases, and the person concerned has the right to defend themselves with a lawyer and can appeal a judgment.",
+      "en": "The rule of law means everyone is treated equally before the law and receives a fair trial where evidence and facts are carefully reviewed. Courts are independent; the government and Riksdag may not decide how they judge cases, and the person concerned has the right to defend themselves with a lawyer and can appeal a judgment.",
       "sv": "Rättssäkerhet innebär att alla behandlas lika inför lagen och får en rättvis rättegång där bevis och fakta granskas noggrant. Domstolarna är oberoende; regering och riksdag får inte bestämma hur de ska döma, och den som berörs har rätt att försvara sig med advokat och kan överklaga en dom."
     },
     "source": {
@@ -28925,7 +28925,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Legal certainty means everyone is treated equally before the law and receives a fair trial where evidence and facts are carefully reviewed. Courts are independent; the government and Riksdag may not decide how they judge cases, and the person concerned has the right to defend themselves with a lawyer and can appeal a judgment.",
+      "en": "The rule of law means everyone is treated equally before the law and receives a fair trial where evidence and facts are carefully reviewed. Courts are independent; the government and Riksdag may not decide how they judge cases, and the person concerned has the right to defend themselves with a lawyer and can appeal a judgment.",
       "sv": "Rättssäkerhet innebär att alla behandlas lika inför lagen och får en rättvis rättegång där bevis och fakta granskas noggrant. Domstolarna är oberoende; regering och riksdag får inte bestämma hur de ska döma, och den som berörs har rätt att försvara sig med advokat och kan överklaga en dom."
     },
     "source": {
@@ -28950,7 +28950,7 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which description is correct for legal certainty in Sweden?",
+      "en": "Which description is correct for the rule of law in Sweden?",
       "sv": "Vilken beskrivning stämmer för rättssäkerhet i Sverige?"
     },
     "opts": [
@@ -28997,7 +28997,7 @@
         "uk": "Людину можна засудити без перевірки доказів і фактів"
       },
       {
-        "en": "Legal certainty means that some people are above the law",
+        "en": "The rule of law means that some people are above the law",
         "sv": "Rättssäkerhet betyder att vissa personer står över lagen",
         "zh-Hant": "法律確定性表示某些人凌駕於法律之上",
         "zh-Hans": "法律确定性表示某些人凌驾于法律之上",
@@ -29013,7 +29013,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Legal certainty means everyone is treated equally before the law and receives a fair trial where evidence and facts are carefully reviewed. Courts are independent; the government and Riksdag may not decide how they judge cases, and the person concerned has the right to defend themselves with a lawyer and can appeal a judgment.",
+      "en": "The rule of law means everyone is treated equally before the law and receives a fair trial where evidence and facts are carefully reviewed. Courts are independent; the government and Riksdag may not decide how they judge cases, and the person concerned has the right to defend themselves with a lawyer and can appeal a judgment.",
       "sv": "Rättssäkerhet innebär att alla behandlas lika inför lagen och får en rättvis rättegång där bevis och fakta granskas noggrant. Domstolarna är oberoende; regering och riksdag får inte bestämma hur de ska döma, och den som berörs har rätt att försvara sig med advokat och kan överklaga en dom."
     },
     "source": {
