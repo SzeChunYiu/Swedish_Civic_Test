@@ -30,6 +30,44 @@ function runFocusedLocalStudyCorruptJsonValidation() {
   );
 }
 
+function runFocusedLocalStudyCorruptJsonValidationWithMutations(mutations) {
+  return spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const mutations = ${JSON.stringify(mutations)};
+const originalReadFileSync = fs.readFileSync;
+
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const mutation = mutations.find((candidate) => normalizedPath.endsWith(candidate.file));
+
+  if (!mutation) return contents;
+
+  const isString = typeof contents === 'string';
+  let next = isString ? contents : contents.toString();
+
+  for (const replacement of mutation.replacements) {
+    if (!next.includes(replacement.from)) {
+      throw new Error(\`mutation target not found in \${mutation.file}: \${replacement.from}\`);
+    }
+    next = next.split(replacement.from).join(replacement.to);
+  }
+
+  return isString ? next : Buffer.from(next);
+};
+
+process.argv.push('${LOCAL_STUDY_CORRUPT_JSON_FOCUS_FLAG}');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+}
+
 function parseValidationSummary(stdout) {
   const match = stdout.match(/\{[\s\S]*\}/);
   assert.ok(match, 'focused local study corrupt JSON validation should print a JSON summary');
@@ -307,6 +345,144 @@ test('local study corrupt JSON warnings report focused validator coverage', () =
   assert.equal(summary.localStudyCorruptJsonStoresValidated, 4);
   assert.equal(summary.localStudyCorruptJsonRecoverableReadWarningTestsValidated, 4);
   assert.equal(summary.localStudyCorruptJsonWarningParityValidated, true);
+});
+
+test('local study corrupt JSON focused validator rejects dropped store warning propagation', () => {
+  const mutationCases = [
+    {
+      label: 'progress',
+      file: 'lib/storage/progressStore.ts',
+      replacements: [{ from: 'parseJsonRecoverably(', to: 'parseJsonWithoutWarning(' }],
+      expectedFailure: /progress store corrupt JSON warning path is missing parseJsonRecoverably/,
+    },
+    {
+      label: 'mistake review',
+      file: 'lib/storage/mistakeReviewStore.ts',
+      replacements: [
+        {
+          from: 'persistenceWarning: parseResult.warning ?? readResult.warning',
+          to: 'persistenceWarning: readResult.warning',
+        },
+      ],
+      expectedFailure:
+        /mistake review store corrupt JSON warning path is missing persistenceWarning: parseResult\.warning \?\? readResult\.warning/,
+    },
+    {
+      label: 'review',
+      file: 'lib/storage/reviewStore.ts',
+      replacements: [{ from: 'parseJsonRecoverably(', to: 'parseJsonWithoutWarning(' }],
+      expectedFailure: /review store corrupt JSON warning path is missing parseJsonRecoverably/,
+    },
+    {
+      label: 'highlights',
+      file: 'lib/storage/highlightsStore.ts',
+      replacements: [
+        {
+          from: 'persistenceWarning: parsed.warning ?? result.warning',
+          to: 'persistenceWarning: result.warning',
+        },
+      ],
+      expectedFailure:
+        /highlights store corrupt JSON warning path is missing persistenceWarning: parsed\.warning \?\? result\.warning/,
+    },
+  ];
+
+  for (const mutationCase of mutationCases) {
+    const result = runFocusedLocalStudyCorruptJsonValidationWithMutations([
+      {
+        file: mutationCase.file,
+        replacements: mutationCase.replacements,
+      },
+    ]);
+    const output = `${result.stdout}\n${result.stderr}`;
+
+    assert.notEqual(result.status, 0, `${mutationCase.label} mutation should fail validation`);
+    assert.match(output, mutationCase.expectedFailure, mutationCase.label);
+  }
+});
+
+test('local study corrupt JSON focused validator rejects missing warning detail assertions', () => {
+  const mutationCases = [
+    {
+      label: 'progress storage id',
+      file: 'tests/content-storage-write-fail-soft.test.js',
+      replacements: [
+        {
+          from: "persistenceWarning.storageId, 'progress'",
+          to: "persistenceWarning.storageId, 'not-progress'",
+        },
+      ],
+      expectedFailure:
+        /progress corrupt JSON warning test is missing persistenceWarning\.storageId, 'progress'/,
+    },
+    {
+      label: 'mistake-review key',
+      file: 'tests/content-storage-write-fail-soft.test.js',
+      replacements: [
+        {
+          from: "persistenceWarning.key, 'mistakeReviewState'",
+          to: "persistenceWarning.key, 'not-mistakeReviewState'",
+        },
+      ],
+      expectedFailure:
+        /mistake review corrupt JSON warning test is missing persistenceWarning\.key, 'mistakeReviewState'/,
+    },
+    {
+      label: 'highlight parse error detail',
+      file: 'tests/content-storage-write-fail-soft.test.js',
+      replacements: [
+        {
+          from: "assert.equal(state.persistenceWarning.key, 'ebook.highlights.v1');\n  assert.match(state.persistenceWarning.errorMessage, /JSON|Unexpected|position/i);",
+          to: "assert.equal(state.persistenceWarning.key, 'ebook.highlights.v1');\n  assert.equal(state.persistenceWarning.operation, 'read');",
+        },
+      ],
+      expectedFailure:
+        /highlights corrupt JSON warning test is missing persistenceWarning\.errorMessage/,
+    },
+    {
+      label: 'review storage id',
+      file: 'tests/v1-1-review-store.test.js',
+      replacements: [
+        {
+          from: "persistenceWarning.storageId, 'reviews'",
+          to: "persistenceWarning.storageId, 'not-reviews'",
+        },
+      ],
+      expectedFailure:
+        /review corrupt JSON warning test is missing persistenceWarning\.storageId, 'reviews'/,
+    },
+  ];
+
+  for (const mutationCase of mutationCases) {
+    const result = runFocusedLocalStudyCorruptJsonValidationWithMutations([
+      {
+        file: mutationCase.file,
+        replacements: mutationCase.replacements,
+      },
+    ]);
+    const output = `${result.stdout}\n${result.stderr}`;
+
+    assert.notEqual(result.status, 0, `${mutationCase.label} mutation should fail validation`);
+    assert.match(output, mutationCase.expectedFailure, mutationCase.label);
+  }
+});
+
+test('local study corrupt JSON focused validator rejects dropped parse error exposure', () => {
+  const result = runFocusedLocalStudyCorruptJsonValidationWithMutations([
+    {
+      file: 'lib/storage/persistenceWarning.ts',
+      replacements: [
+        {
+          from: '...(errorMessage ? { errorMessage } : {})',
+          to: '',
+        },
+      ],
+    },
+  ]);
+  const output = `${result.stdout}\n${result.stderr}`;
+
+  assert.notEqual(result.status, 0);
+  assert.match(output, /warnings must expose parse error messages when present/);
 });
 
 test('PersistenceWarningNotice copy selector covers warning scope and operation copy', () => {
