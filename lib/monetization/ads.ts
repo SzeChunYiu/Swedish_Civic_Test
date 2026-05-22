@@ -56,6 +56,10 @@ function readEnvString(key: string): string | undefined {
 }
 
 export const REAL_ADS_ENABLED = readBooleanFlag(process.env.EXPO_PUBLIC_REAL_ADS_ENABLED, false);
+const MOBILE_ADS_TEST_UNIT_CONSENT_ENABLED = readBooleanFlag(
+  process.env.EXPO_PUBLIC_MOBILE_ADS_TEST_UNIT_CONSENT_ENABLED,
+  false,
+);
 
 const GOOGLE_ADS_ENABLED = readBooleanFlag(process.env.EXPO_PUBLIC_GOOGLE_ADS_ENABLED, true);
 const REAL_AD_UNIT_OVERRIDES = readRealAdUnitOverrides();
@@ -252,6 +256,7 @@ export function getPlatformAdUnitId(
 
 export const adsConfig = {
   googleMobileAdsEnabled: GOOGLE_ADS_ENABLED,
+  mobileAdsTestUnitConsentEnabled: MOBILE_ADS_TEST_UNIT_CONSENT_ENABLED,
   realAdsEnabled: REAL_ADS_ENABLED,
   realAdsRequireConsentDecision: true,
   realUnitJsonEnvKey: REAL_AD_UNITS_JSON_ENV,

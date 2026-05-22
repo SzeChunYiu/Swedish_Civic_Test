@@ -3148,7 +3148,13 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
     initializeGoogleMobileAdsAfterConsent,
     mapTrackingTransparencyStatus,
     mapUmpConsentStatus,
+    shouldCollectMobileAdsConsent,
   } = loadTs('lib/monetization/mobileAdsConsent.ts');
+  const defaultAdsConfig = loadTs('lib/monetization/ads.ts').adsConfig;
+  const testUnitConsentAdsConfig = withEnv(
+    { EXPO_PUBLIC_MOBILE_ADS_TEST_UNIT_CONSENT_ENABLED: 'true' },
+    () => loadTs('lib/monetization/ads.ts').adsConfig,
+  );
 
   assert.equal(packageJson.dependencies['expo-tracking-transparency'], '~6.0.8');
   assert.ok(trackingPlugin, 'expo-tracking-transparency plugin should be configured');
@@ -3156,7 +3162,14 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
   assert.match(mobileConsentSource, /expo-tracking-transparency/);
   assert.match(mobileConsentSource, /AdsConsent\.gatherConsent/);
   assert.match(mobileConsentSource, /mobileAds\(\)\.initialize/);
+  assert.match(mobileConsentSource, /shouldCollectMobileAdsConsent/);
+  assert.match(mobileConsentSource, /mobileAdsTestUnitConsentEnabled/);
   assert.match(hookSource, /const platform = options\.platform \?\? Platform\.OS/);
+  assert.match(hookSource, /shouldCollectMobileAdsConsent/);
+  assert.match(
+    hookSource,
+    /mobileAdsTestUnitConsentEnabled:\s*adsConfig\.mobileAdsTestUnitConsentEnabled/,
+  );
   assert.match(hookSource, /createNativeMobileAdsConsentRuntime\(platform\)/);
   assert.match(nativeBannerSource, /useMobileAdsConsent/);
   assert.match(nativeBannerSource, /consentDecision/);
@@ -3172,6 +3185,38 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
   assert.equal(mapUmpConsentStatus({ status: 'OBTAINED' }), 'obtained');
   assert.equal(mapUmpConsentStatus({ status: 'NOT_REQUIRED' }), 'not_required');
   assert.equal(mapUmpConsentStatus({ canRequestAds: true, status: 'REQUIRED' }), 'obtained');
+  assert.equal(defaultAdsConfig.mobileAdsTestUnitConsentEnabled, false);
+  assert.equal(testUnitConsentAdsConfig.mobileAdsTestUnitConsentEnabled, true);
+  assert.equal(
+    shouldCollectMobileAdsConsent({
+      entitlements: { adsDisabled: false },
+      googleMobileAdsEnabled: true,
+      mobileAdsTestUnitConsentEnabled: true,
+      platform: 'ios',
+      realAdsEnabled: false,
+    }),
+    true,
+  );
+  assert.equal(
+    shouldCollectMobileAdsConsent({
+      entitlements: { adsDisabled: false },
+      googleMobileAdsEnabled: true,
+      mobileAdsTestUnitConsentEnabled: true,
+      platform: 'web',
+      realAdsEnabled: false,
+    }),
+    false,
+  );
+  assert.equal(
+    shouldCollectMobileAdsConsent({
+      entitlements: { adsDisabled: true },
+      googleMobileAdsEnabled: true,
+      mobileAdsTestUnitConsentEnabled: true,
+      platform: 'ios',
+      realAdsEnabled: false,
+    }),
+    false,
+  );
 
   const calls = [];
   const initializedResult = await initializeGoogleMobileAdsAfterConsent({
@@ -3205,10 +3250,97 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
   assert.equal(initializedResult.decision.requestNonPersonalizedAdsOnly, true);
   assert.deepEqual(calls, ['att:get', 'att:request', 'ump', 'ads:init']);
 
+  const testUnitCalls = [];
+  const testUnitResult = await initializeGoogleMobileAdsAfterConsent({
+    entitlements: { adsDisabled: false },
+    googleMobileAdsEnabled: true,
+    mobileAdsTestUnitConsentEnabled: true,
+    realAdsEnabled: false,
+    region: 'eea',
+    runtime: {
+      async gatherUmpConsent() {
+        testUnitCalls.push('ump:test-unit');
+        return { canRequestAds: true, status: 'OBTAINED' };
+      },
+      async getTrackingPermissionsAsync() {
+        testUnitCalls.push('att:get:test-unit');
+        return { status: 'undetermined' };
+      },
+      async initializeGoogleMobileAds() {
+        testUnitCalls.push('ads:init:test-unit');
+      },
+      platform: 'ios',
+      async requestTrackingPermissionsAsync() {
+        testUnitCalls.push('att:request:test-unit');
+        return { status: 'denied' };
+      },
+    },
+  });
+
+  assert.equal(testUnitResult.initialized, true);
+  assert.equal(testUnitResult.state.realAdsEnabled, false);
+  assert.equal(testUnitResult.state.trackingTransparencyStatus, 'denied');
+  assert.equal(testUnitResult.state.umpConsentStatus, 'obtained');
+  assert.deepEqual(testUnitCalls, [
+    'att:get:test-unit',
+    'att:request:test-unit',
+    'ump:test-unit',
+    'ads:init:test-unit',
+  ]);
+
+  const nativePreviewCalls = [];
+  const nativePreviewState = await collectMobileAdsConsentState({
+    entitlements: { adsDisabled: false },
+    googleMobileAdsEnabled: true,
+    mobileAdsTestUnitConsentEnabled: false,
+    realAdsEnabled: false,
+    region: 'eea',
+    runtime: {
+      async gatherUmpConsent() {
+        nativePreviewCalls.push('ump:native-preview');
+        return { status: 'OBTAINED' };
+      },
+      async getTrackingPermissionsAsync() {
+        nativePreviewCalls.push('att:get:native-preview');
+        return { status: 'undetermined' };
+      },
+      platform: 'ios',
+      async requestTrackingPermissionsAsync() {
+        nativePreviewCalls.push('att:request:native-preview');
+        return { status: 'denied' };
+      },
+    },
+  });
+
+  assert.deepEqual(nativePreviewCalls, []);
+  assert.equal(nativePreviewState.trackingTransparencyStatus, 'unavailable');
+  assert.equal(nativePreviewState.umpConsentStatus, 'not_required');
+
+  const webPreviewCalls = [];
+  const webPreviewState = await collectMobileAdsConsentState({
+    entitlements: { adsDisabled: false },
+    googleMobileAdsEnabled: true,
+    mobileAdsTestUnitConsentEnabled: true,
+    realAdsEnabled: false,
+    region: 'eea',
+    runtime: {
+      async gatherUmpConsent() {
+        webPreviewCalls.push('ump:web-preview');
+        return { status: 'OBTAINED' };
+      },
+      platform: 'web',
+    },
+  });
+
+  assert.deepEqual(webPreviewCalls, []);
+  assert.equal(webPreviewState.trackingTransparencyStatus, 'unavailable');
+  assert.equal(webPreviewState.umpConsentStatus, 'not_required');
+
   const disabledCalls = [];
   const disabledState = await collectMobileAdsConsentState({
     entitlements: { adsDisabled: true },
     googleMobileAdsEnabled: true,
+    mobileAdsTestUnitConsentEnabled: true,
     realAdsEnabled: true,
     runtime: {
       async gatherUmpConsent() {

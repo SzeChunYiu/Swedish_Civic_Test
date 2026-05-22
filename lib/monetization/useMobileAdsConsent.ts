@@ -8,6 +8,7 @@ import {
   createInitialAdConsentState,
   createNativeMobileAdsConsentRuntime,
   initializeGoogleMobileAdsAfterConsent,
+  shouldCollectMobileAdsConsent,
   type MobileAdsConsentInitializationResult,
 } from './mobileAdsConsent';
 import type { PremiumEntitlements } from '../../types/monetization';
@@ -26,10 +27,13 @@ function createInitialResult(
   entitlements: Pick<PremiumEntitlements, 'adsDisabled'>,
   platform: string,
 ): MobileAdsConsentInitializationResult {
-  const shouldCollectConsent =
-    adsConfig.googleMobileAdsEnabled &&
-    !isStrictEntitlementFlag(entitlements.adsDisabled) &&
-    adsConfig.realAdsEnabled;
+  const shouldCollectConsent = shouldCollectMobileAdsConsent({
+    entitlements,
+    googleMobileAdsEnabled: adsConfig.googleMobileAdsEnabled,
+    mobileAdsTestUnitConsentEnabled: adsConfig.mobileAdsTestUnitConsentEnabled,
+    platform,
+    realAdsEnabled: adsConfig.realAdsEnabled,
+  });
   const state: AdConsentState = createInitialAdConsentState({
     entitlements,
     googleMobileAdsEnabled: adsConfig.googleMobileAdsEnabled,
