@@ -14,15 +14,7 @@ const selectors = new Map([
     'correct-display-position',
     {
       scripts: ['test:correct-display-position'],
-      description:
-        'P0 answer-shuffle distribution, attempt-seed, stability, and static scoring gate',
-    },
-  ],
-  [
-    'mobile-ads-consent',
-    {
-      script: 'test:mobile-ads-consent',
-      description: 'focused ATT/UMP Mobile Ads consent runtime gate',
+      description: 'P0 routed/static answer-shuffle distribution, stability, and scoring gate',
     },
   ],
   [

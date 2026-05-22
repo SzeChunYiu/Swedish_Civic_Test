@@ -130,6 +130,16 @@ function answerRadio(page: Page, name: string) {
   return page.getByRole('radio', { name, exact: true });
 }
 
+async function answerRadioAccessibilityLabels(page: Page) {
+  return page
+    .getByRole('radio')
+    .evaluateAll((elements) =>
+      elements
+        .map((element) => element.getAttribute('aria-label') ?? '')
+        .filter((label) => label.length > 0),
+    );
+}
+
 async function openPracticeQuestion(page: Page, language: PracticeHubLanguage) {
   await page.goto('/practice', { waitUntil: 'networkidle' });
   await closeLaunchAdIfPresent(page);
@@ -352,6 +362,32 @@ test('practice and routed quiz answer option labels follow the selected language
   await expect(answerRadio(page, 'Select answer In southern Europe')).toBeVisible();
   await expect(answerRadio(page, 'Välj svaret In southern Europe')).toHaveCount(0);
 
+  expect(consoleErrors).toEqual([]);
+});
+
+test('routed quiz Try again keeps the current route-entry answer order', async ({ page }) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await enableEnglishSupport(page);
+  await page.goto('/quiz/q001', { waitUntil: 'networkidle' });
+  await closeLaunchAdIfPresent(page);
+  await dismissBlockingModals(page);
+
+  const initialOrder = await answerRadioAccessibilityLabels(page);
+  expect(initialOrder).toHaveLength(4);
+  await answerRadio(page, 'Select answer In southern Europe').click();
+
+  const tryAgain = page.getByRole('button', { name: 'Try this quiz question again' });
+  await expect(tryAgain).toBeVisible();
+  await tryAgain.click();
+
+  await expect(answerRadio(page, 'Select answer In southern Europe')).toBeVisible();
+  expect(await answerRadioAccessibilityLabels(page)).toEqual(initialOrder);
   expect(consoleErrors).toEqual([]);
 });
 
