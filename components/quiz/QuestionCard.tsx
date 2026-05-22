@@ -80,14 +80,11 @@ export function QuestionCard({
       </Text>
       <QuestionSourceCitation
         accessibilityLabel={`${copy.sourceCitationLabel}: ${sourceCitation}`}
-        citationText={sourceCitation}
         label={copy.sourceCitationLabel}
         language={language}
         question={question}
         style={styles.sourceCitationSurface}
-      >
-        <Text style={styles.sourceCitation}>{sourceCitation}</Text>
-      </QuestionSourceCitation>
+      />
       {questionTranslation ? <Text style={styles.translation}>{questionTranslation}</Text> : null}
     </Card>
   );
@@ -107,11 +104,6 @@ function createStyles(themeColors: ThemeColors) {
       fontWeight: typography.bodyBold.fontWeight,
       lineHeight: typography.body.lineHeight,
       marginTop: space[0.75],
-    },
-    sourceCitation: {
-      color: themeColors.textDisclaimer,
-      fontSize: typography.disclaimer.fontSize,
-      lineHeight: typography.disclaimer.lineHeight,
     },
     sourceCitationSurface: {
       marginTop: space[0.75],

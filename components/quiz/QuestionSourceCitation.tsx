@@ -1,11 +1,17 @@
+import type { Href } from 'expo-router';
+import { Link } from 'expo-router';
 import type { ReactNode } from 'react';
 import { useMemo } from 'react';
-import { StyleSheet, Text as NativeText } from 'react-native';
+import { StyleSheet, Text as NativeText, View } from 'react-native';
 import type { StyleProp, TextStyle } from 'react-native';
 
-import { getQuestionSourceCitation } from '../../lib/quiz/questionText';
+import {
+  getQuestionPrimarySourceCitation,
+  getQuestionSourceCitation,
+  getQuestionSupplementalSourceCitations,
+} from '../../lib/quiz/questionText';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
-import { typography } from '../../lib/theme';
+import { space, typography } from '../../lib/theme';
 import type { ThemeColors } from '../../lib/theme';
 import type { OfficialSourceReference, UHRReference } from '../../types/content';
 import { useResolvedThemeColors } from '../useResolvedThemeColors';
@@ -62,9 +68,14 @@ export function QuestionSourceCitation({
   const resolvedThemeColors = useResolvedThemeColors(themeColors);
   const styles = useMemo(() => createStyles(resolvedThemeColors), [resolvedThemeColors]);
   const sourceCitation = citationText ?? getQuestionSourceCitation(question, language);
+  const hasCustomBody = children !== undefined && children !== null;
+  const primarySourceCitation =
+    question?.uhrReference && !hasCustomBody
+      ? getQuestionPrimarySourceCitation(question, language)
+      : sourceCitation;
+  const supplementalSourceCitations = getQuestionSupplementalSourceCitations(question, language);
   const resolvedLabel = label ?? questionSourceCitationLabels[language].label;
   const resolvedAccessibilityLabel = accessibilityLabel ?? `${resolvedLabel}: ${sourceCitation}`;
-  const hasCustomBody = children !== undefined && children !== null;
 
   return (
     <SourceCitation
@@ -78,7 +89,28 @@ export function QuestionSourceCitation({
       {hasCustomBody ? (
         children
       ) : (
-        <NativeText style={[styles.body, bodyStyle]}>{sourceCitation}</NativeText>
+        <View style={styles.bodyStack}>
+          <NativeText style={[styles.body, bodyStyle]}>{primarySourceCitation}</NativeText>
+          {supplementalSourceCitations.length > 0 ? (
+            <View style={styles.supplementalSourceList}>
+              {supplementalSourceCitations.map((source) => (
+                <Link
+                  key={`${source.publisher}-${source.url}`}
+                  accessibilityLabel={source.accessibilityLabel}
+                  accessibilityRole="link"
+                  href={source.url as Href}
+                  rel="noreferrer"
+                  style={styles.supplementalSourceLink}
+                  target="_blank"
+                >
+                  {source.label}: {source.title}
+                  {'\n'}
+                  {source.meta}
+                </Link>
+              ))}
+            </View>
+          ) : null}
+        </View>
       )}
     </SourceCitation>
   );
@@ -86,10 +118,22 @@ export function QuestionSourceCitation({
 
 function createStyles(themeColors: ThemeColors) {
   return StyleSheet.create({
+    bodyStack: {
+      gap: space[0.75],
+    },
     body: {
       color: themeColors.textDisclaimer,
       fontSize: typography.disclaimer.fontSize,
       lineHeight: typography.disclaimer.lineHeight,
+    },
+    supplementalSourceLink: {
+      color: themeColors.accent,
+      fontSize: typography.disclaimer.fontSize,
+      lineHeight: typography.disclaimer.lineHeight,
+      textDecorationLine: 'underline',
+    },
+    supplementalSourceList: {
+      gap: space[0.5],
     },
   });
 }
