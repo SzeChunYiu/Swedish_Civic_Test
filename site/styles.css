@@ -9707,3 +9707,101 @@ button.quiz__dot.is-nav:hover {
     padding: 6px 10px;
   }
 }
+
+/* ------------------------------------------------------------------
+   MOCK LANDING BOX OPTIMIZATION ROUND
+   Frames the mock-exam builder intro as a tactile planning card so the
+   timed round setup feels deliberate before the configuration controls.
+------------------------------------------------------------------ */
+
+.mock-landing__inner {
+  background:
+    radial-gradient(circle at 88% 12%, rgba(0, 106, 167, 0.12), transparent 34%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.68), rgba(255, 248, 228, 0.4));
+  border: 1px solid rgba(0, 106, 167, 0.1);
+  border-radius: 28px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.36),
+    0 22px 58px -46px rgba(11, 31, 51, 0.74);
+  margin: 0 auto 28px;
+  max-width: 860px;
+  overflow: hidden;
+  padding: 30px clamp(22px, 5vw, 48px);
+  position: relative;
+}
+
+.mock-landing__inner::before {
+  background: linear-gradient(180deg, var(--gold), var(--blue));
+  border-radius: 999px;
+  content: '';
+  height: 64px;
+  left: 20px;
+  opacity: 0.62;
+  position: absolute;
+  top: 26px;
+  width: 4px;
+}
+
+.mock-landing__inner > .eyebrow {
+  background: rgba(0, 106, 167, 0.08);
+  border: 1px solid rgba(0, 106, 167, 0.14);
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+  color: var(--blue);
+  display: inline-flex;
+  padding: 7px 12px;
+}
+
+.mock-landing__inner .practice__title {
+  margin-top: 16px;
+}
+
+.mock-landing__lede {
+  background: rgba(255, 255, 255, 0.42);
+  border: 1px solid rgba(0, 106, 167, 0.08);
+  border-radius: 18px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+  padding: 14px 16px;
+}
+
+.mock-landing__cta {
+  background: rgba(0, 106, 167, 0.055);
+  border: 1px solid rgba(0, 106, 167, 0.1);
+  border-radius: 20px;
+  padding: 12px;
+}
+
+:root[data-theme='dark'] .mock-landing__inner,
+:root[data-theme='dark'] .mock-landing__lede,
+:root[data-theme='dark'] .mock-landing__cta {
+  background: rgba(255, 255, 255, 0.045);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.055);
+}
+
+:root[data-theme='dark'] .mock-landing__inner > .eyebrow {
+  background: rgba(255, 255, 255, 0.055);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 640px) {
+  .mock-landing__inner {
+    border-radius: 22px;
+    margin-bottom: 22px;
+    padding: 24px 18px 26px;
+  }
+  .mock-landing__inner::before {
+    height: 46px;
+    left: 12px;
+    top: 22px;
+  }
+  .mock-landing__lede {
+    border-radius: 16px;
+    font-size: 15px;
+    padding: 12px 13px;
+  }
+  .mock-landing__cta {
+    border-radius: 16px;
+    padding: 10px;
+  }
+}
