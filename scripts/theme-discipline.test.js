@@ -283,7 +283,11 @@ test('form fields and primary button controls consume dedicated radius tokens', 
 });
 
 test('utility routes resolve semantic colors from the active theme', () => {
-  for (const routePath of ['app/search.tsx', 'app/citizenship-requirements.tsx']) {
+  for (const routePath of [
+    'app/search.tsx',
+    'app/citizenship-requirements.tsx',
+    'app/onboarding.tsx',
+  ]) {
     const source = read(routePath);
 
     assert.match(source, /themeColors/, `${routePath} should derive local styles from themeColors`);
@@ -301,12 +305,17 @@ test('utility routes resolve semantic colors from the active theme', () => {
 
   const searchSource = read('app/search.tsx');
   const citizenshipSource = read('app/citizenship-requirements.tsx');
+  const onboardingSource = read('app/onboarding.tsx');
 
   assert.match(searchSource, /colorsForThemeMode\(themeMode, systemColorScheme\)/);
   assert.match(citizenshipSource, /const \{ colors: themeColors \} = useTheme\(\);/);
   assert.match(citizenshipSource, /function createStyles\(themeColors: ThemeColors\)/);
   assert.match(citizenshipSource, /<ScreenShell[\s\S]*themeColors=\{themeColors\}/);
   assert.match(citizenshipSource, /<QuestionDisclaimer themeColors=\{themeColors\}/);
+  assert.match(onboardingSource, /const themeColors = useThemeColors\(\);/);
+  assert.match(onboardingSource, /function createStyles\(themeColors: ThemeColors\)/);
+  assert.match(onboardingSource, /<QuestionDisclaimer themeColors=\{themeColors\}/);
+  assert.match(onboardingSource, /placeholderTextColor=\{themeColors\.textMuted\}/);
 });
 
 test('native ebook route resolves semantic colors from the active theme', () => {

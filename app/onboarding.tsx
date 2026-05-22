@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
@@ -11,7 +11,8 @@ import {
   useSettingsStore,
   type AppLanguage,
 } from '../lib/storage/settingsStore';
-import { colors, radius, space, typography } from '../lib/theme';
+import { radius, space, typography, type ThemeColors } from '../lib/theme';
+import { useThemeColors } from '../lib/theme/ThemeProvider';
 
 type DailyGoalPresetValue = Exclude<(typeof supportedDailyGoalAnswerOptions)[number], 5>;
 
@@ -168,6 +169,8 @@ export default function Screen() {
   const setStudyPlanIntensity = useSettingsStore((state) => state.setStudyPlanIntensity);
   const setStudyPlanTestDateIso = useSettingsStore((state) => state.setStudyPlanTestDateIso);
   const studyPlanTestDateIso = useSettingsStore((state) => state.studyPlanTestDateIso);
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const [testDateInput, setTestDateInput] = useState(() =>
     studyPlanTestDateIso ? studyPlanTestDateIso.slice(0, 10) : '',
   );
@@ -222,7 +225,7 @@ export default function Screen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <View style={styles.hero}>
+      <View style={styles.hero} testID="onboarding-hero">
         <Text style={styles.eyebrow}>{copy.eyebrow}</Text>
         <Text accessibilityRole="header" style={styles.title}>
           {copy.title}
@@ -239,7 +242,7 @@ export default function Screen() {
         ))}
       </View>
 
-      <View style={styles.goalSection}>
+      <View style={styles.goalSection} testID="onboarding-goal-section">
         <Text accessibilityRole="header" style={styles.goalTitle}>
           {copy.dailyGoalTitle}
         </Text>
@@ -298,7 +301,7 @@ export default function Screen() {
         </RouteLink>
       </View>
 
-      <View style={styles.testDateSection}>
+      <View style={styles.testDateSection} testID="onboarding-test-date-section">
         <Text accessibilityRole="header" style={styles.goalTitle}>
           {copy.testDateTitle}
         </Text>
@@ -310,7 +313,7 @@ export default function Screen() {
           maxLength={10}
           onChangeText={handleTestDateChange}
           placeholder={copy.testDateInputPlaceholder}
-          placeholderTextColor={colors.textMuted}
+          placeholderTextColor={themeColors.textMuted}
           style={styles.testDateInput}
           value={testDateInput}
         />
@@ -331,7 +334,7 @@ export default function Screen() {
         </Pressable>
       </View>
 
-      <QuestionDisclaimer />
+      <QuestionDisclaimer themeColors={themeColors} />
       <ComplianceLinks />
 
       <View style={styles.actions}>
@@ -356,191 +359,193 @@ export default function Screen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.surface,
-    flex: 1,
-  },
-  content: {
-    flexGrow: 1,
-    gap: space[2.25],
-    justifyContent: 'center',
-    padding: space[3],
-    paddingBottom: space[10],
-  },
-  hero: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.large,
-    borderWidth: space.hairline,
-    gap: space[1.25],
-    padding: space[3],
-  },
-  eyebrow: {
-    color: colors.badgeBlueText,
-    fontSize: typography.badge.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    letterSpacing: typography.badge.letterSpacing,
-    textTransform: 'uppercase',
-  },
-  title: {
-    color: colors.text,
-    fontSize: typography.heroMobile.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    letterSpacing: typography.subHeading.letterSpacing,
-    lineHeight: typography.heroMobile.lineHeight,
-  },
-  subtitle: {
-    color: colors.textMuted,
-    fontSize: typography.body.fontSize,
-    lineHeight: typography.body.lineHeight,
-  },
-  steps: {
-    gap: space[1.5],
-  },
-  stepRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: space[1.5],
-  },
-  stepNumber: {
-    backgroundColor: colors.badgeBlueBg,
-    borderRadius: radius.pill,
-    color: colors.badgeBlueText,
-    fontSize: typography.badge.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    overflow: 'hidden',
-    paddingHorizontal: space[1.25],
-    paddingVertical: space[0.75],
-  },
-  stepText: {
-    color: colors.textSecondary,
-    flex: 1,
-    fontSize: typography.navButton.fontSize,
-    lineHeight: typography.bodyTight.lineHeight,
-  },
-  goalSection: {
-    backgroundColor: colors.surfaceWarm,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: space.hairline,
-    gap: space[1.5],
-    padding: space[2],
-  },
-  testDateSection: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: space.hairline,
-    gap: space[1.5],
-    padding: space[2],
-  },
-  goalTitle: {
-    color: colors.text,
-    fontSize: typography.cardTitle.fontSize,
-    fontWeight: typography.cardTitle.fontWeight,
-    lineHeight: typography.cardTitle.lineHeight,
-  },
-  goalSubtitle: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  goalPresetGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-  },
-  goalPreset: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: space.hairline,
-    flexBasis: space[15],
-    flexGrow: 1,
-    gap: space[0.5],
-    minHeight: space[10],
-    padding: space[1.5],
-  },
-  goalPresetActive: {
-    backgroundColor: colors.badgeBlueBg,
-    borderColor: colors.badgeBlueText,
-  },
-  goalPresetPressed: {
-    borderColor: colors.focus,
-  },
-  goalPresetLabel: {
-    color: colors.text,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    lineHeight: typography.navButton.lineHeight,
-  },
-  goalPresetSummary: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    lineHeight: typography.caption.lineHeight,
-  },
-  goalPresetHelper: {
-    color: colors.textMuted,
-    fontSize: typography.micro.fontSize,
-    lineHeight: typography.micro.lineHeight,
-  },
-  goalPresetTextActive: {
-    color: colors.badgeBlueText,
-  },
-  decideLaterLink: {
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    color: colors.textSecondary,
-    display: 'flex',
-    justifyContent: 'center',
-    minHeight: space[6],
-  },
-  testDateInput: {
-    backgroundColor: colors.surfaceWarm,
-    borderColor: colors.border,
-    borderRadius: radius.micro,
-    borderWidth: space.hairline,
-    color: colors.text,
-    fontSize: typography.body.fontSize,
-    minHeight: space[6],
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[1],
-  },
-  testDateSkipButton: {
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    borderColor: colors.border,
-    borderRadius: radius.micro,
-    borderWidth: space.hairline,
-    minHeight: space[6],
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[1],
-  },
-  testDateSkipText: {
-    color: colors.textSecondary,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    lineHeight: typography.navButton.lineHeight,
-  },
-  actions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1.5],
-  },
-  primaryLink: {
-    alignItems: 'center',
-    borderRadius: radius.micro,
-    display: 'flex',
-    justifyContent: 'center',
-    minHeight: space[6],
-  },
-  secondaryLink: {
-    alignItems: 'center',
-    borderRadius: radius.micro,
-    display: 'flex',
-    justifyContent: 'center',
-    minHeight: space[6],
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    container: {
+      backgroundColor: themeColors.surface,
+      flex: 1,
+    },
+    content: {
+      flexGrow: 1,
+      gap: space[2.25],
+      justifyContent: 'center',
+      padding: space[3],
+      paddingBottom: space[10],
+    },
+    hero: {
+      backgroundColor: themeColors.surface,
+      borderColor: themeColors.border,
+      borderRadius: radius.large,
+      borderWidth: space.hairline,
+      gap: space[1.25],
+      padding: space[3],
+    },
+    eyebrow: {
+      color: themeColors.badgeBlueText,
+      fontSize: typography.badge.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      letterSpacing: typography.badge.letterSpacing,
+      textTransform: 'uppercase',
+    },
+    title: {
+      color: themeColors.text,
+      fontSize: typography.heroMobile.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      letterSpacing: typography.subHeading.letterSpacing,
+      lineHeight: typography.heroMobile.lineHeight,
+    },
+    subtitle: {
+      color: themeColors.textMuted,
+      fontSize: typography.body.fontSize,
+      lineHeight: typography.body.lineHeight,
+    },
+    steps: {
+      gap: space[1.5],
+    },
+    stepRow: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      gap: space[1.5],
+    },
+    stepNumber: {
+      backgroundColor: themeColors.badgeBlueBg,
+      borderRadius: radius.pill,
+      color: themeColors.badgeBlueText,
+      fontSize: typography.badge.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      overflow: 'hidden',
+      paddingHorizontal: space[1.25],
+      paddingVertical: space[0.75],
+    },
+    stepText: {
+      color: themeColors.textSecondary,
+      flex: 1,
+      fontSize: typography.navButton.fontSize,
+      lineHeight: typography.bodyTight.lineHeight,
+    },
+    goalSection: {
+      backgroundColor: themeColors.surfaceWarm,
+      borderColor: themeColors.border,
+      borderRadius: radius.card,
+      borderWidth: space.hairline,
+      gap: space[1.5],
+      padding: space[2],
+    },
+    testDateSection: {
+      backgroundColor: themeColors.surface,
+      borderColor: themeColors.border,
+      borderRadius: radius.card,
+      borderWidth: space.hairline,
+      gap: space[1.5],
+      padding: space[2],
+    },
+    goalTitle: {
+      color: themeColors.text,
+      fontSize: typography.cardTitle.fontSize,
+      fontWeight: typography.cardTitle.fontWeight,
+      lineHeight: typography.cardTitle.lineHeight,
+    },
+    goalSubtitle: {
+      color: themeColors.textSecondary,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+    goalPresetGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1],
+    },
+    goalPreset: {
+      backgroundColor: themeColors.surface,
+      borderColor: themeColors.border,
+      borderRadius: radius.card,
+      borderWidth: space.hairline,
+      flexBasis: space[15],
+      flexGrow: 1,
+      gap: space[0.5],
+      minHeight: space[10],
+      padding: space[1.5],
+    },
+    goalPresetActive: {
+      backgroundColor: themeColors.badgeBlueBg,
+      borderColor: themeColors.badgeBlueText,
+    },
+    goalPresetPressed: {
+      borderColor: themeColors.focus,
+    },
+    goalPresetLabel: {
+      color: themeColors.text,
+      fontSize: typography.navButton.fontSize,
+      fontWeight: typography.navButton.fontWeight,
+      lineHeight: typography.navButton.lineHeight,
+    },
+    goalPresetSummary: {
+      color: themeColors.textSecondary,
+      fontSize: typography.caption.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      lineHeight: typography.caption.lineHeight,
+    },
+    goalPresetHelper: {
+      color: themeColors.textMuted,
+      fontSize: typography.micro.fontSize,
+      lineHeight: typography.micro.lineHeight,
+    },
+    goalPresetTextActive: {
+      color: themeColors.badgeBlueText,
+    },
+    decideLaterLink: {
+      alignItems: 'center',
+      alignSelf: 'flex-start',
+      color: themeColors.textSecondary,
+      display: 'flex',
+      justifyContent: 'center',
+      minHeight: space[6],
+    },
+    testDateInput: {
+      backgroundColor: themeColors.surfaceWarm,
+      borderColor: themeColors.border,
+      borderRadius: radius.micro,
+      borderWidth: space.hairline,
+      color: themeColors.text,
+      fontSize: typography.body.fontSize,
+      minHeight: space[6],
+      paddingHorizontal: space[1.5],
+      paddingVertical: space[1],
+    },
+    testDateSkipButton: {
+      alignItems: 'center',
+      alignSelf: 'flex-start',
+      borderColor: themeColors.border,
+      borderRadius: radius.micro,
+      borderWidth: space.hairline,
+      minHeight: space[6],
+      paddingHorizontal: space[1.5],
+      paddingVertical: space[1],
+    },
+    testDateSkipText: {
+      color: themeColors.textSecondary,
+      fontSize: typography.navButton.fontSize,
+      fontWeight: typography.navButton.fontWeight,
+      lineHeight: typography.navButton.lineHeight,
+    },
+    actions: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1.5],
+    },
+    primaryLink: {
+      alignItems: 'center',
+      borderRadius: radius.micro,
+      display: 'flex',
+      justifyContent: 'center',
+      minHeight: space[6],
+    },
+    secondaryLink: {
+      alignItems: 'center',
+      borderRadius: radius.micro,
+      display: 'flex',
+      justifyContent: 'center',
+      minHeight: space[6],
+    },
+  });
+}

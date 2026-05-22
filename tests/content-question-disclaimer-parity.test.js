@@ -6,6 +6,10 @@ const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
 const QUESTION_DISCLAIMER_FOCUS_FLAG = '--focus-question-disclaimer-parity';
+const QUESTION_DISCLAIMER_USAGE_PATTERN =
+  /<QuestionDisclaimer(?:\s+(?:language=\{language\}|themeColors=\{themeColors\}))*\s*\/>/;
+const QUESTION_DISCLAIMER_USAGE_PATTERN_GLOBAL =
+  /<QuestionDisclaimer(?:\s+(?:language=\{language\}|themeColors=\{themeColors\}))*\s*\/>/g;
 const expectedQuestionDisclaimerRoutes = [
   'app/onboarding.tsx',
   'app/(tabs)/practice.tsx',
@@ -31,7 +35,7 @@ const expectedQuestionCardRoutes = [
 ];
 
 function countQuestionDisclaimerOccurrences(source) {
-  return (source.match(/<QuestionDisclaimer(?:\s+language=\{language\})?\s*\/>/g) || []).length;
+  return (source.match(QUESTION_DISCLAIMER_USAGE_PATTERN_GLOBAL) || []).length;
 }
 
 test('question disclaimer coverage stays aligned across study surfaces', () => {
@@ -65,7 +69,7 @@ test('question disclaimer coverage stays aligned across study surfaces', () => {
   for (const routeFile of [...expectedQuestionDisclaimerRoutes, ...supplementalDisclaimerRoutes]) {
     const source = fs.readFileSync(path.join(repoRoot, routeFile), 'utf8');
     assert.match(source, /QuestionDisclaimer/);
-    assert.match(source, /<QuestionDisclaimer(?:\s+language=\{language\})?\s*\/>/);
+    assert.match(source, QUESTION_DISCLAIMER_USAGE_PATTERN);
     assert.equal(
       countQuestionDisclaimerOccurrences(source),
       expectedDisclaimerCounts.get(routeFile),
@@ -91,8 +95,7 @@ test('question disclaimer stays separate from source citation rendering', () => 
   for (const routeFile of expectedQuestionCardRoutes) {
     const source = fs.readFileSync(path.join(repoRoot, routeFile), 'utf8');
     assert.ok(
-      source.search(/<QuestionDisclaimer(?:\s+language=\{language\})?\s*\/>/) <
-        source.indexOf('<QuestionCard'),
+      source.search(QUESTION_DISCLAIMER_USAGE_PATTERN) < source.indexOf('<QuestionCard'),
       `${routeFile} should show the independent-study disclaimer before question cards`,
     );
   }
@@ -121,7 +124,7 @@ test('question disclaimer stays separate from source citation rendering', () => 
 
   const learnSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/learn.tsx'), 'utf8');
   assert.ok(
-    learnSource.search(/<QuestionDisclaimer(?:\s+language=\{language\})?\s*\/>/) <
+    learnSource.search(QUESTION_DISCLAIMER_USAGE_PATTERN) <
       learnSource.indexOf('<View style={styles.flashcardDeck}>'),
     'app/(tabs)/learn.tsx should show the independent-study disclaimer before flashcards',
   );

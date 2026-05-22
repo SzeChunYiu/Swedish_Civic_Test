@@ -957,7 +957,8 @@ const EXPECTED_PRACTICE_ROUTE_COPY_SNIPPETS = [
   ],
   ['{copy.tryAgain}', 'try-again action must render localized copy'],
 ];
-const QUESTION_DISCLAIMER_USAGE_PATTERN = /<QuestionDisclaimer(?:\s+language=\{language\})?\s*\/>/;
+const QUESTION_DISCLAIMER_USAGE_PATTERN =
+  /<QuestionDisclaimer(?:\s+(?:language=\{language\}|themeColors=\{themeColors\}))*\s*\/>/;
 const EXPECTED_LEARN_ROUTE_LINK_COPY_LABELS = {
   sv: [
     'innehåll planerat',
