@@ -167,6 +167,14 @@ function syntheticStudyCounts(
   return { correctCount, wrongCount, residualCount };
 }
 
+function buildQuestionChapterIndex(questions: readonly PracticeQuestion[]): Record<string, string> {
+  const questionChapterIndex: Record<string, string> = {};
+  for (const q of questions) {
+    questionChapterIndex[q.id] = q.chapterId;
+  }
+  return questionChapterIndex;
+}
+
 export interface ReadinessInput {
   progress: UserProgress;
   chapters: ReadonlyArray<{ id: string; questionCount: number }>;
@@ -179,15 +187,15 @@ export function computeReadinessFromQuestionProgress(input: {
   questionProgress: Record<string, UserQuestionProgress>;
   questions: readonly PracticeQuestion[];
   chapters: readonly { id: string; questionCount: number }[];
+  questionChapterIndex?: Record<string, string>;
+  questionIdsInBank?: ReadonlySet<string>;
   mockExamSessions?: readonly MockExamProgress[];
   now?: Date;
 }): ReadinessScore {
   // Build a minimal UserProgress so computeReadinessScore can run unchanged.
-  const questionChapterIndex: Record<string, string> = {};
-  for (const q of input.questions) {
-    questionChapterIndex[q.id] = q.chapterId;
-  }
-  const questionIdsInBank = new Set(input.questions.map((q) => q.id));
+  const questionChapterIndex =
+    input.questionChapterIndex ?? buildQuestionChapterIndex(input.questions);
+  const questionIdsInBank = input.questionIdsInBank ?? new Set(input.questions.map((q) => q.id));
   const studyAnswers: QuizAnswer[] = [];
   for (const [questionId, progress] of Object.entries(input.questionProgress)) {
     if (!questionIdsInBank.has(questionId)) continue;

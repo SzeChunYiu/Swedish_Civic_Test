@@ -443,6 +443,11 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
   },
 };
 
+const QUESTION_CHAPTER_INDEX: Record<string, string> = Object.fromEntries(
+  questions.map((question) => [question.id, question.chapterId]),
+);
+const QUESTION_IDS_IN_BANK = new Set(questions.map((question) => question.id));
+
 export default function Screen() {
   const [rewardPreviewCompleted, setRewardPreviewCompleted] = useState(false);
   const [rewardUnlockInFlight, setRewardUnlockInFlight] = useState(false);
@@ -468,10 +473,20 @@ export default function Screen() {
   const copy = homeCopy[language];
   const themeColors = useThemeColors();
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
-  const dailyChallenge = buildDailyChallenge({ bank: questions });
-  const dailyChallengeCompleted = isDailyChallengeCompleted(Object.keys(dailyChallengeCompletions));
+  const dailyChallenge = useMemo(() => buildDailyChallenge({ bank: questions }), []);
+  const dailyChallengeCompletionKeys = useMemo(
+    () => Object.keys(dailyChallengeCompletions),
+    [dailyChallengeCompletions],
+  );
+  const dailyChallengeCompleted = useMemo(
+    () => isDailyChallengeCompleted(dailyChallengeCompletionKeys),
+    [dailyChallengeCompletionKeys],
+  );
   const dailyChallengeCopy = dailyChallengeBannerCopy(dailyChallengeCompleted, language);
-  const completedToday = Math.min(countAnswersForLocalDate(questionProgress), dailyGoalAnswers);
+  const completedToday = useMemo(
+    () => Math.min(countAnswersForLocalDate(questionProgress), dailyGoalAnswers),
+    [dailyGoalAnswers, questionProgress],
+  );
   const progress = dailyGoalAnswers > 0 ? completedToday / dailyGoalAnswers : 0;
   const streakWithFreeze = useMemo(
     () =>
@@ -488,14 +503,23 @@ export default function Screen() {
       ? copy.dayStreakFreezeHelper(streakWithFreeze.freezeState.available)
       : copy.dayStreakHelper;
   const level = calculateLevel(totalXp);
-  const weakChapterCount = findWeakChapterIds(questions, questionProgress, 0.6).length;
+  const weakChapterCount = useMemo(
+    () => findWeakChapterIds(questions, questionProgress, 0.6).length,
+    [questionProgress],
+  );
   const nextAction = weakChapterCount > 0 ? copy.reviewWeakChapters : copy.startPracticeSet;
-  const readiness = computeReadinessFromQuestionProgress({
-    questionProgress,
-    questions,
-    chapters,
-    mockExamSessions,
-  });
+  const readiness = useMemo(
+    () =>
+      computeReadinessFromQuestionProgress({
+        questionProgress,
+        questions,
+        chapters,
+        questionChapterIndex: QUESTION_CHAPTER_INDEX,
+        questionIdsInBank: QUESTION_IDS_IN_BANK,
+        mockExamSessions,
+      }),
+    [mockExamSessions, questionProgress],
+  );
   const readinessVerdict = copy.readinessVerdicts[readiness.verdict];
   const readinessDetails = copy.readinessDetails(
     Math.round(readiness.components.accuracy * 100),
