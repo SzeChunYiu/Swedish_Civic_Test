@@ -740,8 +740,7 @@ const GENERATED_TRUE_FALSE_EXPLANATION_META_PATTERNS = [
 ];
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
 const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
-const EXPECTED_STREAK_RULE_COUNT = 17;
-const EXPECTED_STREAK_FREEZE_COUNTER_RUNTIME_CASE_COUNT = 4;
+const EXPECTED_STREAK_RULE_COUNT = 21;
 const EXPECTED_XP_RULE_COUNT = 24;
 const EXPECTED_MASTERY_RULE_COUNT = 17;
 const EXPECTED_WEAK_CHAPTER_RULE_COUNT = 5;
@@ -9601,6 +9600,8 @@ const selectDailyFlashcardDeck = flashcardDeckModule.selectDailyFlashcardDeck;
 const streakModule = loadTs('lib/learning/streaks.ts');
 const calculateStreak = streakModule.calculateStreak;
 const getLocalDateKey = streakModule.getLocalDateKey;
+const countAnswersForLocalDate = streakModule.countAnswersForLocalDate;
+const countAnswerAttemptsForLocalDate = streakModule.countAnswerAttemptsForLocalDate;
 const streakWithFreezeModule = loadTs('lib/learning/streakWithFreeze.ts');
 const calculateStreakWithFreeze = streakWithFreezeModule.calculateStreakWithFreeze;
 const createInitialFreezeState = streakWithFreezeModule.createInitialFreezeState;
@@ -22809,6 +22810,14 @@ function validateStreakRules() {
     fail('getLocalDateKey export is not a function');
     return;
   }
+  if (typeof countAnswersForLocalDate !== 'function') {
+    fail('countAnswersForLocalDate export is not a function');
+    return;
+  }
+  if (typeof countAnswerAttemptsForLocalDate !== 'function') {
+    fail('countAnswerAttemptsForLocalDate export is not a function');
+    return;
+  }
   if (typeof calculateStreakWithFreeze !== 'function') {
     fail('calculateStreakWithFreeze export is not a function');
     return;
@@ -22964,6 +22973,87 @@ function validateStreakRules() {
 
   rulesAreValid =
     validateStreakFreezeCounterRuntimeInputs({ countTowardStreakRules: true }) && rulesAreValid;
+
+  const rolloverTarget = new Date(2026, 2, 2, 12);
+  const farFutureTarget = new Date(2099, 0, 1, 12);
+  const dailyGoalCases = [
+    {
+      label: 'countAnswersForLocalDate ignores rollover and malformed answer dates',
+      actual: () =>
+        countAnswersForLocalDate(
+          {
+            valid: { lastAnsweredAt: '2026-03-02T08:00:00.000Z' },
+            lateValid: { lastAnsweredAt: '2026-03-02T20:00:00.000Z' },
+            rolloverTimestamp: { lastAnsweredAt: '2026-02-30T08:00:00.000Z' },
+            rolloverDateOnly: { lastAnsweredAt: '2026-02-30' },
+            malformed: { lastAnsweredAt: 'not-a-date' },
+            empty: { lastAnsweredAt: '' },
+            nonString: { lastAnsweredAt: 42 },
+          },
+          rolloverTarget,
+        ),
+      expected: 2,
+    },
+    {
+      label: 'countAnswerAttemptsForLocalDate preserves duplicate valid same-day attempts',
+      actual: () =>
+        countAnswerAttemptsForLocalDate({
+          answerAttempts: [
+            { questionId: 'q001', answeredAt: '2026-03-02T08:00:00.000Z' },
+            { questionId: 'q001', answeredAt: '2026-03-02T20:00:00.000Z' },
+            { questionId: 'q-rollover', answeredAt: '2026-02-30T08:00:00.000Z' },
+            { questionId: 'q-rollover-date', answeredAt: '2026-02-30' },
+            { questionId: 'q-malformed', answeredAt: 'not-a-date' },
+            { questionId: 'q-non-string', answeredAt: 42 },
+          ],
+          date: rolloverTarget,
+        }),
+      expected: 2,
+    },
+    {
+      label: 'countAnswerAttemptsForLocalDate fallback uses strict answer-date parsing',
+      actual: () =>
+        countAnswerAttemptsForLocalDate({
+          questionProgress: {
+            valid: { lastAnsweredAt: '2026-03-02T08:00:00.000Z' },
+            lateValid: { lastAnsweredAt: '2026-03-02T20:00:00.000Z' },
+            rollover: { lastAnsweredAt: '2026-02-30T08:00:00.000Z' },
+          },
+          date: rolloverTarget,
+        }),
+      expected: 2,
+    },
+    {
+      label: 'countAnswersForLocalDate ignores over-tolerance future answers',
+      actual: () =>
+        countAnswersForLocalDate(
+          {
+            future: { lastAnsweredAt: '2099-01-01T08:00:00.000Z' },
+          },
+          farFutureTarget,
+        ),
+      expected: 0,
+    },
+  ];
+
+  dailyGoalCases.forEach(({ label, actual, expected }) => {
+    let actualValue;
+    try {
+      actualValue = actual();
+    } catch (error) {
+      rulesAreValid = false;
+      fail(`streak rule ${label} threw ${error.message}`);
+      return;
+    }
+
+    if (actualValue !== expected) {
+      rulesAreValid = false;
+      fail(`streak rule ${label} returned ${actualValue}, expected ${expected}`);
+      return;
+    }
+
+    streakRulesValidated += 1;
+  });
 
   if (rulesAreValid && streakRulesValidated === EXPECTED_STREAK_RULE_COUNT) {
     streakRulesParityValidated = true;

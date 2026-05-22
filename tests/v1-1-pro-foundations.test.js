@@ -137,6 +137,50 @@ test('FSRS-lite: sortByDueAscending demotes malformed review timestamps', () => 
   );
 });
 
+test('daily goal counters reject rollover, malformed, non-string, and future timestamps', () => {
+  const { countAnswerAttemptsForLocalDate, countAnswersForLocalDate } =
+    loadTs('lib/learning/streaks.ts');
+  const rolloverTarget = new Date(2026, 2, 2, 12);
+  const farFutureTarget = new Date(2099, 0, 1, 12);
+
+  assert.equal(
+    countAnswersForLocalDate(
+      {
+        valid: { lastAnsweredAt: '2026-03-02T08:00:00.000Z' },
+        lateValid: { lastAnsweredAt: '2026-03-02T20:00:00.000Z' },
+        rolloverTimestamp: { lastAnsweredAt: '2026-02-30T08:00:00.000Z' },
+        rolloverDateOnly: { lastAnsweredAt: '2026-02-30' },
+        malformed: { lastAnsweredAt: 'not-a-date' },
+        nonString: { lastAnsweredAt: 42 },
+      },
+      rolloverTarget,
+    ),
+    2,
+  );
+  assert.equal(
+    countAnswerAttemptsForLocalDate({
+      answerAttempts: [
+        { questionId: 'q001', answeredAt: '2026-03-02T08:00:00.000Z' },
+        { questionId: 'q001', answeredAt: '2026-03-02T20:00:00.000Z' },
+        { questionId: 'q-rollover', answeredAt: '2026-02-30T08:00:00.000Z' },
+        { questionId: 'q-malformed', answeredAt: 'not-a-date' },
+        { questionId: 'q-non-string', answeredAt: 42 },
+      ],
+      date: rolloverTarget,
+    }),
+    2,
+  );
+  assert.equal(
+    countAnswersForLocalDate(
+      {
+        future: { lastAnsweredAt: '2099-01-01T08:00:00.000Z' },
+      },
+      farFutureTarget,
+    ),
+    0,
+  );
+});
+
 // ----------------------------------------------------------- Study plan algo
 
 test('generateStudyPlan: 27 days out, regular intensity → reasonable target', () => {
