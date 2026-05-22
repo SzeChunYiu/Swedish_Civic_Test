@@ -16,7 +16,8 @@ import {
   type MockExamProgress,
 } from '../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
-import { colors, space, typography } from '../lib/theme';
+import { space, typography, type ThemeColors } from '../lib/theme';
+import { useThemeColors } from '../lib/theme/ThemeProvider';
 import type { QuizSession, UserProgress } from '../types/progress';
 
 type RecapCopy = {
@@ -195,6 +196,8 @@ export default function Screen() {
   const streakFreezeState = useProgressStore((state) => state.streakFreezeState);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const language = useSettingsStore((state) => state.language);
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const copy = recapCopy[language];
   const streakWithFreeze = useMemo(
     () =>
@@ -248,6 +251,7 @@ export default function Screen() {
       eyebrow={copy.eyebrow}
       title={copy.title}
       subtitle={`${copy.subtitle} ${copy.weekRange(weekStart, weekEnd)}.`}
+      themeColors={themeColors}
     >
       <View style={styles.statsRow}>
         <MetricCard
@@ -275,6 +279,7 @@ export default function Screen() {
           accessible
           accessibilityLabel={`${copy.quietTitle}. ${copy.quietBody}`}
           style={styles.card}
+          themeColors={themeColors}
         >
           <Text accessibilityRole="header" style={styles.cardTitle}>
             {copy.quietTitle}
@@ -290,10 +295,12 @@ export default function Screen() {
             touchedWeakChapterName,
           )}`}
           style={styles.card}
+          themeColors={themeColors}
         >
           <SectionHeader
             title={copy.weakChapterTitle}
             subtitle={copy.weakChapterBody(touchedWeakChapterName)}
+            themeColors={themeColors}
           />
           <ComplianceActionLink
             accessibilityLabel={copy.practiceWeakChapterAccessibilityLabel(touchedWeakChapterName)}
@@ -313,23 +320,25 @@ export default function Screen() {
   );
 }
 
-const styles = StyleSheet.create({
-  statsRow: {
-    flexDirection: 'row',
-    gap: space[1.5],
-  },
-  card: {
-    gap: space[1.5],
-  },
-  cardTitle: {
-    color: colors.text,
-    fontSize: typography.subHeading.fontSize,
-    fontWeight: typography.subHeading.fontWeight,
-    lineHeight: typography.subHeading.lineHeight,
-  },
-  cardBody: {
-    color: colors.textSecondary,
-    fontSize: typography.body.fontSize,
-    lineHeight: typography.body.lineHeight,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    statsRow: {
+      flexDirection: 'row',
+      gap: space[1.5],
+    },
+    card: {
+      gap: space[1.5],
+    },
+    cardTitle: {
+      color: themeColors.text,
+      fontSize: typography.subHeading.fontSize,
+      fontWeight: typography.subHeading.fontWeight,
+      lineHeight: typography.subHeading.lineHeight,
+    },
+    cardBody: {
+      color: themeColors.textSecondary,
+      fontSize: typography.body.fontSize,
+      lineHeight: typography.body.lineHeight,
+    },
+  });
+}

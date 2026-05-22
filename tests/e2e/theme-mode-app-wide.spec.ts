@@ -2,6 +2,7 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
 
 import { darkColors, shadows, space } from '../../lib/theme';
 import {
+  currentProgressStateStorageKey,
   dismissBlockingModals,
   seedFreshSettingsLanguageAndAboutSeenWithStorage,
 } from './browserLaunch';
@@ -85,6 +86,34 @@ async function expectComputedColor(
     .toBe(hexToRgb(expectedHexColor));
 }
 
+async function expectComputedCssColor(
+  locator: Locator,
+  property: 'backgroundColor' | 'borderColor' | 'color',
+  expectedCssColor: string,
+  message: string,
+) {
+  await expect
+    .poll(async () => (await computedColors(locator))[property], { message })
+    .toBe(expectedCssColor);
+}
+
+async function expectNoHorizontalOverflow(page: Page, message: string) {
+  await expect
+    .poll(
+      async () =>
+        page.evaluate(() => {
+          const root = document.documentElement;
+          const body = document.body;
+
+          return (
+            root.scrollWidth <= root.clientWidth + 1 && body.scrollWidth <= root.clientWidth + 1
+          );
+        }),
+      { message },
+    )
+    .toBe(true);
+}
+
 async function seedDarkEnglishMonetization(page: Page) {
   await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, 'en', {
     localStorageValues: {
@@ -95,6 +124,111 @@ async function seedDarkEnglishMonetization(page: Page) {
       __SMT_ENABLE_PRO_RUNTIME_SCOPE__: true,
       __SMT_PRO_LIFETIME_MOCK_OWNED__: false,
       __SMT_REMOVE_ADS_MOCK_OWNED__: false,
+    },
+  });
+}
+
+function dateInCurrentLocalWeek(offsetDays: number, minuteOffset = 0) {
+  const date = new Date();
+  const offsetToMonday = (date.getDay() + 6) % 7;
+  date.setHours(12, minuteOffset, 0, 0);
+  date.setDate(date.getDate() - offsetToMonday + offsetDays);
+  return date;
+}
+
+function localDateKey(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function weeklyRecapProgressSeed() {
+  const firstAnswerAt = dateInCurrentLocalWeek(0);
+  const secondAnswerAt = dateInCurrentLocalWeek(0, 2);
+  const mockCompletedAt = dateInCurrentLocalWeek(1);
+
+  return {
+    answerDates: [localDateKey(firstAnswerAt)],
+    answerHistory: [
+      {
+        answeredAt: firstAnswerAt.toISOString(),
+        isCorrect: false,
+        questionId: 'q001',
+        timeSpentSeconds: 12,
+      },
+      {
+        answeredAt: secondAnswerAt.toISOString(),
+        isCorrect: true,
+        questionId: 'q002',
+        timeSpentSeconds: 9,
+      },
+    ],
+    completedQuestionIds: ['q002'],
+    dailyChallengeCompletions: {},
+    mockExamSessions: [
+      {
+        completedAt: mockCompletedAt.toISOString(),
+        correctCount: 14,
+        questionTimings: [{ questionId: 'q001', timeSpentSeconds: 60 }],
+        score: 0.7,
+        sessionId: 'exam-weekly',
+        totalCount: 20,
+      },
+    ],
+    questionProgress: {
+      q001: {
+        correctCount: 0,
+        correctStreak: 0,
+        lastAnsweredAt: firstAnswerAt.toISOString(),
+        questionId: 'q001',
+        seenCount: 1,
+        wrongCount: 1,
+      },
+      q002: {
+        correctCount: 1,
+        correctStreak: 1,
+        lastAnsweredAt: secondAnswerAt.toISOString(),
+        questionId: 'q002',
+        seenCount: 1,
+        wrongCount: 0,
+      },
+    },
+    streakFreezeState: {
+      available: 0,
+      lastEarnedAt: null,
+      lifetimeEarned: 0,
+      lifetimeSpent: 0,
+      rescuedDayKeys: [],
+    },
+    totalXp: 80,
+  };
+}
+
+function quietWeekProgressSeed() {
+  return {
+    answerDates: [],
+    answerHistory: [],
+    completedQuestionIds: [],
+    dailyChallengeCompletions: {},
+    mockExamSessions: [],
+    questionProgress: {},
+    streakFreezeState: {
+      available: 0,
+      lastEarnedAt: null,
+      lifetimeEarned: 0,
+      lifetimeSpent: 0,
+      rescuedDayKeys: [],
+    },
+    totalXp: 0,
+  };
+}
+
+async function seedDarkEnglishWeeklyRecap(page: Page, progressSeed: unknown) {
+  await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, 'en', {
+    localStorageValues: {
+      [accessibilityThemeModeKey]: 'dark',
+      [currentProgressStateStorageKey]: JSON.stringify(progressSeed),
     },
   });
 }
@@ -307,6 +441,98 @@ test('practice post-answer reward panel uses dark theme tokens', async ({ page }
     darkColors.badgeBlueText,
     'Post-answer XP label should use the dark badge text token',
   );
+});
+
+test('weekly recap route uses dark theme tokens without horizontal overflow', async ({ page }) => {
+  await seedDarkEnglishWeeklyRecap(page, quietWeekProgressSeed());
+  await page.goto('/recap', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  await expectComputedColor(
+    page.getByRole('heading', { name: 'Your study week' }),
+    'color',
+    darkColors.text,
+    'Weekly recap title should use the dark text token',
+  );
+  await expectComputedColor(
+    page.getByText(/A local summary of this week.s answers/),
+    'color',
+    darkColors.textMuted,
+    'Weekly recap subtitle should use the dark muted text token',
+  );
+
+  const questionsMetric = page.getByLabel('questions answered: 0');
+  await expectComputedColor(
+    questionsMetric,
+    'backgroundColor',
+    darkColors.badgeBlueBg,
+    'Weekly recap questions metric should use the dark badge surface token',
+  );
+  await expectComputedColor(
+    page.getByText('questions answered', { exact: true }),
+    'color',
+    darkColors.textMuted,
+    'Weekly recap metric labels should use the dark muted text token',
+  );
+
+  const quietWeekCard = page.getByLabel(/Quiet week\. No problem\./);
+  await expectComputedColor(
+    quietWeekCard,
+    'backgroundColor',
+    darkColors.surface,
+    'Quiet-week card should use the dark card surface token',
+  );
+  await expectComputedColor(
+    page.getByText('Quiet week', { exact: true }),
+    'color',
+    darkColors.text,
+    'Quiet-week card title should use the dark text token',
+  );
+  await expectComputedColor(
+    page.getByText(/A quiet week still counts/),
+    'color',
+    darkColors.textSecondary,
+    'Quiet-week card body should use the dark secondary text token',
+  );
+
+  const backToProfile = page.getByRole('link', { name: 'Back to Profile' });
+  await expectComputedCssColor(
+    backToProfile,
+    'backgroundColor',
+    darkColors.surfaceMuted,
+    'Back to Profile link should use the dark muted surface token',
+  );
+  await expectComputedColor(
+    page.getByText('Back to Profile', { exact: true }),
+    'color',
+    darkColors.text,
+    'Back to Profile label should use the dark text token',
+  );
+  await expectNoHorizontalOverflow(page, 'Quiet weekly recap should not overflow horizontally');
+
+  await seedDarkEnglishWeeklyRecap(page, weeklyRecapProgressSeed());
+  await page.goto('/recap', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  await expectComputedColor(
+    page.getByRole('heading', { name: 'Next calm review' }),
+    'color',
+    darkColors.text,
+    'Weekly recap weak-chapter heading should use the dark text token',
+  );
+  await expectComputedColor(
+    page.getByText(/appeared in this week.s answers/),
+    'color',
+    darkColors.textMuted,
+    'Weekly recap weak-chapter subtitle should use the dark muted text token',
+  );
+  await expectComputedColor(
+    page.getByRole('link', { name: /Practise / }),
+    'backgroundColor',
+    darkColors.accent,
+    'Weak-chapter practice link should use the dark accent token',
+  );
+  await expectNoHorizontalOverflow(page, 'Active weekly recap should not overflow horizontally');
 });
 
 test('search and settings hairline/divider CSS widths stay correct in dark theme', async ({
