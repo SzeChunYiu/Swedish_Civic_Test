@@ -24,6 +24,13 @@ const extraLocales = [
 ] as const;
 
 type ExtraLocale = (typeof extraLocales)[number];
+const purchaseSurfaceLocales = [
+  'ckb',
+  'fa',
+  'so',
+  'ti',
+  'tr',
+] as const satisfies readonly ExtraLocale[];
 
 const contentTypeByExtension: Record<string, string> = {
   '.css': 'text/css; charset=utf-8',
@@ -103,6 +110,8 @@ const localizedHomeChapterElevenCitizenshipSnippets: Record<ExtraLocale, RegExp>
   tr: /vatandaşlık\s*\(medborgarskap\)/i,
   uk: /громадянством\s*\(medborgarskap\)/i,
 };
+const copiedTurkishPurchaseText =
+  /Yalnızca|Satın alma|Web yükseltmeleri|Reklamsız|Reklamları kaldır|Google Play ile devam et|Ömür boyu|tek seferlik|Yükseltmenin|satın almaya hazır|Önce giriş yapın|Satın alma aktarım|Hesaba bağlı|Satın alma başlatılamadı/i;
 
 type StaticSite = {
   baseUrl: string;
@@ -374,6 +383,66 @@ test('static Settings selects extra languages with localized legal metadata with
     await assertLongFormRouteCopy(page, locale);
     await expectRootLocale(page, locale);
     await expectNoOutcomeSlogans(page);
+    await expectNoHorizontalOverflow(page);
+  }
+
+  expect(pageErrors).toEqual([]);
+});
+
+test('static purchase gate uses localized extra-language copy and account interpolation', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const pageErrors = collectPageErrors(page);
+  await page.addInitScript(() => {
+    for (const key of ['SMT_SUPABASE_URL', 'SMT_SUPABASE_ANON_KEY'] as const) {
+      Object.defineProperty(window, key, {
+        configurable: true,
+        get: () => '',
+        set: () => undefined,
+      });
+    }
+  });
+  await openStaticHome(page, staticSite.baseUrl);
+
+  await page.evaluate(() => {
+    window.localStorage.setItem('smt_signed_in', '1');
+    window.localStorage.setItem('smt_account_id', 'acct-extra-locale');
+    window.localStorage.setItem('smt_account_email', 'learner@example.test');
+    window.dispatchEvent(new Event('smt:authchange'));
+  });
+
+  for (const locale of purchaseSurfaceLocales) {
+    await page.locator('#settings-open').click();
+    await expect(page.locator('#settings-modal')).toBeVisible();
+    await page
+      .locator(`#settings-modal [data-set="language"] button[data-val="${locale}"]`)
+      .click();
+    await page.locator('#settings-modal button[data-close="settings"]').last().click();
+    await expect(page.locator('#settings-modal')).toBeHidden();
+
+    await expectRootLocale(page, locale);
+    await expectDictionaryText(page, locale, 'purchase.h1a');
+    await expectDictionaryText(page, locale, 'purchase.h1b');
+    await expectDictionaryText(page, locale, 'purchase.removeAds.title');
+    await expectDictionaryText(page, locale, 'purchase.premium.title');
+    await expect(page.locator('[data-purchase-kind="remove_ads"]')).toHaveText(
+      await dictionaryText(page, locale, 'purchase.removeAds.ready'),
+    );
+    await expect(page.locator('[data-purchase-kind="pro_lifetime"]')).toHaveText(
+      await dictionaryText(page, locale, 'purchase.premium.ready'),
+    );
+    await expect(page.locator('#purchase-status')).toHaveText(
+      (await dictionaryText(page, locale, 'purchase.status.ready')).replace(
+        '{account}',
+        'learner@example.test',
+      ),
+    );
+
+    const purchaseText = await page.locator('#purchase-account-gate').innerText();
+    if (locale !== 'tr') {
+      expect(purchaseText).not.toMatch(copiedTurkishPurchaseText);
+    }
     await expectNoHorizontalOverflow(page);
   }
 
