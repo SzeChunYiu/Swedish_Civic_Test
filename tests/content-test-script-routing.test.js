@@ -141,6 +141,31 @@ test('newly registered focus modes expose advertised summary keys', () => {
   }
 });
 
+test('Home route focused mutation fixtures use the shared helper', () => {
+  const homeRouteTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-home-route-header-parity.test.js'),
+    'utf8',
+  );
+  const helperSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/helpers/focusedValidatorMutation.cjs'),
+    'utf8',
+  );
+  const homeMutationCalls = homeRouteTestSource.match(/runFocusedValidatorMutation\(/g) ?? [];
+
+  assert.equal(homeMutationCalls.length, 12);
+  assert.match(homeRouteTestSource, /runFocusedValidatorMutation/);
+  assert.match(homeRouteTestSource, /homeRoutePath = 'app\/\(tabs\)\/home\.tsx'/);
+  assert.match(homeRouteTestSource, /--focus-home-route-copy/);
+  assert.match(homeRouteTestSource, /--focus-home-sv-mistake-review-copy/);
+  assert.match(homeRouteTestSource, /--focus-sv-native-mock-exam-copy/);
+  assert.doesNotMatch(homeRouteTestSource, /spawnSync\(\s*process\.execPath/);
+  assert.doesNotMatch(homeRouteTestSource, /require\('\.\/scripts\/validate-content\.js'\)/);
+  assert.match(helperSource, /cwd: repoRoot/);
+  assert.match(helperSource, /process\.argv\.push\(\$\{JSON\.stringify\(focusFlag\)\}\)/);
+  assert.match(helperSource, /targetFile/);
+  assert.match(helperSource, /require\(path\.join\(repoRoot, 'scripts\/validate-content\.js'\)\)/);
+});
+
 test('npm test keeps selector routing in the project dispatcher', () => {
   const pkg = readPackageJson();
   const testContentScript = pkg.scripts['test:content'];
