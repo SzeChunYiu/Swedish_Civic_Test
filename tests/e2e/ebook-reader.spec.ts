@@ -8,6 +8,8 @@ import {
   type StaticSite,
 } from './staticSiteServer';
 
+test.use({ serviceWorkers: 'block' });
+
 let staticSite: StaticSite;
 
 test.beforeAll(async () => {
@@ -48,4 +50,22 @@ test('static ebook reader keeps navigation, highlights, sources link, and mobile
   await expectNoHorizontalOverflow(page, 'ebook chapter 2');
 
   expect(pageErrors).toEqual([]);
+});
+
+test('static ebook route shows a localized error when the route bundle fails to load', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.route('**/ebook.js', (route) => route.abort());
+
+  await page.goto(`${staticSite.baseUrl}/#/ebook?c=1`, { waitUntil: 'domcontentloaded' });
+
+  await expect(page.locator('[data-page="/ebook"]')).toHaveClass(/is-active/);
+  await expect(page.locator('#ebook-reader .ebook__route-status')).toContainText(
+    'Ebook could not load',
+  );
+  await expect(page.locator('#ebook-reader .ebook__route-status')).toContainText(
+    'Check your connection and open the ebook again.',
+  );
+  await expectNoHorizontalOverflow(page, 'ebook route load failure');
 });

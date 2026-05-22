@@ -435,19 +435,28 @@ async function checkLiveSite(inputUrl, options = {}) {
   const requiredHeadMetadata = resolveRequiredHeadMetadata(options);
   const requiredQuestionCount = resolveRequiredQuestionCount(options);
   const requiredQuestionBankHash = resolveRequiredQuestionBankHash(options);
-  const [indexAsset, stylesAsset, appAsset, practiceAsset, ebookAsset, questionsAsset] =
-    await Promise.all([
-      fetchAsset(baseUrl, 'index.html'),
-      fetchAsset(baseUrl, 'styles.css'),
-      fetchAsset(baseUrl, 'app.js'),
-      fetchAsset(baseUrl, 'practice.js'),
-      fetchAsset(baseUrl, 'ebook.js'),
-      fetchAsset(baseUrl, 'questions.js'),
-    ]);
+  const [
+    indexAsset,
+    stylesAsset,
+    appAsset,
+    practiceAsset,
+    ebookToolsAsset,
+    ebookAsset,
+    questionsAsset,
+  ] = await Promise.all([
+    fetchAsset(baseUrl, 'index.html'),
+    fetchAsset(baseUrl, 'styles.css'),
+    fetchAsset(baseUrl, 'app.js'),
+    fetchAsset(baseUrl, 'practice.js'),
+    fetchAsset(baseUrl, 'ebook-tools.js'),
+    fetchAsset(baseUrl, 'ebook.js'),
+    fetchAsset(baseUrl, 'questions.js'),
+  ]);
   const index = indexAsset.text;
   const styles = stylesAsset.text;
   const app = appAsset.text;
   const practice = practiceAsset.text;
+  const ebookTools = ebookToolsAsset.text;
   const ebook = ebookAsset.text;
   const questions = questionsAsset.text;
 
@@ -606,10 +615,20 @@ async function checkLiveSite(inputUrl, options = {}) {
   );
 
   checks.push(
-    containsAll(index, ['ebook-tools.js', 'ebook.js']) &&
+    !/<script\b[^>]+\bsrc=["'][^"']*ebook(?:-tools)?\.js[^"']*["']/i.test(index) &&
+      containsAll(app, [
+        'SMT_EBOOK_SCRIPT_SOURCES',
+        'ebook-tools.js',
+        'ebook.js',
+        'window.smtEnsureEbookScripts',
+      ]) &&
+      containsAll(ebookTools, ['window.smtApplyEbookHighlights']) &&
       containsAll(ebook, ['window.smtEbookRender', 'PRACTICE_LINKS'])
       ? pass('ebook renderer assets')
-      : fail('ebook renderer assets', 'missing current Ebook helper or renderer wiring'),
+      : fail(
+          'ebook renderer assets',
+          'missing lazy Ebook helper/renderer wiring or found eager ebook entry scripts',
+        ),
   );
 
   const staleEbookPattern = /Svenska översättningen kommer|kommer i v1\.1|friendly stubs/i;

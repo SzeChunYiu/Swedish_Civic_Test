@@ -41,6 +41,22 @@ test('static sign-in script is an intentional local manifest-backed asset', () =
   assert.ok(manifest.assets?.['signin.js']);
 });
 
+test('static ebook route scripts are lazy-loaded and manifest-backed assets', () => {
+  const indexHtml = readSiteIndex();
+  const appSource = fs.readFileSync(path.join(siteRoot, 'app.js'), 'utf8');
+  const manifest = JSON.parse(fs.readFileSync(path.join(siteRoot, 'asset-manifest.json'), 'utf8'));
+
+  assert.doesNotMatch(indexHtml, /<script\b[^>]+\bsrc=["'][^"']*ebook-tools\.js[^"']*["']/i);
+  assert.doesNotMatch(indexHtml, /<script\b[^>]+\bsrc=["'][^"']*ebook\.js[^"']*["']/i);
+  assert.match(appSource, /SMT_EBOOK_SCRIPT_SOURCES[\s\S]*ebook-tools\.js[\s\S]*ebook\.js/);
+  assert.match(appSource, /window\.smtEnsureEbookScripts/);
+
+  for (const assetPath of ['ebook-tools.js', 'ebook.js']) {
+    assert.equal(fs.existsSync(path.join(siteRoot, assetPath)), true);
+    assert.ok(manifest.assets?.[assetPath], `${assetPath} missing from asset-manifest.json`);
+  }
+});
+
 test('committed static site asset manifest matches shipped assets', () => {
   const result = checkAssetManifest();
 
