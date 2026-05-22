@@ -7,6 +7,8 @@ const vm = require('node:vm');
 const repoRoot = path.resolve(__dirname, '..');
 const moduleCache = new Map();
 const checkMode = process.argv.includes('--check');
+const BASE_STATIC_CHAPTER_LOCALES = new Set(['sv', 'en']);
+const CHAPTER_LOCALIZATION_ENGLISH_WELFARE_GLOSS_PATTERN = /\(welfare\)/i;
 
 function resolveLocalModule(fromFilePath, request) {
   const base = path.resolve(path.dirname(fromFilePath), request);
@@ -152,6 +154,26 @@ function buildStaticQuestionBankMetadata(questions, chapters) {
     chapterCount: chapters.length,
     provenanceCounts: summarizeQuestionProvenance(questions),
   };
+}
+
+function chapterLocalizationWelfareGlossOffenders(chapters, scope = 'static') {
+  const offenders = [];
+  for (const chapter of chapters || []) {
+    for (const field of ['title', 'description']) {
+      const localized = chapter[field] || {};
+      for (const [locale, value] of Object.entries(localized)) {
+        if (BASE_STATIC_CHAPTER_LOCALES.has(locale)) continue;
+        if (
+          typeof value === 'string' &&
+          CHAPTER_LOCALIZATION_ENGLISH_WELFARE_GLOSS_PATTERN.test(value)
+        ) {
+          offenders.push(`${scope}.chapter${chapter.id}.${field}.${locale}`);
+        }
+      }
+    }
+  }
+
+  return offenders;
 }
 
 function buildStaticSourceProvenanceTranslations(provenanceCounts) {
@@ -508,6 +530,7 @@ module.exports = {
   buildPublishedQuestionListFromSourceQuestions,
   buildSiteQuestionBank,
   buildStaticSourceProvenanceTranslations,
+  chapterLocalizationWelfareGlossOffenders,
   formatStaticQuestionBankDrift,
   generateStaticSiteQuestionBankJs,
   loadCanonicalExportInputs,
