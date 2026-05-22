@@ -12,7 +12,7 @@ test('static cheatsheet easter egg uses tactile command card boxes', () => {
   assert.match(css, /CHEATSHEET BOX OPTIMIZATION ROUND/);
   assert.match(
     css,
-    /\.cheats__panel\s*{[\s\S]*background:[\s\S]*var\(--card-surface\);[\s\S]*border-radius: 28px;[\s\S]*box-shadow: var\(--card-shadow-hover\);/,
+    /\.cheats__panel\s*{[\s\S]*background:[\s\S]*var\(--card-surface\);[\s\S]*border-radius: 28px;[\s\S]*box-shadow: var\(--card-shadow-hover\);[\s\S]*max-height: calc\(100vh - 32px\);[\s\S]*overflow-y: auto;/,
   );
   assert.match(
     css,
@@ -63,4 +63,18 @@ test('static cheatsheet easter egg renders localized copy without changing comma
   assert.match(source, /<kbd>\?<\/kbd>/);
   assert.match(source, /<b>5×<\/b>/);
   assert.match(source, /<b>3×<\/b>/);
+});
+
+test('static cheatsheet easter egg uses modal dialog semantics and focus controls', () => {
+  const source = fs.readFileSync(extrasPath, 'utf8');
+
+  assert.match(source, /role="dialog"/);
+  assert.match(source, /aria-modal="true"/);
+  assert.match(source, /aria-labelledby="smt-cheats-title"/);
+  assert.match(source, /<h3 id="smt-cheats-title">/);
+  assert.match(source, /cheatsheetPreviouslyFocused/);
+  assert.match(source, /closeCheatsheet\(true\)/);
+  assert.match(source, /e\.key === 'Escape'/);
+  assert.match(source, /e\.key !== 'Tab'/);
+  assert.match(source, /focus\(\{ preventScroll: true \}\)/);
 });

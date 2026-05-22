@@ -845,19 +845,25 @@
     else showRandomTip();
   }
 
+  function eventTargetElement(event) {
+    const target = event.target;
+    return target?.nodeType === 1 ? target : target?.parentElement || null;
+  }
+
   document.addEventListener('click', (e) => {
-    if (e.target.closest('#dala-figure')) {
+    const target = eventTargetElement(e);
+    if (target?.closest('#dala-figure')) {
       activateBuddyFigure();
       return;
     }
-    if (e.target.closest('#dala-bubble-close')) {
+    if (target?.closest('#dala-bubble-close')) {
       hideMessage();
       return;
     }
   });
 
   document.addEventListener('keydown', (e) => {
-    if (!e.target.closest('#dala-figure')) return;
+    if (!eventTargetElement(e)?.closest('#dala-figure')) return;
     if (e.key !== 'Enter' && e.key !== ' ') return;
     e.preventDefault();
     activateBuddyFigure();
@@ -866,9 +872,10 @@
   window.addEventListener('hashchange', () => setTimeout(pageNudge, 400));
   document.addEventListener('click', (e) => {
     // re-render name when language changes
+    const target = eventTargetElement(e);
     if (
-      e.target.closest('.lang button[data-lang]') ||
-      e.target.closest('[data-set="language"] button')
+      target?.closest('.lang button[data-lang]') ||
+      target?.closest('[data-set="language"] button')
     ) {
       setTimeout(renderBuddy, 50);
     }

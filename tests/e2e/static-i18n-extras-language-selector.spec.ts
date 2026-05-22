@@ -772,6 +772,46 @@ test('static cheatsheet easter egg localizes hidden command copy in extra langua
   expect(pageErrors).toEqual([]);
 });
 
+test('static cheatsheet easter egg behaves as a keyboard-trapped modal dialog', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const pageErrors = collectPageErrors(page);
+  await openStaticHome(page, staticSite.baseUrl);
+
+  const brand = page.locator('.brand').first();
+  await brand.focus();
+  await expect(brand).toBeFocused();
+
+  await page.keyboard.press('?');
+
+  const cheatsheet = page.locator('#smt-cheats');
+  const dialog = page.getByRole('dialog', { name: 'Hidden things' });
+  const closeButton = dialog.getByRole('button', { name: 'Close' });
+
+  await expect(cheatsheet).toBeVisible();
+  await expect(dialog).toBeVisible();
+  await expect(closeButton).toBeFocused();
+
+  await page.keyboard.press('Tab');
+  await expect(closeButton).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  await expect(closeButton).toBeFocused();
+
+  await page.keyboard.press('Escape');
+  await expect(cheatsheet).toBeHidden();
+  await expect(brand).toBeFocused();
+
+  await page.keyboard.press('?');
+  await expect(dialog).toBeVisible();
+  await expect(closeButton).toBeFocused();
+  await cheatsheet.click({ position: { x: 4, y: 4 } });
+  await expect(cheatsheet).toBeHidden();
+  await expect(brand).toBeFocused();
+
+  expect(pageErrors).toEqual([]);
+});
+
 test('static typography keeps nonnegative tracking across primary routes', async ({ page }) => {
   const staticSite = await startStaticSiteServer();
   try {

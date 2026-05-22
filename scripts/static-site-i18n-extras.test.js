@@ -327,6 +327,8 @@ function loadStaticExtrasCopy() {
       createElement: () => ({
         addEventListener: noop,
         remove: noop,
+        querySelector: (selector) =>
+          selector === '.cheats__close' || selector === '.cheats__panel' ? { focus: noop } : null,
         style: {},
         set id(value) {
           this._id = value;
@@ -376,6 +378,8 @@ function renderCheatsheetHtml(locale) {
       createElement: () => ({
         addEventListener: noop,
         remove: noop,
+        querySelector: (selector) =>
+          selector === '.cheats__close' || selector === '.cheats__panel' ? { focus: noop } : null,
         style: {},
         set id(value) {
           this._id = value;
@@ -573,7 +577,10 @@ test('static cheatsheet easter egg copy is localized for every shipped language'
   const source = fs.readFileSync(path.join(repoRoot, 'site/extras.js'), 'utf8');
 
   assert.match(source, /aria-label="\$\{extrasText\('cheatsheetClose'\)\}"/);
-  assert.match(source, /<h3>\$\{extrasText\('cheatsheetTitle'\)\}<\/h3>/);
+  assert.match(source, /<h3 id="smt-cheats-title">\$\{extrasText\('cheatsheetTitle'\)\}<\/h3>/);
+  assert.match(source, /role="dialog"/);
+  assert.match(source, /aria-modal="true"/);
+  assert.match(source, /aria-labelledby="smt-cheats-title"/);
   assert.doesNotMatch(source, /<h3>Hidden things<\/h3>/);
   assert.doesNotMatch(source, /aria-label="Close"/);
   assert.doesNotMatch(source, /coffee break<\/li>|some assembly required<\/li>|Hej hej\.<\/p>/);
