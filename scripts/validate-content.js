@@ -2041,6 +2041,15 @@ const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
     'exam answer radios must mirror checked state natively',
   ],
   [
+    'const isFlagged = Boolean(flaggedQuestionIds[question.id]);',
+    'exam flag control must derive a stable boolean toggle state',
+  ],
+  ['aria-pressed={isFlagged}', 'exam flag control must expose pressed state on web'],
+  [
+    'accessibilityState={{ checked: isFlagged }}',
+    'exam flag control must expose native checked state',
+  ],
+  [
     'accessibilityLabel={copy.submitAccessibilityLabel}',
     'exam submit control must expose localized accessibility labels',
   ],
@@ -12726,7 +12735,7 @@ function validateExamRouteCopyParity() {
   });
 
   const reviewSectionStart = examRoute.indexOf('{filteredReviewItems.map((item) => {');
-  const activeQuestionSectionStart = examRoute.indexOf('{examQuestions.map((question, index) => (');
+  const activeQuestionSectionStart = examRoute.indexOf('{examQuestions.map((question, index) =>');
   if (reviewSectionStart < 0 || activeQuestionSectionStart < 0) {
     reject('exam route must keep distinct submitted-review and active-question sections');
   } else {
@@ -12741,6 +12750,25 @@ function validateExamRouteCopyParity() {
       !activeQuestionSection.includes('<ProvenanceBadge language={language} question={question} />')
     ) {
       reject('active unsubmitted exam questions must keep provenance badges');
+    }
+    if (
+      !activeQuestionSection.includes('const isFlagged = Boolean(flaggedQuestionIds[question.id]);')
+    ) {
+      reject('exam flag-for-review control must derive an explicit boolean pressed state');
+    }
+    if (!activeQuestionSection.includes('aria-pressed={isFlagged}')) {
+      reject('exam flag-for-review control must expose aria-pressed on web');
+    }
+    if (!activeQuestionSection.includes('accessibilityState={{ checked: isFlagged }}')) {
+      reject('exam flag-for-review control must preserve native checked accessibility state');
+    }
+    if (
+      /aria-selected=\{isFlagged\}/.test(activeQuestionSection) ||
+      /accessibilityState=\{\{\s*selected:\s*(?:isFlagged|Boolean\(flaggedQuestionIds\[question\.id\]\))\s*\}\}/.test(
+        activeQuestionSection,
+      )
+    ) {
+      reject('exam flag-for-review control must use pressed toggle semantics, not selected state');
     }
   }
 
