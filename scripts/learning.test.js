@@ -634,11 +634,11 @@ test('weak chapter selector builds per-chapter totals without repeated full-bank
   assert.equal(calculateChapterMastery('missing', questions, progress), 0);
   assert.deepEqual(findWeakChapterIds(questions, progress, 0.8), ['weak']);
   assert.match(source, /function chapterMasteryTotalsById\(/);
-  assert.match(source, /for \(const \[chapterId, totals\] of chapterMasteryTotalsById\(questions, progress\)\)/);
-  assert.doesNotMatch(
+  assert.match(
     source,
-    /export function findWeakChapterIds[\s\S]*questions\.filter\(/,
+    /for \(const \[chapterId, totals\] of chapterMasteryTotalsById\(questions, progress\)\)/,
   );
+  assert.doesNotMatch(source, /export function findWeakChapterIds[\s\S]*questions\.filter\(/);
   assert.doesNotMatch(
     source,
     /export function findWeakChapterIds[\s\S]*calculateChapterMastery\(chapterId, questions, progress\)/,
