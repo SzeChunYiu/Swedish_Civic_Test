@@ -628,6 +628,7 @@ const QUESTION_SALTSJOBADEN_ENGLISH_NATURALNESS_PATTERNS = [
 const QUESTION_RELIGIOUS_FREEDOM_1951_ENGLISH_NATURALNESS_PATTERNS = [/\bcompletely freely\b/i];
 const QUESTION_PUBLIC_SECTOR_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhat is meant by the public sector in Sweden\b/i,
+  /\bWhich fact is correct regarding what the public sector in Sweden is\b/i,
   /\bActivities for which the state, regions, and municipalities are responsible\b/i,
   /\bThe public sector(?: in Sweden)? means (?:activities|all privately owned companies)\b/i,
 ];
