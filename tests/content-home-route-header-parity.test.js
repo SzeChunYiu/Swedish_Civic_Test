@@ -1,10 +1,13 @@
 const assert = require('node:assert/strict');
-const { execFileSync, spawnSync } = require('node:child_process');
+const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 
+const { runFocusedValidatorMutation } = require('./helpers/focusedValidatorMutation.cjs');
+
 const repoRoot = path.resolve(__dirname, '..');
+const homeRoutePath = 'app/(tabs)/home.tsx';
 
 function parseFocusedHomeRouteSummary() {
   const output = execFileSync(
@@ -150,31 +153,15 @@ test('home source-trust row links learners to sources without unsupported rating
 });
 
 test('home route copy parity rejects unreachable flashcard promises', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-process.argv.push('--focus-home-route-copy');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace(
+  const result = runFocusedValidatorMutation({
+    focusFlag: '--focus-home-route-copy',
+    targetFile: homeRoutePath,
+    mutateSource: (source) =>
+      source.replace(
         'Växla mellan tidsatta övningsprov, bokmärken, missade frågor, ljud och förberedelsesignal.',
         'Växla mellan tidsatta övningsprov, bokmärken, missade frågor, ljud och förberedelsesignal. Flashcards kommer snart.',
-      );
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
+      ),
+  });
 
   assert.notEqual(result.status, 0);
   assert.match(
@@ -184,35 +171,17 @@ require('./scripts/validate-content.js');
 });
 
 test('home route copy parity rejects harsh Swedish mistake-review wording', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-process.argv.push('--focus-home-sv-mistake-review-copy');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace(
-        'Växla mellan tidsatta övningsprov, bokmärken, missade frågor, ljud och förberedelsesignal.',
-        'Växla mellan tidsatta övningsprov, bokmärken, felspårning, ljud och förberedelsesignal.',
-      )
-      .replace(
-        'genomgång av frågor du missat',
-        'repetition av misstag',
-      );
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
+  const result = runFocusedValidatorMutation({
+    focusFlag: '--focus-home-sv-mistake-review-copy',
+    targetFile: homeRoutePath,
+    mutateSource: (source) =>
+      source
+        .replace(
+          'Växla mellan tidsatta övningsprov, bokmärken, missade frågor, ljud och förberedelsesignal.',
+          'Växla mellan tidsatta övningsprov, bokmärken, felspårning, ljud och förberedelsesignal.',
+        )
+        .replace('genomgång av frågor du missat', 'repetition av misstag'),
+  });
 
   assert.notEqual(result.status, 0);
   assert.match(
@@ -232,30 +201,12 @@ test('home route copy parity accepts natural Swedish missed-question review word
 });
 
 test('home route copy parity rejects internal benchmark phrases in learner copy', () => {
-  const forbiddenPhrase = ['Optimized', ' study loop'].join('');
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-process.argv.push('--focus-home-route-copy');
-const originalReadFileSync = fs.readFileSync;
-const forbiddenPhrase = ${JSON.stringify(forbiddenPhrase)};
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace("'Smart study habits'", JSON.stringify(forbiddenPhrase));
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
+  const result = runFocusedValidatorMutation({
+    focusFlag: '--focus-home-route-copy',
+    targetFile: homeRoutePath,
+    mutateSource: (source) =>
+      source.replace("'Smart study habits'", JSON.stringify('Optimized study loop')),
+  });
 
   assert.notEqual(result.status, 0);
   assert.match(
@@ -265,29 +216,14 @@ require('./scripts/validate-content.js');
 });
 
 test('home route copy parity rejects unsupported readiness prediction wording', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-process.argv.push('--focus-home-route-copy');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace('Preparation signal', 'Readiness indicator')
-      .replace('Förberedelsesignal', 'Redoindikator');
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
+  const result = runFocusedValidatorMutation({
+    focusFlag: '--focus-home-route-copy',
+    targetFile: homeRoutePath,
+    mutateSource: (source) =>
+      source
+        .replace('Preparation signal', 'Readiness indicator')
+        .replace('Förberedelsesignal', 'Redoindikator'),
+  });
 
   assert.notEqual(result.status, 0);
   assert.match(
@@ -297,31 +233,15 @@ require('./scripts/validate-content.js');
 });
 
 test('home route copy parity rejects Swedish samhällskunskaper plural subject wording', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-process.argv.push('--focus-home-route-copy');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace(
+  const result = runFocusedValidatorMutation({
+    focusFlag: '--focus-home-route-copy',
+    targetFile: homeRoutePath,
+    mutateSource: (source) =>
+      source.replace(
         'const homeCopy: Record<AppLanguage, HomeCopy> = {',
         'const homeCopy: Record<AppLanguage, HomeCopy> = { /* svenska samhällskunskaper */',
-      );
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
+      ),
+  });
 
   assert.notEqual(result.status, 0);
   assert.match(
@@ -331,29 +251,14 @@ require('./scripts/validate-content.js');
 });
 
 test('home route copy parity rejects guided path chapter drift', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-process.argv.push('--focus-home-route-copy');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace("chapterRange: 'Kapitel 10-13'", "chapterRange: 'Kapitel 10-99'")
-      .replace("chapterRange: 'Chapters 10-13'", "chapterRange: 'Chapters 10-99'");
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
+  const result = runFocusedValidatorMutation({
+    focusFlag: '--focus-home-route-copy',
+    targetFile: homeRoutePath,
+    mutateSource: (source) =>
+      source
+        .replace("chapterRange: 'Kapitel 10-13'", "chapterRange: 'Kapitel 10-99'")
+        .replace("chapterRange: 'Chapters 10-13'", "chapterRange: 'Chapters 10-99'"),
+  });
 
   assert.notEqual(result.status, 0);
   assert.match(
@@ -363,32 +268,17 @@ require('./scripts/validate-content.js');
 });
 
 test('home route copy parity rejects Swedish mockprov wording', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-process.argv.push('--focus-sv-native-mock-exam-copy');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace('Gå till övningsprovet', 'Gå till mockprov')
-      .replaceAll(
-        'gå till övningsprovet när steget är klart',
-        'gå till mockprov när steget är klart',
-      );
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
+  const result = runFocusedValidatorMutation({
+    focusFlag: '--focus-sv-native-mock-exam-copy',
+    targetFile: homeRoutePath,
+    mutateSource: (source) =>
+      source
+        .replace('Gå till övningsprovet', 'Gå till mockprov')
+        .replaceAll(
+          'gå till övningsprovet när steget är klart',
+          'gå till mockprov när steget är klart',
+        ),
+  });
 
   assert.notEqual(result.status, 0);
   assert.match(
@@ -398,35 +288,20 @@ require('./scripts/validate-content.js');
 });
 
 test('home route copy parity rejects duplicate timed-exam accessible labels', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-process.argv.push('--focus-home-route-copy');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace(
-        'Starta ett tidsatt övningsprov från snabbåtgärderna',
-        'Starta ett tidsatt övningsprov från kortet Förberedelsesignal',
-      )
-      .replace(
-        'Start a timed practice exam from quick actions',
-        'Start a timed practice exam from the Preparation signal card',
-      );
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
+  const result = runFocusedValidatorMutation({
+    focusFlag: '--focus-home-route-copy',
+    targetFile: homeRoutePath,
+    mutateSource: (source) =>
+      source
+        .replace(
+          'Starta ett tidsatt övningsprov från snabbåtgärderna',
+          'Starta ett tidsatt övningsprov från kortet Förberedelsesignal',
+        )
+        .replace(
+          'Start a timed practice exam from quick actions',
+          'Start a timed practice exam from the Preparation signal card',
+        ),
+  });
 
   assert.notEqual(result.status, 0);
   assert.match(
@@ -436,31 +311,15 @@ require('./scripts/validate-content.js');
 });
 
 test('home route header parity rejects unheadered dashboard card titles', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-process.argv.push('--focus-home-route-copy');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace(
+  const result = runFocusedValidatorMutation({
+    focusFlag: '--focus-home-route-copy',
+    targetFile: homeRoutePath,
+    mutateSource: (source) =>
+      source.replace(
         '<Text accessibilityRole="header" style={styles.feedbackTitle}>',
         '<Text style={styles.feedbackTitle}>',
-      );
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
+      ),
+  });
 
   assert.notEqual(result.status, 0);
   assert.match(
@@ -470,28 +329,12 @@ require('./scripts/validate-content.js');
 });
 
 test('home route copy parity rejects bypassing the settings language', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-process.argv.push('--focus-home-route-copy');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace('const copy = homeCopy[language];', 'const copy = homeCopy.en;');
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
+  const result = runFocusedValidatorMutation({
+    focusFlag: '--focus-home-route-copy',
+    targetFile: homeRoutePath,
+    mutateSource: (source) =>
+      source.replace('const copy = homeCopy[language];', 'const copy = homeCopy.en;'),
+  });
 
   assert.notEqual(result.status, 0);
   assert.match(
@@ -501,56 +344,26 @@ require('./scripts/validate-content.js');
 });
 
 test('home route copy parity rejects missing Swedish shell copy', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-process.argv.push('--focus-home-route-copy');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace("'Starta övning'", "'Start practice'");
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
+  const result = runFocusedValidatorMutation({
+    focusFlag: '--focus-home-route-copy',
+    targetFile: homeRoutePath,
+    mutateSource: (source) => source.replace("'Starta övning'", "'Start practice'"),
+  });
 
   assert.notEqual(result.status, 0);
   assert.match(`${result.stdout}\n${result.stderr}`, /home route is missing sv copy/);
 });
 
 test('home route copy parity rejects synthetic learner feedback copy', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-process.argv.push('--focus-home-route-copy');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace('Smart study habits', ['Smart study habits with simulated', ' learners'].join(''));
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
+  const result = runFocusedValidatorMutation({
+    focusFlag: '--focus-home-route-copy',
+    targetFile: homeRoutePath,
+    mutateSource: (source) =>
+      source.replace(
+        'Smart study habits',
+        ['Smart study habits with simulated', ' learners'].join(''),
+      ),
+  });
 
   assert.notEqual(result.status, 0);
   assert.match(
