@@ -22,6 +22,11 @@ test('static site consent and footer utility surfaces use tactile box treatment'
     css,
     /\.consent__actions\s*{[\s\S]*background: rgba\(255, 255, 255, 0\.06\);[\s\S]*border-radius: 999px;[\s\S]*padding: 5px;/,
   );
+  assert.match(
+    css,
+    /\.consent \.btn--ghost,\s*\.consent \.btn--gold\s*{[\s\S]*min-height: 44px;[\s\S]*min-width: 44px;/,
+  );
+  assert.doesNotMatch(css, /\.consent \.btn--ghost,[\s\S]{0,120}min-height: 38px;/);
   assert.match(css, /\.footer__brag\s*{[\s\S]*border-radius: 30px;[\s\S]*padding: 30px 32px 34px;/);
   assert.match(css, /\.footer__brag::before\s*{[\s\S]*background: var\(--card-rail\);/);
   assert.match(
