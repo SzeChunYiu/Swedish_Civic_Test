@@ -20,6 +20,16 @@ function validateContentSummary() {
   return JSON.parse(match[0]);
 }
 
+function extractCitizenshipTimelineReturnKeys(source) {
+  const returnMatch = source.match(
+    /function validateCitizenshipTimeline\(\) \{[\s\S]*?\n\s+return\s+\{([\s\S]*?)\n\s+\};\n\}/,
+  );
+  assert.ok(returnMatch, 'validateCitizenshipTimeline return object should be source-checkable');
+  return [...returnMatch[1].matchAll(/^\s*([A-Za-z_$][\w$]*)\s*(?=,|:)/gm)].map(
+    (match) => match[1],
+  );
+}
+
 function runFocusedCountdownValidationWithExamDatePatch(search, replacement) {
   return spawnSync(
     process.execPath,
@@ -103,6 +113,73 @@ test('countdown banner keeps citizenship rules and civic test dates separate', (
   const homeRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
   assert.match(homeRoute, /import \{ CountdownBanner \}/);
   assert.match(homeRoute, /<CountdownBanner language=\{language\} \/>/);
+});
+
+test('countdown timeline return shape has one source key per focused summary field', () => {
+  const summary = validateContentSummary();
+  assert.equal(summary.citizenshipTimelineReturnShapeKeysValidated, true);
+
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const returnKeys = extractCitizenshipTimelineReturnKeys(validatorSource);
+  const expectedReturnKeys = [
+    'countdownCopyParity',
+    'homeMountParity',
+    'homeMountRulesValidated',
+    'dateParity',
+    'firstSittingDate',
+    'rulesDate',
+    'sourceUrlsValidated',
+    'testDeadlineDate',
+  ];
+
+  assert.deepEqual(returnKeys, expectedReturnKeys);
+  assert.equal(new Set(returnKeys).size, returnKeys.length);
+  assert.equal(summary.citizenshipRulesEffectiveDateValidated, '2026-06-06');
+  assert.equal(summary.civicKnowledgeTestFirstSittingDateValidated, '2026-08-15');
+  assert.equal(summary.civicKnowledgeTestDeadlineDateValidated, '2026-08-17');
+  assert.equal(summary.citizenshipTimelineSourceUrlsValidated, 4);
+  assert.equal(summary.citizenshipTimelineDateParityValidated, true);
+  assert.equal(summary.countdownBannerTimelineCopyParityValidated, true);
+  assert.equal(summary.countdownBannerHomeMountRulesValidated, 2);
+  assert.equal(summary.countdownBannerHomeMountParityValidated, true);
+});
+
+test('countdown timeline return shape guard rejects duplicate object keys', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+process.argv.push('scripts/validate-content.js', '--focus-countdown-banner-parity');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/scripts/validate-content.js')) {
+    const source = String(contents);
+    const search = '    homeMountParity,\\n    homeMountRulesValidated,';
+    if (!source.includes(search)) {
+      throw new Error('countdown return-shape mutation fixture did not find target source');
+    }
+    return source.replace(search, '    firstSittingDate,\\n    homeMountParity,\\n    homeMountRulesValidated,');
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /validateCitizenshipTimeline return shape must not duplicate keys: firstSittingDate/,
+  );
 });
 
 test('validate:content rejects removing the Home countdown banner mount', () => {
