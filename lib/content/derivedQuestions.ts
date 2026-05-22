@@ -215,6 +215,64 @@ function stripLeadingByEn(value: string): string {
   return stripLeadingPurposeEn(value).replace(/^by\s+/i, '');
 }
 
+function swedishTaskProposition(source: PracticeQuestion, subject: string, answer: string): string {
+  const normalizedSubject = upperFirst(subject);
+  const phrase = stripLeadingPurposeSv(answer).trim();
+
+  if (source.id === 'q022') {
+    if (/^besluta om lagar och hur statens pengar ska användas$/i.test(phrase)) {
+      return `${normalizedSubject} beslutar om lagar och hur statens pengar ska användas`;
+    }
+    if (/^sköta regionernas kollektivtrafik$/i.test(phrase)) {
+      return `${normalizedSubject} sköter regionernas kollektivtrafik`;
+    }
+  }
+
+  if (source.id === 'q059') {
+    if (
+      /^representera den samiska befolkningen i frågor om språk, kultur och identitet$/i.test(
+        phrase,
+      )
+    ) {
+      return `${normalizedSubject} representerar den samiska befolkningen i frågor om språk, kultur och identitet`;
+    }
+    if (/^besluta statens budget$/i.test(phrase)) {
+      return `${normalizedSubject} beslutar statens budget`;
+    }
+  }
+
+  return `${normalizedSubject} har uppgiften att ${lowerFirst(phrase)}`;
+}
+
+function englishTaskProposition(source: PracticeQuestion, subject: string, answer: string): string {
+  const normalizedSubject = upperFirst(subject);
+  const phrase = stripLeadingPurposeEn(answer).trim();
+
+  if (source.id === 'q022') {
+    if (/^decide laws and how the state's money should be used$/i.test(phrase)) {
+      return `${normalizedSubject} passes laws and decides how state funds are used`;
+    }
+    if (/^manage regional public transport$/i.test(phrase)) {
+      return `${normalizedSubject} manages regional public transport`;
+    }
+  }
+
+  if (source.id === 'q059') {
+    if (
+      /^represent the Sami population on questions of language, culture, and identity$/i.test(
+        phrase,
+      )
+    ) {
+      return `${normalizedSubject} represents the Sami population on questions of language, culture, and identity`;
+    }
+    if (/^decide the state budget$/i.test(phrase)) {
+      return `${normalizedSubject} decides the state budget`;
+    }
+  }
+
+  return `${normalizedSubject} has the task to ${lowerFirst(phrase)}`;
+}
+
 function swedishIncomeMethod(answer: string): string {
   const phrase = lowerFirst(answer.trim());
   if (/^de säljer reklamplats eller tar betalt för en särskild kanal$/i.test(phrase)) {
@@ -1749,11 +1807,10 @@ export function deriveCivicStatementSv(source: PracticeQuestion, option: Questio
   if (match) return `${upperFirst(answer)} delar ${match[1]}`;
 
   match = q.match(/^Vilken av följande uppgifter har (.+)$/i);
-  if (match)
-    return `${upperFirst(match[1])} har uppgiften att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
+  if (match) return swedishTaskProposition(source, match[1], answer);
 
   match = q.match(/^Vilken uppgift har (.+)$/i);
-  if (match) return `${upperFirst(match[1])} har uppgiften ${swedishPurposeClause(answer)}`;
+  if (match) return swedishTaskProposition(source, match[1], answer);
 
   match = q.match(/^Vad är en uppgift för (.+)$/i);
   if (match) return `En uppgift för ${match[1]} är ${swedishPurposeClause(answer)}`;
@@ -2381,11 +2438,10 @@ export function deriveCivicStatementEn(source: PracticeQuestion, option: Questio
   if (match) return `${upperFirst(answer)} share ${match[1]}`;
 
   match = q.match(/^Which of the following tasks belongs to (.+)$/i);
-  if (match)
-    return `${upperFirst(match[1])} has the task to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+  if (match) return englishTaskProposition(source, match[1], answer);
 
   match = q.match(/^What is one task of (.+)$/i);
-  if (match) return `One task of ${match[1]} is to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+  if (match) return englishTaskProposition(source, match[1], answer);
 
   match = q.match(/^What is one role of (.+)$/i);
   if (match) return `One role of ${match[1]} is to ${lowerFirst(stripLeadingPurposeEn(answer))}`;

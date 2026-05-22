@@ -24147,8 +24147,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "The Riksdag has the task to decide laws and how the state's money should be used.",
-      "sv": "Riksdagen har uppgiften att besluta om lagar och hur statens pengar ska användas."
+      "en": "The Riksdag passes laws and decides how state funds are used.",
+      "sv": "Riksdagen beslutar om lagar och hur statens pengar ska användas."
     },
     "opts": [
       {
@@ -24187,8 +24187,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "The Riksdag has the task to manage regional public transport.",
-      "sv": "Riksdagen har uppgiften att sköta regionernas kollektivtrafik."
+      "en": "The Riksdag manages regional public transport.",
+      "sv": "Riksdagen sköter regionernas kollektivtrafik."
     },
     "opts": [
       {
@@ -33227,8 +33227,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "One task of the Sami Parliament is to represent the Sami population on questions of language, culture, and identity.",
-      "sv": "Sametinget har uppgiften att representera den samiska befolkningen i frågor om språk, kultur och identitet."
+      "en": "The Sami Parliament represents the Sami population on questions of language, culture, and identity.",
+      "sv": "Sametinget representerar den samiska befolkningen i frågor om språk, kultur och identitet."
     },
     "opts": [
       {
@@ -33267,8 +33267,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "One task of the Sami Parliament is to decide the state budget.",
-      "sv": "Sametinget har uppgiften att besluta statens budget."
+      "en": "The Sami Parliament decides the state budget.",
+      "sv": "Sametinget beslutar statens budget."
     },
     "opts": [
       {
