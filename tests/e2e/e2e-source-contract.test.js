@@ -525,6 +525,73 @@ test('countdown browser date coverage uses the shared clock helper', () => {
   );
 });
 
+test('browser speech synthesis audio mock coverage uses the shared helper contract', () => {
+  const browserLaunchSource = readRelative('browserLaunch.ts');
+  const practiceFeedbackSource = readRelative('practice-feedback.spec.ts');
+  const forbiddenLocalSpeechMockPatterns = [
+    /\b__SMT_SPEECH_EVENTS__\b/g,
+    /\bSpeechSynthesisUtterance\b/g,
+    /\bspeechSynthesis\s*[:=]/g,
+    /\bObject\.defineProperty\(window,\s*['"]speechSynthesis['"]/g,
+  ];
+
+  assert.match(
+    browserLaunchSource,
+    /export async function installSpeechSynthesisMock\(page: Page\): Promise<void>/,
+    'browserLaunch should export the shared browser SpeechSynthesis mock installer',
+  );
+  assert.match(
+    browserLaunchSource,
+    /export async function speechEvents\(page: Page\): Promise<BrowserSpeechEvent\[]>/,
+    'browserLaunch should export the speech event reader',
+  );
+  assert.match(
+    browserLaunchSource,
+    /export async function clearSpeechEvents\(page: Page\): Promise<void>/,
+    'browserLaunch should export the speech event reset helper',
+  );
+  assert.match(
+    browserLaunchSource,
+    /export function speakEvents\(events: BrowserSpeechEvent\[]\)/,
+    'browserLaunch should export the speak-event filter helper',
+  );
+  assert.match(
+    browserLaunchSource,
+    /reseedOnNavigation\?: boolean/,
+    'browserLaunch should keep the one-time settings seed option used by cross-route audio flows',
+  );
+
+  assert.match(
+    practiceFeedbackSource,
+    /import \{[\s\S]*clearSpeechEvents,[\s\S]*installSpeechSynthesisMock,[\s\S]*speakEvents,[\s\S]*speechEvents,[\s\S]*\} from '\.\/browserLaunch';/,
+    'Practice feedback e2e should import the shared browser speech mock helpers',
+  );
+  assert.match(
+    practiceFeedbackSource,
+    /await installSpeechSynthesisMock\(page\);/,
+    'listen-first browser coverage should install the shared speech mock before navigation',
+  );
+  assert.match(
+    practiceFeedbackSource,
+    /reseedOnNavigation:\s*false/,
+    'cross-route audio coverage should preserve the one-time settings seed semantics',
+  );
+
+  const violations = [];
+  for (const filePath of browserSpecPaths) {
+    const source = fs.readFileSync(filePath, 'utf8');
+    for (const pattern of forbiddenLocalSpeechMockPatterns) {
+      violations.push(...collectMatches({ pattern, source, filePath }));
+    }
+  }
+
+  assert.deepEqual(
+    violations,
+    [],
+    'browser specs should use installSpeechSynthesisMock, speechEvents, clearSpeechEvents, and speakEvents from tests/e2e/browserLaunch.ts instead of route-local speech mocks',
+  );
+});
+
 test('static site privacy grep focus stays isolated to privacy assertions', () => {
   const privacySource = readRelative('static-site-network-privacy.spec.ts');
   const networkSource = readRelative('static-site-network-fonts.spec.ts');
@@ -624,7 +691,7 @@ test('static q050 source-criticism rendered e2e keeps a focused grep target', ()
   );
   assert.match(
     paritySource,
-    /static site question bank preserves q050 source-criticism canonical copy and source metadata/,
+    /static site question bank keeps q050 source-criticism i18n noun-based/,
     'static q050 data contract should preserve canonical copy and UHR source metadata',
   );
 });
@@ -668,7 +735,7 @@ test('static site network specs share one external request trap helper', () => {
   );
   assert.deepEqual(
     callArgumentCounts(networkSource, 'trapExternalRequests'),
-    [3, 3],
+    [3, 3, 3, 3],
     'font/network coverage should use the shared helper with an explicit capture array',
   );
   assert.match(
