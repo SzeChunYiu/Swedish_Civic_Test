@@ -6683,7 +6683,7 @@ function validateStaticEbookProseSourceMetadata() {
       message: 'static ebook external source anchors must use target blank and noreferrer',
     },
     {
-      snippet: 'OFFICIAL_TEST_SOURCE_NOTES.map(sourceAnchor).join',
+      snippet: 'OFFICIAL_TEST_SOURCE_NOTES.map((source) => sourceAnchor(source, lang)).join',
       message: 'static ebook official source note links must use the safe source anchor helper',
     },
   ];
