@@ -2115,7 +2115,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 15;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 36;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 39;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_RUNTIME_CASES = 9;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
@@ -20748,6 +20748,12 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       normalizedPlacementCtaSource.includes(
         "purchaseRuntime?.purchaseUnavailableReason === 'web_store_unavailable'",
       ) &&
+        normalizedPlacementCtaSource.includes(
+          "purchaseRuntime?.purchaseUnavailableReason === 'native_receipt_validator_unavailable'",
+        ) &&
+        normalizedPlacementCtaSource.includes(
+          'const purchaseUnavailable = webPurchaseUnavailable || nativePurchaseUnavailable;',
+        ) &&
         normalizedPlacementCtaSource.includes('copy.webUnavailableBody(REMOVE_ADS_PRICE_LABEL)') &&
         normalizedPlacementCtaSource.includes('copy.webUnavailableAccessibilityHint') &&
         normalizedPlacementCtaSource.includes('copy.buyUnavailable') &&
@@ -20757,6 +20763,24 @@ function validateRemoveAdsPurchaseRuntimeParity() {
         /Restore in mobile app/.test(placementCtaSource) &&
         /Återställ i mobilappen/.test(placementCtaSource),
       'RemoveAdsPlacementCta must render localized mobile-app-only copy when web purchases are unavailable',
+    ],
+    [
+      normalizedPlacementCtaSource.includes('copy.nativeUnavailableBody(REMOVE_ADS_PRICE_LABEL)') &&
+        normalizedPlacementCtaSource.includes('copy.nativeUnavailableAccessibilityHint') &&
+        normalizedPlacementCtaSource.includes('copy.buyNativeUnavailable') &&
+        normalizedPlacementCtaSource.includes('copy.restoreNativeUnavailable') &&
+        normalizedPlacementCtaSource.includes('copy.nativeUnavailableStatus') &&
+        /Purchases are temporarily unavailable because receipt validation is not configured/.test(
+          placementCtaSource,
+        ) &&
+        /Köp är tillfälligt inte tillgängliga eftersom kvittovalidering inte är konfigurerad/.test(
+          placementCtaSource,
+        ) &&
+        /Buy unavailable/.test(placementCtaSource) &&
+        /Köp inte tillgängligt/.test(placementCtaSource) &&
+        /Restore unavailable/.test(placementCtaSource) &&
+        /Återställ inte tillgängligt/.test(placementCtaSource),
+      'RemoveAdsPlacementCta must render localized receipt-validator-unavailable copy when native purchases are unavailable',
     ],
     [
       normalizedPlacementCtaSource.includes(
@@ -20770,15 +20794,29 @@ function validateRemoveAdsPurchaseRuntimeParity() {
     ],
     [
       normalizedPlacementCtaSource.includes(
-        'purchaseUnavailable ? copy.statusMessages.unavailable',
+        'webPurchaseUnavailable ? copy.statusMessages.unavailable',
+      ) ||
+        (normalizedPlacementCtaSource.includes('copy.nativeUnavailableStatus') &&
+          normalizedPlacementCtaSource.includes('copy.statusMessages.unavailable') &&
+          normalizedPlacementCtaSource.includes(
+            'Remove Ads can be bought or restored in the mobile app.',
+          ) &&
+          normalizedPlacementCtaSource.includes(
+            'Ta bort annonser kan köpas eller återställas i mobilappen.',
+          )),
+      'RemoveAdsPlacementCta must show mobile-app-only status copy for unavailable web purchase runtime',
+    ],
+    [
+      normalizedPlacementCtaSource.includes(
+        'nativePurchaseUnavailable ? copy.nativeUnavailableStatus',
       ) &&
         normalizedPlacementCtaSource.includes(
-          'Remove Ads can be bought or restored in the mobile app.',
+          'Purchases are temporarily unavailable because receipt validation is not configured.',
         ) &&
         normalizedPlacementCtaSource.includes(
-          'Ta bort annonser kan köpas eller återställas i mobilappen.',
+          'Köp är tillfälligt inte tillgängliga eftersom kvittovalidering inte är konfigurerad.',
         ),
-      'RemoveAdsPlacementCta must show mobile-app-only status copy for unavailable web purchase runtime',
+      'RemoveAdsPlacementCta must show receipt-validator-unavailable status copy for unavailable native purchase runtime',
     ],
     [
       normalizedPlacementCtaSource.includes(
@@ -20822,10 +20860,30 @@ function validateRemoveAdsPurchaseRuntimeParity() {
     [
       normalizedPaywallSource.includes('useRemoveAdsPriceLabel(purchaseRuntime, priceLabel)') &&
         normalizedPaywallSource.includes('copy.webUnavailableBody(resolvedPriceLabel)') &&
+        normalizedPaywallSource.includes('copy.nativeUnavailableBody(resolvedPriceLabel)') &&
         normalizedPaywallSource.includes('copy.body(resolvedPriceLabel)') &&
         normalizedPaywallSource.includes('copy.buyAccessibilityLabel(resolvedPriceLabel)') &&
         normalizedPaywallSource.includes('copy.buyIdle(resolvedPriceLabel)'),
       'PremiumBanner must render the fetched Remove Ads display price with fallback',
+    ],
+    [
+      normalizedPaywallSource.includes(
+        "purchaseRuntime?.purchaseUnavailableReason === 'native_receipt_validator_unavailable'",
+      ) &&
+        normalizedPaywallSource.includes(
+          'const purchaseUnavailable = webPurchaseUnavailable || nativePurchaseUnavailable;',
+        ) &&
+        normalizedPaywallSource.includes('copy.nativeUnavailableAccessibilityHint') &&
+        normalizedPaywallSource.includes('copy.buyNativeUnavailable') &&
+        normalizedPaywallSource.includes('copy.restoreNativeUnavailable') &&
+        normalizedPaywallSource.includes('copy.nativeUnavailableStatus') &&
+        /Purchases are temporarily unavailable because receipt validation is not configured/.test(
+          paywallSource,
+        ) &&
+        /Köp är tillfälligt inte tillgängliga eftersom kvittovalidering inte är konfigurerad/.test(
+          paywallSource,
+        ),
+      'PremiumBanner must render localized receipt-validator-unavailable copy when native purchases are unavailable',
     ],
     [
       normalizedPricingWedgeSource.includes('priceLabel = REMOVE_ADS_PRICE_LABEL') &&

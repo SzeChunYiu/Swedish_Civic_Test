@@ -2728,20 +2728,32 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(paywallSource, /onEntitlementsChange/);
   assert.match(paywallSource, /adsDisabled/);
   assert.match(paywallSource, /purchaseUnavailableReason === 'web_store_unavailable'/);
+  assert.match(
+    paywallSource,
+    /purchaseUnavailableReason === 'native_receipt_validator_unavailable'/,
+  );
   assert.match(paywallSource, /copy\.webUnavailableBody\(resolvedPriceLabel\)/);
+  assert.match(paywallSource, /copy\.nativeUnavailableBody\(resolvedPriceLabel\)/);
   assert.match(paywallSource, /copy\.body\(resolvedPriceLabel\)/);
   assert.match(paywallSource, /copy\.webUnavailableAccessibilityHint/);
+  assert.match(paywallSource, /copy\.nativeUnavailableAccessibilityHint/);
   assert.match(paywallSource, /Buy in mobile app/);
   assert.match(paywallSource, /Köp i mobilappen/);
+  assert.match(paywallSource, /Buy unavailable/);
+  assert.match(paywallSource, /Köp inte tillgängligt/);
   assert.match(paywallSource, /Restore in mobile app/);
   assert.match(paywallSource, /Återställ i mobilappen/);
+  assert.match(paywallSource, /Restore unavailable/);
+  assert.match(paywallSource, /Återställ inte tillgängligt/);
   assert.match(paywallSource, /web version shows status only/);
   assert.match(paywallSource, /Webbversionen visar bara status/);
+  assert.match(paywallSource, /receipt validation is not configured/);
+  assert.match(paywallSource, /kvittovalidering inte är konfigurerad/);
   assert.match(paywallSource, /Buy Remove Ads for \$\{price\}/);
   assert.match(paywallSource, /Köp Ta bort annonser för \$\{price\}/);
   assert.match(
     paywallSource,
-    /purchaseUnavailable \? copy\.webUnavailableAccessibilityHint : copy\.buyAccessibilityHint/,
+    /webPurchaseUnavailable[\s\S]*\? copy\.webUnavailableAccessibilityHint[\s\S]*: copy\.buyAccessibilityHint/,
   );
   assert.match(paywallSource, /Purchase removes ads after store confirmation/);
   assert.match(paywallSource, /tidsatta övningsprov i appen redan är annonsfria/);
@@ -2750,7 +2762,7 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(paywallSource, /Återställ köp av Ta bort annonser/);
   assert.match(
     paywallSource,
-    /purchaseUnavailable[\s\S]*\? copy\.webUnavailableAccessibilityHint[\s\S]*: copy\.restoreAccessibilityHint/,
+    /webPurchaseUnavailable[\s\S]*\? copy\.webUnavailableAccessibilityHint[\s\S]*: copy\.restoreAccessibilityHint/,
   );
   assert.match(paywallSource, /same store account/);
   assert.match(paywallSource, /samma butikskonto/);
@@ -2773,12 +2785,24 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(profileSource, /onEntitlementsChange=\{setMonetizationEntitlements\}/);
   assert.match(profileSource, /runtimeOptions=\{purchaseRuntime\}/);
   assert.match(placementCtaSource, /purchaseUnavailableReason === 'web_store_unavailable'/);
+  assert.match(
+    placementCtaSource,
+    /purchaseUnavailableReason === 'native_receipt_validator_unavailable'/,
+  );
   assert.match(placementCtaSource, /copy\.webUnavailableBody\(REMOVE_ADS_PRICE_LABEL\)/);
+  assert.match(placementCtaSource, /copy\.nativeUnavailableBody\(REMOVE_ADS_PRICE_LABEL\)/);
   assert.match(placementCtaSource, /copy\.webUnavailableAccessibilityHint/);
+  assert.match(placementCtaSource, /copy\.nativeUnavailableAccessibilityHint/);
   assert.match(placementCtaSource, /Buy in mobile app/);
   assert.match(placementCtaSource, /Köp i mobilappen/);
+  assert.match(placementCtaSource, /Buy unavailable/);
+  assert.match(placementCtaSource, /Köp inte tillgängligt/);
   assert.match(placementCtaSource, /Restore in mobile app/);
   assert.match(placementCtaSource, /Återställ i mobilappen/);
+  assert.match(placementCtaSource, /Restore unavailable/);
+  assert.match(placementCtaSource, /Återställ inte tillgängligt/);
+  assert.match(placementCtaSource, /receipt validation is not configured/);
+  assert.match(placementCtaSource, /kvittovalidering inte är konfigurerad/);
   assert.match(placementCtaSource, /statusMessages: Record<PlacementPurchaseStatus, string>/);
   assert.doesNotMatch(placementCtaSource, /Partial<Record<PlacementPurchaseStatus, string>>/);
   assert.match(placementCtaSource, /persistence_failed/);
