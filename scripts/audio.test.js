@@ -318,6 +318,56 @@ test('speakSwedish forwards lifecycle callbacks to Expo Speech', () => {
   assert.equal(speakCalls[0].options.onStopped, callbacks.onStopped);
 });
 
+test('question and feedback audio buttons guard stale speech callbacks by playback run', () => {
+  const audioSource = fs.readFileSync(
+    path.join(repoRoot, 'components/learning/AudioButton.tsx'),
+    'utf8',
+  );
+  const feedbackSource = fs.readFileSync(
+    path.join(repoRoot, 'components/learning/FeedbackAudioButton.tsx'),
+    'utf8',
+  );
+
+  for (const [label, source] of [
+    ['AudioButton', audioSource],
+    ['FeedbackAudioButton', feedbackSource],
+  ]) {
+    assert.match(source, /import \{ useEffect, useRef, useState \} from 'react';/);
+    assert.match(source, /const playbackRunRef = useRef\(0\);/);
+    assert.match(source, /const previousSpeechTextRef = useRef<string \| null>\(null\);/);
+    assert.match(
+      source,
+      /const clearSpeakingForRun = \(runId: number\) => \{[\s\S]*playbackRunRef\.current === runId[\s\S]*setIsSpeaking\(false\);/,
+      `${label} should ignore callbacks from stale runs`,
+    );
+    assert.match(
+      source,
+      /previousSpeechTextRef\.current = speechText;[\s\S]*playbackRunRef\.current \+= 1;[\s\S]*stopSpeech\(\);[\s\S]*setIsSpeaking\(false\);/,
+      `${label} should invalidate playback when text changes`,
+    );
+    assert.match(
+      source,
+      /if \(!canPlayAudio && isSpeaking\) \{[\s\S]*playbackRunRef\.current \+= 1;[\s\S]*stopSpeech\(\);[\s\S]*setIsSpeaking\(false\);/,
+      `${label} should invalidate playback when disabled or text disappears`,
+    );
+    assert.match(
+      source,
+      /if \(isSpeaking\) \{[\s\S]*playbackRunRef\.current \+= 1;[\s\S]*stopSpeech\(\);[\s\S]*setIsSpeaking\(false\);[\s\S]*return;/,
+      `${label} should invalidate playback before manual stop`,
+    );
+    assert.match(
+      source,
+      /const runId = playbackRunRef\.current \+ 1;[\s\S]*playbackRunRef\.current = runId;[\s\S]*stopSpeech\(\);[\s\S]*setIsSpeaking\(true\);[\s\S]*speakSwedish\(speechText, \{[\s\S]*onDone: \(\) => clearSpeakingForRun\(runId\),[\s\S]*onError: \(\) => clearSpeakingForRun\(runId\),[\s\S]*onStopped: \(\) => clearSpeakingForRun\(runId\),/,
+      `${label} should guard every speech lifecycle callback with the active run id`,
+    );
+    assert.match(
+      source,
+      /return \(\) => \{[\s\S]*playbackRunRef\.current \+= 1;[\s\S]*stopSpeech\(\);[\s\S]*\};[\s\S]*\}, \[\]\);/,
+      `${label} should invalidate playback before unmount cleanup`,
+    );
+  }
+});
+
 test('question audio autoplay gate is opt-in and stop-aware', () => {
   moduleCache.clear();
   const { shouldAutoplayQuestionAudio } = loadTs('lib/audio/questionAudioAutoplay.ts');

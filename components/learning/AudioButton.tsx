@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Button } from '../Button';
 import { speakSwedish, stopSpeech } from '../../lib/audio/speak';
@@ -69,16 +69,35 @@ export function AudioButton({
       : isSpeaking
         ? copy.stopHint
         : copy.enabledHint;
+  const playbackRunRef = useRef(0);
+  const previousSpeechTextRef = useRef<string | null>(null);
+
+  const clearSpeakingForRun = (runId: number) => {
+    if (playbackRunRef.current === runId) setIsSpeaking(false);
+  };
 
   useEffect(() => {
+    if (previousSpeechTextRef.current === null) {
+      previousSpeechTextRef.current = speechText;
+      return;
+    }
+
+    previousSpeechTextRef.current = speechText;
+    playbackRunRef.current += 1;
+    stopSpeech();
     setIsSpeaking(false);
-    return () => {
-      stopSpeech();
-    };
   }, [speechText]);
 
   useEffect(() => {
+    return () => {
+      playbackRunRef.current += 1;
+      stopSpeech();
+    };
+  }, []);
+
+  useEffect(() => {
     if (!canPlayAudio && isSpeaking) {
+      playbackRunRef.current += 1;
       stopSpeech();
       setIsSpeaking(false);
     }
@@ -94,17 +113,20 @@ export function AudioButton({
       onPress={() => {
         if (!canPlayAudio) return;
         if (isSpeaking) {
+          playbackRunRef.current += 1;
           stopSpeech();
           setIsSpeaking(false);
           return;
         }
+        const runId = playbackRunRef.current + 1;
+        playbackRunRef.current = runId;
         stopSpeech();
         setIsSpeaking(true);
         speakSwedish(speechText, {
           rate,
-          onDone: () => setIsSpeaking(false),
-          onError: () => setIsSpeaking(false),
-          onStopped: () => setIsSpeaking(false),
+          onDone: () => clearSpeakingForRun(runId),
+          onError: () => clearSpeakingForRun(runId),
+          onStopped: () => clearSpeakingForRun(runId),
         });
       }}
     >

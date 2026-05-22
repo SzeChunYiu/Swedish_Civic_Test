@@ -4007,25 +4007,85 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
   {
     label: 'trimmed speech playback with lifecycle cleanup',
     pattern:
-      /if \(!canPlayAudio\) return;[\s\S]*stopSpeech\(\);[\s\S]*setIsSpeaking\(true\);[\s\S]*speakSwedish\(speechText,\s*\{[\s\S]*rate,[\s\S]*onDone:[\s\S]*onError:[\s\S]*onStopped:/,
+      /if \(!canPlayAudio\) return;[\s\S]*const runId = playbackRunRef\.current \+ 1;[\s\S]*playbackRunRef\.current = runId;[\s\S]*stopSpeech\(\);[\s\S]*setIsSpeaking\(true\);[\s\S]*speakSwedish\(speechText,\s*\{[\s\S]*rate,[\s\S]*onDone:[\s\S]*onError:[\s\S]*onStopped:/,
   },
   {
     label: 'second press stops active question audio',
     pattern:
-      /if \(isSpeaking\) \{[\s\S]*stopSpeech\(\);[\s\S]*setIsSpeaking\(false\);[\s\S]*return;[\s\S]*\}/,
+      /if \(isSpeaking\) \{[\s\S]*playbackRunRef\.current \+= 1;[\s\S]*stopSpeech\(\);[\s\S]*setIsSpeaking\(false\);[\s\S]*return;[\s\S]*\}/,
   },
   {
-    label: 'speech cleanup on text change and unmount',
+    label: 'playback run refs for stale callback invalidation',
     pattern:
-      /useEffect\(\(\) => \{[\s\S]*setIsSpeaking\(false\);[\s\S]*return \(\) => \{[\s\S]*stopSpeech\(\);[\s\S]*\};[\s\S]*\}, \[speechText\]\);/,
+      /const playbackRunRef = useRef\(0\);[\s\S]*const previousSpeechTextRef = useRef<string \| null>\(null\);[\s\S]*const clearSpeakingForRun = \(runId: number\) => \{[\s\S]*playbackRunRef\.current === runId[\s\S]*setIsSpeaking\(false\);/,
   },
   {
-    label: 'stop callback clears speaking state',
-    pattern: /onStopped: \(\) => setIsSpeaking\(false\),/,
+    label: 'speech text changes invalidate current playback run',
+    pattern:
+      /previousSpeechTextRef\.current === null[\s\S]*previousSpeechTextRef\.current = speechText;[\s\S]*playbackRunRef\.current \+= 1;[\s\S]*stopSpeech\(\);[\s\S]*setIsSpeaking\(false\);[\s\S]*\}, \[speechText\]\);/,
   },
   {
-    label: 'error callback clears speaking state',
-    pattern: /onError: \(\) => setIsSpeaking\(false\),/,
+    label: 'unmount cleanup invalidates playback run before stopping speech',
+    pattern:
+      /useEffect\(\(\) => \{[\s\S]*return \(\) => \{[\s\S]*playbackRunRef\.current \+= 1;[\s\S]*stopSpeech\(\);[\s\S]*\};[\s\S]*\}, \[\]\);/,
+  },
+  {
+    label: 'disabled state invalidates playback run before stopping speech',
+    pattern:
+      /if \(!canPlayAudio && isSpeaking\) \{[\s\S]*playbackRunRef\.current \+= 1;[\s\S]*stopSpeech\(\);[\s\S]*setIsSpeaking\(false\);/,
+  },
+  {
+    label: 'done callback clears only the current playback run',
+    pattern: /onDone: \(\) => clearSpeakingForRun\(runId\),/,
+  },
+  {
+    label: 'stop callback clears only the current playback run',
+    pattern: /onStopped: \(\) => clearSpeakingForRun\(runId\),/,
+  },
+  {
+    label: 'error callback clears only the current playback run',
+    pattern: /onError: \(\) => clearSpeakingForRun\(runId\),/,
+  },
+];
+const EXPECTED_FEEDBACK_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
+  {
+    label: 'feedback playback run refs for stale callback invalidation',
+    pattern:
+      /const playbackRunRef = useRef\(0\);[\s\S]*const previousSpeechTextRef = useRef<string \| null>\(null\);[\s\S]*const clearSpeakingForRun = \(runId: number\) => \{[\s\S]*playbackRunRef\.current === runId[\s\S]*setIsSpeaking\(false\);/,
+  },
+  {
+    label: 'feedback speech text changes invalidate current playback run',
+    pattern:
+      /previousSpeechTextRef\.current === null[\s\S]*previousSpeechTextRef\.current = speechText;[\s\S]*playbackRunRef\.current \+= 1;[\s\S]*stopSpeech\(\);[\s\S]*setIsSpeaking\(false\);[\s\S]*\}, \[speechText\]\);/,
+  },
+  {
+    label: 'feedback disabled state invalidates playback run before stopping speech',
+    pattern:
+      /if \(!canPlayAudio && isSpeaking\) \{[\s\S]*playbackRunRef\.current \+= 1;[\s\S]*stopSpeech\(\);[\s\S]*setIsSpeaking\(false\);/,
+  },
+  {
+    label: 'feedback unmount cleanup invalidates playback run before stopping speech',
+    pattern:
+      /useEffect\(\(\) => \{[\s\S]*return \(\) => \{[\s\S]*playbackRunRef\.current \+= 1;[\s\S]*stopSpeech\(\);[\s\S]*\};[\s\S]*\}, \[\]\);/,
+  },
+  {
+    label: 'feedback second press invalidates playback run',
+    pattern:
+      /if \(isSpeaking\) \{[\s\S]*playbackRunRef\.current \+= 1;[\s\S]*stopSpeech\(\);[\s\S]*setIsSpeaking\(false\);[\s\S]*return;[\s\S]*\}/,
+  },
+  {
+    label: 'feedback playback starts a new guarded run id',
+    pattern:
+      /const runId = playbackRunRef\.current \+ 1;[\s\S]*playbackRunRef\.current = runId;[\s\S]*stopSpeech\(\);[\s\S]*setIsSpeaking\(true\);[\s\S]*speakSwedish\(speechText,\s*\{/,
+  },
+  {
+    label: 'feedback done callback clears only the current playback run',
+    pattern: /onDone: \(\) => clearSpeakingForRun\(runId\),/,
+  },
+  {
+    label: 'feedback stop and error callbacks clear only the current playback run',
+    pattern:
+      /onError: \(\) => clearSpeakingForRun\(runId\),[\s\S]*onStopped: \(\) => clearSpeakingForRun\(runId\),/,
   },
 ];
 const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
@@ -16362,6 +16422,7 @@ function validateFlashcardAccessibilityParity() {
 function validateAudioButtonAccessibilityParity() {
   let valid = true;
   let audioButtonSource = '';
+  let feedbackAudioButtonSource = '';
 
   function reject(message) {
     valid = false;
@@ -16380,6 +16441,18 @@ function validateAudioButtonAccessibilityParity() {
     return;
   }
 
+  try {
+    feedbackAudioButtonSource = fs.readFileSync(
+      path.join(repoRoot, 'components/learning/FeedbackAudioButton.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(
+      `components/learning/FeedbackAudioButton.tsx could not be read for accessibility parity: ${error.message}`,
+    );
+    return;
+  }
+
   EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES.forEach((expectedRule) => {
     if (!expectedRule.pattern.test(audioButtonSource)) {
       reject(`AudioButton missing ${expectedRule.label} for accessibility parity`);
@@ -16388,9 +16461,19 @@ function validateAudioButtonAccessibilityParity() {
     audioButtonAccessibilityRulesValidated += 1;
   });
 
+  EXPECTED_FEEDBACK_AUDIO_BUTTON_ACCESSIBILITY_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(feedbackAudioButtonSource)) {
+      reject(`FeedbackAudioButton missing ${expectedRule.label} for accessibility parity`);
+      return;
+    }
+    audioButtonAccessibilityRulesValidated += 1;
+  });
+
   if (
     valid &&
-    audioButtonAccessibilityRulesValidated === EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES.length
+    audioButtonAccessibilityRulesValidated ===
+      EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES.length +
+        EXPECTED_FEEDBACK_AUDIO_BUTTON_ACCESSIBILITY_RULES.length
   ) {
     audioButtonAccessibilityParityValidated = true;
   }
