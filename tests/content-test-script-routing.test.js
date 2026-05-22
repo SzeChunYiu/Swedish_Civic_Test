@@ -13,9 +13,7 @@ const {
   MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES,
   MALFORMED_ADAPTIVE_PRACTICE_SIZE_CASES,
 } = require('./helpers/adaptivePracticeRuntimeFixtures.cjs');
-const {
-  runFocusedValidatorMutation,
-} = require('./helpers/focusedValidatorMutation.cjs');
+const { runFocusedValidatorMutation } = require('./helpers/focusedValidatorMutation.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
 const streakFreezeCounterRuntimeFocusFlag = '--focus-streak-freeze-counter-runtime-input';
@@ -115,6 +113,54 @@ function assertFocusedValidationSummary(flag, expectedSummaryKeys) {
   assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
 
   return summary;
+}
+
+const staticEbookProvenanceUmbrellaConstituents = [
+  'staticEbookOutcomeClaimParityValidated',
+  'staticEbookPracticalTestCurrentnessValidated',
+  'staticEbookFactboxProvenanceValidated',
+  'staticEbookFootnoteHashParityValidated',
+  'staticEbookProseSourceMetadataParityValidated',
+  'staticEbookSourceAuthorityCopyParityValidated',
+  'staticEbookSomaliHolidayFoodParityValidated',
+  'staticEbookFoodBeverageSourceParityValidated',
+  'staticEbookCivicTermGlossesParityValidated',
+];
+
+function extractFocusedStaticEbookProvenanceUmbrellaAssignment(source) {
+  const focusStart = source.indexOf(
+    "if (process.argv.includes('--focus-static-ebook-provenance'))",
+  );
+  assert.notEqual(focusStart, -1, 'static ebook provenance focus block should exist');
+
+  const assignmentStart = source.indexOf('staticEbookProvenanceParityValidated =', focusStart);
+  assert.notEqual(assignmentStart, -1, 'static ebook provenance umbrella assignment should exist');
+
+  const assignmentEnd = source.indexOf(';', assignmentStart);
+  assert.notEqual(assignmentEnd, -1, 'static ebook provenance umbrella assignment should end');
+
+  return source.slice(assignmentStart, assignmentEnd + 1);
+}
+
+function makeStaticEbookProvenanceUmbrellaMutation(constituent) {
+  return Function(
+    'source',
+    `
+const constituent = ${JSON.stringify(constituent)};
+const focusStart = source.indexOf("if (process.argv.includes('--focus-static-ebook-provenance'))");
+if (focusStart < 0) throw new Error('static ebook provenance focus block should exist');
+const assignmentStart = source.indexOf('staticEbookProvenanceParityValidated =', focusStart);
+if (assignmentStart < 0) throw new Error('static ebook provenance umbrella assignment should exist');
+const assignmentEnd = source.indexOf(';', assignmentStart);
+if (assignmentEnd < 0) throw new Error('static ebook provenance umbrella assignment should end');
+const assignment = source.slice(assignmentStart, assignmentEnd + 1);
+if (!assignment.includes(constituent)) {
+  throw new Error('umbrella assignment missing ' + constituent);
+}
+const mutatedAssignment = assignment.replace(new RegExp('\\\\b' + constituent + '\\\\b'), 'false');
+return source.slice(0, assignmentStart) + mutatedAssignment + source.slice(assignmentEnd + 1);
+`,
+  );
 }
 
 function validateContentFocusFlags() {
@@ -1867,7 +1913,8 @@ test('streak freeze counter runtime input focus reports isolated summary', () =>
 test('streak freeze counter runtime input focus rejects targeted source mutations', () => {
   assertStreakFreezeCounterMutationFails({
     label: 'weakened integer counter normalization',
-    expectedCase: /refillFreezes rejects NaN, negative, and string counters|refillFreezes clamps overstocked available and rejects fractional counters/,
+    expectedCase:
+      /refillFreezes rejects NaN, negative, and string counters|refillFreezes clamps overstocked available and rejects fractional counters/,
     mutateSource: function mutateSource(source) {
       const strictIntegerGuard = `typeof value === 'number' &&
     Number.isFinite(value) &&
@@ -2060,6 +2107,7 @@ test('static ebook provenance umbrella focus routes only static ebook provenance
     'utf8',
   );
   const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('staticEbookProvenance');
+  const umbrellaAssignment = extractFocusedStaticEbookProvenanceUmbrellaAssignment(validatorSource);
 
   assert.ok(registryEntry, 'static ebook provenance focus mode must be registered');
   assert.deepEqual(registryEntry.flags, ['--focus-static-ebook-provenance']);
@@ -2068,6 +2116,14 @@ test('static ebook provenance umbrella focus routes only static ebook provenance
     validatorSource,
     /validateStaticEbookOutcomeClaimPatterns\(\);[\s\S]*validateStaticEbookPracticalTestClaims\(\);[\s\S]*validateStaticEbookFactboxProvenance\(\);[\s\S]*validateStaticEbookFootnoteHashParity\(\);[\s\S]*staticEbookProvenanceParityValidated/,
   );
+  for (const constituent of staticEbookProvenanceUmbrellaConstituents) {
+    assert.match(
+      umbrellaAssignment,
+      new RegExp(`\\b${constituent}\\b`),
+      `static ebook provenance umbrella must include ${constituent}`,
+    );
+  }
+  assert.doesNotMatch(umbrellaAssignment, /\|\|\s*true|true\s*\|\|/);
 
   const result = spawnSync(
     process.execPath,
@@ -2092,6 +2148,31 @@ test('static ebook provenance umbrella focus routes only static ebook provenance
     Object.prototype.hasOwnProperty.call(summary, 'staticFaqFallbackParityValidated'),
     false,
   );
+
+  for (const constituent of staticEbookProvenanceUmbrellaConstituents) {
+    const mutationResult = runFocusedValidatorMutation({
+      focusFlag: '--focus-static-ebook-provenance',
+      targetFile: 'scripts/validate-content.js',
+      mutateSource: makeStaticEbookProvenanceUmbrellaMutation(constituent),
+    });
+    const mutationOutput = `${mutationResult.stdout}\n${mutationResult.stderr}`;
+    assert.equal(mutationResult.status, 0, mutationOutput);
+    const mutationSummary = parseJsonSummary(
+      mutationResult.stdout,
+      `static ebook provenance umbrella mutation for ${constituent}`,
+    );
+
+    assert.equal(
+      mutationSummary.staticEbookProvenanceParityValidated,
+      false,
+      `umbrella should become false when ${constituent} is false`,
+    );
+    assert.equal(mutationSummary[constituent], true, `${constituent} itself should still pass`);
+    assert.equal(
+      Object.prototype.hasOwnProperty.call(mutationSummary, 'questionSchemasValidated'),
+      false,
+    );
+  }
 });
 
 test('weekly recap runtime guard uses focused content validation routing', () => {
