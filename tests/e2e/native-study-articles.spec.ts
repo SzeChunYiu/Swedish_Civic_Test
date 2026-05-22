@@ -64,6 +64,25 @@ test('learn links to native study articles and back to chapter practice', async 
   await expect(page.locator('body')).toContainText('Källa för avsnittet');
   await expect(page.getByRole('button', { name: 'Lyssna på artikeln' })).toBeVisible();
 
+  await page.getByLabel('Tillbaka till studievägen').click();
+
+  await expect(page).toHaveURL(/\/learn$/);
+  await expect(
+    page.getByRole('heading', { name: 'Bläddra bland kapitel med tydliga nästa steg' }),
+  ).toBeVisible();
+  await expect(page.locator('body')).not.toContainText('En kort historia om Sverige.');
+
+  await page.goBack({ waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  await expect(page).toHaveURL(/\/learn$/);
+  await expect(page.locator('body')).not.toContainText('En kort historia om Sverige.');
+
+  await page.getByLabel(/Öppna studieartiklar/).click();
+  await expect(page).toHaveURL(/\/ebook$/);
+  await chapterOneTab.click();
+  await expect(page).toHaveURL(/\/ebook\?c=1$/);
+
   await expect
     .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1))
     .toBe(true);

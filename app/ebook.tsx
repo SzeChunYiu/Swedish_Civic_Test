@@ -99,7 +99,7 @@ const ebookRouteCopy: Record<AppLanguage, EbookRouteCopy> = {
 };
 
 function navigateToArticle(router: ReturnType<typeof useRouter>, article: EbookArticle) {
-  router.push(`/ebook?c=${article.staticChapterId}`);
+  router.replace(`/ebook?c=${article.staticChapterId}`);
 }
 
 type EbookStyles = ReturnType<typeof createStyles>;
@@ -169,7 +169,7 @@ export default function EbookScreen() {
         accessibilityLabel={copy.backToLearnAccessibilityLabel}
         accessibilityRole="link"
         hitSlop={space[1]}
-        onPress={() => router.push('/learn')}
+        onPress={() => router.replace('/learn')}
         style={({ pressed }) => [styles.backLink, pressed ? styles.pressedLink : null]}
       >
         <Text style={styles.backLinkText}>{copy.backToLearn}</Text>

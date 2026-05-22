@@ -1654,3 +1654,38 @@ test('native ebook article navigation uses selected tab semantics', () => {
   assert.match(articleNavSource, /accessibilityState=\{\{\s*selected\s*\}\}/);
   assert.doesNotMatch(articleNavSource, /accessibilityRole="button"/);
 });
+
+test('native ebook article navigation replaces reader history entries', () => {
+  const routeSource = readSiteFile('app/ebook.tsx');
+
+  assert.match(
+    routeSource,
+    /function navigateToArticle\(router: ReturnType<typeof useRouter>, article: EbookArticle\) \{\s*router\.replace\(`\/ebook\?c=\$\{article\.staticChapterId\}`\);\s*\}/,
+    'article tabs and pager should replace ebook reader route state',
+  );
+  assert.match(
+    routeSource,
+    /onPress=\{\(\) => router\.replace\('\/learn'\)\}/,
+    'Back to Learn should replace the reader route instead of pushing a duplicate Learn entry',
+  );
+  assert.match(
+    routeSource,
+    /onPress=\{\(\) => router\.push\(article\.practicePath\)\}/,
+    'Practice CTA should remain normal forward navigation',
+  );
+  assert.match(
+    routeSource,
+    /onPress=\{\(\) => router\.push\('\/sources'\)\}/,
+    'Sources CTA should remain normal forward navigation',
+  );
+  assert.doesNotMatch(
+    routeSource,
+    /function navigateToArticle[\s\S]*?router\.push\(`\/ebook\?c=/,
+    'article navigation must not push a new ebook history entry',
+  );
+  assert.doesNotMatch(
+    routeSource,
+    /onPress=\{\(\) => router\.push\('\/learn'\)\}/,
+    'Back to Learn must not push a second Learn route entry',
+  );
+});
