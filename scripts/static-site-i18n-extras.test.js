@@ -256,6 +256,23 @@ const englishFallbacksByKey = {
 const chineseScriptLocales = ['zh-Hans', 'zh-Hant'];
 const chineseTextPattern = /[\u3400-\u9fff]/;
 const asciiSentencePunctuationNearChinese = /[\u3400-\u9fff][,:;?!.]|[,:;?!.][\u3400-\u9fff]/;
+const chineseQcardAllowedLatinTokens = new Set([
+  'Allemansrätten',
+  'BankID',
+  'Fika',
+  'Jantelagen',
+  'Lag',
+  'Lagom',
+  'Sverige',
+  'UHR',
+  'fokus',
+  'i',
+  'och',
+  'p',
+  'rätt',
+]);
+const chineseQcardAllowedLatinPattern =
+  /\b(?:Allemansrätten|BankID|Fika|Jantelagen|Lagom|Sverige|UHR|Lag|fokus|i|och|p|rätt)\b/g;
 
 function loadExtraI18n() {
   const source = fs.readFileSync(path.join(repoRoot, 'site/i18n-extras.js'), 'utf8');
@@ -360,6 +377,36 @@ test('Chinese static-site labels use script-native sentence punctuation', () => 
   }
 
   assert.ok(checkedValues > 0, 'Chinese punctuation guard must inspect learner-facing text');
+});
+
+test('Chinese Home qcard strings reject stray English common nouns', () => {
+  const extra = loadExtraI18n();
+
+  for (const locale of chineseScriptLocales) {
+    const dictionary = extra?.[locale];
+    assert.equal(typeof dictionary, 'object', `${locale} dictionary must exist`);
+
+    for (const [key, value] of Object.entries(dictionary)) {
+      if (!key.startsWith('qcard.')) continue;
+
+      assert.equal(typeof value, 'string', `${locale}.${key} must be a string`);
+      const learnerText = value.replace(chineseQcardAllowedLatinPattern, ' ');
+      const latinTokens = learnerText.match(/\b[A-Za-z][A-Za-z-]*\b/g) ?? [];
+      const unexpectedTokens = latinTokens.filter(
+        (token) => !chineseQcardAllowedLatinTokens.has(token),
+      );
+
+      assert.deepEqual(
+        unexpectedTokens,
+        [],
+        `${locale}.${key} contains non-allowlisted Latin tokens`,
+      );
+    }
+  }
+
+  assert.match(extra['zh-Hans']['qcard.q'], /采摘莓果/);
+  assert.doesNotMatch(extra['zh-Hans']['qcard.q'], /\bberries\b/i);
+  assert.match(extra['zh-Hant']['qcard.q'], /採莓果/);
 });
 
 test('extra locale footer.app.5 Roadmap English fallback guard covers Central Kurdish Somali and Tigrinya', () => {

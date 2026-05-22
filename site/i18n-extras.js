@@ -151,7 +151,7 @@
       'practice.title': '一组十题。',
       'practice.subtitle': '轻松练，不紧张。',
       'qcard.chip': '第5章 · q039',
-      'qcard.q': '哪一项瑞典原则让每个人都可以在大多数自然土地上行走、游泳和采 berries？',
+      'qcard.q': '哪一项瑞典原则让每个人都可以在大多数自然土地上行走、游泳和采摘莓果？',
       'qcard.a': 'Jantelagen — 保持谦逊的社会准则',
       'qcard.b': 'Allemansrätten — 公众进入自然的权利',
       'qcard.c': 'Lagom — 刚刚好的理念',
