@@ -40,7 +40,7 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
       /async validateRemoveAdsReceipt\(purchase, productId\) \{([\s\S]*?)\n    \},\n    async requestRemoveAdsPurchase/,
     )?.[1] ?? '';
 
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 26);
+  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 29);
   assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
   assert.match(purchaseSource, /REMOVE_ADS_RECORD_SCHEMA_VERSION = 1/);
   assert.match(purchaseSource, /interface StoredRemoveAdsEntitlementRecord/);
@@ -105,6 +105,22 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.match(placementCtaSource, /accessibilityLabel=\{copy\.restoreAccessibilityLabel\}/);
   assert.match(placementCtaSource, /copy\.restoreAccessibilityHint/);
   assert.match(placementCtaSource, /Purchase restored\. Study ads are being removed/);
+  assert.match(placementCtaSource, /statusMessages: Record<PlacementPurchaseStatus, string>/);
+  assert.doesNotMatch(placementCtaSource, /Partial<Record<PlacementPurchaseStatus, string>>/);
+  assert.match(placementCtaSource, /persistence_failed/);
+  assert.match(
+    placementCtaSource,
+    /Purchase was confirmed, but ad-free status could not be saved on this device/,
+  );
+  assert.match(
+    placementCtaSource,
+    /Köpet bekräftades, men annonsfri status kunde inte sparas på den här enheten/,
+  );
+  assert.match(
+    placementCtaSource,
+    /accessibilityLabel=\{copy\.statusAccessibilityLabel\(statusMessage\)\}/,
+  );
+  assert.match(placementCtaSource, /accessibilityLiveRegion="polite"/);
   assert.match(placementCtaSource, /const purchaseActionInFlightRef = useRef\(false\);/);
   assert.match(placementCtaSource, /if \(purchaseActionInFlightRef\.current\) return;/);
   assert.match(placementCtaSource, /purchaseActionInFlightRef\.current = true;/);
@@ -120,6 +136,38 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
       awaitedCalls: ['await buyRemoveAds(', 'await restoreRemoveAdsPurchase('],
       surfaceName: 'PremiumBanner',
     }),
+  );
+});
+
+test('Remove Ads purchase runtime parity rejects placement CTA persistence_failed status drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/RemoveAdsPlacementCta.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('statusMessages: Record<PlacementPurchaseStatus, string>;', 'statusMessages: Partial<Record<PlacementPurchaseStatus, string>>;')
+      .replace("      persistence_failed:\\n        'Purchase was confirmed, but ad-free status could not be saved on this device. Try restoring the purchase.',\\n", '');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-remove-ads-purchase-runtime-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /RemoveAdsPlacementCta must keep a total status-message map for every purchase status|RemoveAdsPlacementCta must render localized persistence_failed recovery copy/,
   );
 });
 

@@ -2224,6 +2224,22 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(placementCtaSource, /Köp i mobilappen/);
   assert.match(placementCtaSource, /Restore in mobile app/);
   assert.match(placementCtaSource, /Återställ i mobilappen/);
+  assert.match(placementCtaSource, /statusMessages: Record<PlacementPurchaseStatus, string>/);
+  assert.doesNotMatch(placementCtaSource, /Partial<Record<PlacementPurchaseStatus, string>>/);
+  assert.match(placementCtaSource, /persistence_failed/);
+  assert.match(
+    placementCtaSource,
+    /Purchase was confirmed, but ad-free status could not be saved on this device/,
+  );
+  assert.match(
+    placementCtaSource,
+    /Köpet bekräftades, men annonsfri status kunde inte sparas på den här enheten/,
+  );
+  assert.match(
+    placementCtaSource,
+    /accessibilityLabel=\{copy\.statusAccessibilityLabel\(statusMessage\)\}/,
+  );
+  assert.match(placementCtaSource, /accessibilityLiveRegion="polite"/);
   assert.match(
     placementCtaSource,
     /const actionsDisabled = activeAction !== null \|\| purchaseUnavailable;/,

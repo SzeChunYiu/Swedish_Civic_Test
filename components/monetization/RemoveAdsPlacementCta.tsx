@@ -29,7 +29,8 @@ type RemoveAdsPlacementCtaCopy = {
   restoreIdle: string;
   restoreUnavailable: string;
   restoring: string;
-  statusMessages: Partial<Record<PlacementPurchaseStatus, string>>;
+  statusAccessibilityLabel: (message: string) => string;
+  statusMessages: Record<PlacementPurchaseStatus, string>;
   title: (placementLabel: string) => string;
   webUnavailableAccessibilityHint: string;
   webUnavailableBody: (price: string) => string;
@@ -54,10 +55,13 @@ const removeAdsPlacementCtaCopy: Record<AppLanguage, RemoveAdsPlacementCtaCopy> 
     restoreIdle: 'Återställ',
     restoreUnavailable: 'Återställ i mobilappen',
     restoring: 'Återställer...',
+    statusAccessibilityLabel: (message) => `Status för Ta bort annonser: ${message}`,
     statusMessages: {
       error: 'Köp är inte tillgängligt. Försök igen senare.',
       not_found: 'Inget tidigare köp av Ta bort annonser hittades.',
       pending: 'Väntar på butikens bekräftelse innan annonser tas bort.',
+      persistence_failed:
+        'Köpet bekräftades, men annonsfri status kunde inte sparas på den här enheten. Försök återställa köpet.',
       purchased: 'Köpet är bekräftat. Studieannonser tas bort.',
       restored: 'Köpet är återställt. Studieannonser tas bort.',
       unavailable: 'Ta bort annonser kan köpas eller återställas i mobilappen.',
@@ -81,10 +85,13 @@ const removeAdsPlacementCtaCopy: Record<AppLanguage, RemoveAdsPlacementCtaCopy> 
     restoreIdle: 'Restore',
     restoreUnavailable: 'Restore in mobile app',
     restoring: 'Restoring...',
+    statusAccessibilityLabel: (message) => `Remove Ads status: ${message}`,
     statusMessages: {
       error: 'Purchase is unavailable. Try again later.',
       not_found: 'No previous Remove Ads purchase was found.',
       pending: 'Waiting for store confirmation before removing ads.',
+      persistence_failed:
+        'Purchase was confirmed, but ad-free status could not be saved on this device. Try restoring the purchase.',
       purchased: 'Purchase confirmed. Study ads are being removed.',
       restored: 'Purchase restored. Study ads are being removed.',
       unavailable: 'Remove Ads can be bought or restored in the mobile app.',
@@ -199,7 +206,12 @@ export function RemoveAdsPlacementCta({ placement }: { placement: AdPlacement })
         </View>
       </View>
       {statusMessage ? (
-        <Text aria-live="polite" accessibilityLiveRegion="polite" style={styles.status}>
+        <Text
+          aria-live="polite"
+          accessibilityLabel={copy.statusAccessibilityLabel(statusMessage)}
+          accessibilityLiveRegion="polite"
+          style={styles.status}
+        >
           {statusMessage}
         </Text>
       ) : null}
