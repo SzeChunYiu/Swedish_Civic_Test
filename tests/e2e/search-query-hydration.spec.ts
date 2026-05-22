@@ -384,3 +384,33 @@ test('direct quiz visits keep the search backlink query-free', async ({ page }) 
   await expect(page).toHaveURL(/\/search$/);
   expectSearchUrlWithoutQueryParams(page);
 });
+
+test('direct quiz visits ignore malformed and overlong search backlink params', async ({
+  page,
+}) => {
+  await seedSettingsLanguage(page, 'en');
+  await markAboutTheTestSeen(page);
+
+  const overlongQuery = 'r'.repeat(121);
+  const malformedQuizUrls = [
+    '/quiz/q001?q=',
+    `/quiz/q001?q=${encodeURIComponent('   ')}`,
+    `/quiz/q001?q=${overlongQuery}`,
+    `/quiz/q001?query=${overlongQuery}`,
+  ];
+
+  for (const quizUrl of malformedQuizUrls) {
+    await page.goto(quizUrl, { waitUntil: 'networkidle' });
+    await dismissBlockingModals(page);
+
+    const backToSearchLink = page
+      .getByRole('link', { name: /Search for practice questions/ })
+      .first();
+    await expect(backToSearchLink).toBeVisible();
+    await expect(backToSearchLink).toHaveAttribute('href', '/search');
+
+    await backToSearchLink.click();
+    await expect(page).toHaveURL(/\/search$/);
+    expectSearchUrlWithoutQueryParams(page);
+  }
+});
