@@ -221,6 +221,7 @@ export const expoRouterNativeIntentStaticRoutes = [
   '/practice',
   '/privacy',
   '/profile',
+  '/recap',
   '/search',
   '/settings',
   '/sources',
@@ -273,6 +274,14 @@ export const expoRouterNativeIntentRuntimeSamples = [
     expectedPath: '/ebook?c=1',
   },
   {
+    input: '/recap',
+    expectedPath: '/recap',
+  },
+  {
+    input: '/recap?week=current',
+    expectedPath: '/recap?week=current',
+  },
+  {
     input: `${expoRouterShellAppScheme}://app/chapter/ch01?from=learn`,
     expectedPath: '/chapter/ch01?from=learn',
   },
@@ -283,6 +292,14 @@ export const expoRouterNativeIntentRuntimeSamples = [
   {
     input: `${expoRouterShellAppScheme}://ebook?c=1`,
     expectedPath: '/ebook?c=1',
+  },
+  {
+    input: `${expoRouterShellAppScheme}://app/recap`,
+    expectedPath: '/recap',
+  },
+  {
+    input: `${expoRouterShellAppScheme}://recap`,
+    expectedPath: '/recap',
   },
   {
     input: `${expoRouterShellAppScheme}://app/search?q=riksdag`,
