@@ -23698,8 +23698,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "That referendums in Sweden are advisory means politicians do not have to follow the result.",
-      "sv": "Att folkomröstningar i Sverige är rådgivande betyder att politikerna inte behöver följa resultatet."
+      "en": "In Sweden, referendums are advisory, so politicians do not have to follow the result.",
+      "sv": "I Sverige är folkomröstningar rådgivande, så politiker behöver inte följa resultatet."
     },
     "opts": [
       {
@@ -23738,8 +23738,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "That referendums in Sweden are advisory means politicians must always follow the result.",
-      "sv": "Att folkomröstningar i Sverige är rådgivande betyder att politikerna alltid måste följa resultatet."
+      "en": "In Sweden, referendums are binding, so politicians are required to follow the result.",
+      "sv": "I Sverige är folkomröstningar bindande, så politiker är skyldiga att följa resultatet."
     },
     "opts": [
       {

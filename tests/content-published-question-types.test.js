@@ -52,7 +52,13 @@ const luciaExplanationRoleScaffoldPattern =
   /\b(?:In a Lucia procession,\s+one person is Lucia|I ett luciatåg\s+(?:är en person Lucia|en person är Lucia))\b/i;
 const umeaDemonymOldSwedishPattern = /\bumebor\b/i;
 const referendumAdvisorySwedishNaturalnessPattern =
-  /\b(?:måste inte följa resultatet|betyder att politikerna måste (?:inte|alltid) följa resultatet)\b/i;
+  /\b(?:måste inte följa resultatet|Att folkomröstningar i Sverige är rådgivande betyder att|betyder att politikerna måste (?:inte|alltid) följa resultatet)\b/i;
+const referendumAdvisoryEnglishNaturalnessPattern =
+  /\bThat referendums in Sweden are advisory means\b/i;
+const referendumAdvisoryNaturalnessPattern = new RegExp(
+  `${referendumAdvisorySwedishNaturalnessPattern.source}|${referendumAdvisoryEnglishNaturalnessPattern.source}`,
+  'i',
+);
 const taxVatTwoConceptPattern =
   /\b(?:skatt och moms|tax and VAT|Företag betalar också skatt,\s+och moms betalas|Companies also pay tax,\s+and VAT is paid|Skatt betalas både av personer som arbetar och av företag\.\s+Moms är|Both people who work and companies pay tax\.\s+VAT is)\b/i;
 const q038OldVatDistractorPattern = /\b(?:Vilka varor som har moms|Which goods have VAT)\b/i;
@@ -1168,27 +1174,28 @@ test('referendum advisory Swedish copy stays natural across source and exports',
   ];
   const q020Ids = ['q020', ...q020GeneratedIds];
   const textForQuestion = (question) =>
-    [question.q?.sv, question.why?.sv, ...(question.opts || []).map((option) => option.sv)].join(
-      ' ',
-    );
+    [
+      question.q?.sv,
+      question.q?.en,
+      question.why?.sv,
+      question.why?.en,
+      ...(question.opts || []).map((option) => option.sv),
+      ...(question.opts || []).map((option) => option.en),
+    ].join(' ');
   const fileFindings = ['data/questions.ts', 'content/question-bank.csv', 'site/questions.js']
     .filter((relativePath) =>
-      referendumAdvisorySwedishNaturalnessPattern.test(
+      referendumAdvisoryNaturalnessPattern.test(
         fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'),
       ),
     )
     .map((relativePath) => path.normalize(relativePath));
   const generatedOffenders = generatedSiteBank
     .filter((question) => q020Ids.includes(question.id))
-    .filter((question) =>
-      referendumAdvisorySwedishNaturalnessPattern.test(textForQuestion(question)),
-    )
+    .filter((question) => referendumAdvisoryNaturalnessPattern.test(textForQuestion(question)))
     .map((question) => question.id);
   const actualOffenders = actualSiteBank
     .filter((question) => q020Ids.includes(question.id))
-    .filter((question) =>
-      referendumAdvisorySwedishNaturalnessPattern.test(textForQuestion(question)),
-    )
+    .filter((question) => referendumAdvisoryNaturalnessPattern.test(textForQuestion(question)))
     .map((question) => question.id);
   const q020 = generatedSiteBank.find((question) => question.id === 'q020');
   const q020True = generatedSiteBank.find(
@@ -1208,11 +1215,19 @@ test('referendum advisory Swedish copy stays natural across source and exports',
   assert.ok(q020False, 'q020 false generated variant should be published');
   assert.equal(
     q020True.q.sv,
-    'Att folkomröstningar i Sverige är rådgivande betyder att politikerna inte behöver följa resultatet.',
+    'I Sverige är folkomröstningar rådgivande, så politiker behöver inte följa resultatet.',
+  );
+  assert.equal(
+    q020True.q.en,
+    'In Sweden, referendums are advisory, so politicians do not have to follow the result.',
   );
   assert.equal(
     q020False.q.sv,
-    'Att folkomröstningar i Sverige är rådgivande betyder att politikerna alltid måste följa resultatet.',
+    'I Sverige är folkomröstningar bindande, så politiker är skyldiga att följa resultatet.',
+  );
+  assert.equal(
+    q020False.q.en,
+    'In Sweden, referendums are binding, so politicians are required to follow the result.',
   );
 });
 
