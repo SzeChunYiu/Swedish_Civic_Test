@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useLocalSearchParams } from 'expo-router';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'expo-router';
+import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AudioButton } from '../../components/learning/AudioButton';
 import { FeedbackAudioButton } from '../../components/learning/FeedbackAudioButton';
@@ -574,6 +574,7 @@ export default function Screen() {
   const selectedIsCorrect =
     hasSelectedAnswer && selectedOptionId ? isCorrectAnswer(question, selectedOptionId) : false;
   const isBookmarked = Boolean(questionProgress[question.id]?.bookmarked);
+  const bookmarkAccessibilityState = Platform.OS === 'web' ? undefined : { selected: isBookmarked };
   const currentScore = hasSelectedAnswer ? scoreAnswers([selectedIsCorrect]) : null;
   const companionFeedbackState = hasSelectedAnswer
     ? selectedIsCorrect
@@ -692,7 +693,7 @@ export default function Screen() {
             aria-pressed={isBookmarked}
             accessibilityLabel={copy.bookmarkAccessibilityLabel(isBookmarked)}
             accessibilityRole="button"
-            accessibilityState={{ selected: isBookmarked }}
+            accessibilityState={bookmarkAccessibilityState}
             hitSlop={space[1]}
             onBlur={() => setFocusedHeaderControl(null)}
             onFocus={() => setFocusedHeaderControl('bookmark')}

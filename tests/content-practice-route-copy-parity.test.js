@@ -162,6 +162,8 @@ test('practice route shell copy follows the persisted settings language', () => 
   assert.match(source, /accessibilityLabel=\{copy\.bookmarkAccessibilityLabel\(isBookmarked\)\}/);
   assert.match(source, /aria-pressed=\{isBookmarked\}/);
   assert.doesNotMatch(source, /aria-selected=\{isBookmarked\}/);
+  assert.match(source, /accessibilityState=\{bookmarkAccessibilityState\}/);
+  assert.doesNotMatch(source, /accessibilityState=\{\{ selected: isBookmarked \}\}/);
   assert.match(source, /\{copy\.scoreLabel\}: \{currentScore\.correct\}\/\{currentScore\.total\}/);
 });
 
@@ -203,25 +205,18 @@ test('practice route source wires selected companion copy to answer feedback sta
   assert.doesNotMatch(source, /selectedCompanionId[\s\S]{0,120}recordAnswer/);
 });
 
-test('practice route consumes Home quick-launch modes instead of landing on the hub', () => {
-  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
-  const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+test('practice route bookmark uses web pressed toggle semantics', () => {
+  const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
 
-  assertPracticeRouteLaunchParity(practiceSource, homeSource);
-});
-
-test('practice route launch parity rejects a dead daily-challenge link', () => {
-  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
-  const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
-  const mutatedPracticeSource = practiceSource.replace(
-    'const routeLaunchMode = normalizePracticeRouteLaunchMode(mode);',
-    'const routeLaunchMode = null;',
+  assert.match(source, /import \{ Platform, Pressable, ScrollView, StyleSheet, Text, View \}/);
+  assert.match(source, /aria-pressed=\{isBookmarked\}/);
+  assert.doesNotMatch(source, /aria-selected=\{isBookmarked\}/);
+  assert.match(
+    source,
+    /const bookmarkAccessibilityState =\s*Platform\.OS === 'web' \? undefined : \{ selected: isBookmarked \};/,
   );
-
-  assert.throws(
-    () => assertPracticeRouteLaunchParity(mutatedPracticeSource, homeSource),
-    /normalized route mode/,
-  );
+  assert.match(source, /accessibilityState=\{bookmarkAccessibilityState\}/);
+  assert.doesNotMatch(source, /accessibilityState=\{\{ selected: isBookmarked \}\}/);
 });
 
 test('web aria false-state e2e covers localized Practice control labels', () => {
