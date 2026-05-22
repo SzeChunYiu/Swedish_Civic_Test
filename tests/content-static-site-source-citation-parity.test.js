@@ -25,8 +25,14 @@ function assertLocalizedSourceCitation(source, copyIdentifier) {
   assert.match(source, /const copy = .*?\|\| .*?\.en;/);
   assert.match(
     source,
-    /return `\$\{copy\.source\}: \$\{title\}, \$\{source\.chapter\}, \$\{source\.section\}, \$\{copy\.page\} \$\{source\.page\}`;/,
+    /const uhrCitation = `\$\{copy\.source\}: \$\{title\}, \$\{source\.chapter\}, \$\{source\.section\}, \$\{copy\.page\} \$\{source\.page\}`;/,
   );
+  assert.match(source, /supplementalSources/);
+  assert.match(
+    source,
+    /const supplementalCitations = Array\.isArray\(source\.supplementalSources\)/,
+  );
+  assert.match(source, /return \[uhrCitation, \.\.\.supplementalCitations\]\.join\('; '\);/);
 }
 
 test('static practice quiz renders localized source citations below each question', () => {

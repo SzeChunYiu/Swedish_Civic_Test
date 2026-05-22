@@ -1,5 +1,6 @@
 import { additionalQuestions } from './additionalQuestions';
 import { applyQuestionLocalizationPilot } from './questionLocalizations';
+import { VALMYNDIGHETEN_VOTING_RIGHTS_SOURCE } from './sourceReferences';
 import { derivePublishedQuestions, publishQuestions } from '../lib/content/derivedQuestions';
 import type { PracticeQuestion } from '../types/content';
 
@@ -578,6 +579,7 @@ const rawBaseQuestions: PracticeQuestion[] = [
       section: 'Val och röstning',
       pageApprox: 14,
     },
+    supplementalSources: [VALMYNDIGHETEN_VOTING_RIGHTS_SOURCE],
     difficulty: 'easy',
     reviewStatus: 'reviewed',
     tags: ['voting-age', 'elections', 'riksdag'],

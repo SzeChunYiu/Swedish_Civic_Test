@@ -54,6 +54,12 @@ function optionPayload(question, field) {
   );
 }
 
+function supplementalSourcePayload(question, field) {
+  const sources = Array.isArray(question.supplementalSources) ? question.supplementalSources : [];
+  if (!sources.length) return '';
+  return sources.map((source) => source[field] || '').join('|');
+}
+
 const questions = loadTs('data/questions.ts', 'questions');
 const sourceQuestions = loadTs('data/questions.ts', 'sourceQuestions');
 const generatedPublishedQuestions = loadTs('data/questions.ts', 'generatedPublishedQuestions');
@@ -89,6 +95,11 @@ const rows = [
     'uhrSourcePublisher',
     'uhrSourceUrl',
     'uhrSourceRetrievedAt',
+    'supplementalSourceTitle',
+    'supplementalSourcePublisher',
+    'supplementalSourceUrl',
+    'supplementalSourcePublishedDate',
+    'supplementalSourceRetrievedDate',
     'difficulty',
     'reviewStatus',
     'tags',
@@ -112,6 +123,11 @@ const rows = [
     uhrSource.publisher,
     uhrSource.url,
     uhrSource.retrievedDate,
+    supplementalSourcePayload(question, 'title'),
+    supplementalSourcePayload(question, 'publisher'),
+    supplementalSourcePayload(question, 'url'),
+    supplementalSourcePayload(question, 'publishedDate'),
+    supplementalSourcePayload(question, 'retrievedDate'),
     question.difficulty,
     question.reviewStatus,
     question.tags.join('|'),

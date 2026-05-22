@@ -315,6 +315,9 @@ function buildSiteQuestionBank(inputs = {}) {
         chapter: question.uhrReference.chapter,
         section: question.uhrReference.section,
         page: question.uhrReference.pageApprox,
+        ...(question.supplementalSources
+          ? { supplementalSources: question.supplementalSources }
+          : {}),
       },
       questionProvenance: getQuestionProvenance(question),
       difficulty: question.difficulty,

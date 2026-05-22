@@ -1,4 +1,10 @@
-import type { Difficulty, PracticeQuestion, UHRReference } from '../types/content';
+import { VALMYNDIGHETEN_VOTING_RIGHTS_SOURCE } from './sourceReferences';
+import type {
+  Difficulty,
+  OfficialSourceReference,
+  PracticeQuestion,
+  UHRReference,
+} from '../types/content';
 
 type OptionText = [textSv: string, textEn: string];
 
@@ -14,6 +20,7 @@ function single(
   explanationEn: string,
   tags: string[],
   difficulty: Difficulty = 'medium',
+  supplementalSources: OfficialSourceReference[] = [],
 ): PracticeQuestion {
   const optionIds = ['a', 'b', 'c', 'd'] as const;
   return {
@@ -27,6 +34,7 @@ function single(
     explanationSv,
     explanationEn,
     uhrReference: ref,
+    ...(supplementalSources.length ? { supplementalSources } : {}),
     difficulty,
     reviewStatus: 'reviewed',
     tags,
@@ -240,6 +248,8 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     'För att rösta i riksdagsvalet krävs både att väljaren har fyllt 18 år och att väljaren är svensk medborgare. Krav som bostadsägande, partimedlemskap eller 16 års ålder ger inte rösträtt i riksdagsval.',
     'Voting in a Riksdag election requires both having turned 18 and being a Swedish citizen. Owning a home, being a party member, or being 16 does not give someone the right to vote in a Riksdag election.',
     ['voting-rights', 'citizenship', 'riksdag-election'],
+    'medium',
+    [VALMYNDIGHETEN_VOTING_RIGHTS_SOURCE],
   ),
   trueFalse(
     'q031',
@@ -3451,6 +3461,8 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     'För kommun- och regionval krävs inte alltid svenskt medborgarskap. Personer som inte är svenska medborgare kan ha rösträtt om de är folkbokförda i Sverige och uppfyller reglerna, till exempel tre års folkbokföring eller särskilda regler för EU- och nordiska medborgare.',
     'Swedish citizenship is not always required for municipal and regional elections. People who are not Swedish citizens may have the right to vote if they are registered as living in Sweden and meet the rules, such as three years of registration or special rules for EU and Nordic citizens.',
     ['voting-rights', 'municipal-elections', 'regional-elections', 'non-citizen-voting'],
+    'medium',
+    [VALMYNDIGHETEN_VOTING_RIGHTS_SOURCE],
   ),
   single(
     'q167',
