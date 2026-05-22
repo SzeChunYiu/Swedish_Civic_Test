@@ -12045,3 +12045,50 @@ img.ebook__brand-mark {
     padding: 12px 13px;
   }
 }
+
+/* ======================================================================
+   DOC SUBHEADING BOX OPTIMIZATION ROUND
+   ====================================================================== */
+
+.doc__main h3 {
+  align-items: center;
+  background:
+    linear-gradient(90deg, rgba(254, 204, 0, 0.18), rgba(254, 204, 0, 0) 58%),
+    rgba(255, 255, 255, 0.34);
+  border: 1px solid rgba(0, 106, 167, 0.09);
+  border-radius: 16px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.34);
+  display: flex;
+  gap: 9px;
+  margin: 28px 0 10px;
+  padding: 10px 12px;
+  width: fit-content;
+}
+
+.doc__main h3::before {
+  background: var(--gold);
+  border: 1px solid rgba(217, 169, 0, 0.34);
+  border-radius: 999px;
+  box-shadow: 0 0 0 4px rgba(254, 204, 0, 0.14);
+  content: '';
+  flex: 0 0 auto;
+  height: 8px;
+  width: 8px;
+}
+
+:root[data-theme='dark'] .doc__main h3 {
+  background: rgba(255, 255, 255, 0.045);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme='dark'] .doc__main h3::before {
+  box-shadow: 0 0 0 4px rgba(254, 204, 0, 0.18);
+}
+
+@media (max-width: 620px) {
+  .doc__main h3 {
+    border-radius: 14px;
+    font-size: 17px;
+    padding: 9px 10px;
+  }
+}
