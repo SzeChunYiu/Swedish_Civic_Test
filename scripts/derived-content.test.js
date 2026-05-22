@@ -1544,6 +1544,25 @@ test('derivePublishedQuestions keeps q080/q496-q499 suffrage explanation learner
       /the first Riksdag election held after those reforms was in 1921/i,
     );
   }
+
+  const singleChoice = byId.get('q496');
+  const judgement = byId.get('q499');
+  const expectedSingleChoiceSv =
+    'Vilket år ägde det första riksdagsvalet där både kvinnor och män fick rösta och kvinnor kunde bli riksdagsledamöter rum?';
+  const expectedSingleChoiceEn =
+    'In what year did the first Riksdag election in which both women and men could vote and women could become members of the Riksdag take place?';
+  const expectedJudgementSv =
+    'Vilket år stämmer för det första riksdagsvalet där både kvinnor och män fick rösta och kvinnor kunde bli riksdagsledamöter?';
+  const expectedJudgementEn =
+    'Which year is correct for the first Riksdag election in which both women and men could vote and women could become members of the Riksdag?';
+  assert.equal(singleChoice?.questionSv, expectedSingleChoiceSv);
+  assert.equal(singleChoice?.questionEn, expectedSingleChoiceEn);
+  assert.equal(judgement?.questionSv, expectedJudgementSv);
+  assert.equal(judgement?.questionEn, expectedJudgementEn);
+  assert.doesNotMatch(
+    `${singleChoice?.questionSv}\n${singleChoice?.questionEn}\n${judgement?.questionSv}\n${judgement?.questionEn}`,
+    /året då det första riksdagsvalet där|year when the first Riksdag election was held with both women and men could vote/i,
+  );
 });
 
 test('derivePublishedQuestions renders q048 public-service broadcasters in natural English', () => {

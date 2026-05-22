@@ -2646,7 +2646,15 @@ function generatedSingleChoicePromptFromSourceSv(
     return 'Vilken uppgift om offentlig sektor i Sverige stämmer?';
   }
 
-  let match = q.match(/^Vilket påstående beskriver (.+)$/i);
+  let match = q.match(/^Vilket år hölls (.+)$/i);
+  if (match) {
+    const event = lowerFirst(match[1]);
+    return variant === 'judgement'
+      ? `Vilket år stämmer för ${event}?`
+      : `Vilket år ägde ${event} rum?`;
+  }
+
+  match = q.match(/^Vilket påstående beskriver (.+)$/i);
   if (match) {
     return variant === 'judgement'
       ? `Vilken uppgift stämmer om ${match[1]}?`
@@ -2800,7 +2808,15 @@ function generatedSingleChoicePromptFromSourceEn(
     return "Which statement about Sweden's public sector is correct?";
   }
 
-  let match = q.match(/^Which statement describes (.+)$/i);
+  let match = q.match(/^In which year was (.+?) held in which (.+)$/i);
+  if (match) {
+    const event = `${match[1]} in which ${match[2]}`;
+    return variant === 'judgement'
+      ? `Which year is correct for ${event}?`
+      : `In what year did ${event} take place?`;
+  }
+
+  match = q.match(/^Which statement describes (.+)$/i);
   if (match) {
     return variant === 'judgement'
       ? `Which fact is correct about ${match[1]}?`
@@ -2986,7 +3002,6 @@ function universalHumanRightsStatementEn(answer: string): string | null {
   }
   return null;
 }
-
 
 function constitution1809ChangeStatementSv(answer: string): string | null {
   if (/^Kungens makt begränsades$/i.test(answer)) {

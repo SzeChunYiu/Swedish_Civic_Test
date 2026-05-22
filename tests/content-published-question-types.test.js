@@ -5109,8 +5109,8 @@ test('generated judgement prompts do not nest source which-questions', () => {
       'Which fact is correct about the popular movements that were among the largest in Sweden during the 19th century?',
     ],
     [generatedQuestionId(sourceQuestions, 'q080', 'judgement')]: [
-      'Vilken uppgift stämmer om året då det första riksdagsvalet där både kvinnor och män fick rösta och kvinnor kunde bli riksdagsledamöter?',
-      'Which fact is correct about the year when the first Riksdag election was held with both women and men could vote and women could become members of the Riksdag?',
+      'Vilket år stämmer för det första riksdagsvalet där både kvinnor och män fick rösta och kvinnor kunde bli riksdagsledamöter?',
+      'Which year is correct for the first Riksdag election in which both women and men could vote and women could become members of the Riksdag?',
     ],
     [generatedQuestionId(sourceQuestions, 'q093', 'judgement')]: [
       'Vilken uppgift stämmer om lagen för religionsfrihetens slutliga genombrott 1951?',

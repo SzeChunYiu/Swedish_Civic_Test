@@ -38546,8 +38546,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "What is correct about the year when the first Riksdag election was held with both women and men could vote and women could become members of the Riksdag?",
-      "sv": "Vad stämmer om året då det första riksdagsvalet där både kvinnor och män fick rösta och kvinnor kunde bli riksdagsledamöter?"
+      "en": "In what year did the first Riksdag election in which both women and men could vote and women could become members of the Riksdag take place?",
+      "sv": "Vilket år ägde det första riksdagsvalet där både kvinnor och män fick rösta och kvinnor kunde bli riksdagsledamöter rum?"
     },
     "opts": [
       {
@@ -38714,8 +38714,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct about the year when the first Riksdag election was held with both women and men could vote and women could become members of the Riksdag?",
-      "sv": "Vilken uppgift stämmer om året då det första riksdagsvalet där både kvinnor och män fick rösta och kvinnor kunde bli riksdagsledamöter?"
+      "en": "Which year is correct for the first Riksdag election in which both women and men could vote and women could become members of the Riksdag?",
+      "sv": "Vilket år stämmer för det första riksdagsvalet där både kvinnor och män fick rösta och kvinnor kunde bli riksdagsledamöter?"
     },
     "opts": [
       {
