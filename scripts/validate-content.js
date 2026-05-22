@@ -665,6 +665,7 @@ const QUESTION_RECORD_YEARS_ENGLISH_NATURALNESS_PATTERNS = [
 const QUESTION_SUFFRAGE_1921_ENGLISH_NATURALNESS_PATTERNS = [
   /\b1921 is the year of the election asked about here\b/i,
   /\bthe year of the election asked about here\b/i,
+  /\byear when the first Riksdag election was held with both women and men could vote\b/i,
 ];
 const QUESTION_RULE_OF_LAW_ENGLISH_NATURALNESS_PATTERNS = [/\blegal certainty\b/i];
 const QUESTION_SOURCE_CRITICISM_ENGLISH_NATURALNESS_PATTERNS = [
