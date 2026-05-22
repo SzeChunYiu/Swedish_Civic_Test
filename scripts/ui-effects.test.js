@@ -546,6 +546,7 @@ test('practice and routed quiz answer options expose selected state', () => {
 test('answer option feedback remains available in the accessibility label', () => {
   const source = read('components/quiz/AnswerOption.tsx');
 
+  assert.match(source, /import \{ useState \} from 'react';/);
   assert.match(source, /language = 'sv'/);
   assert.match(source, /const answerOptionCopy: Record<AnswerLanguage, AnswerOptionCopy>/);
   assert.match(source, /Välj svaret \$\{label\}/);
@@ -561,6 +562,29 @@ test('answer option feedback remains available in the accessibility label', () =
   assert.match(source, /copy\.selectAccessibilityLabel\(label\)/);
   assert.match(source, /accessibilityLabel=\{accessibilityLabel\}/);
   assert.doesNotMatch(source, /accessibilityLabel=\{`Select answer \$\{label\}`\}/);
+});
+
+test('answer option strikeout control exposes keyboard focus and pressed state', () => {
+  const source = read('components/quiz/AnswerOption.tsx');
+  const e2eSource = read('tests/e2e/practice-feedback.spec.ts');
+
+  assert.match(source, /const \[strikeoutFocused, setStrikeoutFocused\] = useState\(false\);/);
+  assert.match(source, /onFocus=\{\(\) => setStrikeoutFocused\(true\)\}/);
+  assert.match(source, /onBlur=\{\(\) => setStrikeoutFocused\(false\)\}/);
+  assert.match(source, /strikeoutFocused \? styles\.strikeoutButtonFocused : null/);
+  assert.match(source, /strikeoutButtonFocused: \{/);
+  assert.match(source, /borderColor: colors\.focus/);
+  assert.match(source, /aria-pressed=\{struck\}/);
+  assert.match(source, /pressed\s*\?\s*reduceMotion/);
+  assert.match(e2eSource, /practice strikeout controls support keyboard focus, Space, and Enter/);
+  assert.match(e2eSource, /focusByKeyboard\(page, eliminateWrongAnswer/);
+  assert.match(e2eSource, /page\.keyboard\.down\('Space'\)/);
+  assert.match(e2eSource, /page\.keyboard\.press\('Enter'\)/);
+  assert.match(e2eSource, /toHaveAttribute\('aria-pressed', 'true'\)/);
+  assert.match(
+    e2eSource,
+    /getByRole\('button', \{ name: \/Eliminate answer\|Restore answer\/ \}\)/,
+  );
 });
 
 test('question card groups prompt and translation into an accessible summary', () => {

@@ -1,4 +1,5 @@
 import type { QuestionOption } from '../../types/content';
+import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { getQuestionOptionText } from '../../lib/quiz/questionText';
 import { useReducedMotion } from '../../lib/motion/useReducedMotion';
@@ -75,6 +76,7 @@ export function AnswerOption({
 }) {
   const copy = answerOptionCopy[language];
   const reduceMotion = useReducedMotion();
+  const [strikeoutFocused, setStrikeoutFocused] = useState(false);
   const label = option ? getOptionLabel(option, language) : copy.fallbackLabel;
   const state = getOptionCardState(tone, selected);
   const accessibilityLabel = resultLabel
@@ -109,10 +111,13 @@ export function AnswerOption({
           accessibilityState={{ selected: struck }}
           aria-pressed={struck}
           hitSlop={space[1]}
+          onBlur={() => setStrikeoutFocused(false)}
+          onFocus={() => setStrikeoutFocused(true)}
           onPress={onToggleStrikeout}
           style={({ pressed }) => [
             styles.strikeoutButton,
             struck ? styles.strikeoutButtonActive : null,
+            strikeoutFocused ? styles.strikeoutButtonFocused : null,
             pressed
               ? reduceMotion
                 ? styles.strikeoutButtonPressedReducedMotion
@@ -157,6 +162,10 @@ const styles = StyleSheet.create({
   strikeoutButtonActive: {
     backgroundColor: colors.surfaceWarm,
     borderColor: colors.textMuted,
+  },
+  strikeoutButtonFocused: {
+    backgroundColor: colors.focusSoft,
+    borderColor: colors.focus,
   },
   strikeoutButtonPressed: {
     backgroundColor: colors.focusSoft,

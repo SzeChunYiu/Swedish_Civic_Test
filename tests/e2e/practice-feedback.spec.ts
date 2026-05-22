@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import type { Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 
 import {
   clearSpeechEvents,
@@ -14,6 +14,12 @@ import { startAllVisiblePractice, type PracticeHubLanguage } from './practiceHub
 
 const accessibilityAudioPlaybackRateKey = 'accessibility\\a11y.audioPlaybackRate.v1';
 
+type InteractionStyle = {
+  backgroundColor: string;
+  borderColor: string;
+  transform: string;
+};
+
 async function closeLaunchAdIfPresent(page: Page) {
   const closeLaunchAd = page.getByRole('button', {
     name: /Close launch sponsor ad|Stäng startannons/,
@@ -21,6 +27,43 @@ async function closeLaunchAdIfPresent(page: Page) {
   if (await closeLaunchAd.isVisible()) {
     await closeLaunchAd.click();
   }
+}
+
+async function getInteractionStyle(locator: Locator): Promise<InteractionStyle> {
+  return locator.evaluate((element) => {
+    const style = window.getComputedStyle(element);
+
+    return {
+      backgroundColor: style.backgroundColor,
+      borderColor: style.borderColor,
+      transform: style.transform,
+    };
+  });
+}
+
+function expectVisibleInteractionChange(
+  before: InteractionStyle,
+  after: InteractionStyle,
+  label: string,
+) {
+  expect(
+    after.backgroundColor !== before.backgroundColor ||
+      after.borderColor !== before.borderColor ||
+      after.transform !== before.transform,
+    `${label} should expose visible interaction feedback`,
+  ).toBe(true);
+}
+
+async function focusByKeyboard(page: Page, target: Locator, label: string) {
+  for (let attempt = 0; attempt < 40; attempt += 1) {
+    if (await target.evaluate((element) => element === document.activeElement).catch(() => false)) {
+      return;
+    }
+
+    await page.keyboard.press('Tab');
+  }
+
+  await expect(target, `${label} should be reachable by Tab`).toBeFocused();
 }
 
 async function enableEnglishSupport(page: Page) {
@@ -381,6 +424,67 @@ test('practice answer choices can be eliminated and restored before submission',
   await page.getByLabel('Try this practice question again').click();
   await expect(eliminatedAnswer).toHaveCount(0);
   await expect(eliminateWrongAnswer).toBeVisible();
+
+  expect(consoleErrors).toEqual([]);
+});
+
+test('practice strikeout controls support keyboard focus, Space, and Enter', async ({ page }) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await enableEnglishSupport(page);
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await closeLaunchAdIfPresent(page);
+  await startAllVisiblePractice(page, 'en');
+
+  const restoredWrongAnswer = page.getByLabel('Select answer In North America');
+  const eliminatedAnswer = page.getByLabel('In North America, Eliminated');
+  const wrongFeedbackAnswer = page.getByLabel('In North America, Wrong');
+  const eliminateWrongAnswer = page.getByRole('button', {
+    name: 'Eliminate answer In North America',
+  });
+  const restoreWrongAnswer = page.getByRole('button', {
+    name: 'Restore answer In North America',
+  });
+
+  await expect(eliminateWrongAnswer).toHaveAttribute('aria-pressed', 'false');
+  const idleStyle = await getInteractionStyle(eliminateWrongAnswer);
+  await focusByKeyboard(page, eliminateWrongAnswer, 'In North America strikeout control');
+  await expect(eliminateWrongAnswer).toBeFocused();
+  const focusStyle = await getInteractionStyle(eliminateWrongAnswer);
+  expectVisibleInteractionChange(idleStyle, focusStyle, 'strikeout keyboard focus');
+
+  await page.keyboard.down('Space');
+  const pressedStyle = await getInteractionStyle(page.locator(':focus'));
+  expectVisibleInteractionChange(focusStyle, pressedStyle, 'strikeout keyboard press');
+  await page.keyboard.up('Space');
+
+  await expect(eliminatedAnswer).toBeVisible();
+  await expect(eliminatedAnswer).toBeDisabled();
+  await expect(restoreWrongAnswer).toHaveAttribute('aria-pressed', 'true');
+  await expect(restoreWrongAnswer).toBeFocused();
+
+  await page.keyboard.press('Enter');
+  await expect(eliminatedAnswer).toHaveCount(0);
+  await expect(eliminateWrongAnswer).toHaveAttribute('aria-pressed', 'false');
+  await expect(restoredWrongAnswer).toBeVisible();
+  await expect(restoredWrongAnswer).toBeEnabled();
+
+  await page.keyboard.press('Shift+Tab');
+  await expect(restoredWrongAnswer).toBeFocused();
+  await restoredWrongAnswer.click();
+  await expect(wrongFeedbackAnswer).toBeVisible();
+  await expect(page.getByRole('button', { name: /Eliminate answer|Restore answer/ })).toHaveCount(
+    0,
+  );
+
+  const tryAgain = page.getByLabel('Try this practice question again');
+  await focusByKeyboard(page, tryAgain, 'Try again control after submitted feedback');
+  await expect(tryAgain).toBeFocused();
 
   expect(consoleErrors).toEqual([]);
 });
