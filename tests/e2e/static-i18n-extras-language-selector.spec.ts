@@ -124,6 +124,8 @@ const localizedHomeChapterElevenCitizenshipSnippets: Record<ExtraLocale, RegExp>
 };
 const copiedTurkishPurchaseText =
   /Yalnızca|Satın alma|Web yükseltmeleri|Reklamsız|Reklamları kaldır|Google Play ile devam et|Ömür boyu|tek seferlik|Yükseltmenin|satın almaya hazır|Önce giriş yapın|Satın alma aktarım|Hesaba bağlı|Satın alma başlatılamadı/i;
+const reviewedSomaliAccountSyncFragment =
+  /calaamadahaaga, qoraalladaada iyo dashboard-kaaga ayaa la isku waafajinayaa dhammaan qalabkaaga/i;
 
 type StaticSite = {
   baseUrl: string;
@@ -607,5 +609,42 @@ test('static Home chapter 11 citizenship terms render localized glossary before 
     await expect(page.locator('.list-quiet > li')).toHaveCount(13);
   }
 
+  expect(pageErrors).toEqual([]);
+});
+
+test('Somali static sign-in and FAQ dashboard sync copy render without dhban typo', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const pageErrors = collectPageErrors(page);
+  await openStaticHome(page, staticSite.baseUrl);
+
+  await page.locator('#settings-open').click();
+  await expect(page.locator('#settings-modal')).toBeVisible();
+  await page.locator('#settings-modal [data-set="language"] button[data-val="so"]').click();
+  await page.locator('#settings-modal button[data-close="settings"]').last().click();
+  await expect(page.locator('#settings-modal')).toBeHidden();
+
+  await expectRootLocale(page, 'so');
+  await expect(page.locator(i18nSelector('faq.3.a'))).toContainText(
+    'dashboard-kaaga ayaa la isku waafajinayaa dhammaan qalabkaaga',
+  );
+  const faqText = await page.locator(i18nSelector('faq.3.a')).innerText();
+  expect(faqText).toMatch(reviewedSomaliAccountSyncFragment);
+  expect(faqText).not.toMatch(/\bdhban\b/i);
+
+  await page.evaluate(() => {
+    window.localStorage.setItem('smt_signed_in', '1');
+    window.localStorage.setItem('smt_account_id', 'somali-sync-e2e');
+    window.localStorage.setItem('smt_account_email', 'somali@example.test');
+  });
+  await page.locator('#signin-open').click();
+  await expect(page.locator('#signin-modal')).toBeVisible();
+  await expect(page.locator('#signin-modal .signin__account')).toBeVisible();
+
+  const signedInText = await page.locator('#signin-modal [data-sk="signin.signedin"]').innerText();
+  expect(signedInText).toMatch(reviewedSomaliAccountSyncFragment);
+  expect(signedInText).not.toMatch(/\bdhban\b/i);
+  await expectNoHorizontalOverflow(page);
   expect(pageErrors).toEqual([]);
 });
