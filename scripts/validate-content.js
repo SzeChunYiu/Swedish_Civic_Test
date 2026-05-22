@@ -2024,6 +2024,7 @@ const EXPECTED_RELEASE_MONETIZATION_POLICY_FIELDS = [
   'realAdsEnvFlag',
   'removeAdsPriceLabel',
   'removeAdsProductId',
+  'removeAdsStoreProductIds',
   'storeDisclosureTopics',
 ];
 const EXPECTED_RELEASE_CONSENT_PROMPTS = ['app_tracking_transparency', 'ump_consent_form'];
@@ -12948,6 +12949,7 @@ function validateReleaseMonetizationPolicyParity() {
     realAdsEnvFlag: EXPECTED_RELEASE_REAL_ADS_ENV_FLAG,
     removeAdsPriceLabel: REMOVE_ADS_PRICE_LABEL,
     removeAdsProductId: REMOVE_ADS_PRODUCT_ID,
+    removeAdsStoreProductIds: REMOVE_ADS_STORE_PRODUCT_IDS,
     storeDisclosureTopics: EXPECTED_RELEASE_STORE_DISCLOSURE_TOPICS,
   };
 
@@ -13060,6 +13062,27 @@ function validateReleaseMonetizationPolicyParity() {
       reject(`releaseMonetizationPolicy store disclosures must include ${label}`);
     }
   });
+
+  if (!isObjectRecord(releaseMonetizationPolicy.removeAdsStoreProductIds)) {
+    reject('releaseMonetizationPolicy.removeAdsStoreProductIds must expose platform store ids');
+  } else {
+    if (
+      releaseMonetizationPolicy.removeAdsStoreProductIds.android !== REMOVE_ADS_ANDROID_PRODUCT_ID
+    ) {
+      reject(
+        `releaseMonetizationPolicy.removeAdsStoreProductIds.android is ${JSON.stringify(
+          releaseMonetizationPolicy.removeAdsStoreProductIds.android,
+        )}, expected ${JSON.stringify(REMOVE_ADS_ANDROID_PRODUCT_ID)}`,
+      );
+    }
+    if (releaseMonetizationPolicy.removeAdsStoreProductIds.ios !== REMOVE_ADS_IOS_PRODUCT_ID) {
+      reject(
+        `releaseMonetizationPolicy.removeAdsStoreProductIds.ios is ${JSON.stringify(
+          releaseMonetizationPolicy.removeAdsStoreProductIds.ios,
+        )}, expected ${JSON.stringify(REMOVE_ADS_IOS_PRODUCT_ID)}`,
+      );
+    }
+  }
 
   if (
     valid &&
