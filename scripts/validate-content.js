@@ -694,6 +694,7 @@ const GENERATED_TRUE_FALSE_EXPLANATION_META_PATTERNS = [
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
 const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
 const EXPECTED_STREAK_RULE_COUNT = 17;
+const EXPECTED_STREAK_FREEZE_COUNTER_RUNTIME_CASE_COUNT = 4;
 const EXPECTED_XP_RULE_COUNT = 24;
 const EXPECTED_MASTERY_RULE_COUNT = 17;
 const EXPECTED_WEAK_CHAPTER_RULE_COUNT = 5;
@@ -9325,6 +9326,8 @@ let progressStoreSchemaParityValidated = false;
 let streakFreezeNormalizerCasesValidated = 0;
 let streakFreezeNormalizerSourceChecksValidated = 0;
 let streakFreezeNormalizerParityValidated = false;
+let streakFreezeCounterRuntimeCasesValidated = 0;
+let streakFreezeCounterRuntimeParityValidated = false;
 let dashboardProgressSnapshotCasesValidated = 0;
 let dashboardProgressSnapshotParityValidated = false;
 let weeklyRecapRuntimeCasesValidated = 0;
@@ -10479,6 +10482,16 @@ if (process.argv.includes('--focus-streak-freeze-normalizer-parity')) {
     streakFreezeNormalizerCasesValidated,
     streakFreezeNormalizerSourceChecksValidated,
     streakFreezeNormalizerParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-streak-freeze-counter-runtime-input')) {
+  validateStreakFreezeCounterRuntimeInputs();
+  exitWithValidationFailures();
+  printValidationSummary({
+    streakFreezeCounterRuntimeCasesValidated,
+    streakFreezeCounterRuntimeParityValidated,
   });
   process.exit(0);
 }
@@ -21062,6 +21075,146 @@ function validateWeeklyRecapRuntimeGuard() {
   }
 }
 
+function validateStreakFreezeCounterRuntimeInputs({ countTowardStreakRules = false } = {}) {
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  if (typeof refillFreezes !== 'function') {
+    reject('refillFreezes export is not a function');
+    return false;
+  }
+  if (typeof calculateStreakWithFreeze !== 'function') {
+    reject('calculateStreakWithFreeze export is not a function');
+    return false;
+  }
+
+  const now = new Date('2026-05-19T08:00:00.000Z');
+  const runtimeCounterCases = [
+    {
+      label: 'refillFreezes rejects NaN, negative, and string counters',
+      actual: () => {
+        const result = refillFreezes(
+          {
+            available: Number.NaN,
+            lastEarnedAt: '2026-05-18',
+            lifetimeEarned: '2',
+            lifetimeSpent: -1,
+            rescuedDayKeys: [],
+          },
+          now,
+        );
+        return {
+          available: result.available,
+          lifetimeEarned: result.lifetimeEarned,
+          lifetimeSpent: result.lifetimeSpent,
+        };
+      },
+      expected: { available: 0, lifetimeEarned: 0, lifetimeSpent: 0 },
+    },
+    {
+      label: 'refillFreezes clamps overstocked available and rejects fractional counters',
+      actual: () => {
+        const result = refillFreezes(
+          {
+            available: 99,
+            lastEarnedAt: '2026-05-11',
+            lifetimeEarned: 3.5,
+            lifetimeSpent: Infinity,
+            rescuedDayKeys: [],
+          },
+          now,
+        );
+        return {
+          available: result.available,
+          lifetimeEarned: result.lifetimeEarned,
+          lifetimeSpent: result.lifetimeSpent,
+        };
+      },
+      expected: { available: 4, lifetimeEarned: 0, lifetimeSpent: 0 },
+    },
+    {
+      label: 'calculateStreakWithFreeze refuses string available freezes',
+      actual: () => {
+        const result = calculateStreakWithFreeze({
+          activeDayKeys: ['2026-05-17', '2026-05-19'],
+          freezeState: {
+            available: '1',
+            lastEarnedAt: '2026-05-18',
+            lifetimeEarned: 1,
+            lifetimeSpent: 0,
+            rescuedDayKeys: [],
+          },
+          today: '2026-05-19',
+          now,
+        });
+        return {
+          available: result.freezeState.available,
+          lifetimeSpent: result.freezeState.lifetimeSpent,
+          rescuedThisRun: result.rescuedThisRun,
+          streakDays: result.streakDays,
+        };
+      },
+      expected: { available: 0, lifetimeSpent: 0, rescuedThisRun: [], streakDays: 1 },
+    },
+    {
+      label: 'calculateStreakWithFreeze resets string lifetimeSpent before spending',
+      actual: () => {
+        const result = calculateStreakWithFreeze({
+          activeDayKeys: ['2026-05-17', '2026-05-19'],
+          freezeState: {
+            available: 4,
+            lastEarnedAt: '2026-05-18',
+            lifetimeEarned: 4,
+            lifetimeSpent: '2',
+            rescuedDayKeys: [],
+          },
+          today: '2026-05-19',
+          now,
+        });
+        return {
+          available: result.freezeState.available,
+          lifetimeSpent: result.freezeState.lifetimeSpent,
+          rescuedThisRun: result.rescuedThisRun,
+          streakDays: result.streakDays,
+        };
+      },
+      expected: { available: 3, lifetimeSpent: 1, rescuedThisRun: ['2026-05-18'], streakDays: 3 },
+    },
+  ];
+
+  runtimeCounterCases.forEach(({ label, actual, expected }) => {
+    let actualValue;
+    try {
+      actualValue = actual();
+    } catch (error) {
+      reject(`streak-freeze counter runtime ${label} threw ${error.message}`);
+      return;
+    }
+
+    if (!jsonEqual(actualValue, expected)) {
+      reject(
+        `streak-freeze counter runtime ${label} returned ${JSON.stringify(
+          actualValue,
+        )}, expected ${JSON.stringify(expected)}`,
+      );
+      return;
+    }
+
+    streakFreezeCounterRuntimeCasesValidated += 1;
+    if (countTowardStreakRules) streakRulesValidated += 1;
+  });
+
+  streakFreezeCounterRuntimeParityValidated =
+    valid &&
+    streakFreezeCounterRuntimeCasesValidated === EXPECTED_STREAK_FREEZE_COUNTER_RUNTIME_CASE_COUNT;
+
+  return streakFreezeCounterRuntimeParityValidated;
+}
+
 function validateStreakRules() {
   if (typeof calculateStreak !== 'function') return;
   if (typeof getLocalDateKey !== 'function') {
@@ -21221,122 +21374,8 @@ function validateStreakRules() {
     streakRulesValidated += 1;
   });
 
-  const now = new Date('2026-05-19T08:00:00.000Z');
-  const runtimeCounterCases = [
-    {
-      label: 'refillFreezes rejects NaN, negative, and string counters',
-      actual: () => {
-        const result = refillFreezes(
-          {
-            available: Number.NaN,
-            lastEarnedAt: '2026-05-18',
-            lifetimeEarned: '2',
-            lifetimeSpent: -1,
-            rescuedDayKeys: [],
-          },
-          now,
-        );
-        return {
-          available: result.available,
-          lifetimeEarned: result.lifetimeEarned,
-          lifetimeSpent: result.lifetimeSpent,
-        };
-      },
-      expected: { available: 0, lifetimeEarned: 0, lifetimeSpent: 0 },
-    },
-    {
-      label: 'refillFreezes clamps overstocked available and rejects fractional counters',
-      actual: () => {
-        const result = refillFreezes(
-          {
-            available: 99,
-            lastEarnedAt: '2026-05-11',
-            lifetimeEarned: 3.5,
-            lifetimeSpent: Infinity,
-            rescuedDayKeys: [],
-          },
-          now,
-        );
-        return {
-          available: result.available,
-          lifetimeEarned: result.lifetimeEarned,
-          lifetimeSpent: result.lifetimeSpent,
-        };
-      },
-      expected: { available: 4, lifetimeEarned: 0, lifetimeSpent: 0 },
-    },
-    {
-      label: 'calculateStreakWithFreeze refuses string available freezes',
-      actual: () => {
-        const result = calculateStreakWithFreeze({
-          activeDayKeys: ['2026-05-17', '2026-05-19'],
-          freezeState: {
-            available: '1',
-            lastEarnedAt: '2026-05-18',
-            lifetimeEarned: 1,
-            lifetimeSpent: 0,
-            rescuedDayKeys: [],
-          },
-          today: '2026-05-19',
-          now,
-        });
-        return {
-          available: result.freezeState.available,
-          lifetimeSpent: result.freezeState.lifetimeSpent,
-          rescuedThisRun: result.rescuedThisRun,
-          streakDays: result.streakDays,
-        };
-      },
-      expected: { available: 0, lifetimeSpent: 0, rescuedThisRun: [], streakDays: 1 },
-    },
-    {
-      label: 'calculateStreakWithFreeze resets string lifetimeSpent before spending',
-      actual: () => {
-        const result = calculateStreakWithFreeze({
-          activeDayKeys: ['2026-05-17', '2026-05-19'],
-          freezeState: {
-            available: 4,
-            lastEarnedAt: '2026-05-18',
-            lifetimeEarned: 4,
-            lifetimeSpent: '2',
-            rescuedDayKeys: [],
-          },
-          today: '2026-05-19',
-          now,
-        });
-        return {
-          available: result.freezeState.available,
-          lifetimeSpent: result.freezeState.lifetimeSpent,
-          rescuedThisRun: result.rescuedThisRun,
-          streakDays: result.streakDays,
-        };
-      },
-      expected: { available: 3, lifetimeSpent: 1, rescuedThisRun: ['2026-05-18'], streakDays: 3 },
-    },
-  ];
-
-  runtimeCounterCases.forEach(({ label, actual, expected }) => {
-    let actualValue;
-    try {
-      actualValue = actual();
-    } catch (error) {
-      rulesAreValid = false;
-      fail(`streak rule ${label} threw ${error.message}`);
-      return;
-    }
-
-    if (!jsonEqual(actualValue, expected)) {
-      rulesAreValid = false;
-      fail(
-        `streak rule ${label} returned ${JSON.stringify(
-          actualValue,
-        )}, expected ${JSON.stringify(expected)}`,
-      );
-      return;
-    }
-
-    streakRulesValidated += 1;
-  });
+  rulesAreValid =
+    validateStreakFreezeCounterRuntimeInputs({ countTowardStreakRules: true }) && rulesAreValid;
 
   if (rulesAreValid && streakRulesValidated === EXPECTED_STREAK_RULE_COUNT) {
     streakRulesParityValidated = true;
@@ -24205,6 +24244,8 @@ console.log(
       streakFreezeNormalizerCasesValidated,
       streakFreezeNormalizerSourceChecksValidated,
       streakFreezeNormalizerParityValidated,
+      streakFreezeCounterRuntimeCasesValidated,
+      streakFreezeCounterRuntimeParityValidated,
       dashboardProgressSnapshotCasesValidated,
       dashboardProgressSnapshotParityValidated,
       weeklyRecapRuntimeCasesValidated,

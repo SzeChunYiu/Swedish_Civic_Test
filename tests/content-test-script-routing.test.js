@@ -1155,6 +1155,41 @@ test('streak rules parity uses focused content validation routing', () => {
   );
 });
 
+test('streak freeze counter runtime input focus reports isolated summary', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('streakFreezeCounterRuntimeInput');
+
+  assert.ok(registryEntry, 'streak-freeze counter runtime focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-streak-freeze-counter-runtime-input']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'streakFreezeCounterRuntimeCasesValidated',
+    'streakFreezeCounterRuntimeParityValidated',
+  ]);
+  assert.match(validatorSource, /--focus-streak-freeze-counter-runtime-input/);
+  assert.match(
+    validatorSource,
+    /validateStreakFreezeCounterRuntimeInputs\(\);[\s\S]*streakFreezeCounterRuntimeCasesValidated[\s\S]*streakFreezeCounterRuntimeParityValidated/,
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-streak-freeze-counter-runtime-input'],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused streak-freeze counter validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.deepEqual(Object.keys(summary).sort(), registryEntry.summaryKeys.slice().sort());
+  assert.equal(summary.streakFreezeCounterRuntimeCasesValidated, 4);
+  assert.equal(summary.streakFreezeCounterRuntimeParityValidated, true);
+});
+
 test('streak freeze normalizer parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),

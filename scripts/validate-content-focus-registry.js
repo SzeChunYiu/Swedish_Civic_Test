@@ -352,6 +352,14 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     summaryKeys: ['streakRulesValidated', 'streakRulesParityValidated'],
   },
   {
+    id: 'streakFreezeCounterRuntimeInput',
+    flags: ['--focus-streak-freeze-counter-runtime-input'],
+    summaryKeys: [
+      'streakFreezeCounterRuntimeCasesValidated',
+      'streakFreezeCounterRuntimeParityValidated',
+    ],
+  },
+  {
     id: 'readinessAdapterRules',
     flags: ['--focus-readiness-adapter-rules'],
     summaryKeys: ['readinessAdapterRulesValidated', 'readinessAdapterRuntimeParityValidated'],
