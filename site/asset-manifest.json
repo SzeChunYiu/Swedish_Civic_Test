@@ -8,8 +8,8 @@
       "sha256": "fa08d5f935a0f425e591e8ddc00b027fc9737d6f8e11f765677aa3bfb1ee1959"
     },
     "app.js": {
-      "bytes": 112018,
-      "sha256": "1e718e6688cf230bb1e58fe93ef13f7ded6e8d5c456a4179e54db44790fea03b"
+      "bytes": 113084,
+      "sha256": "7e3f1f3388c8f5e34b6801306e5218db4b0ac03f385d1851b97ca145be7636ff"
     },
     "assets/banner.png": {
       "bytes": 254757,
@@ -100,16 +100,16 @@
       "sha256": "8b4e39811312f45dafeb4ae49bc65bc8f9ec54154df5c7fc5221694ae808b0ba"
     },
     "practice.js": {
-      "bytes": 68033,
-      "sha256": "7ff596e541c6f3a54c0dd7c1b907c2d4d7eb97aa5db694dd0edfbb33e4d9ba4a"
+      "bytes": 69197,
+      "sha256": "502386f596a3ba159d39d8e3429c9a5820951c519c6d386a7e30c25e126185bb"
     },
     "purchase.js": {
       "bytes": 4782,
       "sha256": "7c73ab63e08a89f3dde77b2eba53fcb32477fee7a899467742c7029020f0ef74"
     },
     "questions.js": {
-      "bytes": 3770418,
-      "sha256": "978a04a0085aae07ad4f1440c503db4fe86e5305be7bf7caa1bb9a48de2f69ae"
+      "bytes": 3775698,
+      "sha256": "dde4dfa23e037dc4a6e5a75174b7e3df0ec634fe9b125b4d78c8c31ad5d5dc43"
     },
     "settings.js": {
       "bytes": 12903,
@@ -124,8 +124,8 @@
       "sha256": "4e2dca9706273065513ca97fb0d493f6ea67d852034a03166d67f1ee03c9975b"
     },
     "styles.css": {
-      "bytes": 223605,
-      "sha256": "0106e5ac54e616b30bfb9836dbd37484581a2779b6fedbba0f6cd453d75b988c"
+      "bytes": 226061,
+      "sha256": "9ffb4eade3c785f72a80656c879c99e102c8f36ff14cb91e39335549eebb37e6"
     },
     "tweaks-panel.jsx": {
       "bytes": 25802,
