@@ -10253,3 +10253,95 @@ button.quiz__dot.is-nav:hover {
     padding: 6px 10px;
   }
 }
+
+/* ------------------------------------------------------------------
+   FAQ INTRO BOX OPTIMIZATION ROUND
+   Frames the FAQ heading as a tactile coffee-card so the accordion list
+   starts with the same confident boxed hierarchy as the other sections.
+------------------------------------------------------------------ */
+
+.faq .wrap--narrow {
+  position: relative;
+}
+
+.faq .wrap > .eyebrow,
+.faq .headline {
+  position: relative;
+  z-index: 1;
+}
+
+.faq .wrap--narrow::before {
+  background:
+    radial-gradient(circle at 86% 6%, rgba(0, 106, 167, 0.12), transparent 34%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.62), rgba(255, 248, 228, 0.38));
+  border: 1px solid rgba(0, 106, 167, 0.1);
+  border-radius: 28px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.32),
+    0 20px 54px -46px rgba(11, 31, 51, 0.74);
+  content: '';
+  height: 210px;
+  left: -32px;
+  position: absolute;
+  right: -32px;
+  top: -30px;
+  z-index: 0;
+}
+
+.faq .wrap--narrow::after {
+  background: var(--card-rail);
+  border-radius: 999px;
+  content: '';
+  height: 62px;
+  left: -12px;
+  opacity: 0.72;
+  position: absolute;
+  top: -4px;
+  width: 4px;
+  z-index: 1;
+}
+
+.faq .wrap > .eyebrow {
+  background: rgba(0, 106, 167, 0.08);
+  border: 1px solid rgba(0, 106, 167, 0.14);
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+  color: var(--blue);
+  display: inline-flex;
+  padding: 7px 12px;
+}
+
+.faq .faq__list {
+  margin-top: 52px;
+  position: relative;
+  z-index: 1;
+}
+
+:root[data-theme='dark'] .faq .wrap--narrow::before,
+:root[data-theme='dark'] .faq .wrap > .eyebrow {
+  background: rgba(255, 255, 255, 0.045);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: var(--ink);
+}
+
+@media (max-width: 640px) {
+  .faq .wrap--narrow::before {
+    border-radius: 22px;
+    height: 236px;
+    left: -10px;
+    right: -10px;
+    top: -22px;
+  }
+  .faq .wrap--narrow::after {
+    height: 50px;
+    left: 2px;
+    top: 0;
+    width: 3px;
+  }
+  .faq .wrap > .eyebrow {
+    padding: 6px 10px;
+  }
+  .faq .faq__list {
+    margin-top: 38px;
+  }
+}
