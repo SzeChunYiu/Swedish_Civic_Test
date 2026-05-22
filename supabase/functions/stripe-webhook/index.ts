@@ -11,7 +11,9 @@
 import Stripe from 'npm:stripe@^17';
 import { createClient } from 'npm:@supabase/supabase-js@^2';
 
-const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') ?? '');
+// Construct Stripe lazily inside the handler — `new Stripe('')` throws at module
+// load, which would crash the function (HTTP 500) before STRIPE_SECRET_KEY is set.
+const stripeKey = Deno.env.get('STRIPE_SECRET_KEY') ?? '';
 const webhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET') ?? '';
 const admin = createClient(
   Deno.env.get('SUPABASE_URL')!,
@@ -23,13 +25,14 @@ Deno.serve(async (req) => {
 
   const signature = req.headers.get('stripe-signature');
   const rawBody = await req.text();
-  if (!signature || !webhookSecret) {
+  if (!signature || !webhookSecret || !stripeKey) {
     return new Response('missing signature or secret', { status: 400 });
   }
 
   let event: Stripe.Event;
   try {
     // constructEventAsync uses WebCrypto (required in the Deno/Edge runtime).
+    const stripe = new Stripe(stripeKey);
     event = await stripe.webhooks.constructEventAsync(rawBody, signature, webhookSecret);
   } catch (err) {
     console.error('[stripe-webhook] bad signature', (err as Error).message);
