@@ -785,6 +785,9 @@ const UNSUPPORTED_SETTINGS_LANGUAGE_SCOPE_LABELS = [
 ];
 const EXPECTED_PRACTICE_ROUTE_COPY_LABELS = {
   sv: [
+    '${counts.recentlyWrong} att repetera efter miss · ${counts.unseen} nya · ${counts.stale} att fräscha upp · ${counts.mastered} bemästrade',
+    'Rekommenderad övningsmix: ${counts.recentlyWrong} att repetera efter miss, ${counts.unseen} nya, ${counts.stale} att fräscha upp och ${counts.mastered} bemästrade.',
+    'Rekommenderad mix',
     '5-minutersövning',
     'Bokmärk',
     'Bokmärkt',
@@ -822,6 +825,9 @@ const EXPECTED_PRACTICE_ROUTE_COPY_LABELS = {
     'Skriven av oss för att förklara sammanhang som inte täcks direkt av UHR-materialet. Aldrig en del av övningsprovet.',
   ],
   en: [
+    '${counts.recentlyWrong} recently missed · ${counts.unseen} unseen · ${counts.stale} stale · ${counts.mastered} mastered',
+    'Recommended practice mix: ${counts.recentlyWrong} recently missed, ${counts.unseen} unseen, ${counts.stale} stale, and ${counts.mastered} mastered.',
+    'Recommended mix',
     '5-minute practice',
     'Bookmark',
     'Bookmarked',
@@ -862,6 +868,30 @@ const EXPECTED_PRACTICE_ROUTE_COPY_LABELS = {
 const EXPECTED_PRACTICE_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'practice route must import AppLanguage from settings'],
   ['type PracticeCopy = {', 'practice route must define a typed copy contract'],
+  ['explainAdaptivePick', 'practice route must derive the adaptive summary from the selector'],
+  [
+    'getAvailableQuestionsForPracticeSession(practiceQuestionBank, answeredQuestionIds)',
+    'practice adaptive summary must omit questions already answered in the current session',
+  ],
+  [
+    'const answeredQuestionIds = usePracticeSessionStore((state) => state.answeredQuestionIds);',
+    'practice adaptive summary must read the session-local answered set',
+  ],
+  [
+    'accessibilityLabel={adaptiveSummaryAccessibilityLabel}',
+    'practice adaptive summary must expose a localized accessibility label',
+  ],
+  [
+    'accessibilityLiveRegion="polite"',
+    'practice adaptive summary must expose native polite live-region updates',
+  ],
+  ['aria-live="polite"', 'practice adaptive summary must expose web polite live-region updates'],
+  [
+    'nativeID="practice-adaptive-summary-status"',
+    'practice adaptive summary live region must keep a stable native/web id',
+  ],
+  ['{copy.adaptiveSummaryTitle}', 'practice adaptive summary title must render localized copy'],
+  ['{adaptiveSummaryText}', 'practice adaptive summary counts must remain visibly rendered'],
   [
     'const practiceCopy: Record<AppLanguage, PracticeCopy> = {',
     'practice route copy must cover every AppLanguage value',

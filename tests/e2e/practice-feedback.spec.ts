@@ -667,6 +667,76 @@ test('practice flow answers a question, shows source feedback, and advances', as
   expect(consoleErrors).toEqual([]);
 });
 
+test('Practice adaptive summary announces recommendation mix updates without taking focus', async ({
+  page,
+}) => {
+  const consoleErrors: string[] = [];
+  const recentlyWrongAnsweredAt = '2026-05-21T08:00:00.000Z';
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, 'en', {
+    localStorageValues: {
+      [currentProgressStateStorageKey]: JSON.stringify({
+        answerDates: ['2026-05-21'],
+        answerHistory: [
+          {
+            answeredAt: recentlyWrongAnsweredAt,
+            isCorrect: false,
+            questionId: 'q001',
+            timeSpentSeconds: 12,
+          },
+        ],
+        questionProgress: {
+          q001: {
+            correctCount: 0,
+            correctStreak: 0,
+            lastAnsweredAt: recentlyWrongAnsweredAt,
+            questionId: 'q001',
+            seenCount: 1,
+            wrongCount: 1,
+          },
+        },
+      }),
+    },
+  });
+
+  await openPracticeQuestion(page, 'en');
+
+  const adaptiveSummary = page.locator('#practice-adaptive-summary-status');
+  await expect(page.getByText('Recommended mix', { exact: true })).toBeVisible();
+  await expect(adaptiveSummary).toHaveAttribute('aria-live', 'polite');
+  await expect(adaptiveSummary).toHaveAccessibleName(
+    /Recommended practice mix: 1 recently missed, 9 unseen, 0 stale, and 0 mastered\./,
+  );
+  await expect(adaptiveSummary).toContainText(
+    '1 recently missed · 9 unseen · 0 stale · 0 mastered',
+  );
+  const initialSummary = await adaptiveSummary.textContent();
+
+  await answerRadio(page, 'Select answer In the Nordic region in northern Europe').click();
+  await page.getByRole('button', { name: 'Move to the next practice question' }).click();
+
+  await expect(page.getByText('Question 2', { exact: true })).toBeVisible();
+  await expect(adaptiveSummary).toContainText(
+    '0 recently missed · 10 unseen · 0 stale · 0 mastered',
+  );
+  await expect.poll(async () => adaptiveSummary.textContent()).not.toBe(initialSummary);
+  await expect(adaptiveSummary).not.toBeFocused();
+
+  await page.getByRole('switch', { name: 'Include supplementary questions' }).click();
+  await expect(page.getByRole('switch', { name: 'UHR questions only' })).toHaveAttribute(
+    'aria-checked',
+    'false',
+  );
+  await expect(adaptiveSummary).toHaveAttribute('aria-live', 'polite');
+
+  expect(consoleErrors).toEqual([]);
+});
+
 test('Practice source filter restart clears hidden supplementary answer state', async ({
   page,
 }) => {

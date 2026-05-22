@@ -29,12 +29,14 @@ import {
   stopSpeech,
 } from '../../lib/audio/speak';
 import { filterQuestionsByProvenance } from '../../lib/content/provenance';
+import { explainAdaptivePick } from '../../lib/learning/adaptivePractice';
 import { buildDailyChallenge } from '../../lib/learning/dailyChallenge';
 import { calculateStreak } from '../../lib/learning/streaks';
 import { calculateAnswerXp, calculateLevel } from '../../lib/learning/xp';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
 import {
+  getAvailableQuestionsForPracticeSession,
   getCompletedQuestionIdsForQuestionBank,
   getPracticeQuestionForSession,
 } from '../../lib/quiz/practiceFlow';
@@ -47,13 +49,17 @@ import {
 } from '../../lib/quiz/practiceSessionStore';
 import { scoreAnswers } from '../../lib/quiz/scoring';
 import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
-import { useProgressStore } from '../../lib/storage/progressStore';
+import {
+  useProgressStore,
+  type AnswerHistoryEntry,
+  type QuestionProgress,
+} from '../../lib/storage/progressStore';
 import { useAccessibilityStore } from '../../lib/storage/accessibilityStore';
 import { useCompanionStore } from '../../lib/storage/companionStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, motion, radius, space, typography } from '../../lib/theme';
 import type { Chapter, PracticeQuestion } from '../../types/content';
-import type { ConfidenceRating } from '../../types/progress';
+import type { ConfidenceRating, QuizAnswer, UserProgress } from '../../types/progress';
 
 type PracticeHeaderControl = 'bookmark' | 'supplementary' | 'sources';
 
@@ -65,7 +71,17 @@ type PracticeScope =
 
 type PracticeRouteLaunchMode = 'challenge' | 'quick';
 
+type PracticeAdaptiveSummary = {
+  recentlyWrong: number;
+  unseen: number;
+  stale: number;
+  mastered: number;
+};
+
 type PracticeCopy = {
+  adaptiveSummary: (counts: PracticeAdaptiveSummary) => string;
+  adaptiveSummaryAccessibilityLabel: (counts: PracticeAdaptiveSummary) => string;
+  adaptiveSummaryTitle: string;
   badge: string;
   bookmark: string;
   bookmarked: string;
@@ -112,6 +128,11 @@ type PracticeCopy = {
 
 const practiceCopy: Record<AppLanguage, PracticeCopy> = {
   sv: {
+    adaptiveSummary: (counts) =>
+      `${counts.recentlyWrong} att repetera efter miss · ${counts.unseen} nya · ${counts.stale} att fräscha upp · ${counts.mastered} bemästrade`,
+    adaptiveSummaryAccessibilityLabel: (counts) =>
+      `Rekommenderad övningsmix: ${counts.recentlyWrong} att repetera efter miss, ${counts.unseen} nya, ${counts.stale} att fräscha upp och ${counts.mastered} bemästrade.`,
+    adaptiveSummaryTitle: 'Rekommenderad mix',
     badge: '5-minutersövning',
     bookmark: 'Bokmärk',
     bookmarked: 'Bokmärkt',
@@ -156,6 +177,11 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
       'Skriven av oss för att förklara sammanhang som inte täcks direkt av UHR-materialet. Aldrig en del av övningsprovet.',
   },
   en: {
+    adaptiveSummary: (counts) =>
+      `${counts.recentlyWrong} recently missed · ${counts.unseen} unseen · ${counts.stale} stale · ${counts.mastered} mastered`,
+    adaptiveSummaryAccessibilityLabel: (counts) =>
+      `Recommended practice mix: ${counts.recentlyWrong} recently missed, ${counts.unseen} unseen, ${counts.stale} stale, and ${counts.mastered} mastered.`,
+    adaptiveSummaryTitle: 'Recommended mix',
     badge: '5-minute practice',
     bookmark: 'Bookmark',
     bookmarked: 'Bookmarked',
@@ -253,11 +279,75 @@ function getChapterAccuracy(questionBank: PracticeQuestion[], questionProgress: 
   return totalCount > 0 ? Math.round((correctCount / totalCount) * 100) : 0;
 }
 
+function getAdaptiveSummaryCounts(
+  counts: Record<'recently-wrong' | 'unseen' | 'stale' | 'mastered', number>,
+): PracticeAdaptiveSummary {
+  return {
+    recentlyWrong: counts['recently-wrong'],
+    unseen: counts.unseen,
+    stale: counts.stale,
+    mastered: counts.mastered,
+  };
+}
+
+function buildAdaptivePracticeProgress(
+  questionProgress: Record<string, QuestionProgress>,
+  answerHistory: AnswerHistoryEntry[],
+): UserProgress {
+  const historyAnswers: QuizAnswer[] = answerHistory.map((answer) => ({
+    answeredAt: answer.answeredAt,
+    confidenceRating: answer.confidenceRating,
+    isCorrect: answer.isCorrect,
+    questionId: answer.questionId,
+    selectedOptionIds: [],
+    timeSpentSeconds: answer.timeSpentSeconds ?? 0,
+  }));
+  const historyQuestionIds = new Set(historyAnswers.map((answer) => answer.questionId));
+  const fallbackAnswers: QuizAnswer[] = Object.values(questionProgress).flatMap((progress) => {
+    if (historyQuestionIds.has(progress.questionId)) return [];
+    if (!progress.lastAnsweredAt || progress.seenCount <= 0) return [];
+
+    return [
+      {
+        answeredAt: progress.lastAnsweredAt,
+        confidenceRating: progress.confidenceRating,
+        isCorrect: progress.correctStreak > 0,
+        questionId: progress.questionId,
+        selectedOptionIds: [],
+        timeSpentSeconds: 0,
+      },
+    ];
+  });
+  const answers = [...fallbackAnswers, ...historyAnswers];
+
+  return {
+    currentStreak: 0,
+    dailyChallengeCompletions: {},
+    dailyGoalAnswers: 0,
+    level: 0,
+    questionProgress,
+    sessions:
+      answers.length > 0
+        ? [
+            {
+              answers,
+              id: 'practice-adaptive-summary',
+              mode: 'study',
+              questionIds: answers.map((answer) => answer.questionId),
+              startedAt: answers[0]?.answeredAt ?? new Date(0).toISOString(),
+            },
+          ]
+        : [],
+    totalXp: 0,
+  };
+}
+
 export default function Screen() {
   const { mode } = useLocalSearchParams<{ mode?: string | string[] }>();
   const consumedRouteLaunchModeRef = useRef<PracticeRouteLaunchMode | null>(null);
   const answerXpAwardedKey = usePracticeSessionStore((state) => state.answerXpAwardedKey);
   const activeQuestionId = usePracticeSessionStore((state) => state.activeQuestionId);
+  const answeredQuestionIds = usePracticeSessionStore((state) => state.answeredQuestionIds);
   const markAnswerXpAwarded = usePracticeSessionStore((state) => state.markAnswerXpAwarded);
   const selectedOptionId = usePracticeSessionStore((state) => state.selectedOptionId);
   const selectOption = usePracticeSessionStore((state) => state.selectOption);
@@ -277,6 +367,7 @@ export default function Screen() {
   );
   const totalXp = useProgressStore((state) => state.totalXp);
   const answerDates = useProgressStore((state) => state.answerDates);
+  const answerHistory = useProgressStore((state) => state.answerHistory);
   const recordWrongAnswerReview = useMistakeReviewStore((state) => state.recordWrongAnswerReview);
   const mistakeReviewPersistenceWarning = useMistakeReviewStore(
     (state) => state.persistenceWarning,
@@ -331,6 +422,28 @@ export default function Screen() {
     () => getCompletedQuestionIdsForQuestionBank(practiceQuestionBank, completedQuestionIds),
     [completedQuestionIds, practiceQuestionBank],
   );
+  const adaptiveProgress = useMemo(
+    () => buildAdaptivePracticeProgress(questionProgress, answerHistory),
+    [answerHistory, questionProgress],
+  );
+  const adaptiveSummaryQuestionBank = useMemo(
+    () => getAvailableQuestionsForPracticeSession(practiceQuestionBank, answeredQuestionIds),
+    [answeredQuestionIds, practiceQuestionBank],
+  );
+  const adaptiveSummaryCounts = useMemo(
+    () =>
+      getAdaptiveSummaryCounts(
+        explainAdaptivePick({
+          bank: adaptiveSummaryQuestionBank,
+          progress: adaptiveProgress,
+          size: Math.min(10, adaptiveSummaryQuestionBank.length),
+        }),
+      ),
+    [adaptiveProgress, adaptiveSummaryQuestionBank],
+  );
+  const adaptiveSummaryText = copy.adaptiveSummary(adaptiveSummaryCounts);
+  const adaptiveSummaryAccessibilityLabel =
+    copy.adaptiveSummaryAccessibilityLabel(adaptiveSummaryCounts);
   const rawQuestion = practiceScope
     ? getPracticeQuestionForSession(
         practiceQuestionBank,
@@ -611,6 +724,19 @@ export default function Screen() {
         <Text style={styles.meta}>
           {copy.completedQuestions(visibleCompletedQuestionIds.length)}
         </Text>
+        <View style={styles.adaptiveSummary}>
+          <Text style={styles.adaptiveSummaryTitle}>{copy.adaptiveSummaryTitle}</Text>
+          <Text
+            nativeID="practice-adaptive-summary-status"
+            testID="practice-adaptive-summary-status"
+            accessibilityLabel={adaptiveSummaryAccessibilityLabel}
+            accessibilityLiveRegion="polite"
+            aria-live="polite"
+            style={styles.adaptiveSummaryText}
+          >
+            {adaptiveSummaryText}
+          </Text>
+        </View>
         <View style={styles.headerControls}>
           <Pressable
             android_ripple={{ color: colors.focusSoft }}
@@ -912,6 +1038,26 @@ const styles = StyleSheet.create({
   meta: {
     color: colors.textMuted,
     fontSize: typography.caption.fontSize,
+  },
+  adaptiveSummary: {
+    backgroundColor: colors.surfaceMuted,
+    borderColor: colors.border,
+    borderRadius: radius.small,
+    borderWidth: space.hairline,
+    gap: space[0.5],
+    paddingHorizontal: space[1.5],
+    paddingVertical: space[1],
+  },
+  adaptiveSummaryTitle: {
+    color: colors.text,
+    fontSize: typography.caption.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    lineHeight: typography.caption.lineHeight,
+  },
+  adaptiveSummaryText: {
+    color: colors.textMuted,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
   },
   provenanceBadge: {
     alignSelf: 'flex-start',
