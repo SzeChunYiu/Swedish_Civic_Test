@@ -4850,7 +4850,7 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which three companies are called public service in Sweden?",
+      "en": "Which three companies are Sweden's public service broadcasters?",
       "sv": "Vilka tre företag kallas public service i Sverige?",
       "zh-Hant": "瑞典哪三家公司被稱為公共服務媒體？",
       "zh-Hans": "瑞典哪三家公司被称为公共服务媒体？",
@@ -4923,7 +4923,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Swedish Radio (SR), Swedish Television (SVT), and Swedish Educational Broadcasting Company (UR) are the three media companies called public service. They have a special mission, should offer many types of programs, and are financed through a fee collected via tax; agencies, political bodies, and union confederations are therefore incorrect.",
+      "en": "Swedish Radio (SR), Swedish Television (SVT), and Swedish Educational Broadcasting Company (UR) are Sweden's public service broadcasters. They have a special mission, should offer many types of programs, and are financed through a fee collected through the tax system; agencies, political bodies, and union confederations are therefore incorrect.",
       "sv": "Sveriges Radio (SR), Sveriges Television (SVT) och Utbildningsradion (UR) är de tre medieföretag som kallas public service. De har ett särskilt uppdrag, ska erbjuda många olika typer av program och finansieras genom en avgift som tas ut via skatten; myndigheter, politiska organ och fackliga centralorganisationer är därför fel.",
       "zh-Hant": "瑞典廣播（SR）、瑞典電視（SVT）和教育廣播（UR）是被稱為公共服務媒體的三家媒體公司。它們有特別任務，應提供多種節目，並透過稅收收取的費用資助；因此機關、政治機構和工會中央組織都是錯誤選項。 (Riksdag; Skatteverket; Migrationsverket)",
       "zh-Hans": "瑞典广播（SR）、瑞典电视（SVT）和教育广播（UR）是被称为公共服务媒体的三家媒体公司。它们有特别任务，应提供多种节目，并通过税收收取的费用资助；因此机关、政治机构和工会中央组织都是错误选项。 (Riksdag; Skatteverket; Migrationsverket)",
@@ -30494,7 +30494,7 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "... are called public service in Sweden?",
+      "en": "What is correct about Sweden's public service broadcasters?",
       "sv": "... kallas public service i Sverige?"
     },
     "opts": [
@@ -30557,7 +30557,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Swedish Radio (SR), Swedish Television (SVT), and Swedish Educational Broadcasting Company (UR) are the three media companies called public service. They have a special mission, should offer many types of programs, and are financed through a fee collected via tax; agencies, political bodies, and union confederations are therefore incorrect.",
+      "en": "Swedish Radio (SR), Swedish Television (SVT), and Swedish Educational Broadcasting Company (UR) are Sweden's public service broadcasters. They have a special mission, should offer many types of programs, and are financed through a fee collected through the tax system; agencies, political bodies, and union confederations are therefore incorrect.",
       "sv": "Sveriges Radio (SR), Sveriges Television (SVT) och Utbildningsradion (UR) är de tre medieföretag som kallas public service. De har ett särskilt uppdrag, ska erbjuda många olika typer av program och finansieras genom en avgift som tas ut via skatten; myndigheter, politiska organ och fackliga centralorganisationer är därför fel."
     },
     "source": {
@@ -30583,7 +30583,7 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "Swedish Radio (SR), Swedish Television (SVT), and Swedish Educational Broadcasting Company (UR) are called public service in Sweden.",
+      "en": "Swedish Radio (SR), Swedish Television (SVT), and Swedish Educational Broadcasting Company (UR) are Sweden's public service broadcasters.",
       "sv": "Sveriges Radio (SR), Sveriges Television (SVT) och Utbildningsradion (UR) kallas public service i Sverige."
     },
     "opts": [
@@ -30598,7 +30598,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Swedish Radio (SR), Swedish Television (SVT), and Swedish Educational Broadcasting Company (UR) are the three media companies called public service. They have a special mission, should offer many types of programs, and are financed through a fee collected via tax; agencies, political bodies, and union confederations are therefore incorrect.",
+      "en": "Swedish Radio (SR), Swedish Television (SVT), and Swedish Educational Broadcasting Company (UR) are Sweden's public service broadcasters. They have a special mission, should offer many types of programs, and are financed through a fee collected through the tax system; agencies, political bodies, and union confederations are therefore incorrect.",
       "sv": "Sveriges Radio (SR), Sveriges Television (SVT) och Utbildningsradion (UR) är de tre medieföretag som kallas public service. De har ett särskilt uppdrag, ska erbjuda många olika typer av program och finansieras genom en avgift som tas ut via skatten; myndigheter, politiska organ och fackliga centralorganisationer är därför fel."
     },
     "source": {
@@ -30624,7 +30624,7 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "The Police, Tax Agency, and Migration Agency are called public service in Sweden.",
+      "en": "The Police, Tax Agency, and Migration Agency are Sweden's public service broadcasters.",
       "sv": "Polisen, Skatteverket och Migrationsverket kallas public service i Sverige."
     },
     "opts": [
@@ -30639,7 +30639,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Swedish Radio (SR), Swedish Television (SVT), and Swedish Educational Broadcasting Company (UR) are the three media companies called public service. They have a special mission, should offer many types of programs, and are financed through a fee collected via tax; agencies, political bodies, and union confederations are therefore incorrect.",
+      "en": "Swedish Radio (SR), Swedish Television (SVT), and Swedish Educational Broadcasting Company (UR) are Sweden's public service broadcasters. They have a special mission, should offer many types of programs, and are financed through a fee collected through the tax system; agencies, political bodies, and union confederations are therefore incorrect.",
       "sv": "Sveriges Radio (SR), Sveriges Television (SVT) och Utbildningsradion (UR) är de tre medieföretag som kallas public service. De har ett särskilt uppdrag, ska erbjuda många olika typer av program och finansieras genom en avgift som tas ut via skatten; myndigheter, politiska organ och fackliga centralorganisationer är därför fel."
     },
     "source": {
@@ -30665,7 +30665,7 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding which three companies are called public service in Sweden?",
+      "en": "Which fact is correct about Sweden's public service broadcasters?",
       "sv": "Vilken uppgift stämmer när det gäller vilka tre företag kallas public service i Sverige?"
     },
     "opts": [
@@ -30728,7 +30728,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Swedish Radio (SR), Swedish Television (SVT), and Swedish Educational Broadcasting Company (UR) are the three media companies called public service. They have a special mission, should offer many types of programs, and are financed through a fee collected via tax; agencies, political bodies, and union confederations are therefore incorrect.",
+      "en": "Swedish Radio (SR), Swedish Television (SVT), and Swedish Educational Broadcasting Company (UR) are Sweden's public service broadcasters. They have a special mission, should offer many types of programs, and are financed through a fee collected through the tax system; agencies, political bodies, and union confederations are therefore incorrect.",
       "sv": "Sveriges Radio (SR), Sveriges Television (SVT) och Utbildningsradion (UR) är de tre medieföretag som kallas public service. De har ett särskilt uppdrag, ska erbjuda många olika typer av program och finansieras genom en avgift som tas ut via skatten; myndigheter, politiska organ och fackliga centralorganisationer är därför fel."
     },
     "source": {

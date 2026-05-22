@@ -621,7 +621,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     'ch06',
     { chapter: 'Mediernas roll', section: 'Public service', pageApprox: 21 },
     'Vilka tre företag kallas public service i Sverige?',
-    'Which three companies are called public service in Sweden?',
+    "Which three companies are Sweden's public service broadcasters?",
     [
       [
         'Sveriges Radio (SR), Sveriges Television (SVT) och Utbildningsradion (UR)',
@@ -636,7 +636,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     ],
     0,
     'Sveriges Radio (SR), Sveriges Television (SVT) och Utbildningsradion (UR) är de tre medieföretag som kallas public service. De har ett särskilt uppdrag, ska erbjuda många olika typer av program och finansieras genom en avgift som tas ut via skatten; myndigheter, politiska organ och fackliga centralorganisationer är därför fel.',
-    'Swedish Radio (SR), Swedish Television (SVT), and Swedish Educational Broadcasting Company (UR) are the three media companies called public service. They have a special mission, should offer many types of programs, and are financed through a fee collected via tax; agencies, political bodies, and union confederations are therefore incorrect.',
+    "Swedish Radio (SR), Swedish Television (SVT), and Swedish Educational Broadcasting Company (UR) are Sweden's public service broadcasters. They have a special mission, should offer many types of programs, and are financed through a fee collected through the tax system; agencies, political bodies, and union confederations are therefore incorrect.",
     ['public-service', 'sr', 'svt', 'ur'],
   ),
   trueFalse(

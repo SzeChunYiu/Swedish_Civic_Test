@@ -1487,6 +1487,57 @@ test('derivePublishedQuestions renders q062 public-sector English as direct prop
   );
 });
 
+test('derivePublishedQuestions renders q048 public-service broadcasters in natural English', () => {
+  const { questions, sourceQuestions } = loadTs('data/questions.ts');
+  const byId = new Map(questions.map((question) => [question.id, question]));
+  const source = byId.get('q048');
+  const singleChoiceId = generatedQuestionId(sourceQuestions, 'q048', 'singleChoice');
+  const trueStatementId = generatedQuestionId(sourceQuestions, 'q048', 'trueStatement');
+  const falseStatementId = generatedQuestionId(sourceQuestions, 'q048', 'falseStatement');
+  const judgementId = generatedQuestionId(sourceQuestions, 'q048', 'judgement');
+
+  assert.equal(
+    source?.questionEn,
+    "Which three companies are Sweden's public service broadcasters?",
+  );
+  assert.equal(
+    source?.explanationEn,
+    "Swedish Radio (SR), Swedish Television (SVT), and Swedish Educational Broadcasting Company (UR) are Sweden's public service broadcasters. They have a special mission, should offer many types of programs, and are financed through a fee collected through the tax system; agencies, political bodies, and union confederations are therefore incorrect.",
+  );
+  assert.equal(
+    byId.get(singleChoiceId)?.questionEn,
+    "What is correct about Sweden's public service broadcasters?",
+  );
+  assert.equal(
+    byId.get(trueStatementId)?.questionEn,
+    "Swedish Radio (SR), Swedish Television (SVT), and Swedish Educational Broadcasting Company (UR) are Sweden's public service broadcasters.",
+  );
+  assert.equal(byId.get(trueStatementId)?.correctOptionId, 'true');
+  assert.equal(
+    byId.get(falseStatementId)?.questionEn,
+    "The Police, Tax Agency, and Migration Agency are Sweden's public service broadcasters.",
+  );
+  assert.equal(byId.get(falseStatementId)?.correctOptionId, 'false');
+  assert.equal(
+    byId.get(judgementId)?.questionEn,
+    "Which fact is correct about Sweden's public service broadcasters?",
+  );
+
+  const text = [
+    source,
+    byId.get(singleChoiceId),
+    byId.get(trueStatementId),
+    byId.get(falseStatementId),
+    byId.get(judgementId),
+  ]
+    .map((question) => `${question?.questionEn} ${question?.explanationEn}`)
+    .join('\n');
+  assert.doesNotMatch(
+    text,
+    /called public service|which three companies are called public service/i,
+  );
+});
+
 test('derivePublishedQuestions renders q146 political-rights true/false as direct propositions', () => {
   const { questions, sourceQuestions } = loadTs('data/questions.ts');
   const byId = new Map(questions.map((question) => [question.id, question]));
