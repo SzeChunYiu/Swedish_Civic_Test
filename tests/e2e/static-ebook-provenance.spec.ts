@@ -12,6 +12,28 @@ type SourceCounts = Record<string, number>;
 
 const chapterIds = ['1', '7', '9', '12'] as const;
 const languages = ['en', 'sv'] as const satisfies readonly StaticSiteLanguage[];
+const extraLocaleSourceChromeCases = [
+  {
+    countLabel: 'المصادر',
+    footnoteLabel: /^مصدر 1$/,
+    footnotesHeading: 'ملاحظات مصادر الفصل',
+    language: 'ar',
+    sourcePageLink: 'صفحة المصادر',
+  },
+  {
+    countLabel: '来源',
+    footnoteLabel: /^来源 1$/,
+    footnotesHeading: '本章来源说明',
+    language: 'zh-Hans',
+    sourcePageLink: '来源页面',
+  },
+] as const satisfies readonly {
+  countLabel: string;
+  footnoteLabel: RegExp;
+  footnotesHeading: string;
+  language: StaticSiteLanguage;
+  sourcePageLink: string;
+}[];
 const safeExternalSourceLinkCases = [
   {
     chapterId: '1',
@@ -42,7 +64,7 @@ const officialTestSourceLinkLabels = [
   'UHR: Utbildningsmaterial',
 ] as const;
 
-const badgeLabels: Record<StaticSiteLanguage, Record<string, string>> = {
+const badgeLabels: Record<(typeof languages)[number], Record<string, string>> = {
   en: {
     editorialCommentary: 'Editorial',
     governmentNato: 'Government Offices',
@@ -61,6 +83,10 @@ const badgeLabels: Record<StaticSiteLanguage, Record<string, string>> = {
     migrationsverketCitizenshipRules: 'Migrationsverket citizenship rules',
     riksbankHistory: 'Riksbank',
     scbLandUse: 'SCB',
+    uhrOfficialTestAbout: 'UHR test overview',
+    uhrOfficialTestFaq: 'UHR test FAQ',
+    uhrOfficialTestSignup: 'UHR sign-up',
+    uhrOfficialTestStudyMaterial: 'UHR study material',
     uhrOfficialTestSources: 'UHR:s provstatus',
     uhrStudyMaterial: 'UHR',
   },
@@ -203,6 +229,39 @@ test('static ebook footnote and backlink keep the active chapter hash', async ({
 
   expect(pageErrors).toEqual([]);
 });
+
+for (const {
+  countLabel,
+  footnoteLabel,
+  footnotesHeading,
+  language,
+  sourcePageLink,
+} of extraLocaleSourceChromeCases) {
+  test(`static ebook source chrome is localized in ${language}`, async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    const pageErrors = collectPageErrors(page);
+
+    await openStaticEbook(page, staticSite.baseUrl, language, '#/ebook?c=7');
+
+    const reader = page.locator('#ebook-reader');
+    await expect(reader.locator('.ebook__footnotes')).toHaveAccessibleName(footnotesHeading);
+    await expect(reader.locator('.ebook__footnotes h2')).toHaveText(footnotesHeading);
+    await expect(reader.locator('.ebook__source-ref a').first()).toHaveAccessibleName(
+      footnoteLabel,
+    );
+    await expect(reader.locator('.ebook__provenance-badge span').first()).toContainText(
+      `${countLabel}:`,
+    );
+    await expect(reader.locator('.ebook__provenance-badge a[href="#/sources"]')).toHaveText(
+      sourcePageLink,
+    );
+    await expect(reader).not.toContainText('Chapter source notes');
+    await expect(reader).not.toContainText('Sources page');
+    await expect(reader).not.toContainText('Original study guide');
+
+    expect(pageErrors).toEqual([]);
+  });
+}
 
 test('static ebook ignores malformed footnote hash values without page errors', async ({
   page,

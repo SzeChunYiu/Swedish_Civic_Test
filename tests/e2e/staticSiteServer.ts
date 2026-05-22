@@ -21,7 +21,19 @@ export type StaticSite = {
   close: () => Promise<void>;
 };
 
-export type StaticSiteLanguage = 'en' | 'sv';
+export type StaticSiteLanguage =
+  | 'en'
+  | 'sv'
+  | 'zh-Hans'
+  | 'zh-Hant'
+  | 'ar'
+  | 'ckb'
+  | 'fa'
+  | 'pl'
+  | 'so'
+  | 'ti'
+  | 'tr'
+  | 'uk';
 
 export type StaticSiteServerOptions = {
   failAssetPaths?: string[];

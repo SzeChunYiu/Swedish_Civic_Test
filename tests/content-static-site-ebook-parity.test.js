@@ -1119,6 +1119,32 @@ test('static ebook chapters render source footnotes for every prose paragraph an
   }
 });
 
+test('static ebook source chrome localizes for every extra reader language', () => {
+  const harness = createEbookHarness();
+  const englishChromePattern =
+    /Chapter source notes|Sources:|Original study guide|Sources page|aria-label="Source 1"|\b\d+ cites?\b/;
+
+  for (const lang of staticEbookExtraLanguages) {
+    const html = renderChapter(harness, lang, '7');
+    assert.match(html, /class="ebook__footnotes"/, `${lang} should render footnotes`);
+    assert.match(
+      html,
+      new RegExp(`aria-label="[^"]+ 1"`),
+      `${lang} should keep localized footnote reference aria labels`,
+    );
+    assert.match(
+      html,
+      /class="ebook__provenance-badge ebook__provenance-badge--source-mix"/,
+      `${lang} should render provenance badge`,
+    );
+    assert.doesNotMatch(
+      html,
+      englishChromePattern,
+      `${lang} source chrome should not fall back to English`,
+    );
+  }
+});
+
 test('static ebook source labels localize in rendered Swedish source notes', () => {
   const harness = createEbookHarness();
   const englishChapterOne = renderChapter(harness, 'en', '1');
