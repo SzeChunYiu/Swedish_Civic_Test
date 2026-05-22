@@ -1176,6 +1176,51 @@ test('Pro Lifetime relaunch parity uses focused content validation routing', () 
   assert.match(proIapTestSource, /--focus-pro-lifetime-relaunch-parity/);
 });
 
+test('Remove Ads hook parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const removeAdsHookTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-remove-ads-hook-parity.test.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('removeAdsHookParity');
+
+  assert.ok(registryEntry, 'Remove Ads hook focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-remove-ads-hook-parity']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'removeAdsEntitlementHookCasesValidated',
+    'removeAdsEntitlementHookParityValidated',
+  ]);
+  assert.match(validatorSource, /--focus-remove-ads-hook-parity/);
+  assert.equal(
+    (validatorSource.match(/validateRemoveAdsEntitlementHookParity\(\);/g) ?? []).length,
+    2,
+    'Remove Ads hook validation should run once in focus mode and once in full validation',
+  );
+  assert.match(removeAdsHookTestSource, /--focus-remove-ads-hook-parity/);
+  assert.doesNotMatch(
+    removeAdsHookTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'Remove Ads hook tests must not route through full content validation',
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-remove-ads-hook-parity'],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused Remove Ads hook validation should print a JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.deepEqual(Object.keys(summary).sort(), registryEntry.summaryKeys.slice().sort());
+  assert.ok(summary.removeAdsEntitlementHookCasesValidated > 0);
+  assert.equal(summary.removeAdsEntitlementHookParityValidated, true);
+});
+
 test('streak rules parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
