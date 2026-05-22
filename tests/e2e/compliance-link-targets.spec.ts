@@ -66,6 +66,10 @@ const complianceRouteCases: ComplianceRouteCase[] = [
   },
 ];
 
+const firstRunSuppressedComplianceRouteCases = complianceRouteCases.filter(({ path }) =>
+  ['/privacy', '/terms', '/disclaimer', '/sources', '/support'].includes(path),
+);
+
 function collectConsoleErrors(page: Page) {
   const consoleErrors: string[] = [];
 
@@ -83,6 +87,16 @@ async function seedStableSwedishSettings(page: Page) {
     window.sessionStorage.clear();
     window.localStorage.setItem('settings\\language', 'sv');
     window.localStorage.setItem('settings\\hasSeenAboutTheTest', 'true');
+  });
+}
+
+async function seedFirstRunUnseenSwedishSettings(page: Page) {
+  await page.addInitScript(() => {
+    window.localStorage.clear();
+    window.sessionStorage.clear();
+    window.localStorage.setItem('settings\\language', 'sv');
+    window.localStorage.removeItem('hasSeenAboutTheTest');
+    window.localStorage.removeItem('settings\\hasSeenAboutTheTest');
   });
 }
 
@@ -155,6 +169,26 @@ for (const routeCase of complianceRouteCases) {
     }
 
     await expectAllVisibleLinksAndButtonsMeetTargetSize(page, routeCase.path);
+    await expectNoHorizontalOverflow(page, routeCase.path);
+
+    expect(consoleErrors).toEqual([]);
+  });
+}
+
+for (const routeCase of firstRunSuppressedComplianceRouteCases) {
+  test(`${routeCase.path} does not show the first-run guide over direct legal/support content`, async ({
+    page,
+  }) => {
+    const consoleErrors = collectConsoleErrors(page);
+
+    await seedFirstRunUnseenSwedishSettings(page);
+    await page.goto(routeCase.path, { waitUntil: 'networkidle' });
+
+    await expect(page.getByRole('dialog', { name: 'Vad är medborgarskapsprovet?' })).toHaveCount(0);
+    await expect(page.locator('body')).toContainText(routeCase.marker);
+    for (const label of routeCase.expectedLinkLabels) {
+      await expectTouchTarget(page.getByRole('link', { name: label }).first(), label);
+    }
     await expectNoHorizontalOverflow(page, routeCase.path);
 
     expect(consoleErrors).toEqual([]);

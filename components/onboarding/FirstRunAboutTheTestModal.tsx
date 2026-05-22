@@ -51,9 +51,9 @@ const firstRunCopy: Record<AppLanguage, FirstRunCopy> = {
 
 /**
  * Defaults: uses the settings-store language and first-run flag, suppresses
- * exam/quiz/auth/about routes, defers for the same app launch after a launch
- * sponsor modal appears, and dismisses after backdrop, skip, hardware back,
- * or guide-open actions.
+ * exam/quiz/auth/about/legal routes, defers for the same app launch after a
+ * launch sponsor modal appears, and dismisses after backdrop, skip, hardware
+ * back, or guide-open actions.
  */
 export interface FirstRunAboutTheTestModalProps {
   languageOverride?: AppLanguage;

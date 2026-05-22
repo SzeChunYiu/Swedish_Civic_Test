@@ -16891,6 +16891,11 @@ function validateOnboardingRouteCopyParity() {
     '/(auth)',
     '/onboarding',
     '/about-the-test',
+    '/privacy',
+    '/terms',
+    '/disclaimer',
+    '/sources',
+    '/support',
   ];
   const helperSuppressedRoutes =
     firstRunAboutModalRoutePolicy?.FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PATH_PREFIXES;
