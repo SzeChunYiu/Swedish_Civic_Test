@@ -181,6 +181,74 @@ test('practice audio control follows the selected question language', async ({ p
   expect(consoleErrors).toEqual([]);
 });
 
+test('practice feedback playback rate selector offers 0.5, 0.75, and 1.25 speeds', async ({
+  page,
+}) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await installSpeechSynthesisMock(page);
+  await seedFreshSettingsLanguageAndAboutSeen(page, 'en');
+  await openPracticeQuestion(page, 'en');
+
+  const questionRateTrigger = page.getByRole('button', { name: 'Audio speed 1.0x' }).first();
+  await expect(questionRateTrigger).toHaveAttribute('aria-expanded', 'false');
+  await questionRateTrigger.click();
+  await expect(questionRateTrigger).toHaveAttribute('aria-expanded', 'true');
+
+  const questionRateMenu = page.getByRole('radiogroup', { name: 'Choose audio speed' });
+  await expect(questionRateMenu).toBeVisible();
+  await expect(page.getByRole('radio', { name: 'Choose audio speed 0.5x' })).toBeVisible();
+  await expect(page.getByRole('radio', { name: 'Choose audio speed 0.75x' })).toBeVisible();
+  await expect(page.getByRole('radio', { name: 'Choose audio speed 1.25x' })).toBeVisible();
+  await expect(page.getByRole('radio', { name: 'Choose audio speed 1.0x' })).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
+
+  await page.getByRole('radio', { name: 'Choose audio speed 0.75x' }).click();
+  await expect(questionRateMenu).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Audio speed 0.75x' }).first()).toHaveAttribute(
+    'aria-expanded',
+    'false',
+  );
+  await expect
+    .poll(() =>
+      page.evaluate((key) => window.localStorage.getItem(key), accessibilityAudioPlaybackRateKey),
+    )
+    .toBe('0.75');
+
+  await clearSpeechEvents(page);
+  await page.getByRole('button', { name: 'Listen to the Swedish question and answers' }).click();
+  await expect.poll(async () => speakEvents(await speechEvents(page)).length).toBe(1);
+  expect(speakEvents(await speechEvents(page))[0].rate).toBe(0.75);
+
+  await answerRadio(page, 'Select answer In southern Europe').click();
+  await expect(page.getByRole('button', { name: 'Listen to feedback' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Audio speed 0.75x' })).toHaveCount(2);
+
+  const feedbackRateTrigger = page.getByRole('button', { name: 'Audio speed 0.75x' }).nth(1);
+  await feedbackRateTrigger.click();
+  await expect(feedbackRateTrigger).toHaveAttribute('aria-expanded', 'true');
+  await page.getByRole('radio', { name: 'Choose audio speed 1.25x' }).click();
+  await expect
+    .poll(() =>
+      page.evaluate((key) => window.localStorage.getItem(key), accessibilityAudioPlaybackRateKey),
+    )
+    .toBe('1.25');
+
+  await clearSpeechEvents(page);
+  await page.getByRole('button', { name: 'Listen to feedback' }).click();
+  await expect.poll(async () => speakEvents(await speechEvents(page)).length).toBe(1);
+  expect(speakEvents(await speechEvents(page))[0].rate).toBe(1.25);
+
+  expect(consoleErrors).toEqual([]);
+});
+
 test('listen-first speech synthesis autoplay starts from Settings and stays out of exam', async ({
   page,
 }) => {

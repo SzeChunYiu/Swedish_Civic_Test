@@ -4011,7 +4011,17 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
   {
     label: 'trimmed speech playback with lifecycle cleanup',
     pattern:
-      /if \(!canPlayAudio\) return;[\s\S]*const runId = playbackRunRef\.current \+ 1;[\s\S]*playbackRunRef\.current = runId;[\s\S]*stopSpeech\(\);[\s\S]*setIsSpeaking\(true\);[\s\S]*speakSwedish\(speechText,\s*\{[\s\S]*rate,[\s\S]*onDone:[\s\S]*onError:[\s\S]*onStopped:/,
+      /if \(!canPlayAudio\) return;[\s\S]*const runId = playbackRunRef\.current \+ 1;[\s\S]*playbackRunRef\.current = runId;[\s\S]*stopSpeech\(\);[\s\S]*setIsSpeaking\(true\);[\s\S]*speakSwedish\(speechText,\s*\{[\s\S]*rate: resolvedRate,[\s\S]*onDone:[\s\S]*onError:[\s\S]*onStopped:/,
+  },
+  {
+    label: 'store-backed audio rate menu state',
+    pattern:
+      /const \[rateMenuOpen, setRateMenuOpen\] = useState\(false\);[\s\S]*const storedAudioPlaybackRate = useAccessibilityStore\(\(state\) => state\.audioPlaybackRate\);[\s\S]*const resolvedRate = AUDIO_PLAYBACK_RATES\.includes\(rate as AudioPlaybackRate\)/,
+  },
+  {
+    label: 'in-context audio rate menu wiring',
+    pattern:
+      /onLongPress=\{\(\) => setRateMenuOpen\(true\)\}[\s\S]*<AudioRateMenu[\s\S]*expanded=\{rateMenuOpen\}[\s\S]*language=\{language\}[\s\S]*onExpandedChange=\{setRateMenuOpen\}[\s\S]*selectedRate=\{resolvedRate\}/,
   },
   {
     label: 'second press stops active question audio',
@@ -4080,7 +4090,17 @@ const EXPECTED_FEEDBACK_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
   {
     label: 'feedback playback starts a new guarded run id',
     pattern:
-      /const runId = playbackRunRef\.current \+ 1;[\s\S]*playbackRunRef\.current = runId;[\s\S]*stopSpeech\(\);[\s\S]*setIsSpeaking\(true\);[\s\S]*speakSwedish\(speechText,\s*\{/,
+      /const runId = playbackRunRef\.current \+ 1;[\s\S]*playbackRunRef\.current = runId;[\s\S]*stopSpeech\(\);[\s\S]*setIsSpeaking\(true\);[\s\S]*speakSwedish\(speechText,\s*\{[\s\S]*rate: resolvedRate,/,
+  },
+  {
+    label: 'feedback store-backed audio rate menu state',
+    pattern:
+      /const \[rateMenuOpen, setRateMenuOpen\] = useState\(false\);[\s\S]*const storedAudioPlaybackRate = useAccessibilityStore\(\(state\) => state\.audioPlaybackRate\);[\s\S]*const resolvedRate = AUDIO_PLAYBACK_RATES\.includes\(rate as AudioPlaybackRate\)/,
+  },
+  {
+    label: 'feedback in-context audio rate menu wiring',
+    pattern:
+      /onLongPress=\{\(\) => setRateMenuOpen\(true\)\}[\s\S]*<AudioRateMenu[\s\S]*expanded=\{rateMenuOpen\}[\s\S]*language=\{language\}[\s\S]*onExpandedChange=\{setRateMenuOpen\}[\s\S]*selectedRate=\{resolvedRate\}/,
   },
   {
     label: 'feedback done callback clears only the current playback run',
@@ -4090,6 +4110,55 @@ const EXPECTED_FEEDBACK_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
     label: 'feedback stop and error callbacks clear only the current playback run',
     pattern:
       /onError: \(\) => clearSpeakingForRun\(runId\),[\s\S]*onStopped: \(\) => clearSpeakingForRun\(runId\),/,
+  },
+];
+const EXPECTED_AUDIO_RATE_MENU_ACCESSIBILITY_RULES = [
+  {
+    label: 'rate menu store imports',
+    pattern: /AUDIO_PLAYBACK_RATES,[\s\S]*type AudioPlaybackRate,[\s\S]*useAccessibilityStore,/,
+  },
+  {
+    label: 'localized rate menu copy contract',
+    pattern:
+      /type AudioRateMenuCopy = \{[\s\S]*const audioRateMenuCopy: Record<AppLanguage, AudioRateMenuCopy> = \{/,
+  },
+  {
+    label: 'localized rate menu labels',
+    pattern:
+      /groupLabel: 'Välj ljudhastighet'[\s\S]*triggerLabel: \(rateLabel\) => `Hastighet \$\{rateLabel\}`[\s\S]*groupLabel: 'Choose audio speed'[\s\S]*triggerLabel: \(rateLabel\) => `Speed \$\{rateLabel\}`/,
+  },
+  {
+    label: 'localized decimal rate labels',
+    pattern: /0,5x[\s\S]*0,75x[\s\S]*1,25x[\s\S]*0\.5x[\s\S]*0\.75x[\s\S]*1\.25x/,
+  },
+  {
+    label: 'expanded trigger accessibility state',
+    pattern:
+      /<Button[\s\S]*accessibilityHint=\{expanded \? copy\.triggerHintExpanded : copy\.triggerHintCollapsed\}[\s\S]*accessibilityLabel=\{copy\.triggerAccessibilityLabel\(selectedRateLabel\)\}[\s\S]*accessibilityState=\{\{ expanded \}\}[\s\S]*onPress=\{\(\) => onExpandedChange\(!expanded\)\}/,
+  },
+  {
+    label: 'radiogroup menu semantics',
+    pattern:
+      /aria-label=\{copy\.groupLabel\}[\s\S]*accessibilityLabel=\{copy\.groupLabel\}[\s\S]*accessibilityRole="radiogroup"/,
+  },
+  {
+    label: 'playback rates drive radio options',
+    pattern:
+      /AUDIO_PLAYBACK_RATES\.map\(\(rateOption\) => \{[\s\S]*const selected = selectedRate === rateOption;/,
+  },
+  {
+    label: 'radio option checked state',
+    pattern:
+      /accessibilityRole="radio"[\s\S]*accessibilityState=\{\{ checked: selected \}\}[\s\S]*variant=\{selected \? 'primary' : 'secondary'\}/,
+  },
+  {
+    label: 'radio option persists selected rate',
+    pattern: /setAudioPlaybackRate\(rateOption\);[\s\S]*onExpandedChange\(false\);/,
+  },
+  {
+    label: 'rate menu token-only surface styling',
+    pattern:
+      /backgroundColor: themeColors\.surfaceWarm[\s\S]*borderColor: themeColors\.border[\s\S]*borderRadius: radius\.card[\s\S]*borderWidth: space\.hairline[\s\S]*gap: space\[0\.75\]/,
   },
 ];
 const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
@@ -16696,6 +16765,7 @@ function validateAudioButtonAccessibilityParity() {
   let valid = true;
   let audioButtonSource = '';
   let feedbackAudioButtonSource = '';
+  let audioRateMenuSource = '';
 
   function reject(message) {
     valid = false;
@@ -16726,6 +16796,18 @@ function validateAudioButtonAccessibilityParity() {
     return;
   }
 
+  try {
+    audioRateMenuSource = fs.readFileSync(
+      path.join(repoRoot, 'components/learning/AudioRateMenu.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(
+      `components/learning/AudioRateMenu.tsx could not be read for accessibility parity: ${error.message}`,
+    );
+    return;
+  }
+
   EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES.forEach((expectedRule) => {
     if (!expectedRule.pattern.test(audioButtonSource)) {
       reject(`AudioButton missing ${expectedRule.label} for accessibility parity`);
@@ -16742,11 +16824,20 @@ function validateAudioButtonAccessibilityParity() {
     audioButtonAccessibilityRulesValidated += 1;
   });
 
+  EXPECTED_AUDIO_RATE_MENU_ACCESSIBILITY_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(audioRateMenuSource)) {
+      reject(`AudioRateMenu missing ${expectedRule.label} for accessibility parity`);
+      return;
+    }
+    audioButtonAccessibilityRulesValidated += 1;
+  });
+
   if (
     valid &&
     audioButtonAccessibilityRulesValidated ===
       EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES.length +
-        EXPECTED_FEEDBACK_AUDIO_BUTTON_ACCESSIBILITY_RULES.length
+        EXPECTED_FEEDBACK_AUDIO_BUTTON_ACCESSIBILITY_RULES.length +
+        EXPECTED_AUDIO_RATE_MENU_ACCESSIBILITY_RULES.length
   ) {
     audioButtonAccessibilityParityValidated = true;
   }
