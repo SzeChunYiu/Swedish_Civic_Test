@@ -1093,7 +1093,7 @@ test('static ebook chapters render source footnotes for every prose paragraph an
     assert.match(englishHtml, /class="ebook__footnotes"/);
     assert.match(swedishHtml, /class="ebook__footnotes"/);
     assert.match(englishHtml, /UHR public study material/);
-    assert.match(swedishHtml, /UHR:s offentliga utbildningsmaterial/);
+    assert.match(swedishHtml, /UHR:s offentliga studiematerial/);
     assert.doesNotMatch(swedishHtml, /UHR public study material/);
     assert.match(englishHtml, /Editorial \(\d+ cites?\)/);
     assert.match(swedishHtml, /Redaktionellt \(\d+ (?:källa|källor)\)/);
@@ -1104,24 +1104,28 @@ test('static ebook chapters render source footnotes for every prose paragraph an
   }
 });
 
-test('static ebook source links localize rendered labels without changing English labels', () => {
+test('static ebook source labels localize in rendered Swedish source notes', () => {
   const harness = createEbookHarness();
-  const englishChapter1Html = renderChapter(harness, 'en', '1');
-  const swedishChapter1Html = renderChapter(harness, 'sv', '1');
-  const englishChapter7Html = renderChapter(harness, 'en', '7');
-  const swedishChapter7Html = renderChapter(harness, 'sv', '7');
+  const englishChapterOne = renderChapter(harness, 'en', '1');
+  const swedishChapterOne = renderChapter(harness, 'sv', '1');
+  const englishChapterSeven = renderChapter(harness, 'en', '7');
+  const swedishChapterSeven = renderChapter(harness, 'sv', '7');
 
-  assert.match(englishChapter1Html, /UHR public study material/);
-  assert.match(englishChapter1Html, /Government Offices NATO membership notice/);
-  assert.match(englishChapter7Html, /SCB land and water area statistics/);
+  assert.match(englishChapterOne, /UHR public study material/);
+  assert.match(englishChapterOne, /Government Offices NATO membership notice/);
+  assert.match(englishChapterOne, /editorial commentary/);
+  assert.match(englishChapterSeven, /SCB land and water area statistics/);
 
-  assert.match(swedishChapter1Html, /UHR:s offentliga utbildningsmaterial/);
-  assert.match(swedishChapter1Html, /Regeringskansliets besked om Nato-medlemskap/);
-  assert.match(swedishChapter7Html, /SCB:s statistik om land- och vattenareal/);
-
-  assert.doesNotMatch(swedishChapter1Html, /UHR public study material/);
-  assert.doesNotMatch(swedishChapter1Html, /Government Offices NATO membership notice/);
-  assert.doesNotMatch(swedishChapter7Html, /SCB land and water area statistics/);
+  assert.match(swedishChapterOne, /UHR:s offentliga studiematerial/);
+  assert.match(swedishChapterOne, /Regeringskansliets meddelande om Nato-medlemskapet/);
+  assert.match(swedishChapterOne, /redaktionell kommentar/);
+  assert.match(swedishChapterOne, /redaktionell kommentar<\/a> \(redaktionell\)/);
+  assert.match(swedishChapterSeven, /SCB:s statistik om land- och vattenareal/);
+  assert.doesNotMatch(swedishChapterOne, /UHR public study material/);
+  assert.doesNotMatch(swedishChapterOne, /Government Offices NATO membership notice/);
+  assert.doesNotMatch(swedishChapterOne, /editorial commentary/);
+  assert.doesNotMatch(swedishChapterOne, /\(editorial\)/);
+  assert.doesNotMatch(swedishChapterSeven, /SCB land and water area statistics/);
 });
 
 test('focus-static-ebook-footnote hash validator mirrors source-counts and route links', () => {

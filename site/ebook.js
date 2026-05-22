@@ -9,16 +9,29 @@
   const EBOOK_FACTBOX_SOURCE_NOTES = Object.freeze({
     uhrStudyMaterial: {
       label: 'UHR public study material',
-      labelSv: 'UHR:s offentliga utbildningsmaterial',
+      labels: {
+        en: 'UHR public study material',
+        sv: 'UHR:s offentliga studiematerial',
+      },
       mixLabel: 'UHR',
+      mixLabels: {
+        en: 'UHR',
+        sv: 'UHR',
+      },
       url: 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
       retrievedDate: '2026-05-19',
     },
     uhrOfficialTestSources: {
       label: 'UHR current medborgarskapsprovet source pages',
-      labelSv: 'UHR:s aktuella sidor om medborgarskapsprovet',
+      labels: {
+        en: 'UHR current medborgarskapsprovet source pages',
+        sv: 'UHR:s aktuella källsidor om medborgarskapsprovet',
+      },
       mixLabel: 'UHR test status',
-      mixLabelSv: 'UHR provstatus',
+      mixLabels: {
+        en: 'UHR test status',
+        sv: 'UHR:s provstatus',
+      },
       url: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
       retrievedDate: '2026-05-19',
     },
@@ -42,30 +55,57 @@
     },
     scbLandUse: {
       label: 'SCB land and water area statistics',
-      labelSv: 'SCB:s statistik om land- och vattenareal',
+      labels: {
+        en: 'SCB land and water area statistics',
+        sv: 'SCB:s statistik om land- och vattenareal',
+      },
       mixLabel: 'SCB',
+      mixLabels: {
+        en: 'SCB',
+        sv: 'SCB',
+      },
       url: 'https://www.scb.se/mi0803-en',
       retrievedDate: '2026-05-19',
     },
     riksbankHistory: {
       label: 'Riksbank historical timeline',
-      labelSv: 'Riksbankens historiska tidslinje',
+      labels: {
+        en: 'Riksbank historical timeline',
+        sv: 'Riksbankens historiska tidslinje',
+      },
       mixLabel: 'Riksbank',
+      mixLabels: {
+        en: 'Riksbank',
+        sv: 'Riksbanken',
+      },
       url: 'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
       retrievedDate: '2026-05-19',
     },
     governmentNato: {
       label: 'Government Offices NATO membership notice',
-      labelSv: 'Regeringskansliets besked om Nato-medlemskap',
+      labels: {
+        en: 'Government Offices NATO membership notice',
+        sv: 'Regeringskansliets meddelande om Nato-medlemskapet',
+      },
       mixLabel: 'Government Offices',
-      mixLabelSv: 'Regeringskansliet',
+      mixLabels: {
+        en: 'Government Offices',
+        sv: 'Regeringskansliet',
+      },
       url: 'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
       retrievedDate: '2026-05-19',
     },
     migrationsverketCitizenshipRules: {
       label: 'Migrationsverket citizenship rule changes from 6 June 2026',
-      labelSv: 'Migrationsverkets ändrade medborgarskapsregler från 6 juni 2026',
+      labels: {
+        en: 'Migrationsverket citizenship rule changes from 6 June 2026',
+        sv: 'Migrationsverkets ändrade medborgarskapsregler från 6 juni 2026',
+      },
       mixLabel: 'Migrationsverket',
+      mixLabels: {
+        en: 'Migrationsverket',
+        sv: 'Migrationsverket',
+      },
       url: 'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html',
       retrievedDate: '2026-05-20',
     },
@@ -75,11 +115,21 @@
     ...EBOOK_FACTBOX_SOURCE_NOTES,
     editorialCommentary: {
       label: 'editorial commentary',
-      labelSv: 'redaktionell kommentar',
+      labels: {
+        en: 'editorial commentary',
+        sv: 'redaktionell kommentar',
+      },
       mixLabel: 'Editorial',
-      mixLabelSv: 'Redaktionellt',
+      mixLabels: {
+        en: 'Editorial',
+        sv: 'Redaktionellt',
+      },
       url: '#/sources',
       retrievedDate: 'editorial',
+      retrievedLabels: {
+        en: 'editorial',
+        sv: 'redaktionell',
+      },
     },
   });
 
@@ -137,14 +187,23 @@
     },
   ]);
 
-  function sourceLabel(note, lang) {
-    return lang === 'sv' ? note.labelSv || note.label : note.label;
+  function sourceLabel(note, lang = 'en') {
+    return (note.labels && (note.labels[lang] || note.labels.en)) || note.label;
   }
 
-  function sourceMixLabel(note, lang) {
-    return lang === 'sv'
-      ? note.mixLabelSv || note.mixLabel || sourceLabel(note, lang)
-      : note.mixLabel || note.label;
+  function sourceMixLabel(note, lang = 'en') {
+    return (
+      (note.mixLabels && (note.mixLabels[lang] || note.mixLabels.en)) ||
+      note.mixLabel ||
+      sourceLabel(note, lang)
+    );
+  }
+
+  function sourceRetrievedLabel(note, lang = 'en') {
+    return (
+      (note.retrievedLabels && (note.retrievedLabels[lang] || note.retrievedLabels.en)) ||
+      note.retrievedDate
+    );
   }
 
   function sourceAnchor(note, lang = 'en') {
@@ -155,7 +214,7 @@
   }
 
   function sourceLink(note, lang = 'en') {
-    return `${sourceAnchor(note, lang)} (${note.retrievedDate})`;
+    return `${sourceAnchor(note, lang)} (${sourceRetrievedLabel(note, lang)})`;
   }
 
   function ebookSourceNotes(sourceKeys) {
@@ -165,7 +224,7 @@
   }
 
   function officialTestSourceLinks() {
-    return OFFICIAL_TEST_SOURCE_NOTES.map(sourceAnchor).join(' · ');
+    return OFFICIAL_TEST_SOURCE_NOTES.map((note) => sourceAnchor(note)).join(' · ');
   }
 
   function ebookLocalizedLabel(map, lang) {

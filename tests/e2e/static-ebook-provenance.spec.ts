@@ -59,9 +59,9 @@ const badgeLabels: Record<StaticSiteLanguage, Record<string, string>> = {
     editorialCommentary: 'Redaktionellt',
     governmentNato: 'Regeringskansliet',
     migrationsverketCitizenshipRules: 'Migrationsverket',
-    riksbankHistory: 'Riksbank',
+    riksbankHistory: 'Riksbanken',
     scbLandUse: 'SCB',
-    uhrOfficialTestSources: 'UHR provstatus',
+    uhrOfficialTestSources: 'UHR:s provstatus',
     uhrStudyMaterial: 'UHR',
   },
 };
@@ -285,16 +285,28 @@ test('static ebook language switching keeps localized source labels', async ({ p
   await expect(badge).toHaveAttribute('aria-label', /^Källor:/);
   await expect(badge).toContainText('Redaktionellt');
   await expect(badge).not.toContainText('Editorial');
-  await expect(
-    page.getByRole('link', { name: 'UHR:s offentliga utbildningsmaterial' }).first(),
-  ).toBeVisible();
-  await expect(
-    page.getByRole('link', { name: 'Regeringskansliets besked om Nato-medlemskap' }).first(),
-  ).toBeVisible();
-  await expect(page.getByRole('link', { name: 'UHR public study material' })).toHaveCount(0);
-  await expect(
-    page.getByRole('link', { name: 'Government Offices NATO membership notice' }),
-  ).toHaveCount(0);
+  await expect(page.locator('#ebook-reader .ebook__footnotes')).toContainText(
+    'UHR:s offentliga studiematerial',
+  );
+  await expect(page.locator('#ebook-reader .ebook__footnotes')).toContainText(
+    'Regeringskansliets meddelande om Nato-medlemskapet',
+  );
+  await expect(page.locator('#ebook-reader .ebook__footnotes')).toContainText(
+    'redaktionell kommentar',
+  );
+  await expect(page.locator('#ebook-reader .ebook__footnotes')).toContainText(
+    'redaktionell kommentar (redaktionell)',
+  );
+  await expect(page.locator('#ebook-reader .ebook__footnotes')).not.toContainText(
+    'UHR public study material',
+  );
+  await expect(page.locator('#ebook-reader .ebook__footnotes')).not.toContainText(
+    'Government Offices NATO membership notice',
+  );
+  await expect(page.locator('#ebook-reader .ebook__footnotes')).not.toContainText(
+    'editorial commentary',
+  );
+  await expect(page.locator('#ebook-reader .ebook__footnotes')).not.toContainText('(editorial)');
   await expect(page.locator('#ebook-reader .ebook__footnotes')).toHaveAttribute(
     'aria-label',
     'Källnoter för kapitlet',
@@ -303,10 +315,15 @@ test('static ebook language switching keeps localized source labels', async ({ p
   await renderEbookAfterLanguageSwitch(page, 'en');
   await expect(badge).toHaveAttribute('aria-label', /^Sources:/);
   await expect(badge).toContainText('Editorial');
-  await expect(page.getByRole('link', { name: 'UHR public study material' }).first()).toBeVisible();
-  await expect(
-    page.getByRole('link', { name: 'Government Offices NATO membership notice' }).first(),
-  ).toBeVisible();
+  await expect(page.locator('#ebook-reader .ebook__footnotes')).toContainText(
+    'UHR public study material',
+  );
+  await expect(page.locator('#ebook-reader .ebook__footnotes')).toContainText(
+    'Government Offices NATO membership notice',
+  );
+  await expect(page.locator('#ebook-reader .ebook__footnotes')).toContainText(
+    'editorial commentary',
+  );
   await expect(page.locator('#ebook-reader .ebook__footnotes')).toHaveAttribute(
     'aria-label',
     'Chapter source notes',
