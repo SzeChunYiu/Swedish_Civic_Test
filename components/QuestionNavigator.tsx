@@ -11,6 +11,7 @@ export type QuestionNavigatorItemState = 'current' | 'answered' | 'flagged' | 'u
 type QuestionNavigatorCopy = {
   navigationLabel: string;
   questionLabel: string;
+  statusLabel: string;
   stateLabels: Record<QuestionNavigatorItemState, string>;
 };
 
@@ -18,6 +19,7 @@ const questionNavigatorCopy: Record<AppLanguage, QuestionNavigatorCopy> = {
   sv: {
     navigationLabel: 'Frågenavigering',
     questionLabel: 'Fråga',
+    statusLabel: 'Frågestatus',
     stateLabels: {
       current: 'Aktuell fråga',
       answered: 'Besvarad',
@@ -28,6 +30,7 @@ const questionNavigatorCopy: Record<AppLanguage, QuestionNavigatorCopy> = {
   en: {
     navigationLabel: 'Question navigation',
     questionLabel: 'Question',
+    statusLabel: 'Question status',
     stateLabels: {
       current: 'Current question',
       answered: 'Answered',
@@ -39,9 +42,9 @@ const questionNavigatorCopy: Record<AppLanguage, QuestionNavigatorCopy> = {
 
 /**
  * Defaults: `currentIndex=0`, `answeredIndexes=[]`, `disabled=false`,
- * `accessibilityRole="tablist"`, localized spoken labels from settings, and
- * token-sized press targets. Pass localized label props from the screen for
- * screen-specific copy.
+ * localized spoken labels from settings, and token-sized press targets.
+ * Interactive navigators use tab semantics; status-only navigators use a
+ * non-interactive list.
  */
 export interface QuestionNavigatorProps extends Omit<
   ComponentProps<typeof View>,
@@ -135,9 +138,15 @@ export function QuestionNavigator({
       .map((index) => Math.max(0, Math.min(Math.round(index), safeTotalCount - 1))),
   );
   const resolvedStateLabels = { ...copy.stateLabels, ...stateLabels };
-  const resolvedAccessibilityLabel = accessibilityLabel ?? copy.navigationLabel;
-  const isDisabled = disabled === true || !onSelect;
-  const resolvedAccessibilityRole = accessibilityRole as AccessibilityRole;
+  const isInteractive = disabled !== true && typeof onSelect === 'function';
+  const requestedAccessibilityRole = accessibilityRole as AccessibilityRole | undefined;
+  const resolvedAccessibilityRole = isInteractive
+    ? (requestedAccessibilityRole ?? 'tablist')
+    : requestedAccessibilityRole === 'tablist'
+      ? 'list'
+      : (requestedAccessibilityRole ?? 'list');
+  const resolvedAccessibilityLabel =
+    accessibilityLabel ?? (isInteractive ? copy.navigationLabel : copy.statusLabel);
 
   return (
     <View
@@ -155,35 +164,50 @@ export function QuestionNavigator({
           index,
         });
         const selected = state === 'current';
+        const itemLabel =
+          itemAccessibilityLabel?.(questionNumber, state) ??
+          getDefaultItemAccessibilityLabel({
+            questionLabel: copy.questionLabel,
+            questionNumber,
+            state,
+            stateLabels: resolvedStateLabels,
+          });
+        const itemContent = (
+          <NativeText style={[styles.itemText, styles[`${state}Text`], itemTextStyle]}>
+            {questionNumber}
+          </NativeText>
+        );
+
+        if (!isInteractive) {
+          return (
+            <View
+              accessible
+              accessibilityLabel={itemLabel}
+              accessibilityRole="text"
+              key={questionNumber}
+              style={[styles.item, styles[state], disabled ? styles.disabled : null, itemStyle]}
+            >
+              {itemContent}
+            </View>
+          );
+        }
 
         return (
           <Pressable
-            accessibilityLabel={
-              itemAccessibilityLabel?.(questionNumber, state) ??
-              getDefaultItemAccessibilityLabel({
-                questionLabel: copy.questionLabel,
-                questionNumber,
-                state,
-                stateLabels: resolvedStateLabels,
-              })
-            }
+            accessibilityLabel={itemLabel}
             accessibilityRole="tab"
-            accessibilityState={{ disabled: isDisabled, selected }}
-            disabled={isDisabled}
+            accessibilityState={{ selected }}
             hitSlop={space[1]}
             key={questionNumber}
             onPress={() => onSelect?.(index)}
             style={({ pressed }) => [
               styles.item,
               styles[state],
-              pressed && !isDisabled && !reduceMotion ? styles.pressed : null,
-              isDisabled ? styles.disabled : null,
+              pressed && !reduceMotion ? styles.pressed : null,
               itemStyle,
             ]}
           >
-            <NativeText style={[styles.itemText, styles[`${state}Text`], itemTextStyle]}>
-              {questionNumber}
-            </NativeText>
+            {itemContent}
           </Pressable>
         );
       })}
