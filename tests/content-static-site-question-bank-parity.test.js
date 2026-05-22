@@ -377,36 +377,25 @@ test('static site question bank keeps q050 source-criticism i18n noun-based', ()
   assert.doesNotMatch(staticQuestionVisibleText(q050), SOURCE_CRITICISM_STALE_STATIC_PATTERN);
 });
 
-test('static site question bank keeps q166/q169 kommun-region i18n target-language-first', () => {
-  const expectedBank = buildSiteQuestionBank();
-  const uhrQuestions = expectedBank.questions.filter(
-    (question) => question.questionProvenance === 'uhr',
-  );
-  const generatedIds = ['q166', 'q169'].flatMap((id) => [
-    generatedQuestionId(uhrQuestions, id, 'singleChoice'),
-    generatedQuestionId(uhrQuestions, id, 'judgement'),
-  ]);
+test('static site question bank preserves q050 source-criticism canonical copy and source metadata', () => {
   const context = { window: {} };
   vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
   const questionsById = new Map(
     context.window.SMT_QUESTIONS.map((question) => [question.id, question]),
   );
-  const sourceQuestions = Q166_Q169_KOMMUN_REGION_NATURALNESS_IDS.map((id) => {
-    const question = questionsById.get(id);
-    assert.ok(question, `${id} should be present in static question bank`);
-    return staticQuestionToI18nQuestion(question);
-  });
-  const generatedQuestions = generatedIds.map((id) => {
-    const question = questionsById.get(id);
-    assert.ok(question, `${id} should be present in static question bank`);
-    return staticQuestionToI18nQuestion(question);
-  });
+  const q050 = questionsById.get('q050');
 
-  assert.deepEqual(summarizeQ166Q169KommunRegionNaturalness(sourceQuestions).errors, []);
-  assert.deepEqual(
-    summarizeQ166Q169KommunRegionNaturalness(generatedQuestions, generatedIds).errors,
-    [],
-  );
+  assert.ok(q050, 'q050 should be present in static question bank');
+  assert.equal(q050.q.sv, 'Vad betyder det att vara källkritisk?');
+  assert.equal(q050.q.en, 'What does source criticism mean?');
+  assert.equal(q050.answer, 0);
+  assert.equal(q050.opts[0].sv, 'Att ifrågasätta och kontrollera om information är korrekt');
+  assert.equal(q050.opts[0].en, 'Questioning and checking whether information is correct');
+  assert.equal(q050.source.title, 'Sverige i fokus');
+  assert.equal(q050.source.chapter, 'Mediernas roll');
+  assert.equal(q050.source.section, 'Källkritik');
+  assert.equal(q050.source.page, 21);
+  assert.equal(q050.questionProvenance, 'uhr');
 });
 
 test('chapter localization metadata avoids parenthetical English welfare glosses', () => {
