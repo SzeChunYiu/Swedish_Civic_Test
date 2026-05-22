@@ -149,6 +149,18 @@ test('npm test keeps selector routing in the project dispatcher', () => {
     /test:content|test:all|validate:content(?!\.js --focus-answer-shuffle-parity)/,
     'correct-display-position must stay limited to the P0 answer-shuffle acceptance bundle',
   );
+  assert.equal(
+    pkg.scripts['test:mobile-ads-consent'],
+    [
+      'node --test tests/mobile-ads-consent-runtime.test.js tests/content-mobile-ads-consent-schema-parity.test.js --test-name-pattern "mobile ads consent|Mobile Ads consent runtime|focus-mobile-ads-consent|ATT|UMP|SDK init"',
+      'node scripts/validate-content.js --focus-mobile-ads-consent',
+    ].join(' && '),
+  );
+  assert.doesNotMatch(
+    pkg.scripts['test:mobile-ads-consent'],
+    /test:monetization|scripts\/monetization\.test|test:all|validate:content(?!\.js --focus-mobile-ads-consent)/,
+    'mobile-ads-consent must stay limited to the Mobile Ads consent runtime and focused validator bundle',
+  );
   assert.match(
     studyReminderParitySource,
     /lib\/notifications\/studyReminderRouting\.ts/,
@@ -1850,6 +1862,33 @@ test('correct-display-position selector runs the P0 answer shuffle acceptance sc
   }
 });
 
+test('mobile-ads-consent selector runs only the focused Mobile Ads consent suite', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-mobile-ads-routing-'));
+  const npmLog = path.join(tmpDir, 'npm.log');
+  const env = {
+    ...process.env,
+    TEST_DISPATCH_CAPTURE: '1',
+    TEST_DISPATCH_LOG: npmLog,
+    TEST_DISPATCH_NPM: createFakeNpm(tmpDir),
+  };
+
+  try {
+    const selectedResult = runDispatcher(['--', 'mobile-ads-consent'], env);
+    assert.equal(selectedResult.status, 0, selectedResult.stderr || selectedResult.stdout);
+    assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:mobile-ads-consent\n');
+
+    const pkg = readPackageJson();
+    const script = pkg.scripts['test:mobile-ads-consent'];
+    assert.match(script, /tests\/mobile-ads-consent-runtime\.test\.js/);
+    assert.match(script, /tests\/content-mobile-ads-consent-schema-parity\.test\.js/);
+    assert.match(script, /node scripts\/validate-content\.js --focus-mobile-ads-consent/);
+    assert.match(script, /ATT\|UMP\|SDK init/);
+    assert.doesNotMatch(script, /test:monetization|scripts\/monetization\.test|test:all|npm test/);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
 test('xp selector runs only the focused XP rules parity script', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-xp-routing-'));
   const npmLog = path.join(tmpDir, 'npm.log');
@@ -1929,12 +1968,8 @@ test('package npm test selector enters the dispatcher before running suites', ()
     assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:correct-display-position\n');
 
     fs.writeFileSync(npmLog, '');
-    const mobileAdsConsentResult = runPackageTest(['mobile-ads-consent'], env);
-    assert.equal(
-      mobileAdsConsentResult.status,
-      0,
-      mobileAdsConsentResult.stderr || mobileAdsConsentResult.stdout,
-    );
+    const mobileAdsResult = runPackageTest(['mobile-ads-consent'], env);
+    assert.equal(mobileAdsResult.status, 0, mobileAdsResult.stderr || mobileAdsResult.stdout);
     assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:mobile-ads-consent\n');
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
@@ -2083,10 +2118,7 @@ test('unsupported npm test selectors fail before running any suite', () => {
       result.stderr,
       /correct-display-position -> npm run test:correct-display-position/,
     );
-    assert.match(
-      result.stderr,
-      /architecture -> npm run test:architecture && npm run test:router-shell/,
-    );
+    assert.match(result.stderr, /mobile-ads-consent -> npm run test:mobile-ads-consent/);
     assert.match(result.stderr, /monetization -> npm run test:monetization/);
     assert.match(result.stderr, /mobile-ads-consent -> npm run test:mobile-ads-consent/);
     assert.match(result.stderr, /xp -> npm run test:xp-rules/);
