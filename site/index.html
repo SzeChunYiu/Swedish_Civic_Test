@@ -205,29 +205,44 @@
 
           <div class="qcard" id="qcard" data-source-question-id="q039">
             <span class="qcard__chip" data-i18n="qcard.chip">Chapter 5 · q039</span>
-            <div class="qcard__q" data-i18n="qcard.q">
+            <div class="qcard__q" id="qcard-question" data-i18n="qcard.q">
               Which Swedish principle gives everyone the right to walk, swim, and pick berries on
               most land in nature?
             </div>
-            <div class="qcard__opts">
-              <button class="qopt" data-correct="false">
+            <div
+              class="qcard__opts"
+              role="group"
+              aria-labelledby="qcard-options-label"
+              aria-describedby="qcard-question"
+              data-a11y-label="qcard.optionsLabel"
+            >
+              <span class="sr-only" id="qcard-options-label" data-i18n="qcard.optionsLabel"
+                >Answer choices for the demo question</span
+              >
+              <button class="qopt" data-correct="false" aria-pressed="false">
                 <span class="key">A</span
                 ><span data-i18n="qcard.a">Jantelagen — the law of staying humble</span>
               </button>
-              <button class="qopt" data-correct="true">
+              <button class="qopt" data-correct="true" aria-pressed="false">
                 <span class="key">B</span
                 ><span data-i18n="qcard.b">Allemansrätten — the right of public access</span>
               </button>
-              <button class="qopt" data-correct="false">
+              <button class="qopt" data-correct="false" aria-pressed="false">
                 <span class="key">C</span
                 ><span data-i18n="qcard.c">Lagom — the doctrine of just-enough</span>
               </button>
-              <button class="qopt" data-correct="false">
+              <button class="qopt" data-correct="false" aria-pressed="false">
                 <span class="key">D</span
                 ><span data-i18n="qcard.d">Fika — the constitutional coffee break</span>
               </button>
             </div>
-            <div class="qcard__explain">
+            <div
+              class="qcard__explain"
+              id="qcard-explanation"
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+            >
               <p>
                 <b data-i18n="qcard.ex.b">Allemansrätten</b
                 ><span data-i18n="qcard.ex.p">
@@ -237,6 +252,13 @@
                 >
               </p>
             </div>
+            <div
+              class="sr-only"
+              id="qcard-status"
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+            ></div>
             <div class="qcard__meta">
               <span class="qcard__source">
                 <span class="quiz__provenance quiz__provenance--uhr" data-i18n="qcard.prov"

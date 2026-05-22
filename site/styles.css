@@ -68,6 +68,18 @@ img {
   display: block;
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* ------------------------------------------------------------------ NAV */
 
 .topbar {
@@ -6251,11 +6263,12 @@ html[dir='rtl'] .lang-menu {
 .consent {
   background:
     radial-gradient(circle at 8% 0%, rgba(254, 204, 0, 0.16), rgba(254, 204, 0, 0) 32%),
-    linear-gradient(135deg, rgba(0, 106, 167, 0.22), rgba(0, 106, 167, 0) 44%),
-    #071625;
+    linear-gradient(135deg, rgba(0, 106, 167, 0.22), rgba(0, 106, 167, 0) 44%), #071625;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 24px;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset, 0 30px 80px -20px rgba(0, 0, 0, 0.56);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.08) inset,
+    0 30px 80px -20px rgba(0, 0, 0, 0.56);
 }
 
 .consent__inner {
@@ -6514,8 +6527,7 @@ html[dir='rtl'] .lang-menu {
 
 .quiz__feedback {
   background:
-    linear-gradient(135deg, rgba(254, 204, 0, 0.18), rgba(254, 204, 0, 0) 44%),
-    var(--card-surface);
+    linear-gradient(135deg, rgba(254, 204, 0, 0.18), rgba(254, 204, 0, 0) 44%), var(--card-surface);
   border: 1px solid rgba(217, 169, 0, 0.42);
   border-left: 7px solid var(--gold);
   border-radius: 18px;
@@ -6525,8 +6537,7 @@ html[dir='rtl'] .lang-menu {
 
 .quiz__feedback.is-wrong {
   background:
-    linear-gradient(135deg, rgba(194, 65, 12, 0.1), rgba(194, 65, 12, 0) 48%),
-    var(--card-surface);
+    linear-gradient(135deg, rgba(194, 65, 12, 0.1), rgba(194, 65, 12, 0) 48%), var(--card-surface);
   border-color: rgba(194, 65, 12, 0.34);
   border-left-color: #c2410c;
 }
@@ -6803,8 +6814,7 @@ html[dir='rtl'] .lang-menu {
 .ebook__reader blockquote,
 .ebook__factbox {
   background:
-    linear-gradient(135deg, rgba(254, 204, 0, 0.14), rgba(254, 204, 0, 0) 46%),
-    var(--card-surface);
+    linear-gradient(135deg, rgba(254, 204, 0, 0.14), rgba(254, 204, 0, 0) 46%), var(--card-surface);
   border: 1px solid rgba(217, 169, 0, 0.38);
   border-left: 7px solid var(--gold);
   border-radius: 18px;
@@ -6850,8 +6860,7 @@ html[dir='rtl'] .lang-menu {
 :root[data-theme='dark'] .ebook__reader blockquote,
 :root[data-theme='dark'] .ebook__factbox {
   background:
-    linear-gradient(135deg, rgba(254, 204, 0, 0.12), rgba(254, 204, 0, 0) 46%),
-    var(--card-surface);
+    linear-gradient(135deg, rgba(254, 204, 0, 0.12), rgba(254, 204, 0, 0) 46%), var(--card-surface);
   border-color: rgba(254, 204, 0, 0.26);
 }
 
@@ -6980,7 +6989,9 @@ html[dir='rtl'] .lang-menu {
   background: rgba(255, 255, 255, 0.56);
   border: 1px solid rgba(0, 106, 167, 0.12);
   border-radius: 50%;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.34), 0 14px 30px -24px rgba(0, 58, 92, 0.72);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.34),
+    0 14px 30px -24px rgba(0, 58, 92, 0.72);
   padding: 6px;
 }
 
@@ -7281,8 +7292,7 @@ html[dir='rtl'] .lang-menu {
 
 .callout {
   background:
-    linear-gradient(135deg, rgba(254, 204, 0, 0.16), rgba(254, 204, 0, 0) 44%),
-    var(--card-surface);
+    linear-gradient(135deg, rgba(254, 204, 0, 0.16), rgba(254, 204, 0, 0) 44%), var(--card-surface);
   border: 1px solid rgba(217, 169, 0, 0.36);
   border-left: 7px solid var(--gold);
   border-radius: 18px;
@@ -7292,8 +7302,7 @@ html[dir='rtl'] .lang-menu {
 
 .callout--blue {
   background:
-    linear-gradient(135deg, rgba(0, 106, 167, 0.12), rgba(0, 106, 167, 0) 44%),
-    var(--card-surface);
+    linear-gradient(135deg, rgba(0, 106, 167, 0.12), rgba(0, 106, 167, 0) 44%), var(--card-surface);
   border-color: rgba(0, 106, 167, 0.28);
   border-left-color: var(--blue);
 }
@@ -7755,8 +7764,7 @@ html[dir='rtl'] .lang-menu {
 
 .lang-menu button.is-on {
   background:
-    linear-gradient(90deg, rgba(254, 204, 0, 0.2), rgba(254, 204, 0, 0.08)),
-    var(--ink, #0b1f33);
+    linear-gradient(90deg, rgba(254, 204, 0, 0.2), rgba(254, 204, 0, 0.08)), var(--ink, #0b1f33);
   border-color: rgba(254, 204, 0, 0.4);
   color: var(--gold, #fecc00);
 }
@@ -7886,8 +7894,7 @@ html[dir='rtl'] .lang-menu {
 
 .set-segment button.is-on {
   background:
-    linear-gradient(90deg, rgba(254, 204, 0, 0.18), rgba(254, 204, 0, 0.06)),
-    var(--ink, #0b1f33);
+    linear-gradient(90deg, rgba(254, 204, 0, 0.18), rgba(254, 204, 0, 0.06)), var(--ink, #0b1f33);
   border-color: rgba(254, 204, 0, 0.36);
   box-shadow: 0 12px 24px -18px rgba(11, 31, 51, 0.68);
   color: var(--gold, #fecc00);
@@ -7982,9 +7989,7 @@ html[dir='rtl'] .lang-menu {
 }
 
 :root[data-theme='dark'] .set-segment button.is-on {
-  background:
-    linear-gradient(90deg, rgba(254, 204, 0, 0.18), rgba(254, 204, 0, 0.06)),
-    var(--blue);
+  background: linear-gradient(90deg, rgba(254, 204, 0, 0.18), rgba(254, 204, 0, 0.06)), var(--blue);
   color: var(--gold);
 }
 
@@ -8234,8 +8239,7 @@ html[dir='rtl'] .lang-menu {
 
   .topbar.is-nav-open .nav a.is-active {
     background:
-      linear-gradient(90deg, rgba(254, 204, 0, 0.18), rgba(254, 204, 0, 0.06)),
-      var(--ink, #0b1f33);
+      linear-gradient(90deg, rgba(254, 204, 0, 0.18), rgba(254, 204, 0, 0.06)), var(--ink, #0b1f33);
     border-color: rgba(254, 204, 0, 0.36);
     color: var(--gold, #fecc00);
   }
@@ -8479,16 +8483,14 @@ html[dir='rtl'] .lang-menu {
 
 .smt-toast--streak {
   background:
-    linear-gradient(90deg, rgba(254, 204, 0, 0.2), rgba(254, 204, 0, 0.06)),
-    var(--card-surface);
+    linear-gradient(90deg, rgba(254, 204, 0, 0.2), rgba(254, 204, 0, 0.06)), var(--card-surface);
   border-color: rgba(217, 169, 0, 0.38);
   color: var(--ink);
 }
 
 .smt-toast--win {
   background:
-    linear-gradient(90deg, rgba(0, 106, 167, 0.14), rgba(30, 135, 75, 0.1)),
-    var(--card-surface);
+    linear-gradient(90deg, rgba(0, 106, 167, 0.14), rgba(30, 135, 75, 0.1)), var(--card-surface);
   border-color: rgba(0, 106, 167, 0.28);
   color: var(--ink);
 }
@@ -8545,7 +8547,12 @@ html[dir='rtl'] .lang-menu {
 ------------------------------------------------------------------ */
 
 .eb-hl {
-  background: linear-gradient(180deg, rgba(254, 204, 0, 0.08) 0%, rgba(254, 204, 0, 0.45) 58%, rgba(254, 204, 0, 0.24) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(254, 204, 0, 0.08) 0%,
+    rgba(254, 204, 0, 0.45) 58%,
+    rgba(254, 204, 0, 0.24) 100%
+  );
   border-radius: 0.28em;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
@@ -8554,7 +8561,12 @@ html[dir='rtl'] .lang-menu {
 }
 
 .eb-hl[data-has-note='1'] {
-  background: linear-gradient(180deg, rgba(0, 106, 167, 0.08) 0%, rgba(254, 204, 0, 0.5) 60%, rgba(0, 106, 167, 0.08) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(0, 106, 167, 0.08) 0%,
+    rgba(254, 204, 0, 0.5) 60%,
+    rgba(0, 106, 167, 0.08) 100%
+  );
   box-shadow:
     inset 0 -0.08em 0 rgba(0, 106, 167, 0.26),
     0 0 0 1px rgba(0, 106, 167, 0.1);
@@ -8968,8 +8980,7 @@ html[dir='rtl'] .lang-menu {
 
 .purchase__card:nth-child(2) {
   background:
-    linear-gradient(135deg, rgba(0, 106, 167, 0.09), rgba(254, 204, 0, 0.08)),
-    var(--card-surface);
+    linear-gradient(135deg, rgba(0, 106, 167, 0.09), rgba(254, 204, 0, 0.08)), var(--card-surface);
   border-color: rgba(0, 106, 167, 0.24);
 }
 
@@ -9262,8 +9273,7 @@ html[dir='rtl'] .lang-menu {
 }
 
 .cheats__panel kbd {
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 250, 240, 0.88));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 250, 240, 0.88));
   border: 1px solid rgba(0, 106, 167, 0.18);
   border-bottom-color: rgba(0, 58, 92, 0.28);
   border-radius: 10px;
@@ -9359,8 +9369,7 @@ html[dir='rtl'] .lang-menu {
 
 .mock-chip.is-on {
   background:
-    linear-gradient(135deg, rgba(0, 106, 167, 0.18), rgba(254, 204, 0, 0.12)),
-    var(--card-surface);
+    linear-gradient(135deg, rgba(0, 106, 167, 0.18), rgba(254, 204, 0, 0.12)), var(--card-surface);
   border-color: rgba(0, 106, 167, 0.34);
   box-shadow: var(--card-shadow);
   color: var(--ink);
@@ -10546,7 +10555,9 @@ button.quiz__dot.is-nav:hover {
   border: 1px solid rgba(0, 106, 167, 0.16) !important;
   border-radius: 22px;
   padding: 18px;
-  box-shadow: var(--card-shadow), inset 0 0 0 1px rgba(255, 255, 255, 0.38);
+  box-shadow:
+    var(--card-shadow),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.38);
 }
 .ebook__study-actions::before {
   content: '';
@@ -12518,9 +12529,7 @@ img.ebook__brand-mark {
    ====================================================================== */
 
 .nav a.is-active {
-  background:
-    linear-gradient(90deg, rgba(254, 204, 0, 0.2), rgba(254, 204, 0, 0) 58%),
-    var(--ink);
+  background: linear-gradient(90deg, rgba(254, 204, 0, 0.2), rgba(254, 204, 0, 0) 58%), var(--ink);
   border-color: rgba(0, 106, 167, 0.22);
   color: var(--paper);
   gap: 7px;

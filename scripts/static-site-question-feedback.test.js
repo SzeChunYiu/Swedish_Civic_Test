@@ -289,6 +289,52 @@ test('static Home demo qcard renders q039 UHR source metadata', () => {
   assert.doesNotMatch(appSource, /'qcard\.src': '[^']*Grundlagarna/);
 });
 
+test('static Home demo qcard exposes accessible answer state', () => {
+  const indexHtml = read('site/index.html');
+  const appSource = read('site/app.js');
+  const extraSource = read('site/i18n-extras.js');
+  const qcardMatch = indexHtml.match(
+    /<div class="qcard" id="qcard"[\s\S]*?<\/div>\s*<\/div>\s*<\/section>/,
+  );
+  assert.ok(qcardMatch, 'Home demo qcard should be present');
+  const qcardHtml = qcardMatch[0];
+
+  assert.match(qcardHtml, /class="qcard__opts"[\s\S]*role="group"/);
+  assert.match(qcardHtml, /aria-labelledby="qcard-options-label"/);
+  assert.match(qcardHtml, /data-a11y-label="qcard\.optionsLabel"/);
+  assert.match(qcardHtml, /id="qcard-options-label" data-i18n="qcard\.optionsLabel"/);
+  assert.equal((qcardHtml.match(/aria-pressed="false"/g) || []).length, 4);
+  assert.match(qcardHtml, /id="qcard-explanation"[\s\S]*role="status"[\s\S]*aria-live="polite"/);
+  assert.match(qcardHtml, /id="qcard-status"[\s\S]*role="status"[\s\S]*aria-live="polite"/);
+
+  assert.match(appSource, /function smtApplyQcardA11yState/);
+  assert.match(appSource, /qcard\.state\.selectedCorrect/);
+  assert.match(appSource, /qcard\.state\.selectedIncorrect/);
+  assert.match(appSource, /qcard\.state\.correct/);
+  assert.match(appSource, /qcard\.feedback\.correct/);
+  assert.match(appSource, /qcard\.feedback\.incorrect/);
+  assert.match(appSource, /option\.setAttribute\('aria-pressed', isSelected \? 'true' : 'false'\)/);
+  assert.match(
+    appSource,
+    /option\.setAttribute\('aria-label', `\$\{smtQcardOptionLabel\(option\)\}\. \$\{stateText\}`\)/,
+  );
+  assert.match(appSource, /option\.removeAttribute\('aria-label'\)/);
+  assert.match(appSource, /status\.textContent = ''/);
+  assert.match(appSource, /window\.addEventListener\('smt:languagechange'/);
+
+  for (const key of [
+    'qcard.optionsLabel',
+    'qcard.state.correct',
+    'qcard.state.selectedCorrect',
+    'qcard.state.selectedIncorrect',
+    'qcard.feedback.correct',
+    'qcard.feedback.incorrect',
+  ]) {
+    assert.match(appSource, new RegExp(`'${key.replace('.', '\\.')}'`));
+    assert.match(extraSource, new RegExp(`'${key.replace('.', '\\.')}'`));
+  }
+});
+
 test('static Mock review renders citation and disclaimer for every reviewed question', () => {
   const { sandbox, element } = createRenderContext({ hash: '#/mock?run=1', language: 'sv' });
   const source = read('site/practice.js').replace(
