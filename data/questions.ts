@@ -355,7 +355,7 @@ const rawBaseQuestions: PracticeQuestion[] = [
       {
         id: 'a',
         textSv: 'Kontakta politiker, demonstrera eller skriva på en namninsamling',
-        textEn: 'Contact politicians, demonstrate, or sign a petition',
+        textEn: 'Contact politicians, join a demonstration, or sign a petition',
       },
       {
         id: 'b',
@@ -377,7 +377,7 @@ const rawBaseQuestions: PracticeQuestion[] = [
     explanationSv:
       'Det finns flera demokratiska sätt att påverka och delta i samhället, till exempel att kontakta politiker, demonstrera och starta eller skriva på en namninsamling. De andra alternativen skulle hindra människor från att rösta, uttrycka åsikter eller delta i demokratin.',
     explanationEn:
-      'People can influence and participate in society in several democratic ways, including contacting politicians, demonstrating, and starting or signing a petition. The other options would stop people from voting, expressing opinions, or taking part in democracy.',
+      'People can influence and participate in society in several democratic ways, including contacting politicians, joining a demonstration, and starting or signing a petition. The other options would stop people from voting, expressing opinions, or taking part in democracy.',
     uhrReference: {
       chapter: 'Sveriges demokratiska system',
       section: 'En stark demokrati',

@@ -2350,6 +2350,10 @@ export function deriveCivicStatementEn(source: PracticeQuestion, option: Questio
         'contacting politicians, demonstrating, or signing a petition',
       )
       .replace(
+        /^Contact politicians, join a demonstration, or sign a petition$/i,
+        'contacting politicians, joining a demonstration, or signing a petition',
+      )
+      .replace(
         /^Ban others from voting in political elections$/i,
         'banning others from voting in political elections',
       );

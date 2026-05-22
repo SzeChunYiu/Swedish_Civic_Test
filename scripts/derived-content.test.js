@@ -737,7 +737,7 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
         {
           id: 'a',
           textSv: 'Kontakta politiker, demonstrera eller skriva på en namninsamling',
-          textEn: 'Contact politicians, demonstrate, or sign a petition',
+          textEn: 'Contact politicians, join a demonstration, or sign a petition',
         },
         {
           id: 'b',
@@ -951,7 +951,7 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
   );
   assert.ok(
     text.includes(
-      'One way to influence and participate in society is to contact politicians, demonstrate, or sign a petition.',
+      'One way to influence and participate in society is to contact politicians, join a demonstration, or sign a petition.',
     ),
   );
   assert.ok(
