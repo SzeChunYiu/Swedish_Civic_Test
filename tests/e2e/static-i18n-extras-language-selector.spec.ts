@@ -167,6 +167,7 @@ const localizedQ050SourceCriticismTerms: Record<Q050RenderedSourceCriticismLocal
 };
 const forbiddenQ050SourceCriticismStaleTerms =
   /具有(?:來|来)源批判意識|أن تكون ناقدًا للمصادر|krytyczne podejście do źródeł|si naqdineed loo eego ilaha|kaynaklara eleştirel yaklaşmak|критично ставитися до джерел/i;
+const englishPrivacyPurchaseActionLabel = /\bRemove Ads\b/i;
 
 type StaticQ050RenderedCopy = {
   question: string;
@@ -445,6 +446,11 @@ async function assertLongFormRouteCopy(page: Page, locale: ExtraLocale) {
     await dictionaryText(page, locale, 'privacy.lede'),
   );
   await expectLegalReadingTime(page, locale, 'privacy.meta3.v');
+  const privacyRouteText = await page.locator('[data-page="/privacy"]').innerText();
+  expect(privacyRouteText).not.toMatch(englishPrivacyPurchaseActionLabel);
+  if (locale === 'ti') {
+    expect(privacyRouteText).toContain('መወዓውዒታት ኣወግድ');
+  }
   await switchToTermsRoute(page);
   await expectDictionaryText(page, locale, 'terms.kicker');
   await expectDictionaryText(page, locale, 'terms.h1a');

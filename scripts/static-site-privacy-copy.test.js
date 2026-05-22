@@ -2,6 +2,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
+const vm = require('node:vm');
 const {
   assertNoUnsupportedStaticReleaseCopy,
   findUnsupportedStaticReleaseCopyInSource,
@@ -39,9 +40,20 @@ const adSensePreparedDisabledCopyPatterns = [
   /Manuella annonsytor i övning och e-bok visas som reserverade ytor tills granskade annonsplats-ID:n är konfigurerade/i,
   /Google AdSense kan sätta cookies efter ditt val/i,
 ];
+const extraPrivacyLocales = ['zh-Hans', 'zh-Hant', 'ar', 'ckb', 'fa', 'pl', 'so', 'ti', 'tr', 'uk'];
+const extraPrivacyKeys = ['privacy.lede', 'privacy.s5.p'];
+const englishRemoveAdsActionLabel = /\bRemove Ads\b/i;
 
 function read(filePath) {
   return fs.readFileSync(path.join(repoRoot, filePath), 'utf8');
+}
+
+function loadExtraI18n() {
+  const source = read('site/i18n-extras.js');
+  const sandbox = { window: {} };
+  vm.createContext(sandbox);
+  vm.runInContext(source, sandbox, { timeout: 3000 });
+  return sandbox.window.__i18n_extra;
 }
 
 function assertNoInternalMonetizationCopy(surface) {
@@ -199,6 +211,28 @@ test('static site privacy and consent copy hides internal monetization implement
 
   const mutatedConsent = `${surface}\nCookie consent stores remove_ads_entitlement state.`;
   assert.match(mutatedConsent, internalMonetizationCopyPatterns[2]);
+});
+
+test('static extra-locale privacy copy localizes Remove Ads action labels', () => {
+  const extra = loadExtraI18n();
+
+  for (const locale of extraPrivacyLocales) {
+    const dictionary = extra?.[locale];
+    assert.equal(typeof dictionary, 'object', `${locale} dictionary must exist`);
+
+    for (const key of extraPrivacyKeys) {
+      const value = dictionary[key];
+      assert.equal(typeof value, 'string', `${locale}.${key} must be a string`);
+      assert.doesNotMatch(
+        value,
+        englishRemoveAdsActionLabel,
+        `${locale}.${key} should not leak English Remove Ads action copy`,
+      );
+    }
+  }
+
+  assert.match(extra.ti['privacy.lede'], /መወዓውዒታት ኣወግድ/);
+  assert.match(extra.ti['privacy.s5.p'], /መወዓውዒታት ኣወግድ/);
 });
 
 test('static site public copy does not label the release as MVP', () => {

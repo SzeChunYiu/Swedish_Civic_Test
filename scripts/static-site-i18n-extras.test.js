@@ -188,6 +188,8 @@ const supportMetadataEnglishFallbacks = {
   'support.meta2.v': /English or Swedish/i,
   'support.meta3.v': /^Free$/i,
 };
+const privacyPurchaseActionKeys = ['privacy.lede', 'privacy.s5.p'];
+const englishPrivacyPurchaseActionLabel = /\bRemove Ads\b/i;
 const forbiddenTigrinyaWorkWelfareTerms = ['kollektivavtal', 'föräldraledighet', 'sjukpenning'];
 const forbiddenStaticHomeEducationTerms = /\b(?:Förskola|förskola|universitet)\b/iu;
 
@@ -422,6 +424,29 @@ test('extra locale Support metadata values reject English fallbacks', () => {
 
   assert.equal(extra.ckb['support.meta1.v'], '~2 ڕۆژی کاری');
   assert.match(extra.ckb['support.meta1.v'], /ڕۆژی کاری/);
+});
+
+test('extra locale Privacy copy localizes Remove Ads purchase-action labels', () => {
+  const extra = loadExtraI18n();
+
+  for (const locale of extraLocales) {
+    const dictionary = extra?.[locale];
+    assert.equal(typeof dictionary, 'object', `${locale} dictionary must exist`);
+
+    for (const key of privacyPurchaseActionKeys) {
+      const value = dictionary[key];
+      assert.equal(typeof value, 'string', `${locale}.${key} must be a string`);
+      assert.notEqual(value.trim(), '', `${locale}.${key} must not be empty`);
+      assert.doesNotMatch(
+        value,
+        englishPrivacyPurchaseActionLabel,
+        `${locale}.${key} must not leak the English Remove Ads action label`,
+      );
+    }
+  }
+
+  assert.match(extra.ti['privacy.lede'], /መወዓውዒታት ኣወግድ/);
+  assert.match(extra.ti['privacy.s5.p'], /መወዓውዒታት ኣወግድ/);
 });
 
 test('extra locale Home chapter 1 folkhemmet glossary terms use localized wording first', () => {
