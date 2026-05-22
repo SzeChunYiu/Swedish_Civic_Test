@@ -435,6 +435,52 @@ test('Flashcard accessibility parity uses focused content validation routing', (
     'Flashcard accessibility tests must not route through full content validation',
   );
 });
+test('question disclaimer parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const disclaimerTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-question-disclaimer-parity.test.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('questionDisclaimerParity');
+
+  assert.ok(registryEntry, 'QuestionDisclaimer parity focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-question-disclaimer-parity']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'questionDisclaimerRoutesValidated',
+    'questionDisclaimerCopyValidated',
+  ]);
+  assert.match(validatorSource, /--focus-question-disclaimer-parity/);
+  assert.match(
+    validatorSource,
+    /validateQuestionDisclaimerParity\(\);[\s\S]*questionDisclaimerRoutesValidated[\s\S]*questionDisclaimerCopyValidated/,
+  );
+  assert.match(disclaimerTestSource, /--focus-question-disclaimer-parity/);
+  assert.doesNotMatch(
+    disclaimerTestSource,
+    /--focus-learn-flashcard-source/,
+    'QuestionDisclaimer parity tests must not use the broader Learn flashcard focus flag',
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-question-disclaimer-parity'],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused QuestionDisclaimer validation should print a JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  for (const key of registryEntry.summaryKeys) {
+    assert.ok(Object.prototype.hasOwnProperty.call(summary, key), `${key} is present`);
+  }
+  assert.equal(summary.questionDisclaimerRoutesValidated, 6);
+  assert.equal(summary.questionDisclaimerCopyValidated, true);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
+});
 test('answer feedback parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),

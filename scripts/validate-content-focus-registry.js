@@ -738,6 +738,11 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'questionDisclaimerParity',
+    flags: ['--focus-question-disclaimer-parity'],
+    summaryKeys: ['questionDisclaimerRoutesValidated', 'questionDisclaimerCopyValidated'],
+  },
+  {
     id: 'questionAuthorityBoundary',
     flags: ['--focus-question-authority-boundary'],
     summaryKeys: ['publishedQuestions', 'questionAuthorityBoundaryTextValidated'],
