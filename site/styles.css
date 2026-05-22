@@ -12359,3 +12359,27 @@ img.ebook__brand-mark {
     padding: 12px 13px 12px 17px;
   }
 }
+
+/* ======================================================================
+   FOOTER LIST STACK BOX OPTIMIZATION ROUND
+   ====================================================================== */
+
+.footer__cols ul {
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  gap: 6px;
+  padding: 8px;
+}
+
+.footer__cols li + li {
+  border-top: 1px solid rgba(255, 255, 255, 0.055);
+  padding-top: 6px;
+}
+
+@media (max-width: 720px) {
+  .footer__cols ul {
+    border-radius: 14px;
+    padding: 7px;
+  }
+}
