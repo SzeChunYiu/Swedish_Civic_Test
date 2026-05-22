@@ -3,6 +3,7 @@ import { Platform } from 'react-native';
 
 import { adsConfig } from './ads';
 import { getAdSdkInitializationDecision, type AdConsentState } from './consent';
+import { isStrictEntitlementFlag } from './premium';
 import {
   createInitialAdConsentState,
   createNativeMobileAdsConsentRuntime,
@@ -26,7 +27,9 @@ function createInitialResult(
   platform: string,
 ): MobileAdsConsentInitializationResult {
   const shouldCollectConsent =
-    adsConfig.googleMobileAdsEnabled && !entitlements.adsDisabled && adsConfig.realAdsEnabled;
+    adsConfig.googleMobileAdsEnabled &&
+    !isStrictEntitlementFlag(entitlements.adsDisabled) &&
+    adsConfig.realAdsEnabled;
   const state: AdConsentState = createInitialAdConsentState({
     entitlements,
     googleMobileAdsEnabled: adsConfig.googleMobileAdsEnabled,
@@ -63,7 +66,7 @@ function initializeOnce(
   entitlements: Pick<PremiumEntitlements, 'adsDisabled'>,
   platform: string,
 ): Promise<MobileAdsConsentInitializationResult> {
-  if (entitlements.adsDisabled) {
+  if (isStrictEntitlementFlag(entitlements.adsDisabled)) {
     return initializeGoogleMobileAdsAfterConsent({
       entitlements,
       runtime: createNativeMobileAdsConsentRuntime(platform),
@@ -95,7 +98,7 @@ export function useMobileAdsConsent(
   const platform = options.platform ?? Platform.OS;
   const initialResult = useMemo(() => {
     if (
-      !entitlements.adsDisabled &&
+      !isStrictEntitlementFlag(entitlements.adsDisabled) &&
       cachedInitialization &&
       cachedInitializationPlatform === platform
     ) {

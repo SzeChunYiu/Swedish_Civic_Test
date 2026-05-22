@@ -9111,6 +9111,7 @@ const FREE_ENTITLEMENTS = premiumModule.FREE_ENTITLEMENTS;
 const PREMIUM_ENTITLEMENTS = premiumModule.PREMIUM_ENTITLEMENTS;
 const REMOVE_ADS_ENTITLEMENTS = premiumModule.REMOVE_ADS_ENTITLEMENTS;
 const hasAdsDisabled = premiumModule.hasAdsDisabled;
+const hasProEntitlement = premiumModule.hasProEntitlement;
 const isPremiumUser = premiumModule.isPremiumUser;
 const premiumConfig = premiumModule.premiumConfig;
 const purchaseModule = loadTs('lib/monetization/purchases.ts');
@@ -12146,6 +12147,9 @@ function validatePremiumEntitlementParity() {
     if (hasAdsDisabled(REMOVE_ADS_ENTITLEMENTS) !== true) {
       reject('hasAdsDisabled must return true for REMOVE_ADS_ENTITLEMENTS');
     }
+    if (hasAdsDisabled({ adsDisabled: 'yes' }) !== false) {
+      reject('hasAdsDisabled must reject malformed truthy adsDisabled values');
+    }
   }
 
   if (typeof isPremiumUser === 'function') {
@@ -12167,6 +12171,27 @@ function validatePremiumEntitlementParity() {
     ) {
       reject('isPremiumUser must stay decoupled from adsDisabled');
     }
+    if (
+      isPremiumUser({
+        adsDisabled: false,
+        unlimitedMockExams: 'yes',
+        fullMistakeReview: true,
+      }) !== false
+    ) {
+      reject('isPremiumUser must reject malformed truthy premium flags');
+    }
+  }
+
+  if (
+    typeof hasProEntitlement === 'function' &&
+    hasProEntitlement({
+      adsDisabled: true,
+      unlimitedMockExams: true,
+      fullMistakeReview: 'yes',
+      spacedRepetition: true,
+    }) !== false
+  ) {
+    reject('hasProEntitlement must reject malformed truthy Pro flags');
   }
 
   if (typeof shouldShowAd === 'function' && shouldShowAd('home_banner', REMOVE_ADS_ENTITLEMENTS)) {
@@ -12182,7 +12207,7 @@ function validatePremiumEntitlementParity() {
   }
 
   if (
-    !/return\s+entitlements\.unlimitedMockExams\s*&&\s*entitlements\.fullMistakeReview;/.test(
+    !/isStrictEntitlementFlag\(entitlements\.unlimitedMockExams\)[\s\S]*isStrictEntitlementFlag\(entitlements\.fullMistakeReview\)/.test(
       premiumSource,
     )
   ) {
@@ -18278,7 +18303,7 @@ function validateMobileAdsConsentRuntimeParity() {
   const runtimeCases = [
     [
       normalizedMobileConsentSource.includes(
-        'const shouldCollectConsent = googleMobileAdsEnabled && !entitlements.adsDisabled && realAdsEnabled;',
+        'const shouldCollectConsent = googleMobileAdsEnabled && !isStrictEntitlementFlag(entitlements.adsDisabled) && realAdsEnabled;',
       ),
       'Mobile Ads consent runtime must gate consent collection on ads config, real ads, and Remove Ads entitlements',
     ],
@@ -18362,7 +18387,7 @@ function validateMobileAdsConsentHookParity() {
   const hookCases = [
     [
       normalizedHookSource.includes(
-        'const shouldCollectConsent = adsConfig.googleMobileAdsEnabled && !entitlements.adsDisabled && adsConfig.realAdsEnabled;',
+        'const shouldCollectConsent = adsConfig.googleMobileAdsEnabled && !isStrictEntitlementFlag(entitlements.adsDisabled) && adsConfig.realAdsEnabled;',
       ) &&
         normalizedHookSource.includes('platform,') &&
         normalizedHookSource.includes(
@@ -18380,7 +18405,7 @@ function validateMobileAdsConsentHookParity() {
       'Mobile Ads consent hook must route initial state through the consent SDK decision helper',
     ],
     [
-      /if\s*\(\s*entitlements\.adsDisabled\s*\)\s*\{\s*return\s+initializeGoogleMobileAdsAfterConsent\(\{[\s\S]*entitlements,[\s\S]*runtime:\s*createNativeMobileAdsConsentRuntime\(platform\),[\s\S]*\}\);\s*\}/.test(
+      /if\s*\(\s*isStrictEntitlementFlag\(entitlements\.adsDisabled\)\s*\)\s*\{\s*return\s+initializeGoogleMobileAdsAfterConsent\(\{[\s\S]*entitlements,[\s\S]*runtime:\s*createNativeMobileAdsConsentRuntime\(platform\),[\s\S]*\}\);\s*\}/.test(
         hookSource,
       ),
       'Mobile Ads consent hook must bypass cached initialization when Remove Ads is active',
@@ -18401,7 +18426,7 @@ function validateMobileAdsConsentHookParity() {
       'Mobile Ads consent hook must reset shared initialization after blocked consent results without caching them',
     ],
     [
-      /if\s*\([\s\S]*!entitlements\.adsDisabled[\s\S]*cachedInitialization[\s\S]*cachedInitializationPlatform\s*===\s*platform[\s\S]*\)\s*\{\s*return\s+cachedInitialization;\s*\}/.test(
+      /if\s*\([\s\S]*!isStrictEntitlementFlag\(entitlements\.adsDisabled\)[\s\S]*cachedInitialization[\s\S]*cachedInitializationPlatform\s*===\s*platform[\s\S]*\)\s*\{\s*return\s+cachedInitialization;\s*\}/.test(
         hookSource,
       ) &&
         normalizedHookSource.includes('setResult(initialResult);') &&

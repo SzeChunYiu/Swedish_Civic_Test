@@ -1284,11 +1284,13 @@ test('launch popup ad respects launch cap and adsDisabled entitlement', () => {
 });
 
 test('remove-ads entitlement is decoupled from premium feature bundle', () => {
-  const { REMOVE_ADS_ENTITLEMENTS, hasAdsDisabled, isPremiumUser } = loadTs(
+  const { REMOVE_ADS_ENTITLEMENTS, hasAdsDisabled, hasProEntitlement, isPremiumUser } = loadTs(
     'lib/monetization/premium.ts',
   );
 
   assert.equal(hasAdsDisabled(REMOVE_ADS_ENTITLEMENTS), true);
+  assert.equal(hasAdsDisabled({ adsDisabled: 'yes' }), false);
+  assert.equal(hasAdsDisabled({ adsDisabled: 1 }), false);
   assert.equal(isPremiumUser(REMOVE_ADS_ENTITLEMENTS), false);
   assert.equal(
     isPremiumUser({
@@ -1297,6 +1299,29 @@ test('remove-ads entitlement is decoupled from premium feature bundle', () => {
       unlimitedMockExams: true,
     }),
     true,
+  );
+  assert.equal(
+    isPremiumUser({
+      adsDisabled: false,
+      fullMistakeReview: true,
+      unlimitedMockExams: 'yes',
+    }),
+    false,
+  );
+  assert.equal(
+    hasProEntitlement({
+      adsDisabled: true,
+      confidenceSlider: true,
+      customStudyPlan: true,
+      fullMistakeReview: 'yes',
+      multiColorHighlights: true,
+      nativeLangExplanations: true,
+      notesExport: true,
+      predictedPassProbability: true,
+      spacedRepetition: true,
+      unlimitedMockExams: true,
+    }),
+    false,
   );
 });
 
@@ -2737,6 +2762,32 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
   assert.deepEqual(disabledCalls, []);
   assert.equal(disabledState.trackingTransparencyStatus, 'unavailable');
   assert.equal(disabledState.umpConsentStatus, 'not_required');
+
+  const malformedDisabledCalls = [];
+  const malformedDisabledState = await collectMobileAdsConsentState({
+    entitlements: { adsDisabled: 'yes' },
+    googleMobileAdsEnabled: true,
+    realAdsEnabled: true,
+    runtime: {
+      async gatherUmpConsent() {
+        malformedDisabledCalls.push('ump');
+        return { canRequestAds: true, status: 'OBTAINED' };
+      },
+      async getTrackingPermissionsAsync() {
+        malformedDisabledCalls.push('att:get');
+        return { status: 'undetermined' };
+      },
+      platform: 'ios',
+      async requestTrackingPermissionsAsync() {
+        malformedDisabledCalls.push('att:request');
+        return { status: 'authorized' };
+      },
+    },
+  });
+
+  assert.deepEqual(malformedDisabledCalls, ['att:get', 'att:request', 'ump']);
+  assert.equal(malformedDisabledState.trackingTransparencyStatus, 'authorized');
+  assert.equal(malformedDisabledState.umpConsentStatus, 'obtained');
 
   const canRequestAdsCalls = [];
   const canRequestAdsResult = await initializeGoogleMobileAdsAfterConsent({

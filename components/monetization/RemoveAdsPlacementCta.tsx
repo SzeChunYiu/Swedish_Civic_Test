@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { adBannerCopy } from '../../lib/monetization/adCopy';
+import { isStrictEntitlementFlag } from '../../lib/monetization/premium';
 import {
   REMOVE_ADS_PRICE_LABEL,
   buyRemoveAds,
@@ -116,7 +117,7 @@ export function RemoveAdsPlacementCta({ placement }: { placement: AdPlacement })
   const [status, setStatus] = useState<PlacementPurchaseStatus | null>(null);
   const purchaseActionInFlightRef = useRef(false);
 
-  if (!entitlementsReady || entitlements.adsDisabled) return null;
+  if (!entitlementsReady || isStrictEntitlementFlag(entitlements.adsDisabled)) return null;
   const purchaseUnavailable =
     purchaseRuntime?.purchaseUnavailableReason === 'web_store_unavailable';
 
