@@ -17,7 +17,7 @@ import { QuestionReportLink } from '../../components/quiz/QuestionReportLink';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { PersistenceWarningNotice } from '../../components/storage/PersistenceWarningNotice';
 import { StudyCompanionCard } from '../../components/mascot/StudyCompanionCard';
-import { Button } from '../../components/ui/Button';
+import { Button } from '../../components/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';

@@ -3054,17 +3054,16 @@ const EXPECTED_BUTTON_ACCESSIBILITY_RULES = [
   {
     label: 'exported variant type',
     pattern:
-      /export type ButtonVariant = 'primary' \| 'secondary' \| 'option' \| 'success' \| 'danger';/,
+      /export type ButtonVariant = 'primary' \| 'secondary' \| 'ghost' \| 'option' \| 'success' \| 'danger';/,
   },
   {
     label: 'exported props interface',
     pattern:
-      /export interface ButtonProps extends PropsWithChildren<Omit<PressableProps, 'style'>>/,
+      /export interface ButtonProps extends PropsWithChildren<Omit<PressableProps, 'children' \| 'style'>>/,
   },
   {
     label: 'documented default props',
-    pattern:
-      /Defaults: `variant="primary"`, `accessibilityRole="button"`[\s\S]*`hitSlop=space\[0\.5\]`/,
+    pattern: /Defaults: `variant="primary"`, `size="md"`, `loading=false`,[\s\S]*`hitSlop`/,
   },
   {
     label: 'native Pressable root',
@@ -3080,12 +3079,12 @@ const EXPECTED_BUTTON_ACCESSIBILITY_RULES = [
   },
   {
     label: 'disabled prop merged into accessibility state',
-    pattern: /\.\.\.\(disabled == null \? \{\} : \{ disabled \}\),/,
+    pattern: /disabled:\s*isPressDisabled \|\| accessibilityState\?\.disabled,/,
   },
   {
     label: 'plain child label fallback',
     pattern:
-      /typeof children === 'string' \|\| typeof children === 'number' \? String\(children\) : undefined/,
+      /function getStringLabel[\s\S]*typeof children === 'string' \|\| typeof children === 'number'[\s\S]*String\(children\)/,
   },
   {
     label: 'busy state mirrored to web aria',
@@ -3138,7 +3137,7 @@ const EXPECTED_BUTTON_ACCESSIBILITY_RULES = [
   {
     label: 'caller style override after state styles',
     pattern:
-      /style=\{\(\{ pressed \}\) => \[\s*styles\.button,\s*styles\[variant\],\s*pressed && !disabled \? styles\.pressed : null,\s*pressed && !disabled && !reduceMotion \? styles\.pressedMotion : null,\s*pressed && !disabled && variant === 'primary' \? styles\.primaryPressed : null,\s*disabled \? styles\.disabled : null,\s*style,\s*\]\}/,
+      /style=\{\(\{ pressed \}\) => \[\s*styles\.base,\s*styles\[size\],\s*styles\[variant\],\s*pressed && !isPressDisabled \? styles\.pressed : null,\s*pressed && !isPressDisabled && !reduceMotion \? styles\.pressedMotion : null,\s*pressed && !isPressDisabled \? styles\[`\$\{variant\}Pressed`\] : null,\s*isExplicitlyDisabled \? styles\.disabled : null,\s*style,\s*\]\}/,
   },
   {
     label: 'reduced-motion hook',
@@ -3146,7 +3145,7 @@ const EXPECTED_BUTTON_ACCESSIBILITY_RULES = [
   },
   {
     label: 'pressed scale disabled under reduced motion',
-    pattern: /pressed && !disabled && !reduceMotion \? styles\.pressedMotion : null/,
+    pattern: /pressed && !isPressDisabled && !reduceMotion \? styles\.pressedMotion : null/,
   },
 ];
 const EXPECTED_CARD_ACCESSIBILITY_RULES = [
@@ -3686,7 +3685,7 @@ const EXPECTED_FLASHCARD_ACCESSIBILITY_RULES = [
 const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
   {
     label: 'shared Button import',
-    pattern: /import \{ Button \} from '\.\.\/ui\/Button';/,
+    pattern: /import \{ Button \} from '\.\.\/Button';/,
   },
   {
     label: 'speech runtime imports',
@@ -14777,6 +14776,7 @@ function validateLegalRouteScrollParity() {
 function validateButtonAccessibilityParity() {
   let valid = true;
   let buttonSource = '';
+  let wrapperSource = '';
 
   function reject(message) {
     valid = false;
@@ -14784,10 +14784,65 @@ function validateButtonAccessibilityParity() {
   }
 
   try {
-    buttonSource = fs.readFileSync(path.join(repoRoot, 'components/ui/Button.tsx'), 'utf8');
+    buttonSource = fs.readFileSync(path.join(repoRoot, 'components/Button.tsx'), 'utf8');
   } catch (error) {
-    reject(`components/ui/Button.tsx could not be read for accessibility parity: ${error.message}`);
+    reject(`components/Button.tsx could not be read for accessibility parity: ${error.message}`);
     return;
+  }
+
+  try {
+    wrapperSource = fs.readFileSync(path.join(repoRoot, 'components/ui/Button.tsx'), 'utf8');
+  } catch (error) {
+    reject(
+      `components/ui/Button.tsx could not be read for button compatibility parity: ${error.message}`,
+    );
+    return;
+  }
+
+  if (!/export \{ Button \} from '\.\.\/Button';/.test(wrapperSource)) {
+    reject('components/ui/Button.tsx must re-export the canonical Button implementation');
+  }
+
+  if (
+    !/export type \{ ButtonProps, ButtonSize, ButtonVariant \} from '\.\.\/Button';/.test(
+      wrapperSource,
+    )
+  ) {
+    reject('components/ui/Button.tsx must re-export canonical Button types');
+  }
+
+  const productButtonImportOffenders = [];
+  const scanButtonImportDir = (dirPath) => {
+    for (const entry of fs.readdirSync(dirPath, { withFileTypes: true })) {
+      const fullPath = path.join(dirPath, entry.name);
+      if (entry.isDirectory()) {
+        scanButtonImportDir(fullPath);
+        continue;
+      }
+
+      if (!/\.(ts|tsx)$/.test(entry.name)) continue;
+
+      const relPath = path.relative(repoRoot, fullPath).replace(/\\/g, '/');
+      if (relPath === 'components/ui/Button.tsx') continue;
+
+      const source = fs.readFileSync(fullPath, 'utf8');
+      if (/from\s+['"][^'"]*(?:components\/ui\/Button|\/ui\/Button)['"]/.test(source)) {
+        productButtonImportOffenders.push(relPath);
+      }
+    }
+  };
+
+  ['app', 'components'].forEach((sourceDir) => {
+    const dirPath = path.join(repoRoot, sourceDir);
+    if (fs.existsSync(dirPath)) scanButtonImportDir(dirPath);
+  });
+
+  if (productButtonImportOffenders.length > 0) {
+    reject(
+      `Product code must import the canonical components/Button.tsx contract instead of components/ui/Button.tsx: ${productButtonImportOffenders.join(
+        ', ',
+      )}`,
+    );
   }
 
   EXPECTED_BUTTON_ACCESSIBILITY_RULES.forEach((expectedRule) => {

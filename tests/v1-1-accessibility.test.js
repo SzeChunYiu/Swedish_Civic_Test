@@ -362,7 +362,6 @@ test('main native surfaces consume app-wide theme colors instead of static token
   const useThemeColorsFiles = [
     'components/Button.tsx',
     'components/OptionCard.tsx',
-    'components/ui/Button.tsx',
     'components/ui/Card.tsx',
     'components/ui/ScreenShell.tsx',
     'app/(tabs)/home.tsx',
@@ -395,6 +394,8 @@ test('main native surfaces consume app-wide theme colors instead of static token
     assert.doesNotMatch(source, /import \{[^}]*\bcolors\b[^}]*\} from .*lib\/theme/, file);
     assert.doesNotMatch(source, /\bcolors\./, file);
   }
+
+  assert.match(loadSource('components/ui/Button.tsx'), /export \{ Button \} from '\.\.\/Button';/);
 });
 
 test('nested native surfaces consume app-wide theme colors instead of static tokens', () => {

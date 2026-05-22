@@ -10,7 +10,7 @@ import {
 } from '../../lib/mascot/catalog';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
-import { Button } from '../ui/Button';
+import { Button } from '../Button';
 import { MascotArtwork, mascotArtworkExpressionForFeedbackState } from './MascotArtwork';
 
 export type StudyCompanionFeedbackState = 'neutral' | 'correct' | 'incorrect';

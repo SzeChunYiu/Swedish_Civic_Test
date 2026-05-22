@@ -8,7 +8,7 @@ import { BadgeRow } from '../../components/learning/BadgeRow';
 import { PremiumBanner } from '../../components/monetization/PremiumBanner';
 import { ProPaywall } from '../../components/monetization/ProPaywall';
 import { Badge } from '../../components/ui/Badge';
-import { Button } from '../../components/ui/Button';
+import { Button } from '../../components/Button';
 import { Card } from '../../components/ui/Card';
 import { MetricCard } from '../../components/ui/MetricCard';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
