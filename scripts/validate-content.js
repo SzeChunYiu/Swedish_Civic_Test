@@ -1014,6 +1014,21 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
   },
   {
     file: 'app/search.tsx',
+    pattern: /if \(previousRouteQueryRef\.current === routeQuery\) return;/,
+    message: 'search route must guard unchanged route params before resyncing',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /previousRouteQueryRef\.current = routeQuery;/,
+    message: 'search route must update the route query sync ref before state resync',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /setQuery\(routeQuery\);/,
+    message: 'search route must apply changed route params to visible state',
+  },
+  {
+    file: 'app/search.tsx',
     pattern: /function getFirstSearchParamValue/,
     message: 'search route must centralize first route-param value extraction',
   },
