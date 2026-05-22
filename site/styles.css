@@ -12383,3 +12383,27 @@ img.ebook__brand-mark {
     padding: 7px;
   }
 }
+
+/* ======================================================================
+   FOOTER CARD FOCUS BOX OPTIMIZATION ROUND
+   ====================================================================== */
+
+.footer__cols > div:focus-within {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(254, 204, 0, 0.3);
+  box-shadow:
+    0 0 0 3px rgba(254, 204, 0, 0.12),
+    0 24px 64px -42px rgba(0, 0, 0, 0.92);
+  transform: translateY(-2px);
+}
+
+.footer__cols > div:focus-within h4 {
+  border-color: rgba(254, 204, 0, 0.28);
+  color: #ffe680;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer__cols > div:focus-within {
+    transform: none;
+  }
+}

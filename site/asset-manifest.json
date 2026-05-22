@@ -120,8 +120,8 @@
       "sha256": "502386f596a3ba159d39d8e3429c9a5820951c519c6d386a7e30c25e126185bb"
     },
     "purchase.js": {
-      "bytes": 4782,
-      "sha256": "7c73ab63e08a89f3dde77b2eba53fcb32477fee7a899467742c7029020f0ef74"
+      "bytes": 4965,
+      "sha256": "9e1322599dd8fc8149d838d09fcb9ff72731bb196846b1a0f4af403a672b9144"
     },
     "questions.js": {
       "bytes": 3766904,
@@ -132,16 +132,16 @@
       "sha256": "4b3be1332e38ecf10a23b00915e7afa9985e3a9783e199d15299afcfbd4198cc"
     },
     "signin.js": {
-      "bytes": 19254,
-      "sha256": "e6e8dbcbf92a91403490865d2e26b2199fe42264bd258f6b4d0e69635c2438ff"
+      "bytes": 22196,
+      "sha256": "b9919318e3e38bbfd29b341446a742871c4fd6b96fdf5d9c13a87a96529eb410"
     },
     "site.js": {
       "bytes": 5221,
       "sha256": "4e2dca9706273065513ca97fb0d493f6ea67d852034a03166d67f1ee03c9975b"
     },
     "styles.css": {
-      "bytes": 272098,
-      "sha256": "20113c666cc3cf21dee74502a8a940af5dbbff311258ab98ad0894bcfc653a70"
+      "bytes": 272747,
+      "sha256": "c7dff112725e517863575602676d7fca0c6ae49c89820c58aa04900eb9fa6a81"
     },
     "sw.js": {
       "bytes": 4589,
@@ -156,8 +156,8 @@
       "sha256": "67435e90bc00665d368d0d6c39e217485a8014e5d394ecb463a5fef166d36bcc"
     },
     "v11.js": {
-      "bytes": 41147,
-      "sha256": "16cf9ded6b5eed9a8d71660b4560e02b059da769f7b0ca6aba2b84e875e5f18d"
+      "bytes": 41391,
+      "sha256": "e78483bae88489a5e7367848443eead96b37e854ca613b24e3c9d9498f3b6bf5"
     }
   }
 }
