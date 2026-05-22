@@ -170,6 +170,18 @@ const expectedCentralKurdishLegalReadingTimes = {
   'privacy.meta3.v': '~3 خولەک',
   'terms.meta3.v': '~2 خولەک خوێندنەوە',
 };
+const expectedExtraLocaleTermsH1a = {
+  'zh-Hans': '规则清楚，',
+  'zh-Hant': '規則清楚，',
+  ar: 'قواعد واضحة،',
+  ckb: 'ڕێساکان ڕوونن،',
+  fa: 'قوانین روشن،',
+  pl: 'Jasne zasady,',
+  so: 'Xeerar cad,',
+  ti: 'ንጹር ሕግታት፣',
+  tr: 'Açık kurallar,',
+  uk: 'Чіткі правила,',
+};
 const forbiddenTigrinyaWorkWelfareTerms = ['kollektivavtal', 'föräldraledighet', 'sjukpenning'];
 const forbiddenStaticHomeEducationTerms = /\b(?:Förskola|förskola|universitet)\b/iu;
 
@@ -323,6 +335,23 @@ test('Central Kurdish legal reading-time metadata uses localized minutes', () =>
     assert.equal(value, expected, `ckb.${key}`);
     assert.match(value, /خولەک/, `ckb.${key} should use the Central Kurdish minute unit`);
     assert.doesNotMatch(value, /\bmin\b/i, `ckb.${key} must not contain English min`);
+  }
+});
+
+test('extra locale Terms h1a rejects the Plain rules English fallback', () => {
+  const extra = loadExtraI18n();
+
+  for (const locale of extraLocales) {
+    const dictionary = extra?.[locale];
+    assert.equal(typeof dictionary, 'object', `${locale} dictionary must exist`);
+
+    const h1a = dictionary['terms.h1a'];
+    const h1b = dictionary['terms.h1b'];
+    assert.equal(h1a, expectedExtraLocaleTermsH1a[locale], `${locale}.terms.h1a`);
+    assert.equal(typeof h1b, 'string', `${locale}.terms.h1b must be a string`);
+    assert.notEqual(h1b.trim(), '', `${locale}.terms.h1b must not be empty`);
+    assert.doesNotMatch(h1a, /Plain rules/i, `${locale}.terms.h1a uses English fallback`);
+    assert.doesNotMatch(h1b, /plainly written/i, `${locale}.terms.h1b uses English fallback`);
   }
 });
 
