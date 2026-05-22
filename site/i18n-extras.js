@@ -117,6 +117,7 @@
       'purchase.status.realSignin': '购买跳转前需要真实的 Supabase 登录。',
       'purchase.status.preparing': '正在准备绑定账号的 Google Play 跳转…',
       'purchase.status.error': '购买无法开始。请重新登录后再试。',
+      'purchase.status.backendMissing': '购买设置尚未完成：Supabase 中缺少购买意向表。',
       'terms.h1a': '规则清楚，',
       'chap.1.t': '瑞典简史',
       'chap.2.t': '瑞典如何治理',
@@ -516,6 +517,7 @@
       'purchase.status.realSignin': '購買跳轉前需要真實的 Supabase 登入。',
       'purchase.status.preparing': '正在準備綁定帳號的 Google Play 跳轉…',
       'purchase.status.error': '購買無法開始。請重新登入後再試。',
+      'purchase.status.backendMissing': '購買設定尚未完成：Supabase 中缺少購買意向表。',
       'terms.h1a': '規則清楚，',
       'chap.1.t': '瑞典簡史',
       'chap.2.t': '瑞典如何治理',
@@ -923,6 +925,8 @@
       'purchase.status.realSignin': 'يلزم تسجيل دخول Supabase حقيقي قبل تحويل الشراء.',
       'purchase.status.preparing': 'نحضّر تحويل Google Play المرتبط بحسابك…',
       'purchase.status.error': 'تعذر بدء الشراء. سجّل الدخول مرة أخرى وحاول مجددًا.',
+      'purchase.status.backendMissing':
+        'لم يكتمل إعداد الشراء بعد: جدول نية الشراء غير موجود في Supabase.',
       'terms.h1a': 'قواعد واضحة،',
       'chap.1.t': 'تاريخ قصير جداً للسويد',
       'chap.2.t': 'كيف تُحكم السويد',
@@ -1342,6 +1346,8 @@
       'purchase.status.realSignin': 'Satın alma aktarımından önce gerçek Supabase girişi gerekir.',
       'purchase.status.preparing': 'Hesaba bağlı Google Play aktarımı hazırlanıyor…',
       'purchase.status.error': 'Satın alma başlatılamadı. Lütfen tekrar giriş yapıp deneyin.',
+      'purchase.status.backendMissing':
+        'ئامادەکردنی کڕینەکە تەواو نەبووە: خشتەی نیتی کڕین لە Supabaseدا نییە.',
       'terms.h1a': 'ڕێساکان ڕوونن،',
       'chap.1.t': 'مێژوویەکی زۆر کورتی سوید',
       'chap.2.t': 'سوید چۆن بەڕێوە دەبرێت',
@@ -1766,6 +1772,8 @@
       'purchase.status.realSignin': 'Satın alma aktarımından önce gerçek Supabase girişi gerekir.',
       'purchase.status.preparing': 'Hesaba bağlı Google Play aktarımı hazırlanıyor…',
       'purchase.status.error': 'Satın alma başlatılamadı. Lütfen tekrar giriş yapıp deneyin.',
+      'purchase.status.backendMissing':
+        'راه‌اندازی خرید هنوز کامل نیست: جدول نیت خرید در Supabase وجود ندارد.',
       'terms.h1a': 'قوانین روشن،',
       'chap.1.t': 'تاریخ بسیار کوتاه سوئد',
       'chap.2.t': 'سوئد چگونه اداره می‌شود',
@@ -2193,6 +2201,8 @@
       'purchase.status.preparing': 'Przygotowujemy przekazanie do Google Play przypisane do konta…',
       'purchase.status.error':
         'Nie można rozpocząć zakupu. Zaloguj się ponownie i spróbuj jeszcze raz.',
+      'purchase.status.backendMissing':
+        'Konfiguracja zakupu nie jest jeszcze ukończona: w Supabase brakuje tabeli intencji zakupu.',
       'terms.h1a': 'Jasne zasady,',
       'chap.1.t': 'Bardzo krótka historia Szwecji',
       'chap.2.t': 'Jak rządzona jest Szwecja',
@@ -2625,6 +2635,8 @@
       'purchase.status.realSignin': 'Satın alma aktarımından önce gerçek Supabase girişi gerekir.',
       'purchase.status.preparing': 'Hesaba bağlı Google Play aktarımı hazırlanıyor…',
       'purchase.status.error': 'Satın alma başlatılamadı. Lütfen tekrar giriş yapıp deneyin.',
+      'purchase.status.backendMissing':
+        'Dejinta iibsigu weli ma dhammaan: jadwalka ujeeddada iibsiga ayaa ka maqan Supabase.',
       'terms.h1a': 'Xeerar cad,',
       'chap.1.t': 'Taariikh aad u kooban oo Iswiidhan ah',
       'chap.2.t': 'Sida Iswiidhan loo maamulo',
@@ -3040,16 +3052,16 @@
       'purchase.premium.title': 'ናይ ምሉእ ዕድመ ፕሪሚየም',
       'purchase.premium.body':
         'ኩሉ ናይ ብዘይ መወዓውዒ መደብ ዘጠቓልል፣ ምስኡ ድማ ናይ ፕሪሚየም መሳርሒ መጽናዕቲ — ኣብ ኢ-ቡክ ምልክት ምግባር፣ መዘኻኸርን ካልእን — ነቲ እትኣትዎ ሕሳብ።',
-      'purchase.premium.locked': 'Premium satın almak için giriş yapın',
-      'purchase.premium.ready': 'Google Play ile devam et — 59 kr',
-      'purchase.price.once': 'tek seferlik',
-      'purchase.status.locked': 'Yükseltmenin hesabınıza bağlanması için önce giriş yapın.',
-      'purchase.status.ready': '{account} olarak satın almaya hazır.',
-      'purchase.status.needSignIn':
-        'Önce giriş yapın. Satın almalar burada kullandığınız hesaba bağlanır.',
-      'purchase.status.realSignin': 'Satın alma aktarımından önce gerçek Supabase girişi gerekir.',
-      'purchase.status.preparing': 'Hesaba bağlı Google Play aktarımı hazırlanıyor…',
-      'purchase.status.error': 'Satın alma başlatılamadı. Lütfen tekrar giriş yapıp deneyin.',
+      'purchase.premium.locked': 'ፕሪሚየም ክትዕድግ እቶ',
+      'purchase.premium.ready': 'ብ Google Play ቀጽል — 59 kr',
+      'purchase.price.once': 'ናይ ሓንሳብ ዕድጊ',
+      'purchase.status.locked': 'ምዕባይካ ምስ ሕሳብካ ክተሓሓዝ ቅድም እቶ።',
+      'purchase.status.ready': 'ከም {account} ንዕድጊ ድሉው እዩ።',
+      'purchase.status.needSignIn': 'ቅድም እቶ። ዕድጊታት ምስቲ ኣብዚ እትጥቀመሉ ሕሳብ ይተሓሓዛ።',
+      'purchase.status.realSignin': 'ቅድሚ ናይ ዕድጊ ምምሕልላፍ፣ ናይ Supabase ናይ ብሓቂ ምእታው የድሊ።',
+      'purchase.status.preparing': 'ምስ ሕሳብካ ዝተተሓሓዘ ናብ Google Play ምምሕልላፍ ይዳሎ ኣሎ…',
+      'purchase.status.error': 'ዕድጊ ክጅምር ኣይከኣለን። በጃኻ ደጊምካ እቶ እሞ ፈትን።',
+      'purchase.status.backendMissing': 'ምድላው ዕድጊ ገና ኣይተዛዘመን፦ ናይ ዕድጊ ድሌት ሰሌዳ ኣብ Supabase የለን።',
       'terms.h1a': 'ንጹር ሕግታት፣',
       'chap.1.t': 'ኣዝዩ ሓጺር ታሪኽ ሽወደን',
       'chap.2.t': 'ሽወደን ከመይ ትመሓደር',
@@ -3459,6 +3471,8 @@
       'purchase.status.realSignin': 'Satın alma aktarımından önce gerçek Supabase girişi gerekir.',
       'purchase.status.preparing': 'Hesaba bağlı Google Play aktarımı hazırlanıyor…',
       'purchase.status.error': 'Satın alma başlatılamadı. Lütfen tekrar giriş yapıp deneyin.',
+      'purchase.status.backendMissing':
+        'Satın alma kurulumu henüz tamamlanmadı: Supabase’de satın alma niyeti tablosu eksik.',
       'terms.h1a': 'Açık kurallar,',
       'chap.1.t': 'İsveç’in çok kısa tarihi',
       'chap.2.t': 'İsveç nasıl yönetilir',
@@ -3885,6 +3899,8 @@
       'purchase.status.preparing':
         'Готуємо передачу до Google Play, прив’язану до вашого облікового запису…',
       'purchase.status.error': 'Не вдалося почати покупку. Увійдіть ще раз і повторіть спробу.',
+      'purchase.status.backendMissing':
+        'Налаштування покупки ще не завершено: у Supabase бракує таблиці наміру покупки.',
       'terms.h1a': 'Чіткі правила,',
       'chap.1.t': 'Дуже коротка історія Швеції',
       'chap.2.t': 'Як керується Швеція',

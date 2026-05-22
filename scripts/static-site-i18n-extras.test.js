@@ -200,6 +200,8 @@ const supportMetadataEnglishFallbacks = {
 };
 const privacyPurchaseActionKeys = ['privacy.lede', 'privacy.s5.p'];
 const englishPrivacyPurchaseActionLabel = /\bRemove Ads\b/i;
+const purchaseBackendMissingEnglishFallback =
+  /Purchase setup|purchase-intent table|Online purchases are not enabled|Something went wrong/i;
 const forbiddenTigrinyaWorkWelfareTerms = ['kollektivavtal', 'föräldraledighet', 'sjukpenning'];
 const forbiddenStaticHomeEducationTerms = /\b(?:Förskola|förskola|universitet)\b/iu;
 const cheatsheetCopyKeys = [
@@ -751,6 +753,31 @@ test('extra locale Privacy copy localizes Remove Ads purchase-action labels', ()
 
   assert.match(extra.ti['privacy.lede'], /መወዓውዒታት ኣወግድ/);
   assert.match(extra.ti['privacy.s5.p'], /መወዓውዒታት ኣወግድ/);
+});
+
+test('extra locale purchase backend-missing status is localized for every static language', () => {
+  const extra = loadExtraI18n();
+  const base = loadBaseI18n();
+
+  for (const locale of extraLocales) {
+    const value = extra?.[locale]?.['purchase.status.backendMissing'];
+    assert.equal(typeof value, 'string', `${locale}.purchase.status.backendMissing must exist`);
+    assert.notEqual(value.trim(), '', `${locale}.purchase.status.backendMissing must not be empty`);
+    assert.notEqual(
+      value,
+      base.en['purchase.status.backendMissing'],
+      `${locale}.purchase.status.backendMissing must not fall back to English`,
+    );
+    assert.doesNotMatch(
+      value,
+      purchaseBackendMissingEnglishFallback,
+      `${locale}.purchase.status.backendMissing must not use an English backend-missing fallback`,
+    );
+  }
+
+  assert.match(extra.ckb['purchase.status.backendMissing'], /خشتەی نیتی کڕین/);
+  assert.match(extra.so['purchase.status.backendMissing'], /ujeeddada iibsiga/);
+  assert.match(extra.ti['purchase.status.backendMissing'], /ናይ ዕድጊ ድሌት/);
 });
 
 test('extra locale Home chapter 1 folkhemmet glossary terms use localized wording first', () => {

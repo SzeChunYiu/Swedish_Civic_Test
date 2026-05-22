@@ -10,14 +10,8 @@
 
 (function () {
   const PLAN_COPY = {
-    remove_ads: { locked: 'purchase.removeAds.locked' },
-    pro_lifetime: { locked: 'purchase.premium.locked' },
-  };
-  // Labels are literal (not the old i18n keys) because those said "Continue with
-  // Google Play"; this is now a Stripe web checkout.
-  const READY_LABEL = {
-    remove_ads: 'Remove ads — 29 kr',
-    pro_lifetime: 'Premium Lifetime — 59 kr',
+    remove_ads: { locked: 'purchase.removeAds.locked', ready: 'purchase.removeAds.ready' },
+    pro_lifetime: { locked: 'purchase.premium.locked', ready: 'purchase.premium.ready' },
   };
   const OWNED_LABEL = {
     remove_ads: 'Ad-free — active ✓',
@@ -65,8 +59,27 @@
     if (window.smtFx && message) window.smtFx.toast(message, { duration: 2600 });
   }
 
+  function isPurchaseBackendMissing(errorPayload) {
+    if (!errorPayload || typeof errorPayload !== 'object') return false;
+    const fields = [
+      errorPayload.code,
+      errorPayload.error,
+      errorPayload.message,
+      errorPayload.details,
+      errorPayload.hint,
+    ]
+      .filter(Boolean)
+      .map(String)
+      .join(' ');
+    return (
+      /\bPGRST205\b/.test(fields) ||
+      (/purchase[_-]?intents?/i.test(fields) && /missing|not found|schema cache/i.test(fields))
+    );
+  }
+
   function setButtonState(button, account) {
     const kind = button.dataset.purchaseKind;
+    const copy = PLAN_COPY[kind] || PLAN_COPY.remove_ads;
     const owned =
       ownedPlans.includes(kind) || (kind === 'remove_ads' && ownedPlans.includes('pro_lifetime'));
     const locked = !account;
@@ -75,8 +88,8 @@
     button.removeAttribute('aria-disabled');
     button.disabled = owned;
     if (owned) button.textContent = OWNED_LABEL[kind] || 'Active ✓';
-    else if (locked) button.textContent = t((PLAN_COPY[kind] || PLAN_COPY.remove_ads).locked);
-    else button.textContent = READY_LABEL[kind] || 'Buy';
+    else if (locked) button.textContent = t(copy.locked);
+    else button.textContent = t(copy.ready);
   }
 
   function renderPurchaseGate() {
@@ -84,6 +97,12 @@
     document.querySelectorAll('[data-purchase-kind]').forEach((button) => {
       setButtonState(button, account);
     });
+    const status = document.getElementById('purchase-status');
+    if (status) {
+      status.textContent = account
+        ? t('purchase.status.ready', { account: account.email || account.id })
+        : t('purchase.status.locked');
+    }
   }
 
   function supabaseConfigured() {
@@ -152,6 +171,9 @@
     if (resp.status === 501 || json.error === 'not_configured') {
       return { notConfigured: true };
     }
+    if (isPurchaseBackendMissing(json)) {
+      return { backendMissing: true };
+    }
     if (!resp.ok || !json.url) {
       throw new Error(json.error || `checkout_failed_${resp.status}`);
     }
@@ -179,9 +201,14 @@
     if (!isRealPurchaseAccount(account)) return;
 
     button.disabled = true;
-    statusMsg('Opening secure checkout…');
+    statusMsg(t('purchase.status.preparing'));
     try {
       const result = await startCheckout(kind);
+      if (result.backendMissing) {
+        button.disabled = false;
+        statusMsg(t('purchase.status.backendMissing'));
+        return;
+      }
       if (result.notConfigured) {
         button.disabled = false;
         statusMsg('Online purchases are not enabled yet — please check back soon.');
@@ -191,7 +218,7 @@
     } catch (error) {
       if (console && console.warn) console.warn('[purchase] checkout failed', error);
       button.disabled = false;
-      statusMsg('Something went wrong starting checkout. Please try again.');
+      statusMsg(t('purchase.status.error'));
     }
   }
 

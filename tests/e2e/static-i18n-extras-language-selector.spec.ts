@@ -948,6 +948,73 @@ test('static purchase gate uses localized extra-language copy and account interp
   expect(pageErrors).toEqual([]);
 });
 
+test('static purchase gate localizes backend-missing Supabase errors in extra languages', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const pageErrors = collectPageErrors(page);
+  await page.addInitScript(() => {
+    Object.defineProperty(window, 'SMT_SUPABASE_URL', {
+      configurable: true,
+      get: () => 'https://supabase.example',
+      set: () => undefined,
+    });
+    Object.defineProperty(window, 'SMT_SUPABASE_ANON_KEY', {
+      configurable: true,
+      get: () => 'anon-key',
+      set: () => undefined,
+    });
+    const originalFetch = window.fetch.bind(window);
+    window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
+      if (url.includes('/functions/v1/create-checkout')) {
+        return new Response(
+          JSON.stringify({
+            code: 'PGRST205',
+            message: 'Could not find the table public.purchase_intents in the schema cache',
+          }),
+          {
+            headers: { 'content-type': 'application/json' },
+            status: 400,
+          },
+        );
+      }
+      return originalFetch(input, init);
+    };
+  });
+  await openStaticHome(page, staticSite.baseUrl);
+
+  await page.evaluate(() => {
+    window.localStorage.setItem('smt_signed_in', '1');
+    window.localStorage.setItem('smt_account_id', 'acct-extra-locale');
+    window.localStorage.setItem('smt_account_email', 'learner@example.test');
+    (window as any).smtGetSupabaseClient = async () => ({
+      auth: {
+        getSession: async () => ({ data: { session: { access_token: 'token' } } }),
+      },
+      from: () => ({
+        select: () => ({
+          eq: async () => ({ data: [], error: null }),
+        }),
+      }),
+    });
+    window.smtSetLanguage?.('so');
+    window.dispatchEvent(new Event('smt:authchange'));
+  });
+
+  await expectRootLocale(page, 'so');
+  await page.locator('[data-purchase-kind="remove_ads"]').click();
+  await expect(page.locator('#purchase-status')).toHaveText(
+    await dictionaryText(page, 'so', 'purchase.status.backendMissing'),
+  );
+  await expect(page.locator('#purchase-status')).not.toContainText(
+    /Purchase setup|purchase-intent/i,
+  );
+  await expect(page.locator('[data-purchase-kind="remove_ads"]')).toBeEnabled();
+
+  expect(pageErrors).toEqual([]);
+});
+
 test('static Home chapter 1 folkhemmet glossary keeps localized term before Swedish glossary', async ({
   page,
 }) => {
