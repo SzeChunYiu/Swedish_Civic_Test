@@ -25,10 +25,15 @@ test('shared Badge keeps visual uppercase text and readable accessibility labels
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'components/ui/Badge.tsx'), 'utf8');
 
-  assert.equal(summary.badgeAccessibilityRulesValidated, 9);
+  assert.equal(summary.badgeAccessibilityRulesValidated, 11);
   assert.equal(summary.badgeAccessibilityParityValidated, true);
   assert.match(source, /const badgeAccessibilityLabel =/);
-  assert.match(source, /accessibilityLabel \?\?/);
+  assert.match(
+    source,
+    /accessibilityLabel \?\? getPrimitiveChildrenAccessibilityLabel\(children\)/,
+  );
+  assert.match(source, /function getPrimitiveChildrenAccessibilityLabel\(children: ReactNode\)/);
+  assert.match(source, /Array\.isArray\(child\)/);
   assert.match(source, /aria-label=\{badgeAccessibilityLabel\}/);
   assert.match(source, /accessibilityLabel=\{badgeAccessibilityLabel\}/);
   assert.match(source, /style=\{\[styles\.badge, styles\[tone\], style\]\}/);
@@ -61,6 +66,37 @@ require('./scripts/validate-content.js');
 
   assert.notEqual(result.status, 0);
   assert.match(`${result.stdout}\n${result.stderr}`, /Badge missing web aria label/);
+});
+
+test('Badge accessibility parity rejects primitive-array label fallback drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/ui/Badge.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('if (Array.isArray(child)) {', 'if (false && Array.isArray(child)) {');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('${BADGE_ACCESSIBILITY_FOCUS_FLAG}');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /Badge missing primitive child array label fallback/,
+  );
 });
 
 test('Badge accessibility parity rejects dropped caller style overrides', () => {

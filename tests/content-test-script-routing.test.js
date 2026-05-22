@@ -565,8 +565,8 @@ test('Badge accessibility parity uses focused content validation routing', () =>
     badgeTestSource.match(/process\.argv\.push\('\$\{BADGE_ACCESSIBILITY_FOCUS_FLAG\}'\)/g) ?? [];
   assert.equal(
     mutationFocusPushes.length,
-    2,
-    'Badge accessibility mutation fixtures must both route through the focused validator',
+    3,
+    'Badge accessibility mutation fixtures must all route through the focused validator',
   );
 
   const result = spawnSync(
@@ -582,7 +582,7 @@ test('Badge accessibility parity uses focused content validation routing', () =>
   for (const key of registryEntry.summaryKeys) {
     assert.ok(Object.prototype.hasOwnProperty.call(summary, key), `${key} is present`);
   }
-  assert.equal(summary.badgeAccessibilityRulesValidated, 9);
+  assert.equal(summary.badgeAccessibilityRulesValidated, 11);
   assert.equal(summary.badgeAccessibilityParityValidated, true);
   assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
 });

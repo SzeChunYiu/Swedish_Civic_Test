@@ -3714,8 +3714,16 @@ const EXPECTED_BADGE_ACCESSIBILITY_RULES = [
   },
   {
     label: 'explicit label override before child fallback',
+    pattern: /accessibilityLabel \?\? getPrimitiveChildrenAccessibilityLabel\(children\)/,
+  },
+  {
+    label: 'primitive child label helper',
     pattern:
-      /accessibilityLabel \?\?\s*\(\s*typeof children === 'string' \|\| typeof children === 'number' \? String\(children\) : undefined\s*\)/,
+      /function getPrimitiveChildrenAccessibilityLabel\(children: ReactNode\): string \| undefined/,
+  },
+  {
+    label: 'primitive child array label fallback',
+    pattern: /if \(Array\.isArray\(child\)\) \{[\s\S]*child\.forEach\(collectLabelPart\);[\s\S]*\}/,
   },
   {
     label: 'web aria label',
