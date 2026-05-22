@@ -143,6 +143,15 @@ const chapterTwoCivicTermSnippets = {
   tr: /belediyeler ve bölgeler/,
   uk: /муніципалітети й регіони/,
 };
+const chapterThreeFundamentalLawLocales = ['ar', 'ckb', 'so', 'ti', 'tr', 'uk'];
+const chapterThreeFundamentalLawSnippets = {
+  ar: /القوانين الأساسية\s*\(Grundlagarna\)/,
+  ckb: /یاسا بنەڕەتییەکان\s*\(Grundlagarna\)/,
+  so: /Shuruucda aasaasiga ah\s*\(Grundlagarna\)/i,
+  ti: /መሰረታዊ ሕግታት\s*\(Grundlagarna\)/,
+  tr: /Temel yasalar\s*\(Grundlagarna\)/i,
+  uk: /Основні закони\s*\(Grundlagarna\)/i,
+};
 const chapterSixEducationLocales = ['so', 'ti', 'tr'];
 const chapterSixEducationSnippets = {
   so: /dugsiyada barbaarinta.+jaamacadda/,
@@ -466,6 +475,33 @@ test('extra locale Home chapter 2 civic terms use localized nouns', () => {
       value,
       /\b(?:kommun|region|regering)\b/i,
       `${locale}.chap.2.d must not keep bare Swedish civic-term tokens`,
+    );
+  }
+});
+
+test('Arabic Central Kurdish Somali Tigrinya Turkish and Ukrainian Home chapter 3 fundamental laws use localized glosses', () => {
+  const extra = loadExtraI18n();
+
+  for (const locale of chapterThreeFundamentalLawLocales) {
+    const dictionary = extra?.[locale];
+    assert.equal(typeof dictionary, 'object', `${locale} dictionary must exist`);
+
+    const value = dictionary['chap.3.d'];
+    assert.equal(typeof value, 'string', `${locale}.chap.3.d must be a string`);
+    assert.notEqual(value.trim(), '', `${locale}.chap.3.d must not be empty`);
+    assert.match(
+      value,
+      chapterThreeFundamentalLawSnippets[locale],
+      `${locale}.chap.3.d should explain Grundlagarna with a localized term first`,
+    );
+    assert.ok(
+      value.search(chapterThreeFundamentalLawSnippets[locale]) < value.indexOf('Grundlagarna'),
+      `${locale}.chap.3.d should place the localized term before the Swedish glossary`,
+    );
+    assert.doesNotMatch(
+      value,
+      /^Grundlagarna\b/,
+      `${locale}.chap.3.d must not start with bare Swedish Grundlagarna`,
     );
   }
 });

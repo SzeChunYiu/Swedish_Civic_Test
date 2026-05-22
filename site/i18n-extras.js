@@ -1008,7 +1008,7 @@
         'Riksdag (البرلمان السويدي)، الحكومة، البلديات، والمناطق. مَن يقرّر ماذا، ومَن تنتخب، ولماذا لا يخشى أحد الملك.',
       'chap.2.m2': '~12 دقيقة',
       'chap.3.d':
-        'Grundlagarna بلغة بسيطة. حرية الصحافة، وحرية التعبير، ولماذا لا يحقّ لمديرك أن يسألك عن دينك.',
+        'القوانين الأساسية (Grundlagarna) بلغة بسيطة. حرية الصحافة، وحرية التعبير، ولماذا لا يحقّ لمديرك أن يسألك عن دينك.',
       'chap.3.m2': '~11 دقيقة',
       'chap.4.d':
         'Skatteverket، والاتفاقيات الجماعية، وإجازة الوالدين، والتعويض المرضي. الاتفاق الذي وافقت عليه.',
@@ -1423,7 +1423,7 @@
         'Riksdag، حکومەت، شارەوانییەکان، هەرێمەکان. کێ بڕیاری چی دەدات، دەنگ بە کێ دەدەیت، و بۆچی کەس لە پاشا ناترسێت.',
       'chap.2.m2': '~12 min',
       'chap.3.d':
-        'Grundlagarna بە زمانێکی ئاسان. ئازادیی چاپ، ئازادیی دەربڕین، و بۆچی بەرپرسەکەت ناتوانێت پرسیاری ئاینەکەت لێ بکات.',
+        'یاسا بنەڕەتییەکان (Grundlagarna) بە زمانێکی ئاسان. ئازادیی چاپ، ئازادیی دەربڕین، و بۆچی بەرپرسەکەت ناتوانێت پرسیاری ئاینەکەت لێ بکات.',
       'chap.3.m2': '~11 min',
       'chap.4.d':
         'Skatteverket، گرێبەستی هاوبەشی کار، مۆڵەتی دایک و باوکی، پارەی نەخۆشی. ئەو ڕێککەوتنەی پەسەندت کرد.',
@@ -2692,7 +2692,7 @@
         "Riksdag, xukuumadda, degmooyinka iyo gobollada. Yaa go'aamiya maxay, yaad u codaysaa, iyo sababta aan cidna uga baqin boqorka.",
       'chap.2.m2': '~12 daqiiqo',
       'chap.3.d':
-        'Grundlagarna oo luqad fudud ku qoran. Xorriyadda daabacaadda, xorriyadda hadalka, iyo sababta uusan madaxaagu wax kaaga weydiin karin diintaada.',
+        'Shuruucda aasaasiga ah (Grundlagarna) oo si fudud loo sharxay. Xorriyadda daabacaadda, xorriyadda hadalka, iyo sababta uusan madaxaagu wax kaaga weydiin karin diintaada.',
       'chap.3.m2': '~11 daqiiqo',
       'chap.4.d':
         'Skatteverket, heshiisyada wadajirka ah, fasaxa waalidnimada, lacagta jirrada. Heshiiskii aad gashay.',
@@ -3104,7 +3104,7 @@
         'Riksdag፡ መንግስቲ፡ ናይ ከባቢ ምምሕዳራት፡ ክልላት። መን እንታይ ይውስን፡ ንመን ትመርጽ፡ ስለምንታይ ድማ ሓደ እኳ ንንጉስ ዘይፈርሕ።',
       'chap.2.m2': '~12 ደቒቕ',
       'chap.3.d':
-        'Grundlagarna ብቐሊል ቋንቋ። ናጽነት ሕትመት፡ ናጽነት ሓሳብካ ምግላጽ፡ ስለምንታይ ድማ ሓላፊኻ ብዛዕባ ሃይማኖትካ ክሓትት ዘይክእል።',
+        'መሰረታዊ ሕግታት (Grundlagarna) ብቐሊል ቋንቋ። ናጽነት ሕትመት፡ ናጽነት ሓሳብካ ምግላጽ፡ ስለምንታይ ድማ ሓላፊኻ ብዛዕባ ሃይማኖትካ ክሓትት ዘይክእል።',
       'chap.3.m2': '~11 ደቒቕ',
       'chap.4.d': 'Skatteverket፡ ሓባራዊ ስምምዓት፡ ናይ ወለዲ ዕረፍቲ፡ ጥቕማጥቕሚ ሕማም። እቲ ዝተሰማማዕካሉ ስምምዕ።',
       'chap.4.m2': '~10 ደቒቕ',
@@ -3509,7 +3509,7 @@
         'Riksdag, hükümet, belediyeler ve bölgeler. Kim neye karar verir, kime oy verirsiniz ve neden kimse kraldan korkmaz.',
       'chap.2.m2': '~12 dk',
       'chap.3.d':
-        'Grundlagarna sade bir dille. Basın özgürlüğü, ifade özgürlüğü ve patronunuzun dininizi neden soramayacağı.',
+        'Temel yasalar (Grundlagarna) sade bir dille. Basın özgürlüğü, ifade özgürlüğü ve patronunuzun dininizi neden soramayacağı.',
       'chap.3.m2': '~11 dk',
       'chap.4.d':
         'Skatteverket, toplu iş sözleşmesi, ebeveyn izni, hastalık ödeneği. Kabul ettiğiniz anlaşma.',
@@ -3930,7 +3930,7 @@
         'Riksdag, уряд, муніципалітети й регіони. Хто що вирішує, за кого ви голосуєте і чому ніхто не боїться короля.',
       'chap.2.m2': '~12 хв',
       'chap.3.d':
-        'Grundlagarna простою мовою. Свобода преси, свобода слова і чому начальник не може питати про вашу релігію.',
+        'Основні закони (Grundlagarna) простою мовою. Свобода преси, свобода слова і чому начальник не може питати про вашу релігію.',
       'chap.3.m2': '~11 хв',
       'chap.4.d':
         'Skatteverket, колективні договори, батьківська відпустка, виплати через хворобу. Угода, на яку ви погодилися.',

@@ -33,6 +33,14 @@ const localizedChapterTwoCivicTerms = {
   tr: /belediyeler ve bölgeler/,
   uk: /муніципалітети й регіони/,
 };
+const localizedChapterThreeFundamentalLawTerms = {
+  ar: /القوانين الأساسية\s*\(Grundlagarna\)/,
+  ckb: /یاسا بنەڕەتییەکان\s*\(Grundlagarna\)/,
+  so: /Shuruucda aasaasiga ah\s*\(Grundlagarna\)/i,
+  ti: /መሰረታዊ ሕግታት\s*\(Grundlagarna\)/,
+  tr: /Temel yasalar\s*\(Grundlagarna\)/i,
+  uk: /Основні закони\s*\(Grundlagarna\)/i,
+};
 const localizedChapterSixEducationTerms = {
   so: /dugsiyada barbaarinta.+jaamacadda/,
   ti: /መዋእለ ህጻናት.+ዩኒቨርሲቲ/,
@@ -228,6 +236,28 @@ test('extra locale Home chapter 2 cards localize kommun and region labels', () =
       value,
       /\b(?:kommun|region|regering)\b/i,
       `${locale}.chap.2.d must not render bare Swedish civic-term tokens`,
+    );
+  }
+});
+
+test('selected extra locale Home chapter 3 cards explain Grundlagarna with localized terms first', () => {
+  const dictionaries = loadDictionaries();
+
+  for (const [locale, localizedTerms] of Object.entries(localizedChapterThreeFundamentalLawTerms)) {
+    const value = dictionaries[locale]['chap.3.d'];
+    assert.match(
+      value,
+      localizedTerms,
+      `${locale}.chap.3.d should explain Grundlagarna with localized fundamental-law wording`,
+    );
+    assert.ok(
+      value.search(localizedTerms) < value.indexOf('Grundlagarna'),
+      `${locale}.chap.3.d should put localized wording before the Swedish glossary`,
+    );
+    assert.doesNotMatch(
+      value,
+      /^Grundlagarna\b/,
+      `${locale}.chap.3.d must not render bare Swedish Grundlagarna first`,
     );
   }
 });
