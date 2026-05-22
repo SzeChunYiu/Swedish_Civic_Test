@@ -103,16 +103,58 @@
 
   /* ---------- storage ---------- */
 
+  const HIGHLIGHT_ID_MAX_LENGTH = 160;
+  const HIGHLIGHT_TEXT_MAX_LENGTH = 500;
+  const HIGHLIGHT_ANCHOR_MAX_LENGTH = 120;
+  const HIGHLIGHT_NOTE_MAX_LENGTH = 2000;
+
+  function isPlainHighlightRecord(value) {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+    const prototype = Object.getPrototypeOf(value);
+    return prototype === Object.prototype || prototype === null;
+  }
+
+  function normalizeRequiredString(value, maxLength) {
+    if (typeof value !== 'string') return null;
+    const normalized = value.trim();
+    if (!normalized || normalized.length > maxLength) return null;
+    return normalized;
+  }
+
+  function normalizeOptionalString(value, maxLength) {
+    if (value === undefined || value === null) return '';
+    if (typeof value !== 'string') return null;
+    const normalized = value.trim();
+    if (normalized.length > maxLength) return null;
+    return normalized;
+  }
+
+  function normalizeHighlightRecord(value) {
+    if (!isPlainHighlightRecord(value)) return null;
+    const id = normalizeRequiredString(value.id, HIGHLIGHT_ID_MAX_LENGTH);
+    const text = normalizeRequiredString(value.text, HIGHLIGHT_TEXT_MAX_LENGTH);
+    const before = normalizeOptionalString(value.before, HIGHLIGHT_ANCHOR_MAX_LENGTH);
+    const after = normalizeOptionalString(value.after, HIGHLIGHT_ANCHOR_MAX_LENGTH);
+    const note = normalizeOptionalString(value.note, HIGHLIGHT_NOTE_MAX_LENGTH);
+    if (!id || !text || before === null || after === null || note === null) return null;
+    return { id, text, before, after, note };
+  }
+
+  function normalizeHighlights(value) {
+    if (!Array.isArray(value)) return [];
+    return value.map(normalizeHighlightRecord).filter(Boolean);
+  }
+
   function loadHighlights(chId) {
     try {
-      return JSON.parse(localStorage.getItem('smt_hl_' + chId) || '[]');
+      return normalizeHighlights(JSON.parse(localStorage.getItem('smt_hl_' + chId) || '[]'));
     } catch {
       return [];
     }
   }
   function saveHighlights(chId, arr) {
     try {
-      localStorage.setItem('smt_hl_' + chId, JSON.stringify(arr));
+      localStorage.setItem('smt_hl_' + chId, JSON.stringify(normalizeHighlights(arr)));
     } catch {}
   }
 
@@ -130,6 +172,7 @@
     if (!reader || !reader.contains(sel.anchorNode)) return null;
     const text = sel.toString().trim();
     if (text.length < 3) return null;
+    if (text.length > HIGHLIGHT_TEXT_MAX_LENGTH) return null;
     const range = sel.getRangeAt(0);
     // capture small slices of plain text on either side of the selection
     // using the chapter's plain text as the canonical search space
@@ -337,7 +380,7 @@
     const hls = loadHighlights(chId);
     const hl = hls.find((h) => h.id === hlId);
     if (!hl) return;
-    hl.note = p.querySelector('.eb-note__ta').value.trim();
+    hl.note = p.querySelector('.eb-note__ta').value.trim().slice(0, HIGHLIGHT_NOTE_MAX_LENGTH);
     saveHighlights(chId, hls);
     if (window.smtEbookRender) window.smtEbookRender();
     else applyHighlights();

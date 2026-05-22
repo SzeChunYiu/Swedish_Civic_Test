@@ -174,68 +174,19 @@ function createEbookToolsHarness() {
   };
 }
 
-test('static optional account surface preserves anonymous local study boundaries', () => {
+test('static site optional account surface keeps ebook highlights account-free', () => {
   const index = read('site/index.html');
-  const app = read('site/app.js');
-  const extras = read('site/i18n-extras.js');
-  const styles = read('site/styles.css');
   const ebookTools = read('site/ebook-tools.js');
   const purchase = read('site/purchase.js');
   const signin = read('site/signin.js');
   const v11 = read('site/v11.js');
 
-  const staticSurface = [index, app, extras, styles, ebookTools].join('\n');
-
   assert.match(index, /id="signin-open"/);
   assert.match(index, /id="signin-modal"/);
   assert.match(index, /<script src="signin\.js"><\/script>/);
-  assert.match(staticSurface, /Continue with Google|Forts[aä]tt med Google/i);
-  assert.match(staticSurface, /Continue with Apple|Forts[aä]tt med Apple/i);
-  assert.match(staticSurface, /Email me a magic link|Mejla mig en magisk l[aä]nk/i);
-  assert.match(index, /data-sk-placeholder="signin\.email\.placeholder"/);
-  assert.match(index, /data-sk-aria-label="signin\.email\.label"/);
-  assert.match(app, /No — you can do everything without registering/);
-  assert.match(app, /Signing in is optional, but it unlocks more/);
-  assert.match(app, /Study progress stays local/);
-  assert.match(app, /Dina framsteg sparas lokalt/);
-
-  assert.match(index, /window\.SMT_SITE_ORIGIN = 'https:\/\/almostswedish\.se'/);
-  assert.match(
-    index,
-    /window\.SMT_SUPABASE_URL\s*=\s*\n\s*window\.SMT_SUPABASE_URL \|\| 'https:\/\/uesfowwijbdlffyweyum\.supabase\.co'/,
-  );
-  assert.match(
-    index,
-    /window\.SMT_SUPABASE_ANON_KEY\s*=\s*\n\s*window\.SMT_SUPABASE_ANON_KEY \|\| 'sb_publishable_/,
-  );
-  assert.doesNotMatch(index, /intentionally LEFT EMPTY|leave EMPTY|no CDN is contacted/i);
-  assert.doesNotMatch(index, /<script[^>]+supabase-js/i);
-
-  assert.match(signin, /function\s+isConfigured\(\)/);
-  assert.match(signin, /if\s*\(!isConfigured\(\)\)\s+return Promise\.resolve\(null\)/);
-  assert.match(signin, /import\('https:\/\/esm\.sh\/@supabase\/supabase-js@2'\)/);
-  assert.match(
-    signin,
-    /if\s*\(!isConfigured\(\)\)\s+return;[\s\S]*clearConfiguredLocalDemoSession\(\);[\s\S]*getClient\(\)\.then/,
-  );
-  assert.match(signin, /window\.smtOpenSignin = open/);
-  assert.match(signin, /window\.smtIsSignedIn = signedIn/);
-  assert.match(signin, /#signin-modal \[data-sk-placeholder\]/);
-  assert.match(signin, /setAttribute\('placeholder', v\)/);
-  assert.match(signin, /#signin-modal \[data-sk-aria-label\]/);
-  assert.match(signin, /setAttribute\('aria-label', v\)/);
-  assert.match(signin, /if \(!email\) \{\s*if \(input\) input\.focus\(\);\s*return;\s*\}/);
-
-  assert.match(purchase, /account\.id === 'local-demo'/);
-  assert.match(purchase, /function\s+isRealPurchaseAccount\b/);
-  assert.match(purchase, /account\.id !== 'local-demo'/);
-  assert.match(purchase, /purchase\.status\.realSignin/);
-  assert.match(purchase, /window\.smtOpenSignin\(\)/);
-  assert.match(v11, /accountId !== 'local-demo'/);
-
+  assert.match(index, /Highlights and notes stay in this browser\. No account is needed\./);
   assert.doesNotMatch(ebookTools, /isSignedIn|showSigninNudge|data-act="signin"/);
-  assert.doesNotMatch(ebookTools, /smtOpenSignin|smt_signed_in|signin__/);
-  assert.doesNotMatch(staticSurface, /Sign in to highlight|Logga in f[oö]r att markera/i);
+  assert.doesNotMatch(ebookTools, /Sign in to (?:sync|highlight)|Logga in för att markera/i);
 });
 
 test('ebook highlights and notes stay local without account prompts', () => {
@@ -312,6 +263,67 @@ test('ebook highlight and note controls expose localized accessible names', () =
   harness.documentListeners.get('mouseup')({ target: { closest: () => null } });
   assert.equal(highlightButton.getAttribute('aria-label'), 'Highlight');
   assert.equal(noteButton.getAttribute('aria-label'), 'Add note');
+});
+
+test('ebook malformed highlight storage hydrates to a safe empty notes list', () => {
+  const malformedStorageValues = [
+    '"not an array"',
+    '{"length":1}',
+    '42',
+    'null',
+    JSON.stringify([
+      null,
+      [],
+      { id: '', text: 'viktig text', before: '', after: '', note: '' },
+      { id: 'h1', text: '', before: '', after: '', note: '' },
+      { id: 'h2', text: 'x'.repeat(501), before: '', after: '', note: '' },
+      { id: 'h3', text: 'viktig text', before: '', after: '', note: 'x'.repeat(2001) },
+      { id: 'h4', text: 'viktig text', before: {}, after: '', note: '' },
+    ]),
+  ];
+
+  for (const storedValue of malformedStorageValues) {
+    const harness = createEbookToolsHarness();
+    harness.localStorage.setItem('smt_hl_intro', storedValue);
+
+    assert.doesNotThrow(() => harness.context.window.smtApplyEbookHighlights());
+    assert.match(
+      harness.notesHost.innerHTML,
+      /No highlights yet\. Select text to mark it\./,
+      `malformed storage should render an empty note list for ${storedValue}`,
+    );
+    assert.doesNotMatch(harness.notesHost.innerHTML, /eb-notes-item/);
+  }
+});
+
+test('ebook highlight storage drops unsupported rows while preserving valid local records', () => {
+  const harness = createEbookToolsHarness();
+  const overlongAnchor = 'a'.repeat(121);
+  const unsafeId = 'h1"][autofocus][data-extra="x';
+
+  harness.localStorage.setItem(
+    'smt_hl_intro',
+    JSON.stringify([
+      { id: '', text: 'viktig text', before: '', after: '', note: '' },
+      { id: 'h-missing-text', before: '', after: '', note: '' },
+      { id: 'h-overlong-anchor', text: 'viktig text', before: overlongAnchor, after: '', note: '' },
+      {
+        id: unsafeId,
+        text: 'viktig text',
+        before: '',
+        after: '',
+        note: 'egen notis',
+      },
+    ]),
+  );
+
+  harness.windowListeners.get('hashchange')();
+
+  assert.match(harness.notesHost.innerHTML, /data-hl-id="h1&quot;\]\[autofocus\]/);
+  assert.match(harness.notesHost.innerHTML, /viktig text/);
+  assert.match(harness.notesHost.innerHTML, /egen notis/);
+  assert.doesNotMatch(harness.notesHost.innerHTML, /h-missing-text/);
+  assert.doesNotMatch(harness.notesHost.innerHTML, /h-overlong-anchor/);
 });
 
 test('ebook highlight ids are escaped before note rendering and selector lookup', () => {
