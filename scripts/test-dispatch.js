@@ -18,6 +18,13 @@ const selectors = new Map([
     },
   ],
   [
+    'mobile-ads-consent',
+    {
+      script: 'test:mobile-ads-consent',
+      description: 'focused ATT/UMP Mobile Ads consent runtime gate',
+    },
+  ],
+  [
     'xp',
     {
       script: 'test:xp-rules',

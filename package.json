@@ -28,6 +28,7 @@
     "content:export": "node scripts/export-question-bank.js",
     "test:compliance": "node --test scripts/compliance-pages.test.js",
     "test:monetization": "node --test scripts/monetization.test.js tests/remove-ads-web-e2e-mock-runtime.test.js",
+    "test:mobile-ads-consent": "node --test tests/mobile-ads-consent-runtime.test.js tests/content-mobile-ads-consent-schema-parity.test.js --test-name-pattern \"mobile ads consent|Mobile Ads consent runtime|focus-mobile-ads-consent|ATT|UMP|SDK init\" && node scripts/validate-content.js --focus-mobile-ads-consent",
     "test:publishing": "node --test scripts/publishing.test.js",
     "build:preview": "node scripts/build-preview-guard.js",
     "build:production": "node scripts/build-production-guard.js",
