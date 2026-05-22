@@ -111,6 +111,8 @@ async function expectQuestionResultNavigation({
 
   const questionId = href.match(/\/quiz\/(q\d+)/)?.[1];
   if (!questionId) throw new Error(`Question result href did not include a question id: ${href}`);
+  const routeSessionHeading =
+    language === 'sv' ? `Frågepass ${questionId}` : `Session ${questionId}`;
   const questionUrl = new URL(href, 'https://example.test');
   expect(questionUrl.pathname).toBe(`/quiz/${questionId}`);
   expect(questionUrl.searchParams.get('q')).toBe(expectedSearchQuery);
@@ -143,6 +145,7 @@ async function expectQuestionResultNavigation({
   await expect(page).toHaveURL(
     new RegExp(`/quiz/${questionId}\\?q=${encodeURIComponent(expectedSearchQuery)}$`),
   );
+  await expect(page.getByRole('heading', { name: routeSessionHeading })).toBeVisible();
   await expect(page.getByRole('heading', { name: questionTitle }).first()).toBeVisible();
   await expect(
     page
@@ -166,6 +169,8 @@ async function expectQuestionResultNavigation({
     new RegExp(`/search\\?q=${encodeURIComponent(expectedSearchQuery)}$`),
   );
   await expect(page.getByRole('textbox', { name: inputName })).toHaveValue(expectedSearchQuery);
+  await expect(page.getByRole('heading', { name: routeSessionHeading })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: backSearchLinkName })).toHaveCount(0);
 }
 
 test('search route hydrates q and query URL parameters before typing', async ({ page }) => {
