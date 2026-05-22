@@ -484,12 +484,25 @@ test('routed quiz shell copy follows Swedish and English settings language', () 
   assert.match(source, /accessibilityLabel=\{copy\.backToPracticeAccessibilityLabel\}/);
 });
 
-test('routed quiz answer state resets when the shuffle session seed changes', () => {
+test('routed quiz answer state resets when the route-entry shuffle seed changes', () => {
   const source = read('app/quiz/[sessionId].tsx');
 
   assert.match(
     source,
-    /useEffect\(\(\) => \{\n\s+setSelectedOptionId\(null\);\n\s+setSelectedConfidenceRating\(null\);\n\s+\}, \[normalizedSessionId, question\?\.id\]\);/,
+    /const routedQuizShuffleSessionId = useRoutedQuizShuffleSessionId\(normalizedSessionId\);/,
+  );
+  assert.match(
+    source,
+    /shuffleQuestionOptionsForSession\(\s*pickedQuestion,\s*routedQuizShuffleSessionId\s*\)/,
+  );
+  assert.match(
+    source,
+    /useEffect\(\(\) => \{\n\s+setSelectedOptionId\(null\);\n\s+setSelectedConfidenceRating\(null\);\n\s+\}, \[routedQuizShuffleSessionId, question\?\.id\]\);/,
+  );
+  assert.doesNotMatch(source, /\}, \[normalizedSessionId, question\?\.id\]\);/);
+  assert.doesNotMatch(
+    source,
+    /shuffleQuestionOptionsForSession\(\s*pickedQuestion,\s*normalizedSessionId\s*\)/,
   );
   assert.doesNotMatch(source, /\}, \[question\?\.id\]\);/);
 });
