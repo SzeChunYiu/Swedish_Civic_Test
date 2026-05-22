@@ -65,6 +65,53 @@ function countSourceOccurrences(source, token) {
   return source.match(new RegExp(`\\b${token}\\b`, 'g'))?.length ?? 0;
 }
 
+test('Playwright dist-web server reuse is explicit and worktree-bound', () => {
+  const playwrightConfigSource = fs.readFileSync(
+    path.join(repoRoot, 'playwright.config.ts'),
+    'utf8',
+  );
+  const serveDistWebSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/e2e/serve-dist-web.cjs'),
+    'utf8',
+  );
+
+  assert.match(
+    playwrightConfigSource,
+    /const e2ePort = Number\(process\.env\.E2E_PORT \?\? DEFAULT_E2E_PORT\);/,
+    'Playwright must keep the E2E_PORT override for unique local ports',
+  );
+  assert.match(
+    playwrightConfigSource,
+    /PORT=\$\{e2ePort\} node tests\/e2e\/serve-dist-web\.cjs/,
+    'Playwright must pass the selected E2E_PORT to the dist-web server',
+  );
+  assert.match(
+    playwrightConfigSource,
+    /process\.env\.E2E_REUSE_EXISTING_SERVER === '1' && !process\.env\.CI/,
+    'local server reuse must require E2E_REUSE_EXISTING_SERVER=1 while CI keeps reuse disabled',
+  );
+  assert.match(
+    playwrightConfigSource,
+    /reuseExistingServer,\s*\n\s*timeout:/,
+    'Playwright webServer must use the guarded reuseExistingServer value',
+  );
+  assert.doesNotMatch(
+    playwrightConfigSource,
+    /reuseExistingServer:\s*!process\.env\.CI|reuseExistingServer:\s*true/,
+    'local Playwright must not silently reuse any server already listening on the default port',
+  );
+  assert.doesNotMatch(
+    playwrightConfigSource,
+    /DIST_WEB_ROOT=/,
+    'Playwright must serve this worktree default dist-web path instead of pointing at another root',
+  );
+  assert.match(
+    serveDistWebSource,
+    /path\.join\(__dirname, '\.\.\/\.\.\/dist-web'\)/,
+    'serve-dist-web must default to the invoking worktree dist-web directory',
+  );
+});
+
 test('npm test keeps selector routing in the project dispatcher', () => {
   const pkg = readPackageJson();
   const testContentScript = pkg.scripts['test:content'];
