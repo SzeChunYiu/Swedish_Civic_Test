@@ -7,6 +7,7 @@ import {
   blockingModalOverlayLocator,
   dismissBlockingModals,
   seedFreshFirstRunSettingsLanguage,
+  seedFreshSettingsLanguageAndAboutSeen,
 } from './browserLaunch';
 import { resolveVisualSmokeOutput } from './visualSmokeOutput';
 import {
@@ -191,5 +192,31 @@ test('shared modal dismissal helper closes forced first-run guide and language p
   await expect(page.locator(blockingModalOverlayLocator)).toHaveCount(0);
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(page.getByRole('menu', { name: /Språkväljare|Language picker/ })).toHaveCount(0);
+  expect(consoleErrors).toEqual([]);
+});
+
+test('shared modal dismissal helper closes forced launch overlay', async ({ page }) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await seedFreshSettingsLanguageAndAboutSeen(page, 'en');
+  await page.goto('/home', { waitUntil: 'networkidle' });
+  await expect(page.getByRole('dialog', { name: 'Launch sponsor ad' })).toBeVisible();
+
+  const dismissal = await dismissBlockingModals(page);
+
+  expect(dismissal).toEqual({
+    firstRunAboutDismissed: false,
+    languagePickerDismissed: false,
+    launchOverlayDismissed: true,
+  });
+  await expect(page.locator(blockingModalOverlayLocator)).toHaveCount(0);
+  await expect(page.getByRole('dialog', { name: 'Launch sponsor ad' })).toHaveCount(0);
+  await expect(page.getByRole('menu', { name: /Språkväljare|Language picker/ })).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: "Today's goal" })).toBeVisible();
   expect(consoleErrors).toEqual([]);
 });

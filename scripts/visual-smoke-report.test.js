@@ -106,7 +106,7 @@ test('visual smoke uses the shared route filename contract and blocking modal ov
   assert.match(browserLaunchSource, /\[role="dialog"\]\[aria-modal="true"\]/);
   assert.match(browserLaunchSource, /\[role="menu"\]\[aria-modal="true"\]/);
   assert.match(browserLaunchSource, /function activateBlockingModalControl/);
-  assert.match(browserLaunchSource, /dispatchEvent\('click'\)/);
+  assert.match(browserLaunchSource, /dispatchEvent\('click', undefined, \{ timeout: 2_000 \}\)/);
   assert.match(
     visualSmokeSource,
     /import \{[\s\S]*visualSmokeRouteManifestEntries[\s\S]*\} from '\.\/visualSmokeRoutes';/,
@@ -147,6 +147,10 @@ test('visual smoke uses the shared route filename contract and blocking modal ov
   assert.match(visualSmokeSource, /seedFreshFirstRunSettingsLanguage\(page, 'sv'\)/);
   assert.match(visualSmokeSource, /firstRunDismissal\.firstRunAboutDismissed/);
   assert.match(visualSmokeSource, /languagePickerDismissal\.languagePickerDismissed/);
+  assert.match(visualSmokeSource, /shared modal dismissal helper closes forced launch overlay/);
+  assert.match(visualSmokeSource, /seedFreshSettingsLanguageAndAboutSeen\(page, 'en'\)/);
+  assert.match(visualSmokeSource, /getByRole\('dialog', \{ name: 'Launch sponsor ad' \}\)/);
+  assert.match(visualSmokeSource, /launchOverlayDismissed: true/);
   assert.doesNotMatch(
     visualSmokeSource,
     /page\.locator\('\[role="dialog"\]\[aria-modal="true"\]'\)/,
@@ -232,6 +236,21 @@ test('visual smoke includes a focused proof for first-run and language picker di
   assert.match(visualSmokeSource, /languagePickerDismissal\.languagePickerDismissed/);
   assert.match(visualSmokeSource, /Nuvarande språk SV\\\. Öppna språkväljaren\\\./);
   assert.match(visualSmokeSource, /locator\(blockingModalOverlayLocator\)\)\.toHaveCount\(0\)/);
+});
+
+test('visual smoke includes a focused proof for launch overlay dismissal', () => {
+  const visualSmokeSource = readRepoFile('tests/e2e/visual-smoke.spec.ts');
+
+  assert.match(visualSmokeSource, /shared modal dismissal helper closes forced launch overlay/);
+  assert.match(visualSmokeSource, /seedFreshSettingsLanguageAndAboutSeen\(page, 'en'\)/);
+  assert.match(visualSmokeSource, /getByRole\('dialog', \{ name: 'Launch sponsor ad' \}\)/);
+  assert.match(visualSmokeSource, /const dismissal = await dismissBlockingModals\(page\)/);
+  assert.match(visualSmokeSource, /launchOverlayDismissed: true/);
+  assert.match(visualSmokeSource, /locator\(blockingModalOverlayLocator\)\)\.toHaveCount\(0\)/);
+  assert.match(
+    visualSmokeSource,
+    /getByRole\('menu', \{ name: \/Språkväljare\|Language picker\/ \}\)\)\.toHaveCount\(0\)/,
+  );
 });
 
 test('visual smoke duplicate helper requires exact groups and nonempty reasons', () => {
