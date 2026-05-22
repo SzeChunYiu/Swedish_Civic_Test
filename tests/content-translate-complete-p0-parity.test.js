@@ -44,6 +44,7 @@ test('TRANSLATE-COMPLETE P0 has explicit SV/EN completeness and naturalness clos
     summary.publishedQuestions,
   );
   assert.equal(summary.questionRecordYearsEnglishNaturalnessValidated, summary.publishedQuestions);
+  assert.equal(summary.questionSuffrage1921EnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(summary.questionLuciaExplanationRoleScaffoldValidated, summary.publishedQuestions);
   assert.equal(summary.questionGoodFridayEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(

@@ -1398,7 +1398,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     ],
     2,
     'År 1921 hölls det första riksdagsvalet där både kvinnor och män fick rösta och där kvinnor kunde bli riksdagsledamöter. Nästan alla män hade fått rösträtt 1909 och beslutet om allmän rösträtt kom 1918, men 1921 är året för valet som frågan syftar på.',
-    'The first Riksdag election in which both women and men could vote and women could become members of the Riksdag was held in 1921. Almost all men had gained suffrage in 1909 and the decision on universal suffrage came in 1918, but 1921 is the year of the election asked about here.',
+    "The first Riksdag election in which both women and men could vote and women could become members of the Riksdag was held in 1921. Almost all men had gained suffrage in 1909 and the decision on universal suffrage came in 1918, but the first Riksdag election with both women's and men's voting rights and women's eligibility was held in 1921.",
     ['suffrage', '1921', 'democracy'],
     'medium',
   ),
