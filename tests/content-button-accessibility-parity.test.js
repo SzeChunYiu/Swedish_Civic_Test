@@ -6,7 +6,6 @@ const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
 const canonicalButtonPath = path.join(repoRoot, 'components/Button.tsx');
-const compatibilityButtonPath = path.join(repoRoot, 'components/ui/Button.tsx');
 
 function parseValidationSummary() {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
@@ -30,14 +29,13 @@ function walkProductSources(dir) {
 test('shared Button mirrors native accessibility state to web aria attributes', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(canonicalButtonPath, 'utf8');
-  const wrapperSource = fs.readFileSync(compatibilityButtonPath, 'utf8');
 
   assert.equal(summary.buttonAccessibilityRulesValidated, 23);
   assert.equal(summary.buttonAccessibilityParityValidated, true);
-  assert.match(wrapperSource, /export \{ Button \} from '\.\.\/Button';/);
-  assert.match(
-    wrapperSource,
-    /export type \{ ButtonProps, ButtonSize, ButtonVariant \} from '\.\.\/Button';/,
+  assert.equal(
+    fs.existsSync(path.join(repoRoot, 'components/ui/Button.tsx')),
+    false,
+    'components/ui/Button.tsx should stay retired; product code should import components/Button.tsx',
   );
   assert.match(source, /accessibilityRole = 'button'/);
   assert.match(source, /const mergedAccessibilityState =/);
@@ -63,7 +61,6 @@ test('shared Button mirrors native accessibility state to web aria attributes', 
   const splitImportOffenders = ['app', 'components'].flatMap((sourceDir) =>
     walkProductSources(path.join(repoRoot, sourceDir)).filter((filePath) => {
       const relPath = path.relative(repoRoot, filePath).replace(/\\/g, '/');
-      if (relPath === 'components/ui/Button.tsx') return false;
       const fileSource = fs.readFileSync(filePath, 'utf8');
       return /from\s+['"][^'"]*(?:components\/ui\/Button|\/ui\/Button)['"]/.test(fileSource);
     }),

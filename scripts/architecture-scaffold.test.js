@@ -31,7 +31,7 @@ const architectureTargetFiles = [
   'app/chapter/[chapterId].tsx',
   'app/quiz/[sessionId].tsx',
   'app/settings.tsx',
-  'components/ui/Button.tsx',
+  'components/Button.tsx',
   'components/ui/Card.tsx',
   'components/ui/ProgressBar.tsx',
   'components/quiz/QuestionCard.tsx',

@@ -97,9 +97,12 @@ test('provenance badge source note uses tokenized toggle feedback', () => {
 
 test('button derives an accessibility label from plain text children by default', () => {
   const source = read('components/Button.tsx');
-  const wrapperSource = read('components/ui/Button.tsx');
 
-  assert.match(wrapperSource, /export \{ Button \} from '\.\.\/Button';/);
+  assert.equal(
+    fs.existsSync(path.join(repoRoot, 'components/ui/Button.tsx')),
+    false,
+    'components/ui/Button.tsx should stay retired; motion and accessibility checks target components/Button.tsx',
+  );
   assert.match(source, /accessibilityLabel,/);
   assert.match(source, /accessibilityHint,/);
   assert.match(source, /const buttonAccessibilityLabel =/);

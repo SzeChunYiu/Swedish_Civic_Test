@@ -443,7 +443,11 @@ test('main native surfaces consume app-wide theme colors instead of static token
     assert.doesNotMatch(source, /\bcolors\./, file);
   }
 
-  assert.match(loadSource('components/ui/Button.tsx'), /export \{ Button \} from '\.\.\/Button';/);
+  assert.equal(
+    fs.existsSync(path.join(repoRoot, 'components/ui/Button.tsx')),
+    false,
+    'components/ui/Button.tsx should stay retired; components/Button.tsx is the canonical themed Button',
+  );
 });
 
 test('nested native surfaces consume app-wide theme colors instead of static tokens', () => {

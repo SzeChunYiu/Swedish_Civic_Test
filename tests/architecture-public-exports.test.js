@@ -7,10 +7,10 @@ const repoRoot = path.resolve(__dirname, '..');
 
 const architectureExpectedExports = {
   'components/Surface.tsx': ['Surface', 'SurfaceElevation', 'SurfaceProps', 'SurfaceTone'],
+  'components/Button.tsx': ['Button', 'ButtonProps', 'ButtonSize', 'ButtonVariant'],
   'components/compliance/ComplianceLinks.tsx': ['ComplianceLinks'],
   'components/compliance/LegalPage.tsx': ['LegalPage', 'LegalSection'],
   'components/ui/Badge.tsx': ['Badge'],
-  'components/ui/Button.tsx': ['Button'],
   'components/ui/Card.tsx': ['Card'],
   'components/ui/MetricCard.tsx': ['MetricCard'],
   'components/ui/ProgressBar.tsx': ['ProgressBar'],
@@ -249,5 +249,20 @@ test('component barrel does not advertise the retired Screen wrapper', () => {
     componentBarrel,
     /export\s+\*\s+from ['"]\.\/Screen['"]/,
     'components/index.ts should not re-export the retired Screen wrapper',
+  );
+});
+
+test('component barrel does not advertise the retired Button compatibility wrapper', () => {
+  const componentBarrel = readText('components/index.ts');
+
+  assert.equal(
+    fs.existsSync(path.join(repoRoot, 'components/ui/Button.tsx')),
+    false,
+    'components/ui/Button.tsx should stay removed; components/Button.tsx is the canonical Button primitive',
+  );
+  assert.doesNotMatch(
+    componentBarrel,
+    /export\s+\*\s+from ['"]\.\/ui\/Button['"]/,
+    'components/index.ts should not re-export the retired Button compatibility wrapper',
   );
 });
