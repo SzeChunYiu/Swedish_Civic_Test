@@ -30,7 +30,7 @@ const PRO_LIFETIME_SNAP = {
   nativeLangExplanations: true,
   customStudyPlan: true,
   notesExport: true,
-  predictedPassProbability: true,
+  predictedPassProbability: false,
   confidenceSlider: true,
   multiColorHighlights: true,
 };
@@ -58,7 +58,7 @@ test('resolveEffectiveEntitlement: free baseline when no inputs', () => {
   assert.equal(r.entitlements.adsDisabled, false);
 });
 
-test('resolveEffectiveEntitlement: Pro Lifetime → all flags + pro-lifetime primary', () => {
+test('resolveEffectiveEntitlement: Pro Lifetime → shipped flags + pro-lifetime primary', () => {
   const { resolveEffectiveEntitlement } = loadTs('lib/monetization/effectiveEntitlements.ts');
   const r = resolveEffectiveEntitlement({ proLifetime: PRO_LIFETIME_SNAP, now: NOW });
   assert.equal(r.primarySource, 'pro-lifetime');
@@ -141,7 +141,7 @@ test('resolveEffectiveEntitlement: Pro Lifetime contributes only strict boolean 
       nativeLangExplanations: 'yes',
       customStudyPlan: true,
       notesExport: {},
-      predictedPassProbability: [],
+      predictedPassProbability: true,
       confidenceSlider: false,
       multiColorHighlights: Number.POSITIVE_INFINITY,
     },
