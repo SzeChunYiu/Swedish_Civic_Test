@@ -24,6 +24,7 @@ import {
   dailyChallengeBannerCopy,
   isDailyChallengeCompleted,
 } from '../../lib/learning/dailyChallenge';
+import { daysUntil, formatExamDate } from '../../lib/learning/examDate';
 import { buildChapterQuestionIndex, findWeakChapterIds } from '../../lib/learning/mastery';
 import {
   buildReadinessQuestionBankIndex,
@@ -123,6 +124,12 @@ type HomeCopy = {
   startPracticeAccessibilityLabel: string;
   startPracticeSet: string;
   streakFreezeBadge: string;
+  studyPlanAccessibilityLabel: (summary: string) => string;
+  studyPlanBadge: string;
+  studyPlanCta: string;
+  studyPlanDateSummary: (daysRemaining: number, dateLabel: string) => string;
+  studyPlanNoDateSummary: string;
+  studyPlanTitle: string;
   studyLoopItems: StudyLoopItemCopy[];
   studyLoopSubtitle: string;
   studyLoopTitle: string;
@@ -258,6 +265,14 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     startPracticeAccessibilityLabel: 'Starta den rekommenderade övningen',
     startPracticeSet: 'Starta en 5-minutersövning',
     streakFreezeBadge: 'Svitskydd',
+    studyPlanAccessibilityLabel: (summary) => `Öppna studieplanen. ${summary}`,
+    studyPlanBadge: 'Provdatum',
+    studyPlanCta: 'Öppna studieplan',
+    studyPlanDateSummary: (daysRemaining, dateLabel) =>
+      `${daysRemaining} dagar till ${dateLabel}. Nedräkningen är gratis; Pro visar dagliga mål.`,
+    studyPlanNoDateSummary:
+      'Lägg till ett provdatum för en lokal nedräkning. Pro lägger till dagliga mål.',
+    studyPlanTitle: 'Din studieplan',
     studyLoopItems: [
       {
         label: 'Korta pass',
@@ -413,6 +428,13 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     startPracticeAccessibilityLabel: 'Start the recommended practice session',
     startPracticeSet: 'Start a 5-minute practice set',
     streakFreezeBadge: 'Streak freeze',
+    studyPlanAccessibilityLabel: (summary) => `Open study plan. ${summary}`,
+    studyPlanBadge: 'Test date',
+    studyPlanCta: 'Open study plan',
+    studyPlanDateSummary: (daysRemaining, dateLabel) =>
+      `${daysRemaining} days until ${dateLabel}. The countdown is free; Pro shows daily targets.`,
+    studyPlanNoDateSummary: 'Add a test date for a local countdown. Pro adds daily targets.',
+    studyPlanTitle: 'Your study plan',
     studyLoopItems: [
       {
         label: 'Bite-size practice',
@@ -467,12 +489,24 @@ export default function Screen() {
   const dailyChallengeCompletions = useProgressStore((state) => state.dailyChallengeCompletions);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const language = useSettingsStore((state) => state.language);
+  const studyPlanTestDateIso = useSettingsStore((state) => state.studyPlanTestDateIso);
   const copy = homeCopy[language];
   const themeColors = useThemeColors();
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const removeAdsPriceLabel = useRemoveAdsPriceLabel(purchaseRuntime);
   const todayKey = getLocalDateKey();
   const today = useMemo(() => new Date(`${todayKey}T12:00:00`), [todayKey]);
+  const studyPlanDate = useMemo(() => {
+    if (!studyPlanTestDateIso) return null;
+    const date = new Date(studyPlanTestDateIso);
+    return Number.isFinite(date.getTime()) ? date : null;
+  }, [studyPlanTestDateIso]);
+  const studyPlanSummary = studyPlanDate
+    ? copy.studyPlanDateSummary(
+        daysUntil(studyPlanDate, today),
+        formatExamDate(studyPlanDate, language),
+      )
+    : copy.studyPlanNoDateSummary;
   const dailyChallenge = useMemo(
     () => buildDailyChallenge({ bank: questions, now: today }),
     [today],
@@ -613,6 +647,21 @@ export default function Screen() {
     >
       <SwedishFlagBand />
       <CountdownBanner language={language} />
+      <Card style={styles.studyPlanCard}>
+        <Badge tone="blue">{copy.studyPlanBadge}</Badge>
+        <Text accessibilityRole="header" style={styles.studyPlanTitle}>
+          {copy.studyPlanTitle}
+        </Text>
+        <Text style={styles.studyPlanText}>{studyPlanSummary}</Text>
+        <RouteLink
+          accessibilityLabel={copy.studyPlanAccessibilityLabel(studyPlanSummary)}
+          href="/study-plan"
+          style={styles.studyPlanLink}
+          variant="secondary"
+        >
+          {copy.studyPlanCta}
+        </RouteLink>
+      </Card>
       <View style={styles.statRow}>
         <StatCallout value={questions.length} label={language === 'sv' ? 'frågor' : 'questions'} />
         <StatCallout
@@ -868,6 +917,23 @@ function createStyles(themeColors: ThemeColors) {
     },
     readinessCard: {
       gap: space[1.5],
+    },
+    studyPlanCard: {
+      gap: space[1],
+    },
+    studyPlanTitle: {
+      color: themeColors.text,
+      fontSize: typography.cardTitle.fontSize,
+      fontWeight: typography.cardTitle.fontWeight,
+      lineHeight: typography.cardTitle.lineHeight,
+    },
+    studyPlanText: {
+      color: themeColors.textSecondary,
+      fontSize: typography.body.fontSize,
+      lineHeight: typography.body.lineHeight,
+    },
+    studyPlanLink: {
+      alignSelf: 'flex-start',
     },
     readinessHeader: {
       alignItems: 'center',

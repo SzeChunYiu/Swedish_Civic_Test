@@ -13,6 +13,7 @@ const sourcePaths = {
   history: 'components/dashboard/MockExamHistoryCard.tsx',
   sparkline: 'components/dashboard/StreakXpSparkline.tsx',
   stats: 'lib/learning/dashboardStats.ts',
+  studyPlan: 'app/study-plan.tsx',
 };
 
 function read(relativePath) {
@@ -99,6 +100,48 @@ function assertDashboardAccessibilitySeparation(sources) {
     sources.dashboard,
     /<Card[\s\S]{0,180}style=\{styles\.summaryCard\}>[\s\S]*?<Link[\s\S]*?accessibilityLabel=\{copy\.homeLinkAccessibilityLabel\}[\s\S]*?accessibilityRole="link"/,
     'Dashboard Home link must remain an independent labelled link inside the visual card',
+  );
+  assert.match(
+    sources.dashboard,
+    /const studyPlanTestDateIso = useSettingsStore\(\(state\) => state\.studyPlanTestDateIso\);/,
+    'Dashboard must read the locally stored study-plan test date',
+  );
+  assert.match(
+    sources.dashboard,
+    /href="\/study-plan"/,
+    'Dashboard study-plan card must link to the detail route',
+  );
+  assert.match(
+    sources.dashboard,
+    /accessibilityLabel=\{copy\.studyPlan\.accessibilityLabel\(studyPlanSummary\)\}/,
+    'Dashboard study-plan link must carry a route-specific label',
+  );
+  assert.match(
+    sources.studyPlan,
+    /useProLifetimeEntitlements\(\)/,
+    'Study-plan detail route must read Pro Lifetime entitlements',
+  );
+  assert.match(
+    sources.studyPlan,
+    /hasProEntitlement\(entitlements\)/,
+    'Study-plan detail route must keep Pro gating in the detail route',
+  );
+  assert.match(
+    sources.studyPlan,
+    /isProRuntimeScopeEnabled\(\)/,
+    'Study-plan detail route must respect the release scope gate',
+  );
+  assert.match(
+    sources.studyPlan,
+    /generateStudyPlanWeeklyBreakdown\(/,
+    'Study-plan detail route must render the generated weekly breakdown',
+  );
+  assert.match(sources.studyPlan, /questionTargetMet/);
+  assert.match(sources.studyPlan, /mockTargetMet/);
+  assert.doesNotMatch(
+    sources.studyPlan,
+    /\b(behind|missed days|guilt|skuld|efter)\b/i,
+    'Study-plan detail copy must avoid guilt or behind-language',
   );
   assert.doesNotMatch(
     sources.dashboard,

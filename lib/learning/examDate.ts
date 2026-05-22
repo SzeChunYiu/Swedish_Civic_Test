@@ -104,9 +104,30 @@ export interface StudyPlan {
   generatedAt: string;
 }
 
+export interface StudyPlanDayBreakdown {
+  dateIso: string;
+  dayOffset: number;
+  isToday: boolean;
+  localDateKey: string;
+  mockTarget: number;
+  mockTargetMet: boolean;
+  mocksCompleted: number;
+  questionTarget: number;
+  questionTargetMet: boolean;
+  questionsCompleted: number;
+}
+
+export interface StudyPlanWeeklyBreakdownInput {
+  mockCountsByLocalDate?: Record<string, number>;
+  now?: Date;
+  plan: StudyPlan;
+  questionCountsByLocalDate?: Record<string, number>;
+}
+
 const MOCKS_GOAL = 6;
 const MIN_DAILY = 5;
 const MAX_DAILY = 80;
+const MAX_WEEKLY_BREAKDOWN_DAYS = 7;
 
 function normalizeStudyIntensity(value: unknown): StudyIntensity {
   if (value === 'casual' || value === 'regular' || value === 'serious') return value;
@@ -120,6 +141,11 @@ function normalizeNonNegativeInteger(value: unknown): number {
     value >= 0
     ? value
     : 0;
+}
+
+function normalizeProgressCount(value: unknown): number {
+  if (typeof value !== 'number' || !Number.isFinite(value) || value < 0) return 0;
+  return Math.floor(value);
 }
 
 function intensityFloor(intensity: StudyIntensity): number {
@@ -176,6 +202,67 @@ export function generateStudyPlan(input: StudyPlanInput): StudyPlan {
     hasTestDate: true,
     generatedAt: now.toISOString(),
   };
+}
+
+function startOfLocalDay(date: Date): Date {
+  const safeDate = isFiniteDate(date) ? date : new Date();
+  return new Date(safeDate.getFullYear(), safeDate.getMonth(), safeDate.getDate());
+}
+
+function addLocalDays(date: Date, daysToAdd: number): Date {
+  const localDate = startOfLocalDay(date);
+  localDate.setDate(localDate.getDate() + daysToAdd);
+  return localDate;
+}
+
+function localDateKey(date: Date): string {
+  const localDate = startOfLocalDay(date);
+  const year = localDate.getFullYear();
+  const month = String(localDate.getMonth() + 1).padStart(2, '0');
+  const day = String(localDate.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+}
+
+function mockTargetForDay(dayOffset: number, weeklyMockTarget: number): number {
+  if (weeklyMockTarget <= 0) return 0;
+  if (weeklyMockTarget === 1) return dayOffset === 0 ? 1 : 0;
+  return dayOffset === 0 || dayOffset === 3 ? 1 : 0;
+}
+
+export function generateStudyPlanWeeklyBreakdown({
+  mockCountsByLocalDate = {},
+  now = new Date(),
+  plan,
+  questionCountsByLocalDate = {},
+}: StudyPlanWeeklyBreakdownInput): StudyPlanDayBreakdown[] {
+  const safeNow = isFiniteDate(now) ? now : new Date();
+  const daysToShow = Math.max(
+    1,
+    Math.min(MAX_WEEKLY_BREAKDOWN_DAYS, normalizeProgressCount(plan.daysRemaining) || 1),
+  );
+
+  return Array.from({ length: daysToShow }, (_, dayOffset) => {
+    const date = addLocalDays(safeNow, dayOffset);
+    const dateKey = localDateKey(date);
+    const questionTarget = normalizeProgressCount(plan.dailyQuestionTarget);
+    const mockTarget = mockTargetForDay(dayOffset, normalizeProgressCount(plan.weeklyMockTarget));
+    const questionsCompleted = normalizeProgressCount(questionCountsByLocalDate[dateKey]);
+    const mocksCompleted = normalizeProgressCount(mockCountsByLocalDate[dateKey]);
+
+    return {
+      dateIso: date.toISOString(),
+      dayOffset,
+      isToday: dayOffset === 0,
+      localDateKey: dateKey,
+      mockTarget,
+      mockTargetMet: mockTarget > 0 && mocksCompleted >= mockTarget,
+      mocksCompleted,
+      questionTarget,
+      questionTargetMet: questionTarget > 0 && questionsCompleted >= questionTarget,
+      questionsCompleted,
+    };
+  });
 }
 
 export interface NoTestDatePlan {

@@ -8,6 +8,7 @@ import { PerChapterProgressBars } from '../components/dashboard/PerChapterProgre
 import { StreakXpSparkline } from '../components/dashboard/StreakXpSparkline';
 import { Badge } from '../components/ui/Badge';
 import { Card } from '../components/ui/Card';
+import { RouteLink } from '../components/ui/RouteLink';
 import { ScreenShell } from '../components/ui/ScreenShell';
 import { chapters } from '../data/chapters';
 import { questions } from '../data/questions';
@@ -24,6 +25,7 @@ import {
 } from '../lib/learning/dashboardSummaryCopy';
 import { formatDashboardCompletedDate } from '../lib/learning/dashboardDateFormat';
 import { buildDashboardProgressSnapshot } from '../lib/learning/dashboardProgressSnapshot';
+import { daysUntil, formatExamDate } from '../lib/learning/examDate';
 import { calculateStreakWithFreeze } from '../lib/learning/streakWithFreeze';
 import { useProgressStore } from '../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
@@ -100,6 +102,14 @@ type DashboardCopy = {
     streakLabel: string;
     subtitle: string;
     summary: (totalXp: number, activeDays: number, currentStreak: number, level: number) => string;
+    title: string;
+  };
+  studyPlan: {
+    accessibilityLabel: (summary: string) => string;
+    badge: string;
+    cta: string;
+    dateSummary: (daysRemaining: number, dateLabel: string) => string;
+    noDateSummary: string;
     title: string;
   };
   subtitle: string;
@@ -184,6 +194,15 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
       summary: (totalXp, activeDays, currentStreak, level) =>
         `${totalXp} XP de senaste 30 dagarna. ${activeDays} aktiva dagar. ${currentStreak} dagars svit. Nivå ${level}.`,
       title: 'Svit och XP',
+    },
+    studyPlan: {
+      accessibilityLabel: (summary) => `Öppna studieplanen. ${summary}`,
+      badge: 'Plan',
+      cta: 'Öppna studieplan',
+      dateSummary: (daysRemaining, dateLabel) =>
+        `${daysRemaining} dagar till ${dateLabel}. Pro visar veckomål på detaljsidan.`,
+      noDateSummary: 'Lägg till ett provdatum för nedräkning och lokala veckomål på detaljsidan.',
+      title: 'Studieplan',
     },
     subtitle: 'Se var du har varit aktiv, vilka kapitel du täcker och hur din svit växer.',
     summaryAccessibilityLabel: (questionsAnswered, touchedChapters, unresolved) =>
@@ -273,6 +292,15 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
         `${totalXp} XP in the last 30 days. ${activeDays} active days. ${currentStreak} day streak. Level ${level}.`,
       title: 'Streak and XP',
     },
+    studyPlan: {
+      accessibilityLabel: (summary) => `Open study plan. ${summary}`,
+      badge: 'Plan',
+      cta: 'Open study plan',
+      dateSummary: (daysRemaining, dateLabel) =>
+        `${daysRemaining} days until ${dateLabel}. Pro shows weekly targets on the detail screen.`,
+      noDateSummary: 'Add a test date for countdown and local weekly targets on the detail screen.',
+      title: 'Study plan',
+    },
     subtitle:
       'See where you have been active, which chapters you cover, and how your streak grows.',
     summaryAccessibilityLabel: (questionsAnswered, touchedChapters, unresolved) =>
@@ -301,9 +329,22 @@ export default function DashboardScreen() {
   const totalXp = useProgressStore((state) => state.totalXp);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const language = useSettingsStore((state) => state.language);
+  const studyPlanTestDateIso = useSettingsStore((state) => state.studyPlanTestDateIso);
   const copy = dashboardCopy[language];
   const themeColors = useThemeColors();
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
+  const today = useMemo(() => new Date(), []);
+  const studyPlanDate = useMemo(() => {
+    if (!studyPlanTestDateIso) return null;
+    const date = new Date(studyPlanTestDateIso);
+    return Number.isFinite(date.getTime()) ? date : null;
+  }, [studyPlanTestDateIso]);
+  const studyPlanSummary = studyPlanDate
+    ? copy.studyPlan.dateSummary(
+        daysUntil(studyPlanDate, today),
+        formatExamDate(studyPlanDate, language),
+      )
+    : copy.studyPlan.noDateSummary;
   const progress = useMemo(
     () =>
       buildDashboardProgressSnapshot({
@@ -368,6 +409,21 @@ export default function DashboardScreen() {
           {copy.homeLink}
         </Link>
       </Card>
+      <Card style={styles.studyPlanCard}>
+        <Badge tone="blue">{copy.studyPlan.badge}</Badge>
+        <Text accessibilityRole="header" style={styles.studyPlanTitle}>
+          {copy.studyPlan.title}
+        </Text>
+        <Text style={styles.studyPlanText}>{studyPlanSummary}</Text>
+        <RouteLink
+          accessibilityLabel={copy.studyPlan.accessibilityLabel(studyPlanSummary)}
+          href="/study-plan"
+          style={styles.studyPlanLink}
+          variant="secondary"
+        >
+          {copy.studyPlan.cta}
+        </RouteLink>
+      </Card>
 
       <ActivityHeatmap bins={activityBins} copy={copy.activity} />
       <PerChapterProgressBars
@@ -407,6 +463,23 @@ function createStyles(themeColors: ThemeColors) {
       color: themeColors.text,
       fontSize: typography.body.fontSize,
       lineHeight: typography.body.lineHeight,
+    },
+    studyPlanCard: {
+      gap: space[1],
+    },
+    studyPlanTitle: {
+      color: themeColors.text,
+      fontSize: typography.cardTitle.fontSize,
+      fontWeight: typography.cardTitle.fontWeight,
+      lineHeight: typography.cardTitle.lineHeight,
+    },
+    studyPlanText: {
+      color: themeColors.textSecondary,
+      fontSize: typography.body.fontSize,
+      lineHeight: typography.body.lineHeight,
+    },
+    studyPlanLink: {
+      alignSelf: 'flex-start',
     },
     homeLink: {
       alignSelf: 'flex-start',
