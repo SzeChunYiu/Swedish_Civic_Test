@@ -10,6 +10,8 @@ import {
 test.use({ viewport: { width: 390, height: 844 } });
 
 type PrivacyRemoveAdsScenario = {
+  adConsentCopy: RegExp[];
+  adConsentSectionTitle: string;
   adsAndPurchasesCopy: RegExp[];
   backLinkLabel: string;
   forbiddenVisibleCopy: RegExp;
@@ -24,6 +26,13 @@ const englishSupportLanguageControl =
 
 const scenarios: PrivacyRemoveAdsScenario[] = [
   {
+    adConsentCopy: [
+      /På iOS begärs App Tracking Transparency innan spårningsbaserad annonsering/i,
+      /Där det krävs visas Google UMP-samtyckesformuläret innan riktiga AdMob-annonser visas/i,
+      /Annonser kan blockeras eller begäras som icke-personanpassade annonser/i,
+      /samtyckesbeslutet inte tillåter personanpassad annonsering/i,
+    ],
+    adConsentSectionTitle: 'Annonssamtycke',
     adsAndPurchasesCopy: [
       /Gratisappen finansieras med annonser på studieskärmar via Google Mobile Ads/i,
       /Tidsatta provskärmar är annonsfria/i,
@@ -43,6 +52,13 @@ const scenarios: PrivacyRemoveAdsScenario[] = [
     title: 'Integritetspolicy',
   },
   {
+    adConsentCopy: [
+      /On iOS, App Tracking Transparency is requested before tracking-based advertising/i,
+      /Where required, the Google UMP consent form is shown before real AdMob serving/i,
+      /Ads may be blocked or requested as non-personalized ads/i,
+      /consent decision does not allow personalized ad serving/i,
+    ],
+    adConsentSectionTitle: 'Ad consent',
     adsAndPurchasesCopy: [
       /The free app is ad-supported on study screens through Google Mobile Ads/i,
       /Timed mock exam screens stay ad-free/i,
@@ -118,7 +134,9 @@ async function expectPrivacyRouteCopy(
 ): Promise<void> {
   await expect(page.getByRole('heading', { name: scenario.title })).toBeVisible();
   await expect(page.getByRole('heading', { name: scenario.sectionTitle })).toBeVisible();
+  await expect(page.getByRole('heading', { name: scenario.adConsentSectionTitle })).toBeVisible();
   await expectVisibleCopy(page, scenario.adsAndPurchasesCopy);
+  await expectVisibleCopy(page, scenario.adConsentCopy);
   await expectVisibleCopy(page, scenario.providerProcessingCopy);
   await expect(page.locator('body')).not.toContainText(scenario.forbiddenVisibleCopy);
 
@@ -130,7 +148,7 @@ async function expectPrivacyRouteCopy(
 }
 
 for (const scenario of scenarios) {
-  test(`/privacy renders natural Remove Ads legal copy in ${scenario.language}`, async ({
+  test(`/privacy renders natural Remove Ads and ad consent legal copy in ${scenario.language}`, async ({
     page,
   }) => {
     const errors = collectConsoleAndPageErrors(page);
@@ -145,7 +163,7 @@ for (const scenario of scenarios) {
   });
 }
 
-test('/privacy refreshes Remove Ads legal copy after language selection changes', async ({
+test('/privacy refreshes Remove Ads and ad consent legal copy after language selection changes', async ({
   page,
 }) => {
   const errors = collectConsoleAndPageErrors(page);
@@ -175,6 +193,8 @@ test('/privacy refreshes Remove Ads legal copy after language selection changes'
   await expect(page.locator('body')).not.toContainText(
     /Ta bort annonser är ett engångsköp för 29 SEK/i,
   );
+  await expect(page.locator('body')).not.toContainText(/Annonssamtycke/i);
+  await expect(page.locator('body')).not.toContainText(/Google UMP-samtyckesformuläret/i);
 
   expect(errors.get()).toEqual([]);
 });
