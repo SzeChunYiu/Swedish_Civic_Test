@@ -90,6 +90,10 @@ async function expectTouchTarget(locator: Locator) {
   expect(Math.floor(box?.height ?? 0)).toBeGreaterThanOrEqual(44);
 }
 
+function examRegion(page: Page, name: string | RegExp) {
+  return page.getByRole('region', { name }).first();
+}
+
 async function openExamWithLanguage(page: Page, language: AppLanguage) {
   await seedSettingsLanguage(page, language);
   await markAboutTheTestSeen(page);
@@ -121,12 +125,15 @@ test('mock exam requires all answers before showing Swedish score and source pro
   await expect(activeCount).toBeVisible();
   await expect(page.getByText(/^Tid kvar/)).toBeVisible();
   await expect(page.getByText(/^Källa: Sverige i fokus/).first()).toBeVisible();
+  const activeQuestionOne = examRegion(page, 'Fråga 1 i övningsprovet');
   const submit = page.getByRole('button', { name: 'Skicka övningsprov' });
   await expect(submit).toBeDisabled();
   await expect(page.getByText('Frågegenomgång')).toHaveCount(0);
   await expect(page.getByText('Förklaring', { exact: true })).toHaveCount(0);
-  await expect(page.getByText('UHR-källa', { exact: true }).first()).toBeVisible();
-  await expect(page.getByLabel(/^UHR-källa:/)).toHaveCount(0);
+  await expect(activeQuestionOne).toBeVisible();
+  await expect(activeQuestionOne.getByText(/^Källa: Sverige i fokus/)).toBeVisible();
+  await expect(activeQuestionOne.getByText('UHR-källa', { exact: true })).toBeVisible();
+  await expect(activeQuestionOne.getByLabel(/^UHR-källa:/)).toHaveCount(0);
   await expectProvenanceSourceNoteToggle(page, {
     buttonName: /Källtyp: UHR-källa/,
     sourceNoteLabel: /^Källanteckning:/,
@@ -194,11 +201,13 @@ test('mock exam requires all answers before showing Swedish score and source pro
   await page.getByRole('button', { name: 'Visa alla frågor' }).click();
   await expect(page.getByText(`Visar ${totalQuestions} av ${totalQuestions} frågor`)).toBeVisible();
   await expect(page.getByText('Fråga 3', { exact: true })).toBeVisible();
+  const reviewQuestionOne = examRegion(page, 'Genomgång för fråga 1');
+  await expect(reviewQuestionOne).toBeVisible();
   await expect(page.getByText('Valt svar').first()).toBeVisible();
   await expect(page.getByText('Rätt svar').first()).toBeVisible();
   await expect(page.getByText('Förklaring', { exact: true }).first()).toBeVisible();
-  await expect(page.getByText('UHR-källa', { exact: true }).first()).toBeVisible();
-  await expect(page.getByLabel(/^UHR-källa:/).first()).toBeVisible();
+  await expect(reviewQuestionOne.getByText('UHR-källa', { exact: true })).toBeVisible();
+  await expect(reviewQuestionOne.getByLabel(/^UHR-källa:/)).toBeVisible();
   await expectProvenanceSourceNoteToggle(page, {
     buttonName: /Källtyp: UHR-källa/,
     sourceNoteLabel: /^Källanteckning:/,
@@ -236,6 +245,7 @@ test('mock exam provenance review follows English support mode', async ({ page }
   await expect(activeCount).toBeVisible();
   await expect(page.getByText(/^Time left/)).toBeVisible();
   await expect(page.getByText(/^Source: Sverige i fokus/).first()).toBeVisible();
+  const activeQuestionOne = examRegion(page, 'Question 1 in mock exam');
   await expect(page.getByText('Övningsprov')).toHaveCount(0);
   const activeReportLink = page.getByRole('link', { name: /^Report question q/ }).first();
   await expect(activeReportLink).toBeVisible();
@@ -249,9 +259,11 @@ test('mock exam provenance review follows English support mode', async ({ page }
   await expect(submit).toBeDisabled();
   await expect(page.getByText('Question review')).toHaveCount(0);
   await expect(page.getByText('Explanation', { exact: true })).toHaveCount(0);
-  await expect(page.getByText('UHR reference', { exact: true })).toHaveCount(0);
-  await expect(page.getByLabel(/^UHR reference:/)).toHaveCount(0);
-  await expect(page.getByText('UHR source', { exact: true }).first()).toBeVisible();
+  await expect(activeQuestionOne).toBeVisible();
+  await expect(activeQuestionOne.getByText(/^Source: Sverige i fokus/)).toBeVisible();
+  await expect(activeQuestionOne.getByText('UHR reference', { exact: true })).toHaveCount(0);
+  await expect(activeQuestionOne.getByLabel(/^UHR reference:/)).toHaveCount(0);
+  await expect(activeQuestionOne.getByText('UHR source', { exact: true })).toBeVisible();
   await expectProvenanceSourceNoteToggle(page, {
     buttonName: /Provenance: UHR source/,
     sourceNoteLabel: /^Source note:/,
@@ -314,11 +326,13 @@ test('mock exam provenance review follows English support mode', async ({ page }
     page.getByText(`Showing ${totalQuestions} of ${totalQuestions} questions`),
   ).toBeVisible();
   await expect(page.getByText('Question 2', { exact: true })).toBeVisible();
+  const reviewQuestionOne = examRegion(page, 'Review for question 1');
+  await expect(reviewQuestionOne).toBeVisible();
   await expect(page.getByText('Selected answer').first()).toBeVisible();
   await expect(page.getByText('Correct answer').first()).toBeVisible();
   await expect(page.getByText('Explanation', { exact: true }).first()).toBeVisible();
-  await expect(page.getByText('UHR reference', { exact: true }).first()).toBeVisible();
-  await expect(page.getByLabel(/^UHR reference:/).first()).toBeVisible();
+  await expect(reviewQuestionOne.getByText('UHR reference', { exact: true })).toBeVisible();
+  await expect(reviewQuestionOne.getByLabel(/^UHR reference:/)).toBeVisible();
   const reviewReportLink = page.getByRole('link', { name: /^Report question q/ }).first();
   await expect(reviewReportLink).toBeVisible();
   const reviewReportHref = await reviewReportLink.getAttribute('href');
