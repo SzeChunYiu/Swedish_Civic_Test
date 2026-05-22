@@ -9259,6 +9259,7 @@ const timeBoundedExpiry = effectiveEntitlementsModule.timeBoundedExpiry;
 const releasePolicyModule = loadTs('lib/monetization/releasePolicy.ts');
 const releaseMonetizationPolicy = releasePolicyModule.releaseMonetizationPolicy;
 const isReleaseMonetizationPolicyReady = releasePolicyModule.isReleaseMonetizationPolicyReady;
+const isProRuntimeScopeEnabled = releasePolicyModule.isProRuntimeScopeEnabled;
 const packageMetadata = loadJson('package.json');
 const appConfig = loadJson('app.json');
 const uhrSectionMap = loadJson('content/uhr-section-map.json');
@@ -12012,8 +12013,61 @@ function validateAdPlacementRouteParity() {
   }
 }
 
+function withProRuntimeScopeState({ env, e2e, e2eOverride } = {}, callback) {
+  const previousEnv = process.env.EXPO_PUBLIC_ENABLE_PRO_RUNTIME_SCOPE;
+  const hadE2E = Object.prototype.hasOwnProperty.call(globalThis, '__SMT_E2E__');
+  const hadE2EOverride = Object.prototype.hasOwnProperty.call(
+    globalThis,
+    '__SMT_ENABLE_PRO_RUNTIME_SCOPE__',
+  );
+  const previousE2E = globalThis.__SMT_E2E__;
+  const previousE2EOverride = globalThis.__SMT_ENABLE_PRO_RUNTIME_SCOPE__;
+
+  if (env === undefined) {
+    delete process.env.EXPO_PUBLIC_ENABLE_PRO_RUNTIME_SCOPE;
+  } else {
+    process.env.EXPO_PUBLIC_ENABLE_PRO_RUNTIME_SCOPE = env;
+  }
+
+  if (e2e === undefined) {
+    delete globalThis.__SMT_E2E__;
+  } else {
+    globalThis.__SMT_E2E__ = e2e;
+  }
+
+  if (e2eOverride === undefined) {
+    delete globalThis.__SMT_ENABLE_PRO_RUNTIME_SCOPE__;
+  } else {
+    globalThis.__SMT_ENABLE_PRO_RUNTIME_SCOPE__ = e2eOverride;
+  }
+
+  try {
+    return callback();
+  } finally {
+    if (previousEnv === undefined) {
+      delete process.env.EXPO_PUBLIC_ENABLE_PRO_RUNTIME_SCOPE;
+    } else {
+      process.env.EXPO_PUBLIC_ENABLE_PRO_RUNTIME_SCOPE = previousEnv;
+    }
+
+    if (hadE2E) {
+      globalThis.__SMT_E2E__ = previousE2E;
+    } else {
+      delete globalThis.__SMT_E2E__;
+    }
+
+    if (hadE2EOverride) {
+      globalThis.__SMT_ENABLE_PRO_RUNTIME_SCOPE__ = previousE2EOverride;
+    } else {
+      delete globalThis.__SMT_ENABLE_PRO_RUNTIME_SCOPE__;
+    }
+  }
+}
+
 function validateReleaseMonetizationPolicyParity() {
   let valid = true;
+  let releasePolicySource = '';
+  let purchaseInflightSpecSource = '';
 
   function reject(message) {
     valid = false;
@@ -12021,6 +12075,26 @@ function validateReleaseMonetizationPolicyParity() {
   }
 
   if (!isObjectRecord(releaseMonetizationPolicy)) return;
+
+  try {
+    releasePolicySource = fs.readFileSync(
+      path.join(repoRoot, 'lib/monetization/releasePolicy.ts'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`release monetization policy source could not be read: ${error.message}`);
+    return;
+  }
+
+  try {
+    purchaseInflightSpecSource = fs.readFileSync(
+      path.join(repoRoot, 'tests/e2e/purchase-inflight-guard.spec.ts'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`purchase in-flight E2E spec source could not be read: ${error.message}`);
+    return;
+  }
 
   const expectedFieldValues = {
     adSupportedByDefault: true,
@@ -12066,6 +12140,63 @@ function validateReleaseMonetizationPolicyParity() {
   if (typeof isReleaseMonetizationPolicyReady !== 'function') return;
   if (!isReleaseMonetizationPolicyReady()) {
     reject('isReleaseMonetizationPolicyReady must return true for the current release policy');
+  }
+
+  if (typeof isProRuntimeScopeEnabled !== 'function') {
+    reject('isProRuntimeScopeEnabled must be exported by the release monetization policy');
+  } else {
+    const proRuntimeScopeCases = [
+      [
+        withProRuntimeScopeState({}, () => isProRuntimeScopeEnabled()),
+        false,
+        'Pro runtime scope must default to false for v1.0 release builds',
+      ],
+      [
+        withProRuntimeScopeState({ e2eOverride: true }, () => isProRuntimeScopeEnabled()),
+        false,
+        'Pro runtime E2E override must require __SMT_E2E__',
+      ],
+      [
+        withProRuntimeScopeState({ e2e: true, e2eOverride: true }, () =>
+          isProRuntimeScopeEnabled(),
+        ),
+        true,
+        'Pro runtime E2E override must work when __SMT_E2E__ is true',
+      ],
+      [
+        withProRuntimeScopeState({ env: 'true' }, () => isProRuntimeScopeEnabled()),
+        true,
+        'EXPO_PUBLIC_ENABLE_PRO_RUNTIME_SCOPE=true must enable Pro runtime scope',
+      ],
+      [
+        withProRuntimeScopeState({ env: 'false' }, () => isProRuntimeScopeEnabled()),
+        false,
+        'EXPO_PUBLIC_ENABLE_PRO_RUNTIME_SCOPE=false must keep Pro runtime scope disabled',
+      ],
+    ];
+
+    proRuntimeScopeCases.forEach(([actual, expected, message]) => {
+      if (actual !== expected) reject(message);
+    });
+  }
+
+  if (
+    !/if\s*\(\s*runtime\.__SMT_E2E__\s*&&\s*runtime\.__SMT_ENABLE_PRO_RUNTIME_SCOPE__\s*===\s*true\s*\)/.test(
+      releasePolicySource,
+    )
+  ) {
+    reject('Pro runtime E2E override must require __SMT_E2E__');
+  }
+
+  if (!releasePolicySource.includes('process.env.EXPO_PUBLIC_ENABLE_PRO_RUNTIME_SCOPE')) {
+    reject('Pro runtime scope must preserve the production env flag path');
+  }
+
+  if (
+    !purchaseInflightSpecSource.includes('__SMT_E2E__: true') ||
+    !purchaseInflightSpecSource.includes('__SMT_ENABLE_PRO_RUNTIME_SCOPE__: true')
+  ) {
+    reject('purchase-inflight E2E spec must seed __SMT_E2E__ with the Pro runtime override');
   }
 
   if (!Array.isArray(consentConfig?.prompts)) {

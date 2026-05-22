@@ -58,6 +58,57 @@ function loadTs(relativePath, exportName, moduleCache = new Map()) {
   return exportName ? mod.exports[exportName] : mod.exports;
 }
 
+function withProRuntimeScopeState({ env, e2e, e2eOverride } = {}, callback) {
+  const previousEnv = process.env.EXPO_PUBLIC_ENABLE_PRO_RUNTIME_SCOPE;
+  const hadE2E = Object.prototype.hasOwnProperty.call(globalThis, '__SMT_E2E__');
+  const hadE2EOverride = Object.prototype.hasOwnProperty.call(
+    globalThis,
+    '__SMT_ENABLE_PRO_RUNTIME_SCOPE__',
+  );
+  const previousE2E = globalThis.__SMT_E2E__;
+  const previousE2EOverride = globalThis.__SMT_ENABLE_PRO_RUNTIME_SCOPE__;
+
+  if (env === undefined) {
+    delete process.env.EXPO_PUBLIC_ENABLE_PRO_RUNTIME_SCOPE;
+  } else {
+    process.env.EXPO_PUBLIC_ENABLE_PRO_RUNTIME_SCOPE = env;
+  }
+
+  if (e2e === undefined) {
+    delete globalThis.__SMT_E2E__;
+  } else {
+    globalThis.__SMT_E2E__ = e2e;
+  }
+
+  if (e2eOverride === undefined) {
+    delete globalThis.__SMT_ENABLE_PRO_RUNTIME_SCOPE__;
+  } else {
+    globalThis.__SMT_ENABLE_PRO_RUNTIME_SCOPE__ = e2eOverride;
+  }
+
+  try {
+    return callback();
+  } finally {
+    if (previousEnv === undefined) {
+      delete process.env.EXPO_PUBLIC_ENABLE_PRO_RUNTIME_SCOPE;
+    } else {
+      process.env.EXPO_PUBLIC_ENABLE_PRO_RUNTIME_SCOPE = previousEnv;
+    }
+
+    if (hadE2E) {
+      globalThis.__SMT_E2E__ = previousE2E;
+    } else {
+      delete globalThis.__SMT_E2E__;
+    }
+
+    if (hadE2EOverride) {
+      globalThis.__SMT_ENABLE_PRO_RUNTIME_SCOPE__ = previousE2EOverride;
+    } else {
+      delete globalThis.__SMT_ENABLE_PRO_RUNTIME_SCOPE__;
+    }
+  }
+}
+
 test('release monetization policy stays aligned with Remove Ads and ad consent runtime', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
     cwd: repoRoot,
@@ -98,6 +149,33 @@ test('release monetization policy stays aligned with Remove Ads and ad consent r
     'App Tracking Transparency',
     'Google UMP consent',
   ]);
+});
+
+test('release monetization policy keeps Pro runtime E2E override test-only', () => {
+  const releasePolicy = loadTs('lib/monetization/releasePolicy.ts', undefined, new Map());
+
+  assert.equal(
+    withProRuntimeScopeState({}, () => releasePolicy.isProRuntimeScopeEnabled()),
+    false,
+  );
+  assert.equal(
+    withProRuntimeScopeState({ e2eOverride: true }, () => releasePolicy.isProRuntimeScopeEnabled()),
+    false,
+  );
+  assert.equal(
+    withProRuntimeScopeState({ e2e: true, e2eOverride: true }, () =>
+      releasePolicy.isProRuntimeScopeEnabled(),
+    ),
+    true,
+  );
+  assert.equal(
+    withProRuntimeScopeState({ env: 'true' }, () => releasePolicy.isProRuntimeScopeEnabled()),
+    true,
+  );
+  assert.equal(
+    withProRuntimeScopeState({ env: 'false' }, () => releasePolicy.isProRuntimeScopeEnabled()),
+    false,
+  );
 });
 
 test('release monetization policy rejects Pro runtime-scope default drift', () => {
@@ -187,6 +265,66 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /releaseMonetizationPolicy\.proRuntimeScopeEnvFlag/,
+  );
+});
+
+test('release monetization policy rejects Pro E2E override without the E2E gate', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/monetization/releasePolicy.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('runtime.__SMT_E2E__ && runtime.__SMT_ENABLE_PRO_RUNTIME_SCOPE__ === true', 'runtime.__SMT_ENABLE_PRO_RUNTIME_SCOPE__ === true');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /Pro runtime E2E override must require __SMT_E2E__/,
+  );
+});
+
+test('release monetization policy rejects purchase-inflight E2E harness scope drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/tests/e2e/purchase-inflight-guard.spec.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('__SMT_E2E__: true,', '__SMT_E2E__: false,');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /purchase-inflight E2E spec must seed __SMT_E2E__ with the Pro runtime override/,
   );
 });
 
