@@ -8779,3 +8779,159 @@ html[dir='rtl'] .lang-menu {
     width: auto;
   }
 }
+
+/* ------------------------------------------------------------------
+   SOURCE + PROVENANCE BOX OPTIMIZATION ROUND
+   Turns citations, provenance pills, and source metadata into compact,
+   scannable study receipts across the demo, quiz, mock, and ebook.
+------------------------------------------------------------------ */
+
+.qcard__meta,
+.quiz__source-row,
+.ebook__provenance-badge,
+.ebook__footnotes {
+  background:
+    linear-gradient(135deg, rgba(0, 106, 167, 0.06), rgba(254, 204, 0, 0.05)),
+    rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(0, 106, 167, 0.12);
+  border-radius: 16px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.28),
+    0 14px 36px -32px rgba(11, 31, 51, 0.65);
+  position: relative;
+}
+
+.qcard__meta::before,
+.quiz__source-row::before,
+.ebook__provenance-badge::before,
+.ebook__footnotes::before {
+  background: var(--card-rail);
+  border-radius: inherit;
+  content: '';
+  inset: 0 auto 0 0;
+  opacity: 0.76;
+  position: absolute;
+  width: 4px;
+}
+
+.qcard__meta {
+  align-items: center;
+  margin-top: 20px;
+  padding: 10px 12px 10px 16px;
+}
+
+.qcard__source {
+  min-width: 0;
+  padding-left: 2px;
+}
+
+.qcard__source b,
+.quiz__source-row b,
+.ebook__provenance-badge b,
+.ebook__footnotes b {
+  color: var(--blue-ink);
+}
+
+.qcard__meta button {
+  background: rgba(255, 255, 255, 0.58);
+  border-color: rgba(0, 106, 167, 0.2);
+  box-shadow: 0 10px 24px -22px rgba(11, 31, 51, 0.68);
+}
+
+.qcard__meta button:hover,
+.qcard__meta button:focus-visible {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--gold);
+}
+
+.quiz__source-row {
+  align-items: center;
+  margin: 0 0 24px;
+  padding: 11px 12px 11px 16px;
+}
+
+.quiz__source-row .quiz__source,
+.quiz__source-row .quiz__feedback-source,
+.quiz__source-row .mock-review__source {
+  color: var(--ink-soft);
+  line-height: 1.55;
+  min-width: 0;
+}
+
+.quiz__provenance {
+  background: rgba(255, 255, 255, 0.68);
+  border-color: rgba(0, 106, 167, 0.16);
+  box-shadow: 0 8px 20px -18px rgba(11, 31, 51, 0.72);
+  color: var(--ink);
+  flex: 0 0 auto;
+  min-height: 28px;
+  padding: 5px 10px;
+}
+
+.quiz__provenance--uhr {
+  background: linear-gradient(135deg, rgba(0, 106, 167, 0.15), rgba(0, 106, 167, 0.06));
+  border-color: rgba(0, 106, 167, 0.34);
+  color: var(--blue-ink);
+}
+
+.quiz__provenance--derived {
+  background: linear-gradient(135deg, rgba(254, 204, 0, 0.24), rgba(254, 204, 0, 0.08));
+  border-color: rgba(217, 169, 0, 0.42);
+  color: #4f2d12;
+}
+
+.quiz__provenance--editorial {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.74), rgba(0, 106, 167, 0.04));
+  color: var(--ink-soft);
+}
+
+.ebook__provenance-badge,
+.ebook__footnotes {
+  border-radius: 16px !important;
+  padding-left: 18px !important;
+}
+
+.ebook__provenance-badge span {
+  background: rgba(0, 106, 167, 0.08);
+  border: 1px solid rgba(0, 106, 167, 0.16);
+  border-radius: 999px;
+  color: var(--blue-ink);
+  padding: 4px 9px;
+}
+
+:root[data-theme='dark'] .qcard__meta,
+:root[data-theme='dark'] .quiz__source-row,
+:root[data-theme='dark'] .ebook__provenance-badge,
+:root[data-theme='dark'] .ebook__footnotes {
+  background: rgba(255, 255, 255, 0.045) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+:root[data-theme='dark'] .qcard__source b,
+:root[data-theme='dark'] .quiz__source-row b,
+:root[data-theme='dark'] .ebook__provenance-badge b,
+:root[data-theme='dark'] .ebook__footnotes b {
+  color: var(--gold);
+}
+
+:root[data-theme='dark'] .qcard__meta button,
+:root[data-theme='dark'] .quiz__provenance,
+:root[data-theme='dark'] .ebook__provenance-badge span {
+  background: rgba(255, 255, 255, 0.055);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--ink);
+}
+
+@media (max-width: 560px) {
+  .qcard__meta,
+  .quiz__source-row {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .quiz__provenance,
+  .qcard__meta button {
+    align-self: flex-start;
+  }
+}
