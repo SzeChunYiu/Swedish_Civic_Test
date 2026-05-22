@@ -309,6 +309,48 @@ test('utility routes resolve semantic colors from the active theme', () => {
   assert.match(citizenshipSource, /<QuestionDisclaimer themeColors=\{themeColors\}/);
 });
 
+test('native ebook route resolves semantic colors from the active theme', () => {
+  const source = read('app/ebook.tsx');
+
+  assert.match(source, /useThemeColors\(\)/, 'Ebook should read the active theme context');
+  assert.match(
+    source,
+    /const styles = useMemo\(\(\) => createStyles\(themeColors\), \[themeColors\]\)/,
+    'Ebook should memoize route-local styles from active theme colors',
+  );
+  assert.match(
+    source,
+    /function createStyles\(themeColors: ThemeColors\)/,
+    'Ebook should derive local styles from ThemeColors',
+  );
+  assert.match(
+    source,
+    /<ScreenShell[\s\S]*themeColors=\{themeColors\}/,
+    'Ebook should pass active theme colors to its route shell',
+  );
+  assert.match(
+    source,
+    /<Badge themeColors=\{themeColors\}/,
+    'Ebook should pass active theme colors to local badges',
+  );
+  assert.match(
+    source,
+    /themeColors\.focusSoft/,
+    'Ebook pressed states should resolve focus feedback from ThemeColors',
+  );
+  assert.match(
+    source,
+    /themeColors\.surfaceWarm/,
+    'Ebook provenance and section-source panels should use active warm surfaces',
+  );
+  assert.doesNotMatch(
+    source,
+    /import \{[^}]*\bcolors\b[^}]*\} from ['"]\.\.\/lib\/theme['"]/,
+    'Ebook must not import the static light colors singleton',
+  );
+  assert.doesNotMatch(source, /\bcolors\./, 'Ebook must not read static colors.* values');
+});
+
 test('monetization surfaces resolve semantic colors from the active theme', () => {
   for (const componentPath of MONETIZATION_THEME_SURFACES) {
     const source = read(componentPath);

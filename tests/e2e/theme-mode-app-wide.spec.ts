@@ -613,3 +613,55 @@ test('ebook elevated card uses the tokenized web shadow', async ({ page }) => {
   expect(articleCardBoxShadow).not.toBe('none');
   expectBoxShadowToMatchToken(articleCardBoxShadow, shadows.card.boxShadow);
 });
+
+test('ebook route uses dark theme tokens without horizontal overflow', async ({ page }) => {
+  await page.setViewportSize(mobileViewport);
+  await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, 'en', {
+    localStorageValues: {
+      [accessibilityThemeModeKey]: 'dark',
+    },
+  });
+  await page.goto('/ebook', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  const articleHeading = page.getByRole('heading', {
+    name: "Slow down. We've got coffee.",
+  });
+  await expect(articleHeading).toBeVisible();
+  await expectComputedColor(
+    articleHeading,
+    'color',
+    darkColors.text,
+    'Ebook article heading should use the dark text token',
+  );
+
+  const backLink = page.getByRole('link', { name: 'Back to Learn' });
+  const backLinkLabel = backLink.getByText('Back to Learn');
+  await expectComputedColor(
+    backLinkLabel,
+    'color',
+    darkColors.accent,
+    'Ebook back link should use the dark accent token',
+  );
+
+  const provenanceBody = page.getByText(/Original study guide/);
+  await expectComputedColor(
+    provenanceBody,
+    'color',
+    darkColors.textSecondary,
+    'Ebook provenance text should use the dark secondary text token',
+  );
+
+  const sectionSourceBox = page
+    .getByRole('link', {
+      name: /Open source: UHR public study material\./,
+    })
+    .first();
+  await expectComputedColor(
+    sectionSourceBox,
+    'borderColor',
+    darkColors.border,
+    'Ebook section-source link should use the dark border token',
+  );
+  await expectNoHorizontalOverflow(page, 'Ebook dark mobile layout should not overflow');
+});
