@@ -114,6 +114,34 @@
       tr: 'veya',
       uk: 'або',
     },
+    'signin.email.label': {
+      en: 'Email address',
+      sv: 'E-postadress',
+      'zh-Hans': '电子邮件地址',
+      'zh-Hant': '電子郵件地址',
+      ar: 'عنوان البريد الإلكتروني',
+      ckb: 'ناونیشانی ئیمەیڵ',
+      fa: 'نشانی ایمیل',
+      pl: 'Adres e-mail',
+      so: 'Cinwaanka iimaylka',
+      ti: 'ኣድራሻ ኢመይል',
+      tr: 'E-posta adresi',
+      uk: 'Адреса електронної пошти',
+    },
+    'signin.email.placeholder': {
+      en: 'you@example.com',
+      sv: 'namn@example.com',
+      'zh-Hans': 'name@example.com',
+      'zh-Hant': 'name@example.com',
+      ar: 'name@example.com',
+      ckb: 'name@example.com',
+      fa: 'name@example.com',
+      pl: 'imie@example.com',
+      so: 'magac@example.com',
+      ti: 'name@example.com',
+      tr: 'ad@example.com',
+      uk: 'name@example.com',
+    },
     'signin.magic': {
       en: 'Email me a magic link',
       sv: 'Mejla mig en magisk länk',
@@ -366,6 +394,14 @@
     document.querySelectorAll('#signin-modal [data-sk]').forEach((el) => {
       const v = t(el.dataset.sk);
       if (v) el.textContent = v;
+    });
+    document.querySelectorAll('#signin-modal [data-sk-placeholder]').forEach((el) => {
+      const v = t(el.dataset.skPlaceholder);
+      if (v) el.setAttribute('placeholder', v);
+    });
+    document.querySelectorAll('#signin-modal [data-sk-aria-label]').forEach((el) => {
+      const v = t(el.dataset.skAriaLabel);
+      if (v) el.setAttribute('aria-label', v);
     });
     // Trigger label depends on signed-in state.
     const btn = document.getElementById('signin-open');
