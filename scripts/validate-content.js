@@ -36,6 +36,7 @@ const {
 } = require('./content-exec-cwd-guards');
 const { runLegalSectionRenderingGuard } = require('./legal-section-rendering-guard');
 const { assertPurchaseActionInFlightGuard } = require('./purchase-inflight-guard');
+const { REQUIRED_THEME_CONTRAST_PAIRS } = require('./theme-validation');
 const {
   findGeneratedTrueFalseNaturalnessPatternMatch,
 } = require('./generated-true-false-naturalness-patterns');
@@ -4801,30 +4802,6 @@ const RAW_THEME_BORDER_WIDTH_PATTERN =
   /\b(?:border(?:Top|Right|Bottom|Left)?Width):\s*(?:StyleSheet\.hairlineWidth|\d+(?:\.\d+)?)/;
 const NON_BORDER_THEME_HAIRLINE_PATTERN =
   /\b(?:gap|height|padding(?:Horizontal|Vertical)?|width):\s*space\.hairline\b/;
-const REQUIRED_THEME_CONTRAST_PAIRS = [
-  ['text', 'surface'],
-  ['text', 'canvas'],
-  ['textSoft', 'surface'],
-  ['textSoft', 'canvas'],
-  ['textSecondary', 'canvas'],
-  ['textSecondary', 'surfaceWarm'],
-  ['textMuted', 'canvas'],
-  ['textMuted', 'surfaceWarm'],
-  ['textDisclaimer', 'surface'],
-  ['textDisclaimer', 'canvas'],
-  ['textDisclaimer', 'surfaceWarm'],
-  ['textPlaceholder', 'surface'],
-  ['textPlaceholder', 'canvas'],
-  ['textPlaceholder', 'surfaceWarm'],
-  ['badgeBlueText', 'badgeBlueBg'],
-  ['accent', 'surface'],
-  ['success', 'surface'],
-  ['success', 'successSoft'],
-  ['warning', 'surface'],
-  ['warning', 'warningSoft'],
-  ['danger', 'surface'],
-  ['danger', 'dangerSoft'],
-];
 const EXPECTED_PROGRESS_QUESTION_FIELDS = [
   'questionId',
   'seenCount',

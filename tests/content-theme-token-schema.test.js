@@ -3,6 +3,7 @@ const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
+const { REQUIRED_THEME_CONTRAST_PAIRS } = require('../scripts/theme-validation');
 
 const repoRoot = path.resolve(__dirname, '..');
 const THEME_TOKEN_FOCUS_ARGS = ['scripts/validate-content.js', '--focus-theme-token-schema'];
@@ -20,7 +21,7 @@ test('theme token schema validates the exported design-token catalog', () => {
   const shadowSource = fs.readFileSync(path.join(repoRoot, 'lib/theme/shadows.ts'), 'utf8');
   const spacingSource = fs.readFileSync(path.join(repoRoot, 'lib/theme/spacing.ts'), 'utf8');
 
-  assert.equal(summary.themeColorTokensValidated, 37);
+  assert.equal(summary.themeColorTokensValidated, 39);
   assert.equal(summary.themeSpaceTokensValidated, 25);
   assert.equal(summary.themeRadiusTokensValidated, 9);
   assert.equal(summary.themeTypographyTokensValidated, 22);
@@ -28,10 +29,10 @@ test('theme token schema validates the exported design-token catalog', () => {
   assert.equal(summary.themeMotionTokensValidated, 7);
   assert.ok(summary.themeBorderWidthTokenFilesValidated > 0);
   assert.equal(summary.themeBorderWidthTokenParityValidated, true);
-  assert.equal(summary.themeContrastPairsValidated, 20);
+  assert.equal(summary.themeContrastPairsValidated, REQUIRED_THEME_CONTRAST_PAIRS.length);
   assert.equal(summary.themeContrastPairsAAValidated, true);
-  assert.equal(summary.themeDarkColorTokensValidated, 37);
-  assert.equal(summary.themeDarkContrastPairsValidated, 20);
+  assert.equal(summary.themeDarkColorTokensValidated, 39);
+  assert.equal(summary.themeDarkContrastPairsValidated, REQUIRED_THEME_CONTRAST_PAIRS.length);
   assert.equal(summary.themeDarkContrastPairsAAValidated, true);
   assert.equal(summary.themeTokenSchemaValidated, true);
   assert.match(spacingSource, /hairline:\s*1,/);
@@ -47,6 +48,38 @@ test('theme token schema validates the exported design-token catalog', () => {
   );
   assert.match(themeIndex, /export \{ space \} from '\.\/spacing';/);
   assert.match(themeIndex, /export \{ typography \} from '\.\/typography';/);
+});
+
+test('theme contrast validation paths consume the shared required-pair list', () => {
+  const themeDisciplineSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/theme-discipline.test.js'),
+    'utf8',
+  );
+  const validateContentSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+
+  assert.match(
+    themeDisciplineSource,
+    /require\('\.\/theme-validation'\)/,
+    'theme-discipline should consume the shared theme contrast pair list',
+  );
+  assert.match(
+    validateContentSource,
+    /require\('\.\/theme-validation'\)/,
+    'validate-content should consume the shared theme contrast pair list',
+  );
+  assert.doesNotMatch(
+    themeDisciplineSource,
+    /const REQUIRED_CONTRAST_PAIRS\s*=\s*\[/,
+    'theme-discipline should not keep a private contrast pair list',
+  );
+  assert.doesNotMatch(
+    validateContentSource,
+    /const REQUIRED_THEME_CONTRAST_PAIRS\s*=\s*\[/,
+    'validate-content should not keep a private contrast pair list',
+  );
 });
 
 test('theme token schema rejects raw app border width literals', () => {

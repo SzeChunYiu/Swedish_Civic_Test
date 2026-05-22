@@ -3,6 +3,7 @@ const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
+const { REQUIRED_THEME_CONTRAST_PAIRS } = require('./theme-validation');
 
 const ROOT = path.resolve(__dirname, '..');
 const SOURCE_DIRS = ['app', 'components'];
@@ -41,30 +42,6 @@ const BORDER_WIDTH_LITERAL =
 const SHADOW_LITERAL =
   /\b(?:shadowColor|shadowOpacity|shadowRadius|shadowOffset|boxShadow):\s*|\belevation:\s*\d/;
 const MIN_BODY_TEXT_CONTRAST = 4.5;
-const REQUIRED_CONTRAST_PAIRS = [
-  ['text', 'surface'],
-  ['text', 'canvas'],
-  ['textSoft', 'surface'],
-  ['textSoft', 'canvas'],
-  ['textSecondary', 'canvas'],
-  ['textSecondary', 'surfaceWarm'],
-  ['textMuted', 'canvas'],
-  ['textMuted', 'surfaceWarm'],
-  ['textDisclaimer', 'surface'],
-  ['textDisclaimer', 'canvas'],
-  ['textDisclaimer', 'surfaceWarm'],
-  ['textPlaceholder', 'surface'],
-  ['textPlaceholder', 'canvas'],
-  ['textPlaceholder', 'surfaceWarm'],
-  ['badgeBlueText', 'badgeBlueBg'],
-  ['accent', 'surface'],
-  ['success', 'surface'],
-  ['success', 'successSoft'],
-  ['warning', 'surface'],
-  ['warning', 'warningSoft'],
-  ['danger', 'surface'],
-  ['danger', 'dangerSoft'],
-];
 
 function walk(dir) {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -214,7 +191,7 @@ test('shared elevated surfaces consume tokenized native and web shadows', () => 
 
 test('semantic text tokens meet WCAG AA contrast on app surfaces', () => {
   for (const { label, colors } of readThemeColorPalettes()) {
-    for (const [foreground, background] of REQUIRED_CONTRAST_PAIRS) {
+    for (const [foreground, background] of REQUIRED_THEME_CONTRAST_PAIRS) {
       const ratio = contrastRatio(colors[foreground], colors[background]);
       assert.ok(
         ratio >= 4.5,
