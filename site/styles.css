@@ -11293,3 +11293,86 @@ img.ebook__brand-mark {
     padding: 11px 12px;
   }
 }
+
+/* ======================================================================
+   EBOOK READER LIST ITEM BOX OPTIMIZATION ROUND
+   ====================================================================== */
+
+.ebook__reader > ul,
+.ebook__reader > ol {
+  display: grid;
+  gap: 8px;
+  list-style: none;
+  padding-left: 0;
+}
+.ebook__reader > ul > li,
+.ebook__reader > ol > li {
+  background: rgba(255, 255, 255, 0.42);
+  border: 1px solid rgba(0, 106, 167, 0.1);
+  border-radius: 14px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.34);
+  margin: 0;
+  padding: 10px 12px 10px 38px;
+  position: relative;
+}
+.ebook__reader > ul > li::before,
+.ebook__reader > ol > li::before {
+  align-items: center;
+  background: rgba(0, 106, 167, 0.08);
+  border: 1px solid rgba(0, 106, 167, 0.13);
+  border-radius: 999px;
+  color: var(--blue-ink);
+  display: inline-flex;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 900;
+  height: 22px;
+  justify-content: center;
+  left: 10px;
+  position: absolute;
+  top: 10px;
+  width: 22px;
+}
+.ebook__reader > ul > li::before {
+  content: '•';
+}
+.ebook__reader > ol {
+  counter-reset: ebook-list;
+}
+.ebook__reader > ol > li {
+  counter-increment: ebook-list;
+}
+.ebook__reader > ol > li::before {
+  content: counter(ebook-list);
+}
+
+:root[data-theme='dark'] .ebook__reader > ul > li,
+:root[data-theme='dark'] .ebook__reader > ol > li {
+  background: rgba(255, 255, 255, 0.045);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+:root[data-theme='dark'] .ebook__reader > ul > li::before,
+:root[data-theme='dark'] .ebook__reader > ol > li::before {
+  background: rgba(45, 168, 255, 0.12);
+  border-color: rgba(45, 168, 255, 0.22);
+  color: var(--blue-soft);
+}
+
+@media (max-width: 560px) {
+  .ebook__reader > ul,
+  .ebook__reader > ol {
+    gap: 7px;
+  }
+  .ebook__reader > ul > li,
+  .ebook__reader > ol > li {
+    border-radius: 12px;
+    padding: 9px 10px 9px 36px;
+  }
+  .ebook__reader > ul > li::before,
+  .ebook__reader > ol > li::before {
+    height: 20px;
+    left: 9px;
+    top: 9px;
+    width: 20px;
+  }
+}
