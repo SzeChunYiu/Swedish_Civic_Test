@@ -5,8 +5,10 @@ type NotificationSubscription = {
 };
 
 type NotificationResponse = {
+  actionIdentifier?: string;
   notification?: {
     request?: {
+      identifier?: string;
       content?: {
         data?: unknown;
       };
@@ -18,14 +20,18 @@ type ExpoNotificationsRoutingModule = {
   addNotificationResponseReceivedListener?: (
     listener: (response: NotificationResponse) => void,
   ) => NotificationSubscription;
+  getLastNotificationResponse?: () => NotificationResponse | null | undefined;
+  getLastNotificationResponseAsync?: () => Promise<NotificationResponse | null | undefined>;
 };
 
 export type StudyReminderNotificationRoute = '/practice';
 
 export type StudyReminderNotificationRoutingRuntime = {
-  addNotificationResponseReceivedListener: (
+  addNotificationResponseReceivedListener?: (
     listener: (response: NotificationResponse) => void,
   ) => NotificationSubscription;
+  getLastNotificationResponse?: () => NotificationResponse | null | undefined;
+  getLastNotificationResponseAsync?: () => Promise<NotificationResponse | null | undefined>;
   platformOS?: string;
 };
 
@@ -67,18 +73,81 @@ export function routeFromStudyReminderNotificationResponse(
   return data ? normalizeStudyReminderNotificationRoute(data) : null;
 }
 
+function notificationResponseDedupeKey(response: NotificationResponse): string | null {
+  const identifier = firstString(response.notification?.request?.identifier);
+  if (!identifier) return null;
+  const actionIdentifier = firstString(response.actionIdentifier) ?? 'default';
+  return `${identifier}:${actionIdentifier}`;
+}
+
+function handleLastNotificationResponse(
+  runtime: StudyReminderNotificationRoutingRuntime,
+  handler: (response: NotificationResponse) => void,
+): void {
+  try {
+    if (runtime.getLastNotificationResponse) {
+      const response = runtime.getLastNotificationResponse();
+      if (response) handler(response);
+      return;
+    }
+    if (runtime.getLastNotificationResponseAsync) {
+      void runtime
+        .getLastNotificationResponseAsync()
+        .then((response) => {
+          if (response) handler(response);
+        })
+        .catch(() => undefined);
+    }
+  } catch {
+    // Last-response lookup is best-effort; live listener routing still fails closed.
+  }
+}
+
 export function registerStudyReminderNotificationResponseRouting(
   runtime: StudyReminderNotificationRoutingRuntime | null,
   navigate: (route: StudyReminderNotificationRoute) => void,
 ): () => void {
-  if (!runtime?.addNotificationResponseReceivedListener) return () => undefined;
+  if (
+    !runtime?.getLastNotificationResponse &&
+    !runtime?.getLastNotificationResponseAsync &&
+    !runtime?.addNotificationResponseReceivedListener
+  ) {
+    return () => undefined;
+  }
 
-  const subscription = runtime.addNotificationResponseReceivedListener((response) => {
+  let active = true;
+  const handledResponses = new WeakSet<object>();
+  const handledResponseKeys = new Set<string>();
+
+  const routeResponse = (response: NotificationResponse) => {
+    if (!active) return;
     const route = routeFromStudyReminderNotificationResponse(response);
-    if (route) navigate(route);
+    if (!route) return;
+
+    if (typeof response === 'object' && response) {
+      if (handledResponses.has(response)) return;
+      handledResponses.add(response);
+    }
+
+    const dedupeKey = notificationResponseDedupeKey(response);
+    if (dedupeKey) {
+      if (handledResponseKeys.has(dedupeKey)) return;
+      handledResponseKeys.add(dedupeKey);
+    }
+
+    navigate(route);
+  };
+
+  handleLastNotificationResponse(runtime, routeResponse);
+
+  const subscription = runtime.addNotificationResponseReceivedListener?.((response) => {
+    routeResponse(response);
   });
 
-  return () => subscription.remove?.();
+  return () => {
+    active = false;
+    subscription?.remove?.();
+  };
 }
 
 export async function createExpoStudyReminderNotificationRoutingRuntime(): Promise<StudyReminderNotificationRoutingRuntime | null> {
@@ -89,11 +158,19 @@ export async function createExpoStudyReminderNotificationRoutingRuntime(): Promi
 
     const notifications = (await import('expo-notifications')) as ExpoNotificationsRoutingModule;
 
-    if (!notifications.addNotificationResponseReceivedListener) return null;
+    if (
+      !notifications.addNotificationResponseReceivedListener &&
+      !notifications.getLastNotificationResponse &&
+      !notifications.getLastNotificationResponseAsync
+    ) {
+      return null;
+    }
 
     return {
       addNotificationResponseReceivedListener:
         notifications.addNotificationResponseReceivedListener,
+      getLastNotificationResponse: notifications.getLastNotificationResponse,
+      getLastNotificationResponseAsync: notifications.getLastNotificationResponseAsync,
       platformOS: Platform.OS,
     };
   } catch {

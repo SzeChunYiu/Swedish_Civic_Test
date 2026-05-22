@@ -102,6 +102,20 @@ function createGrantedRuntime() {
   };
 }
 
+function createStudyReminderNotificationResponse(identifier = 'study-reminder-response') {
+  return {
+    actionIdentifier: 'default',
+    notification: {
+      request: {
+        identifier,
+        content: {
+          data: { route: '/practice', source: 'local-study-reminder' },
+        },
+      },
+    },
+  };
+}
+
 test('study reminder time sanitizer accepts only finite integer clock values', () => {
   const { formatStudyReminderTime, sanitizeStudyReminderTime } = loadTs(
     'lib/notifications/studyReminder.ts',
@@ -322,6 +336,71 @@ test('study reminder notification response listener navigates only validated rou
   );
 });
 
+test('study reminder notification cold start response routes once before listener duplicates', () => {
+  const { registerStudyReminderNotificationResponseRouting } = loadTs(
+    'lib/notifications/studyReminderRouting.ts',
+  );
+  const initialResponse = createStudyReminderNotificationResponse('initial-reminder');
+  const duplicateResponse = createStudyReminderNotificationResponse('initial-reminder');
+  const nextResponse = createStudyReminderNotificationResponse('next-reminder');
+  const navigations = [];
+  const listeners = [];
+  let removeCount = 0;
+  const runtime = {
+    getLastNotificationResponse: () => initialResponse,
+    addNotificationResponseReceivedListener: (listener) => {
+      listeners.push(listener);
+      return {
+        remove: () => {
+          removeCount += 1;
+        },
+      };
+    },
+  };
+
+  const cleanup = registerStudyReminderNotificationResponseRouting(runtime, (route) => {
+    navigations.push(route);
+  });
+
+  assert.deepEqual(navigations, ['/practice']);
+  assert.equal(listeners.length, 1);
+  listeners[0](initialResponse);
+  listeners[0](duplicateResponse);
+  assert.deepEqual(navigations, ['/practice']);
+  listeners[0](nextResponse);
+  assert.deepEqual(navigations, ['/practice', '/practice']);
+
+  cleanup();
+  listeners[0](createStudyReminderNotificationResponse('after-cleanup'));
+  assert.deepEqual(navigations, ['/practice', '/practice']);
+  assert.equal(removeCount, 1);
+});
+
+test('study reminder notification async cold start response fails closed after cleanup', async () => {
+  const { registerStudyReminderNotificationResponseRouting } = loadTs(
+    'lib/notifications/studyReminderRouting.ts',
+  );
+  const navigations = [];
+  let resolveLastResponse;
+  const runtime = {
+    getLastNotificationResponseAsync: () =>
+      new Promise((resolve) => {
+        resolveLastResponse = resolve;
+      }),
+    addNotificationResponseReceivedListener: () => ({ remove: () => undefined }),
+  };
+
+  const cleanup = registerStudyReminderNotificationResponseRouting(runtime, (route) => {
+    navigations.push(route);
+  });
+  cleanup();
+  resolveLastResponse(createStudyReminderNotificationResponse('late-reminder'));
+  await Promise.resolve();
+  await Promise.resolve();
+
+  assert.deepEqual(navigations, []);
+});
+
 test('root layout registers fail-closed study reminder notification routing', () => {
   const layoutSource = fs.readFileSync(path.join(repoRoot, 'app/_layout.tsx'), 'utf8');
   const routingSource = fs.readFileSync(
@@ -354,6 +433,61 @@ test('root layout registers fail-closed study reminder notification routing', ()
     /import\(\s*'expo-notifications'\s*\)/,
     'native notification listener module should be imported dynamically',
   );
+  assert.match(
+    routingSource,
+    /getLastNotificationResponse(?:Async)?/,
+    'native notification routing should inspect the initial notification response',
+  );
+  assert.match(
+    routingSource,
+    /handledResponseKeys/,
+    'cold-start and listener notification responses should be deduplicated',
+  );
+});
+
+test('createExpoStudyReminderNotificationRoutingRuntime exposes last-response APIs when configured', async () => {
+  const notifications = {
+    addNotificationResponseReceivedListener: () => ({ remove: () => undefined }),
+    getLastNotificationResponse: () => null,
+    getLastNotificationResponseAsync: async () => null,
+  };
+  const { createExpoStudyReminderNotificationRoutingRuntime } = loadTsWithExternalModules(
+    'lib/notifications/studyReminderRouting.ts',
+    {
+      'expo-notifications': notifications,
+      'react-native': { Platform: { OS: 'ios' } },
+    },
+  );
+
+  const runtime = await createExpoStudyReminderNotificationRoutingRuntime();
+
+  assert.equal(runtime.platformOS, 'ios');
+  assert.equal(
+    runtime.addNotificationResponseReceivedListener,
+    notifications.addNotificationResponseReceivedListener,
+  );
+  assert.equal(runtime.getLastNotificationResponse, notifications.getLastNotificationResponse);
+  assert.equal(
+    runtime.getLastNotificationResponseAsync,
+    notifications.getLastNotificationResponseAsync,
+  );
+});
+
+test('createExpoStudyReminderNotificationRoutingRuntime skips native notifications on web', async () => {
+  let notificationsRequested = false;
+  const { createExpoStudyReminderNotificationRoutingRuntime } = loadTsWithExternalModules(
+    'lib/notifications/studyReminderRouting.ts',
+    {
+      'expo-notifications': () => {
+        notificationsRequested = true;
+        throw new Error('web should not import native notifications');
+      },
+      'react-native': { Platform: { OS: 'web' } },
+    },
+  );
+
+  assert.equal(await createExpoStudyReminderNotificationRoutingRuntime(), null);
+  assert.equal(notificationsRequested, false);
 });
 
 test('createExpoStudyReminderRuntime returns null when native notifications are unavailable', async () => {
