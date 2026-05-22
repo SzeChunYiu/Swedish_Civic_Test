@@ -667,8 +667,12 @@ const GENERATED_SINGLE_CHOICE_FILLER_OPTION_TEXTS = new Set([
   'Only sometimes',
 ]);
 const GENERATED_SINGLE_CHOICE_META_STEM_PATTERNS = [
+  /^\s*Vilket svar stämmer bäst\?/i,
   /^\s*Vilket svar är korrekt\?/i,
+  /^\s*Välj rätt alternativ:/i,
   /^\s*Which answer is correct\?/i,
+  /^\s*Which answer best matches\?/i,
+  /^\s*Choose the correct option:/i,
   /^\s*Vilket påstående är korrekt/i,
   /^\s*Vilket påstående stämmer bäst/i,
   /^\s*Which statement is correct/i,

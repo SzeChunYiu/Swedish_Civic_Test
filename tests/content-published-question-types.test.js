@@ -789,21 +789,15 @@ test('tradition prompts avoid literal common-to-do English', () => {
   assert.ok(q104, 'q104 should be published in the site bank');
   assert.equal(q097.q.en, 'How is New Year’s Eve on 31 December commonly celebrated in Sweden?');
   assert.equal(q104.q.en, 'How is All Saints’ Day commonly observed in Sweden?');
-  assert.equal(
-    q097SingleChoice?.q.en,
-    'Which answer best matches? How is New Year’s Eve on 31 December commonly celebrated in Sweden?',
-  );
+  assert.equal(q097SingleChoice?.q.en, 'On New Year’s Eve, 31 December, it is common to ...?');
   assert.equal(
     q097Judgement?.q.en,
-    'Choose the correct option: How is New Year’s Eve on 31 December commonly celebrated in Sweden?',
+    'Which fact is correct regarding how New Year’s Eve on 31 December is commonly celebrated in Sweden?',
   );
-  assert.equal(
-    q104SingleChoice?.q.en,
-    'Which answer best matches? How is All Saints’ Day commonly observed in Sweden?',
-  );
+  assert.equal(q104SingleChoice?.q.en, 'On All Saints’ Day, it is common to ...?');
   assert.equal(
     q104Judgement?.q.en,
-    'Choose the correct option: How is All Saints’ Day commonly observed in Sweden?',
+    'Which fact is correct regarding how All Saints’ Day is commonly observed in Sweden?',
   );
 });
 
@@ -846,21 +840,18 @@ test('Christmas tree prompts keep natural English wording', () => {
   assert.deepEqual(fileFindings, []);
   assert.deepEqual(bankFindings, []);
   assert.equal(q138?.q.en, 'What do many people do with a Christmas tree at Christmas in Sweden?');
-  assert.equal(
-    q138SingleChoice?.q.en,
-    'Which answer best matches? What do many people do with a Christmas tree at Christmas in Sweden?',
-  );
+  assert.equal(q138SingleChoice?.q.en, 'In Sweden, at Christmas, many people ...?');
   assert.equal(
     q138TrueStatement?.q.en,
-    'At Christmas, many people bring a Christmas tree into the home and decorate it with strings of lights, baubles, and tinsel.',
+    'In Sweden, at Christmas, many people bring a Christmas tree into the home and decorate it with strings of lights, baubles, and tinsel.',
   );
   assert.equal(
     q138FalseStatement?.q.en,
-    'At Christmas, many people plant a Christmas tree at the cemetery and light grave candles.',
+    'In Sweden, at Christmas, many people plant a Christmas tree at the cemetery and light grave candles.',
   );
   assert.equal(
     q138Judgement?.q.en,
-    'Choose the correct option: What do many people do with a Christmas tree at Christmas in Sweden?',
+    'Which fact is correct regarding what many people do with a Christmas tree at Christmas in Sweden?',
   );
 });
 
@@ -1775,12 +1766,9 @@ test('source-criticism source and single-choice exports use natural English', ()
     'Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.',
   );
   assert.ok(q050SingleChoice, 'q050 generated single-choice variant should be published');
-  assert.equal(
-    q050SingleChoice.q.en,
-    'Which answer best matches? What does source criticism mean?',
-  );
+  assert.equal(q050SingleChoice.q.en, 'What is meant by source criticism?');
   assert.ok(q050Judgement, 'q050 generated judgement variant should be published');
-  assert.equal(q050Judgement.q.en, 'Choose the correct option: What does source criticism mean?');
+  assert.equal(q050Judgement.q.en, 'Which description is correct for source criticism?');
 });
 
 test('source-criticism English naturalness guard rejects source-critical wording', () => {
@@ -2265,7 +2253,7 @@ test('public-sector source and generated exports use direct English propositions
     },
     {
       id: generatedQuestionId(sourceQuestions, 'q062', 'singleChoice'),
-      q: 'Which answer best matches? What is the public sector in Sweden?',
+      q: 'The public sector in Sweden consists of ...?',
       why: expectedExplanation,
     },
     {
@@ -2280,7 +2268,7 @@ test('public-sector source and generated exports use direct English propositions
     },
     {
       id: generatedQuestionId(sourceQuestions, 'q062', 'judgement'),
-      q: 'Choose the correct option: What is the public sector in Sweden?',
+      q: 'Which fact is correct regarding what the public sector in Sweden is?',
       why: expectedExplanation,
     },
   ];
@@ -2923,17 +2911,17 @@ test('municipal responsibilities source and generated prompts ask directly about
   assert.equal(q026.q.sv, 'Vilka vardagstjänster ansvarar kommuner för?');
   assert.equal(q026.q.en, 'Which everyday services are municipalities responsible for?');
   assert.ok(q026SectionPractice, 'q026 section-practice generated variant should be published');
-  assert.equal(
-    q026SectionPractice.q.sv,
-    'Vilket svar stämmer bäst? Vilka vardagstjänster ansvarar kommuner för?',
-  );
-  assert.equal(
-    q026SectionPractice.q.en,
-    'Which answer best matches? Which everyday services are municipalities responsible for?',
-  );
+  assert.equal(q026SectionPractice.q.sv, 'Kommuner ansvarar för ...?');
+  assert.equal(q026SectionPractice.q.en, 'Municipalities are responsible for ...?');
   assert.ok(q026Judgement, 'q026 judgement generated variant should be published');
-  assert.match(q026Judgement.q.sv, /Vilka vardagstjänster ansvarar kommuner för/);
-  assert.match(q026Judgement.q.en, /Which everyday services are municipalities responsible for/);
+  assert.equal(
+    q026Judgement.q.sv,
+    'Vilken uppgift stämmer när det gäller vilka vardagstjänster kommuner ansvarar för?',
+  );
+  assert.equal(
+    q026Judgement.q.en,
+    'Which fact is correct regarding which everyday services municipalities are responsible for?',
+  );
   assert.equal(
     q026True?.q.sv,
     'Kommuner ansvarar för vatten och avlopp, omsorg, snöröjning, parkskötsel och vuxenutbildning.',
@@ -4420,8 +4408,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       [
         ${JSON.stringify(generatedFixtureIdHelperSource())},
         "const generatedScopeResiduals = {",
-        "  [generatedFixtureId('q070', 0)]: { questionSv: 'Vilka betalar skatt i Sverige?', questionEn: 'Who pays tax?' },",
-        "  [generatedFixtureId('q070', 3)]: { questionSv: 'Vilket svar stämmer bäst? Vilka betalar skatt i Sverige?', questionEn: 'Which answer best matches? Who pays tax?' },",
+        "  [generatedFixtureId('q070', 0)]: { questionSv: 'Vad stämmer när det gäller vilka som betalar skatt i Sverige?', questionEn: 'What is correct regarding who pays tax?' },",
+        "  [generatedFixtureId('q070', 3)]: { questionSv: 'Vilken uppgift stämmer när det gäller vilka som betalar skatt i Sverige?', questionEn: 'Which fact is correct regarding who pays tax?' },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
         "  generatedScopeResiduals[question.id]",

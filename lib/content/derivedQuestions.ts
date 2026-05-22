@@ -140,6 +140,13 @@ function ensureSentence(value: string): string {
   return /[.!?]$/.test(trimmed) ? trimmed : `${trimmed}.`;
 }
 
+function ensureQuestion(value: string): string {
+  const trimmed = value.trim();
+  if (trimmed.endsWith('?')) return trimmed;
+  if (trimmed.endsWith('...')) return `${trimmed}?`;
+  return `${stripFinalPunctuation(trimmed)}?`;
+}
+
 function lowerFirst(value: string): string {
   if (/^EU\b/.test(value)) return value;
   return value ? `${value[0].toLowerCase()}${value.slice(1)}` : value;
@@ -195,6 +202,55 @@ function englishInfinitive(value: string): string {
 
 function englishAgePhrase(value: string): string {
   return value.replace(/^(\d+)\s+years$/i, 'age $1');
+}
+
+function answerClozeCandidates(answer: string, language: 'sv' | 'en'): string[] {
+  const stripped = stripFinalPunctuation(answer);
+  const candidates = [
+    stripped,
+    lowerFirst(stripped),
+    language === 'sv' ? stripLeadingPurposeSv(stripped) : stripLeadingPurposeEn(stripped),
+  ];
+
+  if (language === 'en') candidates.push(stripLeadingThatEn(stripped));
+
+  const ageMatch =
+    language === 'sv' ? stripped.match(/^(\d+)\s+år$/i) : stripped.match(/^(\d+)\s+years$/i);
+  if (ageMatch) {
+    candidates.push(language === 'sv' ? `${ageMatch[1]} års ålder` : `age ${ageMatch[1]}`);
+  }
+
+  return [...new Set(candidates.map((candidate) => candidate.trim()).filter(Boolean))].sort(
+    (a, b) => b.length - a.length,
+  );
+}
+
+function replaceAnswerWithCloze(
+  statement: string,
+  answer: string,
+  language: 'sv' | 'en',
+): string | null {
+  const normalizedStatement = stripFinalPunctuation(statement);
+
+  for (const candidate of answerClozeCandidates(answer, language)) {
+    const escaped = candidate.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+');
+    const pattern = new RegExp(`(^|[^\\p{L}\\p{N}])(${escaped})(?=$|[^\\p{L}\\p{N}])`, 'iu');
+    if (!pattern.test(normalizedStatement)) continue;
+
+    const cloze = normalizedStatement
+      .replace(pattern, (_match, prefix: string) => `${prefix}...`)
+      .replace(/\s+\.\.\./g, ' ...')
+      .replace(/\.\.\.\s+/g, '... ')
+      .trim();
+
+    const context = cloze
+      .replace(/\.\.\./g, '')
+      .replace(/[^\p{L}\p{N}]+/gu, '')
+      .trim();
+    return cloze.includes('...') && context.length >= 2 ? cloze : null;
+  }
+
+  return null;
 }
 
 function stripLeadingPurposeSv(value: string): string {
@@ -1473,13 +1529,124 @@ function generatedTrueFalseStatementEn(
   return truthStatementEn(deriveCivicStatementEn(source, option));
 }
 
+function embeddedQuestionTopicSv(question: string): string {
+  const q = stripFinalPunctuation(question);
+  let match = q.match(/^Var ligger (.+)$/i);
+  if (match) return `var ${match[1]} ligger`;
+
+  match = q.match(/^Vad heter (.+)$/i);
+  if (match) return `vad ${match[1]} heter`;
+
+  match = q.match(/^Vad är vanligt att göra på (.+)$/i);
+  if (match) return `vad som är vanligt att göra på ${match[1]}`;
+
+  match = q.match(/^Vad gör många på (.+?) i Sverige$/i);
+  if (match) return `vad många gör på ${match[1]} i Sverige`;
+
+  match = q.match(/^Vad gör många med (.+?) vid (.+?) i Sverige$/i);
+  if (match) return `vad många gör med ${match[1]} vid ${match[2]} i Sverige`;
+
+  match = q.match(/^Vad menas med (.+)$/i);
+  if (match) return `vad som menas med ${match[1]}`;
+
+  match = q.match(/^Vad är (.+)$/i);
+  if (match) return `vad ${match[1]} är`;
+
+  match = q.match(/^Vad betyder (.+)$/i);
+  if (match) return `vad ${match[1]} betyder`;
+
+  match = q.match(/^Vad innebär (.+)$/i);
+  if (match) return `vad ${match[1]} innebär`;
+
+  match = q.match(/^Hur kan (.+?) (.+)$/i);
+  if (match) return `hur ${match[1]} kan ${match[2]}`;
+
+  match = q.match(/^Vilka är (.+)$/i);
+  if (match) return `vilka ${match[1]} är`;
+
+  match = q.match(/^Vilka (.+?) ansvarar (.+?) för$/i);
+  if (match) return `vilka ${match[1]} ${match[2]} ansvarar för`;
+
+  match = q.match(/^Vilka betalar skatt i Sverige$/i);
+  if (match) return 'vilka som betalar skatt i Sverige';
+
+  match = q.match(/^Vem väljer (.+)$/i);
+  if (match) return `vem som väljer ${match[1]}`;
+
+  match = q.match(/^När (.+)$/i);
+  if (match) return `när ${lowerFirst(match[1])}`;
+
+  return lowerFirst(q);
+}
+
+function embeddedQuestionTopicEn(question: string): string {
+  const q = stripFinalPunctuation(question);
+  let match = q.match(/^Where is (.+) located$/i);
+  if (match) return `where ${match[1]} is located`;
+
+  match = q.match(/^What is (.+) called$/i);
+  if (match) return `what ${match[1]} is called`;
+
+  match = q.match(/^What is the name of (.+)$/i);
+  if (match) return `what the name of ${match[1]} is`;
+
+  match = q.match(/^How is (.+?) commonly (celebrated|observed) in Sweden$/i);
+  if (match) return `how ${match[1]} is commonly ${match[2]} in Sweden`;
+
+  match = q.match(/^What do many people do with (.+?) at (.+?) in Sweden$/i);
+  if (match) return `what many people do with ${match[1]} at ${match[2]} in Sweden`;
+
+  match = q.match(/^Which everyday services are (.+?) responsible for$/i);
+  if (match) return `which everyday services ${match[1]} are responsible for`;
+
+  match = q.match(/^What is the public sector in Sweden$/i);
+  if (match) return 'what the public sector in Sweden is';
+
+  match = q.match(/^What does it mean that (.+)$/i);
+  if (match) return `what it means that ${match[1]}`;
+
+  match = q.match(/^What does (.+) mean$/i);
+  if (match) return `what ${match[1]} means`;
+
+  match = q.match(/^How can (.+?) (.+)$/i);
+  if (match) return `how ${match[1]} can ${match[2]}`;
+
+  match = q.match(/^Who chooses (.+)$/i);
+  if (match) return `who chooses ${match[1]}`;
+
+  match = q.match(/^When (.+)$/i);
+  if (match) return `when ${lowerFirst(match[1])}`;
+
+  return lowerFirst(q);
+}
+
+function generatedSingleChoiceGenericPromptSv(
+  source: PracticeQuestion,
+  variant: 'section-practice' | 'judgement',
+): string {
+  const topic = embeddedQuestionTopicSv(source.questionSv);
+  return variant === 'judgement'
+    ? `Vilken uppgift stämmer när det gäller ${topic}?`
+    : `Vad stämmer när det gäller ${topic}?`;
+}
+
+function generatedSingleChoiceGenericPromptEn(
+  source: PracticeQuestion,
+  variant: 'section-practice' | 'judgement',
+): string {
+  const topic = embeddedQuestionTopicEn(source.questionEn);
+  return variant === 'judgement'
+    ? `Which fact is correct regarding ${topic}?`
+    : `What is correct regarding ${topic}?`;
+}
+
 function judgementPromptSv(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
     return `Vilken uppgift stämmer om ${statementTopicSv(source)}?`;
   }
   const prompt = generatedSingleChoicePromptFromSourceSv(source, 'judgement');
   if (prompt) return prompt;
-  return `Välj rätt alternativ: ${source.questionSv}`;
+  return generatedSingleChoiceGenericPromptSv(source, 'judgement');
 }
 
 function judgementPromptEn(source: PracticeQuestion): string {
@@ -1488,7 +1655,7 @@ function judgementPromptEn(source: PracticeQuestion): string {
   }
   const prompt = generatedSingleChoicePromptFromSourceEn(source, 'judgement');
   if (prompt) return prompt;
-  return `Choose the correct option: ${source.questionEn}`;
+  return generatedSingleChoiceGenericPromptEn(source, 'judgement');
 }
 
 function singleChoicePromptSv(source: PracticeQuestion): string {
@@ -1497,7 +1664,10 @@ function singleChoicePromptSv(source: PracticeQuestion): string {
   }
   const prompt = generatedSingleChoicePromptFromSourceSv(source, 'section-practice');
   if (prompt) return prompt;
-  return `Vilket svar stämmer bäst? ${source.questionSv}`;
+  return (
+    generatedSingleChoiceClozePromptSv(source, correctOption(source)) ??
+    generatedSingleChoiceGenericPromptSv(source, 'section-practice')
+  );
 }
 
 function singleChoicePromptEn(source: PracticeQuestion): string {
@@ -1506,7 +1676,34 @@ function singleChoicePromptEn(source: PracticeQuestion): string {
   }
   const prompt = generatedSingleChoicePromptFromSourceEn(source, 'section-practice');
   if (prompt) return prompt;
-  return `Which answer best matches? ${source.questionEn}`;
+  return (
+    generatedSingleChoiceClozePromptEn(source, correctOption(source)) ??
+    generatedSingleChoiceGenericPromptEn(source, 'section-practice')
+  );
+}
+
+function generatedSingleChoiceClozePromptSv(
+  source: PracticeQuestion,
+  option: QuestionOption,
+): string | null {
+  const cloze = replaceAnswerWithCloze(
+    deriveCivicStatementSv(source, option),
+    answerLabel(option),
+    'sv',
+  );
+  return cloze ? ensureQuestion(cloze) : null;
+}
+
+function generatedSingleChoiceClozePromptEn(
+  source: PracticeQuestion,
+  option: QuestionOption,
+): string | null {
+  const cloze = replaceAnswerWithCloze(
+    deriveCivicStatementEn(source, option),
+    answerTextEn(option),
+    'en',
+  );
+  return cloze ? ensureQuestion(cloze) : null;
 }
 
 function generatedSingleChoicePromptFromSourceSv(
@@ -1514,7 +1711,141 @@ function generatedSingleChoicePromptFromSourceSv(
   variant: 'section-practice' | 'judgement',
 ): string | null {
   const q = stripFinalPunctuation(source.questionSv);
-  const match =
+  let match = q.match(/^Vilket påstående beskriver (.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Vilken beskrivning stämmer för ${match[1]}?`
+      : `Vad gäller för ${match[1]}?`;
+  }
+
+  match = q.match(/^Vad betyder det att (.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Vilken innebörd stämmer för ${match[1]}?`
+      : `Vad innebär det att ${match[1]}?`;
+  }
+
+  match = q.match(/^Vad betyder (?!det att\b)(.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Vilken beskrivning stämmer för ${match[1]}?`
+      : `Vad innebär ${match[1]}?`;
+  }
+
+  match = q.match(/^Vad innebär (.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Vilken beskrivning stämmer för ${match[1]}?`
+      : `Vad betyder ${match[1]}?`;
+  }
+
+  match = q.match(/^Vad gäller för (.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Vilken uppgift stämmer om ${match[1]}?`
+      : `Vad stämmer för ${match[1]}?`;
+  }
+
+  match =
+    q.match(/^Vilken av följande uppgifter har (.+)$/i) ?? q.match(/^Vilken uppgift har (.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Vilken uppgift stämmer för ${match[1]}?`
+      : `Vad är en uppgift för ${match[1]}?`;
+  }
+
+  match = q.match(/^Vad händer i (.+?) om (.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Vad stämmer i ${match[1]} om ${match[2]}?`
+      : `Vilken följd kan uppstå i ${match[1]} om ${match[2]}?`;
+  }
+
+  match = q.match(/^Hur kan (.+?) påverka (.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Vilken följd stämmer för ${match[1]} och ${match[2]}?`
+      : `Vilken följd kan ${match[1]} få för ${match[2]}?`;
+  }
+
+  match = q.match(/^Vad gör (.+?) på arbetsmarknaden$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Vad stämmer om ${match[1]} på arbetsmarknaden?`
+      : `Vilken roll har ${match[1]} på arbetsmarknaden?`;
+  }
+
+  match = q.match(/^Vilket stöd kan (.+?) ge (.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Vilket stöd stämmer för ${match[1]}?`
+      : `Vilken hjälp kan ${match[1]} ge ${match[2]}?`;
+  }
+
+  match = q.match(/^Hur hjälper (.+?) till med (.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Hur kan ${match[1]} hjälpa till med ${match[2]}?`
+      : `Vilken hjälp kan ${match[1]} ge med ${match[2]}?`;
+  }
+
+  match = q.match(/^Vilken roll har (.+?) i (.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Vilken roll stämmer för ${match[1]} i ${match[2]}?`
+      : `Vilken funktion har ${match[1]} i ${match[2]}?`;
+  }
+
+  match = q.match(/^Vad fick (.+?) rätt att göra i Sverige på (.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Vad fick ${match[1]} möjlighet att göra i Sverige på ${match[2]}?`
+      : `Vilken rätt fick ${match[1]} i Sverige på ${match[2]}?`;
+  }
+
+  match = q.match(/^Vad kan hända med (.+?) när (.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Vilken förändring kan gälla för ${match[1]} när ${match[2]}?`
+      : `Vad kan ske med ${match[1]} när ${match[2]}?`;
+  }
+
+  match = q.match(/^Hur kan (.+?) få inkomster$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Vilken inkomstkälla stämmer för ${match[1]}?`
+      : `På vilket sätt kan ${match[1]} få inkomster?`;
+  }
+
+  match = q.match(/^Vad kännetecknar (.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Vilken beskrivning stämmer för ${match[1]}?`
+      : `Vad är typiskt för ${match[1]}?`;
+  }
+
+  match = q.match(/^Hur publiceras (.+?) i dag$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Vad gäller för ${match[1]} i dag?`
+      : `Var publiceras ${match[1]} i dag?`;
+  }
+
+  match = q.match(/^Vad är viktigt att komma ihåg om (.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Vilken uppgift stämmer om ${match[1]}?`
+      : `Vad gäller för ${match[1]}?`;
+  }
+
+  match = q.match(/^Vilka regler gäller för (.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Vad stämmer för ${match[1]}?`
+      : `Vilken regel gäller för ${match[1]}?`;
+  }
+
+  match =
     q.match(/^Vilket påstående stämmer om (.+)$/i) ??
     q.match(/^Vilket påstående är korrekt om (.+)$/i) ??
     q.match(/^Vilket påstående om (.+?) stämmer$/i);
@@ -1529,7 +1860,135 @@ function generatedSingleChoicePromptFromSourceEn(
   variant: 'section-practice' | 'judgement',
 ): string | null {
   const q = stripFinalPunctuation(source.questionEn);
-  const match =
+  let match = q.match(/^Which statement describes (.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Which description is correct for ${match[1]}?`
+      : `What is correct about ${match[1]}?`;
+  }
+
+  match = q.match(/^What does it mean that (.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Which meaning is correct for ${match[1]}?`
+      : `What is meant when ${match[1]}?`;
+  }
+
+  match = q.match(/^What does (.+) mean$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Which description is correct for ${match[1]}?`
+      : `What is meant by ${match[1]}?`;
+  }
+
+  match = q.match(/^What applies to (.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Which fact is correct about ${match[1]}?`
+      : `What is correct for ${match[1]}?`;
+  }
+
+  match =
+    q.match(/^Which of the following tasks belongs to (.+)$/i) ??
+    q.match(/^What is one task of (.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Which task is correct for ${match[1]}?`
+      : `What is one task for ${match[1]}?`;
+  }
+
+  match = q.match(/^What happens in (.+?) if (.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `What is correct in ${match[1]} if ${match[2]}?`
+      : `What consequence can occur in ${match[1]} if ${match[2]}?`;
+  }
+
+  match = q.match(/^How can (.+?) affect (.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Which effect is correct for ${match[1]} and ${match[2]}?`
+      : `What effect can ${match[1]} have on ${match[2]}?`;
+  }
+
+  match = q.match(/^What do (.+?) do in the labour market$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `What is correct about ${match[1]} in the labour market?`
+      : `What role do ${match[1]} have in the labour market?`;
+  }
+
+  match = q.match(/^What support can (.+?) provide to (.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Which support is correct for ${match[1]}?`
+      : `What help can ${match[1]} provide to ${match[2]}?`;
+  }
+
+  match = q.match(/^How does (.+?) help with (.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `How can ${match[1]} help with ${match[2]}?`
+      : `What help can ${match[1]} provide with ${match[2]}?`;
+  }
+
+  match = q.match(/^What role do (.+?) have in (.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Which role is correct for ${match[1]} in ${match[2]}?`
+      : `What function do ${match[1]} have in ${match[2]}?`;
+  }
+
+  match = q.match(/^What did (.+?) gain the right to do in Sweden in (.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `What did ${match[1]} become able to do in Sweden in ${match[2]}?`
+      : `Which right did ${match[1]} gain in Sweden in ${match[2]}?`;
+  }
+
+  match = q.match(/^What can happen to (.+?) when (.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Which change can apply to ${match[1]} when ${match[2]}?`
+      : `What change can happen to ${match[1]} when ${match[2]}?`;
+  }
+
+  match = q.match(/^How can (.+?) earn income$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Which income source is correct for ${match[1]}?`
+      : `In what way can ${match[1]} earn income?`;
+  }
+
+  match = q.match(/^What characterizes (.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Which description is correct for ${match[1]}?`
+      : `What is typical of ${match[1]}?`;
+  }
+
+  match = q.match(/^How are (.+?) published today$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `What applies to ${match[1]} today?`
+      : `Where are ${match[1]} published today?`;
+  }
+
+  match = q.match(/^What is important to remember about (.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Which fact is correct about ${match[1]}?`
+      : `What is correct about ${match[1]}?`;
+  }
+
+  match = q.match(/^What rules apply to (.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `What is correct for ${match[1]}?`
+      : `Which rule applies to ${match[1]}?`;
+  }
+
+  match =
     q.match(/^Which statement is correct about (.+)$/i) ??
     q.match(/^Which statement about (.+?) is correct$/i) ??
     q.match(/^Which statement best matches (.+)$/i);
@@ -2858,13 +3317,13 @@ export function deriveCivicStatementEn(source: PracticeQuestion, option: Questio
   if (match) return `${upperFirst(match[1])} became ${match[2]} in ${answer}`;
 
   match = q.match(/^What do many people do on (.+?) in Sweden$/i);
-  if (match) return `On ${match[1]}, ${manyPeopleActionEn(answer)}`;
+  if (match) return `In Sweden, on ${match[1]}, ${manyPeopleActionEn(answer)}`;
 
   match = q.match(/^What can happen to (.+?) when (.+)$/i);
   if (match) return replaceLeadingEnglishSubject(match[1], answer);
 
   match = q.match(/^What do many people do with (.+?) at (.+?) in Sweden$/i);
-  if (match) return `At ${match[2]}, ${manyPeopleActionEn(answer)}`;
+  if (match) return `In Sweden, at ${match[2]}, ${manyPeopleActionEn(answer)}`;
 
   match = q.match(/^What does (.+?) traditionally celebrate in (.+)$/i);
   if (match)
