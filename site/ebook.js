@@ -244,6 +244,160 @@
     return ebookLocalizedLabel(label, lang);
   }
 
+  const EBOOK_SOURCE_CHROME = Object.freeze({
+    sv: {
+      footnoteRef: 'Källa',
+      footnotesHeading: 'Källnoter för kapitlet',
+      sourceCount: 'Källor',
+      sourceMetadata: 'källmetadata',
+      sourcePageLink: 'källsidan',
+      sourceUnitOne: 'källa',
+      sourceUnitMany: 'källor',
+      provenanceBody:
+        'Egen studieguide med kapitelkällor; kontrollera fakta via {link} och UHR-materialet.',
+      provenanceAriaBody: 'Egen studieguide; kontrollera fakta via källsidan och UHR-materialet.',
+    },
+    en: {
+      footnoteRef: 'Source',
+      footnotesHeading: 'Chapter source notes',
+      sourceCount: 'Sources',
+      sourceMetadata: 'source metadata',
+      sourcePageLink: 'Sources page',
+      sourceUnitOne: 'cite',
+      sourceUnitMany: 'cites',
+      provenanceBody:
+        'Original study guide with chapter sources; verify facts through the {link} and UHR material.',
+      provenanceAriaBody:
+        'Original study guide; verify facts through the Sources page and UHR material.',
+    },
+    'zh-Hans': {
+      footnoteRef: '来源',
+      footnotesHeading: '本章来源说明',
+      sourceCount: '来源',
+      sourceMetadata: '来源元数据',
+      sourcePageLink: '来源页面',
+      sourceUnitOne: '条引用',
+      sourceUnitMany: '条引用',
+      provenanceBody: '独立学习指南，附章节来源；请通过{link}和 UHR 材料核对事实。',
+      provenanceAriaBody: '独立学习指南；请通过来源页面和 UHR 材料核对事实。',
+    },
+    'zh-Hant': {
+      footnoteRef: '來源',
+      footnotesHeading: '本章來源說明',
+      sourceCount: '來源',
+      sourceMetadata: '來源中繼資料',
+      sourcePageLink: '來源頁面',
+      sourceUnitOne: '條引用',
+      sourceUnitMany: '條引用',
+      provenanceBody: '獨立學習指南，附章節來源；請透過{link}和 UHR 材料核對事實。',
+      provenanceAriaBody: '獨立學習指南；請透過來源頁面和 UHR 材料核對事實。',
+    },
+    ar: {
+      footnoteRef: 'مصدر',
+      footnotesHeading: 'ملاحظات مصادر الفصل',
+      sourceCount: 'المصادر',
+      sourceMetadata: 'بيانات المصادر',
+      sourcePageLink: 'صفحة المصادر',
+      sourceUnitOne: 'إحالة',
+      sourceUnitMany: 'إحالات',
+      provenanceBody: 'دليل دراسي مستقل مع مصادر لكل فصل؛ تحقّق من الحقائق عبر {link} ومواد UHR.',
+      provenanceAriaBody: 'دليل دراسي مستقل؛ تحقّق من الحقائق عبر صفحة المصادر ومواد UHR.',
+    },
+    ckb: {
+      footnoteRef: 'سەرچاوە',
+      footnotesHeading: 'تێبینییەکانی سەرچاوەی بابەت',
+      sourceCount: 'سەرچاوەکان',
+      sourceMetadata: 'زانیاریی سەرچاوەکان',
+      sourcePageLink: 'پەڕەی سەرچاوەکان',
+      sourceUnitOne: 'ئاماژە',
+      sourceUnitMany: 'ئاماژە',
+      provenanceBody:
+        'ڕێبەری خوێندنی سەربەخۆیە لەگەڵ سەرچاوەی بابەتەکان؛ ڕاستییەکان لە ڕێی {link} و کەرەستەی UHR بپشکنە.',
+      provenanceAriaBody:
+        'ڕێبەری خوێندنی سەربەخۆیە؛ ڕاستییەکان لە ڕێی پەڕەی سەرچاوەکان و کەرەستەی UHR بپشکنە.',
+    },
+    fa: {
+      footnoteRef: 'منبع',
+      footnotesHeading: 'یادداشت‌های منبع این فصل',
+      sourceCount: 'منابع',
+      sourceMetadata: 'فرادادهٔ منابع',
+      sourcePageLink: 'صفحهٔ منابع',
+      sourceUnitOne: 'ارجاع',
+      sourceUnitMany: 'ارجاع',
+      provenanceBody:
+        'راهنمای مطالعهٔ مستقل با منابع فصل‌ها؛ واقعیت‌ها را از طریق {link} و مواد UHR بررسی کنید.',
+      provenanceAriaBody:
+        'راهنمای مطالعهٔ مستقل؛ واقعیت‌ها را از طریق صفحهٔ منابع و مواد UHR بررسی کنید.',
+    },
+    pl: {
+      footnoteRef: 'Źródło',
+      footnotesHeading: 'Przypisy źródłowe rozdziału',
+      sourceCount: 'Źródła',
+      sourceMetadata: 'metadane źródeł',
+      sourcePageLink: 'stronę Źródła',
+      sourceUnitOne: 'odniesienie',
+      sourceUnitMany: 'odniesienia',
+      provenanceBody:
+        'Niezależny przewodnik do nauki ze źródłami rozdziałów; sprawdzaj fakty przez {link} i materiały UHR.',
+      provenanceAriaBody:
+        'Niezależny przewodnik do nauki; sprawdzaj fakty przez stronę Źródła i materiały UHR.',
+    },
+    so: {
+      footnoteRef: 'Il',
+      footnotesHeading: 'Qoraallada ilaha cutubka',
+      sourceCount: 'Ilaha',
+      sourceMetadata: 'xogta ilaha',
+      sourcePageLink: 'bogga Ilaha',
+      sourceUnitOne: 'tixraac',
+      sourceUnitMany: 'tixraacyo',
+      provenanceBody:
+        'Hage waxbarasho oo madax-bannaan oo leh ilaha cutubyada; xaqiiqooyinka ku hubi {link} iyo agabka UHR.',
+      provenanceAriaBody:
+        'Hage waxbarasho oo madax-bannaan; xaqiiqooyinka ku hubi bogga Ilaha iyo agabka UHR.',
+    },
+    ti: {
+      footnoteRef: 'ምንጪ',
+      footnotesHeading: 'ምንጪታት ናይዚ ምዕራፍ',
+      sourceCount: 'ምንጪታት',
+      sourceMetadata: 'ሓበሬታ ምንጪታት',
+      sourcePageLink: 'ገጽ ምንጪታት',
+      sourceUnitOne: 'መወከሲ',
+      sourceUnitMany: 'መወከሲታት',
+      provenanceBody: 'ናጻ መምርሒ መጽናዕቲ ምስ ምንጪታት ምዕራፍ፤ ሓቅታት ብ{link}ን ብጽሑፍ UHRን ኣረጋግጽ።',
+      provenanceAriaBody: 'ናጻ መምርሒ መጽናዕቲ፤ ሓቅታት ብገጽ ምንጪታትን ብጽሑፍ UHRን ኣረጋግጽ።',
+    },
+    tr: {
+      footnoteRef: 'Kaynak',
+      footnotesHeading: 'Bölüm kaynak notları',
+      sourceCount: 'Kaynaklar',
+      sourceMetadata: 'kaynak meta verisi',
+      sourcePageLink: 'Kaynaklar sayfasını',
+      sourceUnitOne: 'atıf',
+      sourceUnitMany: 'atıf',
+      provenanceBody:
+        'Bölüm kaynakları olan bağımsız çalışma rehberi; bilgileri {link} ve UHR materyali üzerinden kontrol edin.',
+      provenanceAriaBody:
+        'Bağımsız çalışma rehberi; bilgileri Kaynaklar sayfası ve UHR materyali üzerinden kontrol edin.',
+    },
+    uk: {
+      footnoteRef: 'Джерело',
+      footnotesHeading: 'Примітки з джерелами розділу',
+      sourceCount: 'Джерела',
+      sourceMetadata: 'метадані джерел',
+      sourcePageLink: 'сторінку Джерела',
+      sourceUnitOne: 'посилання',
+      sourceUnitMany: 'посилань',
+      provenanceBody:
+        'Незалежний навчальний посібник із джерелами до розділів; перевіряйте факти через {link} і матеріали UHR.',
+      provenanceAriaBody:
+        'Незалежний навчальний посібник; перевіряйте факти через сторінку Джерела й матеріали UHR.',
+    },
+  });
+
+  function ebookSourceChrome(lang) {
+    return EBOOK_SOURCE_CHROME[lang] || EBOOK_SOURCE_CHROME.en;
+  }
+
   function ebookSourceNote(lang, sourceKeys) {
     const notes = sourceKeys.map((key) => EBOOK_FACTBOX_SOURCE_NOTES[key]).filter(Boolean);
     const label = ebookLocalizedLabel(
@@ -380,8 +534,8 @@
   }
 
   function ebookSourceCountUnit(lang, count) {
-    if (lang === 'sv') return count === 1 ? 'källa' : 'källor';
-    return count === 1 ? 'cite' : 'cites';
+    const chrome = ebookSourceChrome(lang);
+    return count === 1 ? chrome.sourceUnitOne : chrome.sourceUnitMany;
   }
 
   function ebookSourceMixLabel(lang, footnotes) {
@@ -426,7 +580,7 @@
             const id = `eb-${chapterId}-${lang}-fn-${footnoteIndex}`;
             footnotes.push({ id, index: footnoteIndex, sourceKeys });
             const keys = Array.from(new Set(sourceKeys)).join(' ');
-            return `<${tagName}${cleanAttrs} data-source-claims="ebook" data-source-scope="ebook" data-source-keys="${keys}" data-source-metadata="${metadataKind}">${content}<sup id="${id}-ref" class="ebook__source-ref"><a href="${ebookRouteHash(chapterId, 'fn', id)}" aria-label="${lang === 'sv' ? 'Källa' : 'Source'} ${footnoteIndex}">[${footnoteIndex}]</a></sup></${tagName}>`;
+            return `<${tagName}${cleanAttrs} data-source-claims="ebook" data-source-scope="ebook" data-source-keys="${keys}" data-source-metadata="${metadataKind}">${content}<sup id="${id}-ref" class="ebook__source-ref"><a href="${ebookRouteHash(chapterId, 'fn', id)}" aria-label="${ebookSourceChrome(lang).footnoteRef} ${footnoteIndex}">[${footnoteIndex}]</a></sup></${tagName}>`;
           },
         );
       },
@@ -435,7 +589,7 @@
 
   function renderEbookFootnotes(lang, chapterId, footnotes) {
     if (footnotes.length === 0) return '';
-    const heading = lang === 'sv' ? 'Källnoter för kapitlet' : 'Chapter source notes';
+    const heading = ebookSourceChrome(lang).footnotesHeading;
     const items = footnotes
       .map((footnote) => {
         const sources = ebookSourceNotes(footnote.sourceKeys)
@@ -450,12 +604,12 @@
 
   function renderEbookProvenanceBadge(lang, footnotes) {
     const count = footnotes.length || 0;
-    const sourceSummary = ebookSourceMixLabel(lang, footnotes) || 'source metadata';
+    const chrome = ebookSourceChrome(lang);
+    const sourceSummary = ebookSourceMixLabel(lang, footnotes) || chrome.sourceMetadata;
     const serializedCounts = JSON.stringify(ebookSourceCounts(footnotes));
-    if (lang === 'sv') {
-      return `<p class="ebook__provenance-badge ebook__provenance-badge--source-mix" data-source-counts='${serializedCounts}' aria-label="Källor: ${count}. ${sourceSummary}. Egen studieguide; kontrollera fakta via källsidan och UHR-materialet."><span>Källor: ${count}</span> · ${sourceSummary} · Egen studieguide med kapitelkällor; kontrollera fakta via <a href="#/sources">källsidan</a> och UHR-materialet.</p>`;
-    }
-    return `<p class="ebook__provenance-badge ebook__provenance-badge--source-mix" data-source-counts='${serializedCounts}' aria-label="Sources: ${count}. ${sourceSummary}. Original study guide; verify facts through the Sources page and UHR material."><span>Sources: ${count}</span> · ${sourceSummary} · Original study guide with chapter sources; verify facts through the <a href="#/sources">Sources page</a> and UHR material.</p>`;
+    const sourcePageLink = `<a href="#/sources">${chrome.sourcePageLink}</a>`;
+    const body = chrome.provenanceBody.replace('{link}', sourcePageLink);
+    return `<p class="ebook__provenance-badge ebook__provenance-badge--source-mix" data-source-counts='${serializedCounts}' aria-label="${chrome.sourceCount}: ${count}. ${sourceSummary}. ${chrome.provenanceAriaBody}"><span>${chrome.sourceCount}: ${count}</span> · ${sourceSummary} · ${body}</p>`;
   }
 
   function svStudyBrief(points, facts, sourceKeys, practiceHint, afterPracticeHtml = '') {
