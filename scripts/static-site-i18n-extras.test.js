@@ -202,6 +202,42 @@ const privacyPurchaseActionKeys = ['privacy.lede', 'privacy.s5.p'];
 const englishPrivacyPurchaseActionLabel = /\bRemove Ads\b/i;
 const forbiddenTigrinyaWorkWelfareTerms = ['kollektivavtal', 'föräldraledighet', 'sjukpenning'];
 const forbiddenStaticHomeEducationTerms = /\b(?:Förskola|förskola|universitet)\b/iu;
+const cheatsheetCopyKeys = [
+  'cheatsheetClose',
+  'cheatsheetTitle',
+  'cheatsheetOr',
+  'cheatsheetFika',
+  'cheatsheetAbba',
+  'cheatsheetSnow',
+  'cheatsheetVasa',
+  'cheatsheetIkea',
+  'cheatsheetSkal',
+  'cheatsheetLagom',
+  'cheatsheetBrand',
+  'cheatsheetFlag',
+  'cheatsheetQuiet',
+  'cheatsheetFact',
+  'cheatsheetSwedenMode',
+  'cheatsheetToggle',
+  'cheatsheetFoot',
+];
+const cheatsheetEnglishFallbacks = {
+  cheatsheetClose: /^Close$/i,
+  cheatsheetTitle: /^Hidden things$/i,
+  cheatsheetFika: /^coffee break$/i,
+  cheatsheetSnow: /^winter$/i,
+  cheatsheetVasa: /^a ship sails by$/i,
+  cheatsheetIkea: /^some assembly required$/i,
+  cheatsheetSkal: /^cheers$/i,
+  cheatsheetLagom: /^just right$/i,
+  cheatsheetBrand: /^click brand logo$/i,
+  cheatsheetFlag: /^flag$/i,
+  cheatsheetQuiet: /^click anywhere quiet$/i,
+  cheatsheetFact: /^Sweden fact$/i,
+  cheatsheetSwedenMode: /^Sweden mode$/i,
+  cheatsheetToggle: /^toggle this$/i,
+  cheatsheetFoot: /Swedish secrets unlocked/i,
+};
 
 const englishFallbacksByKey = {
   'hero.lede': "A friendly, unofficial study app for Sweden's medborgarskapsprov.",
@@ -265,6 +301,112 @@ function loadBaseI18n() {
   vm.createContext(sandbox);
   vm.runInContext(`${dictionarySource}\nwindow.i18n;`, sandbox, { timeout: 3000 });
   return sandbox.window.i18n;
+}
+
+function loadStaticExtrasCopy() {
+  const source = fs.readFileSync(path.join(repoRoot, 'site/extras.js'), 'utf8');
+  const instrumented = source.replace(
+    '\n  function extrasText(key) {',
+    '\n  window.__EXTRAS_COPY = EXTRAS_COPY;\n\n  function extrasText(key) {',
+  );
+  assert.notEqual(instrumented, source, 'site/extras.js should expose EXTRAS_COPY in test VM');
+
+  const noop = () => {};
+  const sandbox = {
+    console,
+    setTimeout,
+    clearTimeout,
+    localStorage: { getItem: () => 'en' },
+    window: { addEventListener: noop },
+    document: {
+      addEventListener: noop,
+      querySelectorAll: () => [],
+      documentElement: { getAttribute: () => '' },
+      body: { appendChild: noop },
+      getElementById: () => null,
+      createElement: () => ({
+        addEventListener: noop,
+        remove: noop,
+        style: {},
+        set id(value) {
+          this._id = value;
+        },
+        get id() {
+          return this._id;
+        },
+        set innerHTML(value) {
+          this._innerHTML = value;
+        },
+        get innerHTML() {
+          return this._innerHTML;
+        },
+      }),
+    },
+    IntersectionObserver: function IntersectionObserver() {
+      this.observe = noop;
+      this.unobserve = noop;
+    },
+  };
+  vm.createContext(sandbox);
+  vm.runInContext(instrumented, sandbox, { timeout: 3000 });
+  return sandbox.window.__EXTRAS_COPY;
+}
+
+function renderCheatsheetHtml(locale) {
+  const source = fs.readFileSync(path.join(repoRoot, 'site/extras.js'), 'utf8');
+  const listeners = {};
+  const noop = () => {};
+  const appended = [];
+  const sandbox = {
+    console,
+    setTimeout,
+    clearTimeout,
+    localStorage: { getItem: (key) => (key === 'smt_lang' ? locale : null) },
+    window: { addEventListener: noop },
+    document: {
+      activeElement: null,
+      addEventListener: (type, handler) => {
+        listeners[type] = listeners[type] || [];
+        listeners[type].push(handler);
+      },
+      querySelectorAll: () => [],
+      documentElement: { getAttribute: () => '' },
+      body: { appendChild: (element) => appended.push(element) },
+      getElementById: () => null,
+      createElement: () => ({
+        addEventListener: noop,
+        remove: noop,
+        style: {},
+        set id(value) {
+          this._id = value;
+        },
+        get id() {
+          return this._id;
+        },
+        set innerHTML(value) {
+          this._innerHTML = value;
+        },
+        get innerHTML() {
+          return this._innerHTML;
+        },
+      }),
+    },
+    IntersectionObserver: function IntersectionObserver() {
+      this.observe = noop;
+      this.unobserve = noop;
+    },
+  };
+  vm.createContext(sandbox);
+  vm.runInContext(source, sandbox, { timeout: 3000 });
+
+  const keydownHandlers = listeners.keydown || [];
+  assert.ok(keydownHandlers.length > 0, 'site/extras.js should register keyboard handlers');
+  for (const handler of keydownHandlers) {
+    handler({ key: '?', shiftKey: false });
+  }
+
+  assert.equal(appended.length, 1, `${locale} should render one cheatsheet overlay`);
+  return appended[0].innerHTML;
 }
 
 function staticFooterHtml() {
@@ -423,6 +565,64 @@ test('Chinese Home qcard strings reject stray English common nouns', () => {
   assert.match(extra['zh-Hans']['qcard.q'], /采摘莓果/);
   assert.doesNotMatch(extra['zh-Hans']['qcard.q'], /\bberries\b/i);
   assert.match(extra['zh-Hant']['qcard.q'], /採莓果/);
+});
+
+test('static cheatsheet easter egg copy is localized for every shipped language', () => {
+  const extrasCopy = loadStaticExtrasCopy();
+  const locales = ['en', 'sv', ...extraLocales];
+  const source = fs.readFileSync(path.join(repoRoot, 'site/extras.js'), 'utf8');
+
+  assert.match(source, /aria-label="\$\{extrasText\('cheatsheetClose'\)\}"/);
+  assert.match(source, /<h3>\$\{extrasText\('cheatsheetTitle'\)\}<\/h3>/);
+  assert.doesNotMatch(source, /<h3>Hidden things<\/h3>/);
+  assert.doesNotMatch(source, /aria-label="Close"/);
+  assert.doesNotMatch(source, /coffee break<\/li>|some assembly required<\/li>|Hej hej\.<\/p>/);
+
+  for (const key of cheatsheetCopyKeys) {
+    const dictionary = extrasCopy?.[key];
+    assert.equal(typeof dictionary, 'object', `${key} copy dictionary must exist`);
+
+    for (const locale of locales) {
+      const value = dictionary[locale];
+      assert.equal(typeof value, 'string', `${key}.${locale} must be a string`);
+      assert.notEqual(value.trim(), '', `${key}.${locale} must not be empty`);
+    }
+
+    for (const locale of extraLocales) {
+      const fallback = cheatsheetEnglishFallbacks[key];
+      if (!fallback) continue;
+      assert.doesNotMatch(
+        dictionary[locale],
+        fallback,
+        `${key}.${locale} must not fall back to English cheatsheet copy`,
+      );
+    }
+  }
+
+  assert.equal(extrasCopy.cheatsheetTitle.sv, 'Gömda saker');
+  assert.equal(extrasCopy.cheatsheetClose.ar, 'إغلاق');
+  assert.match(extrasCopy.cheatsheetFoot.so, /siraha yar ee Iswiidhan/i);
+});
+
+test('static cheatsheet keyboard toggle renders localized overlay HTML for every extra locale', () => {
+  for (const locale of extraLocales) {
+    const html = renderCheatsheetHtml(locale);
+
+    assert.match(html, /<kbd>fika<\/kbd>/, `${locale} keeps fika command token`);
+    assert.match(html, /<kbd>abba<\/kbd>/, `${locale} keeps abba command token`);
+    assert.match(html, /<kbd>snö<\/kbd>/, `${locale} keeps snö command token`);
+    assert.match(html, /<kbd>snow<\/kbd>/, `${locale} keeps snow command token`);
+    assert.match(html, /<kbd>vasa<\/kbd>/, `${locale} keeps vasa command token`);
+    assert.match(html, /<kbd>ikea<\/kbd>/, `${locale} keeps ikea command token`);
+    assert.match(html, /<kbd>skål<\/kbd>/, `${locale} keeps skål command token`);
+    assert.match(html, /<kbd>lagom<\/kbd>/, `${locale} keeps lagom command token`);
+    assert.match(html, /<kbd>↑↑↓↓←→←→ b a<\/kbd>/, `${locale} keeps Konami command token`);
+    assert.match(html, /<kbd>\?<\/kbd>/, `${locale} keeps question-mark toggle token`);
+    assert.doesNotMatch(html, /aria-label="Close"/, `${locale} close label is localized`);
+    assert.doesNotMatch(html, /<h3>Hidden things<\/h3>/, `${locale} heading is localized`);
+    assert.doesNotMatch(html, /coffee break|some assembly required|click anywhere quiet/);
+    assert.doesNotMatch(html, /<p class="cheats__foot">Hej hej\.<\/p>/);
+  }
 });
 
 test('extra locale footer.app.5 Roadmap English fallback guard covers Central Kurdish Somali and Tigrinya', () => {

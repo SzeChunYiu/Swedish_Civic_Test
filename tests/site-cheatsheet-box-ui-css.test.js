@@ -4,6 +4,7 @@ const path = require('node:path');
 const test = require('node:test');
 
 const stylesPath = path.join(__dirname, '..', 'site', 'styles.css');
+const extrasPath = path.join(__dirname, '..', 'site', 'extras.js');
 
 test('static cheatsheet easter egg uses tactile command card boxes', () => {
   const css = fs.readFileSync(stylesPath, 'utf8');
@@ -38,4 +39,28 @@ test('static cheatsheet easter egg uses tactile command card boxes', () => {
     css,
     /@media \(max-width: 520px\)\s*{[\s\S]*\.cheats__panel\s*{[\s\S]*border-radius: 22px;[\s\S]*\.cheats__panel li\s*{[\s\S]*flex-direction: column;/,
   );
+});
+
+test('static cheatsheet easter egg renders localized copy without changing command tokens', () => {
+  const source = fs.readFileSync(extrasPath, 'utf8');
+
+  for (const key of [
+    'cheatsheetClose',
+    'cheatsheetTitle',
+    'cheatsheetFika',
+    'cheatsheetIkea',
+    'cheatsheetFoot',
+  ]) {
+    assert.match(source, new RegExp(`${key}:\\s*\\{`), `${key} copy should be defined`);
+    assert.match(source, new RegExp(`extrasText\\('${key}'\\)`), `${key} should render via lang()`);
+  }
+
+  for (const token of ['fika', 'abba', 'snö', 'snow', 'vasa', 'ikea', 'skål', 'lagom']) {
+    assert.match(source, new RegExp(`<kbd>${token}</kbd>`), `${token} command token is stable`);
+  }
+
+  assert.match(source, /<kbd>↑↑↓↓←→←→ b a<\/kbd>/);
+  assert.match(source, /<kbd>\?<\/kbd>/);
+  assert.match(source, /<b>5×<\/b>/);
+  assert.match(source, /<b>3×<\/b>/);
 });

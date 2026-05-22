@@ -236,6 +236,244 @@
       tr: 'Ne fazla. Ne az. Tam kararında.',
       uk: 'Не забагато. Не замало. Саме так.',
     },
+    cheatsheetClose: {
+      en: 'Close',
+      sv: 'Stäng',
+      'zh-Hans': '关闭',
+      'zh-Hant': '關閉',
+      ar: 'إغلاق',
+      ckb: 'داخستن',
+      fa: 'بستن',
+      pl: 'Zamknij',
+      so: 'Xir',
+      ti: 'ዕጾ',
+      tr: 'Kapat',
+      uk: 'Закрити',
+    },
+    cheatsheetTitle: {
+      en: 'Hidden things',
+      sv: 'Gömda saker',
+      'zh-Hans': '隐藏彩蛋',
+      'zh-Hant': '隱藏彩蛋',
+      ar: 'أشياء مخفية',
+      ckb: 'شتە شاراوەکان',
+      fa: 'چیزهای پنهان',
+      pl: 'Ukryte funkcje',
+      so: 'Waxyaabo qarsoon',
+      ti: 'ዝተሓብኡ ነገራት',
+      tr: 'Gizli şeyler',
+      uk: 'Приховані речі',
+    },
+    cheatsheetOr: {
+      en: 'or',
+      sv: 'eller',
+      'zh-Hans': '或',
+      'zh-Hant': '或',
+      ar: 'أو',
+      ckb: 'یان',
+      fa: 'یا',
+      pl: 'albo',
+      so: 'ama',
+      ti: 'ወይ',
+      tr: 'veya',
+      uk: 'або',
+    },
+    cheatsheetFika: {
+      en: 'coffee break',
+      sv: 'fikapaus',
+      'zh-Hans': '咖啡休息',
+      'zh-Hant': '咖啡休息',
+      ar: 'استراحة قهوة',
+      ckb: 'پشووی قاوە',
+      fa: 'استراحت قهوه',
+      pl: 'przerwa na kawę',
+      so: 'nasasho kafee',
+      ti: 'ናይ ቡን ዕረፍቲ',
+      tr: 'kahve molası',
+      uk: 'кавова перерва',
+    },
+    cheatsheetAbba: {
+      en: 'disco',
+      sv: 'disco',
+      'zh-Hans': '迪斯科',
+      'zh-Hant': '迪斯可',
+      ar: 'ديسكو',
+      ckb: 'دیسکۆ',
+      fa: 'دیسکو',
+      pl: 'dyskoteka',
+      so: 'disco',
+      ti: 'ዲስኮ',
+      tr: 'disko',
+      uk: 'диско',
+    },
+    cheatsheetSnow: {
+      en: 'winter',
+      sv: 'vinter',
+      'zh-Hans': '冬天',
+      'zh-Hant': '冬天',
+      ar: 'الشتاء',
+      ckb: 'زستان',
+      fa: 'زمستان',
+      pl: 'zima',
+      so: 'jiilaal',
+      ti: 'ክረምቲ',
+      tr: 'kış',
+      uk: 'зима',
+    },
+    cheatsheetVasa: {
+      en: 'a ship sails by',
+      sv: 'ett skepp seglar förbi',
+      'zh-Hans': '一艘船驶过',
+      'zh-Hant': '一艘船駛過',
+      ar: 'سفينة تمرّ',
+      ckb: 'کەشتییەک تێدەپەڕێت',
+      fa: 'یک کشتی عبور می‌کند',
+      pl: 'statek przepływa obok',
+      so: 'markab ayaa ag mara',
+      ti: 'መርከብ ትሓልፍ',
+      tr: 'bir gemi geçer',
+      uk: 'корабель пропливає повз',
+    },
+    cheatsheetIkea: {
+      en: 'some assembly required',
+      sv: 'lite montering krävs',
+      'zh-Hans': '需要一点组装',
+      'zh-Hant': '需要一點組裝',
+      ar: 'يحتاج إلى بعض التركيب',
+      ckb: 'کەمێک کۆکردنەوەی پێویستە',
+      fa: 'کمی سرهم‌بندی لازم است',
+      pl: 'wymaga trochę montażu',
+      so: 'wax yar ayaa la isku xirayaa',
+      ti: 'ገለ ምትካል የድሊ',
+      tr: 'biraz montaj gerekir',
+      uk: 'потрібне трохи складання',
+    },
+    cheatsheetSkal: {
+      en: 'cheers',
+      sv: 'skål',
+      'zh-Hans': '干杯',
+      'zh-Hant': '乾杯',
+      ar: 'بصحتك',
+      ckb: 'بەخۆشی',
+      fa: 'به سلامتی',
+      pl: 'na zdrowie',
+      so: 'hambalyo',
+      ti: 'ንጥዕና',
+      tr: 'şerefe',
+      uk: 'будьмо',
+    },
+    cheatsheetLagom: {
+      en: 'just right',
+      sv: 'precis lagom',
+      'zh-Hans': '刚刚好',
+      'zh-Hant': '剛剛好',
+      ar: 'تمامًا كما ينبغي',
+      ckb: 'تەواو گونجاو',
+      fa: 'درست به اندازه',
+      pl: 'w sam raz',
+      so: 'ku filan',
+      ti: 'ትኽክል መጠን',
+      tr: 'tam kararında',
+      uk: 'саме в міру',
+    },
+    cheatsheetBrand: {
+      en: 'click brand logo',
+      sv: 'klicka på logotypen',
+      'zh-Hans': '点击品牌标志',
+      'zh-Hant': '點擊品牌標誌',
+      ar: 'انقر شعار التطبيق',
+      ckb: 'کلیک لە لۆگۆی بەرنامەکە بکە',
+      fa: 'روی نشان برنامه کلیک کن',
+      pl: 'kliknij logo aplikacji',
+      so: 'guji astaanta app-ka',
+      ti: 'ሎጎ ናይቲ መተግበሪ ጠውቕ',
+      tr: 'uygulama logosuna tıkla',
+      uk: 'натисни логотип застосунку',
+    },
+    cheatsheetFlag: {
+      en: 'flag',
+      sv: 'flagga',
+      'zh-Hans': '旗帜',
+      'zh-Hant': '旗幟',
+      ar: 'العلم',
+      ckb: 'ئاڵا',
+      fa: 'پرچم',
+      pl: 'flaga',
+      so: 'calan',
+      ti: 'ባንዴራ',
+      tr: 'bayrak',
+      uk: 'прапор',
+    },
+    cheatsheetQuiet: {
+      en: 'click anywhere quiet',
+      sv: 'klicka på en lugn yta',
+      'zh-Hans': '点击页面空白处',
+      'zh-Hant': '點擊頁面空白處',
+      ar: 'انقر في مكان هادئ من الصفحة',
+      ckb: 'لە شوێنێکی ئارامی پەڕەکە کلیک بکە',
+      fa: 'روی جای خلوت صفحه کلیک کن',
+      pl: 'kliknij spokojne miejsce strony',
+      so: 'guji meel deggan oo bogga ah',
+      ti: 'ኣብ ጸጥ ዝበለ ቦታ ናይ ገጽ ጠውቕ',
+      tr: 'sayfada sakin bir yere tıkla',
+      uk: 'натисни спокійне місце сторінки',
+    },
+    cheatsheetFact: {
+      en: 'Sweden fact',
+      sv: 'Sverige-fakta',
+      'zh-Hans': '瑞典小知识',
+      'zh-Hant': '瑞典小知識',
+      ar: 'معلومة عن السويد',
+      ckb: 'زانیارییەک دەربارەی سوێد',
+      fa: 'نکته‌ای درباره سوئد',
+      pl: 'ciekawostka o Szwecji',
+      so: 'xog ku saabsan Iswiidhan',
+      ti: 'ሓቂ ብዛዕባ ሽወደን',
+      tr: 'İsveç bilgisi',
+      uk: 'факт про Швецію',
+    },
+    cheatsheetSwedenMode: {
+      en: 'Sweden mode',
+      sv: 'Sverige-läge',
+      'zh-Hans': '瑞典模式',
+      'zh-Hant': '瑞典模式',
+      ar: 'وضع السويد',
+      ckb: 'دۆخی سوێد',
+      fa: 'حالت سوئد',
+      pl: 'tryb Szwecji',
+      so: 'habka Iswiidhan',
+      ti: 'ሞድ ሽወደን',
+      tr: 'İsveç modu',
+      uk: 'режим Швеції',
+    },
+    cheatsheetToggle: {
+      en: 'toggle this',
+      sv: 'visa eller dölj detta',
+      'zh-Hans': '显示或隐藏这个面板',
+      'zh-Hant': '顯示或隱藏這個面板',
+      ar: 'إظهار أو إخفاء هذه اللوحة',
+      ckb: 'ئەم پەنجەرەیە پیشان بدە یان بشارەوە',
+      fa: 'این پنل را نشان بده یا پنهان کن',
+      pl: 'pokaż lub ukryj ten panel',
+      so: 'muuji ama qari sanduuqan',
+      ti: 'ነዚ ፓነል ኣርእይ ወይ ሕባእ',
+      tr: 'bu paneli göster ya da gizle',
+      uk: 'показати або сховати цю панель',
+    },
+    cheatsheetFoot: {
+      en: 'Hej hej - Swedish secrets unlocked.',
+      sv: 'Hej hej - svenska hemlisar upplåsta.',
+      'zh-Hans': 'Hej hej，瑞典小秘密已开启。',
+      'zh-Hant': 'Hej hej，瑞典小秘密已開啟。',
+      ar: 'Hej hej - انفتحت الأسرار السويدية الصغيرة.',
+      ckb: 'Hej hej - نهێنییە بچووکەکانی سوێد کرانەوە.',
+      fa: 'Hej hej - رازهای کوچک سوئدی باز شد.',
+      pl: 'Hej hej - szwedzkie sekrety odblokowane.',
+      so: 'Hej hej - siraha yar ee Iswiidhan waa furmeen.',
+      ti: 'Hej hej - ናይ ሽወደን ንኣሽቱ ምስጢራት ተኸፊቶም።',
+      tr: 'Hej hej - İsveç sırları açıldı.',
+      uk: 'Hej hej - шведські секрети відкрито.',
+    },
     swedenModeToast: {
       en: 'Sweden mode. Hej hej.',
       sv: 'Sverige-läge. Hej hej.',
@@ -680,22 +918,22 @@
     el.id = 'smt-cheats';
     el.innerHTML = `
       <div class="cheats__panel">
-        <button class="cheats__close" aria-label="Close">✕</button>
-        <h3>Hidden things</h3>
+        <button class="cheats__close" aria-label="${extrasText('cheatsheetClose')}">✕</button>
+        <h3>${extrasText('cheatsheetTitle')}</h3>
         <ul>
-          <li><kbd>fika</kbd> — coffee break</li>
-          <li><kbd>abba</kbd> — disco</li>
-          <li><kbd>snö</kbd> or <kbd>snow</kbd> — winter</li>
-          <li><kbd>vasa</kbd> — a ship sails by</li>
-          <li><kbd>ikea</kbd> — some assembly required</li>
-          <li><kbd>skål</kbd> — cheers</li>
-          <li><kbd>lagom</kbd> — just right</li>
-          <li><b>5×</b> click brand logo — flag</li>
-          <li><b>3×</b> click anywhere quiet — Sweden fact</li>
-          <li><kbd>↑↑↓↓←→←→ b a</kbd> — Sweden mode</li>
-          <li><kbd>?</kbd> — toggle this</li>
+          <li><kbd>fika</kbd> — ${extrasText('cheatsheetFika')}</li>
+          <li><kbd>abba</kbd> — ${extrasText('cheatsheetAbba')}</li>
+          <li><kbd>snö</kbd> ${extrasText('cheatsheetOr')} <kbd>snow</kbd> — ${extrasText('cheatsheetSnow')}</li>
+          <li><kbd>vasa</kbd> — ${extrasText('cheatsheetVasa')}</li>
+          <li><kbd>ikea</kbd> — ${extrasText('cheatsheetIkea')}</li>
+          <li><kbd>skål</kbd> — ${extrasText('cheatsheetSkal')}</li>
+          <li><kbd>lagom</kbd> — ${extrasText('cheatsheetLagom')}</li>
+          <li><b>5×</b> ${extrasText('cheatsheetBrand')} — ${extrasText('cheatsheetFlag')}</li>
+          <li><b>3×</b> ${extrasText('cheatsheetQuiet')} — ${extrasText('cheatsheetFact')}</li>
+          <li><kbd>↑↑↓↓←→←→ b a</kbd> — ${extrasText('cheatsheetSwedenMode')}</li>
+          <li><kbd>?</kbd> — ${extrasText('cheatsheetToggle')}</li>
         </ul>
-        <p class="cheats__foot">Hej hej.</p>
+        <p class="cheats__foot">${extrasText('cheatsheetFoot')}</p>
       </div>
     `;
     el.style.cssText =
