@@ -212,6 +212,15 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     summaryKeys: ['settingsRouteScrollRulesValidated', 'settingsRouteScrollParityValidated'],
   },
   {
+    id: 'settingsImportSummaryNonzero',
+    flags: ['--focus-settings-import-summary-nonzero'],
+    summaryKeys: [
+      'settingsImportSummaryNonzeroValidated',
+      'settingsImportSummaryLocalesValidated',
+      'settingsImportSummaryHiddenZeroRowsValidated',
+    ],
+  },
+  {
     id: 'settingsRoute',
     flags: ['--focus-settings-route'],
     summaryKeys: [
@@ -219,6 +228,9 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
       'settingsRouteHeaderParityValidated',
       'settingsRouteCopyLabelsValidated',
       'settingsRouteCopyParityValidated',
+      'settingsImportSummaryNonzeroValidated',
+      'settingsImportSummaryLocalesValidated',
+      'settingsImportSummaryHiddenZeroRowsValidated',
       'settingsRouteScrollRulesValidated',
       'settingsRouteScrollParityValidated',
     ],
@@ -276,6 +288,9 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
       'settingsRouteHeaderParityValidated',
       'settingsRouteCopyLabelsValidated',
       'settingsRouteCopyParityValidated',
+      'settingsImportSummaryNonzeroValidated',
+      'settingsImportSummaryLocalesValidated',
+      'settingsImportSummaryHiddenZeroRowsValidated',
       'settingsRouteScrollRulesValidated',
       'settingsRouteScrollParityValidated',
       'settingsStoreFieldsValidated',
