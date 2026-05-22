@@ -20,7 +20,7 @@ test('theme token schema validates the exported design-token catalog', () => {
   const shadowSource = fs.readFileSync(path.join(repoRoot, 'lib/theme/shadows.ts'), 'utf8');
   const spacingSource = fs.readFileSync(path.join(repoRoot, 'lib/theme/spacing.ts'), 'utf8');
 
-  assert.equal(summary.themeColorTokensValidated, 37);
+  assert.equal(summary.themeColorTokensValidated, 39);
   assert.equal(summary.themeSpaceTokensValidated, 25);
   assert.equal(summary.themeRadiusTokensValidated, 9);
   assert.equal(summary.themeTypographyTokensValidated, 22);
@@ -28,10 +28,10 @@ test('theme token schema validates the exported design-token catalog', () => {
   assert.equal(summary.themeMotionTokensValidated, 7);
   assert.ok(summary.themeBorderWidthTokenFilesValidated > 0);
   assert.equal(summary.themeBorderWidthTokenParityValidated, true);
-  assert.equal(summary.themeContrastPairsValidated, 20);
+  assert.equal(summary.themeContrastPairsValidated, 22);
   assert.equal(summary.themeContrastPairsAAValidated, true);
-  assert.equal(summary.themeDarkColorTokensValidated, 37);
-  assert.equal(summary.themeDarkContrastPairsValidated, 20);
+  assert.equal(summary.themeDarkColorTokensValidated, 39);
+  assert.equal(summary.themeDarkContrastPairsValidated, 22);
   assert.equal(summary.themeDarkContrastPairsAAValidated, true);
   assert.equal(summary.themeTokenSchemaValidated, true);
   assert.match(spacingSource, /hairline:\s*1,/);
