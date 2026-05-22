@@ -4829,6 +4829,7 @@
   window.addEventListener('DOMContentLoaded', () => {
     if (isOnEbook()) render();
   });
+  if (isOnEbook()) render();
   document.addEventListener('click', (e) => {
     if (
       e.target.closest('.lang button[data-lang]') ||

@@ -127,6 +127,8 @@ test('static PWA caches lazy ebook route bundles only after route demand', async
   const installCachedPaths = await cachedStaticPaths(page);
   expect(installCachedPaths).toContain('app.js');
   expect(installCachedPaths).toContain('styles.css');
+  expect(installCachedPaths).not.toContain('questions.js');
+  expect(installCachedPaths).not.toContain('practice.js');
   expect(installCachedPaths).not.toContain('ebook-tools.js');
   expect(installCachedPaths).not.toContain('ebook.js');
 

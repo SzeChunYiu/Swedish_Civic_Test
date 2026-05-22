@@ -1391,6 +1391,7 @@
   window.addEventListener('DOMContentLoaded', onRoute);
   window.addEventListener('smt:questionbankready', onRoute);
   window.addEventListener('smt:languagechange', rerenderForLanguageChange);
+  onRoute();
 
   // Re-render hub when language changes
   document.addEventListener('click', (e) => {

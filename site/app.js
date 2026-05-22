@@ -9,10 +9,142 @@
 
 const SMT_QUESTION_BANK_SCRIPT_SRC = 'questions.js';
 const SMT_QUESTION_BANK_ROUTE_PATHS = new Set(['/practice', '/mock', '/sources', '/dashboard']);
+const SMT_PRACTICE_SCRIPT_SOURCES = ['practice.js'];
+const SMT_EBOOK_SCRIPT_SOURCES = ['ebook-tools.js', 'ebook.js'];
 const SMT_QUESTION_BANK_LOAD = {
   error: null,
   promise: null,
 };
+const SMT_STATIC_ROUTE_SCRIPT_LOADS = {};
+
+function smtStaticRouteScriptSelector(src) {
+  return `script[data-smt-route-script="${src}"]`;
+}
+
+function smtStaticRouteScriptIsLoaded(src) {
+  const state = SMT_STATIC_ROUTE_SCRIPT_LOADS[src];
+  if (state?.loaded) return true;
+  const existing = document.querySelector(smtStaticRouteScriptSelector(src));
+  return Boolean(existing && existing.dataset.smtLoaded === 'true');
+}
+
+function smtLoadStaticRouteScript(src) {
+  if (smtStaticRouteScriptIsLoaded(src)) return Promise.resolve();
+  const state = SMT_STATIC_ROUTE_SCRIPT_LOADS[src] || {};
+  if (state.promise) return state.promise;
+
+  state.promise = new Promise((resolve, reject) => {
+    const existing = document.querySelector(smtStaticRouteScriptSelector(src));
+    if (existing) {
+      existing.addEventListener('load', () => resolve(), { once: true });
+      existing.addEventListener('error', () => reject(new Error(`${src} failed to load`)), {
+        once: true,
+      });
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.async = false;
+    script.dataset.smtRouteScript = src;
+    script.src = src;
+    script.onload = () => {
+      state.loaded = true;
+      state.error = null;
+      script.dataset.smtLoaded = 'true';
+      resolve();
+    };
+    script.onerror = () => {
+      const error = new Error(`${src} failed to load`);
+      state.error = error;
+      state.promise = null;
+      reject(error);
+    };
+    document.head.appendChild(script);
+  });
+
+  SMT_STATIC_ROUTE_SCRIPT_LOADS[src] = state;
+  return state.promise;
+}
+
+function smtLoadStaticRouteScripts(sources) {
+  return sources.reduce(
+    (chain, src) => chain.then(() => smtLoadStaticRouteScript(src)),
+    Promise.resolve(),
+  );
+}
+
+function smtStaticRouteBundleSources(path) {
+  if (path === '/practice' || path === '/mock') return SMT_PRACTICE_SCRIPT_SOURCES;
+  if (path === '/ebook') return SMT_EBOOK_SCRIPT_SOURCES;
+  return [];
+}
+
+function smtStaticRouteBundleIsReady(path) {
+  const sources = smtStaticRouteBundleSources(path);
+  return sources.length === 0 || sources.every(smtStaticRouteScriptIsLoaded);
+}
+window.smtStaticRouteBundleIsReady = smtStaticRouteBundleIsReady;
+
+function smtEbookRouteStatusCopy(kind) {
+  const copy =
+    kind === 'error'
+      ? {
+          sv: 'E-boken kunde inte laddas. Kontrollera anslutningen och öppna e-boken igen.',
+          en: 'Ebook could not load. Check your connection and open the ebook again.',
+        }
+      : {
+          sv: 'Laddar e-boken...',
+          en: 'Loading ebook...',
+        };
+  return smtTr(copy);
+}
+
+function smtRenderEbookRouteStatus(kind) {
+  const reader = document.getElementById('ebook-reader');
+  if (!reader) return;
+  reader.innerHTML = `<div class="ebook__route-status" role="status" aria-live="polite">${smtQuizEscapeHtml(
+    smtEbookRouteStatusCopy(kind),
+  )}</div>`;
+}
+
+function smtEnsureEbookScripts() {
+  if (smtStaticRouteBundleIsReady('/ebook')) {
+    if (typeof window.smtEbookRender === 'function') window.smtEbookRender();
+    return Promise.resolve();
+  }
+  smtRenderEbookRouteStatus('loading');
+  return smtLoadStaticRouteScripts(SMT_EBOOK_SCRIPT_SOURCES)
+    .then(() => {
+      if (smtStaticRoutePath() === '/ebook' && typeof window.smtEbookRender === 'function') {
+        window.smtEbookRender();
+      }
+    })
+    .catch((error) => {
+      if (smtStaticRoutePath() === '/ebook') smtRenderEbookRouteStatus('error');
+      throw error;
+    });
+}
+window.smtEnsureEbookScripts = smtEnsureEbookScripts;
+
+function smtEnsurePracticeScripts() {
+  return smtLoadStaticRouteScripts(SMT_PRACTICE_SCRIPT_SOURCES).then(() => {
+    if (smtStaticRoutePath() === '/practice' && typeof window.smtQuizRenderRoute === 'function') {
+      window.smtQuizRenderRoute();
+    }
+  });
+}
+window.smtEnsurePracticeScripts = smtEnsurePracticeScripts;
+
+function smtEnsureStaticRouteBundleForRoute(path) {
+  if (path === '/practice' || path === '/mock') {
+    return smtEnsurePracticeScripts().catch(() => null);
+  }
+  if (path === '/ebook') {
+    return smtEnsureEbookScripts().catch(() => null);
+  }
+  return null;
+}
+window.smtEnsureStaticRouteBundleForRoute = smtEnsureStaticRouteBundleForRoute;
 
 function smtStaticRoutePath() {
   const hash = (location.hash || '#/').replace(/^#/, '');
@@ -111,6 +243,7 @@ function route() {
     window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
   }
   smtSetMobileNav(false);
+  smtEnsureStaticRouteBundleForRoute(path);
   smtEnsureQuestionBankForRoute(path);
 }
 
@@ -2525,6 +2658,20 @@ function smtQuizRenderRoute() {
     return;
   }
 
+  const stage = document.getElementById('quiz-stage');
+  if (!smtStaticRouteBundleIsReady('/practice')) {
+    if (stage) smtQuizRenderStatus(stage, smtQuizLoadingCopy());
+    smtEnsurePracticeScripts().then(
+      () => {
+        if (smtQuizShouldRender()) smtQuizRenderRoute();
+      },
+      () => {
+        if (stage) smtQuizRenderStatus(stage, smtQuizLoadErrorCopy());
+      },
+    );
+    return;
+  }
+
   const scope = smtQuizScopeKey();
   if (!SMT_QUIZ.routeActive && SMT_QUIZ.scope === scope) {
     smtQuizStartAttempt(scope);
@@ -2532,6 +2679,7 @@ function smtQuizRenderRoute() {
   SMT_QUIZ.routeActive = true;
   smtQuizRender();
 }
+window.smtQuizRenderRoute = smtQuizRenderRoute;
 
 document.addEventListener('click', (e) => {
   const opt = e.target.closest('#quiz-stage .quiz__opt');

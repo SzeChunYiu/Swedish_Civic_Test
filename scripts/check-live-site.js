@@ -321,11 +321,22 @@ function findStaticQuestionBankLazyLoadIssues(indexSource, appSource, practiceSo
   if (indexReferencesQuestionBankScript(indexSource)) {
     issues.push('index.html eagerly loads questions.js');
   }
+  if (
+    /<script\b[^>]*\bsrc=["'][^"']*practice\.js(?:[?#][^"']*)?["']/i.test(String(indexSource || ''))
+  ) {
+    issues.push('index.html eagerly loads practice.js');
+  }
   if (!/function\s+smtEnsureQuestionBank\s*\(/.test(String(appSource || ''))) {
     issues.push('app.js is missing smtEnsureQuestionBank lazy loader');
   }
   if (!/questions\.js/.test(String(appSource || ''))) {
     issues.push('app.js lazy loader does not reference questions.js');
+  }
+  if (!/SMT_PRACTICE_SCRIPT_SOURCES/.test(String(appSource || ''))) {
+    issues.push('app.js is missing practice.js route-bundle lazy loader');
+  }
+  if (!/smtEnsureStaticRouteBundleForRoute/.test(String(appSource || ''))) {
+    issues.push('app.js is missing static route-bundle lazy dispatcher');
   }
   if (!/smtEnsureQuestionBank/.test(String(practiceSource || ''))) {
     issues.push('practice.js does not wait for the lazy question bank');
@@ -333,6 +344,73 @@ function findStaticQuestionBankLazyLoadIssues(indexSource, appSource, practiceSo
   if (!/smtEnsureQuestionBank/.test(String(v11Source || ''))) {
     issues.push('v11.js does not wait for the lazy question bank');
   }
+  return issues;
+}
+
+function findStaticPwaAssetIssues(
+  indexSource,
+  manifestSource,
+  webManifestSource,
+  serviceWorkerSource,
+) {
+  const index = String(indexSource || '');
+  const issues = [];
+  const referencesWebManifest = /<link\b[^>]*\brel=["']manifest["']/i.test(index);
+  const registersServiceWorker = /serviceWorker\.register\([^)]*sw\.js/i.test(index);
+
+  if (!referencesWebManifest && !registersServiceWorker) return [];
+  if (!referencesWebManifest) issues.push('index.html does not reference manifest.webmanifest');
+  if (!registersServiceWorker) issues.push('index.html does not register sw.js');
+
+  let assetManifest = null;
+  try {
+    assetManifest = JSON.parse(String(manifestSource || ''));
+  } catch (error) {
+    issues.push(`asset-manifest.json could not be parsed for PWA assets: ${error.message}`);
+  }
+
+  let webManifest = null;
+  try {
+    webManifest = JSON.parse(String(webManifestSource || ''));
+  } catch (error) {
+    issues.push(`manifest.webmanifest could not be parsed: ${error.message}`);
+  }
+
+  const serviceWorker = String(serviceWorkerSource || '');
+  if (/^__FETCH_ERROR__/.test(serviceWorker)) {
+    issues.push(serviceWorker);
+  } else {
+    for (const requiredNeedle of ['CACHE_PREFIX', 'asset-manifest.json', 'cache.addAll']) {
+      if (!serviceWorker.includes(requiredNeedle)) {
+        issues.push(`sw.js is missing ${requiredNeedle}`);
+      }
+    }
+    if (!/addEventListener\(["']fetch["']/.test(serviceWorker)) {
+      issues.push('sw.js does not handle fetch events');
+    }
+  }
+
+  const requiredManifestAssets = ['manifest.webmanifest', 'sw.js'];
+  const iconSources = Array.isArray(webManifest?.icons)
+    ? webManifest.icons.map((icon) => icon?.src).filter(Boolean)
+    : [];
+  if (webManifest) {
+    if (!webManifest.name) issues.push('manifest.webmanifest is missing name');
+    if (!webManifest.display) issues.push('manifest.webmanifest is missing display');
+    if (!webManifest.start_url) issues.push('manifest.webmanifest is missing start_url');
+    if (!webManifest.scope) issues.push('manifest.webmanifest is missing scope');
+    if (!iconSources.length) issues.push('manifest.webmanifest is missing icons');
+    requiredManifestAssets.push(...iconSources);
+  }
+
+  if (assetManifest) {
+    for (const assetPath of requiredManifestAssets) {
+      if (!assetManifest.assets?.[assetPath]) {
+        issues.push(`${assetPath} is missing from asset-manifest.json`);
+      }
+    }
+  }
+
   return issues;
 }
 
@@ -375,16 +453,25 @@ async function checkLiveSite(inputUrl, options = {}) {
   const requiredHeadMetadata = resolveRequiredHeadMetadata(options);
   const requiredQuestionCount = resolveRequiredQuestionCount(options);
   const requiredQuestionBankHash = resolveRequiredQuestionBankHash(options);
-  const [indexAsset, stylesAsset, appAsset, practiceAsset, ebookAsset, v11Asset, questionsAsset] =
-    await Promise.all([
-      fetchAsset(baseUrl, 'index.html'),
-      fetchAsset(baseUrl, 'styles.css'),
-      fetchAsset(baseUrl, 'app.js'),
-      fetchAsset(baseUrl, 'practice.js'),
-      fetchAsset(baseUrl, 'ebook.js'),
-      fetchAsset(baseUrl, 'v11.js'),
-      fetchAsset(baseUrl, 'questions.js'),
-    ]);
+  const [
+    indexAsset,
+    stylesAsset,
+    appAsset,
+    practiceAsset,
+    ebookToolsAsset,
+    ebookAsset,
+    v11Asset,
+    questionsAsset,
+  ] = await Promise.all([
+    fetchAsset(baseUrl, 'index.html'),
+    fetchAsset(baseUrl, 'styles.css'),
+    fetchAsset(baseUrl, 'app.js'),
+    fetchAsset(baseUrl, 'practice.js'),
+    fetchAsset(baseUrl, 'ebook-tools.js'),
+    fetchAsset(baseUrl, 'ebook.js'),
+    fetchAsset(baseUrl, 'v11.js'),
+    fetchAsset(baseUrl, 'questions.js'),
+  ]);
   const index = indexAsset.text;
   const styles = stylesAsset.text;
   const app = appAsset.text;
@@ -454,12 +541,11 @@ async function checkLiveSite(inputUrl, options = {}) {
       'data-page="/practice"',
       'practice__inner practice__inner--wide',
       'id="quiz-stage"',
-      'practice.js',
     ]) &&
-      containsAll(app, ['smtEnsureQuestionBank', 'questions.js']) &&
+      containsAll(app, ['smtEnsureQuestionBank', 'questions.js', 'SMT_PRACTICE_SCRIPT_SOURCES']) &&
       containsAll(practice, ['hub__grid', 'hub__card', 'href="#/mock"'])
       ? pass('practice hub assets')
-      : fail('practice hub assets', 'missing current Practice route, script, or hub markup'),
+      : fail('practice hub assets', 'missing current Practice route, lazy script, or hub markup'),
   );
 
   const questionBankLazyLoadIssues = findStaticQuestionBankLazyLoadIssues(
@@ -616,6 +702,7 @@ module.exports = {
   findStaticAdSenseSlotConfigIssues,
   findStaticAdSenseSlotStateCopyIssues,
   findStaticNoTrackingClaimIssues,
+  findStaticPwaAssetIssues,
   findStaticQuestionBankLazyLoadIssues,
   findStaticSigninAssetIssues,
   hashStaticQuestionBank,

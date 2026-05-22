@@ -73,13 +73,42 @@ test('static ebook route scripts are lazy-loaded and manifest-backed assets', ()
 
   assert.doesNotMatch(indexHtml, /<script\b[^>]+\bsrc=["'][^"']*ebook-tools\.js[^"']*["']/i);
   assert.doesNotMatch(indexHtml, /<script\b[^>]+\bsrc=["'][^"']*ebook\.js[^"']*["']/i);
-  assert.doesNotMatch(appSource, /SMT_EBOOK_SCRIPT_SOURCES/);
-  assert.doesNotMatch(appSource, /window\.smtEnsureEbookScripts/);
+  assert.match(appSource, /SMT_EBOOK_SCRIPT_SOURCES\s*=\s*\['ebook-tools\.js', 'ebook\.js'\]/);
+  assert.match(appSource, /window\.smtEnsureEbookScripts\s*=/);
 
   for (const assetPath of ['ebook-tools.js', 'ebook.js']) {
     assert.equal(fs.existsSync(path.join(siteRoot, assetPath)), true);
     assert.ok(manifest.assets?.[assetPath], `${assetPath} missing from asset-manifest.json`);
   }
+});
+
+test('static route-only bundles are lazy-loaded and manifest-backed assets', () => {
+  const indexHtml = readSiteIndex();
+  const appSource = fs.readFileSync(path.join(siteRoot, 'app.js'), 'utf8');
+  const practiceSource = fs.readFileSync(path.join(siteRoot, 'practice.js'), 'utf8');
+  const ebookSource = fs.readFileSync(path.join(siteRoot, 'ebook.js'), 'utf8');
+  const serviceWorkerSource = fs.readFileSync(path.join(siteRoot, 'sw.js'), 'utf8');
+  const manifest = JSON.parse(fs.readFileSync(path.join(siteRoot, 'asset-manifest.json'), 'utf8'));
+
+  for (const assetPath of ['questions.js', 'practice.js', 'ebook-tools.js', 'ebook.js']) {
+    assert.doesNotMatch(
+      indexHtml,
+      new RegExp(`<script\\b[^>]+\\bsrc=["'][^"']*${assetPath.replace('.', '\\.')}[^"']*["']`, 'i'),
+      `${assetPath} should not be eagerly loaded by index.html`,
+    );
+    assert.ok(manifest.assets?.[assetPath], `${assetPath} missing from asset-manifest.json`);
+  }
+
+  assert.match(appSource, /const SMT_PRACTICE_SCRIPT_SOURCES = \['practice\.js'\]/);
+  assert.match(appSource, /const SMT_EBOOK_SCRIPT_SOURCES = \['ebook-tools\.js', 'ebook\.js'\]/);
+  assert.match(appSource, /function\s+smtEnsureStaticRouteBundleForRoute\s*\(/);
+  assert.match(appSource, /function\s+smtLoadStaticRouteScript\s*\(/);
+  assert.match(appSource, /script\.dataset\.smtRouteScript = src/);
+  assert.match(appSource, /smtEnsureStaticRouteBundleForRoute\(path\)/);
+  assert.match(practiceSource, /onRoute\(\);/);
+  assert.match(ebookSource, /if \(isOnEbook\(\)\) render\(\);/);
+  assert.match(serviceWorkerSource, /questions\.js/);
+  assert.match(serviceWorkerSource, /practice\.js/);
 });
 
 test('committed static site asset manifest matches shipped assets', () => {

@@ -56,9 +56,7 @@ function currentAssets() {
       '<section id="signin-modal" hidden></section>',
       '<main data-page="/practice"><div class="practice__inner practice__inner--wide"><div id="quiz-stage"></div></div></main>',
       '<main data-page="/mock"><div id="mock-stage"></div></main>',
-      '<script src="practice.js"></script>',
-      '<script src="ebook-tools.js"></script>',
-      '<script src="ebook.js"></script>',
+      '<script src="app.js"></script>',
       '<script src="v11.js"></script>',
       '<script src="signin.js"></script>',
       '<script>navigator.serviceWorker.register("./sw.js", { scope: "./", updateViaCache: "none" });</script>',
@@ -77,6 +75,9 @@ function currentAssets() {
     '/app.js': [
       'const SMT_QUESTION_BANK_SCRIPT_SRC = "questions.js";',
       'function smtEnsureQuestionBank(){}',
+      'const SMT_PRACTICE_SCRIPT_SOURCES = ["practice.js"];',
+      'window.smtEnsurePracticeScripts = function ensurePractice() {};',
+      'function smtEnsureStaticRouteBundleForRoute(){}',
       'const SMT_ADS = { slots: { inline: "", anchor: "" } };',
       'const SMT_EBOOK_SCRIPT_SOURCES = ["ebook-tools.js", "ebook.js"];',
       'window.smtEnsureEbookScripts = function ensure() {};',
@@ -128,6 +129,7 @@ function staleAssets() {
     '/styles.css': '.practice__inner { max-width: 720px; }',
     '/app.js': '',
     '/practice.js': 'function renderPractice(){ return "old"; }',
+    '/ebook-tools.js': 'window.smtApplyEbookHighlights = function staleApply() {};',
     '/ebook.js': 'const copy = "Svenska översättningen kommer i v1.1";',
     '/questions.js': generatedQuestions(57, 'stale'),
   };
@@ -265,8 +267,8 @@ test('live site check rejects eager static question-bank loading', async () => {
   const assets = {
     ...currentAssets(),
     '/index.html': currentAssets()['/index.html'].replace(
-      '<script src="practice.js"></script>',
-      '<script src="questions.js"></script><script src="practice.js"></script>',
+      '<script src="app.js"></script>',
+      '<script src="questions.js"></script><script src="app.js"></script>',
     ),
   };
 

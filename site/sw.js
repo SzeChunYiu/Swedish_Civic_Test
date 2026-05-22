@@ -1,7 +1,7 @@
 const CACHE_PREFIX = 'almost-swedish-static';
 const ASSET_MANIFEST_PATH = 'asset-manifest.json';
 const CORE_ASSETS = ['.', 'index.html', ASSET_MANIFEST_PATH];
-const ROUTE_LAZY_ASSETS = new Set(['ebook-tools.js', 'ebook.js']);
+const ROUTE_LAZY_ASSETS = new Set(['questions.js', 'practice.js', 'ebook-tools.js', 'ebook.js']);
 
 let activeCacheName = null;
 
