@@ -48,6 +48,28 @@ test('mobile ads consent hook fails closed around Remove Ads and cached initiali
   assert.match(hookSource, /setResult\(createInitialResult\(entitlements,\s*platform\)\)/);
 });
 
+test('mobile ads consent hook is covered by the monetization strict boolean source scan', () => {
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-monetization-strict-boolean-source-scan'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+  const hookSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/useMobileAdsConsent.ts'),
+    'utf8',
+  );
+
+  assert.equal(summary.monetizationStrictBooleanSourceScanParityValidated, true);
+  assert.match(hookSource, /!isStrictEntitlementFlag\(entitlements\.adsDisabled\)/);
+  assert.doesNotMatch(hookSource, /!\s*entitlements\.adsDisabled/);
+});
+
 test('mobile ads consent hook parity rejects Remove Ads prompt drift', () => {
   const result = spawnSync(
     process.execPath,

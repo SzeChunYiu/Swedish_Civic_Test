@@ -4588,6 +4588,29 @@ const EXPECTED_PREMIUM_ENTITLEMENT_STATES = [
     },
   },
 ];
+const MONETIZATION_STRICT_BOOLEAN_FLAG_NAMES = new Set([
+  'adsDisabled',
+  'unlimitedMockExams',
+  'fullMistakeReview',
+  'spacedRepetition',
+  'nativeLangExplanations',
+  'customStudyPlan',
+  'notesExport',
+  'predictedPassProbability',
+  'confidenceSlider',
+  'multiColorHighlights',
+]);
+const MONETIZATION_STRICT_BOOLEAN_HELPERS = new Set([
+  'hasAdsDisabled',
+  'hasProEntitlement',
+  'isPremiumUser',
+  'isStrictEntitlementFlag',
+]);
+const MONETIZATION_STRICT_BOOLEAN_SOURCE_DIRS = [
+  'app',
+  'components/monetization',
+  'lib/monetization',
+];
 const EXPECTED_QUESTION_DISCLAIMER_ROUTES = [
   { route: '/onboarding', file: 'app/onboarding.tsx' },
   { route: '/practice', file: 'app/(tabs)/practice.tsx' },
@@ -10032,6 +10055,8 @@ let removeAdsEntitlementHookCasesValidated = 0;
 let removeAdsEntitlementHookParityValidated = false;
 let premiumEntitlementStatesValidated = 0;
 let premiumEntitlementParityValidated = false;
+let monetizationStrictBooleanSourceFilesValidated = 0;
+let monetizationStrictBooleanSourceScanParityValidated = false;
 let questionDisclaimerRoutesValidated = 0;
 let questionDisclaimerCopyValidated = false;
 let mockExamConfigTypeFieldsValidated = 0;
@@ -11820,6 +11845,16 @@ if (process.argv.includes('--focus-remove-ads-hook-parity')) {
   printValidationSummary({
     removeAdsEntitlementHookCasesValidated,
     removeAdsEntitlementHookParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-monetization-strict-boolean-source-scan')) {
+  validateMonetizationStrictBooleanSourceScan();
+  exitWithValidationFailures();
+  printValidationSummary({
+    monetizationStrictBooleanSourceFilesValidated,
+    monetizationStrictBooleanSourceScanParityValidated,
   });
   process.exit(0);
 }
@@ -13861,6 +13896,222 @@ function validateRemoveAdsEntitlementHookParity() {
   if (valid && removeAdsEntitlementHookCasesValidated === EXPECTED_REMOVE_ADS_HOOK_CASES) {
     removeAdsEntitlementHookParityValidated = true;
   }
+}
+
+function expressionName(node) {
+  if (ts.isIdentifier(node)) return node.text;
+  if (ts.isPropertyAccessExpression(node)) return node.name.text;
+  return '';
+}
+
+function unwrapExpression(node) {
+  let current = node;
+  while (
+    ts.isParenthesizedExpression(current) ||
+    ts.isAsExpression(current) ||
+    ts.isNonNullExpression(current) ||
+    ts.isSatisfiesExpression(current) ||
+    ts.isTypeAssertionExpression(current)
+  ) {
+    current = current.expression;
+  }
+  return current;
+}
+
+function isTrueLiteral(node) {
+  return unwrapExpression(node).kind === ts.SyntaxKind.TrueKeyword;
+}
+
+function isMonetizationEntitlementFlagAccess(node) {
+  const unwrapped = unwrapExpression(node);
+  if (ts.isPropertyAccessExpression(unwrapped)) {
+    return MONETIZATION_STRICT_BOOLEAN_FLAG_NAMES.has(unwrapped.name.text);
+  }
+  if (ts.isElementAccessExpression(unwrapped) && ts.isStringLiteral(unwrapped.argumentExpression)) {
+    return MONETIZATION_STRICT_BOOLEAN_FLAG_NAMES.has(unwrapped.argumentExpression.text);
+  }
+  return false;
+}
+
+function findFirstMonetizationFlagAccess(node) {
+  const unwrapped = unwrapExpression(node);
+  if (isMonetizationEntitlementFlagAccess(unwrapped)) return unwrapped;
+
+  let found = null;
+  ts.forEachChild(unwrapped, (child) => {
+    if (found) return;
+    found = findFirstMonetizationFlagAccess(child);
+  });
+  return found;
+}
+
+function isAllowedStrictBooleanComparison(node) {
+  const unwrapped = unwrapExpression(node);
+  if (!ts.isBinaryExpression(unwrapped)) return false;
+  if (
+    unwrapped.operatorToken.kind !== ts.SyntaxKind.EqualsEqualsEqualsToken &&
+    unwrapped.operatorToken.kind !== ts.SyntaxKind.ExclamationEqualsEqualsToken
+  ) {
+    return false;
+  }
+
+  return (
+    (isMonetizationEntitlementFlagAccess(unwrapped.left) && isTrueLiteral(unwrapped.right)) ||
+    (isTrueLiteral(unwrapped.left) && isMonetizationEntitlementFlagAccess(unwrapped.right))
+  );
+}
+
+function isAllowedStrictBooleanHelperCall(node) {
+  const unwrapped = unwrapExpression(node);
+  if (!ts.isCallExpression(unwrapped)) return false;
+  if (!MONETIZATION_STRICT_BOOLEAN_HELPERS.has(expressionName(unwrapped.expression))) return false;
+
+  return unwrapped.arguments.some((argument) => findFirstMonetizationFlagAccess(argument));
+}
+
+function expressionText(sourceFile, node) {
+  return node.getText(sourceFile).replace(/\s+/g, ' ').slice(0, 140);
+}
+
+function reportMonetizationStrictBooleanOffender(offenders, sourceFile, relativePath, node) {
+  const position = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile));
+  offenders.push(
+    `${relativePath}:${position.line + 1}:${position.character + 1} uses raw entitlement flag truthiness (${expressionText(
+      sourceFile,
+      node,
+    )})`,
+  );
+}
+
+function scanMonetizationStrictBooleanExpression(offenders, sourceFile, relativePath, node) {
+  const unwrapped = unwrapExpression(node);
+  if (isAllowedStrictBooleanComparison(unwrapped) || isAllowedStrictBooleanHelperCall(unwrapped)) {
+    return;
+  }
+  if (isMonetizationEntitlementFlagAccess(unwrapped)) {
+    reportMonetizationStrictBooleanOffender(offenders, sourceFile, relativePath, unwrapped);
+    return;
+  }
+  if (ts.isPrefixUnaryExpression(unwrapped)) {
+    if (unwrapped.operator === ts.SyntaxKind.ExclamationToken) {
+      scanMonetizationStrictBooleanExpression(
+        offenders,
+        sourceFile,
+        relativePath,
+        unwrapped.operand,
+      );
+    }
+    return;
+  }
+  if (ts.isBinaryExpression(unwrapped)) {
+    if (
+      unwrapped.operatorToken.kind === ts.SyntaxKind.AmpersandAmpersandToken ||
+      unwrapped.operatorToken.kind === ts.SyntaxKind.BarBarToken
+    ) {
+      scanMonetizationStrictBooleanExpression(offenders, sourceFile, relativePath, unwrapped.left);
+      scanMonetizationStrictBooleanExpression(offenders, sourceFile, relativePath, unwrapped.right);
+      return;
+    }
+    const flagAccess = findFirstMonetizationFlagAccess(unwrapped);
+    if (flagAccess) {
+      reportMonetizationStrictBooleanOffender(offenders, sourceFile, relativePath, flagAccess);
+    }
+    return;
+  }
+  if (ts.isConditionalExpression(unwrapped)) {
+    scanMonetizationStrictBooleanExpression(
+      offenders,
+      sourceFile,
+      relativePath,
+      unwrapped.condition,
+    );
+    return;
+  }
+  if (ts.isCallExpression(unwrapped)) {
+    unwrapped.arguments.forEach((argument) =>
+      scanMonetizationStrictBooleanExpression(offenders, sourceFile, relativePath, argument),
+    );
+    return;
+  }
+}
+
+function validateMonetizationStrictBooleanSourceScan() {
+  const offenders = [];
+  const sourceFiles = Array.from(
+    new Set(
+      MONETIZATION_STRICT_BOOLEAN_SOURCE_DIRS.flatMap((sourceDir) =>
+        fs.existsSync(path.join(repoRoot, sourceDir))
+          ? listSourceFiles(sourceDir).map((filePath) =>
+              path.relative(repoRoot, filePath).replace(/\\/g, '/'),
+            )
+          : [],
+      ),
+    ),
+  ).filter((relativePath) => !relativePath.endsWith('.d.ts'));
+
+  sourceFiles.forEach((relativePath) => {
+    const source = loadText(relativePath);
+    const sourceFile = ts.createSourceFile(
+      relativePath,
+      source,
+      ts.ScriptTarget.Latest,
+      true,
+      relativePath.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
+    );
+
+    function visit(node) {
+      if (
+        ts.isIfStatement(node) ||
+        ts.isWhileStatement(node) ||
+        ts.isDoStatement(node) ||
+        ts.isConditionalExpression(node)
+      ) {
+        scanMonetizationStrictBooleanExpression(
+          offenders,
+          sourceFile,
+          relativePath,
+          node.expression || node.condition,
+        );
+      } else if (ts.isForStatement(node) && node.condition) {
+        scanMonetizationStrictBooleanExpression(
+          offenders,
+          sourceFile,
+          relativePath,
+          node.condition,
+        );
+      } else if (ts.isReturnStatement(node) && node.expression) {
+        scanMonetizationStrictBooleanExpression(
+          offenders,
+          sourceFile,
+          relativePath,
+          node.expression,
+        );
+      } else if (ts.isJsxExpression(node) && node.expression) {
+        scanMonetizationStrictBooleanExpression(
+          offenders,
+          sourceFile,
+          relativePath,
+          node.expression,
+        );
+      }
+
+      ts.forEachChild(node, visit);
+    }
+
+    visit(sourceFile);
+    monetizationStrictBooleanSourceFilesValidated += 1;
+  });
+
+  if (offenders.length > 0) {
+    fail(
+      `Monetization entitlement consumers must use strict boolean checks or shared helpers: ${offenders.join(
+        '; ',
+      )}`,
+    );
+    return;
+  }
+
+  monetizationStrictBooleanSourceScanParityValidated = true;
 }
 
 function validatePremiumEntitlementParity() {
@@ -27211,6 +27462,7 @@ validateAdPlacementRouteParity();
 validateReleaseMonetizationPolicyParity();
 validateRemoveAdsEntitlementHookParity();
 validatePremiumEntitlementParity();
+validateMonetizationStrictBooleanSourceScan();
 validateQuestionDisclaimerParity();
 validateMockExamConfigTypeSchemaParity();
 validateMockExamRuntimeParity(defaultMockExamConfig);
@@ -27370,6 +27622,8 @@ console.log(
       removeAdsEntitlementHookParityValidated,
       premiumEntitlementStatesValidated,
       premiumEntitlementParityValidated,
+      monetizationStrictBooleanSourceFilesValidated,
+      monetizationStrictBooleanSourceScanParityValidated,
       questionDisclaimerRoutesValidated,
       questionDisclaimerCopyValidated,
       mockExamConfigTypeFieldsValidated,
