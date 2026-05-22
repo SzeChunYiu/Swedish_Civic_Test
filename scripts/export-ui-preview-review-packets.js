@@ -47,10 +47,22 @@ const UNSUPPORTED_OUTCOME_CLAIM_PATTERNS = [
   /(?:pasaport|vatandaşlık)[^.?!]*(?:garanti|kesin)/i,
   /(?:паспорт|громадянство)[^.?!]*(?:гарант|точно)/i,
 ];
-const UNLOCALIZED_CIVIC_TERM_PATTERNS_BY_LOCALE = {
-  so: [/\bkommun\b/i, /\bvälfärd\b/i, /\bmyndighet\b/i],
-  'zh-Hans': [/\bmyndighet\b/i],
-};
+const APPROVED_SWEDISH_PROPER_NAMES = ['UHR', 'Migrationsverket', 'Skolverket', 'Riksdag'];
+const COMMON_SWEDISH_CIVIC_TERMS = [
+  { term: 'kommun', pattern: /\bkommun(?:en|er|erna|al|ala)?\b/i },
+  { term: 'region', pattern: /\bregion(?:en|er|erna|al|ala)?\b/i },
+  { term: 'välfärd', pattern: /\bv[äa]lf[aä]rd(?:en|s)?\b/i },
+  { term: 'myndighet', pattern: /\bmyndighet(?:en|er|erna|s)?\b/i },
+];
+const CIVIC_TERM_BLOCKLIST_BY_LOCALE = Object.fromEntries(
+  previewModules.map(({ locale }) => [
+    locale,
+    {
+      approvedProperNames: APPROVED_SWEDISH_PROPER_NAMES,
+      blockedTerms: COMMON_SWEDISH_CIVIC_TERMS,
+    },
+  ]),
+);
 
 function sanitize(value) {
   return String(value ?? '')
@@ -188,10 +200,15 @@ function assertNoUnsupportedOutcomeClaim(preview, uiPath, text) {
 function assertNoUnlocalizedCivicTerm(preview, uiPath, text) {
   const normalizedText = sanitize(text);
   if (!normalizedText) return;
-  const civicTermPatterns = UNLOCALIZED_CIVIC_TERM_PATTERNS_BY_LOCALE[preview.locale] ?? [];
-  const matchedPattern = civicTermPatterns.find((pattern) => pattern.test(normalizedText));
-  if (matchedPattern) {
-    throw new Error(`unlocalized civic term in ${preview.locale} ${uiPath}: ${normalizedText}`);
+  const registry = CIVIC_TERM_BLOCKLIST_BY_LOCALE[preview.locale];
+  if (!registry) {
+    throw new Error(`${preview.locale} missing UI preview civic-term blocklist registry`);
+  }
+  const matchedTerm = registry.blockedTerms.find(({ pattern }) => pattern.test(normalizedText));
+  if (matchedTerm) {
+    throw new Error(
+      `unlocalized civic term "${matchedTerm.term}" in ${preview.locale} ${uiPath}: ${normalizedText}`,
+    );
   }
 }
 

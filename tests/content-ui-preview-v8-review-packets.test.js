@@ -115,37 +115,55 @@ require('./scripts/export-ui-preview-review-packets.js');
   );
 });
 
-test('UI preview v8 review export rejects unlocalized civic terms in preview copy', () => {
-  const result = cp.spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
+test('UI preview v8 review export rejects locale-blocklisted Swedish civic terms', () => {
+  const mutationCases = [
+    { locale: 'ar', file: 'arUiPreview.ts', term: 'region', scriptGroup: 'RTL' },
+    { locale: 'zh-Hant', file: 'zhHantUiPreview.ts', term: 'myndighet', scriptGroup: 'CJK' },
+    { locale: 'pl', file: 'plUiPreview.ts', term: 'välfärd', scriptGroup: 'Latin' },
+  ];
+
+  for (const mutationCase of mutationCases) {
+    const result = cp.spawnSync(
+      process.execPath,
+      [
+        '-e',
+        `
 const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
+const targetFile = ${JSON.stringify(mutationCase.file)};
+const blockedTerm = ${JSON.stringify(mutationCase.term)};
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
   const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/lib/localization/soUiPreview.ts')) {
-    return String(contents).replace(
-      'Raadi dimoqraadiyad, degmo, daryeel bulsho…',
-      'Raadi dimoqraadiyad, kommun, välfärd…',
+  if (normalizedPath.endsWith('/lib/localization/' + targetFile)) {
+    const source = String(contents);
+    const mutated = source.replace(
+      /comingSoonTitle:\\s*'([^']+)'/,
+      (_match, title) => "comingSoonTitle: '" + title + ' ' + blockedTerm + "'",
     );
+    if (mutated === source) throw new Error('comingSoonTitle mutation did not apply');
+    return mutated;
   }
   return contents;
 };
 process.argv.push('--check');
 require('./scripts/export-ui-preview-review-packets.js');
 `,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
+      ],
+      { cwd: repoRoot, encoding: 'utf8' },
+    );
 
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /unlocalized civic term.*so.*searchPlaceholder/i,
-  );
+    const output = `${result.stdout}\n${result.stderr}`;
+    assert.notEqual(
+      result.status,
+      0,
+      `${mutationCase.scriptGroup} ${mutationCase.locale} leaked ${mutationCase.term}`,
+    );
+    assert.match(output, /unlocalized civic term/i);
+    assert.match(output, new RegExp(mutationCase.locale));
+    assert.match(output, new RegExp(mutationCase.term));
+    assert.match(output, /languagePicker\.comingSoonTitle/);
+  }
 });
 
 test('UI preview v8 review export rejects unblocked preview readiness gates', () => {
