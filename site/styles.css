@@ -11763,3 +11763,62 @@ img.ebook__brand-mark {
     padding: 14px 15px 14px 20px;
   }
 }
+
+/* ======================================================================
+   DOC LIST ITEM MARKER BOX OPTIMIZATION ROUND
+   ====================================================================== */
+
+.doc__main ul {
+  list-style: none;
+  padding: 14px 16px;
+}
+
+.doc__main li {
+  margin: 0;
+  padding: 8px 0 8px 32px;
+  position: relative;
+}
+
+.doc__main li::before {
+  align-items: center;
+  background: rgba(0, 106, 167, 0.08);
+  border: 1px solid rgba(0, 106, 167, 0.13);
+  border-radius: 999px;
+  color: var(--blue-ink);
+  content: '•';
+  display: inline-flex;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 900;
+  height: 20px;
+  justify-content: center;
+  left: 0;
+  line-height: 1;
+  position: absolute;
+  top: 11px;
+  width: 20px;
+}
+
+.doc__main li + li {
+  padding-top: 10px;
+}
+
+:root[data-theme='dark'] .doc__main li::before {
+  background: rgba(45, 168, 255, 0.12);
+  border-color: rgba(45, 168, 255, 0.22);
+  color: var(--blue-soft);
+}
+
+@media (max-width: 620px) {
+  .doc__main ul {
+    padding: 12px 14px;
+  }
+  .doc__main li {
+    padding-left: 28px;
+  }
+  .doc__main li::before {
+    height: 18px;
+    top: 12px;
+    width: 18px;
+  }
+}
