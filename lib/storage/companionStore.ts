@@ -45,6 +45,15 @@ type CompanionState = {
   clearPersistenceWarning: () => void;
 };
 
+export type ImportableCompanion = Partial<Pick<CompanionState, 'selectedId'>>;
+
+export function normalizeImportedCompanion(value: unknown): ImportableCompanion {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
+
+  const candidate = value as Partial<CompanionState>;
+  return isMascotId(candidate.selectedId) ? { selectedId: candidate.selectedId } : {};
+}
+
 export const useCompanionStore = create<CompanionState>((set) => {
   const initialState = readInitialCompanionState();
 
@@ -81,4 +90,19 @@ export const useCompanionStore = create<CompanionState>((set) => {
  */
 export function resolveCompanionId(stored: unknown): MascotId {
   return isMascotId(stored) ? stored : DEFAULT_COMPANION_ID;
+}
+
+export function importCompanionSnapshot(companion: ImportableCompanion): void {
+  const normalizedCompanion = normalizeImportedCompanion(companion);
+  let persistenceWarning: RecoverablePersistenceWarning | null = null;
+  if (normalizedCompanion.selectedId !== undefined) {
+    persistenceWarning = writeRecoverably(
+      companionStorage,
+      companionStorageId,
+      SELECTED_ID_KEY,
+      normalizedCompanion.selectedId,
+    );
+  }
+
+  useCompanionStore.setState({ ...normalizedCompanion, persistenceWarning });
 }

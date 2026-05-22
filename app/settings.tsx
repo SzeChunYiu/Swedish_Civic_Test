@@ -58,8 +58,10 @@ type SettingsCopy = {
   importReset: string;
   importSectionSubtitle: string;
   importSuccess: string;
+  importSummaryAccessibility: (count: number) => string;
   importSummaryBookmarks: (count: number) => string;
   importSummaryCitizenshipRequirements: (count: number) => string;
+  importSummaryCompanion: (count: number) => string;
   importSummaryCompletedQuestions: (count: number) => string;
   importSummaryFsrsDays: (count: number) => string;
   importSummaryFsrsCards: (count: number) => string;
@@ -190,9 +192,13 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     importReset: 'Återställ importfält',
     importSectionSubtitle: `Klistra in en lokal studiedataexport i JSON-format på högst ${localStudyDataImportMaxLabel}. Du får en sammanfattning innan något skrivs.`,
     importSuccess: 'Importen är klar.',
+    importSummaryAccessibility: (count) =>
+      formatCount(count, { one: 'tillgänglighetsval', other: 'tillgänglighetsval' }),
     importSummaryBookmarks: (count) => formatCount(count, { one: 'bokmärke', other: 'bokmärken' }),
     importSummaryCitizenshipRequirements: (count) =>
       formatCount(count, { one: 'markerat kravområde', other: 'markerade kravområden' }),
+    importSummaryCompanion: (count) =>
+      formatCount(count, { one: 'vald studiekompis', other: 'valda studiekompisar' }),
     importSummaryCompletedQuestions: (count) =>
       formatCount(count, {
         one: 'fråga med sparad progression',
@@ -293,9 +299,13 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     importReset: 'Reset import field',
     importSectionSubtitle: `Paste a local study data export in JSON format under ${localStudyDataImportMaxLabel}. You will see a summary before anything is written.`,
     importSuccess: 'Import complete.',
+    importSummaryAccessibility: (count) =>
+      formatCount(count, { one: 'accessibility preference', other: 'accessibility preferences' }),
     importSummaryBookmarks: (count) => formatCount(count, { one: 'bookmark', other: 'bookmarks' }),
     importSummaryCitizenshipRequirements: (count) =>
       formatCount(count, { one: 'marked requirement', other: 'marked requirements' }),
+    importSummaryCompanion: (count) =>
+      formatCount(count, { one: 'selected study companion', other: 'selected study companions' }),
     importSummaryCompletedQuestions: (count) =>
       formatCount(count, {
         one: 'question with saved progress',
@@ -390,6 +400,16 @@ function buildImportSummaryLines(
   addPositiveImportSummaryLine(lines, summary.gradedReviewDayCount, copy.importSummaryFsrsDays);
   addPositiveImportSummaryLine(lines, summary.highlightCount, copy.importSummaryHighlights);
   addPositiveImportSummaryLine(lines, summary.settingCount, copy.importSummarySettings);
+  addPositiveImportSummaryLine(
+    lines,
+    summary.accessibilityPreferenceCount,
+    copy.importSummaryAccessibility,
+  );
+  addPositiveImportSummaryLine(
+    lines,
+    summary.companionPreferenceCount,
+    copy.importSummaryCompanion,
+  );
   addPositiveImportSummaryLine(
     lines,
     summary.citizenshipRequirementChecklistCount,

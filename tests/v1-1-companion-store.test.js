@@ -265,3 +265,22 @@ test('companion store: successful writes persist and clear persistence warning',
   assert.equal(useCompanionStore.getState().persistenceWarning, null);
   assert.equal(storage.values.get('companion.selectedId.v1'), DEFAULT_COMPANION_ID);
 });
+
+test('companion store: local study data import normalizes selected companion', () => {
+  const storage = createMemoryMMKV({ 'companion.selectedId.v1': 'lucia' });
+  const { importCompanionSnapshot, normalizeImportedCompanion, useCompanionStore } =
+    loadTsWithStorage(repoRoot, 'lib/storage/companionStore.ts', {
+      companion: storage,
+    });
+
+  assert.deepEqual(normalizeImportedCompanion({ selectedId: 'not-a-mascot' }), {});
+  assert.deepEqual(normalizeImportedCompanion({ selectedId: 'dala-horse' }), {
+    selectedId: 'dala-horse',
+  });
+
+  importCompanionSnapshot({ selectedId: 'dala-horse' });
+
+  assert.equal(useCompanionStore.getState().selectedId, 'dala-horse');
+  assert.equal(useCompanionStore.getState().persistenceWarning, null);
+  assert.equal(storage.values.get('companion.selectedId.v1'), 'dala-horse');
+});
