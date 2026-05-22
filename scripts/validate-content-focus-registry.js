@@ -151,6 +151,11 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     summaryKeys: ['settingsRouteCopyLabelsValidated', 'settingsRouteCopyParityValidated'],
   },
   {
+    id: 'settingsRouteScroll',
+    flags: ['--focus-settings-route-scroll'],
+    summaryKeys: ['settingsRouteScrollRulesValidated', 'settingsRouteScrollParityValidated'],
+  },
+  {
     id: 'settingsRoute',
     flags: ['--focus-settings-route'],
     summaryKeys: [

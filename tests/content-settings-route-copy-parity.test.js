@@ -20,6 +20,20 @@ function parseValidationSummary() {
   return JSON.parse(match[0]);
 }
 
+function parseSettingsScrollValidationSummary() {
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-settings-route-scroll'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused scroll validation should print JSON summary');
+  return JSON.parse(match[0]);
+}
+
 function assertIncludes(source, text, context) {
   assert.ok(source.includes(text), `${context} must include ${text}`);
 }
@@ -138,10 +152,7 @@ test('settings route shell copy follows the persisted settings language', () => 
     source,
     /const setThemeMode = useAccessibilityStore\(\(state\) => state\.setThemeMode\);/,
   );
-  assert.match(
-    source,
-    /import \{ Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View \} from 'react-native';/,
-  );
+  assert.match(source, /import\s+\{[\s\S]*\bScrollView\b[\s\S]*\}\s+from 'react-native';/);
   assert.match(
     source,
     /function getRadioArrowDirection\(event: KeyboardEventLike\): -1 \| 1 \| null/,
@@ -177,6 +188,79 @@ test('settings route shell copy follows the persisted settings language', () => 
   assert.match(
     source,
     /getWebRadioKeyboardProps\(\s*supportedDailyGoalAnswerOptions,\s*dailyGoalAnswers,\s*goal,\s*setDailyGoalAnswers,\s*dailyGoalOptionRefs,\s*\)/,
+  );
+});
+
+test('settings route scroll parity uses focused structural ScrollView validation', () => {
+  const summary = parseSettingsScrollValidationSummary();
+  const source = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+
+  assert.equal(summary.settingsRouteScrollRulesValidated, 5);
+  assert.equal(summary.settingsRouteScrollParityValidated, true);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
+  assert.match(source, /import\s+\{[\s\S]*\bScrollView\b[\s\S]*\}\s+from 'react-native';/);
+});
+
+test('settings route scroll parity accepts compact or reordered react-native imports', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/settings.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        /import \\{[^}]+\\} from 'react-native';/,
+        "import { View, TextInput, Text, StyleSheet, ScrollView, Pressable, Platform } from 'react-native';",
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-settings-route-scroll');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  assert.match(`${result.stdout}\n${result.stderr}`, /settingsRouteScrollParityValidated/);
+});
+
+test('settings route scroll parity rejects replacing the scroll root with a plain View', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/settings.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('<ScrollView style={styles.container} contentContainerStyle={styles.content}>', '<View style={styles.container}>')
+      .replace('</ScrollView>', '</View>');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-settings-route-scroll');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /settings route must keep its root content inside ScrollView for mobile scrolling/,
   );
 });
 

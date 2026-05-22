@@ -355,6 +355,42 @@ test('Onboarding route scroll parity uses focused content validation routing', (
   );
 });
 
+test('Settings route scroll parity uses focused structural content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const settingsRouteTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-settings-route-copy-parity.test.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('settingsRouteScroll');
+
+  assert.ok(registryEntry, 'Settings route scroll focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-settings-route-scroll']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'settingsRouteScrollRulesValidated',
+    'settingsRouteScrollParityValidated',
+  ]);
+  assert.match(validatorSource, /--focus-settings-route-scroll/);
+  assert.match(
+    validatorSource,
+    /validateSettingsRouteScrollParity\(\);[\s\S]*settingsRouteScrollRulesValidated[\s\S]*settingsRouteScrollParityValidated/,
+  );
+  assert.match(settingsRouteTestSource, /--focus-settings-route-scroll/);
+  assert.doesNotMatch(
+    settingsRouteTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'Settings route scroll tests must not route through full content validation',
+  );
+  assert.match(settingsRouteTestSource, /accepts compact or reordered react-native imports/);
+  assert.doesNotMatch(
+    validatorSource,
+    /Pressable,\[\\s\\S\]\*ScrollView,\[\\s\\S\]\*StyleSheet/,
+    'Settings route scroll validator must not require one exact react-native import order',
+  );
+});
+
 test('Badge accessibility parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
