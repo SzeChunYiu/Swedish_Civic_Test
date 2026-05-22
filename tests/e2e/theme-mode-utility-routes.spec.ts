@@ -1,7 +1,12 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
 import { darkColors } from '../../lib/theme';
-import { dismissBlockingModals, markAboutTheTestSeen, seedSettingsLanguage } from './browserLaunch';
+import {
+  dismissBlockingModals,
+  markAboutTheTestSeen,
+  seedFreshFirstRunSettingsLanguage,
+  seedSettingsLanguage,
+} from './browserLaunch';
 
 type SourceAffordanceLanguage = 'sv' | 'en';
 
@@ -75,6 +80,38 @@ const citizenshipSourceAffordanceCases = [
   sourceTitle: string;
 }[];
 
+const firstRunAboutModalCases = [
+  {
+    body: 'En kort guide till vad provet är',
+    dialogLabel: 'Vad är medborgarskapsprovet?',
+    eyebrow: 'Välkommen',
+    language: 'sv',
+    openLabel: 'Läs guiden',
+    openLinkName: 'Öppna guiden om medborgarskapsprovet',
+    skipLabel: 'Hoppa över',
+    title: 'Vad är medborgarskapsprovet?',
+  },
+  {
+    body: 'A short guide to what the test is',
+    dialogLabel: 'What is the Swedish civic test?',
+    eyebrow: 'Welcome',
+    language: 'en',
+    openLabel: 'Read the guide',
+    openLinkName: 'Open the about-the-test guide',
+    skipLabel: 'Skip',
+    title: 'What is the Swedish civic test?',
+  },
+] as const satisfies readonly {
+  body: string;
+  dialogLabel: string;
+  eyebrow: string;
+  language: SourceAffordanceLanguage;
+  openLabel: string;
+  openLinkName: string;
+  skipLabel: string;
+  title: string;
+}[];
+
 function hexToRgb(hexColor: string) {
   const hex = hexColor.replace('#', '');
   const red = Number.parseInt(hex.slice(0, 2), 16);
@@ -130,6 +167,81 @@ async function expectNoHorizontalOverflow(page: Page) {
 }
 
 test.use({ viewport: mobileViewport });
+
+for (const testCase of firstRunAboutModalCases) {
+  test(`first-run About modal uses dark theme tokens in ${testCase.language}`, async ({ page }) => {
+    await seedFreshFirstRunSettingsLanguage(page, testCase.language);
+    await seedDarkTheme(page);
+
+    await page.goto('/practice', { waitUntil: 'networkidle' });
+
+    const dialog = page.locator('[role="dialog"][aria-modal="true"]').first();
+    await expect(dialog).toHaveCount(1);
+    await expect(dialog).toHaveAttribute('aria-label', testCase.dialogLabel);
+    await expect(dialog).toHaveAttribute('aria-labelledby', 'first-run-about-dialog-title');
+    await expect(dialog).toHaveAttribute('aria-describedby', 'first-run-about-dialog-body');
+
+    const card = page.getByTestId('first-run-about-modal-card');
+    await expect(card).toBeVisible();
+    await expectComputedColor(
+      card,
+      'backgroundColor',
+      darkColors.surface,
+      `First-run About modal cards should use the dark surface token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      card,
+      'borderColor',
+      darkColors.border,
+      `First-run About modal cards should use the dark border token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      page.getByText(testCase.eyebrow).first(),
+      'color',
+      darkColors.badgeBlueText,
+      `First-run About modal eyebrow text should use the dark badge text token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      page.locator('#first-run-about-dialog-title'),
+      'color',
+      darkColors.text,
+      `First-run About modal titles should use the dark primary text token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      page.locator('#first-run-about-dialog-body'),
+      'color',
+      darkColors.textSecondary,
+      `First-run About modal body copy should use the dark secondary text token in ${testCase.language}`,
+    );
+    await expect(page.locator('#first-run-about-dialog-body')).toContainText(testCase.body);
+
+    const primaryAction = page.getByTestId('first-run-about-modal-primary-action');
+    await expect(primaryAction).toBeVisible();
+    await expectComputedColor(
+      primaryAction,
+      'backgroundColor',
+      darkColors.accent,
+      `First-run About modal primary actions should use the dark accent token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      primaryAction.getByText(testCase.openLabel),
+      'color',
+      darkColors.surface,
+      `First-run About modal primary action labels should use the dark surface token in ${testCase.language}`,
+    );
+    await expect(page.getByRole('link', { name: testCase.openLinkName })).toHaveCount(1);
+
+    const secondaryAction = page.getByTestId('first-run-about-modal-secondary-action');
+    await expect(secondaryAction).toBeVisible();
+    await expectComputedColor(
+      secondaryAction.getByText(testCase.skipLabel),
+      'color',
+      darkColors.textMuted,
+      `First-run About modal secondary action labels should use the dark muted text token in ${testCase.language}`,
+    );
+    await expectNoHorizontalOverflow(page);
+  });
+}
 
 for (const testCase of searchSourceAffordanceCases) {
   test(`search utility route uses dark source-affordance tokens in ${testCase.language}`, async ({
