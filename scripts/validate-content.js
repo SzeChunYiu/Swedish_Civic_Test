@@ -1923,7 +1923,7 @@ const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 15;
 const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 32;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
-const EXPECTED_MOBILE_ADS_CONSENT_RUNTIME_CASES = 7;
+const EXPECTED_MOBILE_ADS_CONSENT_RUNTIME_CASES = 9;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   {
@@ -18686,6 +18686,7 @@ function validateMobileAdsConsentTypeSchemaParity() {
 
 function validateMobileAdsConsentRuntimeParity() {
   let valid = true;
+  let consentSource = '';
   let mobileConsentSource = '';
 
   function reject(message) {
@@ -18703,6 +18704,13 @@ function validateMobileAdsConsentRuntimeParity() {
     return;
   }
 
+  try {
+    consentSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/consent.ts'), 'utf8');
+  } catch (error) {
+    reject(`lib/monetization/consent.ts could not be read: ${error.message}`);
+    return;
+  }
+
   const normalizedMobileConsentSource = mobileConsentSource.replace(/\s+/g, ' ');
   const runtimeCases = [
     [
@@ -18710,6 +18718,19 @@ function validateMobileAdsConsentRuntimeParity() {
         'const shouldCollectConsent = googleMobileAdsEnabled && entitlements.adsDisabled !== true && realAdsEnabled;',
       ),
       'Mobile Ads consent runtime must gate consent collection on ads config, real ads, and Remove Ads entitlements',
+    ],
+    [
+      mobileConsentSource.includes('region: normalizeAdConsentRegion(region),') &&
+        /const\s+normalizedRegion\s*=\s*normalizeAdConsentRegion\(region\);[\s\S]*region:\s*normalizedRegion,/.test(
+          mobileConsentSource,
+        ),
+      'state creation and collection must store normalized regions',
+    ],
+    [
+      /export\s+function\s+regionRequiresUmpConsent\(region:\s*unknown\):\s*boolean\s*\{\s*const\s+normalizedRegion\s*=\s*normalizeAdConsentRegion\(region\);\s*return\s+normalizedRegion\s*===\s*'eea'\s*\|\|\s*normalizedRegion\s*===\s*'uk'\s*\|\|\s*normalizedRegion\s*===\s*'unknown';\s*\}/.test(
+        consentSource,
+      ),
+      'Mobile Ads consent must normalize runtime region values before UMP checks',
     ],
     [
       /const\s+normalizedRegion\s*=\s*normalizeAdConsentRegion\(region\);[\s\S]*region:\s*normalizedRegion,/.test(
