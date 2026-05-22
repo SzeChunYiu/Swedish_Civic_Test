@@ -20041,6 +20041,14 @@ function validateBadgeCatalog() {
 function validatePracticeScoringRules() {
   if (typeof scoreAnswers !== 'function') return;
 
+  const scoringSource = fs.readFileSync(path.join(repoRoot, 'lib/quiz/scoring.ts'), 'utf8');
+  if (!/export function scoreAnswers\(results: unknown = \[\]\)/.test(scoringSource)) {
+    fail('scoreAnswers TypeScript signature must accept unknown runtime input');
+  }
+  if (/scoreAnswers\(results: readonly unknown\[\]/.test(scoringSource)) {
+    fail('scoreAnswers TypeScript signature must not narrow runtime input to arrays only');
+  }
+
   const sparseResults = Object.assign(Array(3), { 0: true, 2: false });
   const cases = [
     { label: 'default empty results', input: undefined, expected: { correct: 0, total: 0 } },

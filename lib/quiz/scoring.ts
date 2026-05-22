@@ -1,4 +1,4 @@
-export function scoreAnswers(results: readonly unknown[] = []): { correct: number; total: number } {
+export function scoreAnswers(results: unknown = []): { correct: number; total: number } {
   const safeResults = Array.isArray(results) ? results : [];
   let correct = 0;
 
