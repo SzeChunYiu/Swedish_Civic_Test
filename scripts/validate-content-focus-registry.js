@@ -20,13 +20,52 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'generatedSwedenScopeParity',
+    flags: ['--focus-generated-sweden-scope-parity'],
+    summaryKeys: ['generatedSwedenScopeFocusValidated', 'generatedSwedenScopeParityValidated'],
+  },
+  {
     id: 'generatedLocalizationTemplateParity',
-    flags: ['--focus-generated-localization-template-parity'],
+    flags: ['--focus-generated-localization-template-parity', '--focus-generated-localization'],
     summaryKeys: [
       'generatedLocalizationTemplateParityValidated',
       'generatedPromptTemplateParityValidated',
       'generatedAnswerTemplateParityValidated',
       'generatedPublishedQuestions',
+    ],
+  },
+  {
+    id: 'translateCompleteP0',
+    flags: ['--focus-translate-complete-p0'],
+    summaryKeys: [
+      'publishedQuestions',
+      'questionBilingualTextPairsValidated',
+      'questionOptionBilingualTextPairsValidated',
+      'translationCompletenessParityValidated',
+      'questionGeneratedTrueFalseNaturalnessValidated',
+      'questionLuciaRoleEnglishNaturalnessValidated',
+      'questionEuCooperationEnglishNaturalnessValidated',
+      'questionOlderSickEnglishNaturalnessValidated',
+      'questionCouncilOfEuropeWorkForEnglishNaturalnessValidated',
+      'questionMayDayEnglishNaturalnessValidated',
+      'questionPublicSectorEnglishNaturalnessValidated',
+      'questionPublicServiceBroadcasterEnglishNaturalnessValidated',
+      'questionLargestLakesEnglishNaturalnessValidated',
+      'questionNationalMinoritiesEnglishNaturalnessValidated',
+      'questionNewYearsEveDateEnglishNaturalnessValidated',
+      'questionLuciaDayDateEnglishNaturalnessValidated',
+      'questionRecordYearsEnglishNaturalnessValidated',
+      'questionSaltsjobadenEnglishNaturalnessValidated',
+      'questionSuffrage1921EnglishNaturalnessValidated',
+      'questionLuciaExplanationRoleScaffoldValidated',
+      'questionGoodFridayEnglishNaturalnessValidated',
+      'questionReferendumAdvisorySwedishNaturalnessValidated',
+      'questionSourceCriticismEnglishNaturalnessValidated',
+      'questionRuleOfLawEnglishNaturalnessValidated',
+      'questionReligiousFreedomParallelismValidated',
+      'somaliGeographyNaturalnessParityValidated',
+      'somaliHolidayFoodNaturalnessParityValidated',
+      'translationNaturalnessGuardParityValidated',
     ],
   },
   {
@@ -99,6 +138,15 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     summaryKeys: [
       'questionCardAccessibilityRulesValidated',
       'questionCardAccessibilityParityValidated',
+    ],
+  },
+  {
+    id: 'progressBarAccessibility',
+    flags: ['--focus-progress-bar-accessibility'],
+    summaryKeys: [
+      'progressBarAccessibilityRulesExpected',
+      'progressBarAccessibilityRulesValidated',
+      'progressBarAccessibilityParityValidated',
     ],
   },
   {
@@ -184,6 +232,25 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     id: 'staticHeadMetadata',
     flags: ['--focus-static-head-metadata'],
     summaryKeys: [
+      'staticHeadMetadataTitleValidated',
+      'staticHeadMetadataDescriptionValidated',
+      'staticHeadMetadataOutcomeClaimPatternsValidated',
+      'staticHeadMetadataParityValidated',
+      'staticValidationSyntaxFilesValidated',
+      'staticValidationImportChecksValidated',
+      'staticValidationSyntaxGateValidated',
+    ],
+  },
+  {
+    id: 'appConfigSchema',
+    flags: ['--focus-app-config-schema'],
+    summaryKeys: [
+      'validationScriptSyntaxChecksValidated',
+      'appConfigPluginsValidated',
+      'appConfigSchemaValidated',
+      'appConfigAdMobAppIdsValidated',
+      'appConfigAdMobRealFlagRejectsSampleAppIds',
+      'webDocumentMetadataUsageParityValidated',
       'staticHeadMetadataTitleValidated',
       'staticHeadMetadataDescriptionValidated',
       'staticHeadMetadataOutcomeClaimPatternsValidated',
@@ -319,6 +386,18 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'proLifetimeRelaunchParity',
+    flags: ['--focus-pro-lifetime-relaunch-parity'],
+    summaryKeys: [
+      'proLifetimeBareTrueRejectionValidated',
+      'proLifetimeStructuredRecordParsingValidated',
+      'proLifetimeProviderReceiptRevalidationValidated',
+      'proLifetimeFailClosedClearingValidated',
+      'proLifetimeNativeHookProviderWiringValidated',
+      'proLifetimeRelaunchParityValidated',
+    ],
+  },
+  {
     id: 'generatedTrueFalseNaturalness',
     flags: ['--focus-generated-true-false-naturalness'],
     summaryKeys: [
@@ -384,6 +463,15 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     summaryKeys: [
       'streakFreezeCounterRuntimeCasesValidated',
       'streakFreezeCounterRuntimeParityValidated',
+    ],
+  },
+  {
+    id: 'streakFreezeNormalizerParity',
+    flags: ['--focus-streak-freeze-normalizer-parity'],
+    summaryKeys: [
+      'streakFreezeNormalizerCasesValidated',
+      'streakFreezeNormalizerSourceChecksValidated',
+      'streakFreezeNormalizerParityValidated',
     ],
   },
   {
@@ -548,6 +636,16 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
       'staticValidationSyntaxFilesValidated',
       'staticValidationImportChecksValidated',
       'staticValidationSyntaxGateValidated',
+    ],
+  },
+  {
+    id: 'staticEbookFootnoteHashParity',
+    flags: ['--focus-static-ebook-footnote-hash-parity'],
+    summaryKeys: [
+      'staticEbookFootnoteHashChaptersValidated',
+      'staticEbookFootnoteHeterogeneousChaptersValidated',
+      'staticEbookFootnoteHashLanguagesValidated',
+      'staticEbookFootnoteHashParityValidated',
     ],
   },
   {

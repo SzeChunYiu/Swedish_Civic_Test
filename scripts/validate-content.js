@@ -11149,11 +11149,15 @@ if (
 }
 
 const GENERATED_LOCALIZATION_TEMPLATE_FOCUS_FLAG = '--focus-generated-localization-template-parity';
+const GENERATED_LOCALIZATION_FOCUS_FLAGS = [
+  GENERATED_LOCALIZATION_TEMPLATE_FOCUS_FLAG,
+  '--focus-generated-localization',
+];
 const requestedGeneratedLocalizationFocusFlags = process.argv.filter((arg) =>
   arg.startsWith('--focus-generated-localization'),
 );
 const unsupportedGeneratedLocalizationFocusFlags = requestedGeneratedLocalizationFocusFlags.filter(
-  (arg) => arg !== GENERATED_LOCALIZATION_TEMPLATE_FOCUS_FLAG,
+  (arg) => !GENERATED_LOCALIZATION_FOCUS_FLAGS.includes(arg),
 );
 if (unsupportedGeneratedLocalizationFocusFlags.length > 0) {
   console.error(
@@ -11218,7 +11222,7 @@ function validateGeneratedLocalizationTemplateParity() {
   }
 }
 
-if (process.argv.includes(GENERATED_LOCALIZATION_TEMPLATE_FOCUS_FLAG)) {
+if (GENERATED_LOCALIZATION_FOCUS_FLAGS.some((flag) => process.argv.includes(flag))) {
   validateGeneratedLocalizationTemplateParity();
   exitWithValidationFailures();
   printValidationSummary({
