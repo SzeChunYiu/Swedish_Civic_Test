@@ -42,6 +42,20 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      # Operator UI-freeze guard (2026-05-22): the factory uiux lane repeatedly
+      # over-boxes site/styles.css (flag-blue/gold card rails, gradient orbs,
+      # box-everything) which deviates from DESIGN.md and reverts the operator's
+      # original layout. This guard refuses to publish that to live, even on an
+      # emergency skip_gate dispatch. Remove only once the over-boxing is gone
+      # from main and the operator lifts the freeze.
+      - name: Block over-boxed UI from reaching live
+        run: |
+          if grep -qE '\-\-card-rail|UI CARD OPTIMIZATION ROUND|--card-shadow-hover' site/styles.css; then
+            echo "::error::site/styles.css carries the over-box signature. Refusing to deploy the reverted UI the operator froze. De-box site/styles.css to the original design first."
+            exit 1
+          fi
+          echo "UI-freeze guard passed: styles.css is the original (non-over-boxed) design"
+
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
