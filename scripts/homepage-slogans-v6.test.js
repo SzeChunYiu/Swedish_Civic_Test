@@ -180,6 +180,206 @@ function loadLanguageHelpers({
   return { a11yAttributes, attributes, extras, sandbox, translatedElement };
 }
 
+function createStaticScriptOrderSandbox(savedLanguage = 'so') {
+  const attributes = new Map();
+  const storage = new Map(savedLanguage ? [['smt_lang', savedLanguage]] : []);
+  const windowListeners = new Map();
+  const documentListeners = new Map();
+
+  function addListener(target, type, callback) {
+    const listeners = target === 'window' ? windowListeners : documentListeners;
+    listeners.set(type, [...(listeners.get(type) || []), callback]);
+  }
+
+  function makeElement({ dataset = {}, id = '', tagName = 'div' } = {}) {
+    return {
+      children: [],
+      dataset,
+      hidden: false,
+      id,
+      innerHTML: '',
+      tagName: tagName.toUpperCase(),
+      attributes: new Map(),
+      classList: {
+        add() {},
+        contains() {
+          return false;
+        },
+        remove() {},
+        toggle(name, on) {
+          attributes.set(
+            `${id || dataset.i18n || dataset.a11yLabel || tagName}:${name}`,
+            String(on),
+          );
+        },
+      },
+      addEventListener() {},
+      appendChild(child) {
+        this.children.push(child);
+        return child;
+      },
+      closest() {
+        return null;
+      },
+      contains() {
+        return false;
+      },
+      getAttribute(name) {
+        return this.attributes.has(name) ? this.attributes.get(name) : null;
+      },
+      querySelector() {
+        return null;
+      },
+      querySelectorAll() {
+        return [];
+      },
+      removeAttribute(name) {
+        this.attributes.delete(name);
+      },
+      setAttribute(name, value) {
+        this.attributes.set(name, String(value));
+        attributes.set(
+          `${id || dataset.i18n || dataset.a11yLabel || tagName}:${name}`,
+          String(value),
+        );
+      },
+    };
+  }
+
+  const translatedElements = [
+    makeElement({ dataset: { i18n: 'hero.cta1' }, id: 'hero-cta' }),
+    makeElement({ dataset: { i18n: 'settings.done' }, id: 'settings-done' }),
+  ];
+  const a11yElement = makeElement({
+    dataset: { a11yLabel: 'a11y.settings.open' },
+    id: 'settings-open',
+  });
+  const languageButtons = homepageLocales.map((locale) =>
+    makeElement({ dataset: { lang: locale }, id: `lang-${locale}`, tagName: 'button' }),
+  );
+  const metaDescription = makeElement({ id: 'meta-description', tagName: 'meta' });
+  const documentElement = makeElement({ id: 'documentElement', tagName: 'html' });
+  const document = {
+    documentElement,
+    head: makeElement({ id: 'head', tagName: 'head' }),
+    readyState: 'loading',
+    title: '',
+    addEventListener(type, callback) {
+      addListener('document', type, callback);
+    },
+    createElement(tagName) {
+      return makeElement({ tagName });
+    },
+    getElementById() {
+      return null;
+    },
+    querySelector(selector) {
+      if (selector === 'meta[name="description"]') return metaDescription;
+      return null;
+    },
+    querySelectorAll(selector) {
+      if (selector === '[data-i18n]') return translatedElements;
+      if (selector === '[data-a11y-label]') return [a11yElement];
+      if (selector === '.lang button[data-lang]') return languageButtons;
+      return [];
+    },
+  };
+  const location = { hash: '#/' };
+  const window = {
+    document,
+    location,
+    addEventListener(type, callback) {
+      addListener('window', type, callback);
+    },
+    dispatchEvent(event) {
+      for (const callback of windowListeners.get(event.type) || []) callback(event);
+      return true;
+    },
+    matchMedia() {
+      return { matches: false };
+    },
+    scrollTo() {},
+  };
+  const sandbox = {
+    CustomEvent: function CustomEvent(type, init = {}) {
+      return { type, detail: init.detail || null };
+    },
+    Event: function Event(type) {
+      return { type };
+    },
+    document,
+    localStorage: {
+      getItem(key) {
+        return storage.has(key) ? storage.get(key) : null;
+      },
+      removeItem(key) {
+        storage.delete(key);
+      },
+      setItem(key, value) {
+        storage.set(key, String(value));
+        attributes.set(`localStorage:${key}`, String(value));
+      },
+    },
+    location,
+    sessionStorage: {
+      getItem() {
+        return null;
+      },
+      setItem() {},
+    },
+    setTimeout(callback) {
+      callback();
+      return 0;
+    },
+    window,
+  };
+  window.window = window;
+  window.localStorage = sandbox.localStorage;
+  window.sessionStorage = sandbox.sessionStorage;
+  window.setTimeout = sandbox.setTimeout;
+  window.Event = sandbox.Event;
+  window.CustomEvent = sandbox.CustomEvent;
+
+  return {
+    a11yElement,
+    attributes,
+    document,
+    documentListeners,
+    languageButtons,
+    metaDescription,
+    sandbox,
+    translatedElements,
+    window,
+    windowListeners,
+  };
+}
+
+function runStaticScriptOrderFixture(order) {
+  const fixture = createStaticScriptOrderSandbox('so');
+  vm.createContext(fixture.sandbox);
+
+  const appSource = read('site/app.js');
+  const extrasSource = read('site/i18n-extras.js');
+
+  if (order === 'extras-before-app') {
+    vm.runInContext(extrasSource, fixture.sandbox, { timeout: 3000 });
+    assert.equal(typeof fixture.window.__i18n_extra?.so, 'object');
+    vm.runInContext(appSource, fixture.sandbox, { timeout: 3000 });
+  } else {
+    vm.runInContext(appSource, fixture.sandbox, { timeout: 3000 });
+    assert.equal(fixture.window.__i18n_extra, undefined);
+    vm.runInContext(extrasSource, fixture.sandbox, { timeout: 3000 });
+  }
+
+  fixture.document.readyState = 'complete';
+  for (const callback of fixture.documentListeners.get('DOMContentLoaded') || []) {
+    callback(new fixture.sandbox.Event('DOMContentLoaded'));
+  }
+  fixture.window.dispatchEvent(new fixture.sandbox.Event('DOMContentLoaded'));
+
+  return fixture;
+}
+
 test('homepage slogans v6 exact replacement keys are merged for every supported locale', () => {
   const dictionaries = loadStaticDictionaries();
 
@@ -310,4 +510,43 @@ test('homepage language helpers apply preloaded saved locale after DOM is ready'
   assert.equal(attributes.get('localStorage:smt_lang'), 'so');
   assert.equal(translatedElement.innerHTML, expected.so['hero.cta1']);
   assert.equal(a11yAttributes.get('aria-label'), extras.so['a11y.settings.open']);
+});
+
+test('static i18n app and extras scripts preserve saved extra-locale copy in both load orders', () => {
+  const dictionaries = loadStaticDictionaries();
+
+  for (const order of ['extras-before-app', 'app-before-extras']) {
+    const fixture = runStaticScriptOrderFixture(order);
+
+    assert.equal(fixture.window.__i18n_extra, undefined, `${order} should clear the extras stash`);
+    assert.equal(
+      fixture.window.smtMergePreloadedExtraI18n(),
+      false,
+      `${order} should not merge preloaded extras more than once`,
+    );
+    assert.equal(typeof fixture.window.i18n.so, 'object', `${order} should expose Somali extras`);
+    assert.equal(fixture.attributes.get('documentElement:lang'), 'so', `${order} lang`);
+    assert.equal(fixture.attributes.get('documentElement:dir'), 'ltr', `${order} dir`);
+    assert.equal(fixture.attributes.get('localStorage:smt_lang'), 'so', `${order} saved language`);
+    assert.equal(
+      fixture.translatedElements[0].innerHTML,
+      dictionaries.so['hero.cta1'],
+      `${order} should translate visible data-i18n text`,
+    );
+    assert.equal(
+      fixture.translatedElements[1].innerHTML,
+      dictionaries.so['settings.done'],
+      `${order} should translate Settings copy from extras`,
+    );
+    assert.equal(
+      fixture.a11yElement.getAttribute('aria-label'),
+      dictionaries.so['a11y.settings.open'],
+      `${order} should translate aria labels from extras`,
+    );
+    assert.equal(
+      fixture.metaDescription.getAttribute('content'),
+      dictionaries.so['meta.description'],
+      `${order} should apply localized metadata from extras`,
+    );
+  }
 });
