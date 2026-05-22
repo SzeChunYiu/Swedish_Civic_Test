@@ -1,14 +1,34 @@
 const assert = require('node:assert/strict');
+const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
 const sourcePath = path.join(repoRoot, 'components/ui/TopBarActions.tsx');
+const focusFlag = '--focus-topbar-actions-accessibility';
 
 function readSource() {
   return fs.readFileSync(sourcePath, 'utf8');
 }
+
+test('TopBarActions accessibility parity uses focused content validation routing', () => {
+  const result = spawnSync(process.execPath, ['scripts/validate-content.js', focusFlag], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+  });
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.doesNotMatch(`${result.stdout}\n${result.stderr}`, /ReferenceError|Cannot access/);
+
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused TopBarActions validation should print a JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.equal(summary.topBarActionsAccessibilityRulesValidated, 33);
+  assert.equal(summary.topBarActionsAccessibilityParityValidated, true);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
+});
 
 test('top bar route links keep web anchor touch targets and theme token feedback', () => {
   const source = readSource();

@@ -201,6 +201,44 @@ test('QuestionCard accessibility parity uses focused content validation routing'
   );
 });
 
+test('TopBarActions accessibility parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const topBarActionsTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-topbar-actions-accessibility-parity.test.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('topBarActionsAccessibility');
+
+  assert.ok(registryEntry, 'TopBarActions accessibility focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-topbar-actions-accessibility']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'topBarActionsAccessibilityRulesValidated',
+    'topBarActionsAccessibilityParityValidated',
+  ]);
+  assert.match(validatorSource, /--focus-topbar-actions-accessibility/);
+  assert.match(
+    validatorSource,
+    /validateTopBarActionsAccessibilityParity\(\);[\s\S]*topBarActionsAccessibilityRulesValidated[\s\S]*topBarActionsAccessibilityParityValidated/,
+  );
+  assert.match(topBarActionsTestSource, /--focus-topbar-actions-accessibility/);
+  assert.doesNotMatch(
+    topBarActionsTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'TopBarActions accessibility tests must not route through full content validation',
+  );
+
+  const summary = assertFocusedValidationSummary('--focus-topbar-actions-accessibility', [
+    'topBarActionsAccessibilityRulesValidated',
+    'topBarActionsAccessibilityParityValidated',
+  ]);
+
+  assert.equal(summary.topBarActionsAccessibilityRulesValidated, 33);
+  assert.equal(summary.topBarActionsAccessibilityParityValidated, true);
+});
+
 test('app config schema parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),

@@ -102,6 +102,14 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'topBarActionsAccessibility',
+    flags: ['--focus-topbar-actions-accessibility'],
+    summaryKeys: [
+      'topBarActionsAccessibilityRulesValidated',
+      'topBarActionsAccessibilityParityValidated',
+    ],
+  },
+  {
     id: 'badgeAccessibility',
     flags: ['--focus-badge-accessibility'],
     summaryKeys: ['badgeAccessibilityRulesValidated', 'badgeAccessibilityParityValidated'],
