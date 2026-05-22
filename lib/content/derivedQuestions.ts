@@ -1602,6 +1602,9 @@ function embeddedQuestionTopicEn(question: string): string {
   match = q.match(/^What is the public sector in Sweden$/i);
   if (match) return 'what the public sector in Sweden is';
 
+  match = q.match(/^Which three companies are Sweden's public service broadcasters$/i);
+  if (match) return "Sweden's public service broadcasters";
+
   match = q.match(/^What does it mean that (.+)$/i);
   if (match) return `what it means that ${match[1]}`;
 
@@ -1996,6 +1999,13 @@ function generatedSingleChoicePromptFromSourceEn(
   match = q.match(/^What are (.+)$/i);
   if (match && variant === 'judgement') {
     return `Which fact is correct about ${match[1]}?`;
+  }
+
+  match = q.match(/^Which three companies are Sweden's public service broadcasters$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? "Which fact is correct about Sweden's public service broadcasters?"
+      : "What is correct about Sweden's public service broadcasters?";
   }
 
   match =
@@ -2697,6 +2707,25 @@ export function deriveCivicStatementEn(source: PracticeQuestion, option: Questio
     }
     if (/^Only non-profit associations$/i.test(answer)) {
       return 'The public sector in Sweden consists only of non-profit associations';
+    }
+  }
+
+  if (source.id === 'q048') {
+    if (
+      /^Swedish Radio \(SR\), Swedish Television \(SVT\), and Swedish Educational Broadcasting Company \(UR\)$/i.test(
+        answer,
+      )
+    ) {
+      return "Swedish Radio (SR), Swedish Television (SVT), and Swedish Educational Broadcasting Company (UR) are Sweden's public service broadcasters";
+    }
+    if (/^The Police, Tax Agency, and Migration Agency$/i.test(answer)) {
+      return "The Police, Tax Agency, and Migration Agency are Sweden's public service broadcasters";
+    }
+    if (/^The Riksdag, government, and courts$/i.test(answer)) {
+      return "The Riksdag, government, and courts are Sweden's public service broadcasters";
+    }
+    if (/^LO, TCO, and Saco$/i.test(answer)) {
+      return "LO, TCO, and Saco are Sweden's public service broadcasters";
     }
   }
 
