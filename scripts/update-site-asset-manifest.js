@@ -410,5 +410,6 @@ module.exports = {
   formatAssetManifest,
   listIndexAssetReferences,
   listSiteAssetFiles,
+  maxStylesheetImportDepth,
   writeAssetManifest,
 };
