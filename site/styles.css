@@ -11712,3 +11712,54 @@ img.ebook__brand-mark {
 :root[data-theme='dark'] .doc__main > h2:first-child {
   border-top-color: rgba(255, 255, 255, 0.08);
 }
+
+/* ======================================================================
+   DOC LEDE SUMMARY BOX OPTIMIZATION ROUND
+   ====================================================================== */
+
+.doc__lede {
+  background:
+    linear-gradient(90deg, rgba(0, 106, 167, 0.12) 0 6px, transparent 6px),
+    radial-gradient(circle at 100% 0%, rgba(254, 204, 0, 0.12), rgba(254, 204, 0, 0) 36%),
+    rgba(255, 255, 255, 0.42);
+  border: 1px solid rgba(0, 106, 167, 0.1);
+  border-radius: 20px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.36),
+    0 18px 42px -34px rgba(11, 31, 51, 0.44);
+  max-width: 62ch;
+  padding: 16px 18px 16px 22px;
+}
+
+.doc__lede strong {
+  background: rgba(0, 106, 167, 0.08);
+  border: 1px solid rgba(0, 106, 167, 0.12);
+  border-radius: 999px;
+  color: var(--blue-ink);
+  display: inline-flex;
+  font-size: 0.9em;
+  font-weight: 900;
+  line-height: 1.1;
+  padding: 2px 7px;
+}
+
+:root[data-theme='dark'] .doc__lede {
+  background:
+    linear-gradient(90deg, rgba(45, 168, 255, 0.22) 0 6px, transparent 6px),
+    rgba(255, 255, 255, 0.045);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme='dark'] .doc__lede strong {
+  background: rgba(45, 168, 255, 0.12);
+  border-color: rgba(45, 168, 255, 0.22);
+  color: var(--blue-soft);
+}
+
+@media (max-width: 620px) {
+  .doc__lede {
+    border-radius: 16px;
+    font-size: 16px;
+    padding: 14px 15px 14px 20px;
+  }
+}
