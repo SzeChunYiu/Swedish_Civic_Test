@@ -2484,6 +2484,37 @@ const EXPECTED_QUIZ_ROUTE_COPY_SNIPPETS = [
   ],
   ['{copy.backToPractice}', 'quiz back-to-practice link must render localized copy'],
 ];
+const EXPECTED_NATIVE_QUIZ_CONTEXT_BROWSER_SNIPPETS = [
+  ['/quiz/q001?chapterId=ch02', 'native quiz E2E must open a mismatched chapter-context URL'],
+  [
+    '/quiz/not-a-question?chapterId=ch01',
+    'native quiz E2E must open an unknown question URL with chapter context',
+  ],
+  [
+    'Frågepass: Sveriges demokratiska system',
+    'native quiz E2E must reject spoofed Swedish chapter-scoped titles',
+  ],
+  [
+    "Quiz session: Sweden's democratic system",
+    'native quiz E2E must reject spoofed English chapter-scoped titles',
+  ],
+  [
+    'Frågepass not-a-question',
+    'native quiz E2E must reject direct fallback titles on unknown Swedish routes',
+  ],
+  [
+    'Session not-a-question',
+    'native quiz E2E must reject direct fallback titles on unknown English routes',
+  ],
+  [
+    "not.toContainText('Besvara en fråga från')",
+    'native quiz E2E must reject Swedish chapter-scoped subtitles for mismatched context',
+  ],
+  [
+    "not.toContainText('Answer a question from')",
+    'native quiz E2E must reject English chapter-scoped subtitles for mismatched context',
+  ],
+];
 const EXPECTED_PRACTICE_ROUTE_HEADERS = [
   {
     label: 'practice question title',
@@ -9671,6 +9702,8 @@ let quizRouteHeadersValidated = 0;
 let quizRouteHeaderParityValidated = false;
 let quizRouteCopyLabelsValidated = 0;
 let quizRouteCopyParityValidated = false;
+let nativeQuizContextBrowserCasesValidated = 0;
+let nativeQuizContextBrowserParityValidated = false;
 let practiceRouteHeadersValidated = 0;
 let practiceRouteHeaderParityValidated = false;
 let chapterRouteHeadersValidated = 0;
@@ -10364,18 +10397,23 @@ if (process.argv.includes('--focus-speech-runtime-parity')) {
 if (process.argv.includes('--focus-native-quiz-copy')) {
   validateQuizRouteHeaderParity();
   validateQuizRouteCopyParity();
+  validateNativeQuizContextBrowserParity();
   validateChapterRouteHeaderParity();
   validateChapterRouteCopyParity();
+  validateChapterQuizSessionParity();
   exitWithValidationFailures();
   printValidationSummary({
     quizRouteHeadersValidated,
     quizRouteHeaderParityValidated,
     quizRouteCopyLabelsValidated,
     quizRouteCopyParityValidated,
+    nativeQuizContextBrowserCasesValidated,
+    nativeQuizContextBrowserParityValidated,
     chapterRouteHeadersValidated,
     chapterRouteHeaderParityValidated,
     chapterRouteCopyLabelsValidated,
     chapterRouteCopyParityValidated,
+    chapterQuizSessionParityValidated,
   });
   process.exit(0);
 }
@@ -14002,6 +14040,42 @@ function validateQuizRouteCopyParity() {
   );
   if (valid && quizRouteCopyLabelsValidated === expectedLabelCount) {
     quizRouteCopyParityValidated = true;
+  }
+}
+
+function validateNativeQuizContextBrowserParity() {
+  let valid = true;
+  let e2eSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    e2eSource = fs.readFileSync(
+      path.join(repoRoot, 'tests/e2e/native-quiz-sv-term-copy.spec.ts'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`native quiz context E2E source could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_NATIVE_QUIZ_CONTEXT_BROWSER_SNIPPETS.forEach(([snippet, message]) => {
+    if (!e2eSource.includes(snippet)) {
+      reject(message);
+      return;
+    }
+
+    nativeQuizContextBrowserCasesValidated += 1;
+  });
+
+  if (
+    valid &&
+    nativeQuizContextBrowserCasesValidated === EXPECTED_NATIVE_QUIZ_CONTEXT_BROWSER_SNIPPETS.length
+  ) {
+    nativeQuizContextBrowserParityValidated = true;
   }
 }
 
@@ -25214,6 +25288,7 @@ validateNativeMockExamComponentLegalCopy();
 validateNativeMockExamLibraryAndTierCopy();
 validateQuizRouteHeaderParity();
 validateQuizRouteCopyParity();
+validateNativeQuizContextBrowserParity();
 validatePracticeRouteHeaderParity();
 validatePracticeRouteCopyParity();
 validateProvenanceAuthorityCopyBoundary();

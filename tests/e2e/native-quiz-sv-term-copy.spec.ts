@@ -17,6 +17,11 @@ async function openChapter(page: Page, language: AppLanguage) {
   await dismissBlockingModals(page);
 }
 
+async function openQuizRoute(page: Page, route: string) {
+  await page.goto(route, { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+}
+
 function collectPageErrors(page: Page) {
   const errors: string[] = [];
   page.on('console', (message) => {
@@ -66,10 +71,27 @@ test('chapter detail and routed quiz render natural Swedish study terms', async 
   await expect(page.getByLabel('Försök igen med den här frågan')).toBeVisible();
   await expect(body).not.toContainText(oldQuizQuestion);
 
-  await page.goto('/quiz/q001', { waitUntil: 'networkidle' });
-  await dismissBlockingModals(page);
+  await openQuizRoute(page, '/quiz/q001');
   await expect(body).toContainText('Frågepass q001');
   await expect(body).not.toContainText('Frågepass: Landet Sverige');
+
+  await openQuizRoute(page, '/quiz/q001?chapterId=ch02');
+  await expect(page).toHaveURL(/\/quiz\/q001\?chapterId=ch02$/);
+  await expect(body).toContainText('Frågepass q001');
+  await expect(body).toContainText(
+    'Besvara frågan och gå sedan igenom den källbaserade återkopplingen.',
+  );
+  await expect(body).not.toContainText('Frågepass: Landet Sverige');
+  await expect(body).not.toContainText('Frågepass: Sveriges demokratiska system');
+  await expect(body).not.toContainText('Besvara en fråga från');
+
+  await openQuizRoute(page, '/quiz/not-a-question?chapterId=ch01');
+  await expect(page).toHaveURL(/\/quiz\/not-a-question\?chapterId=ch01$/);
+  await expect(body).toContainText('Frågan hittades inte');
+  await expect(body).toContainText('Vi hittar ingen övningsfråga för den här länken.');
+  await expect(body).not.toContainText('Frågepass: Landet Sverige');
+  await expect(body).not.toContainText('Frågepass not-a-question');
+  await expect(body).not.toContainText('Var ligger Sverige?');
 
   expect(pageErrors).toEqual([]);
 });
@@ -104,10 +126,27 @@ test('chapter detail and routed quiz keep English quiz copy in support mode', as
     .click();
   await expect(page.getByLabel('Try this quiz question again')).toBeVisible();
 
-  await page.goto('/quiz/q001', { waitUntil: 'networkidle' });
-  await dismissBlockingModals(page);
+  await openQuizRoute(page, '/quiz/q001');
   await expect(body).toContainText('Session q001');
   await expect(body).not.toContainText('Quiz session: The country of Sweden');
+
+  await openQuizRoute(page, '/quiz/q001?chapterId=ch02');
+  await expect(page).toHaveURL(/\/quiz\/q001\?chapterId=ch02$/);
+  await expect(body).toContainText('Session q001');
+  await expect(body).toContainText(
+    'Answer the routed question, then review the source-backed feedback.',
+  );
+  await expect(body).not.toContainText('Quiz session: The country of Sweden');
+  await expect(body).not.toContainText("Quiz session: Sweden's democratic system");
+  await expect(body).not.toContainText('Answer a question from');
+
+  await openQuizRoute(page, '/quiz/not-a-question?chapterId=ch01');
+  await expect(page).toHaveURL(/\/quiz\/not-a-question\?chapterId=ch01$/);
+  await expect(body).toContainText('Question not found');
+  await expect(body).toContainText('We could not find a practice question for this link.');
+  await expect(body).not.toContainText('Quiz session: The country of Sweden');
+  await expect(body).not.toContainText('Session not-a-question');
+  await expect(body).not.toContainText('Where is Sweden located?');
 
   expect(pageErrors).toEqual([]);
 });
