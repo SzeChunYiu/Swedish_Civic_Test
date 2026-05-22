@@ -354,11 +354,11 @@ export const useHighlightsStore = create<HighlightsState>((set, get) => ({
   clearPersistenceWarning: () => set({ persistenceWarning: null }),
 }));
 
-export function importHighlightsSnapshot(value: unknown): PersistedHighlights {
+export function importHighlightsSnapshot(value: unknown): RecoverablePersistenceWarning | null {
   const normalized = normalizeHighlightsState(value);
   const persistenceWarning = write(normalized);
   useHighlightsStore.setState({ ...normalized, persistenceWarning });
-  return normalized;
+  return persistenceWarning;
 }
 
 // Pure selector helpers — usable outside React.

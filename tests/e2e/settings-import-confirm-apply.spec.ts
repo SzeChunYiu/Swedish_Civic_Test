@@ -46,6 +46,7 @@ type Scenario = {
   confirmName: string;
   resetName: string;
   invalidJsonText: string;
+  persistenceWarningText: RegExp;
   successText: string;
 };
 
@@ -58,6 +59,8 @@ const scenarios: Scenario[] = [
     confirmName: 'Bekräfta lokal studiedataimport',
     resetName: 'Återställ importfält',
     invalidJsonText: 'JSON kunde inte läsas.',
+    persistenceWarningText:
+      /Importen lades in, men kunde inte sparas varaktigt för: progression\. Den datan finns bara i minnet tills appen stängs\./,
     successText: 'Importen är klar.',
   },
   {
@@ -68,6 +71,8 @@ const scenarios: Scenario[] = [
     confirmName: 'Confirm local study data import',
     resetName: 'Reset import field',
     invalidJsonText: 'JSON could not be read.',
+    persistenceWarningText:
+      /Import applied, but durable storage failed for: progress\. That data is only in memory until the app closes\./,
     successText: 'Import complete.',
   },
 ];
@@ -461,6 +466,19 @@ async function expectImportApplied(
     });
 }
 
+async function installProgressImportWriteFailure(page: Page) {
+  await page.addInitScript((progressKey) => {
+    const originalSetItem = Storage.prototype.setItem;
+    Storage.prototype.setItem = function patchedSetItem(key, value) {
+      const runtime = window as typeof window & { __SMT_IMPORT_WRITE_FAIL__?: boolean };
+      if (runtime.__SMT_IMPORT_WRITE_FAIL__ && key === progressKey) {
+        throw new Error('progress import write failed');
+      }
+      return originalSetItem.call(this, key, value);
+    };
+  }, progressStateKey);
+}
+
 for (const scenario of scenarios) {
   for (const payloadCase of importPayloadCases) {
     test(`settings import previews and confirms ${payloadCase.name} study data in ${scenario.language}`, async ({
@@ -495,6 +513,51 @@ for (const scenario of scenarios) {
       expect(errors.get()).toEqual([]);
     });
   }
+}
+
+for (const scenario of scenarios) {
+  test(`settings import warns instead of showing success when progress storage fails in ${scenario.language}`, async ({
+    page,
+  }) => {
+    await seedFreshSettingsLanguageAndAboutSeen(page, scenario.language);
+    await installProgressImportWriteFailure(page);
+    const errors = collectConsoleAndPageErrors(page);
+    const payloadCase = importPayloadCases.find((candidate) => candidate.name === 'singular');
+    expect(payloadCase).toBeDefined();
+
+    await page.goto('/settings', { waitUntil: 'networkidle' });
+    await dismissBlockingModals(page);
+    await expectNoImportApplied(page, scenario.language);
+
+    await page
+      .getByLabel(scenario.inputLabel)
+      .fill(payloadCase!.buildPayload(scenario.importedLanguage));
+    await page.getByRole('button', { name: scenario.previewName }).click();
+    await expect(page.getByRole('button', { name: scenario.confirmName })).toBeVisible();
+
+    await page.evaluate(() => {
+      (
+        window as typeof window & { __SMT_IMPORT_WRITE_FAIL__?: boolean }
+      ).__SMT_IMPORT_WRITE_FAIL__ = true;
+    });
+    await page.getByRole('button', { name: scenario.confirmName }).click();
+
+    await expect(page.getByText(scenario.persistenceWarningText)).toBeVisible();
+    await expect(page.getByText(scenario.successText)).toHaveCount(0);
+    await expect
+      .poll(async () => {
+        const storage = await readImportStorage(page);
+        return {
+          progress: storage.progress,
+          language: storage.settings.language,
+        };
+      })
+      .toEqual({
+        progress: null,
+        language: scenario.importedLanguage,
+      });
+    expect(errors.get()).toEqual([]);
+  });
 }
 
 for (const scenario of scenarios) {

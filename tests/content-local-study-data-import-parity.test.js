@@ -3,7 +3,11 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 
-const { createMemoryMMKV, loadTsWithStorage } = require('./helpers/storageStoreHarness.cjs');
+const {
+  createMemoryMMKV,
+  createThrowingSetMMKV,
+  loadTsWithStorage,
+} = require('./helpers/storageStoreHarness.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -133,6 +137,10 @@ test('storage-backed tests share the storage harness TypeScript loader and nativ
 
 test('local study data import summary keeps Swedish copy learner-facing', () => {
   const source = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+  const importSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/storage/localStudyDataImport.ts'),
+    'utf8',
+  );
   const swedishCopyMatch = source.match(/sv:\s*\{[\s\S]*?\n\s*\},\n\s*en:/);
   const englishCopyMatch = source.match(/en:\s*\{[\s\S]*?\n\s*\},\n\};/);
 
@@ -160,6 +168,8 @@ test('local study data import summary keeps Swedish copy learner-facing', () => 
   );
   assert.match(swedishCopyMatch[0], /fält för köp i appen eller kvitton/);
   assert.match(swedishCopyMatch[0], /data om köp i appen importeras inte/);
+  assert.match(swedishCopyMatch[0], /kunde inte sparas varaktigt/);
+  assert.match(swedishCopyMatch[0], /bara i minnet tills appen stängs/);
   assert.doesNotMatch(swedishCopyMatch[0], /\bFSRS\b|frysstatus|\bIAP\b/);
   assert.match(englishCopyMatch[0], /one: 'FSRS review day'/);
   assert.match(englishCopyMatch[0], /other: 'FSRS review days'/);
@@ -182,7 +192,13 @@ test('local study data import summary keeps Swedish copy learner-facing', () => 
   );
   assert.match(englishCopyMatch[0], /\bIAP fields\b/);
   assert.match(englishCopyMatch[0], /\bIAP data\b/);
+  assert.match(englishCopyMatch[0], /durable storage failed/);
+  assert.match(englishCopyMatch[0], /only in memory until the app closes/);
   assert.match(source, /getLocalStudyDataImportPayloadByteCount/);
+  assert.match(importSource, /type LocalStudyDataImportApplyResult/);
+  assert.match(importSource, /warnings: LocalStudyDataImportApplyWarning\[\]/);
+  assert.match(source, /applyResult\.warnings\.length > 0/);
+  assert.match(source, /copy\.importPersistenceWarning\(sectionList\)/);
   assert.match(
     source,
     /const importPayloadOverByteLimit = importPayloadByteCount > LOCAL_STUDY_DATA_IMPORT_MAX_BYTES;/,
@@ -298,8 +314,9 @@ test('local study data import previews and applies all learner snapshot sections
     ['hl-safe-1'],
   );
 
-  const appliedSummary = applyLocalStudyDataImport(previewResult.preview);
-  assert.deepEqual(appliedSummary, previewResult.preview.summary);
+  const applyResult = applyLocalStudyDataImport(previewResult.preview);
+  assert.deepEqual(applyResult.summary, previewResult.preview.summary);
+  assert.deepEqual(applyResult.warnings, []);
 
   const progress = JSON.parse(storageById.progress.values.get('progressState'));
   assert.deepEqual(progress.completedQuestionIds, ['q001', 'q002']);
@@ -331,6 +348,90 @@ test('local study data import previews and applies all learner snapshot sections
     highlights.byChapter.ch01.map((highlight) => highlight.note),
     ['Portable margin note'],
   );
+});
+
+test('local study data import apply result reports section write warnings', () => {
+  const storageById = {
+    'citizenship-requirements': createThrowingSetMMKV('requirements disk full'),
+    progress: createThrowingSetMMKV('progress disk full'),
+    'mistake-review': createThrowingSetMMKV('mistake disk full'),
+    reviews: createThrowingSetMMKV('reviews disk full'),
+    settings: createThrowingSetMMKV('settings disk full'),
+    highlights: createThrowingSetMMKV('highlights disk full'),
+  };
+  const { applyLocalStudyDataImport, previewLocalStudyDataImport } = loadImportModule(storageById);
+  const rawPayload = JSON.stringify({
+    version: 1,
+    progress: {
+      completedQuestionIds: ['q001'],
+      questionProgress: {
+        q001: {
+          seenCount: 1,
+          correctCount: 1,
+          wrongCount: 0,
+          correctStreak: 1,
+          bookmarked: true,
+          lastAnsweredAt: '2026-05-20T08:00:00.000Z',
+          nextReviewAt: '2026-05-21T08:00:00.000Z',
+        },
+      },
+      mockExamSessions: [
+        {
+          sessionId: 'mock-1',
+          score: 1,
+          completedAt: '2026-05-20T09:00:00.000Z',
+          correctCount: 1,
+          totalCount: 1,
+        },
+      ],
+    },
+    mistakeReview: {
+      wrongAnswerReviews: {
+        q001: {
+          answeredAt: '2026-05-20T08:05:00.000Z',
+          selectedOptionTextEn: 'Wrong answer',
+          selectedOptionTextSv: 'Fel svar',
+        },
+      },
+    },
+    reviews: {
+      byId: {
+        q001: validReviewCard('q001'),
+      },
+      gradedPerDay: {
+        '2026-05-20': 1,
+      },
+    },
+    settings: {
+      language: 'en',
+      audioEnabled: false,
+      dailyGoalAnswers: 20,
+    },
+    citizenshipRequirements: {
+      checkedAreaIds: ['identity'],
+    },
+    highlights: {
+      byChapter: {
+        ch01: [validHighlight()],
+      },
+    },
+  });
+
+  const previewResult = previewLocalStudyDataImport(rawPayload);
+  assert.equal(previewResult.ok, true);
+
+  const applyResult = applyLocalStudyDataImport(previewResult.preview);
+  assert.deepEqual(applyResult.summary, previewResult.preview.summary);
+  assert.deepEqual(
+    applyResult.warnings.map((item) => item.section),
+    ['progress', 'mistakeReview', 'reviews', 'settings', 'citizenshipRequirements', 'highlights'],
+  );
+  for (const item of applyResult.warnings) {
+    assert.equal(item.warning.type, 'recoverable-persistence-warning');
+    assert.equal(item.warning.recoverable, true);
+    assert.equal(item.warning.operation, 'write');
+    assert.match(item.warning.message, /using in-memory state for this session/);
+  }
 });
 
 test('local study data import summary reports plural bookmark wrong-answer mock exam FSRS settings and citizenship rows', () => {
@@ -468,8 +569,9 @@ test('local study data import summary reports plural bookmark wrong-answer mock 
     'conduct',
   ]);
 
-  const appliedSummary = applyLocalStudyDataImport(previewResult.preview);
-  assert.deepEqual(appliedSummary, previewResult.preview.summary);
+  const applyResult = applyLocalStudyDataImport(previewResult.preview);
+  assert.deepEqual(applyResult.summary, previewResult.preview.summary);
+  assert.deepEqual(applyResult.warnings, []);
 
   const progress = JSON.parse(storageById.progress.values.get('progressState'));
   assert.deepEqual(progress.completedQuestionIds, ['q001', 'q002', 'q003']);

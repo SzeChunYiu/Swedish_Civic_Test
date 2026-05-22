@@ -281,6 +281,30 @@ test('settings import summary copy keeps singular and plural labels for bookmark
   for (const row of absentZeroRows) {
     assertIncludes(e2eSource, row, 'settings import E2E zero-row rejection');
   }
+  assertIncludes(settingsSource, 'importPersistenceWarning', 'settings import write-fail copy');
+  assertIncludes(settingsSource, 'kunde inte sparas varaktigt', 'settings import Swedish warning');
+  assertIncludes(
+    settingsSource,
+    'bara i minnet tills appen stängs',
+    'settings import Swedish warning',
+  );
+  assertIncludes(settingsSource, 'durable storage failed', 'settings import English warning');
+  assertIncludes(
+    settingsSource,
+    'only in memory until the app closes',
+    'settings import English warning',
+  );
+  assertIncludes(
+    settingsSource,
+    'applyResult.warnings.length > 0',
+    'settings import warning branch',
+  );
+  assertIncludes(settingsSource, "tone: 'warning'", 'settings import warning branch');
+  assertIncludes(
+    settingsSource,
+    "accessibilityRole={importFeedback.tone === 'success' ? 'text' : 'alert'}",
+    'settings import warning alert',
+  );
   assertIncludes(e2eSource, 'absentSummaryTexts', 'settings import E2E zero-row cases');
   assertIncludes(e2eSource, "name: 'plural'", 'settings import E2E payload cases');
 });
