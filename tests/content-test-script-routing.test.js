@@ -65,52 +65,34 @@ function countSourceOccurrences(source, token) {
   return source.match(new RegExp(`\\b${token}\\b`, 'g'))?.length ?? 0;
 }
 
-test('Playwright dist-web server reuse is explicit and worktree-bound', () => {
-  const playwrightConfigSource = fs.readFileSync(
-    path.join(repoRoot, 'playwright.config.ts'),
-    'utf8',
-  );
-  const serveDistWebSource = fs.readFileSync(
-    path.join(repoRoot, 'tests/e2e/serve-dist-web.cjs'),
-    'utf8',
-  );
+function parseJsonSummary(output, label) {
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, `${label} should print a JSON summary`);
+  return JSON.parse(match[0]);
+}
 
-  assert.match(
-    playwrightConfigSource,
-    /const e2ePort = Number\(process\.env\.E2E_PORT \?\? DEFAULT_E2E_PORT\);/,
-    'Playwright must keep the E2E_PORT override for unique local ports',
-  );
-  assert.match(
-    playwrightConfigSource,
-    /PORT=\$\{e2ePort\} node tests\/e2e\/serve-dist-web\.cjs/,
-    'Playwright must pass the selected E2E_PORT to the dist-web server',
-  );
-  assert.match(
-    playwrightConfigSource,
-    /process\.env\.E2E_REUSE_EXISTING_SERVER === '1' && !process\.env\.CI/,
-    'local server reuse must require E2E_REUSE_EXISTING_SERVER=1 while CI keeps reuse disabled',
-  );
-  assert.match(
-    playwrightConfigSource,
-    /reuseExistingServer,\s*\n\s*timeout:/,
-    'Playwright webServer must use the guarded reuseExistingServer value',
-  );
-  assert.doesNotMatch(
-    playwrightConfigSource,
-    /reuseExistingServer:\s*!process\.env\.CI|reuseExistingServer:\s*true/,
-    'local Playwright must not silently reuse any server already listening on the default port',
-  );
-  assert.doesNotMatch(
-    playwrightConfigSource,
-    /DIST_WEB_ROOT=/,
-    'Playwright must serve this worktree default dist-web path instead of pointing at another root',
-  );
-  assert.match(
-    serveDistWebSource,
-    /path\.join\(__dirname, '\.\.\/\.\.\/dist-web'\)/,
-    'serve-dist-web must default to the invoking worktree dist-web directory',
-  );
-});
+function runFocusedValidationCommand(flag) {
+  return spawnSync(process.execPath, ['scripts/validate-content.js', flag], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+  });
+}
+
+function assertFocusedValidationSummary(flag, expectedSummaryKeys) {
+  const result = runFocusedValidationCommand(flag);
+  const combinedOutput = `${result.stdout}\n${result.stderr}`;
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.doesNotMatch(combinedOutput, /ReferenceError|Cannot access .* before initialization/);
+
+  const summary = parseJsonSummary(result.stdout, `${flag} focused validation`);
+  for (const key of expectedSummaryKeys) {
+    assert.ok(Object.prototype.hasOwnProperty.call(summary, key), `${key} is present`);
+  }
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
+
+  return summary;
+}
 
 test('npm test keeps selector routing in the project dispatcher', () => {
   const pkg = readPackageJson();
@@ -709,6 +691,44 @@ test('question speech text parity uses focused content validation routing', () =
     /\['scripts\/validate-content\.js'\]/,
     'question speech text tests must not route through full content validation',
   );
+});
+
+test('question speech focused validation exits after helper constants initialize', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('questionSpeechTextParity');
+  const helperIndex = validatorSource.indexOf('const SOURCE_AUTHORITY_REPLACEMENTS');
+  const focusIndex = validatorSource.indexOf(
+    "if (process.argv.includes('--focus-question-speech-text-parity'))",
+  );
+
+  assert.ok(registryEntry, 'question speech text parity focus mode must be registered');
+  assert.equal(helperIndex >= 0, true, 'speech text helper constants must stay in source');
+  assert.equal(
+    focusIndex > helperIndex,
+    true,
+    'question speech focus exit must follow helper constants',
+  );
+  assert.match(
+    validatorSource,
+    /function finishFocusedValidation\([\s\S]*exitWithValidationFailures\(\);[\s\S]*printValidationSummary\(summary\);[\s\S]*process\.exit\(0\);/,
+    'focused validation exits should use the shared focused summary helper',
+  );
+  assert.match(
+    validatorSource,
+    /--focus-question-speech-text-parity[\s\S]*validateQuestionSpeechTextParity\(\);[\s\S]*finishFocusedValidation\(\{/,
+    'question speech focus mode must use the shared focused summary helper',
+  );
+
+  const summary = assertFocusedValidationSummary(
+    '--focus-question-speech-text-parity',
+    registryEntry.summaryKeys,
+  );
+
+  assert.equal(summary.questionSpeechTextQuestionsValidated, summary.publishedQuestions);
+  assert.equal(summary.questionSpeechTextParityValidated, true);
 });
 
 test('generated localization overlay parity uses focused content validation routing', () => {

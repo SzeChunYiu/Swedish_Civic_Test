@@ -5958,6 +5958,12 @@ function printValidationSummary(summary) {
   console.log(JSON.stringify(summary, null, 2));
 }
 
+function finishFocusedValidation(summary) {
+  exitWithValidationFailures();
+  printValidationSummary(summary);
+  process.exit(0);
+}
+
 function hasText(value) {
   return typeof value === 'string' && value.trim().length > 0;
 }
@@ -21792,8 +21798,7 @@ function validateQuestionSpeechTextParity() {
 
 if (process.argv.includes('--focus-question-speech-text-parity')) {
   validateQuestionSpeechTextParity();
-  exitWithValidationFailures();
-  printValidationSummary({
+  finishFocusedValidation({
     questionSpeechTextQuestionsValidated,
     questionSpeechTextOptionsValidated,
     questionSpeechTextParityValidated,
@@ -21801,7 +21806,6 @@ if (process.argv.includes('--focus-question-speech-text-parity')) {
       ? questions.filter((question) => question.reviewStatus === 'published').length
       : 0,
   });
-  process.exit(0);
 }
 
 function resetSpeechEvents() {
