@@ -461,6 +461,7 @@ test('nested native surfaces consume app-wide theme colors instead of static tok
     'components/quiz/QuestionCard.tsx',
     'components/quiz/ExplanationPanel.tsx',
     'components/quiz/UHRReferenceCard.tsx',
+    'components/quiz/ConfidenceRatingPicker.tsx',
     'components/dashboard/ActivityHeatmap.tsx',
     'components/dashboard/MockExamHistoryCard.tsx',
     'components/dashboard/PerChapterProgressBars.tsx',

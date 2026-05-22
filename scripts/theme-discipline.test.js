@@ -31,7 +31,10 @@ const HEADER_THEME_ICONS = [
   'components/ui/icons/SearchIcon.tsx',
   'components/ui/icons/SettingsIcon.tsx',
 ];
-const PRO_LEARNING_THEME_SURFACES = ['components/quiz/PostAnswerRewardPanel.tsx'];
+const PRO_LEARNING_THEME_SURFACES = [
+  'components/quiz/PostAnswerRewardPanel.tsx',
+  'components/quiz/ConfidenceRatingPicker.tsx',
+];
 const MOCK_EXAM_RESULT_THEME_SURFACES = [
   'components/Surface.tsx',
   'components/Text.tsx',
@@ -496,7 +499,7 @@ test('weekly recap quiet-week and action link colors resolve from active theme c
   );
 });
 
-test('post-answer reward surfaces resolve semantic colors from the active theme', () => {
+test('Pro learning surfaces resolve semantic colors from the active theme', () => {
   for (const componentPath of PRO_LEARNING_THEME_SURFACES) {
     const source = read(componentPath);
 
@@ -512,8 +515,10 @@ test('post-answer reward surfaces resolve semantic colors from the active theme'
     );
     assert.match(
       source,
-      /<Badge themeColors=\{themeColors\}/,
-      `${componentPath} should pass active theme colors to reward badges`,
+      componentPath.endsWith('PostAnswerRewardPanel.tsx')
+        ? /<Badge themeColors=\{themeColors\}/
+        : /android_ripple=\{\{ color: themeColors\.focusSoft \}\}/,
+      `${componentPath} should pass active theme colors into nested themed surfaces`,
     );
     assert.doesNotMatch(
       source,

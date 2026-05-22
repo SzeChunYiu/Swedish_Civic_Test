@@ -1,8 +1,10 @@
+import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { useReducedMotion } from '../../lib/motion/useReducedMotion';
 import type { ConfidenceRating } from '../../types/progress';
-import { colors, motion, radius, space, typography } from '../../lib/theme';
+import { motion, radius, space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
 
 type RatingOption = {
@@ -53,6 +55,8 @@ export function ConfidenceRatingPicker({
 }: ConfidenceRatingPickerProps) {
   const localizedCopy = copy[language];
   const reduceMotion = useReducedMotion();
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
 
   return (
     <View
@@ -72,7 +76,7 @@ export function ConfidenceRatingPicker({
           return (
             <Pressable
               key={option.value}
-              android_ripple={{ color: colors.focusSoft }}
+              android_ripple={{ color: themeColors.focusSoft }}
               aria-checked={selected}
               accessibilityLabel={localizedCopy.optionLabel(option.value, label)}
               accessibilityRole="radio"
@@ -103,79 +107,81 @@ export function ConfidenceRatingPicker({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.surfaceWarm,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: space.hairline,
-    gap: space[1],
-    padding: space[1.5],
-  },
-  heading: {
-    gap: space[0.5],
-  },
-  title: {
-    color: colors.text,
-    fontSize: typography.bodySemibold.fontSize,
-    fontWeight: typography.bodySemibold.fontWeight,
-    lineHeight: typography.bodySemibold.lineHeight,
-  },
-  subtitle: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  options: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[0.75],
-  },
-  option: {
-    alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: space.hairline,
-    gap: space.micro,
-    justifyContent: 'center',
-    minHeight: space[6],
-    minWidth: space[7],
-    paddingHorizontal: space[1],
-    paddingVertical: space[0.75],
-  },
-  optionDisabled: {
-    backgroundColor: colors.surfaceMuted,
-  },
-  optionPressed: {
-    backgroundColor: colors.focusSoft,
-    borderColor: colors.focus,
-    transform: [{ scale: motion.pressedScale }],
-  },
-  optionPressedReducedMotion: {
-    backgroundColor: colors.focusSoft,
-    borderColor: colors.focus,
-  },
-  optionSelected: {
-    backgroundColor: colors.badgeBlueBg,
-    borderColor: colors.focus,
-  },
-  value: {
-    color: colors.text,
-    fontSize: typography.badge.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    lineHeight: typography.badge.lineHeight,
-  },
-  valueSelected: {
-    color: colors.badgeBlueText,
-  },
-  label: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-    textAlign: 'center',
-  },
-  labelSelected: {
-    color: colors.badgeBlueText,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    container: {
+      backgroundColor: themeColors.surfaceWarm,
+      borderColor: themeColors.border,
+      borderRadius: radius.card,
+      borderWidth: space.hairline,
+      gap: space[1],
+      padding: space[1.5],
+    },
+    heading: {
+      gap: space[0.5],
+    },
+    title: {
+      color: themeColors.text,
+      fontSize: typography.bodySemibold.fontSize,
+      fontWeight: typography.bodySemibold.fontWeight,
+      lineHeight: typography.bodySemibold.lineHeight,
+    },
+    subtitle: {
+      color: themeColors.textMuted,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+    options: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[0.75],
+    },
+    option: {
+      alignItems: 'center',
+      backgroundColor: themeColors.surface,
+      borderColor: themeColors.border,
+      borderRadius: radius.card,
+      borderWidth: space.hairline,
+      gap: space.micro,
+      justifyContent: 'center',
+      minHeight: space[6],
+      minWidth: space[7],
+      paddingHorizontal: space[1],
+      paddingVertical: space[0.75],
+    },
+    optionDisabled: {
+      backgroundColor: themeColors.surfaceMuted,
+    },
+    optionPressed: {
+      backgroundColor: themeColors.focusSoft,
+      borderColor: themeColors.focus,
+      transform: [{ scale: motion.pressedScale }],
+    },
+    optionPressedReducedMotion: {
+      backgroundColor: themeColors.focusSoft,
+      borderColor: themeColors.focus,
+    },
+    optionSelected: {
+      backgroundColor: themeColors.badgeBlueBg,
+      borderColor: themeColors.focus,
+    },
+    value: {
+      color: themeColors.text,
+      fontSize: typography.badge.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      lineHeight: typography.badge.lineHeight,
+    },
+    valueSelected: {
+      color: themeColors.badgeBlueText,
+    },
+    label: {
+      color: themeColors.textSecondary,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+      textAlign: 'center',
+    },
+    labelSelected: {
+      color: themeColors.badgeBlueText,
+    },
+  });
+}
