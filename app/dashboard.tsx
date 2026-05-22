@@ -1,5 +1,5 @@
 import { Link } from 'expo-router';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { StyleSheet, Text } from 'react-native';
 
 import { ActivityHeatmap } from '../components/dashboard/ActivityHeatmap';
@@ -13,6 +13,7 @@ import { ScreenShell } from '../components/ui/ScreenShell';
 import { chapters } from '../data/chapters';
 import { questions } from '../data/questions';
 import {
+  activityDayDetail,
   dailyActivityHistogram,
   dashboardSummary,
   mockHistory,
@@ -38,6 +39,25 @@ const XP_DAYS = 30;
 type DashboardCopy = {
   activity: {
     dayLabel: (date: string, answers: number) => string;
+    detail: {
+      accessibilityLabel: (
+        date: string,
+        answers: number,
+        correct: number,
+        review: number,
+        mocks: number,
+      ) => string;
+      mockSummary: (
+        scorePercent: number | null,
+        questionCount: number,
+        duration: string | null,
+      ) => string;
+      mockTitle: string;
+      noMockSummaries: string;
+      selectedLabel: (date: string, answers: number) => string;
+      studyAnswers: (answers: number, correct: number, review: number) => string;
+      title: (date: string) => string;
+    };
     emptyState: string;
     legend: {
       high: string;
@@ -122,6 +142,21 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
   sv: {
     activity: {
       dayLabel: (date, answers) => `${date}: ${answers} svar`,
+      detail: {
+        accessibilityLabel: (date, answers, correct, review, mocks) =>
+          `Detalj för ${date}: ${answers} svar, ${correct} rätt, ${review} att repetera, ${mocks} slutförda övningsprov.`,
+        mockSummary: (scorePercent, questionCount, duration) => {
+          const score = scorePercent === null ? 'utan sparat resultat' : `${scorePercent}%`;
+          const time = duration ? `, ${duration}` : '';
+          return `Övningsprov: ${score} på ${questionCount} frågor${time}.`;
+        },
+        mockTitle: 'Övningsprov den dagen',
+        noMockSummaries: 'Inga slutförda övningsprov den dagen.',
+        selectedLabel: (date, answers) => `${date}: ${answers} svar, vald`,
+        studyAnswers: (answers, correct, review) =>
+          `${answers} studiesvar: ${correct} rätt, ${review} att repetera.`,
+        title: (date) => `Aktivitet ${date}`,
+      },
       emptyState: 'Svara på några frågor så byggs din aktivitetskarta här.',
       legend: {
         high: 'Hög aktivitet',
@@ -219,6 +254,21 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
   en: {
     activity: {
       dayLabel: (date, answers) => `${date}: ${answers} answers`,
+      detail: {
+        accessibilityLabel: (date, answers, correct, review, mocks) =>
+          `Details for ${date}: ${answers} answers, ${correct} correct, ${review} to review, ${mocks} completed mock exams.`,
+        mockSummary: (scorePercent, questionCount, duration) => {
+          const score = scorePercent === null ? 'no saved score' : `${scorePercent}%`;
+          const time = duration ? `, ${duration}` : '';
+          return `Mock exam: ${score} across ${questionCount} questions${time}.`;
+        },
+        mockTitle: 'Mock exams that day',
+        noMockSummaries: 'No completed mock exams that day.',
+        selectedLabel: (date, answers) => `${date}: ${answers} answers, selected`,
+        studyAnswers: (answers, correct, review) =>
+          `${answers} study answers: ${correct} correct, ${review} to review.`,
+        title: (date) => `Activity on ${date}`,
+      },
       emptyState: 'Answer a few questions and your activity map will build here.',
       legend: {
         high: 'High activity',
@@ -333,6 +383,7 @@ export default function DashboardScreen() {
   const copy = dashboardCopy[language];
   const themeColors = useThemeColors();
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
+  const [selectedActivityDate, setSelectedActivityDate] = useState<string | null>(null);
   const today = useMemo(() => new Date(), []);
   const studyPlanDate = useMemo(() => {
     if (!studyPlanTestDateIso) return null;
@@ -361,6 +412,10 @@ export default function DashboardScreen() {
   const activityBins = useMemo(
     () => dailyActivityHistogram(progress, { daysBack: ACTIVITY_DAYS }),
     [progress],
+  );
+  const selectedActivityDayDetail = useMemo(
+    () => (selectedActivityDate ? activityDayDetail(progress, selectedActivityDate) : null),
+    [progress, selectedActivityDate],
   );
   const chapterBars = useMemo(
     () => perChapterProgress(progress, chapters, questionChapterIndex),
@@ -425,7 +480,13 @@ export default function DashboardScreen() {
         </RouteLink>
       </Card>
 
-      <ActivityHeatmap bins={activityBins} copy={copy.activity} />
+      <ActivityHeatmap
+        bins={activityBins}
+        copy={copy.activity}
+        dayDetail={selectedActivityDayDetail}
+        onSelectDate={setSelectedActivityDate}
+        selectedDate={selectedActivityDate}
+      />
       <PerChapterProgressBars
         bars={chapterBars}
         chapters={chapters}

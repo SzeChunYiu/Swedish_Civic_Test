@@ -49,6 +49,22 @@ export interface DailyActivityBin {
   count: number;
 }
 
+export interface ActivityDayMockSummary {
+  completedAt: string;
+  durationMs: number | null;
+  questionCount: number;
+  score: number | null;
+  sessionId: string;
+}
+
+export interface ActivityDayDetail {
+  answerCount: number;
+  date: string;
+  mockSummaries: ActivityDayMockSummary[];
+  strictCorrectCount: number;
+  wrongOrNeedsReviewCount: number;
+}
+
 /**
  * Produce a contiguous run of daily bins from `daysBack-1` ago through today,
  * inclusive (so passing 7 returns 7 entries).
@@ -77,6 +93,53 @@ export function dailyActivityHistogram(
     bins.push({ date: key, count: counts.get(key) ?? 0 });
   }
   return bins;
+}
+
+export function activityDayDetail(
+  progress: UserProgress,
+  date: string,
+  options: { now?: Date } = {},
+): ActivityDayDetail {
+  const now = options.now ?? new Date();
+  const detail: ActivityDayDetail = {
+    answerCount: 0,
+    date,
+    mockSummaries: [],
+    strictCorrectCount: 0,
+    wrongOrNeedsReviewCount: 0,
+  };
+
+  for (const session of progress.sessions ?? []) {
+    if (session.mode !== 'exam') {
+      for (const answer of session.answers) {
+        const answeredAt = validAnswerDate(answer.answeredAt, now);
+        if (!answeredAt || getLocalDateKey(answeredAt) !== date) continue;
+        detail.answerCount += 1;
+        if (answerIsStrictlyCorrect(answer)) detail.strictCorrectCount += 1;
+        else if (answerIsStrictlyWrong(answer)) detail.wrongOrNeedsReviewCount += 1;
+      }
+    }
+
+    if (session.mode !== 'exam' || !session.completedAt) continue;
+    const completedAtMs = validAnswerTimestampMs(session.completedAt, now);
+    if (completedAtMs === null) continue;
+    const completedAt = new Date(completedAtMs);
+    if (getLocalDateKey(completedAt) !== date) continue;
+    const startedAtMs = validAnswerTimestampMs(session.startedAt, now);
+
+    detail.mockSummaries.push({
+      completedAt: session.completedAt,
+      durationMs:
+        startedAtMs === null || startedAtMs > completedAtMs ? null : completedAtMs - startedAtMs,
+      questionCount: Array.isArray(session.questionIds) ? session.questionIds.length : 0,
+      score:
+        typeof session.score === 'number' && Number.isFinite(session.score) ? session.score : null,
+      sessionId: session.id,
+    });
+  }
+
+  detail.mockSummaries.sort((a, b) => a.completedAt.localeCompare(b.completedAt));
+  return detail;
 }
 
 // ----------------------------------------------------------- per-chapter

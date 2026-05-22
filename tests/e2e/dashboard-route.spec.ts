@@ -476,11 +476,73 @@ async function expectNonEmptyProgressVisible(
       fixture.language === 'sv' ? `${seed.todayKey}: 2 svar` : `${seed.todayKey}: 2 answers`,
     ),
   ).toBeVisible();
+  const todayButton = page.getByRole('button', {
+    name: fixture.language === 'sv' ? `${seed.todayKey}: 2 svar` : `${seed.todayKey}: 2 answers`,
+  });
+  await todayButton.click();
+  await expect(
+    page
+      .getByRole('heading', {
+        name:
+          fixture.language === 'sv' ? `Aktivitet ${seed.todayKey}` : `Activity on ${seed.todayKey}`,
+      })
+      .last(),
+  ).toBeVisible();
+  await expect(
+    page.getByText(
+      fixture.language === 'sv'
+        ? '2 studiesvar: 1 rätt, 1 att repetera.'
+        : '2 study answers: 1 correct, 1 to review.',
+      { exact: true },
+    ),
+  ).toBeVisible();
+  await expect(
+    page.getByText(
+      fixture.language === 'sv'
+        ? 'Inga slutförda övningsprov den dagen.'
+        : 'No completed mock exams that day.',
+      { exact: true },
+    ),
+  ).toBeVisible();
   await expect(
     page.getByLabel(
       fixture.language === 'sv'
         ? `${seed.yesterdayKey}: 1 svar`
         : `${seed.yesterdayKey}: 1 answers`,
+    ),
+  ).toBeVisible();
+  const yesterdayButton = page.getByRole('button', {
+    name:
+      fixture.language === 'sv'
+        ? `${seed.yesterdayKey}: 1 svar`
+        : `${seed.yesterdayKey}: 1 answers`,
+  });
+  await yesterdayButton.focus();
+  await page.keyboard.press('Enter');
+  await expect(
+    page
+      .getByRole('heading', {
+        name:
+          fixture.language === 'sv'
+            ? `Aktivitet ${seed.yesterdayKey}`
+            : `Activity on ${seed.yesterdayKey}`,
+      })
+      .last(),
+  ).toBeVisible();
+  await expect(
+    page.getByText(
+      fixture.language === 'sv'
+        ? '1 studiesvar: 1 rätt, 0 att repetera.'
+        : '1 study answers: 1 correct, 0 to review.',
+      { exact: true },
+    ),
+  ).toBeVisible();
+  await expect(
+    page.getByText(
+      fixture.language === 'sv'
+        ? 'Övningsprov: 82% på 2 frågor, 21m.'
+        : 'Mock exam: 82% across 2 questions, 21m.',
+      { exact: true },
     ),
   ).toBeVisible();
   await expect(

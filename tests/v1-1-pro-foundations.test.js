@@ -1089,6 +1089,89 @@ test('dailyActivityHistogram: returns contiguous bins ending today', () => {
   assert.equal(bins[0].count, 0);
 });
 
+test('activityDayDetail: summarizes strict study answers and completed mocks for one day', () => {
+  const { activityDayDetail } = loadTs('lib/learning/dashboardStats.ts');
+  const sessions = [
+    {
+      id: 'study-1',
+      mode: 'study',
+      questionIds: [],
+      startedAt: '2026-05-19T09:00:00.000Z',
+      answers: [
+        {
+          questionId: 'q1',
+          selectedOptionIds: [],
+          isCorrect: true,
+          answeredAt: '2026-05-19T10:00:00.000Z',
+          timeSpentSeconds: 5,
+        },
+        {
+          questionId: 'q2',
+          selectedOptionIds: [],
+          isCorrect: false,
+          answeredAt: '2026-05-19T10:05:00.000Z',
+          timeSpentSeconds: 5,
+        },
+        {
+          questionId: 'q3',
+          selectedOptionIds: [],
+          isCorrect: 'yes',
+          answeredAt: '2026-05-19T10:10:00.000Z',
+          timeSpentSeconds: 5,
+        },
+        {
+          questionId: 'q4',
+          selectedOptionIds: [],
+          isCorrect: true,
+          answeredAt: '2026-05-18T10:00:00.000Z',
+          timeSpentSeconds: 5,
+        },
+      ],
+    },
+    {
+      id: 'exam-1',
+      mode: 'exam',
+      questionIds: ['q1', 'q2', 'q3'],
+      answers: [
+        {
+          questionId: 'q1',
+          selectedOptionIds: [],
+          isCorrect: true,
+          answeredAt: '2026-05-19T11:30:00.000Z',
+          timeSpentSeconds: 5,
+        },
+      ],
+      startedAt: '2026-05-19T11:00:00.000Z',
+      completedAt: '2026-05-19T11:45:00.000Z',
+      score: 2 / 3,
+    },
+  ];
+
+  const detail = activityDayDetail(progressWithSessions(sessions), '2026-05-19', {
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  });
+
+  assert.equal(detail.answerCount, 3);
+  assert.equal(detail.strictCorrectCount, 1);
+  assert.equal(detail.wrongOrNeedsReviewCount, 1);
+  assert.deepEqual(
+    detail.mockSummaries.map((mock) => ({
+      durationMs: mock.durationMs,
+      questionCount: mock.questionCount,
+      score: mock.score,
+      sessionId: mock.sessionId,
+    })),
+    [
+      {
+        durationMs: 45 * 60 * 1000,
+        questionCount: 3,
+        score: 2 / 3,
+        sessionId: 'exam-1',
+      },
+    ],
+  );
+});
+
 test('dashboard day-window selectors normalize invalid daysBack inputs', () => {
   const { MAX_DASHBOARD_DAYS_BACK, dailyActivityHistogram, mistakeConvergence, xpSparkline } =
     loadTs('lib/learning/dashboardStats.ts');

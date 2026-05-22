@@ -237,8 +237,53 @@ function assertDashboardAccessibilitySeparation(sources) {
   );
   assert.match(
     sources.activity,
-    /accessibilityLabel=\{copy\.dayLabel\(bin\.date, bin\.count\)\}/,
+    /const label = selected[\s\S]*?copy\.detail\.selectedLabel\(bin\.date, bin\.count\)[\s\S]*?: copy\.dayLabel\(bin\.date, bin\.count\);/,
     'ActivityHeatmap cells must use localized per-day answer labels',
+  );
+  assert.match(
+    sources.dashboard,
+    /activityDayDetail\(progress, selectedActivityDate\)/,
+    'Dashboard must derive selected activity-day detail from local progress',
+  );
+  assert.match(
+    sources.dashboard,
+    /onSelectDate=\{setSelectedActivityDate\}/,
+    'Dashboard must wire heatmap selection back into local route state',
+  );
+  assert.match(
+    sources.activity,
+    /if \(!active\) \{[\s\S]*?<View[\s\S]*?accessibilityLabel=\{label\}[\s\S]*?style=\{cellStyle\}/,
+    'ActivityHeatmap zero-answer days must stay labelled but non-interactive',
+  );
+  assert.match(
+    sources.activity,
+    /const webActivationProps: WebActivationProps =[\s\S]*?onKeyDown:[\s\S]*?<Pressable[\s\S]*?accessibilityRole="button"[\s\S]*?accessibilityState=\{\{ selected \}\}[\s\S]*?\{\.\.\.webActivationProps\}/,
+    'ActivityHeatmap active days must be pointer and keyboard selectable buttons',
+  );
+  assert.match(
+    sources.activity,
+    /copy\.detail\.studyAnswers\(\s*dayDetail\.answerCount,\s*dayDetail\.strictCorrectCount,\s*dayDetail\.wrongOrNeedsReviewCount,\s*\)/,
+    'ActivityHeatmap selected-day panel must render strict correct and review counts',
+  );
+  assert.match(
+    sources.activity,
+    /dayDetail\.mockSummaries\.map/,
+    'ActivityHeatmap selected-day panel must render completed mock summaries',
+  );
+  assert.match(
+    sources.stats,
+    /export function activityDayDetail\(/,
+    'Dashboard selectors must expose an activity-day drilldown selector',
+  );
+  assert.match(
+    sources.stats,
+    /if \(answerIsStrictlyCorrect\(answer\)\) detail\.strictCorrectCount \+= 1;/,
+    'Activity-day detail must count correct answers only from strict boolean true',
+  );
+  assert.match(
+    sources.stats,
+    /else if \(answerIsStrictlyWrong\(answer\)\) detail\.wrongOrNeedsReviewCount \+= 1;/,
+    'Activity-day detail must count review answers only from strict boolean false',
   );
   assert.match(
     sources.dashboard,
@@ -250,6 +295,9 @@ function assertDashboardAccessibilitySeparation(sources) {
     /dayLabel: \(date, answers\) => `\$\{date\}: \$\{answers\} answers`/,
     'Dashboard English activity copy must label heatmap cells as answers',
   );
+  assert.match(sources.dashboard, /studyAnswers: \(answers, correct, review\) =>/);
+  assert.match(sources.dashboard, /mockTitle: 'Övningsprov den dagen'/);
+  assert.match(sources.dashboard, /mockTitle: 'Mock exams that day'/);
   assert.match(
     sources.activity,
     /legend:\s*\{[\s\S]*?high: string;[\s\S]*?low: string;[\s\S]*?medium: string;[\s\S]*?none: string;[\s\S]*?title: string;/,
