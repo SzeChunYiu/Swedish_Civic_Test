@@ -49,7 +49,7 @@
     ...EBOOK_FACTBOX_SOURCE_NOTES,
     editorialCommentary: {
       label: 'editorial commentary',
-      mixLabel: 'Editorial',
+      mixLabel: { en: 'Editorial', sv: 'Redaktionellt' },
       url: '#/sources',
       retrievedDate: 'editorial',
     },
@@ -113,6 +113,11 @@
 
   function ebookLocalizedLabel(map, lang) {
     return (map && (map[lang] || map.en)) || '';
+  }
+
+  function ebookLocalizedSourceLabel(label, lang) {
+    if (typeof label === 'string') return label;
+    return ebookLocalizedLabel(label, lang);
   }
 
   function ebookSourceNote(lang, sourceKeys) {
@@ -262,7 +267,10 @@
       .map((key) => {
         const note = EBOOK_SOURCE_NOTES[key];
         const count = counts[key];
-        return `${note.mixLabel || note.label} (${count} ${ebookSourceCountUnit(lang, count)})`;
+        const label =
+          ebookLocalizedSourceLabel(note.mixLabel, lang) ||
+          ebookLocalizedSourceLabel(note.label, lang);
+        return `${label} (${count} ${ebookSourceCountUnit(lang, count)})`;
       })
       .join(' · ');
   }
@@ -303,7 +311,7 @@
 
   function renderEbookFootnotes(lang, chapterId, footnotes) {
     if (footnotes.length === 0) return '';
-    const heading = lang === 'sv' ? 'Källor i kapitlet' : 'Chapter sources';
+    const heading = lang === 'sv' ? 'Källnoter för kapitlet' : 'Chapter source notes';
     const items = footnotes
       .map((footnote) => {
         const sources = ebookSourceNotes(footnote.sourceKeys).map(sourceLink).join(' · ');

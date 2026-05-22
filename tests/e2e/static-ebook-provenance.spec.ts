@@ -48,7 +48,7 @@ const badgeLabels: Record<StaticSiteLanguage, Record<string, string>> = {
     uhrStudyMaterial: 'UHR',
   },
   sv: {
-    editorialCommentary: 'Editorial',
+    editorialCommentary: 'Redaktionellt',
     governmentNato: 'Government Offices',
     migrationsverketCitizenshipRules: 'Migrationsverket citizenship rules',
     riksbankHistory: 'Riksbank',

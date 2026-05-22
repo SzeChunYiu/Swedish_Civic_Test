@@ -7,6 +7,74 @@
 
 /* ============================ ROUTING */
 
+const SMT_QUESTION_BANK_SCRIPT_SRC = 'questions.js';
+const SMT_QUESTION_BANK_ROUTE_PATHS = new Set(['/practice', '/mock', '/sources', '/dashboard']);
+const SMT_QUESTION_BANK_LOAD = {
+  error: null,
+  promise: null,
+};
+
+function smtStaticRoutePath() {
+  const hash = (location.hash || '#/').replace(/^#/, '');
+  const routeEndIndexes = [hash.indexOf('?'), hash.indexOf('#')].filter((index) => index >= 0);
+  const routeEnd = routeEndIndexes.length ? Math.min(...routeEndIndexes) : hash.length;
+  const pathRaw = hash.slice(0, routeEnd) || '/';
+  return pathRaw.startsWith('/') ? pathRaw : '/';
+}
+
+function smtQuestionBankIsReady() {
+  return Array.isArray(window.SMT_QUESTIONS) && Array.isArray(window.SMT_CHAPTERS_META);
+}
+window.smtQuestionBankIsReady = smtQuestionBankIsReady;
+
+function smtRouteNeedsQuestionBank(path) {
+  return SMT_QUESTION_BANK_ROUTE_PATHS.has(path || smtStaticRoutePath());
+}
+window.smtRouteNeedsQuestionBank = smtRouteNeedsQuestionBank;
+
+function smtEnsureQuestionBank() {
+  if (smtQuestionBankIsReady()) return Promise.resolve(window.SMT_QUESTIONS);
+  if (SMT_QUESTION_BANK_LOAD.promise) return SMT_QUESTION_BANK_LOAD.promise;
+
+  SMT_QUESTION_BANK_LOAD.promise = new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.async = true;
+    script.dataset.smtQuestionBank = 'lazy';
+    script.src = SMT_QUESTION_BANK_SCRIPT_SRC;
+    script.onload = () => {
+      SMT_QUESTION_BANK_LOAD.error = null;
+      if (typeof smtApplyChapterQuestionCounts === 'function') {
+        let currentLang = 'en';
+        try {
+          currentLang = localStorage.getItem('smt_lang') || 'en';
+        } catch {
+          currentLang = 'en';
+        }
+        smtApplyChapterQuestionCounts(smtNormalizeLanguage(currentLang));
+      }
+      window.dispatchEvent(new Event('smt:questionbankready'));
+      resolve(window.SMT_QUESTIONS || []);
+    };
+    script.onerror = () => {
+      const error = new Error('Static question bank failed to load');
+      SMT_QUESTION_BANK_LOAD.error = error;
+      SMT_QUESTION_BANK_LOAD.promise = null;
+      window.dispatchEvent(new CustomEvent('smt:questionbankerror', { detail: { error } }));
+      reject(error);
+    };
+    document.head.appendChild(script);
+  });
+
+  return SMT_QUESTION_BANK_LOAD.promise;
+}
+window.smtEnsureQuestionBank = smtEnsureQuestionBank;
+
+function smtEnsureQuestionBankForRoute(path) {
+  if (!smtRouteNeedsQuestionBank(path)) return null;
+  return smtEnsureQuestionBank().catch(() => null);
+}
+window.smtEnsureQuestionBankForRoute = smtEnsureQuestionBankForRoute;
+
 function route() {
   const hash = (location.hash || '#/').replace(/^#/, '');
   const routeEndIndexes = [hash.indexOf('?'), hash.indexOf('#')].filter((index) => index >= 0);
@@ -43,6 +111,7 @@ function route() {
     window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
   }
   smtSetMobileNav(false);
+  smtEnsureQuestionBankForRoute(path);
 }
 
 window.addEventListener('hashchange', route);
@@ -2061,6 +2130,71 @@ function smtQuizShouldRender() {
   return /[?&]c=/.test(hash) || typeof window.smtRenderPracticeHub !== 'function';
 }
 
+function smtQuizQuestionBankReady() {
+  return typeof window.smtQuestionBankIsReady === 'function'
+    ? window.smtQuestionBankIsReady()
+    : Boolean(window.SMT_QUESTIONS && window.SMT_QUESTIONS.length);
+}
+
+function smtQuizLoadingCopy() {
+  return smtTr({
+    sv: 'Laddar frågor...',
+    en: 'Loading questions...',
+    'zh-Hans': '正在加载题库...',
+    'zh-Hant': '正在載入題庫...',
+    ar: 'جارٍ تحميل الأسئلة...',
+    ckb: 'پرسیارەکان دادەگیرێن...',
+    fa: 'در حال بارگذاری پرسش‌ها...',
+    pl: 'Ładowanie pytań...',
+    so: "Su'aalaha ayaa la rarayaa...",
+    ti: 'ሕቶታት ይጽዓና ኣለዋ...',
+    tr: 'Sorular yükleniyor...',
+    uk: 'Завантаження запитань...',
+  });
+}
+
+function smtQuizLoadErrorCopy() {
+  return smtTr({
+    sv: 'Frågorna kunde inte laddas. Uppdatera sidan och försök igen.',
+    en: 'Questions could not be loaded. Refresh the page and try again.',
+    'zh-Hans': '题库无法加载。请刷新页面后重试。',
+    'zh-Hant': '題庫無法載入。請重新整理頁面後再試。',
+    ar: 'تعذر تحميل الأسئلة. حدّث الصفحة وحاول مرة أخرى.',
+    ckb: 'پرسیارەکان بار نەبوون. پەڕەکە نوێ بکەرەوە و دووبارە هەوڵ بدە.',
+    fa: 'پرسش‌ها بارگیری نشدند. صفحه را تازه‌سازی و دوباره تلاش کنید.',
+    pl: 'Nie udało się załadować pytań. Odśwież stronę i spróbuj ponownie.',
+    so: "Su'aalaha lama rarin. Cusbooneysii bogga oo mar kale isku day.",
+    ti: 'ሕቶታት ክጽዓና ኣይከኣላን። ገጹ ኣሐድስ እሞ እንደገና ፈትን።',
+    tr: 'Sorular yüklenemedi. Sayfayı yenileyip tekrar dene.',
+    uk: 'Не вдалося завантажити запитання. Оновіть сторінку й спробуйте ще раз.',
+  });
+}
+
+function smtQuizRenderStatus(stage, message) {
+  stage.innerHTML = `
+      <div class="quiz__card">
+        <div class="quiz__crumb">Practice</div>
+        <h2 class="quiz__q">${smtQuizEscapeHtml(message)}</h2>
+      </div>
+    `;
+}
+
+function smtQuizEnsureQuestionBankForRender(stage) {
+  if (!smtQuizShouldRender() || smtQuizQuestionBankReady()) return true;
+  if (typeof window.smtEnsureQuestionBank !== 'function') return true;
+
+  smtQuizRenderStatus(stage, smtQuizLoadingCopy());
+  window.smtEnsureQuestionBank().then(
+    () => {
+      if (smtQuizShouldRender()) smtQuizRender();
+    },
+    () => {
+      smtQuizRenderStatus(stage, smtQuizLoadErrorCopy());
+    },
+  );
+  return false;
+}
+
 function smtQuizQuestionSet() {
   const filtered =
     typeof window.smtPracticeFilterFor === 'function' ? window.smtPracticeFilterFor() : null;
@@ -2072,6 +2206,7 @@ function smtQuizQuestionSet() {
 function smtQuizRender() {
   const stage = document.getElementById('quiz-stage');
   if (!stage) return;
+  if (!smtQuizEnsureQuestionBankForRender(stage)) return;
   const scope = smtQuizScopeKey();
   if (SMT_QUIZ.scope !== scope) {
     SMT_QUIZ.i = 0;
@@ -2368,6 +2503,9 @@ window.addEventListener('DOMContentLoaded', () => {
   if (smtQuizShouldRender()) smtQuizRender();
 });
 window.addEventListener('smt:languagechange', () => {
+  if (smtQuizShouldRender()) smtQuizRender();
+});
+window.addEventListener('smt:questionbankready', () => {
   if (smtQuizShouldRender()) smtQuizRender();
 });
 document.addEventListener('click', (e) => {

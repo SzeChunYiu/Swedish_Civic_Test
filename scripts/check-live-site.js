@@ -310,6 +310,32 @@ function findStaticSigninAssetIssues(indexSource, manifestSource, signinSource) 
   return issues;
 }
 
+function indexReferencesQuestionBankScript(indexSource) {
+  return /<script\b[^>]*\bsrc=["'][^"']*questions\.js(?:[?#][^"']*)?["']/i.test(
+    String(indexSource || ''),
+  );
+}
+
+function findStaticQuestionBankLazyLoadIssues(indexSource, appSource, practiceSource, v11Source) {
+  const issues = [];
+  if (indexReferencesQuestionBankScript(indexSource)) {
+    issues.push('index.html eagerly loads questions.js');
+  }
+  if (!/function\s+smtEnsureQuestionBank\s*\(/.test(String(appSource || ''))) {
+    issues.push('app.js is missing smtEnsureQuestionBank lazy loader');
+  }
+  if (!/questions\.js/.test(String(appSource || ''))) {
+    issues.push('app.js lazy loader does not reference questions.js');
+  }
+  if (!/smtEnsureQuestionBank/.test(String(practiceSource || ''))) {
+    issues.push('practice.js does not wait for the lazy question bank');
+  }
+  if (!/smtEnsureQuestionBank/.test(String(v11Source || ''))) {
+    issues.push('v11.js does not wait for the lazy question bank');
+  }
+  return issues;
+}
+
 async function fetchTextForCheck(baseUrl, assetPath) {
   try {
     return await fetchText(baseUrl, assetPath);
@@ -349,13 +375,14 @@ async function checkLiveSite(inputUrl, options = {}) {
   const requiredHeadMetadata = resolveRequiredHeadMetadata(options);
   const requiredQuestionCount = resolveRequiredQuestionCount(options);
   const requiredQuestionBankHash = resolveRequiredQuestionBankHash(options);
-  const [indexAsset, stylesAsset, appAsset, practiceAsset, ebookAsset, questionsAsset] =
+  const [indexAsset, stylesAsset, appAsset, practiceAsset, ebookAsset, v11Asset, questionsAsset] =
     await Promise.all([
       fetchAsset(baseUrl, 'index.html'),
       fetchAsset(baseUrl, 'styles.css'),
       fetchAsset(baseUrl, 'app.js'),
       fetchAsset(baseUrl, 'practice.js'),
       fetchAsset(baseUrl, 'ebook.js'),
+      fetchAsset(baseUrl, 'v11.js'),
       fetchAsset(baseUrl, 'questions.js'),
     ]);
   const index = indexAsset.text;
@@ -363,6 +390,7 @@ async function checkLiveSite(inputUrl, options = {}) {
   const app = appAsset.text;
   const practice = practiceAsset.text;
   const ebook = ebookAsset.text;
+  const v11 = v11Asset.text;
   const questions = questionsAsset.text;
 
   const questionCount = readStaticQuestionCount(questions);
@@ -425,11 +453,24 @@ async function checkLiveSite(inputUrl, options = {}) {
       'data-page="/practice"',
       'practice__inner practice__inner--wide',
       'id="quiz-stage"',
-      'questions.js',
       'practice.js',
-    ]) && containsAll(practice, ['hub__grid', 'hub__card', 'href="#/mock"'])
+    ]) &&
+      containsAll(app, ['smtEnsureQuestionBank', 'questions.js']) &&
+      containsAll(practice, ['hub__grid', 'hub__card', 'href="#/mock"'])
       ? pass('practice hub assets')
       : fail('practice hub assets', 'missing current Practice route, script, or hub markup'),
+  );
+
+  const questionBankLazyLoadIssues = findStaticQuestionBankLazyLoadIssues(
+    index,
+    app,
+    practice,
+    v11,
+  );
+  checks.push(
+    questionBankLazyLoadIssues.length === 0
+      ? pass('static question bank lazy loading')
+      : fail('static question bank lazy loading', questionBankLazyLoadIssues.join('; ')),
   );
 
   const staticAdSenseIssues = findStaticAdSenseSlotConfigIssues(index, app);
@@ -547,8 +588,10 @@ module.exports = {
   findStaticAdSenseSlotConfigIssues,
   findStaticAdSenseSlotStateCopyIssues,
   findStaticNoTrackingClaimIssues,
+  findStaticQuestionBankLazyLoadIssues,
   findStaticSigninAssetIssues,
   hashStaticQuestionBank,
+  indexReferencesQuestionBankScript,
   indexReferencesSigninScript,
   normalizeBaseUrl,
   readStaticQuestionCount,

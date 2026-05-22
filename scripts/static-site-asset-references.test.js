@@ -55,6 +55,21 @@ test('committed static site asset manifest includes every local index reference'
   assert.deepEqual(missingReferences, []);
 });
 
+test('lazy static question bank remains manifest-backed without eager index loading', () => {
+  const indexHtml = readSiteIndex();
+  const appSource = fs.readFileSync(path.join(siteRoot, 'app.js'), 'utf8');
+  const practiceSource = fs.readFileSync(path.join(siteRoot, 'practice.js'), 'utf8');
+  const v11Source = fs.readFileSync(path.join(siteRoot, 'v11.js'), 'utf8');
+  const manifest = JSON.parse(fs.readFileSync(path.join(siteRoot, 'asset-manifest.json'), 'utf8'));
+
+  assert.doesNotMatch(indexHtml, /<script\b[^>]*\bsrc=["'][^"']*questions\.js/i);
+  assert.match(appSource, /function\s+smtEnsureQuestionBank\s*\(/);
+  assert.match(appSource, /questions\.js/);
+  assert.match(practiceSource, /smtEnsureQuestionBank/);
+  assert.match(v11Source, /smtEnsureQuestionBank/);
+  assert.ok(manifest.assets?.['questions.js']);
+});
+
 test('asset manifest check rejects referenced assets omitted by manifest scope', () => {
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'site-asset-reference-'));
   const tempSiteDir = path.join(tempDir, 'site');

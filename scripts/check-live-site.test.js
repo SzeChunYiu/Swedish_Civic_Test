@@ -54,10 +54,10 @@ function currentAssets() {
       '<section id="signin-modal" hidden></section>',
       '<main data-page="/practice"><div class="practice__inner practice__inner--wide"><div id="quiz-stage"></div></div></main>',
       '<main data-page="/mock"><div id="mock-stage"></div></main>',
-      '<script src="questions.js"></script>',
       '<script src="practice.js"></script>',
       '<script src="ebook-tools.js"></script>',
       '<script src="ebook.js"></script>',
+      '<script src="v11.js"></script>',
       '<script src="signin.js"></script>',
     ].join('\n'),
     '/styles.css': [
@@ -65,17 +65,21 @@ function currentAssets() {
       '.hub__grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }',
     ].join('\n'),
     '/practice.js': [
+      'window.smtEnsureQuestionBank && window.smtEnsureQuestionBank();',
       'function renderPracticeHub(){ return `<a class="hub__card" href="#/mock">hub__grid</a>`; }',
       'function renderMockLanding(){}',
       'function renderMockExam(){}',
       'function renderMockResult(){}',
     ].join('\n'),
     '/app.js': [
+      'const SMT_QUESTION_BANK_SCRIPT_SRC = "questions.js";',
+      'function smtEnsureQuestionBank(){}',
       'const SMT_ADS = { slots: { inline: "", anchor: "" } };',
       'function smtStaticAdsAreConfigured(){ return false; }',
       'function smtIsRealAdSenseSlotId(){ return false; }',
     ].join('\n'),
     '/ebook.js': 'const PRACTICE_LINKS = {}; window.smtEbookRender = function render() {};',
+    '/v11.js': 'window.smtEnsureQuestionBank && window.smtEnsureQuestionBank();',
     '/questions.js': currentQuestionBank(),
     '/signin.js': "document.addEventListener('click', (e) => e.target.closest('#signin-open'));",
     '/asset-manifest.json': JSON.stringify({
@@ -223,6 +227,51 @@ test('live site check passes current static assets', async () => {
       result.checks.every((check) => check.ok),
       true,
     );
+  });
+});
+
+test('live site check rejects eager static question-bank loading', async () => {
+  const assets = {
+    ...currentAssets(),
+    '/index.html': currentAssets()['/index.html'].replace(
+      '<script src="practice.js"></script>',
+      '<script src="questions.js"></script><script src="practice.js"></script>',
+    ),
+  };
+
+  await withStaticServer(assets, async (baseUrl) => {
+    const result = await checkLiveSite(baseUrl, {
+      requiredQuestionBankHash: hashStaticQuestionBank(currentQuestionBank()),
+      requiredQuestionCount: 715,
+    });
+    const failedCheck = result.checks.find(
+      (check) => check.name === 'static question bank lazy loading',
+    );
+
+    assert.equal(result.ok, false);
+    assert.equal(failedCheck?.ok, false);
+    assert.match(failedCheck?.details ?? '', /eagerly loads questions\.js/);
+  });
+});
+
+test('live site check rejects missing static question-bank loader wiring', async () => {
+  const assets = {
+    ...currentAssets(),
+    '/app.js': currentAssets()['/app.js'].replace('function smtEnsureQuestionBank(){}', ''),
+  };
+
+  await withStaticServer(assets, async (baseUrl) => {
+    const result = await checkLiveSite(baseUrl, {
+      requiredQuestionBankHash: hashStaticQuestionBank(currentQuestionBank()),
+      requiredQuestionCount: 715,
+    });
+    const failedCheck = result.checks.find(
+      (check) => check.name === 'static question bank lazy loading',
+    );
+
+    assert.equal(result.ok, false);
+    assert.equal(failedCheck?.ok, false);
+    assert.match(failedCheck?.details ?? '', /missing smtEnsureQuestionBank/);
   });
 });
 
@@ -393,6 +442,7 @@ test('live site check rejects stale deploy assets', async () => {
         'static question bank content',
         'static head metadata',
         'practice hub assets',
+        'static question bank lazy loading',
         'practice wide layout',
         'mock exam route assets',
         'ebook renderer assets',

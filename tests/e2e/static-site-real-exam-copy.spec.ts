@@ -72,6 +72,16 @@ async function renderPracticeResult(page: Page, baseUrl: string): Promise<void> 
     () =>
       typeof (window as typeof window & { smtQuizRender?: unknown }).smtQuizRender === 'function',
   );
+  await page.waitForFunction(() => {
+    const w = window as typeof window & {
+      SMT_QUESTIONS?: unknown[];
+      smtQuestionBankIsReady?: () => boolean;
+    };
+    return (
+      (typeof w.smtQuestionBankIsReady === 'function' && w.smtQuestionBankIsReady()) ||
+      (Array.isArray(w.SMT_QUESTIONS) && w.SMT_QUESTIONS.length > 0)
+    );
+  });
   await page.evaluate(() => {
     window.eval(`
       const questions = smtQuizQuestionSet();

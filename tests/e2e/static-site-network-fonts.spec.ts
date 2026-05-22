@@ -40,6 +40,52 @@ test('static site first load and necessary-only consent do not request Google Fo
   expect(googleFontRequests).toEqual([]);
 });
 
+test('static site lazy-loads the question bank only on study-data routes', async ({ browser }) => {
+  const quietPage = await browser.newPage();
+  const quietQuestionBankRequests: string[] = [];
+  try {
+    await seedStaticNetworkRun(quietPage);
+    await trapExternalRequests(quietPage, new URL(staticSite.baseUrl).origin, []);
+    quietPage.on('request', (request) => {
+      if (new URL(request.url()).pathname.endsWith('/questions.js')) {
+        quietQuestionBankRequests.push(request.url());
+      }
+    });
+
+    for (const hash of ['#/', '#/privacy', '#/terms', '#/support']) {
+      await quietPage.goto(`${staticSite.baseUrl}/${hash}`, { waitUntil: 'domcontentloaded' });
+      await quietPage.waitForTimeout(150);
+    }
+
+    expect(quietQuestionBankRequests).toEqual([]);
+  } finally {
+    await quietPage.close();
+  }
+
+  for (const hash of ['#/practice', '#/mock', '#/sources', '#/dashboard']) {
+    const page = await browser.newPage();
+    const questionBankRequests: string[] = [];
+    try {
+      await seedStaticNetworkRun(page);
+      await trapExternalRequests(page, new URL(staticSite.baseUrl).origin, []);
+      page.on('request', (request) => {
+        if (new URL(request.url()).pathname.endsWith('/questions.js')) {
+          questionBankRequests.push(request.url());
+        }
+      });
+
+      await page.goto(`${staticSite.baseUrl}/${hash}`, { waitUntil: 'domcontentloaded' });
+      await page.waitForFunction(() =>
+        Array.isArray((window as unknown as { SMT_QUESTIONS?: unknown }).SMT_QUESTIONS),
+      );
+
+      expect(questionBankRequests.length, `${hash} should request questions.js`).toBeGreaterThan(0);
+    } finally {
+      await page.close();
+    }
+  }
+});
+
 test('static system font fallback keeps primary routes inside mobile and desktop viewports', async ({
   page,
 }) => {
