@@ -11376,3 +11376,54 @@ img.ebook__brand-mark {
     width: 20px;
   }
 }
+
+/* ======================================================================
+   FOOTER FIKA KEYCAP BOX OPTIMIZATION ROUND
+   ====================================================================== */
+
+.footer__fikahint {
+  align-items: center;
+  background:
+    radial-gradient(circle at 10% 0%, rgba(254, 204, 0, 0.1), rgba(254, 204, 0, 0) 36%),
+    rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 12px;
+}
+
+.footer__fikahint kbd {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.055)),
+    rgba(254, 204, 0, 0.08);
+  border: 1px solid rgba(254, 204, 0, 0.28);
+  border-bottom-color: rgba(254, 204, 0, 0.42);
+  border-radius: 9px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 3px 0 rgba(0, 0, 0, 0.3);
+  color: var(--gold);
+  display: inline-flex;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  padding: 6px 8px 5px;
+  text-transform: uppercase;
+}
+
+:root[data-theme='dark'] .footer__fikahint {
+  background: rgba(255, 255, 255, 0.045);
+  border-color: rgba(255, 255, 255, 0.09);
+}
+
+@media (max-width: 720px) {
+  .footer__fikahint {
+    align-items: flex-start;
+    border-radius: 14px;
+    flex-direction: column;
+  }
+}
