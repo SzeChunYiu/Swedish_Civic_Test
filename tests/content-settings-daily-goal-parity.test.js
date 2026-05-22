@@ -107,6 +107,7 @@ test('daily goal settings stay in parity between storage and settings controls',
     'utf8',
   );
   const settingsRoute = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+  const onboardingRoute = fs.readFileSync(path.join(repoRoot, 'app/onboarding.tsx'), 'utf8');
 
   assert.equal(summary.settingsDailyGoalOptionsValidated, 4);
   assert.equal(summary.settingsDailyGoalParityValidated, true);
@@ -117,7 +118,7 @@ test('daily goal settings stay in parity between storage and settings controls',
   assert.match(settingsStore, /return normalizeDailyGoalAnswers\(storedValue\);/);
   assert.match(
     settingsStore,
-    /function readStorageNumber\(key: string\): number \| undefined \{[\s\S]*settingsStorage\?\.getNumber\(key\);[\s\S]*return undefined;/,
+    /function readStorageNumber\(key: string\): number \| undefined \{[\s\S]*settingsStorage\?\.getNumber\(key\),[\s\S]*return result\.value;/,
   );
   assert.doesNotMatch(settingsStore, /storedValue && storedValue > 0 \? storedValue : 10/);
   assert.match(settingsStore, /Number\.isFinite\(answerCount\)/);
@@ -153,6 +154,19 @@ test('daily goal settings stay in parity between storage and settings controls',
   assert.match(settingsRoute, /\$\{answerCount\} svar per dag/);
   assert.match(settingsRoute, /\$\{answerCount\} answers per day/);
   assert.match(settingsRoute, /\{copy\.dailyGoalSummary\(dailyGoalAnswers\)\}/);
+  assert.match(onboardingRoute, /supportedDailyGoalAnswerOptions,/);
+  assert.match(
+    onboardingRoute,
+    /type DailyGoalPresetValue = Exclude<\(typeof supportedDailyGoalAnswerOptions\)\[number\], 5>;/,
+  );
+  assert.match(
+    onboardingRoute,
+    /supportedDailyGoalAnswerOptions\.filter\(isOnboardingDailyGoalPresetValue\)/,
+  );
+  assert.doesNotMatch(
+    onboardingRoute,
+    /const\s+onboardingDailyGoalPresetValues[\s\S]{0,120}=\s*\[/,
+  );
 });
 
 test('daily goal hydration falls back for unsafe persisted values', () => {

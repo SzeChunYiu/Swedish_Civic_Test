@@ -3064,7 +3064,7 @@ const FORBIDDEN_ONBOARDING_SV_MISTAKE_REVIEW_COPY = [
   /upprepning av misstag/i,
 ];
 const EXPECTED_ONBOARDING_ROUTE_COPY_SNIPPETS = [
-  ['useSettingsStore, type AppLanguage', 'onboarding route must import AppLanguage from settings'],
+  ['type AppLanguage,', 'onboarding route must import AppLanguage from settings'],
   ['type OnboardingCopy = {', 'onboarding route must define a typed copy contract'],
   [
     'const onboardingCopy: Record<AppLanguage, OnboardingCopy> = {',
@@ -3073,6 +3073,18 @@ const EXPECTED_ONBOARDING_ROUTE_COPY_SNIPPETS = [
   [
     'const language = useSettingsStore((state) => state.language);',
     'onboarding route must read language from settings store',
+  ],
+  [
+    'supportedDailyGoalAnswerOptions,',
+    'onboarding route daily goal presets must import supported settings options',
+  ],
+  [
+    'type DailyGoalPresetValue = Exclude<(typeof supportedDailyGoalAnswerOptions)[number], 5>;',
+    'onboarding route daily goal preset type must derive from supported settings options',
+  ],
+  [
+    'supportedDailyGoalAnswerOptions.filter(isOnboardingDailyGoalPresetValue)',
+    'onboarding route daily goal preset values must derive from supported settings options',
   ],
   [
     'const copy = onboardingCopy[language];',
@@ -8909,6 +8921,43 @@ function extractNumericArrayConstantFromTs(source, constantName) {
 
   visit(sourceFile);
   return values;
+}
+
+function extractNumericObjectKeysForPropertyFromTs(source, propertyName) {
+  const sourceFile = ts.createSourceFile(
+    'source.tsx',
+    source,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TSX,
+  );
+  const keyGroups = [];
+
+  function numericPropertyNameValue(name) {
+    const text = propertyNameText(name);
+    if (text === undefined || !/^-?\d+$/.test(text)) return undefined;
+    return Number(text);
+  }
+
+  function visit(node) {
+    if (
+      ts.isPropertyAssignment(node) &&
+      propertyNameText(node.name) === propertyName &&
+      ts.isObjectLiteralExpression(node.initializer)
+    ) {
+      keyGroups.push(
+        node.initializer.properties
+          .map((property) =>
+            ts.isPropertyAssignment(property) ? numericPropertyNameValue(property.name) : undefined,
+          )
+          .filter((value) => value !== undefined),
+      );
+    }
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  return keyGroups;
 }
 
 function parseCsvRows(csv) {
@@ -15260,6 +15309,7 @@ function validateOnboardingRouteCopyParity() {
   let firstRunAboutModalRoutes = '';
   let firstRunAboutModalRoutePolicy = null;
   let adsSource = '';
+  let settingsStore = '';
 
   function reject(message) {
     valid = false;
@@ -15270,6 +15320,15 @@ function validateOnboardingRouteCopyParity() {
     onboardingRoute = fs.readFileSync(path.join(repoRoot, 'app/onboarding.tsx'), 'utf8');
   } catch (error) {
     reject(`onboarding route copy source could not be read: ${error.message}`);
+    return;
+  }
+
+  try {
+    settingsStore = fs.readFileSync(path.join(repoRoot, 'lib/storage/settingsStore.ts'), 'utf8');
+  } catch (error) {
+    reject(
+      `settings store source could not be read for onboarding daily-goal parity: ${error.message}`,
+    );
     return;
   }
 
@@ -15303,6 +15362,29 @@ function validateOnboardingRouteCopyParity() {
 
   EXPECTED_ONBOARDING_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!onboardingRoute.includes(snippet)) reject(message);
+  });
+  if (/const\s+onboardingDailyGoalPresetValues[\s\S]{0,120}=\s*\[/.test(onboardingRoute)) {
+    reject('onboarding daily goal preset values must not be an inline numeric tuple');
+  }
+  const supportedGoalOptions =
+    extractNumericArrayConstantFromTs(settingsStore, 'supportedDailyGoalAnswerOptions') || [];
+  const supportedGoalOptionSet = new Set(supportedGoalOptions);
+  const onboardingPresetGroups = extractNumericObjectKeysForPropertyFromTs(
+    onboardingRoute,
+    'dailyGoalPresets',
+  );
+  if (onboardingPresetGroups.length === 0) {
+    reject('onboarding copy must declare daily goal presets');
+  }
+  onboardingPresetGroups.forEach((presetGoals) => {
+    presetGoals.forEach((goal) => {
+      if (!supportedGoalOptionSet.has(goal)) {
+        reject(`onboarding daily goal preset ${goal} must be supported by settingsStore`);
+      }
+      if (goal === 5) {
+        reject('onboarding daily goal presets must keep the 5-answer option in Settings only');
+      }
+    });
   });
   if (
     /aria-selected=\{selected\}/.test(onboardingRoute) ||

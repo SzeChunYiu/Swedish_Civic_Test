@@ -25,7 +25,16 @@ test('onboarding route title stays accessible as a header', () => {
   assert.equal(summary.onboardingRouteCopyLabelsValidated, 17);
   assert.equal(summary.onboardingRouteCopyParityValidated, true);
   assert.match(source, /type OnboardingCopy =/);
-  assert.match(source, /const onboardingDailyGoalPresetValues = \[10, 20, 40\] as const;/);
+  assert.match(source, /supportedDailyGoalAnswerOptions,/);
+  assert.match(
+    source,
+    /type DailyGoalPresetValue = Exclude<\(typeof supportedDailyGoalAnswerOptions\)\[number\], 5>;/,
+  );
+  assert.match(
+    source,
+    /supportedDailyGoalAnswerOptions\.filter\(isOnboardingDailyGoalPresetValue\)/,
+  );
+  assert.doesNotMatch(source, /const\s+onboardingDailyGoalPresetValues[\s\S]{0,120}=\s*\[/);
   assert.match(source, /const onboardingCopy: Record<AppLanguage, OnboardingCopy> = \{/);
   assert.match(
     source,
@@ -439,5 +448,68 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /onboarding daily goal presets must use radiogroup\/radio checked semantics/,
+  );
+});
+
+test('onboarding route copy parity rejects unsupported daily goal presets', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/app/onboarding.tsx')) {
+    return String(contents).replaceAll('20: {', '50: {');
+  }
+  return contents;
+};
+process.argv.push('--focus-onboarding-route-copy');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /onboarding daily goal preset 50 must be supported by settingsStore/,
+  );
+});
+
+test('onboarding route copy parity rejects inline daily goal preset tuples', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/app/onboarding.tsx')) {
+    return String(contents).replace(
+      'const onboardingDailyGoalPresetValues: readonly DailyGoalPresetValue[] =\\n  supportedDailyGoalAnswerOptions.filter(isOnboardingDailyGoalPresetValue);',
+      'const onboardingDailyGoalPresetValues = [10, 20, 40] as const;',
+    );
+  }
+  return contents;
+};
+process.argv.push('--focus-onboarding-route-copy');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /onboarding daily goal preset values must derive from supported settings options|onboarding daily goal preset values must not be an inline numeric tuple/,
   );
 });
