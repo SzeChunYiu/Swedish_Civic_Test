@@ -56,10 +56,12 @@ labels and Google Play Data safety drafts.
 
 Free study screens may show Google Mobile Ads or AdMob placements when real ads
 are enabled. Timed mock exam screens stay ad-free. Remove Ads can be restored
-through the app store. If analytics, crash reporting, accounts, remote progress
-sync, or support collection are enabled later, this privacy policy, Apple
-privacy labels, Google Play Data safety answers, and in-app privacy copy must be
-reviewed and updated before submission.
+through the app store. For restore or revalidation, the app may keep a local
+purchase-status record with the store product ID, purchase token or transaction
+ID, and receipt-validation timestamp. If analytics, crash reporting, accounts,
+remote progress sync, or support collection are enabled later, this privacy
+policy, Apple privacy labels, Google Play Data safety answers, and in-app
+privacy copy must be reviewed and updated before submission.
 
 ## Hosting checklist
 

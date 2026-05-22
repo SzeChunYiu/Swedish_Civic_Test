@@ -2549,8 +2549,10 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
       'const copy = privacyCopy[language];',
       'Integritetspolicy',
       'Inget konto krävs',
+      'köptoken eller transaktions-id',
       'Privacy policy',
       'No account required',
+      'purchase token or transaction ID',
     ],
     sectionPatterns: [
       /<LegalSection\s+title=\{copy\.sections\.noAccountRequired\.title\}[\s\S]*?>/,
@@ -14684,6 +14686,22 @@ function validateLegalRouteHeaderParity() {
     }
 
     if (expectedRoute.file === 'app/privacy.tsx') {
+      if (!/köptoken eller transaktions-id/.test(routeSource)) {
+        reject(
+          'app/privacy.tsx Swedish Remove Ads privacy copy must disclose local receipt metadata',
+        );
+      }
+      if (!/purchase token or transaction ID/.test(routeSource)) {
+        reject(
+          'app/privacy.tsx English Remove Ads privacy copy must disclose local receipt metadata',
+        );
+      }
+      if (!/receipt-validation timestamp/.test(routeSource)) {
+        reject(
+          'app/privacy.tsx Remove Ads privacy copy must disclose receipt-validation timestamp',
+        );
+      }
+
       const swedishPrivacyBlock = routeSource.match(
         /sv:\s*\{[\s\S]*?title:\s*'Integritetspolicy',\s*\},\s*en:/,
       )?.[0];
