@@ -95,9 +95,25 @@
       "bytes": 362794,
       "sha256": "401ff142bcdf5c40570f8eb7673fc979d7f2ba8d646d26d34b27feb4f4115054"
     },
+    "icons/pwa-icon-192.png": {
+      "bytes": 40258,
+      "sha256": "cbc024c155dbbfc8ad98a5e9e465534deaafc937fd2f7e375928703233c68f65"
+    },
+    "icons/pwa-icon-512.png": {
+      "bytes": 227321,
+      "sha256": "56c549a35d6dfa3a7f9bc9f1425fd94775ad0f9c5b72c0ac500e6bb80775cf57"
+    },
+    "icons/pwa-maskable-512.png": {
+      "bytes": 139113,
+      "sha256": "c70dfeacdb677177592f67a5a943e04c56d84506332615bd1c4c4427740b343c"
+    },
     "index.html": {
-      "bytes": 72947,
-      "sha256": "8b4e39811312f45dafeb4ae49bc65bc8f9ec54154df5c7fc5221694ae808b0ba"
+      "bytes": 73536,
+      "sha256": "2bc5e6ea2134bfc0b74c1a3f56f79363c0c7c5b295285e115128bd070d9b47b1"
+    },
+    "manifest.webmanifest": {
+      "bytes": 752,
+      "sha256": "449d620d867ac89d7f54c571927c4753f025ef182dafb9afda331ce68a55b05f"
     },
     "practice.js": {
       "bytes": 69197,
@@ -126,6 +142,10 @@
     "styles.css": {
       "bytes": 247663,
       "sha256": "1d04c12d34946d36bd3a6f0c24aa6c305ae8d75e5c1d8e001b840b300d269f56"
+    },
+    "sw.js": {
+      "bytes": 4589,
+      "sha256": "8a723df9544ab5581b66031172349b4e51cbdd4abaef310522204ed3b8154f82"
     },
     "tweaks-panel.jsx": {
       "bytes": 25802,

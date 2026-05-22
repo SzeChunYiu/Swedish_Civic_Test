@@ -50,6 +50,8 @@ function currentAssets() {
   return {
     '/index.html': [
       headMarkup(),
+      '<link rel="manifest" href="manifest.webmanifest" />',
+      '<meta name="theme-color" content="#f5f7fa" />',
       '<button id="signin-open" type="button">Sign in</button>',
       '<section id="signin-modal" hidden></section>',
       '<main data-page="/practice"><div class="practice__inner practice__inner--wide"><div id="quiz-stage"></div></div></main>',
@@ -59,6 +61,7 @@ function currentAssets() {
       '<script src="ebook-tools.js"></script>',
       '<script src="ebook.js"></script>',
       '<script src="signin.js"></script>',
+      '<script>navigator.serviceWorker.register("./sw.js", { scope: "./", updateViaCache: "none" });</script>',
     ].join('\n'),
     '/styles.css': [
       '.practice__inner--wide { max-width: 1080px; }',
@@ -78,10 +81,35 @@ function currentAssets() {
     '/ebook.js': 'const PRACTICE_LINKS = {}; window.smtEbookRender = function render() {};',
     '/questions.js': currentQuestionBank(),
     '/signin.js': "document.addEventListener('click', (e) => e.target.closest('#signin-open'));",
+    '/manifest.webmanifest': JSON.stringify({
+      name: 'Almost Swedish',
+      display: 'standalone',
+      start_url: '.',
+      scope: '.',
+      icons: [
+        { src: 'icons/pwa-icon-192.png', sizes: '192x192', purpose: 'any' },
+        { src: 'icons/pwa-icon-512.png', sizes: '512x512', purpose: 'any' },
+        { src: 'icons/pwa-maskable-512.png', sizes: '512x512', purpose: 'maskable' },
+      ],
+    }),
+    '/sw.js': [
+      'const CACHE_PREFIX = "almost-swedish-static";',
+      'async function cacheNameForManifestText(text) { return crypto.subtle.digest("SHA-256", new TextEncoder().encode(text)); }',
+      'function resolvePrecacheUrls(manifest) { return Object.keys(manifest.assets || {}); }',
+      'async function install(cache, manifest) { await cache.addAll(resolvePrecacheUrls(manifest)); }',
+      'async function activate() { await caches.delete(cacheName); }',
+      'self.addEventListener("fetch", (event) => event.respondWith(networkFirstWithCacheFallback(event.request)));',
+      'fetch("asset-manifest.json");',
+    ].join('\n'),
     '/asset-manifest.json': JSON.stringify({
       version: 1,
       assets: {
+        'icons/pwa-icon-192.png': { bytes: 0, sha256: 'fixture' },
+        'icons/pwa-icon-512.png': { bytes: 0, sha256: 'fixture' },
+        'icons/pwa-maskable-512.png': { bytes: 0, sha256: 'fixture' },
+        'manifest.webmanifest': { bytes: 0, sha256: 'fixture' },
         'signin.js': { bytes: 76, sha256: 'fixture' },
+        'sw.js': { bytes: 0, sha256: 'fixture' },
       },
     }),
   };
@@ -223,6 +251,50 @@ test('live site check passes current static assets', async () => {
       result.checks.every((check) => check.ok),
       true,
     );
+  });
+});
+
+test('live site check rejects missing static PWA service worker manifest coverage', async () => {
+  const assets = currentAssets();
+  const manifest = JSON.parse(assets['/asset-manifest.json']);
+  delete manifest.assets['sw.js'];
+
+  await withStaticServer(
+    {
+      ...assets,
+      '/asset-manifest.json': JSON.stringify(manifest),
+    },
+    async (baseUrl) => {
+      const result = await checkLiveSite(baseUrl, {
+        requiredQuestionBankHash: hashStaticQuestionBank(currentQuestionBank()),
+        requiredQuestionCount: 715,
+      });
+      const failedCheck = result.checks.find((check) => check.name === 'static PWA offline shell');
+
+      assert.equal(result.ok, false);
+      assert.equal(failedCheck?.ok, false);
+      assert.match(failedCheck?.details ?? '', /sw\.js missing from asset-manifest\.json/);
+    },
+  );
+});
+
+test('live site check rejects static PWA shell without an asset-manifest-driven cache', async () => {
+  const assets = {
+    ...currentAssets(),
+    '/sw.js': 'self.addEventListener("fetch", function () {});',
+  };
+
+  await withStaticServer(assets, async (baseUrl) => {
+    const result = await checkLiveSite(baseUrl, {
+      requiredQuestionBankHash: hashStaticQuestionBank(currentQuestionBank()),
+      requiredQuestionCount: 715,
+    });
+    const failedCheck = result.checks.find((check) => check.name === 'static PWA offline shell');
+
+    assert.equal(result.ok, false);
+    assert.equal(failedCheck?.ok, false);
+    assert.match(failedCheck?.details ?? '', /asset-manifest-driven precache/);
+    assert.match(failedCheck?.details ?? '', /same-origin fetch handler/);
   });
 });
 
@@ -393,6 +465,7 @@ test('live site check rejects stale deploy assets', async () => {
         'static question bank content',
         'static head metadata',
         'practice hub assets',
+        'static PWA offline shell',
         'practice wide layout',
         'mock exam route assets',
         'ebook renderer assets',
