@@ -9204,7 +9204,9 @@ html[dir='rtl'] .lang-menu {
   border-radius: 28px;
   box-shadow: var(--card-shadow-hover);
   isolation: isolate;
+  max-height: calc(100vh - 32px);
   overflow: hidden;
+  overflow-y: auto;
   padding: 34px 34px 28px 40px;
 }
 

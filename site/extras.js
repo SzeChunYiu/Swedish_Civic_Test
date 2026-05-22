@@ -624,6 +624,10 @@
     const a = document.activeElement;
     return a && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA' || a.isContentEditable);
   }
+  function eventTargetElement(event) {
+    const target = event.target;
+    return target?.nodeType === 1 ? target : target?.parentElement || null;
+  }
 
   // ---------- Type-a-word easter eggs ----------
 
@@ -810,7 +814,7 @@
   let brandClicks = 0;
   let brandClickTimer = null;
   document.addEventListener('click', (e) => {
-    if (!e.target.closest('.brand, .footer__brand')) return;
+    if (!eventTargetElement(e)?.closest('.brand, .footer__brand')) return;
     brandClicks++;
     clearTimeout(brandClickTimer);
     brandClickTimer = setTimeout(() => {
@@ -888,7 +892,7 @@
   document.addEventListener('click', (e) => {
     // skip clicks on real interactive elements
     if (
-      e.target.closest(
+      eventTargetElement(e)?.closest(
         'a, button, input, label, summary, .qopt, .quiz__opt, .nav, .modal, .dala-buddy',
       )
     )
@@ -908,18 +912,46 @@
 
   // ---------- "?" — easter eggs cheatsheet ----------
 
+  let cheatsheetPreviouslyFocused = null;
+
+  function getCheatsheetFocusable(root) {
+    return Array.from(
+      root.querySelectorAll(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      ),
+    ).filter((node) => node.offsetParent !== null || node === document.activeElement);
+  }
+
+  function closeCheatsheet(restoreFocus) {
+    const el = document.getElementById('smt-cheats');
+    if (!el) return;
+    el.remove();
+    if (restoreFocus !== false && cheatsheetPreviouslyFocused) {
+      try {
+        cheatsheetPreviouslyFocused.focus({ preventScroll: true });
+      } catch {
+        cheatsheetPreviouslyFocused.focus();
+      }
+    }
+    cheatsheetPreviouslyFocused = null;
+  }
+
   function toggleCheatsheet() {
     let el = document.getElementById('smt-cheats');
     if (el) {
-      el.remove();
+      closeCheatsheet(true);
       return;
     }
+    cheatsheetPreviouslyFocused =
+      document.activeElement && typeof document.activeElement.focus === 'function'
+        ? document.activeElement
+        : null;
     el = document.createElement('div');
     el.id = 'smt-cheats';
     el.innerHTML = `
-      <div class="cheats__panel">
-        <button class="cheats__close" aria-label="${extrasText('cheatsheetClose')}">✕</button>
-        <h3>${extrasText('cheatsheetTitle')}</h3>
+      <div class="cheats__panel" role="dialog" aria-modal="true" aria-labelledby="smt-cheats-title">
+        <button class="cheats__close" type="button" aria-label="${extrasText('cheatsheetClose')}">✕</button>
+        <h3 id="smt-cheats-title">${extrasText('cheatsheetTitle')}</h3>
         <ul>
           <li><kbd>fika</kbd> — ${extrasText('cheatsheetFika')}</li>
           <li><kbd>abba</kbd> — ${extrasText('cheatsheetAbba')}</li>
@@ -937,17 +969,44 @@
       </div>
     `;
     el.style.cssText =
-      'position:fixed;inset:0;z-index:101;display:grid;place-items:center;background:rgba(11,31,51,.55);backdrop-filter:blur(4px);animation:smt-cheats-in .18s ease-out';
+      'position:fixed;inset:0;z-index:101;display:grid;place-items:center;overflow:auto;padding:16px;box-sizing:border-box;background:rgba(11,31,51,.55);backdrop-filter:blur(4px);animation:smt-cheats-in .18s ease-out';
     document.body.appendChild(el);
     el.addEventListener('click', (e) => {
-      if (e.target === el || e.target.closest('.cheats__close')) el.remove();
+      e.stopPropagation();
+      if (e.target === el || eventTargetElement(e)?.closest('.cheats__close'))
+        closeCheatsheet(true);
     });
+    el.addEventListener('keydown', (e) => {
+      e.stopPropagation();
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeCheatsheet(true);
+        return;
+      }
+      if (e.key !== 'Tab') return;
+      const focusable = getCheatsheetFocusable(el);
+      if (!focusable.length) {
+        e.preventDefault();
+        el.querySelector('.cheats__panel')?.focus({ preventScroll: true });
+        return;
+      }
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus({ preventScroll: true });
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus({ preventScroll: true });
+      }
+    });
+    el.querySelector('.cheats__close')?.focus({ preventScroll: true });
   }
 
   // ---------- Smooth in-page anchors ----------
 
   document.addEventListener('click', (e) => {
-    const a = e.target.closest('a[href^="#"]');
+    const a = eventTargetElement(e)?.closest('a[href^="#"]');
     if (!a) return;
     const h = a.getAttribute('href');
     if (h.length <= 1) return;
