@@ -191,6 +191,8 @@ test('static optional account surface preserves anonymous local study boundaries
   assert.match(staticSurface, /Continue with Google|Forts[aä]tt med Google/i);
   assert.match(staticSurface, /Continue with Apple|Forts[aä]tt med Apple/i);
   assert.match(staticSurface, /Email me a magic link|Mejla mig en magisk l[aä]nk/i);
+  assert.match(index, /data-sk-placeholder="signin\.email\.placeholder"/);
+  assert.match(index, /data-sk-aria-label="signin\.email\.label"/);
   assert.match(app, /No — you can do everything without registering/);
   assert.match(app, /Signing in is optional, but it unlocks more/);
   assert.match(app, /Study progress stays local/);
@@ -214,6 +216,11 @@ test('static optional account surface preserves anonymous local study boundaries
   assert.match(signin, /if\s*\(!isConfigured\(\)\)\s+return;\s*\n\s*getClient\(\)\.then/);
   assert.match(signin, /window\.smtOpenSignin = open/);
   assert.match(signin, /window\.smtIsSignedIn = signedIn/);
+  assert.match(signin, /#signin-modal \[data-sk-placeholder\]/);
+  assert.match(signin, /setAttribute\('placeholder', v\)/);
+  assert.match(signin, /#signin-modal \[data-sk-aria-label\]/);
+  assert.match(signin, /setAttribute\('aria-label', v\)/);
+  assert.match(signin, /if \(!email\) \{\s*if \(input\) input\.focus\(\);\s*return;\s*\}/);
 
   assert.match(purchase, /account\.id === 'local-demo'/);
   assert.match(purchase, /purchase\.status\.realSignin/);

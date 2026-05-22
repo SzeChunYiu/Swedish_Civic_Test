@@ -61,6 +61,23 @@ function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
+function extractSigninDictionaryBlock(source, key) {
+  const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const match = source.match(new RegExp(`'${escapedKey}':\\s*\\{([\\s\\S]*?)\\n    \\},`));
+  assert.ok(match, `signin dictionary should include ${key}`);
+  return match[1];
+}
+
+function extractSigninDictionaryLocales(source, key) {
+  const block = extractSigninDictionaryBlock(source, key);
+  return new Set(
+    Array.from(
+      block.matchAll(/(?:'([^']+)'|([a-z][\w-]*)):\s*'[^']*'/g),
+      (match) => match[1] || match[2],
+    ),
+  );
+}
+
 function createRenderContext({
   hash,
   language = 'en',
@@ -433,6 +450,25 @@ test('Static Settings exposes the shipped extra language choices', () => {
   loadScripts(context);
 
   assert.deepEqual(context.settingLanguageValues(), staticSiteLanguageValues);
+});
+
+test('static sign-in email field labels are localized for every static locale', () => {
+  const index = read('site/index.html');
+  const signin = read('site/signin.js');
+
+  assert.match(index, /data-sk-placeholder="signin\.email\.placeholder"/);
+  assert.match(index, /data-sk-aria-label="signin\.email\.label"/);
+  assert.match(signin, /document\.querySelectorAll\('#signin-modal \[data-sk-placeholder\]'\)/);
+  assert.match(signin, /document\.querySelectorAll\('#signin-modal \[data-sk-aria-label\]'\)/);
+  assert.match(signin, /sv:\s*'E-postadress'/);
+  assert.match(signin, /sv:\s*'namn@example\.com'/);
+  assert.match(signin, /pl:\s*'Adres e-mail'/);
+  assert.match(signin, /pl:\s*'imie@example\.com'/);
+
+  for (const key of ['signin.email.label', 'signin.email.placeholder']) {
+    const locales = extractSigninDictionaryLocales(signin, key);
+    assert.deepEqual([...locales].sort(), [...staticSiteLanguageValues].sort());
+  }
 });
 
 test('Settings language change persists extra locales and updates root direction', () => {
