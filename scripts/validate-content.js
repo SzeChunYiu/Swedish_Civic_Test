@@ -1797,11 +1797,19 @@ const EXPECTED_SETTINGS_STORE_FIELDS = [
   { name: 'dailyGoalAnswers', type: 'number', optional: false },
   { name: 'includeSupplementaryQuestions', type: 'boolean', optional: false },
   { name: 'hasSeenAboutTheTest', type: 'boolean', optional: false },
+  { name: 'studyPlanTestDateIso', type: 'string | null', optional: false },
+  { name: 'studyPlanIntensity', type: 'StudyIntensity', optional: false },
   { name: 'persistenceWarning', type: 'RecoverablePersistenceWarning | null', optional: false },
   { name: 'setLanguage', type: '(language: AppLanguage) => void', optional: false },
   { name: 'setAudioEnabled', type: '(enabled: boolean) => void', optional: false },
   { name: 'setDailyGoalAnswers', type: '(answerCount: number) => void', optional: false },
   { name: 'setIncludeSupplementaryQuestions', type: '(include: boolean) => void', optional: false },
+  {
+    name: 'setStudyPlanTestDateIso',
+    type: '(testDateIso: string | null) => void',
+    optional: false,
+  },
+  { name: 'setStudyPlanIntensity', type: '(intensity: StudyIntensity) => void', optional: false },
   { name: 'markAboutTheTestSeen', type: '() => void', optional: false },
   { name: 'clearPersistenceWarning', type: '() => void', optional: false },
 ];
@@ -3047,6 +3055,12 @@ const EXPECTED_ONBOARDING_ROUTE_COPY_LABELS = {
     'Öva med UHR-refererade frågor och förklaringar.',
     'Följ framsteg lokalt på din enhet utan konto.',
     'En liten, fristående studiekompis för daglig övning, provträning och genomgång av frågor du missat.',
+    'När är ditt prov?',
+    'Lägg till datumet om du redan har bokat. Det sparas bara på den här enheten och kan ändras senare.',
+    'Ange provdatum som ÅÅÅÅ-MM-DD',
+    'Använd formatet ÅÅÅÅ-MM-DD eller hoppa över tills du har bokat.',
+    'Jag har inte bokat än',
+    'Fortsätt utan bokat provdatum',
     'Förbered dig lugnt för samhällskunskapsprovet',
   ],
   en: [
@@ -3057,6 +3071,12 @@ const EXPECTED_ONBOARDING_ROUTE_COPY_LABELS = {
     'Practice with UHR-referenced questions and explanations.',
     'Track progress locally on your device without an account.',
     'A small, independent study companion for daily practice, mock exams, and mistake review.',
+    'When is your test?',
+    'Add the date if you have booked it. It stays only on this device and can be changed later.',
+    'Enter test date as YYYY-MM-DD',
+    "Use YYYY-MM-DD, or skip until you've booked.",
+    "I haven't booked it yet",
+    'Continue without a booked test date',
     'Prepare calmly for the civic test',
   ],
 };
@@ -3065,7 +3085,10 @@ const FORBIDDEN_ONBOARDING_SV_MISTAKE_REVIEW_COPY = [
   /upprepning av misstag/i,
 ];
 const EXPECTED_ONBOARDING_ROUTE_COPY_SNIPPETS = [
-  ['type AppLanguage,', 'onboarding route must import AppLanguage from settings'],
+  ['useSettingsStore', 'onboarding route must import the settings store'],
+  ['type AppLanguage', 'onboarding route must import AppLanguage from settings'],
+  ['formatExamDate', 'onboarding route must format the saved test date'],
+  ['normalizeStudyPlanTestDateIso', 'onboarding route must normalize test dates before persisting'],
   ['type OnboardingCopy = {', 'onboarding route must define a typed copy contract'],
   [
     'const onboardingCopy: Record<AppLanguage, OnboardingCopy> = {',
@@ -3088,8 +3111,29 @@ const EXPECTED_ONBOARDING_ROUTE_COPY_SNIPPETS = [
     'onboarding route daily goal preset values must derive from supported settings options',
   ],
   [
+    'const setStudyPlanIntensity = useSettingsStore((state) => state.setStudyPlanIntensity);',
+    'onboarding route must write the study-plan intensity locally',
+  ],
+  [
+    'const setStudyPlanTestDateIso = useSettingsStore((state) => state.setStudyPlanTestDateIso);',
+    'onboarding route must write the optional test date locally',
+  ],
+  [
+    'const studyPlanTestDateIso = useSettingsStore((state) => state.studyPlanTestDateIso);',
+    'onboarding route must read the optional test date from settings',
+  ],
+  [
     'const copy = onboardingCopy[language];',
     'onboarding route must select copy from settings language',
+  ],
+  ['const handleDailyGoalPress', 'onboarding route must map daily goal selection to intensity'],
+  [
+    'setStudyPlanIntensity(studyIntensityForDailyGoal(goal));',
+    'onboarding route must derive study intensity from the selected daily goal',
+  ],
+  [
+    'onPress={() => handleDailyGoalPress(goal)}',
+    'onboarding daily goal presets must write both goal and study intensity',
   ],
   ['{copy.eyebrow}', 'onboarding eyebrow must render localized copy'],
   ['{copy.title}', 'onboarding title must render localized copy'],
@@ -3107,6 +3151,18 @@ const EXPECTED_ONBOARDING_ROUTE_COPY_SNIPPETS = [
     'accessibilityState={{ checked: selected }}',
     'onboarding daily goal presets must mirror checked state natively',
   ],
+  ['TextInput', 'onboarding route must render an optional test-date input'],
+  ['{copy.testDateTitle}', 'onboarding test-date title must render localized copy'],
+  ['{copy.testDateSubtitle}', 'onboarding test-date subtitle must render localized copy'],
+  [
+    'accessibilityLabel={copy.testDateInputAccessibilityLabel}',
+    'onboarding test-date input must expose localized accessibility copy',
+  ],
+  [
+    'placeholder={copy.testDateInputPlaceholder}',
+    'onboarding test-date input must expose localized placeholder copy',
+  ],
+  ['{copy.testDateSkip}', 'onboarding test-date skip button must render localized copy'],
   [
     'accessibilityLabel={copy.startStudyingAccessibilityLabel}',
     'onboarding start link must expose localized accessibility copy',

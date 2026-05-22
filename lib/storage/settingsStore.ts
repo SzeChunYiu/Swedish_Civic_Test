@@ -3,6 +3,7 @@ import type { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 
 import { stopSpeech } from '../audio/speak';
+import type { StudyIntensity } from '../learning/examDate';
 import type { RecoverablePersistenceWarning } from './persistenceWarning';
 import { readRecoverably, writeRecoverably } from './persistenceWarning';
 
@@ -23,8 +24,11 @@ const audioEnabledKey = 'audioEnabled';
 const dailyGoalKey = 'dailyGoalAnswers';
 const includeSupplementaryKey = 'includeSupplementaryQuestions';
 const hasSeenAboutTheTestKey = 'hasSeenAboutTheTest';
+const studyPlanTestDateIsoKey = 'studyPlanTestDateIso';
+const studyPlanIntensityKey = 'studyPlanIntensity';
 const settingsStorageId = 'settings';
 const defaultDailyGoalAnswers = 10;
+const defaultStudyPlanIntensity: StudyIntensity = 'regular';
 export const supportedDailyGoalAnswerOptions = [5, 10, 20, 40] as const;
 
 const dailyGoalAnswerOptions = new Set<number>(supportedDailyGoalAnswerOptions);
@@ -90,6 +94,39 @@ function normalizeImportedDailyGoalAnswers(answerCount: unknown): number | undef
   return isDailyGoalAnswerOption(answerCount) ? answerCount : undefined;
 }
 
+export function normalizeStudyPlanTestDateIso(value: unknown): string | null {
+  if (value === null || value === '') return null;
+  if (typeof value !== 'string') return null;
+
+  const match = value.match(/^(\d{4})-(\d{2})-(\d{2})(?:$|T)/);
+  if (!match) return null;
+
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const normalizedDate = new Date(Date.UTC(year, month - 1, day));
+
+  if (
+    normalizedDate.getUTCFullYear() !== year ||
+    normalizedDate.getUTCMonth() !== month - 1 ||
+    normalizedDate.getUTCDate() !== day
+  ) {
+    return null;
+  }
+
+  return normalizedDate.toISOString();
+}
+
+function normalizeStudyPlanIntensity(value: unknown): StudyIntensity {
+  return value === 'casual' || value === 'regular' || value === 'serious'
+    ? value
+    : defaultStudyPlanIntensity;
+}
+
+function normalizeImportedStudyPlanIntensity(value: unknown): StudyIntensity | undefined {
+  return value === 'casual' || value === 'regular' || value === 'serious' ? value : undefined;
+}
+
 function isDailyGoalAnswerOption(answerCount: unknown): answerCount is number {
   return (
     typeof answerCount === 'number' &&
@@ -114,17 +151,31 @@ function readHasSeenAboutTheTest(): boolean {
   return storedValue ?? false;
 }
 
+function readStudyPlanTestDateIso(): string | null {
+  const storedValue = readStorageString(studyPlanTestDateIsoKey);
+  return normalizeStudyPlanTestDateIso(storedValue);
+}
+
+function readStudyPlanIntensity(): StudyIntensity {
+  const storedValue = readStorageString(studyPlanIntensityKey);
+  return normalizeStudyPlanIntensity(storedValue);
+}
+
 type SettingsState = {
   language: AppLanguage;
   audioEnabled: boolean;
   dailyGoalAnswers: number;
   includeSupplementaryQuestions: boolean;
   hasSeenAboutTheTest: boolean;
+  studyPlanTestDateIso: string | null;
+  studyPlanIntensity: StudyIntensity;
   persistenceWarning: RecoverablePersistenceWarning | null;
   setLanguage: (language: AppLanguage) => void;
   setAudioEnabled: (enabled: boolean) => void;
   setDailyGoalAnswers: (answerCount: number) => void;
   setIncludeSupplementaryQuestions: (include: boolean) => void;
+  setStudyPlanTestDateIso: (testDateIso: string | null) => void;
+  setStudyPlanIntensity: (intensity: StudyIntensity) => void;
   markAboutTheTestSeen: () => void;
   clearPersistenceWarning: () => void;
 };
@@ -137,6 +188,8 @@ export type ImportableSettings = Partial<
     | 'dailyGoalAnswers'
     | 'includeSupplementaryQuestions'
     | 'hasSeenAboutTheTest'
+    | 'studyPlanTestDateIso'
+    | 'studyPlanIntensity'
   >
 >;
 
@@ -161,6 +214,18 @@ export function normalizeImportedSettings(value: unknown): ImportableSettings {
   if (typeof candidate.hasSeenAboutTheTest === 'boolean') {
     settings.hasSeenAboutTheTest = candidate.hasSeenAboutTheTest;
   }
+  if (Object.prototype.hasOwnProperty.call(candidate, 'studyPlanTestDateIso')) {
+    const studyPlanTestDateIso = normalizeStudyPlanTestDateIso(candidate.studyPlanTestDateIso);
+    if (studyPlanTestDateIso !== null) {
+      settings.studyPlanTestDateIso = studyPlanTestDateIso;
+    } else if (candidate.studyPlanTestDateIso === null || candidate.studyPlanTestDateIso === '') {
+      settings.studyPlanTestDateIso = null;
+    }
+  }
+  if (Object.prototype.hasOwnProperty.call(candidate, 'studyPlanIntensity')) {
+    const studyPlanIntensity = normalizeImportedStudyPlanIntensity(candidate.studyPlanIntensity);
+    if (studyPlanIntensity !== undefined) settings.studyPlanIntensity = studyPlanIntensity;
+  }
 
   return settings;
 }
@@ -171,6 +236,8 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   dailyGoalAnswers: readDailyGoalAnswers(),
   includeSupplementaryQuestions: readIncludeSupplementary(),
   hasSeenAboutTheTest: readHasSeenAboutTheTest(),
+  studyPlanTestDateIso: readStudyPlanTestDateIso(),
+  studyPlanIntensity: readStudyPlanIntensity(),
   persistenceWarning: initialPersistenceWarning,
   setLanguage: (language) => {
     const persistenceWarning = writeRecoverably(
@@ -212,6 +279,26 @@ export const useSettingsStore = create<SettingsState>((set) => ({
       include,
     );
     set({ includeSupplementaryQuestions: include, persistenceWarning });
+  },
+  setStudyPlanTestDateIso: (studyPlanTestDateIso) => {
+    const normalizedDateIso = normalizeStudyPlanTestDateIso(studyPlanTestDateIso);
+    const persistenceWarning = writeRecoverably(
+      settingsStorage,
+      settingsStorageId,
+      studyPlanTestDateIsoKey,
+      normalizedDateIso ?? '',
+    );
+    set({ studyPlanTestDateIso: normalizedDateIso, persistenceWarning });
+  },
+  setStudyPlanIntensity: (studyPlanIntensity) => {
+    const safeIntensity = normalizeStudyPlanIntensity(studyPlanIntensity);
+    const persistenceWarning = writeRecoverably(
+      settingsStorage,
+      settingsStorageId,
+      studyPlanIntensityKey,
+      safeIntensity,
+    );
+    set({ studyPlanIntensity: safeIntensity, persistenceWarning });
   },
   markAboutTheTestSeen: () => {
     const persistenceWarning = writeRecoverably(
@@ -276,6 +363,24 @@ export function importSettingsSnapshot(
         settingsStorageId,
         hasSeenAboutTheTestKey,
         normalizedSettings.hasSeenAboutTheTest,
+      ) ?? persistenceWarning;
+  }
+  if (normalizedSettings.studyPlanTestDateIso !== undefined) {
+    persistenceWarning =
+      writeRecoverably(
+        settingsStorage,
+        settingsStorageId,
+        studyPlanTestDateIsoKey,
+        normalizedSettings.studyPlanTestDateIso ?? '',
+      ) ?? persistenceWarning;
+  }
+  if (normalizedSettings.studyPlanIntensity !== undefined) {
+    persistenceWarning =
+      writeRecoverably(
+        settingsStorage,
+        settingsStorageId,
+        studyPlanIntensityKey,
+        normalizedSettings.studyPlanIntensity,
       ) ?? persistenceWarning;
   }
   useSettingsStore.setState({ ...normalizedSettings, persistenceWarning });
