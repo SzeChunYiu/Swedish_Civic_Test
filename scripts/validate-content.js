@@ -274,7 +274,15 @@ const STATIC_EBOOK_PRACTICAL_TEST_SOURCE_URLS = [
 ];
 const STATIC_EBOOK_PRACTICAL_TEST_REQUIRED_COPY = [
   'OFFICIAL_TEST_SOURCE_NOTES',
+  'OFFICIAL_TEST_SIGNUP_SOURCE_KEYS',
+  'OFFICIAL_TEST_LANGUAGE_SOURCE_KEYS',
+  'OFFICIAL_TEST_SEATS_SOURCE_KEYS',
+  'OFFICIAL_TEST_PENDING_SOURCE_KEYS',
   "retrievedDate: '2026-05-19'",
+  'uhrOfficialTestAbout',
+  'uhrOfficialTestFaq',
+  'uhrOfficialTestSignup',
+  'uhrOfficialTestStudyMaterial',
   'first civic-knowledge sitting will be held on 15 August 2026 in Stockholm',
   'the citizenship test can only be taken in Swedish',
   'only people who receive a letter from Migrationsverket can sign up',
@@ -293,9 +301,12 @@ const STATIC_EBOOK_PRACTICAL_TEST_REQUIRED_COPY = [
 const STATIC_EBOOK_FACTBOX_SOURCE_URLS = [
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
   'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
+  'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
+  'https://www.uhr.se/medborgarskapsprovet/anmalan/',
   'https://www.scb.se/mi0803-en',
   'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
   'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
+  'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html',
 ];
 const STATIC_EBOOK_UNSUPPORTED_FACTBOX_PATTERNS = [
   /Facts you'll see on the test/i,
@@ -340,7 +351,10 @@ const STATIC_EBOOK_FACTBOX_REQUIRED_COPY = [
   "retrievedDate: '2026-05-19'",
   'Facts to review',
   'Fakta att repetera',
-  'uhrOfficialTestSources',
+  'uhrOfficialTestAbout',
+  'uhrOfficialTestFaq',
+  'uhrOfficialTestSignup',
+  'uhrOfficialTestStudyMaterial',
   'editorialCommentary',
   'Sources accessed',
   'Källor hämtade',

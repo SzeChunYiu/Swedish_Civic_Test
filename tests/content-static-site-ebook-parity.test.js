@@ -201,7 +201,20 @@ const officialPracticalTestSourceUrls = [
   'https://www.uhr.se/medborgarskapsprovet/anmalan/',
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
 ];
-const officialPracticalTestSourceKeys = ['uhrOfficialTestSources'];
+const officialPracticalTestSourceKeys = [
+  'uhrOfficialTestAbout',
+  'uhrOfficialTestFaq',
+  'uhrOfficialTestSignup',
+  'uhrOfficialTestStudyMaterial',
+];
+const officialPracticalTestSignupSourceKeys = ['uhrOfficialTestAbout', 'uhrOfficialTestSignup'];
+const officialPracticalTestLanguageSourceKeys = ['uhrOfficialTestFaq'];
+const officialPracticalTestSeatsSourceKeys = ['uhrOfficialTestAbout', 'uhrOfficialTestFaq'];
+const officialPracticalTestPendingSourceKeys = [
+  'uhrOfficialTestAbout',
+  'uhrOfficialTestStudyMaterial',
+  'editorialCommentary',
+];
 const expectedSafeEbookExternalSourceUrls = [
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
   'https://www.scb.se/mi0803-en',
@@ -689,13 +702,103 @@ test('static ebook raw factbox prose renders with non-default provenance', () =>
   assert.deepEqual(dataSourceKeys(swedishCurrentSourceBlock), officialPracticalTestSourceKeys);
   assert.doesNotMatch(englishTipBlock, /\buhrStudyMaterial\b/);
   assert.doesNotMatch(swedishTipBlock, /\buhrStudyMaterial\b/);
-  assert.match(englishChapter12Html, /UHR current medborgarskapsprovet source pages/);
+  assert.doesNotMatch(englishChapter12Html, /\buhrOfficialTestSources\b/);
+  assert.match(englishChapter12Html, /UHR: Om medborgarskapsprovet/);
+  assert.match(englishChapter12Html, /UHR: Frågor och svar/);
+  assert.match(englishChapter12Html, /UHR: Anmälan/);
+  assert.match(englishChapter12Html, /UHR: Utbildningsmaterial/);
   officialPracticalTestSourceUrls.forEach((url) => {
     assert.match(englishCurrentSourceBlock, new RegExp(url));
     assert.match(swedishCurrentSourceBlock, new RegExp(url));
   });
   assertSafeOfficialTestSourceLinks(englishCurrentSourceBlock, 'English current source note');
   assertSafeOfficialTestSourceLinks(swedishCurrentSourceBlock, 'Swedish current source note');
+});
+
+test('static ebook chapter 12 official-test prose uses exact source-key footnotes', () => {
+  const source = readSiteFile('site/ebook.js');
+  const harness = createEbookHarness();
+  const englishHtml = renderChapter(harness, 'en', '12');
+  const swedishHtml = renderChapter(harness, 'sv', '12');
+  const englishBlocks = annotatedSourceClaimBlocks(englishHtml);
+  const swedishBlocks = annotatedSourceClaimBlocks(swedishHtml);
+
+  assert.doesNotMatch(source, /uhrOfficialTestSources/);
+  assert.match(source, /uhrOfficialTestAbout/);
+  assert.match(source, /uhrOfficialTestFaq/);
+  assert.match(source, /uhrOfficialTestSignup/);
+  assert.match(source, /uhrOfficialTestStudyMaterial/);
+
+  const englishSignupBlock = sourceBlockContaining(
+    englishBlocks,
+    /first civic-knowledge sitting[\s\S]*Migrationsverket letter/,
+    'English official-test signup paragraph',
+  );
+  const swedishSignupBlock = sourceBlockContaining(
+    swedishBlocks,
+    /första samhällskunskapsprovet[\s\S]*brev från Migrationsverket/i,
+    'Swedish official-test signup paragraph',
+  );
+  const englishLanguageBlock = sourceBlockContaining(
+    englishBlocks,
+    /civic-knowledge test itself can only be taken in Swedish/,
+    'English official-test language paragraph',
+  );
+  const swedishLanguageBlock = sourceBlockContaining(
+    swedishBlocks,
+    /samhällskunskapsprovet kan bara göras på svenska/,
+    'Swedish official-test language paragraph',
+  );
+  const englishSeatsBlock = sourceBlockContaining(
+    englishBlocks,
+    /Seats are limited[\s\S]*free of charge[\s\S]*generous time/,
+    'English official-test seats paragraph',
+  );
+  const swedishSeatsBlock = sourceBlockContaining(
+    swedishBlocks,
+    /Antalet platser är begränsat[\s\S]*kostnadsfritt[\s\S]*generöst med tid/,
+    'Swedish official-test seats paragraph',
+  );
+  const englishPendingBlock = sourceBlockContaining(
+    englishBlocks,
+    /UHR has not yet published the exact time and place/,
+    'English official-test pending-details paragraph',
+  );
+  const swedishPendingBlock = sourceBlockContaining(
+    swedishBlocks,
+    /UHR har ännu inte publicerat exakt tid och plats/,
+    'Swedish official-test pending-details paragraph',
+  );
+
+  [
+    englishSignupBlock,
+    swedishSignupBlock,
+    englishLanguageBlock,
+    swedishLanguageBlock,
+    englishSeatsBlock,
+    swedishSeatsBlock,
+    englishPendingBlock,
+    swedishPendingBlock,
+  ].forEach((block) => {
+    assert.equal(dataSourceMetadata(block), 'inline');
+    assert.doesNotMatch(block, /\buhrStudyMaterial\b/);
+  });
+
+  assert.deepEqual(dataSourceKeys(englishSignupBlock), officialPracticalTestSignupSourceKeys);
+  assert.deepEqual(dataSourceKeys(swedishSignupBlock), officialPracticalTestSignupSourceKeys);
+  assert.deepEqual(dataSourceKeys(englishLanguageBlock), officialPracticalTestLanguageSourceKeys);
+  assert.deepEqual(dataSourceKeys(swedishLanguageBlock), officialPracticalTestLanguageSourceKeys);
+  assert.deepEqual(dataSourceKeys(englishSeatsBlock), officialPracticalTestSeatsSourceKeys);
+  assert.deepEqual(dataSourceKeys(swedishSeatsBlock), officialPracticalTestSeatsSourceKeys);
+  assert.deepEqual(dataSourceKeys(englishPendingBlock), officialPracticalTestPendingSourceKeys);
+  assert.deepEqual(dataSourceKeys(swedishPendingBlock), officialPracticalTestPendingSourceKeys);
+
+  const englishFootnotes = renderedFootnoteItems(englishHtml).join('\n');
+  const swedishFootnotes = renderedFootnoteItems(swedishHtml).join('\n');
+  officialPracticalTestSourceUrls.forEach((url) => {
+    assert.match(englishFootnotes, new RegExp(url));
+    assert.match(swedishFootnotes, new RegExp(url));
+  });
 });
 
 test('static ebook Swedish mock-exam wording uses övningsprov and survival-guide heading', () => {
