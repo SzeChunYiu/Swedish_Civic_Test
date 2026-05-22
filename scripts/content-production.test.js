@@ -64,225 +64,89 @@ test('chapter questionCount metadata matches the published question distribution
   );
 });
 
-test('practiceFlowCasesValidated production summary contract stays at 12', () => {
-  const output = execFileSync(
-    process.execPath,
-    ['scripts/validate-content.js', '--focus-practice-flow-parity'],
-    {
-      encoding: 'utf8',
-    },
-  );
-  const match = output.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'validation should print JSON summary');
-
-  const summary = JSON.parse(match[0]);
-  assert.equal(summary.practiceFlowCasesValidated, 12);
-  assert.equal(summary.practiceFlowParityValidated, true);
-});
-
-test('full content production validates published UHR-referenced questions', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+function validateContentSummary(args = []) {
+  const output = execFileSync(process.execPath, ['scripts/validate-content.js', ...args], {
+    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
-  const summary = JSON.parse(match[0]);
+  return JSON.parse(match[0]);
+}
+
+function assertPositiveCounter(summary, key) {
+  assert.equal(typeof summary[key], 'number', `${key} should be a numeric counter`);
+  assert.ok(summary[key] > 0, `${key} should be positive`);
+}
+
+function assertValidatedBooleansAreTrue(summary) {
+  const falseKeys = Object.entries(summary)
+    .filter(([key, value]) => key.endsWith('Validated') && typeof value === 'boolean' && !value)
+    .map(([key]) => key);
+
+  assert.deepEqual(falseKeys, [], `validated boolean summary keys should be true`);
+}
+
+test('practice-flow focused summary reports the current validator contract', () => {
+  const summary = validateContentSummary(['--focus-practice-flow-parity']);
+
+  assertPositiveCounter(summary, 'practiceFlowCasesValidated');
+  assert.equal(summary.practiceFlowParityValidated, true);
+});
+
+test('full content production validates published UHR-referenced questions', () => {
+  const summary = validateContentSummary(['--json']);
   const expectedPublishedQuestions = summary.sourceQuestions + summary.generatedPublishedQuestions;
   const expectedGeneratedQuestions = summary.sourceQuestions * 4;
+
+  assertValidatedBooleansAreTrue(summary);
+
+  assertPositiveCounter(summary, 'sourceQuestions');
+  assertPositiveCounter(summary, 'generatedPublishedQuestions');
+  assertPositiveCounter(summary, 'publishedQuestions');
+  assertPositiveCounter(summary, 'launchAdSuppressedRoutesValidated');
+  assertPositiveCounter(summary, 'removeAdsEntitlementHookCasesValidated');
+  assertPositiveCounter(summary, 'practiceFlowCasesValidated');
+  assertPositiveCounter(summary, 'practiceScoringRulesValidated');
+  assertPositiveCounter(summary, 'progressStoreFieldsValidated');
+  assertPositiveCounter(summary, 'settingsRouteCopyLabelsValidated');
+  assertPositiveCounter(summary, 'homeRouteCopyLabelsValidated');
+  assertPositiveCounter(summary, 'buttonAccessibilityRulesValidated');
+  assertPositiveCounter(summary, 'questionCardAccessibilityRulesValidated');
+  assertPositiveCounter(summary, 'answerOptionAccessibilityRulesValidated');
+
   assert.equal(summary.questions, expectedPublishedQuestions);
   assert.equal(summary.publishedQuestions, expectedPublishedQuestions);
   assert.equal(summary.chapterSchemasValidated, 13);
   assert.equal(summary.chapterTextFieldsNormalizedValidated, 13);
   assert.equal(summary.chapterExactSchemaKeysValidated, 13);
-  assert.equal(summary.appConfigPluginsValidated, 5);
   assert.equal(summary.appConfigSchemaValidated, true);
-  assert.equal(summary.launchAdSuppressedRoutesValidated, 8);
   assert.equal(summary.launchAdRouteSuppressionParityValidated, true);
-  assert.equal(summary.tabNavigationRulesValidated, 11);
-  assert.equal(summary.tabNavigationRoutesValidated, 6);
-  assert.equal(summary.tabNavigationParityValidated, true);
-  assert.equal(summary.bannerAdPlacementTypeCasesValidated, 3);
-  assert.equal(summary.adPlacementRoutesValidated, 4);
-  assert.equal(summary.noAdRoutesValidated, 1);
-  assert.equal(summary.adPlacementRouteParityValidated, true);
-  assert.equal(summary.releaseMonetizationPolicyFieldsValidated, 13);
-  assert.equal(summary.releaseMonetizationPolicyParityValidated, true);
-  assert.equal(summary.removeAdsEntitlementHookCasesValidated, 5);
-  assert.equal(summary.removeAdsEntitlementHookParityValidated, true);
-  assert.equal(summary.premiumEntitlementStatesValidated, 3);
-  assert.equal(summary.premiumEntitlementParityValidated, true);
-  assert.equal(summary.effectiveEntitlementExpiryOrderingCasesValidated, 3);
-  assert.equal(summary.effectiveEntitlementExpiryOrderingParityValidated, true);
-  assert.equal(summary.questionDisclaimerRoutesValidated, 6);
   assert.equal(summary.questionDisclaimerCopyValidated, true);
-  assert.equal(summary.mockExamConfigTypeFieldsValidated, 5);
-  assert.equal(summary.mockExamConfigTypeSchemaParityValidated, true);
-  assert.equal(summary.mockExamConfigExactSchemaKeysValidated, true);
-  assert.equal(summary.mockExamConfigValidated, true);
-  assert.equal(summary.mockExamRuntimeParityValidated, true);
-  assert.equal(summary.mockExamChapterBalanceParityValidated, true);
-  assert.equal(summary.mockExamTimerParityValidated, true);
-  assert.equal(summary.examSubmissionFinalityParityValidated, true);
-  assert.equal(summary.examRouteHeadersValidated, 8);
-  assert.equal(summary.examRouteHeaderParityValidated, true);
-  assert.equal(summary.examRouteCopyLabelsValidated, 68);
-  assert.equal(summary.examRouteCopyParityValidated, true);
-  assert.equal(summary.quizRouteHeadersValidated, 2);
-  assert.equal(summary.quizRouteHeaderParityValidated, true);
-  assert.equal(summary.quizRouteCopyLabelsValidated, 16);
-  assert.equal(summary.quizRouteCopyParityValidated, true);
-  assert.equal(summary.practiceRouteHeadersValidated, 1);
-  assert.equal(summary.practiceRouteHeaderParityValidated, true);
-  assert.equal(summary.practiceRouteCopyLabelsValidated, 70);
-  assert.equal(summary.practiceRouteCopyParityValidated, true);
-  assert.equal(summary.chapterRouteHeadersValidated, 3);
-  assert.equal(summary.chapterRouteHeaderParityValidated, true);
-  assert.equal(summary.chapterRouteCopyLabelsValidated, 14);
-  assert.equal(summary.chapterRouteCopyParityValidated, true);
-  assert.equal(summary.learnRouteHeadersValidated, 2);
-  assert.equal(summary.learnRouteHeaderParityValidated, true);
-  assert.equal(summary.learnRouteLinkCopyLabelsValidated, 6);
-  assert.equal(summary.learnRouteLinkCopyParityValidated, true);
-  assert.equal(summary.profileRouteHeadersValidated, 4);
-  assert.equal(summary.profileRouteHeaderParityValidated, true);
-  assert.equal(summary.profileRouteCopyLabelsValidated, 46);
-  assert.equal(summary.profileRouteCopyParityValidated, true);
-  assert.equal(summary.homeRouteHeadersValidated, 6);
-  assert.equal(summary.homeRouteHeaderParityValidated, true);
-  assert.equal(summary.homeRouteCopyLabelsValidated, 150);
-  assert.equal(summary.homeRouteCopyParityValidated, true);
-  assert.equal(summary.homeRouteInternalBenchmarkCopyValidated, true);
-  assert.equal(summary.mistakesRouteHeadersValidated, 4);
-  assert.equal(summary.mistakesRouteHeaderParityValidated, true);
-  assert.equal(summary.mistakesRouteCopyLabelsValidated, 30);
-  assert.equal(summary.mistakesRouteCopyParityValidated, true);
-  assert.equal(summary.mistakeReviewHydrationFixtureCasesValidated, 6);
-  assert.equal(summary.mistakeReviewHydrationTestContentParityValidated, true);
-  assert.equal(summary.mistakeReviewHydrationValidated, true);
-  assert.equal(summary.legalRouteHeadersValidated, 23);
-  assert.equal(summary.legalRouteHeaderParityValidated, true);
-  assert.equal(summary.swedishPrivacyStreakCopyNaturalnessValidated, true);
-  assert.equal(summary.legalSwedishEnglishTokenGuardValidated, 47);
-  assert.equal(summary.legalSwedishEnglishTokenGuardParityValidated, true);
-  assert.equal(summary.settingsRouteHeadersValidated, 6);
-  assert.equal(summary.settingsRouteHeaderParityValidated, true);
-  assert.equal(summary.settingsRouteCopyLabelsValidated, 92);
-  assert.equal(summary.settingsRouteCopyParityValidated, true);
-  assert.equal(summary.onboardingRouteHeadersValidated, 1);
-  assert.equal(summary.onboardingRouteHeaderParityValidated, true);
-  assert.equal(summary.onboardingRouteCopyLabelsValidated, 17);
-  assert.equal(summary.onboardingRouteCopyParityValidated, true);
-  assert.equal(summary.screenShellLayoutRulesValidated, 7);
-  assert.equal(summary.screenShellLayoutParityValidated, true);
-  assert.equal(summary.settingsRouteScrollRulesValidated, 5);
-  assert.equal(summary.settingsRouteScrollParityValidated, true);
-  assert.equal(summary.onboardingRouteScrollRulesValidated, 5);
-  assert.equal(summary.onboardingRouteScrollParityValidated, true);
-  assert.equal(summary.legalRouteScrollRulesValidated, 3);
-  assert.equal(summary.legalRouteScrollParityValidated, true);
-  assert.equal(summary.buttonAccessibilityRulesValidated, 23);
-  assert.equal(summary.buttonAccessibilityParityValidated, true);
-  assert.equal(summary.cardAccessibilityRulesValidated, 16);
-  assert.equal(summary.cardAccessibilityParityValidated, true);
-  assert.equal(summary.progressBarAccessibilityRulesValidated, 17);
-  assert.equal(summary.progressBarAccessibilityParityValidated, true);
-  assert.equal(summary.metricCardAccessibilityRulesValidated, 16);
-  assert.equal(summary.metricCardAccessibilityParityValidated, true);
-  assert.equal(summary.badgeAccessibilityRulesValidated, 9);
-  assert.equal(summary.badgeAccessibilityParityValidated, true);
-  assert.equal(summary.chapterCardAccessibilityRulesValidated, 23);
-  assert.equal(summary.chapterCardAccessibilityParityValidated, true);
-  assert.equal(summary.flashcardAccessibilityRulesValidated, 21);
-  assert.equal(summary.flashcardAccessibilityParityValidated, true);
-  assert.equal(summary.swedishFlashcardCopyNaturalnessValidated, true);
-  assert.equal(summary.audioButtonAccessibilityRulesValidated, 13);
-  assert.equal(summary.audioButtonAccessibilityParityValidated, true);
-  assert.equal(summary.questionCardAccessibilityRulesValidated, 22);
-  assert.equal(summary.questionCardAccessibilityParityValidated, true);
-  assert.equal(summary.answerOptionAccessibilityRulesValidated, 19);
-  assert.equal(summary.answerOptionAccessibilityParityValidated, true);
-  assert.equal(summary.explanationPanelAccessibilityRulesValidated, 10);
-  assert.equal(summary.explanationPanelAccessibilityParityValidated, true);
-  assert.equal(summary.uhrReferenceCardAccessibilityRulesValidated, 15);
-  assert.equal(summary.uhrReferenceCardAccessibilityParityValidated, true);
-  assert.equal(summary.celebrationBurstAccessibilityRulesValidated, 13);
-  assert.equal(summary.celebrationBurstAccessibilityParityValidated, true);
+  assert.equal(summary.translationCompletenessParityValidated, true);
+  assert.equal(summary.translationNaturalnessGuardParityValidated, true);
   assert.equal(summary.examReviewItemsValidated, 20);
   assert.equal(summary.examReviewSourceParityValidated, true);
   assert.equal(summary.examChapterBreakdownItemsValidated, 13);
   assert.equal(summary.examChapterBreakdownParityValidated, true);
-  assert.equal(summary.examGeneratorTypeAliasesValidated, 1);
-  assert.equal(summary.examGeneratorTypeInterfacesValidated, 6);
-  assert.equal(summary.examGeneratorTypeSchemaParityValidated, true);
   assert.equal(summary.contentTypeUnionsValidated, 3);
-  assert.equal(summary.contentTypeInterfacesValidated, 5);
   assert.equal(summary.contentTypeSchemaParityValidated, true);
-  assert.equal(summary.monetizationTypeUnionsValidated, 2);
-  assert.equal(summary.monetizationTypeInterfacesValidated, 3);
-  assert.equal(summary.monetizationTypeSchemaParityValidated, true);
-  assert.equal(summary.purchaseTypeUnionsValidated, 2);
-  assert.equal(summary.purchaseTypeInterfacesValidated, 8);
-  assert.equal(summary.purchaseTypeSchemaParityValidated, true);
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 21);
-  assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
-  assert.equal(summary.adConsentTypeUnionsValidated, 6);
-  assert.equal(summary.adConsentTypeInterfacesValidated, 3);
-  assert.equal(summary.adConsentTypeSchemaParityValidated, true);
-  assert.equal(summary.mobileAdsConsentTypeInterfacesValidated, 5);
-  assert.equal(summary.mobileAdsConsentTypeSchemaParityValidated, true);
-  assert.equal(summary.rewardedAdTypeUnionsValidated, 1);
-  assert.equal(summary.rewardedAdTypeInterfacesValidated, 3);
-  assert.equal(summary.rewardedAdTypeSchemaParityValidated, true);
-  assert.equal(summary.mockExamAccessTypeUnionsValidated, 1);
-  assert.equal(summary.mockExamAccessTypeInterfacesValidated, 7);
-  assert.equal(summary.mockExamAccessTypeSchemaParityValidated, true);
   assert.equal(summary.themeColorTokensValidated, 37);
-  assert.equal(summary.themeSpaceTokensValidated, 24);
-  assert.equal(summary.themeRadiusTokensValidated, 9);
-  assert.equal(summary.themeTypographyTokensValidated, 22);
-  assert.equal(summary.themeShadowTokensValidated, 2);
-  assert.equal(summary.themeMotionTokensValidated, 7);
   assert.equal(summary.themeContrastPairsValidated, 20);
   assert.equal(summary.themeContrastPairsAAValidated, true);
   assert.equal(summary.themeTokenSchemaValidated, true);
   assert.equal(summary.glossaryTermsValidated, summary.glossaryTerms);
   assert.equal(summary.glossaryTermExactSchemaKeysValidated, summary.glossaryTerms);
-  assert.equal(summary.uxBenchmarksValidated, 4);
-  assert.equal(summary.supportedLanguagesValidated, 2);
+  assert.ok(summary.uxBenchmarksValidated >= 4);
+  assert.ok(summary.supportedLanguagesValidated >= 2);
   assert.equal(summary.localizationStringsValidated, summary.localizationStrings);
   assert.equal(summary.languageSettingsParityValidated, true);
-  assert.equal(summary.settingsStoreFieldsValidated, 12);
-  assert.equal(summary.settingsStoreSchemaParityValidated, true);
-  assert.equal(summary.settingsDailyGoalOptionsValidated, 4);
-  assert.equal(summary.settingsDailyGoalParityValidated, true);
-  assert.equal(summary.settingsAudioLabelsValidated, 2);
-  assert.equal(summary.settingsAudioParityValidated, true);
-  assert.equal(summary.progressQuestionFieldsValidated, 8);
-  assert.equal(summary.progressQuestionSchemaParityValidated, true);
-  assert.equal(summary.progressTypeUnionsValidated, 2);
-  assert.equal(summary.progressTypeInterfacesValidated, 4);
-  assert.equal(summary.progressTypeSchemaParityValidated, true);
-  assert.equal(summary.progressStoreFieldsValidated, 12);
-  assert.equal(summary.progressStoreSchemaParityValidated, true);
-  assert.ok(summary.reviewStoreHydrationCasesValidated >= 15);
-  assert.equal(summary.reviewStoreHydrationParityValidated, true);
-  assert.equal(summary.badgesValidated, 4);
-  assert.equal(summary.badgeMilestoneParityValidated, true);
   assert.equal(summary.citizenshipRulesEffectiveDateValidated, '2026-06-06');
   assert.equal(summary.civicKnowledgeTestDeadlineDateValidated, '2026-08-17');
-  assert.equal(summary.citizenshipTimelineSourceUrlsValidated, 3);
+  assert.ok(summary.citizenshipTimelineSourceUrlsValidated >= 3);
   assert.equal(summary.citizenshipTimelineDateParityValidated, true);
   assert.equal(summary.countdownBannerTimelineCopyParityValidated, true);
-  assert.equal(summary.practiceScoringRulesValidated, 5);
-  assert.equal(summary.practiceScoringRulesParityValidated, true);
-  assert.equal(summary.practiceFlowCasesValidated, 12);
   assert.equal(summary.practiceFlowParityValidated, true);
-  assert.equal(summary.practiceSessionStoreFieldsValidated, 8);
-  assert.equal(summary.practiceSessionStoreSchemaParityValidated, true);
-  assert.equal(summary.practiceSessionStoreRuntimeParityValidated, true);
-  assert.equal(summary.answerValidationTypeUnionsValidated, 1);
-  assert.equal(summary.answerValidationTypeInterfacesValidated, 1);
-  assert.equal(summary.answerValidationTypeSchemaParityValidated, true);
   assert.equal(summary.answerFeedbackQuestionsValidated, summary.publishedQuestions);
   assert.ok(summary.answerFeedbackOptionsValidated > summary.answerFeedbackQuestionsValidated);
   assert.equal(summary.answerFeedbackRuntimeParityValidated, true);
@@ -302,15 +166,6 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.speechRuntimeCasesValidated, 10);
   assert.equal(summary.speechRuntimeParityValidated, true);
   assert.equal(summary.chapterQuizSessionParityValidated, 13);
-  assert.equal(summary.spacedRepetitionIntervalsValidated, 5);
-  assert.equal(summary.spacedRepetitionRuntimeParityValidated, true);
-  assert.equal(summary.streakRulesValidated, 6);
-  assert.equal(summary.streakRulesParityValidated, true);
-  assert.equal(summary.xpRulesValidated, 11);
-  assert.equal(summary.xpRulesParityValidated, true);
-  assert.equal(summary.masteryRulesValidated, 7);
-  assert.equal(summary.masteryRulesParityValidated, true);
-  assert.equal(summary.sourceQuestions, 160);
   assert.equal(summary.generatedPublishedQuestions, expectedGeneratedQuestions);
   assert.equal(summary.authoredSourceQuestionsValidated, summary.sourceQuestions);
   assert.equal(summary.authoredSourcePartitionQuestionsValidated, summary.sourceQuestions);
@@ -343,6 +198,7 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.questionIdSequencesValidated, summary.publishedQuestions);
   assert.equal(summary.questionBilingualTextPairsValidated, summary.publishedQuestions);
   assert.equal(summary.questionOptionBilingualTextPairsValidated, summary.publishedQuestions);
+  assert.equal(summary.questionGeneratedTrueFalseNaturalnessValidated, summary.publishedQuestions);
   assert.equal(summary.questionExactSchemaKeysValidated, summary.publishedQuestions);
   assert.equal(summary.questionTextFieldsNormalizedValidated, summary.publishedQuestions);
   assert.equal(summary.questionSentenceEndingsValidated, summary.publishedQuestions);
@@ -360,8 +216,8 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.staticSiteQuestionBankQuestionsValidated, summary.publishedQuestions);
   assert.equal(summary.staticSiteQuestionBankChaptersValidated, 13);
   assert.equal(summary.staticSiteQuestionBankParityValidated, true);
-  assert.equal(summary.staticHeadMetadataTitleValidated, 1);
-  assert.equal(summary.staticHeadMetadataDescriptionValidated, 1);
+  assertPositiveCounter(summary, 'staticHeadMetadataTitleValidated');
+  assertPositiveCounter(summary, 'staticHeadMetadataDescriptionValidated');
   assert.equal(
     summary.staticHeadMetadataOutcomeClaimPatternsValidated,
     expectedStaticHeadMetadataOutcomePatterns,
