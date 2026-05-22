@@ -96,7 +96,7 @@ const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {
       'Migrationsverket avgör vem som får skriva provet. Du kan bara anmäla dig efter ett brev från Migrationsverket. Antalet platser är begränsat, och när platserna är fyllda går det inte längre att anmäla sig. Du kan uppfylla kunskapskravet på andra sätt än genom provet.',
     sectionFormatTitle: 'Vad är känt om första provet?',
     sectionFormatBody:
-      'Den första provomgången i samhällskunskap är den 15 augusti 2026 i Stockholm. Anmälan öppnar i början av juni 2026. Exakt tid och plats, anpassningar och praktiska förberedelser kommer senare. Augustiprovet är kostnadsfritt och ges som ett utprövningsprov med generös tid.',
+      'Den första provomgången i samhällskunskap är den 15 augusti 2026 i Stockholm. Själva samhällskunskapsprovet kan bara göras på svenska; det är skilt från de prov i svenska som införs senare. Anmälan öppnar i början av juni 2026. Exakt tid och plats, anpassningar och praktiska förberedelser kommer senare. Augustiprovet är kostnadsfritt och ges som ett utprövningsprov med generös tid.',
     sectionMaterialTitle: 'Vilket material bygger appen på?',
     sectionMaterialBody:
       'Appens UHR-läge utgår från utbildningsmaterialet Sverige i fokus. Våra övningsfrågor är inte UHR:s provfrågor; övningsprov från andra aktörer är inte kvalitetskontrollerade av UHR eller en annan myndighet.',
@@ -130,7 +130,7 @@ const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {
       'Migrationsverket decides who may take the test. You can only sign up after receiving a letter from Migrationsverket. Seats are limited, and when the seats are filled, registration closes. You may be able to meet the knowledge requirement in other ways.',
     sectionFormatTitle: 'What is known about the first test?',
     sectionFormatBody:
-      'The first civic-knowledge test sitting is on 15 August 2026 in Stockholm. Registration opens in early June 2026. Exact time and place, adaptations, and practical preparation details will come later. The August test is free of charge and is a trial sitting with generous time.',
+      'The first civic-knowledge test sitting is on 15 August 2026 in Stockholm. The civic-knowledge test itself can only be taken in Swedish; that is separate from the Swedish-language tests introduced later. Registration opens in early June 2026. Exact time and place, adaptations, and practical preparation details will come later. The August test is free of charge and is a trial sitting with generous time.',
     sectionMaterialTitle: 'What material does this app use?',
     sectionMaterialBody:
       "The app's UHR mode is based on the study material Sverige i fokus. Our practice questions are not UHR test questions; practice tests from other actors are not quality-checked by UHR or another authority.",

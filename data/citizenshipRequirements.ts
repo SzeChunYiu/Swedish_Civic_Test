@@ -13,6 +13,7 @@ export type CitizenshipRequirementSourceId =
   | 'migrationsverketAdultApplication'
   | 'migrationsverketRules2026'
   | 'uhrCivicTestOverview'
+  | 'uhrCivicTestFaq'
   | 'uhrCivicTestRegistration'
   | 'uhrCivicStudyMaterial'
   | 'governmentCivicTestSchedule'
@@ -79,6 +80,17 @@ export const citizenshipRequirementSources = [
       en: 'About the citizenship test',
     },
     url: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
+    sourceDate: '2026-05-06',
+    retrievedDate: CITIZENSHIP_REQUIREMENTS_RETRIEVED_DATE,
+  },
+  {
+    id: 'uhrCivicTestFaq',
+    publisher: 'Universitets- och högskolerådet',
+    title: {
+      sv: 'Frågor och svar om medborgarskapsprovet',
+      en: 'Questions and answers about the citizenship test',
+    },
+    url: 'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
     sourceDate: '2026-05-06',
     retrievedDate: CITIZENSHIP_REQUIREMENTS_RETRIEVED_DATE,
   },
@@ -237,8 +249,8 @@ export const citizenshipRequirementAreas = [
       en: 'The first test part covers basic knowledge of Swedish society and is held for the first time on 15 August 2026 in Stockholm.',
     },
     detail: {
-      sv: 'UHR ansvarar för provet och utbildningsmaterialet. Du kan bara anmäla dig när Migrationsverket har skickat brev. Antalet platser är begränsat, och när platserna är fyllda går det inte längre att anmäla sig. Anmälan öppnar i början av juni 2026.',
-      en: 'UHR is responsible for the test and study material. You can only register after Migrationsverket has sent you a letter. Seats are limited, and when the seats are filled, registration closes. Registration opens in early June 2026.',
+      sv: 'UHR ansvarar för provet och utbildningsmaterialet. Själva samhällskunskapsprovet kan bara göras på svenska; det är skilt från de prov i svenska som införs senare. Du kan bara anmäla dig när Migrationsverket har skickat brev. Antalet platser är begränsat, och när platserna är fyllda går det inte längre att anmäla sig. Anmälan öppnar i början av juni 2026.',
+      en: 'UHR is responsible for the test and study material. The civic-knowledge test itself can only be taken in Swedish; that is separate from the Swedish-language tests introduced later. You can only register after Migrationsverket has sent you a letter. Seats are limited, and when the seats are filled, registration closes. Registration opens in early June 2026.',
     },
     checklistPrompt: {
       sv: 'Jag vet om jag behöver samhällskunskapsprovet och har hittat UHR:s material.',
@@ -246,6 +258,7 @@ export const citizenshipRequirementAreas = [
     },
     sourceIds: [
       'uhrCivicTestOverview',
+      'uhrCivicTestFaq',
       'uhrCivicTestRegistration',
       'uhrCivicStudyMaterial',
       'governmentCivicTestSchedule',

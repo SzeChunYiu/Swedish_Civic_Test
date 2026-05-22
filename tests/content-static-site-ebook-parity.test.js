@@ -1047,6 +1047,8 @@ test('static ebook chapter 12 keeps practical test claims current and sourced', 
 
   assert.match(englishHtml, /15 August 2026 in Stockholm/);
   assert.match(englishHtml, /Migrationsverket letter/);
+  assert.match(englishHtml, /civic-knowledge test itself can only be taken in Swedish/);
+  assert.match(englishHtml, /separate from the Swedish-language tests/);
   assert.match(englishHtml, /Seats are limited/);
   assert.match(englishHtml, /free of charge/);
   assert.match(englishHtml, /generous time/);
@@ -1055,6 +1057,8 @@ test('static ebook chapter 12 keeps practical test claims current and sourced', 
 
   assert.match(swedishHtml, /15 augusti 2026 i Stockholm/);
   assert.match(swedishHtml, /brev från Migrationsverket/);
+  assert.match(swedishHtml, /samhällskunskapsprovet kan bara göras på svenska/);
+  assert.match(swedishHtml, /skilt från de prov i svenska som införs senare/);
   assert.match(swedishHtml, /Antalet platser är begränsat/);
   assert.match(swedishHtml, /kostnadsfritt/);
   assert.match(swedishHtml, /generöst med tid/);
@@ -1082,6 +1086,8 @@ test('static ebook current-status prose avoids source-authority phrasing', () =>
   assert.match(currentStatusHtml, /15 augusti 2026 i Stockholm/);
   assert.match(currentStatusHtml, /Migrationsverket letter/);
   assert.match(currentStatusHtml, /brev från Migrationsverket/);
+  assert.match(currentStatusHtml, /can only be taken in Swedish/);
+  assert.match(currentStatusHtml, /kan bara göras på svenska/);
 });
 
 test('static ebook chapter 11 keeps child citizenship application rules current', () => {
