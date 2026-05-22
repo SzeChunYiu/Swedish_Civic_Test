@@ -243,6 +243,39 @@ test('generateStudyPlan: serious intensity raises floor above casual', () => {
   assert.ok(serious.dailyQuestionTarget > casual.dailyQuestionTarget);
 });
 
+test('generateStudyPlanWeeklyBreakdown: current week uses local completion marks', () => {
+  const { generateStudyPlan, generateStudyPlanWeeklyBreakdown } = loadTs(
+    'lib/learning/examDate.ts',
+  );
+  const plan = generateStudyPlan({
+    testDate: new Date('2026-06-15T00:00:00.000Z'),
+    now: new Date('2026-05-19T09:00:00.000Z'),
+    totalQuestions: 200,
+    masteredQuestions: 20,
+    mocksTaken: 0,
+    intensity: 'regular',
+  });
+  const breakdown = generateStudyPlanWeeklyBreakdown({
+    mockCountsByLocalDate: { '2026-05-19': 1 },
+    now: new Date('2026-05-19T09:00:00.000Z'),
+    plan,
+    questionCountsByLocalDate: {
+      '2026-05-19': plan.dailyQuestionTarget,
+      '2026-05-20': Math.max(0, plan.dailyQuestionTarget - 1),
+    },
+  });
+
+  assert.equal(breakdown.length, 7);
+  assert.equal(breakdown[0].localDateKey, '2026-05-19');
+  assert.equal(breakdown[0].isToday, true);
+  assert.equal(breakdown[0].questionTarget, plan.dailyQuestionTarget);
+  assert.equal(breakdown[0].questionTargetMet, true);
+  assert.equal(breakdown[0].mockTarget, 1);
+  assert.equal(breakdown[0].mockTargetMet, true);
+  assert.equal(breakdown[1].questionTargetMet, false);
+  assert.equal(breakdown[3].mockTarget, 1);
+});
+
 test('daysUntil and formatExamDate: invalid dates use safe fallback values', () => {
   const { daysUntil, formatExamDate } = loadTs('lib/learning/examDate.ts');
   const validNow = new Date('2026-05-19T00:00:00.000Z');

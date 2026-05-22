@@ -75,6 +75,19 @@ test('home route title and dashboard card headings stay accessible as headers', 
   );
   assert.match(
     source,
+    /const studyPlanTestDateIso = useSettingsStore\(\(state\) => state\.studyPlanTestDateIso\);/,
+  );
+  assert.match(source, /formatExamDate\(studyPlanDate, language\)/);
+  assert.match(source, /daysUntil\(studyPlanDate, today\)/);
+  assert.match(source, /Din studieplan/);
+  assert.match(source, /Your study plan/);
+  assert.match(source, /href="\/study-plan"/);
+  assert.match(
+    source,
+    /accessibilityLabel=\{copy\.studyPlanAccessibilityLabel\(studyPlanSummary\)\}/,
+  );
+  assert.match(
+    source,
     /const streakFreezeState = useProgressStore\(\(state\) => state\.streakFreezeState\);/,
   );
   assert.match(
