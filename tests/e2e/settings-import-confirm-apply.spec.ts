@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+
 import { expect, test, type Page } from '@playwright/test';
 
 import {
@@ -34,6 +37,16 @@ type ImportPayloadCase = {
   name: 'singular' | 'plural';
   buildPayload: (importedLanguage: AppLanguage) => string;
   expected: ImportExpectation;
+  absentSummaryTexts: Record<AppLanguage, string[]>;
+  summaryTexts: Record<AppLanguage, string[]>;
+};
+
+type ImportPayloadFixture = {
+  name: 'singular' | 'plural';
+  payload: { settings?: { language?: AppLanguage } };
+  expected: ImportExpectation & {
+    summaryCounts: Record<string, boolean | number>;
+  };
   absentSummaryTexts: Record<AppLanguage, string[]>;
   summaryTexts: Record<AppLanguage, string[]>;
 };
@@ -77,267 +90,33 @@ const scenarios: Scenario[] = [
   },
 ];
 
-const importPayloadCases: ImportPayloadCase[] = [
-  {
-    name: 'singular',
-    buildPayload: buildSingularImportPayload,
-    expected: {
-      completedQuestionIds: ['q001', 'q002'],
-      bookmarkedQuestionIds: ['q001'],
-      wrongAnswerReviewIds: ['q001'],
-      mockExamSessionIds: ['mock-1'],
-      rescuedDayKeys: ['2026-05-19'],
-      reviewIds: ['q001'],
-      gradedPerDay: { '2026-05-20': 2 },
-      checkedAreaIds: [],
-    },
-    summaryTexts: {
-      sv: [
-        '2 frågor med sparad progression',
-        '1 bokmärke',
-        '1 granskning av fel svar',
-        '1 genomfört övningsprov',
-        '1 repetitionskort',
-        '1 repetitionsdag',
-        '5 sparade inställningar',
-        'Studiesvit och svitskydd ingår',
-      ],
-      en: [
-        '2 questions with saved progress',
-        '1 bookmark',
-        '1 wrong-answer review',
-        '1 completed mock exam',
-        '1 FSRS review card',
-        '1 FSRS review day',
-        '5 saved settings',
-        'Study streak and freeze status included',
-      ],
-    },
-    absentSummaryTexts: {
-      sv: ['0 markeringar i e-boken', '0 markerade kravområden'],
-      en: ['0 ebook highlights', '0 marked requirements'],
-    },
-  },
-  {
-    name: 'plural',
-    buildPayload: buildPluralImportPayload,
-    expected: {
-      completedQuestionIds: ['q001', 'q002', 'q003'],
-      bookmarkedQuestionIds: ['q001', 'q002'],
-      wrongAnswerReviewIds: ['q001', 'q002'],
-      mockExamSessionIds: ['mock-1', 'mock-2'],
-      rescuedDayKeys: ['2026-05-19', '2026-05-20'],
-      reviewIds: ['q001', 'q002'],
-      gradedPerDay: { '2026-05-20': 2, '2026-05-21': 1 },
-      checkedAreaIds: ['identity', 'residenceStatus', 'conduct'],
-    },
-    summaryTexts: {
-      sv: [
-        '3 frågor med sparad progression',
-        '2 bokmärken',
-        '2 granskningar av fel svar',
-        '2 genomförda övningsprov',
-        '2 repetitionskort',
-        '2 repetitionsdagar',
-        '5 sparade inställningar',
-        '3 markerade kravområden',
-        'Studiesvit och svitskydd ingår',
-      ],
-      en: [
-        '3 questions with saved progress',
-        '2 bookmarks',
-        '2 wrong-answer reviews',
-        '2 completed mock exams',
-        '2 FSRS review cards',
-        '2 FSRS review days',
-        '5 saved settings',
-        '3 marked requirements',
-        'Study streak and freeze status included',
-      ],
-    },
-    absentSummaryTexts: {
-      sv: ['0 markeringar i e-boken'],
-      en: ['0 ebook highlights'],
-    },
-  },
-];
-
-function buildSingularImportPayload(importedLanguage: AppLanguage): string {
-  return JSON.stringify({
-    version: 1,
-    progress: {
-      completedQuestionIds: ['q001', 'q002'],
-      questionProgress: {
-        q001: {
-          seenCount: 3,
-          correctCount: 2,
-          wrongCount: 1,
-          correctStreak: 2,
-          bookmarked: true,
-          lastAnsweredAt: '2026-05-20T08:00:00.000Z',
-          nextReviewAt: '2026-05-21T08:00:00.000Z',
-        },
-      },
-      totalXp: 42,
-      answerDates: ['2026-05-20'],
-      mockExamSessions: [
-        {
-          sessionId: 'mock-1',
-          score: 0.75,
-          completedAt: '2026-05-20T09:00:00.000Z',
-          correctCount: 3,
-          totalCount: 4,
-        },
-      ],
-      streakFreezeState: {
-        available: 2,
-        lastEarnedAt: '2026-05-20',
-        lifetimeEarned: 4,
-        lifetimeSpent: 1,
-        rescuedDayKeys: ['2026-05-19'],
-      },
-    },
-    mistakeReview: {
-      wrongAnswerReviews: {
-        q001: {
-          answeredAt: '2026-05-20T08:05:00.000Z',
-          selectedOptionTextEn: 'Wrong answer',
-          selectedOptionTextSv: 'Fel svar',
-        },
-      },
-    },
-    reviews: {
-      byId: {
-        q001: {
-          questionId: 'q001',
-          difficulty: 5,
-          stability: 7,
-          reps: 2,
-          lapses: 0,
-          state: 'review',
-          lastReviewAt: null,
-          dueAt: '2026-05-21T08:00:00.000Z',
-        },
-      },
-      gradedPerDay: {
-        '2026-05-20': 2,
-      },
-    },
-    settings: {
-      language: importedLanguage,
-      audioEnabled: false,
-      dailyGoalAnswers: 20,
-      includeSupplementaryQuestions: true,
-      hasSeenAboutTheTest: true,
-    },
-  });
+function readImportPayloadFixture(name: 'singular' | 'plural'): ImportPayloadFixture {
+  return JSON.parse(
+    readFileSync(resolve(__dirname, '../fixtures/local-study-data-import', `${name}.json`), 'utf8'),
+  ) as ImportPayloadFixture;
 }
 
-function buildPluralImportPayload(importedLanguage: AppLanguage): string {
-  return JSON.stringify({
-    version: 1,
-    progress: {
-      completedQuestionIds: ['q001', 'q002', 'q003'],
-      questionProgress: {
-        q001: {
-          seenCount: 3,
-          correctCount: 2,
-          wrongCount: 1,
-          correctStreak: 2,
-          bookmarked: true,
-          lastAnsweredAt: '2026-05-20T08:00:00.000Z',
-          nextReviewAt: '2026-05-21T08:00:00.000Z',
-        },
-        q002: {
-          seenCount: 2,
-          correctCount: 1,
-          wrongCount: 1,
-          correctStreak: 1,
-          bookmarked: true,
-          lastAnsweredAt: '2026-05-21T08:00:00.000Z',
-          nextReviewAt: '2026-05-22T08:00:00.000Z',
-        },
-      },
-      totalXp: 84,
-      answerDates: ['2026-05-20', '2026-05-21'],
-      mockExamSessions: [
-        {
-          sessionId: 'mock-1',
-          score: 0.75,
-          completedAt: '2026-05-20T09:00:00.000Z',
-          correctCount: 3,
-          totalCount: 4,
-        },
-        {
-          sessionId: 'mock-2',
-          score: 0.8,
-          completedAt: '2026-05-21T09:00:00.000Z',
-          correctCount: 4,
-          totalCount: 5,
-        },
-      ],
-      streakFreezeState: {
-        available: 2,
-        lastEarnedAt: '2026-05-21',
-        lifetimeEarned: 5,
-        lifetimeSpent: 1,
-        rescuedDayKeys: ['2026-05-19', '2026-05-20'],
-      },
-    },
-    mistakeReview: {
-      wrongAnswerReviews: {
-        q001: {
-          answeredAt: '2026-05-20T08:05:00.000Z',
-          selectedOptionTextEn: 'Wrong answer',
-          selectedOptionTextSv: 'Fel svar',
-        },
-        q002: {
-          answeredAt: '2026-05-21T08:05:00.000Z',
-          selectedOptionTextEn: 'Another wrong answer',
-          selectedOptionTextSv: 'Ännu ett fel svar',
-        },
-      },
-    },
-    reviews: {
-      byId: {
-        q001: {
-          questionId: 'q001',
-          difficulty: 5,
-          stability: 7,
-          reps: 2,
-          lapses: 0,
-          state: 'review',
-          lastReviewAt: null,
-          dueAt: '2026-05-21T08:00:00.000Z',
-        },
-        q002: {
-          questionId: 'q002',
-          difficulty: 4,
-          stability: 6,
-          reps: 3,
-          lapses: 1,
-          state: 'review',
-          lastReviewAt: '2026-05-21T08:00:00.000Z',
-          dueAt: '2026-05-22T08:00:00.000Z',
-        },
-      },
-      gradedPerDay: {
-        '2026-05-20': 2,
-        '2026-05-21': 1,
-      },
-    },
-    settings: {
-      language: importedLanguage,
-      audioEnabled: false,
-      dailyGoalAnswers: 20,
-      includeSupplementaryQuestions: true,
-      hasSeenAboutTheTest: true,
-    },
-    citizenshipRequirements: {
-      checkedAreaIds: ['conduct', 'identity', 'residenceStatus', 'identity'],
-    },
-  });
+function withImportedLanguage(
+  payload: ImportPayloadFixture['payload'],
+  importedLanguage: AppLanguage,
+): ImportPayloadFixture['payload'] {
+  const clone = JSON.parse(JSON.stringify(payload)) as ImportPayloadFixture['payload'];
+  clone.settings = { ...(clone.settings ?? {}), language: importedLanguage };
+  return clone;
 }
+
+const importPayloadCases: ImportPayloadCase[] = (['singular', 'plural'] as const).map((name) => {
+  const fixture = readImportPayloadFixture(name);
+  const { summaryCounts: _summaryCounts, ...expected } = fixture.expected;
+  return {
+    name: fixture.name,
+    buildPayload: (importedLanguage) =>
+      JSON.stringify(withImportedLanguage(fixture.payload, importedLanguage)),
+    expected,
+    absentSummaryTexts: fixture.absentSummaryTexts,
+    summaryTexts: fixture.summaryTexts,
+  };
+});
 
 async function readImportStorage(page: Page) {
   return page.evaluate(
