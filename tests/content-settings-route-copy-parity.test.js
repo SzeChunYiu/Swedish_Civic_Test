@@ -116,6 +116,30 @@ test('settings route shell copy follows the persisted settings language', () => 
   assert.match(companionPickerSource, /accessibilityRole="radio"/);
   assert.match(companionPickerSource, /aria-checked=\{selected\}/);
   assert.match(companionPickerSource, /accessibilityState=\{\{ checked: selected \}\}/);
+  assert.match(companionPickerSource, /import \{ useRef \} from 'react';/);
+  assert.match(
+    companionPickerSource,
+    /function getRadioArrowDirection\(event: KeyboardEventLike\)/,
+  );
+  assert.match(companionPickerSource, /key === 'ArrowRight' \|\| key === 'ArrowDown'/);
+  assert.match(companionPickerSource, /key === 'ArrowLeft' \|\| key === 'ArrowUp'/);
+  assert.match(
+    companionPickerSource,
+    /const handleRadioGroupKeyDown = \(event: KeyboardEventLike\)/,
+  );
+  assert.match(companionPickerSource, /event\.preventDefault\?\.\(\);/);
+  assert.match(
+    companionPickerSource,
+    /\(currentIndex \+ direction \+ mascots\.length\) % mascots\.length/,
+  );
+  assert.match(companionPickerSource, /onSelect\(nextId\);/);
+  assert.match(companionPickerSource, /optionRefs\.current\[nextId\]\?\.focus\?\.\(\);/);
+  assert.match(companionPickerSource, /tabIndex: selected \? 0 : -1/);
+  assert.match(companionPickerSource, /onKeyDown: handleRadioGroupKeyDown/);
+  assert.match(
+    companionPickerSource,
+    /optionRefs\.current\[mascot\.id\] = node as FocusableElement \| null;/,
+  );
   assert.doesNotMatch(companionPickerSource, /aria-selected=\{selected\}/);
   assert.doesNotMatch(companionPickerSource, /accessibilityState=\{\{ selected \}\}/);
   assert.match(source, /Byt studiespråk till \$\{label\}/);

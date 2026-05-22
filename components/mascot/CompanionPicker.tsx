@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { Image, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import type { ImageSourcePropType, ViewStyle } from 'react-native';
 
@@ -56,6 +57,24 @@ type CompanionPickerProps = {
   selectedId: MascotId;
 };
 
+type FocusableElement = { focus?: () => void };
+type KeyboardEventLike = {
+  key?: string;
+  nativeEvent?: { key?: string };
+  preventDefault?: () => void;
+};
+type WebRadioKeyboardProps = {
+  onKeyDown?: (event: KeyboardEventLike) => void;
+  tabIndex?: 0 | -1;
+};
+
+function getRadioArrowDirection(event: KeyboardEventLike): -1 | 1 | null {
+  const key = event.nativeEvent?.key ?? event.key;
+  if (key === 'ArrowRight' || key === 'ArrowDown') return 1;
+  if (key === 'ArrowLeft' || key === 'ArrowUp') return -1;
+  return null;
+}
+
 function mascotLabel(mascot: MascotDescriptor, language: AppLanguage) {
   return language === 'sv' ? mascot.labelSv : mascot.labelEn;
 }
@@ -91,6 +110,34 @@ function webPreviewImageStyle(uri: string): ViewStyle {
 
 export function CompanionPicker({ language, onSelect, selectedId }: CompanionPickerProps) {
   const copy = companionPickerCopy[language];
+  const mascots = getCompanionPickerMascots();
+  const optionRefs = useRef<Record<string, FocusableElement | null>>({});
+
+  const handleRadioGroupKeyDown = (event: KeyboardEventLike) => {
+    const direction = getRadioArrowDirection(event);
+    if (!direction || mascots.length === 0) return;
+
+    event.preventDefault?.();
+    const currentIndex = mascots.findIndex((mascot) => mascot.id === selectedId);
+    const nextIndex =
+      currentIndex >= 0
+        ? (currentIndex + direction + mascots.length) % mascots.length
+        : direction > 0
+          ? 0
+          : mascots.length - 1;
+    const nextId = mascots[nextIndex].id;
+
+    onSelect(nextId);
+    optionRefs.current[nextId]?.focus?.();
+  };
+
+  const getWebRadioKeyboardProps = (selected: boolean): WebRadioKeyboardProps =>
+    Platform.OS === 'web'
+      ? {
+          onKeyDown: handleRadioGroupKeyDown,
+          tabIndex: selected ? 0 : -1,
+        }
+      : {};
 
   return (
     <View
@@ -99,7 +146,7 @@ export function CompanionPicker({ language, onSelect, selectedId }: CompanionPic
       accessibilityRole="radiogroup"
       style={styles.grid}
     >
-      {getCompanionPickerMascots().map((mascot) => {
+      {mascots.map((mascot) => {
         const label = mascotLabel(mascot, language);
         const anchor = mascotAnchor(mascot, language);
         const selected = mascot.id === selectedId;
@@ -118,11 +165,15 @@ export function CompanionPicker({ language, onSelect, selectedId }: CompanionPic
             accessibilityRole="radio"
             accessibilityState={{ checked: selected }}
             onPress={() => onSelect(mascot.id)}
+            ref={(node) => {
+              optionRefs.current[mascot.id] = node as FocusableElement | null;
+            }}
             style={({ pressed }) => [
               styles.option,
               selected ? styles.optionSelected : null,
               pressed ? styles.optionPressed : null,
             ]}
+            {...getWebRadioKeyboardProps(selected)}
           >
             <View style={styles.optionBody}>
               <View
