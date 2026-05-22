@@ -188,7 +188,7 @@ const rawBaseQuestions: PracticeQuestion[] = [
     chapterId: 'ch01',
     type: 'single_choice',
     questionSv: 'Vilka är Sveriges tre största sjöar?',
-    questionEn: "Which are Sweden's three largest lakes?",
+    questionEn: "What are Sweden's three largest lakes?",
     options: [
       { id: 'a', textSv: 'Vänern, Vättern och Mälaren', textEn: 'Vänern, Vättern, and Mälaren' },
       {

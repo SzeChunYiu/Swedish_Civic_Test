@@ -1845,6 +1845,11 @@ function generatedSingleChoicePromptFromSourceSv(
       : `Vilken regel gäller för ${match[1]}?`;
   }
 
+  match = source.id === 'q008' ? q.match(/^Vilka är (.+)$/i) : null;
+  if (match && variant === 'judgement') {
+    return `Vilken uppgift stämmer om ${match[1]}?`;
+  }
+
   match =
     q.match(/^Vilket påstående stämmer om (.+)$/i) ??
     q.match(/^Vilket påstående är korrekt om (.+)$/i) ??
@@ -1986,6 +1991,11 @@ function generatedSingleChoicePromptFromSourceEn(
     return variant === 'judgement'
       ? `What is correct for ${match[1]}?`
       : `Which rule applies to ${match[1]}?`;
+  }
+
+  match = q.match(/^What are (.+)$/i);
+  if (match && variant === 'judgement') {
+    return `Which fact is correct about ${match[1]}?`;
   }
 
   match =
@@ -2760,6 +2770,9 @@ export function deriveCivicStatementEn(source: PracticeQuestion, option: Questio
 
   match = q.match(/^Which islands are (.+)$/i);
   if (match) return `${upperFirst(match[1])} are ${answer}`;
+
+  match = q.match(/^What are (.+)$/i);
+  if (match) return `${upperFirst(match[1])} are ${lowerLeadingEnglishArticle(answer)}`;
 
   match = q.match(/^Which are (.+)$/i);
   if (match) return `${upperFirst(match[1])} are ${lowerLeadingEnglishArticle(answer)}`;

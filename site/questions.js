@@ -701,7 +701,7 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which are Sweden's three largest lakes?",
+      "en": "What are Sweden's three largest lakes?",
       "sv": "Vilka är Sveriges tre största sjöar?",
       "zh-Hant": "瑞典最大的三座湖是哪三座？",
       "zh-Hans": "瑞典最大的三座湖是哪三座？",
@@ -20664,8 +20664,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct regarding which are Sweden's three largest lakes?",
-      "sv": "Vilken uppgift stämmer när det gäller vilka Sveriges tre största sjöar är?"
+      "en": "Which fact is correct about Sweden's three largest lakes?",
+      "sv": "Vilken uppgift stämmer om Sveriges tre största sjöar?"
     },
     "opts": [
       {
