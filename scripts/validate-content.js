@@ -10330,6 +10330,7 @@ let proLifetimeBareTrueRejectionValidated = 0;
 let proLifetimeStructuredRecordParsingValidated = 0;
 let proLifetimeProviderReceiptRevalidationValidated = 0;
 let proLifetimeFailClosedClearingValidated = 0;
+let proLifetimeFailedActionValidStoredRevalidationValidated = 0;
 let proLifetimeNativeHookProviderWiringValidated = 0;
 let proLifetimeRelaunchParityValidated = false;
 let adConsentTypeUnionsValidated = 0;
@@ -12066,6 +12067,7 @@ if (process.argv.includes('--focus-pro-lifetime-relaunch-parity')) {
     proLifetimeStructuredRecordParsingValidated,
     proLifetimeProviderReceiptRevalidationValidated,
     proLifetimeFailClosedClearingValidated,
+    proLifetimeFailedActionValidStoredRevalidationValidated,
     proLifetimeNativeHookProviderWiringValidated,
     proLifetimeRelaunchParityValidated,
   });
@@ -21172,11 +21174,24 @@ function validateProLifetimeRelaunchParity() {
       normalizedProLifetimeSource.match(/await clearStoredProLifetimeEntitlement\(storage\);/g) ??
       []
     ).length >= 4 &&
+    normalizedProLifetimeSource.includes('async function getFailClosedProLifetimeEntitlement({') &&
     normalizedProLifetimeSource.includes(
-      "return createResult('pending', await getProLifetimeEntitlement({ storage }), purchase);",
+      'const record = parseStoredProLifetimeEntitlementRecord(storedValue);',
     ) &&
     normalizedProLifetimeSource.includes(
-      "return createResult('not_found', await getProLifetimeEntitlement({ storage }), purchase);",
+      'await revalidateStoredProLifetimeEntitlementRecordWithConnectedProvider({ provider, record, storage, })',
+    ) &&
+    /return createResult\(\s*'pending',\s*await getFailClosedProLifetimeEntitlement\(\{\s*provider,\s*storage\s*\}\)/.test(
+      proLifetimeSource,
+    ) &&
+    /return createResult\(\s*'not_found',\s*await getFailClosedProLifetimeEntitlement\(\{\s*provider,\s*storage\s*\}\)/.test(
+      proLifetimeSource,
+    ) &&
+    !/return createResult\(\s*'pending',\s*await getProLifetimeEntitlement\(\{\s*storage\s*\}\)/.test(
+      proLifetimeSource,
+    ) &&
+    !/return createResult\(\s*'not_found',\s*await getProLifetimeEntitlement\(\{\s*storage\s*\}\)/.test(
+      proLifetimeSource,
     ) &&
     normalizedProLifetimeSource.includes("return createResult('persistence_failed'") &&
     normalizedProIapTestSource.includes(
@@ -21191,6 +21206,20 @@ function validateProLifetimeRelaunchParity() {
     normalizedProIapTestSource.includes(
       'assert.equal(await invalidStorage.getItemAsync(PRO_LIFETIME_STORAGE_KEY), null);',
     );
+  const failedActionValidStoredRevalidationCaseIsValid =
+    normalizedProLifetimeSource.includes(
+      'async function revalidateStoredProLifetimeEntitlementRecordWithConnectedProvider({',
+    ) &&
+    /const restoredPurchase = availablePurchases\.find\(\(purchase\) =>\s*purchaseMatchesStoredRecord\(purchase, record\),\s*\);/.test(
+      proLifetimeSource,
+    ) &&
+    !/availablePurchases\.find\(isProLifetimePurchase\)/.test(proLifetimeSource) &&
+    normalizedProIapTestSource.includes(
+      "test('failed Pro Lifetime actions preserve a valid stored entitlement only after matching revalidation'",
+    ) &&
+    normalizedProIapTestSource.includes('restoreSequences: [[storedPurchase]]') &&
+    normalizedProIapTestSource.includes('restoreSequences: [[differentPurchase]]') &&
+    normalizedProIapTestSource.includes('invalidStoredReceipt: true');
   const nativeHookProviderCaseIsValid =
     normalizedProHookSource.includes(
       "import { createNativePurchaseProvider, createSecureStorePurchaseStorage, createWebPurchaseStorage, } from './purchases';",
@@ -21235,6 +21264,13 @@ function validateProLifetimeRelaunchParity() {
       },
     ],
     [
+      failedActionValidStoredRevalidationCaseIsValid,
+      'Pro Lifetime failed-action validator must require matching restored purchase revalidation before preserving stored Pro',
+      () => {
+        proLifetimeFailedActionValidStoredRevalidationValidated += 1;
+      },
+    ],
+    [
       nativeHookProviderCaseIsValid,
       'Pro Lifetime relaunch validator must require native provider and secure storage wiring while web remains providerless',
       () => {
@@ -21255,6 +21291,7 @@ function validateProLifetimeRelaunchParity() {
     proLifetimeStructuredRecordParsingValidated === 1 &&
     proLifetimeProviderReceiptRevalidationValidated === 1 &&
     proLifetimeFailClosedClearingValidated === 1 &&
+    proLifetimeFailedActionValidStoredRevalidationValidated === 1 &&
     proLifetimeNativeHookProviderWiringValidated === 1
   ) {
     proLifetimeRelaunchParityValidated = true;
@@ -27764,6 +27801,7 @@ console.log(
       proLifetimeStructuredRecordParsingValidated,
       proLifetimeProviderReceiptRevalidationValidated,
       proLifetimeFailClosedClearingValidated,
+      proLifetimeFailedActionValidStoredRevalidationValidated,
       proLifetimeNativeHookProviderWiringValidated,
       proLifetimeRelaunchParityValidated,
       adConsentTypeUnionsValidated,

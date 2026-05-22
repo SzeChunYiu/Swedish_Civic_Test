@@ -2312,6 +2312,50 @@ test('Pro Lifetime uses the shared canonical timestamp helper', () => {
   );
 });
 
+test('Pro Lifetime failed action paths revalidate valid stored records before preserving Pro', () => {
+  const proLifetimeSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/proLifetimePurchase.ts'),
+    'utf8',
+  );
+  const proIapTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/v1-1-pro-iap.test.js'),
+    'utf8',
+  );
+
+  assert.match(
+    proLifetimeSource,
+    /async function getFailClosedProLifetimeEntitlement\(\{[\s\S]*parseStoredProLifetimeEntitlementRecord\(storedValue\)[\s\S]*revalidateStoredProLifetimeEntitlementRecordWithConnectedProvider\(\{[\s\S]*provider,[\s\S]*record,[\s\S]*storage,/,
+  );
+  assert.match(
+    proLifetimeSource,
+    /const restoredPurchase = availablePurchases\.find\(\(purchase\) =>\s*purchaseMatchesStoredRecord\(purchase, record\),\s*\);/,
+  );
+  assert.doesNotMatch(proLifetimeSource, /availablePurchases\.find\(isProLifetimePurchase\)/);
+  assert.match(
+    proLifetimeSource,
+    /return createResult\(\s*'pending',\s*await getFailClosedProLifetimeEntitlement\(\{\s*provider,\s*storage\s*\}\)/,
+  );
+  assert.match(
+    proLifetimeSource,
+    /return createResult\(\s*'not_found',\s*await getFailClosedProLifetimeEntitlement\(\{\s*provider,\s*storage\s*\}\)/,
+  );
+  assert.doesNotMatch(
+    proLifetimeSource,
+    /return createResult\(\s*'pending',\s*await getProLifetimeEntitlement\(\{\s*storage\s*\}\)/,
+  );
+  assert.doesNotMatch(
+    proLifetimeSource,
+    /return createResult\(\s*'not_found',\s*await getProLifetimeEntitlement\(\{\s*storage\s*\}\)/,
+  );
+  assert.match(
+    proIapTestSource,
+    /failed Pro Lifetime actions preserve a valid stored entitlement only after matching revalidation/,
+  );
+  assert.match(proIapTestSource, /restoreSequences: \[\[storedPurchase\]\]/);
+  assert.match(proIapTestSource, /restoreSequences: \[\[differentPurchase\]\]/);
+  assert.match(proIapTestSource, /invalidStoredReceipt: true/);
+});
+
 test('remove-ads entitlement storage rejects stale boolean and malformed records', async () => {
   const {
     REMOVE_ADS_PRODUCT_ID,

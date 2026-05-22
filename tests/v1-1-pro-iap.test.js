@@ -495,6 +495,186 @@ test('getProLifetimeEntitlement: provider revalidates, refreshes, and clears sto
   assert.equal(await invalidStorage.getItemAsync(PRO_LIFETIME_STORAGE_KEY), null);
 });
 
+test('failed Pro Lifetime actions preserve a valid stored entitlement only after matching revalidation', async () => {
+  const {
+    PRO_LIFETIME_PRODUCT_ID,
+    PRO_LIFETIME_STORAGE_KEY,
+    buyProLifetime,
+    restoreProLifetime,
+    setProLifetimeEntitlement,
+  } = loadTs('lib/monetization/proLifetimePurchase.ts');
+  const canonicalTimestamp = '2026-05-20T12:00:00.000Z';
+  const storedPurchase = {
+    productId: PRO_LIFETIME_PRODUCT_ID,
+    purchaseToken: 'stored-token',
+    transactionId: 'stored-tx',
+  };
+  const differentPurchase = {
+    productId: PRO_LIFETIME_PRODUCT_ID,
+    purchaseToken: 'different-token',
+    transactionId: 'different-tx',
+  };
+  const invalidCurrentPurchase = {
+    productId: PRO_LIFETIME_PRODUCT_ID,
+    purchaseToken: 'current-invalid-token',
+    transactionId: 'current-invalid-tx',
+  };
+
+  async function primeStoredPro(storage, purchase = storedPurchase) {
+    await setProLifetimeEntitlement(true, {
+      grantedAt: new Date(canonicalTimestamp),
+      purchase,
+      receiptValidation: validProReceipt({
+        productId: PRO_LIFETIME_PRODUCT_ID,
+        purchaseToken: purchase.purchaseToken,
+        transactionId: purchase.transactionId,
+      }),
+      storage,
+    });
+  }
+
+  function createProvider({
+    invalidStoredReceipt = false,
+    requestPurchase = null,
+    restoreSequences = [[]],
+  } = {}) {
+    let restoreCalls = 0;
+    const events = [];
+
+    return {
+      events,
+      provider: {
+        async connect() {
+          events.push('connect');
+        },
+        async disconnect() {
+          events.push('disconnect');
+        },
+        async finishPurchase() {
+          events.push('finish');
+        },
+        async requestRemoveAdsPurchase() {
+          events.push('request');
+          return requestPurchase;
+        },
+        async restorePurchases() {
+          events.push(`restore:${restoreCalls}`);
+          const purchases =
+            restoreSequences[Math.min(restoreCalls, restoreSequences.length - 1)] ?? [];
+          restoreCalls += 1;
+          return purchases;
+        },
+        async validateRemoveAdsReceipt(purchase, productId) {
+          events.push(`validate:${purchase.transactionId}`);
+          if (purchase.transactionId === invalidCurrentPurchase.transactionId) {
+            return { status: 'invalid' };
+          }
+          if (invalidStoredReceipt && purchase.transactionId === storedPurchase.transactionId) {
+            return { status: 'invalid' };
+          }
+          return validProReceipt({
+            productId,
+            purchaseToken: purchase.purchaseToken ?? null,
+            transactionId: purchase.transactionId ?? null,
+          });
+        },
+      },
+    };
+  }
+
+  const pendingBuyStorage = makeMemoryStorage();
+  await primeStoredPro(pendingBuyStorage);
+  const pendingBuyProvider = createProvider({ restoreSequences: [[storedPurchase]] });
+  const pendingBuy = await buyProLifetime({
+    provider: pendingBuyProvider.provider,
+    storage: pendingBuyStorage,
+  });
+
+  assert.equal(pendingBuy.status, 'pending');
+  assert.equal(pendingBuy.entitlements.spacedRepetition, true);
+  assert.deepEqual(pendingBuyProvider.events, [
+    'connect',
+    'request',
+    'restore:0',
+    'validate:stored-tx',
+    'disconnect',
+  ]);
+  assert.equal(
+    JSON.parse(await pendingBuyStorage.getItemAsync(PRO_LIFETIME_STORAGE_KEY)).transactionId,
+    storedPurchase.transactionId,
+  );
+
+  const invalidBuyStorage = makeMemoryStorage();
+  await primeStoredPro(invalidBuyStorage);
+  const invalidBuyProvider = createProvider({
+    requestPurchase: invalidCurrentPurchase,
+    restoreSequences: [[storedPurchase]],
+  });
+  const invalidBuy = await buyProLifetime({
+    provider: invalidBuyProvider.provider,
+    storage: invalidBuyStorage,
+  });
+
+  assert.equal(invalidBuy.status, 'pending');
+  assert.equal(invalidBuy.entitlements.spacedRepetition, true);
+  assert.deepEqual(invalidBuyProvider.events, [
+    'connect',
+    'request',
+    'validate:current-invalid-tx',
+    'restore:0',
+    'validate:stored-tx',
+    'disconnect',
+  ]);
+
+  const notFoundRestoreStorage = makeMemoryStorage();
+  await primeStoredPro(notFoundRestoreStorage);
+  const notFoundRestoreProvider = createProvider({
+    restoreSequences: [[], [storedPurchase]],
+  });
+  const notFoundRestore = await restoreProLifetime({
+    provider: notFoundRestoreProvider.provider,
+    storage: notFoundRestoreStorage,
+  });
+
+  assert.equal(notFoundRestore.status, 'not_found');
+  assert.equal(notFoundRestore.entitlements.spacedRepetition, true);
+  assert.deepEqual(notFoundRestoreProvider.events, [
+    'connect',
+    'restore:0',
+    'restore:1',
+    'validate:stored-tx',
+    'disconnect',
+  ]);
+
+  const nonMatchingStorage = makeMemoryStorage();
+  await primeStoredPro(nonMatchingStorage);
+  const nonMatchingProvider = createProvider({ restoreSequences: [[differentPurchase]] });
+  const nonMatchingPendingBuy = await buyProLifetime({
+    provider: nonMatchingProvider.provider,
+    storage: nonMatchingStorage,
+  });
+
+  assert.equal(nonMatchingPendingBuy.status, 'pending');
+  assert.equal(nonMatchingPendingBuy.entitlements.spacedRepetition, false);
+  assert.deepEqual(nonMatchingProvider.events, ['connect', 'request', 'restore:0', 'disconnect']);
+  assert.equal(await nonMatchingStorage.getItemAsync(PRO_LIFETIME_STORAGE_KEY), null);
+
+  const invalidStoredReceiptStorage = makeMemoryStorage();
+  await primeStoredPro(invalidStoredReceiptStorage);
+  const invalidStoredReceiptProvider = createProvider({
+    invalidStoredReceipt: true,
+    restoreSequences: [[storedPurchase]],
+  });
+  const invalidStoredReceiptBuy = await buyProLifetime({
+    provider: invalidStoredReceiptProvider.provider,
+    storage: invalidStoredReceiptStorage,
+  });
+
+  assert.equal(invalidStoredReceiptBuy.status, 'pending');
+  assert.equal(invalidStoredReceiptBuy.entitlements.spacedRepetition, false);
+  assert.equal(await invalidStoredReceiptStorage.getItemAsync(PRO_LIFETIME_STORAGE_KEY), null);
+});
+
 test('mergeWithRemoveAds: Pro purchase preserves shipped flags even if Remove-Ads is also active', () => {
   const { mergeWithRemoveAds } = loadTs('lib/monetization/proLifetimePurchase.ts');
   const removeAds = { adsDisabled: true, unlimitedMockExams: false, fullMistakeReview: false };
@@ -598,6 +778,7 @@ test('focus-pro-lifetime validator reports relaunch receipt-backed counters', ()
     proLifetimeStructuredRecordParsingValidated: 1,
     proLifetimeProviderReceiptRevalidationValidated: 1,
     proLifetimeFailClosedClearingValidated: 1,
+    proLifetimeFailedActionValidStoredRevalidationValidated: 1,
     proLifetimeNativeHookProviderWiringValidated: 1,
     proLifetimeRelaunchParityValidated: true,
   });

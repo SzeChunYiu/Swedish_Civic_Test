@@ -255,11 +255,35 @@ async function revalidateStoredProLifetimeEntitlementRecord({
   try {
     await provider.connect();
     connected = true;
+    return await revalidateStoredProLifetimeEntitlementRecordWithConnectedProvider({
+      provider,
+      record,
+      storage,
+    });
+  } catch {
+    await clearStoredProLifetimeEntitlement(storage);
+    return false;
+  } finally {
+    if (connected) {
+      await provider.disconnect?.();
+    }
+  }
+}
 
+async function revalidateStoredProLifetimeEntitlementRecordWithConnectedProvider({
+  provider,
+  record,
+  storage,
+}: {
+  provider: RemoveAdsPurchaseProvider;
+  record: StoredProLifetimeEntitlementRecord;
+  storage: PurchaseStorage;
+}): Promise<boolean> {
+  try {
     const availablePurchases = await provider.restorePurchases([PRO_LIFETIME_PRODUCT_ID]);
-    const restoredPurchase =
-      availablePurchases.find((purchase) => purchaseMatchesStoredRecord(purchase, record)) ??
-      availablePurchases.find(isProLifetimePurchase);
+    const restoredPurchase = availablePurchases.find((purchase) =>
+      purchaseMatchesStoredRecord(purchase, record),
+    );
 
     if (!restoredPurchase) {
       await clearStoredProLifetimeEntitlement(storage);
@@ -286,10 +310,6 @@ async function revalidateStoredProLifetimeEntitlementRecord({
   } catch {
     await clearStoredProLifetimeEntitlement(storage);
     return false;
-  } finally {
-    if (connected) {
-      await provider.disconnect?.();
-    }
   }
 }
 
@@ -388,6 +408,30 @@ export async function getProLifetimeEntitlement({
   );
 }
 
+async function getFailClosedProLifetimeEntitlement({
+  provider,
+  storage,
+}: {
+  provider: RemoveAdsPurchaseProvider;
+  storage: PurchaseStorage;
+}) {
+  try {
+    const storedValue = await storage.getItemAsync(PRO_LIFETIME_STORAGE_KEY);
+    const record = parseStoredProLifetimeEntitlementRecord(storedValue);
+    if (!record) return proLifetimeEntitlements(false);
+
+    return proLifetimeEntitlements(
+      await revalidateStoredProLifetimeEntitlementRecordWithConnectedProvider({
+        provider,
+        record,
+        storage,
+      }),
+    );
+  } catch {
+    return proLifetimeEntitlements(false);
+  }
+}
+
 export async function buyProLifetime({
   provider = createNativePurchaseProvider(),
   storage = createSecureStorePurchaseStorage(),
@@ -396,12 +440,19 @@ export async function buyProLifetime({
   try {
     const purchase = await provider.requestRemoveAdsPurchase(PRO_LIFETIME_PRODUCT_ID);
     if (!purchase || !isProLifetimePurchase(purchase)) {
-      return createResult('pending', await getProLifetimeEntitlement({ storage }));
+      return createResult(
+        'pending',
+        await getFailClosedProLifetimeEntitlement({ provider, storage }),
+      );
     }
 
     const receiptValidation = await validateProLifetimeReceipt(provider, purchase);
     if (!receiptValidation) {
-      return createResult('pending', await getProLifetimeEntitlement({ storage }), purchase);
+      return createResult(
+        'pending',
+        await getFailClosedProLifetimeEntitlement({ provider, storage }),
+        purchase,
+      );
     }
 
     const persistenceResult = await persistValidatedProLifetimeEntitlement({
@@ -430,12 +481,19 @@ export async function restoreProLifetime({
     const purchases = await provider.restorePurchases([PRO_LIFETIME_PRODUCT_ID]);
     const purchase = purchases.find(isProLifetimePurchase);
     if (!purchase) {
-      return createResult('not_found', await getProLifetimeEntitlement({ storage }));
+      return createResult(
+        'not_found',
+        await getFailClosedProLifetimeEntitlement({ provider, storage }),
+      );
     }
 
     const receiptValidation = await validateProLifetimeReceipt(provider, purchase);
     if (!receiptValidation) {
-      return createResult('not_found', await getProLifetimeEntitlement({ storage }), purchase);
+      return createResult(
+        'not_found',
+        await getFailClosedProLifetimeEntitlement({ provider, storage }),
+        purchase,
+      );
     }
 
     const persistenceResult = await persistValidatedProLifetimeEntitlement({
