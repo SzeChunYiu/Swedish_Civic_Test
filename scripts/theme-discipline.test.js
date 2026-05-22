@@ -30,6 +30,8 @@ const HEADER_THEME_ICONS = [
   'components/ui/icons/SearchIcon.tsx',
   'components/ui/icons/SettingsIcon.tsx',
 ];
+const PRO_LEARNING_THEME_SURFACES = ['components/quiz/PostAnswerRewardPanel.tsx'];
+const POST_ANSWER_REWARD_CALLERS = ['app/(tabs)/practice.tsx', 'app/quiz/[sessionId].tsx'];
 const COLOR_LITERAL = /#[0-9a-fA-F]{6}|rgba?\(/;
 const SPACING_LITERAL = /\b(?:padding(?:Horizontal|Vertical)?|marginTop|gap|borderRadius):\s*\d/;
 const TYPOGRAPHY_LITERAL =
@@ -325,6 +327,58 @@ test('monetization surfaces resolve semantic colors from the active theme', () =
       source,
       /\bcolors\./,
       `${componentPath} must not read static colors.* values`,
+    );
+  }
+});
+
+test('post-answer reward surfaces resolve semantic colors from the active theme', () => {
+  for (const componentPath of PRO_LEARNING_THEME_SURFACES) {
+    const source = read(componentPath);
+
+    assert.match(
+      source,
+      /useThemeColors\(\)/,
+      `${componentPath} should read the active theme color context`,
+    );
+    assert.match(
+      source,
+      /function createStyles\(themeColors: ThemeColors\)/,
+      `${componentPath} should derive styles from ThemeColors`,
+    );
+    assert.match(
+      source,
+      /<Badge themeColors=\{themeColors\}/,
+      `${componentPath} should pass active theme colors to reward badges`,
+    );
+    assert.doesNotMatch(
+      source,
+      /import \{[^}]*\bcolors\b[^}]*\} from ['"]\.\.\/\.\.\/lib\/theme['"]/,
+      `${componentPath} must not import the static light color singleton`,
+    );
+    assert.doesNotMatch(
+      source,
+      /\bcolors\./,
+      `${componentPath} must not read static colors.* values`,
+    );
+  }
+
+  for (const callerPath of POST_ANSWER_REWARD_CALLERS) {
+    const source = read(callerPath);
+
+    assert.match(
+      source,
+      /<PostAnswerRewardPanel[\s\S]*answerXp=\{[\s\S]*totalXp=\{totalXp\}/,
+      `${callerPath} should render the themed post-answer reward panel with XP totals`,
+    );
+    assert.match(
+      source,
+      /calculateLevel\(totalXp\)/,
+      `${callerPath} should pass the current level`,
+    );
+    assert.match(
+      source,
+      /calculateStreak\(answerDates\)/,
+      `${callerPath} should pass the current answer streak`,
     );
   }
 });

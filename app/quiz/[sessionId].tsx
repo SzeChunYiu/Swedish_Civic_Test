@@ -9,6 +9,7 @@ import { AnswerOption } from '../../components/quiz/AnswerOption';
 import { CelebrationBurst } from '../../components/quiz/CelebrationBurst';
 import { ConfidenceRatingPicker } from '../../components/quiz/ConfidenceRatingPicker';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
+import { PostAnswerRewardPanel } from '../../components/quiz/PostAnswerRewardPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { QuestionReportLink } from '../../components/quiz/QuestionReportLink';
@@ -24,6 +25,8 @@ import {
   buildQuestionSpeechText,
   stopSpeech,
 } from '../../lib/audio/speak';
+import { calculateStreak } from '../../lib/learning/streaks';
+import { calculateAnswerXp, calculateLevel } from '../../lib/learning/xp';
 import { useProLifetimeEntitlements } from '../../lib/monetization/useProLifetimeEntitlements';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
@@ -164,6 +167,8 @@ export default function QuizSessionScreen() {
   const recordWrongAnswerReview = useMistakeReviewStore((state) => state.recordWrongAnswerReview);
   const recordAnswer = useProgressStore((state) => state.recordAnswer);
   const questionProgress = useProgressStore((state) => state.questionProgress);
+  const totalXp = useProgressStore((state) => state.totalXp);
+  const answerDates = useProgressStore((state) => state.answerDates);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
   const audioPlaybackRate = useAccessibilityStore((state) => state.audioPlaybackRate);
@@ -172,6 +177,8 @@ export default function QuizSessionScreen() {
     useProLifetimeEntitlements();
   const confidenceRatingEnabled = proEntitlementsReady && proEntitlements.confidenceSlider === true;
   const copy = quizSessionCopy[language];
+  const level = calculateLevel(totalXp);
+  const streakDays = useMemo(() => calculateStreak(answerDates), [answerDates]);
   const chapterContextTitle = chapterContext ? copy.chapterTitle(chapterContext) : null;
   const sessionTitle = chapterContextTitle
     ? copy.chapterSessionTitle(chapterContextTitle)
@@ -265,6 +272,9 @@ export default function QuizSessionScreen() {
   const score = hasSelectedAnswer ? scoreAnswers([selectedIsCorrect]) : null;
   const celebrationStreak = selectedIsCorrect
     ? (questionProgress[question.id]?.correctStreak ?? 1)
+    : 0;
+  const answerXp = hasSelectedAnswer
+    ? calculateAnswerXp({ isCorrect: selectedIsCorrect, explanationRead: true })
     : 0;
 
   const handleSelectOption = (optionId: string) => {
@@ -366,6 +376,16 @@ export default function QuizSessionScreen() {
               {copy.scoreLabel}: {score.correct}/{score.total}
             </Text>
           ) : null}
+          <PostAnswerRewardPanel
+            answerXp={answerXp}
+            correctStreak={celebrationStreak}
+            isCorrect={selectedIsCorrect}
+            language={language}
+            level={level}
+            question={question}
+            streakDays={streakDays}
+            totalXp={totalXp}
+          />
           <ExplanationPanel
             explanationEn={question.explanationEn}
             explanationSv={question.explanationSv}

@@ -11,6 +11,7 @@ import { AnswerOption } from '../../components/quiz/AnswerOption';
 import { CelebrationBurst } from '../../components/quiz/CelebrationBurst';
 import { ConfidenceRatingPicker } from '../../components/quiz/ConfidenceRatingPicker';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
+import { PostAnswerRewardPanel } from '../../components/quiz/PostAnswerRewardPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { QuestionReportLink } from '../../components/quiz/QuestionReportLink';
@@ -28,10 +29,8 @@ import {
   stopSpeech,
 } from '../../lib/audio/speak';
 import { filterQuestionsByProvenance } from '../../lib/content/provenance';
-import {
-  buildDailyChallenge,
-  DAILY_CHALLENGE_TIME_LIMIT_SECONDS,
-} from '../../lib/learning/dailyChallenge';
+import { calculateStreak } from '../../lib/learning/streaks';
+import { calculateAnswerXp, calculateLevel } from '../../lib/learning/xp';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
 import {
@@ -70,7 +69,6 @@ type PracticeCopy = {
   bookmark: string;
   bookmarked: string;
   bookmarkAccessibilityLabel: (isBookmarked: boolean) => string;
-  challengeTimer: (remainingSeconds: number) => string;
   chapterAccuracy: (accuracy: number) => string;
   chapterCardAccessibilityLabel: (
     chapterName: string,
@@ -118,7 +116,6 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     bookmarked: 'Bokmärkt',
     bookmarkAccessibilityLabel: (isBookmarked) =>
       isBookmarked ? 'Ta bort bokmärket från den här frågan' : 'Bokmärk den här frågan',
-    challengeTimer: (remainingSeconds) => `Tid kvar: ${remainingSeconds} sekunder`,
     chapterAccuracy: (accuracy) => `${accuracy}% rätt`,
     chapterCardAccessibilityLabel: (chapterName, answered, total, accuracy) =>
       `${chapterName}: ${answered} av ${total} frågor besvarade, ${accuracy}% rätt. Öva det här kapitlet.`,
@@ -163,7 +160,6 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     bookmarked: 'Bookmarked',
     bookmarkAccessibilityLabel: (isBookmarked) =>
       isBookmarked ? 'Remove this question bookmark' : 'Bookmark this question',
-    challengeTimer: (remainingSeconds) => `Time left: ${remainingSeconds} seconds`,
     chapterAccuracy: (accuracy) => `${accuracy}% accuracy`,
     chapterCardAccessibilityLabel: (chapterName, answered, total, accuracy) =>
       `${chapterName}: ${answered} of ${total} questions answered, ${accuracy}% accuracy. Practise this chapter.`,
@@ -274,13 +270,12 @@ export default function Screen() {
   const shuffleSessionId = usePracticeSessionStore((state) => state.shuffleSessionId);
   const completedQuestionIds = useProgressStore((state) => state.completedQuestionIds);
   const recordAnswer = useProgressStore((state) => state.recordAnswer);
-  const recordDailyChallengeCompletion = useProgressStore(
-    (state) => state.recordDailyChallengeCompletion,
-  );
   const progressPersistenceWarning = useProgressStore((state) => state.persistenceWarning);
   const clearProgressPersistenceWarning = useProgressStore(
     (state) => state.clearPersistenceWarning,
   );
+  const totalXp = useProgressStore((state) => state.totalXp);
+  const answerDates = useProgressStore((state) => state.answerDates);
   const recordWrongAnswerReview = useMistakeReviewStore((state) => state.recordWrongAnswerReview);
   const mistakeReviewPersistenceWarning = useMistakeReviewStore(
     (state) => state.persistenceWarning,
@@ -308,14 +303,12 @@ export default function Screen() {
   const [selectedConfidenceRating, setSelectedConfidenceRating] = useState<ConfidenceRating | null>(
     null,
   );
-  const [challengeAnswerResults, setChallengeAnswerResults] = useState<Record<string, boolean>>({});
-  const [challengeStartedAtMs, setChallengeStartedAtMs] = useState<number | null>(null);
-  const [remainingChallengeSeconds, setRemainingChallengeSeconds] = useState(
-    DAILY_CHALLENGE_TIME_LIMIT_SECONDS,
-  );
+  const [answerXpAwardedForSelection, setAnswerXpAwardedForSelection] = useState(0);
   const { entitlements: proEntitlements, entitlementsReady: proEntitlementsReady } =
     useProLifetimeEntitlements();
   const copy = practiceCopy[language];
+  const level = calculateLevel(totalXp);
+  const streakDays = useMemo(() => calculateStreak(answerDates), [answerDates]);
   const filteredQuestions = useMemo(
     () => filterQuestionsByProvenance(questions, { includeSupplementary }),
     [includeSupplementary],
@@ -396,38 +389,14 @@ export default function Screen() {
   }, [question?.id]);
 
   useEffect(() => {
-    if (practiceScope?.type !== 'challenge' || challengeStartedAtMs === null) return undefined;
+    setAnswerXpAwardedForSelection(0);
+  }, [question?.id, shuffleSessionId]);
 
-    const updateRemainingSeconds = () => {
-      const elapsedSeconds = Math.floor((Date.now() - challengeStartedAtMs) / 1000);
-      setRemainingChallengeSeconds(Math.max(0, dailyChallenge.timeLimitSeconds - elapsedSeconds));
-    };
-
-    updateRemainingSeconds();
-    const timerId = setInterval(updateRemainingSeconds, 1000);
-    return () => clearInterval(timerId);
-  }, [challengeStartedAtMs, dailyChallenge.timeLimitSeconds, practiceScope?.type]);
-
-  useEffect(() => {
-    if (!routeLaunchMode || consumedRouteLaunchModeRef.current === routeLaunchMode) return;
-
-    const nextScope: PracticeScope =
-      routeLaunchMode === 'challenge'
-        ? { type: 'challenge', questionIds: dailyChallenge.questionIds }
-        : { type: 'quick', limit: 10 };
+  const startPracticeScope = (nextScope: PracticeScope) => {
     const nextQuestionBank = getQuestionsForPracticeScope(filteredQuestions, nextScope);
     if (nextQuestionBank.length === 0) return;
 
     consumedRouteLaunchModeRef.current = routeLaunchMode;
-    if (nextScope.type === 'challenge') {
-      setChallengeAnswerResults({});
-      setChallengeStartedAtMs(Date.now());
-      setRemainingChallengeSeconds(dailyChallenge.timeLimitSeconds);
-    } else {
-      setChallengeAnswerResults({});
-      setChallengeStartedAtMs(null);
-      setRemainingChallengeSeconds(DAILY_CHALLENGE_TIME_LIMIT_SECONDS);
-    }
     startSession(nextQuestionBank[0]?.id ?? null);
     setAboutSourcesOpen(false);
     setSelectedConfidenceRating(null);
@@ -444,9 +413,6 @@ export default function Screen() {
     startSession(nextQuestion?.id ?? null);
     setAboutSourcesOpen(false);
     setSelectedConfidenceRating(null);
-    setChallengeAnswerResults({});
-    setChallengeStartedAtMs(null);
-    setRemainingChallengeSeconds(DAILY_CHALLENGE_TIME_LIMIT_SECONDS);
     setPracticeScope(nextScope);
   };
   const handleSupplementaryToggle = () => {
@@ -480,9 +446,6 @@ export default function Screen() {
     startSession(firstUnansweredQuestion?.id ?? null);
     setAboutSourcesOpen(false);
     setSelectedConfidenceRating(null);
-    setChallengeAnswerResults({});
-    setChallengeStartedAtMs(null);
-    setRemainingChallengeSeconds(DAILY_CHALLENGE_TIME_LIMIT_SECONDS);
     setPracticeScope({ type: 'chapter', chapterId });
   };
 
@@ -601,57 +564,15 @@ export default function Screen() {
     selectOption(question.id, optionId);
     const answerXpAwardKey = getPracticeAnswerXpAwardKey(question.id, shuffleSessionId);
     const shouldAwardXp = answerXpAwardedKey !== answerXpAwardKey;
+    const answerXp = shouldAwardXp
+      ? calculateAnswerXp({ isCorrect: optionIsCorrect, explanationRead: true })
+      : 0;
+
     recordAnswer(question.id, optionIsCorrect, answerConfidenceRating, {
       awardXp: shouldAwardXp,
     });
     if (shouldAwardXp) markAnswerXpAwarded(answerXpAwardKey);
-
-    if (practiceScope?.type === 'challenge') {
-      const nextChallengeAnswerResults = Object.prototype.hasOwnProperty.call(
-        challengeAnswerResults,
-        question.id,
-      )
-        ? challengeAnswerResults
-        : {
-            ...challengeAnswerResults,
-            [question.id]: optionIsCorrect,
-          };
-
-      if (nextChallengeAnswerResults !== challengeAnswerResults) {
-        setChallengeAnswerResults(nextChallengeAnswerResults);
-
-        const challengeQuestionIds = practiceQuestionBank.map((candidate) => candidate.id);
-        const answeredChallengeQuestionCount = challengeQuestionIds.filter((questionId) =>
-          Object.prototype.hasOwnProperty.call(nextChallengeAnswerResults, questionId),
-        ).length;
-
-        if (
-          challengeQuestionIds.length > 0 &&
-          answeredChallengeQuestionCount >= challengeQuestionIds.length
-        ) {
-          const correctCount = challengeQuestionIds.filter(
-            (questionId) => nextChallengeAnswerResults[questionId],
-          ).length;
-          const timeSpentSeconds =
-            challengeStartedAtMs === null
-              ? 0
-              : Math.min(
-                  dailyChallenge.timeLimitSeconds,
-                  Math.max(0, Math.floor((Date.now() - challengeStartedAtMs) / 1000)),
-                );
-
-          recordDailyChallengeCompletion({
-            completedAt: new Date().toISOString(),
-            correctCount,
-            dayKey: dailyChallenge.dayKey,
-            questionIds: challengeQuestionIds,
-            score: correctCount / challengeQuestionIds.length,
-            timeSpentSeconds,
-            totalCount: challengeQuestionIds.length,
-          });
-        }
-      }
-    }
+    setAnswerXpAwardedForSelection(answerXp);
 
     if (!optionIsCorrect && selectedOption) {
       recordWrongAnswerReview({
@@ -667,6 +588,7 @@ export default function Screen() {
   };
   const handleTryAgain = () => {
     setSelectedConfidenceRating(null);
+    setAnswerXpAwardedForSelection(0);
     resetSelection();
   };
 
@@ -682,11 +604,6 @@ export default function Screen() {
         <Text style={styles.meta}>
           {copy.completedQuestions(visibleCompletedQuestionIds.length)}
         </Text>
-        {practiceScope.type === 'challenge' ? (
-          <Text accessibilityRole="timer" style={styles.challengeTimer}>
-            {copy.challengeTimer(remainingChallengeSeconds)}
-          </Text>
-        ) : null}
         <View style={styles.headerControls}>
           <Pressable
             android_ripple={{ color: colors.focusSoft }}
@@ -850,6 +767,16 @@ export default function Screen() {
               {copy.scoreLabel}: {currentScore.correct}/{currentScore.total}
             </Text>
           ) : null}
+          <PostAnswerRewardPanel
+            answerXp={answerXpAwardedForSelection}
+            correctStreak={celebrationStreak}
+            isCorrect={selectedIsCorrect}
+            language={language}
+            level={level}
+            question={question}
+            streakDays={streakDays}
+            totalXp={totalXp}
+          />
           <ExplanationPanel
             explanationEn={question.explanationEn}
             explanationSv={question.explanationSv}
@@ -974,12 +901,6 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontSize: typography.body.fontSize,
     lineHeight: typography.body.lineHeight,
-  },
-  challengeTimer: {
-    color: colors.accent,
-    fontSize: typography.caption.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    lineHeight: typography.caption.lineHeight,
   },
   meta: {
     color: colors.textMuted,
