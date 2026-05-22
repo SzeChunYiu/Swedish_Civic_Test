@@ -28,7 +28,10 @@ import {
   stopSpeech,
 } from '../../lib/audio/speak';
 import { filterQuestionsByProvenance } from '../../lib/content/provenance';
-import { buildDailyChallenge } from '../../lib/learning/dailyChallenge';
+import {
+  buildDailyChallenge,
+  DAILY_CHALLENGE_TIME_LIMIT_SECONDS,
+} from '../../lib/learning/dailyChallenge';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
 import {
@@ -67,6 +70,7 @@ type PracticeCopy = {
   bookmark: string;
   bookmarked: string;
   bookmarkAccessibilityLabel: (isBookmarked: boolean) => string;
+  challengeTimer: (remainingSeconds: number) => string;
   chapterAccuracy: (accuracy: number) => string;
   chapterCardAccessibilityLabel: (
     chapterName: string,
@@ -114,6 +118,7 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     bookmarked: 'Bokmärkt',
     bookmarkAccessibilityLabel: (isBookmarked) =>
       isBookmarked ? 'Ta bort bokmärket från den här frågan' : 'Bokmärk den här frågan',
+    challengeTimer: (remainingSeconds) => `Tid kvar: ${remainingSeconds} sekunder`,
     chapterAccuracy: (accuracy) => `${accuracy}% rätt`,
     chapterCardAccessibilityLabel: (chapterName, answered, total, accuracy) =>
       `${chapterName}: ${answered} av ${total} frågor besvarade, ${accuracy}% rätt. Öva det här kapitlet.`,
@@ -158,6 +163,7 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     bookmarked: 'Bookmarked',
     bookmarkAccessibilityLabel: (isBookmarked) =>
       isBookmarked ? 'Remove this question bookmark' : 'Bookmark this question',
+    challengeTimer: (remainingSeconds) => `Time left: ${remainingSeconds} seconds`,
     chapterAccuracy: (accuracy) => `${accuracy}% accuracy`,
     chapterCardAccessibilityLabel: (chapterName, answered, total, accuracy) =>
       `${chapterName}: ${answered} of ${total} questions answered, ${accuracy}% accuracy. Practise this chapter.`,
@@ -268,6 +274,9 @@ export default function Screen() {
   const shuffleSessionId = usePracticeSessionStore((state) => state.shuffleSessionId);
   const completedQuestionIds = useProgressStore((state) => state.completedQuestionIds);
   const recordAnswer = useProgressStore((state) => state.recordAnswer);
+  const recordDailyChallengeCompletion = useProgressStore(
+    (state) => state.recordDailyChallengeCompletion,
+  );
   const progressPersistenceWarning = useProgressStore((state) => state.persistenceWarning);
   const clearProgressPersistenceWarning = useProgressStore(
     (state) => state.clearPersistenceWarning,
@@ -298,6 +307,11 @@ export default function Screen() {
   );
   const [selectedConfidenceRating, setSelectedConfidenceRating] = useState<ConfidenceRating | null>(
     null,
+  );
+  const [challengeAnswerResults, setChallengeAnswerResults] = useState<Record<string, boolean>>({});
+  const [challengeStartedAtMs, setChallengeStartedAtMs] = useState<number | null>(null);
+  const [remainingChallengeSeconds, setRemainingChallengeSeconds] = useState(
+    DAILY_CHALLENGE_TIME_LIMIT_SECONDS,
   );
   const { entitlements: proEntitlements, entitlementsReady: proEntitlementsReady } =
     useProLifetimeEntitlements();
@@ -382,6 +396,19 @@ export default function Screen() {
   }, [question?.id]);
 
   useEffect(() => {
+    if (practiceScope?.type !== 'challenge' || challengeStartedAtMs === null) return undefined;
+
+    const updateRemainingSeconds = () => {
+      const elapsedSeconds = Math.floor((Date.now() - challengeStartedAtMs) / 1000);
+      setRemainingChallengeSeconds(Math.max(0, dailyChallenge.timeLimitSeconds - elapsedSeconds));
+    };
+
+    updateRemainingSeconds();
+    const timerId = setInterval(updateRemainingSeconds, 1000);
+    return () => clearInterval(timerId);
+  }, [challengeStartedAtMs, dailyChallenge.timeLimitSeconds, practiceScope?.type]);
+
+  useEffect(() => {
     if (!routeLaunchMode || consumedRouteLaunchModeRef.current === routeLaunchMode) return;
 
     const nextScope: PracticeScope =
@@ -392,6 +419,15 @@ export default function Screen() {
     if (nextQuestionBank.length === 0) return;
 
     consumedRouteLaunchModeRef.current = routeLaunchMode;
+    if (nextScope.type === 'challenge') {
+      setChallengeAnswerResults({});
+      setChallengeStartedAtMs(Date.now());
+      setRemainingChallengeSeconds(dailyChallenge.timeLimitSeconds);
+    } else {
+      setChallengeAnswerResults({});
+      setChallengeStartedAtMs(null);
+      setRemainingChallengeSeconds(DAILY_CHALLENGE_TIME_LIMIT_SECONDS);
+    }
     startSession(nextQuestionBank[0]?.id ?? null);
     setAboutSourcesOpen(false);
     setSelectedConfidenceRating(null);
@@ -408,6 +444,9 @@ export default function Screen() {
     startSession(nextQuestion?.id ?? null);
     setAboutSourcesOpen(false);
     setSelectedConfidenceRating(null);
+    setChallengeAnswerResults({});
+    setChallengeStartedAtMs(null);
+    setRemainingChallengeSeconds(DAILY_CHALLENGE_TIME_LIMIT_SECONDS);
     setPracticeScope(nextScope);
   };
   const handleSupplementaryToggle = () => {
@@ -441,6 +480,9 @@ export default function Screen() {
     startSession(firstUnansweredQuestion?.id ?? null);
     setAboutSourcesOpen(false);
     setSelectedConfidenceRating(null);
+    setChallengeAnswerResults({});
+    setChallengeStartedAtMs(null);
+    setRemainingChallengeSeconds(DAILY_CHALLENGE_TIME_LIMIT_SECONDS);
     setPracticeScope({ type: 'chapter', chapterId });
   };
 
@@ -563,6 +605,53 @@ export default function Screen() {
     });
     if (shouldAwardXp) markAnswerXpAwarded(answerXpAwardKey);
 
+    if (practiceScope?.type === 'challenge') {
+      const nextChallengeAnswerResults = Object.prototype.hasOwnProperty.call(
+        challengeAnswerResults,
+        question.id,
+      )
+        ? challengeAnswerResults
+        : {
+            ...challengeAnswerResults,
+            [question.id]: optionIsCorrect,
+          };
+
+      if (nextChallengeAnswerResults !== challengeAnswerResults) {
+        setChallengeAnswerResults(nextChallengeAnswerResults);
+
+        const challengeQuestionIds = practiceQuestionBank.map((candidate) => candidate.id);
+        const answeredChallengeQuestionCount = challengeQuestionIds.filter((questionId) =>
+          Object.prototype.hasOwnProperty.call(nextChallengeAnswerResults, questionId),
+        ).length;
+
+        if (
+          challengeQuestionIds.length > 0 &&
+          answeredChallengeQuestionCount >= challengeQuestionIds.length
+        ) {
+          const correctCount = challengeQuestionIds.filter(
+            (questionId) => nextChallengeAnswerResults[questionId],
+          ).length;
+          const timeSpentSeconds =
+            challengeStartedAtMs === null
+              ? 0
+              : Math.min(
+                  dailyChallenge.timeLimitSeconds,
+                  Math.max(0, Math.floor((Date.now() - challengeStartedAtMs) / 1000)),
+                );
+
+          recordDailyChallengeCompletion({
+            completedAt: new Date().toISOString(),
+            correctCount,
+            dayKey: dailyChallenge.dayKey,
+            questionIds: challengeQuestionIds,
+            score: correctCount / challengeQuestionIds.length,
+            timeSpentSeconds,
+            totalCount: challengeQuestionIds.length,
+          });
+        }
+      }
+    }
+
     if (!optionIsCorrect && selectedOption) {
       recordWrongAnswerReview({
         questionId: question.id,
@@ -592,6 +681,11 @@ export default function Screen() {
         <Text style={styles.meta}>
           {copy.completedQuestions(visibleCompletedQuestionIds.length)}
         </Text>
+        {practiceScope.type === 'challenge' ? (
+          <Text accessibilityRole="timer" style={styles.challengeTimer}>
+            {copy.challengeTimer(remainingChallengeSeconds)}
+          </Text>
+        ) : null}
         <View style={styles.headerControls}>
           <Pressable
             android_ripple={{ color: colors.focusSoft }}
@@ -879,6 +973,12 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontSize: typography.body.fontSize,
     lineHeight: typography.body.lineHeight,
+  },
+  challengeTimer: {
+    color: colors.accent,
+    fontSize: typography.caption.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    lineHeight: typography.caption.lineHeight,
   },
   meta: {
     color: colors.textMuted,

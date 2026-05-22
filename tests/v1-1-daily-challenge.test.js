@@ -125,16 +125,29 @@ test('daily challenge is surfaced from Home and launched through Practice challe
   assert.match(homeSource, /dailyChallengeBannerCopy\(dailyChallengeCompleted, language\)/);
   assert.match(homeSource, /href="\/practice\?mode=challenge"/);
   assert.match(homeSource, /dailyChallengeCompletions/);
+  assert.match(homeSource, /dailyChallengeCta: \(completed\) => \(completed \? 'Öva igen'/);
+  assert.match(homeSource, /dailyChallengeCta: \(completed\) => \(completed \? 'Practise again'/);
 
   assert.match(practiceSource, /useLocalSearchParams/);
-  assert.match(practiceSource, /const isChallengeMode = mode === 'challenge';/);
+  assert.match(practiceSource, /type PracticeRouteLaunchMode = 'challenge' \| 'quick';/);
+  assert.match(practiceSource, /function normalizePracticeRouteLaunchMode\(/);
+  assert.match(practiceSource, /rawValue === 'challenge' \|\| rawValue === 'quick'/);
+  assert.match(practiceSource, /const routeLaunchMode = normalizePracticeRouteLaunchMode\(mode\);/);
   assert.match(
     practiceSource,
-    /const practiceQuestionBank = isChallengeMode \? challengeQuestions : filteredQuestions;/,
+    /if \(!routeLaunchMode \|\| consumedRouteLaunchModeRef\.current === routeLaunchMode\) return;/,
   );
+  assert.match(practiceSource, /routeLaunchMode === 'challenge'/);
+  assert.match(practiceSource, /type: 'challenge', questionIds: dailyChallenge\.questionIds/);
+  assert.match(practiceSource, /const nextQuestionBank = getQuestionsForPracticeScope/);
+  assert.match(practiceSource, /startSession\(nextQuestionBank\[0\]\?\.id \?\? null\);/);
+  assert.match(practiceSource, /setPracticeScope\(nextScope\);/);
   assert.match(practiceSource, /copy\.challengeTimer\(remainingChallengeSeconds\)/);
   assert.match(practiceSource, /recordDailyChallengeCompletion/);
-  assert.match(practiceSource, /setChallengeRetryActive\(true\)/);
+  assert.match(practiceSource, /challengeAnswerResults/);
+  assert.match(practiceSource, /correctCount \/ challengeQuestionIds\.length/);
+  assert.doesNotMatch(practiceSource, /const isChallengeMode = mode === 'challenge';/);
+  assert.doesNotMatch(practiceSource, /setChallengeRetryActive/);
 });
 
 test('daily challenge completion is persisted by local day in the progress store', () => {
