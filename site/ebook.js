@@ -6,17 +6,242 @@
 (function () {
   'use strict';
 
+  const EBOOK_EXTRA_SOURCE_LABELS = Object.freeze({
+    uhrStudyMaterial: {
+      'zh-Hans': 'UHR 公共学习材料',
+      'zh-Hant': 'UHR 公共學習材料',
+      ar: 'مواد UHR الدراسية العامة',
+      ckb: 'مادەی خوێندنی گشتیی UHR',
+      fa: 'مواد آموزشی عمومی UHR',
+      pl: 'publiczne materiały edukacyjne UHR',
+      so: 'Agabka waxbarasho ee dadweynaha ee UHR',
+      ti: 'ህዝባዊ መምሃሪ ናይ UHR',
+      tr: "UHR'nin kamuya açık çalışma materyali",
+      uk: 'публічні навчальні матеріали UHR',
+    },
+    uhrOfficialTestSources: {
+      'zh-Hans': 'UHR 关于公民考试的最新来源页面',
+      'zh-Hant': 'UHR 關於公民考試的最新來源頁面',
+      ar: 'صفحات UHR الحالية كمصادر عن اختبار الجنسية',
+      ckb: 'پەڕە سەرچاوە نوێکانی UHR دەربارەی تاقیکردنەوەی هاووڵاتیبوون',
+      fa: 'صفحه‌های منبع به‌روز UHR درباره آزمون شهروندی',
+      pl: 'aktualne strony źródłowe UHR o teście obywatelskim',
+      so: 'Bogagga ilaha ee UHR ee imtixaanka muwaadinimada',
+      ti: 'ናይ UHR እዋናዊ ምንጪ ገጻት ብዛዕባ ፈተና ዜግነት',
+      tr: 'UHR vatandaşlık testi için güncel kaynak sayfaları',
+      uk: 'актуальні сторінки UHR про тест на громадянство',
+    },
+    uhrOfficialTestAbout: {
+      'zh-Hans': 'UHR：关于公民考试',
+      'zh-Hant': 'UHR：關於公民考試',
+      ar: 'UHR: حول اختبار الجنسية',
+      ckb: 'UHR: دەربارەی تاقیکردنەوەی هاووڵاتیبوون',
+      fa: 'UHR: درباره آزمون شهروندی',
+      pl: 'UHR: o teście obywatelskim',
+      so: 'UHR: Ku saabsan imtixaanka muwaadinimada',
+      ti: 'UHR፦ ብዛዕባ ፈተና ዜግነት',
+      tr: 'UHR: Vatandaşlık testi hakkında',
+      uk: 'UHR: про тест на громадянство',
+    },
+    uhrOfficialTestFaq: {
+      'zh-Hans': 'UHR：问答',
+      'zh-Hant': 'UHR：問答',
+      ar: 'UHR: أسئلة وأجوبة',
+      ckb: 'UHR: پرسیار و وەڵام',
+      fa: 'UHR: پرسش و پاسخ',
+      pl: 'UHR: pytania i odpowiedzi',
+      so: 'UHR: Su’aalo iyo jawaabo',
+      ti: 'UHR፦ ሕቶታትን መልስታትን',
+      tr: 'UHR: Sorular ve yanıtlar',
+      uk: 'UHR: запитання й відповіді',
+    },
+    uhrOfficialTestSignup: {
+      'zh-Hans': 'UHR：报名',
+      'zh-Hant': 'UHR：報名',
+      ar: 'UHR: التسجيل',
+      ckb: 'UHR: تۆمارکردن',
+      fa: 'UHR: ثبت‌نام',
+      pl: 'UHR: rejestracja',
+      so: 'UHR: Isdiiwaangelin',
+      ti: 'UHR፦ ምዝገባ',
+      tr: 'UHR: Kayıt',
+      uk: 'UHR: реєстрація',
+    },
+    uhrOfficialTestStudyMaterial: {
+      'zh-Hans': 'UHR：学习材料',
+      'zh-Hant': 'UHR：學習材料',
+      ar: 'UHR: مواد الدراسة',
+      ckb: 'UHR: مادەی خوێندن',
+      fa: 'UHR: مواد آموزشی',
+      pl: 'UHR: materiały edukacyjne',
+      so: 'UHR: Agab waxbarasho',
+      ti: 'UHR፦ መምሃሪ ንዋት',
+      tr: 'UHR: Çalışma materyali',
+      uk: 'UHR: навчальні матеріали',
+    },
+    scbLandUse: {
+      'zh-Hans': 'SCB 土地和水域面积统计',
+      'zh-Hant': 'SCB 土地和水域面積統計',
+      ar: 'إحصاءات SCB لمساحات اليابسة والمياه',
+      ckb: 'ئاماری SCB بۆ ڕووبەری وشکانی و ئاو',
+      fa: 'آمار SCB درباره مساحت خشکی و آب',
+      pl: 'statystyki SCB o powierzchni lądu i wód',
+      so: 'Tirakoobka SCB ee dhulka iyo biyaha',
+      ti: 'ናይ SCB ስታቲስቲክስ መሬትን ማይን',
+      tr: 'SCB kara ve su alanı istatistikleri',
+      uk: 'статистика SCB про площу суші й води',
+    },
+    riksbankHistory: {
+      'zh-Hans': '瑞典央行历史时间线',
+      'zh-Hant': '瑞典央行歷史時間線',
+      ar: 'الخط الزمني التاريخي للبنك المركزي السويدي',
+      ckb: 'هێڵی کاتی مێژوویی Riksbank',
+      fa: 'خط زمانی تاریخی ریکس‌بانک',
+      pl: 'oś czasu historii Riksbanku',
+      so: 'Jadwalka taariikhda Riksbank',
+      ti: 'ናይ Riksbank ታሪኻዊ መስመር ግዜ',
+      tr: 'Riksbank tarih zaman çizelgesi',
+      uk: 'історична хронологія Ріксбанку',
+    },
+    governmentNato: {
+      'zh-Hans': '瑞典政府办公室关于加入 NATO 的公告',
+      'zh-Hant': '瑞典政府辦公室關於加入 NATO 的公告',
+      ar: 'إشعار مكاتب الحكومة بشأن عضوية الناتو',
+      ckb: 'ئاگاداریی ئۆفیسەکانی حکومەت دەربارەی ئەندامێتی NATO',
+      fa: 'اطلاعیه دفاتر دولت درباره عضویت در ناتو',
+      pl: 'komunikat Kancelarii Rządu o członkostwie w NATO',
+      so: 'Ogeysiiska Xafiisyada Dowladda ee xubinnimada NATO',
+      ti: 'ምልክታ ቤት ጽሕፈታት መንግስቲ ብዛዕባ ኣባልነት NATO',
+      tr: 'Hükümet Ofisleri NATO üyeliği duyurusu',
+      uk: 'повідомлення Урядових офісів про членство в NATO',
+    },
+    migrationsverketCitizenshipRules: {
+      'zh-Hans': '移民局 2026 年 6 月 6 日起的公民身份规则变更',
+      'zh-Hant': '移民局 2026 年 6 月 6 日起的公民身分規則變更',
+      ar: 'تغييرات قواعد الجنسية لدى مصلحة الهجرة اعتبارًا من 6 يونيو 2026',
+      ckb: 'گۆڕانکاریی یاساکانی هاووڵاتیبوون لە Migrationsverket لە 6ی حوزەیرانی 2026ەوە',
+      fa: 'تغییرات قوانین شهروندی اداره مهاجرت از ۶ ژوئن ۲۰۲۶',
+      pl: 'zmiany zasad obywatelstwa w Migrationsverket od 6 czerwca 2026',
+      so: 'Isbeddellada xeerarka muwaadinimada ee Migrationsverket laga bilaabo 6 Juun 2026',
+      ti: 'ለውጢ ሕግታት ዜግነት ናይ Migrationsverket ካብ 6 ሰነ 2026',
+      tr: 'Migrationsverket vatandaşlık kural değişiklikleri, 6 Haziran 2026 itibarıyla',
+      uk: 'зміни правил громадянства Migrationsverket від 6 червня 2026 року',
+    },
+    editorialCommentary: {
+      'zh-Hans': '编辑说明',
+      'zh-Hant': '編輯說明',
+      ar: 'تعليق تحريري',
+      ckb: 'لێدوانی دەستنووسکاری',
+      fa: 'یادداشت تحریریه',
+      pl: 'komentarz redakcyjny',
+      so: 'Faallo tifaftireed',
+      ti: 'ናይ ኣርታዒ ሓበሬታ',
+      tr: 'editör yorumu',
+      uk: 'редакційний коментар',
+    },
+  });
+
+  const EBOOK_EXTRA_SOURCE_MIX_LABELS = Object.freeze({
+    uhr: {
+      'zh-Hans': 'UHR',
+      'zh-Hant': 'UHR',
+      ar: 'UHR',
+      ckb: 'UHR',
+      fa: 'UHR',
+      pl: 'UHR',
+      so: 'UHR',
+      ti: 'UHR',
+      tr: 'UHR',
+      uk: 'UHR',
+    },
+    scb: {
+      'zh-Hans': 'SCB',
+      'zh-Hant': 'SCB',
+      ar: 'SCB',
+      ckb: 'SCB',
+      fa: 'SCB',
+      pl: 'SCB',
+      so: 'SCB',
+      ti: 'SCB',
+      tr: 'SCB',
+      uk: 'SCB',
+    },
+    riksbank: {
+      'zh-Hans': '瑞典央行',
+      'zh-Hant': '瑞典央行',
+      ar: 'البنك المركزي السويدي',
+      ckb: 'Riksbank',
+      fa: 'ریکس‌بانک',
+      pl: 'Riksbank',
+      so: 'Riksbank',
+      ti: 'Riksbank',
+      tr: 'Riksbank',
+      uk: 'Ріксбанк',
+    },
+    governmentOffices: {
+      'zh-Hans': '瑞典政府办公室',
+      'zh-Hant': '瑞典政府辦公室',
+      ar: 'مكاتب الحكومة',
+      ckb: 'ئۆفیسەکانی حکومەت',
+      fa: 'دفاتر دولت',
+      pl: 'Kancelaria Rządu',
+      so: 'Xafiisyada Dowladda',
+      ti: 'ቤት ጽሕፈታት መንግስቲ',
+      tr: 'Hükümet Ofisleri',
+      uk: 'Урядові офіси',
+    },
+    migrationsverket: {
+      'zh-Hans': '移民局',
+      'zh-Hant': '移民局',
+      ar: 'مصلحة الهجرة',
+      ckb: 'Migrationsverket',
+      fa: 'اداره مهاجرت',
+      pl: 'Migrationsverket',
+      so: 'Migrationsverket',
+      ti: 'Migrationsverket',
+      tr: 'Migrationsverket',
+      uk: 'Migrationsverket',
+    },
+    editorial: {
+      'zh-Hans': '编辑说明',
+      'zh-Hant': '編輯說明',
+      ar: 'تعليق تحريري',
+      ckb: 'دەستنووسکاری',
+      fa: 'تحریریه',
+      pl: 'redakcja',
+      so: 'Tifaftir',
+      ti: 'ኣርታዒ',
+      tr: 'Editör',
+      uk: 'редакція',
+    },
+  });
+
+  const EBOOK_EXTRA_EDITORIAL_RETRIEVED_LABELS = Object.freeze({
+    'zh-Hans': '编辑内容',
+    'zh-Hant': '編輯內容',
+    ar: 'تحريري',
+    ckb: 'دەستنووسکاری',
+    fa: 'تحریریه',
+    pl: 'redakcyjne',
+    so: 'tifaftireed',
+    ti: 'ናይ ኣርታዒ',
+    tr: 'editoryal',
+    uk: 'редакційне',
+  });
+
   const EBOOK_FACTBOX_SOURCE_NOTES = Object.freeze({
     uhrStudyMaterial: {
       label: 'UHR public study material',
       labels: {
         en: 'UHR public study material',
         sv: 'UHR:s offentliga studiematerial',
+        ...EBOOK_EXTRA_SOURCE_LABELS.uhrStudyMaterial,
       },
       mixLabel: 'UHR',
       mixLabels: {
         en: 'UHR',
         sv: 'UHR',
+        ...EBOOK_EXTRA_SOURCE_MIX_LABELS.uhr,
       },
       url: 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
       retrievedDate: '2026-05-19',
@@ -26,11 +251,13 @@
       labels: {
         en: 'UHR current medborgarskapsprovet source pages',
         sv: 'UHR:s aktuella källsidor om medborgarskapsprovet',
+        ...EBOOK_EXTRA_SOURCE_LABELS.uhrOfficialTestSources,
       },
       mixLabel: 'UHR test status',
       mixLabels: {
         en: 'UHR test status',
         sv: 'UHR:s provstatus',
+        ...EBOOK_EXTRA_SOURCE_MIX_LABELS.uhr,
       },
       url: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
       retrievedDate: '2026-05-19',
@@ -40,30 +267,62 @@
       labels: {
         en: 'UHR: About the citizenship test',
         sv: 'UHR: Om medborgarskapsprovet',
+        ...EBOOK_EXTRA_SOURCE_LABELS.uhrOfficialTestAbout,
       },
       mixLabel: 'UHR test overview',
       mixLabels: {
         en: 'UHR test overview',
         sv: 'UHR:s provöversikt',
+        ...EBOOK_EXTRA_SOURCE_MIX_LABELS.uhr,
       },
       url: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
       retrievedDate: '2026-05-19',
     },
     uhrOfficialTestFaq: {
       label: 'UHR: Frågor och svar',
+      labels: {
+        en: 'UHR: Questions and answers',
+        sv: 'UHR: Frågor och svar',
+        ...EBOOK_EXTRA_SOURCE_LABELS.uhrOfficialTestFaq,
+      },
       mixLabel: 'UHR test FAQ',
+      mixLabels: {
+        en: 'UHR test FAQ',
+        sv: 'UHR:s provfrågor',
+        ...EBOOK_EXTRA_SOURCE_MIX_LABELS.uhr,
+      },
       url: 'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
       retrievedDate: '2026-05-19',
     },
     uhrOfficialTestSignup: {
       label: 'UHR: Anmälan',
+      labels: {
+        en: 'UHR: Sign-up',
+        sv: 'UHR: Anmälan',
+        ...EBOOK_EXTRA_SOURCE_LABELS.uhrOfficialTestSignup,
+      },
       mixLabel: 'UHR sign-up',
+      mixLabels: {
+        en: 'UHR sign-up',
+        sv: 'UHR:s anmälan',
+        ...EBOOK_EXTRA_SOURCE_MIX_LABELS.uhr,
+      },
       url: 'https://www.uhr.se/medborgarskapsprovet/anmalan/',
       retrievedDate: '2026-05-19',
     },
     uhrOfficialTestStudyMaterial: {
       label: 'UHR: Utbildningsmaterial',
+      labels: {
+        en: 'UHR: Study material',
+        sv: 'UHR: Utbildningsmaterial',
+        ...EBOOK_EXTRA_SOURCE_LABELS.uhrOfficialTestStudyMaterial,
+      },
       mixLabel: 'UHR study material',
+      mixLabels: {
+        en: 'UHR study material',
+        sv: 'UHR:s utbildningsmaterial',
+        ...EBOOK_EXTRA_SOURCE_MIX_LABELS.uhr,
+      },
       url: 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
       retrievedDate: '2026-05-19',
     },
@@ -72,11 +331,13 @@
       labels: {
         en: 'SCB land and water area statistics',
         sv: 'SCB:s statistik om land- och vattenareal',
+        ...EBOOK_EXTRA_SOURCE_LABELS.scbLandUse,
       },
       mixLabel: 'SCB',
       mixLabels: {
         en: 'SCB',
         sv: 'SCB',
+        ...EBOOK_EXTRA_SOURCE_MIX_LABELS.scb,
       },
       url: 'https://www.scb.se/mi0803-en',
       retrievedDate: '2026-05-19',
@@ -86,11 +347,13 @@
       labels: {
         en: 'Riksbank historical timeline',
         sv: 'Riksbankens historiska tidslinje',
+        ...EBOOK_EXTRA_SOURCE_LABELS.riksbankHistory,
       },
       mixLabel: 'Riksbank',
       mixLabels: {
         en: 'Riksbank',
         sv: 'Riksbanken',
+        ...EBOOK_EXTRA_SOURCE_MIX_LABELS.riksbank,
       },
       url: 'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
       retrievedDate: '2026-05-19',
@@ -100,11 +363,13 @@
       labels: {
         en: 'Government Offices NATO membership notice',
         sv: 'Regeringskansliets meddelande om Nato-medlemskapet',
+        ...EBOOK_EXTRA_SOURCE_LABELS.governmentNato,
       },
       mixLabel: 'Government Offices',
       mixLabels: {
         en: 'Government Offices',
         sv: 'Regeringskansliet',
+        ...EBOOK_EXTRA_SOURCE_MIX_LABELS.governmentOffices,
       },
       url: 'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
       retrievedDate: '2026-05-19',
@@ -114,11 +379,13 @@
       labels: {
         en: 'Migrationsverket citizenship rule changes from 6 June 2026',
         sv: 'Migrationsverkets ändrade medborgarskapsregler från 6 juni 2026',
+        ...EBOOK_EXTRA_SOURCE_LABELS.migrationsverketCitizenshipRules,
       },
       mixLabel: 'Migrationsverket',
       mixLabels: {
         en: 'Migrationsverket',
         sv: 'Migrationsverket',
+        ...EBOOK_EXTRA_SOURCE_MIX_LABELS.migrationsverket,
       },
       url: 'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html',
       retrievedDate: '2026-05-20',
@@ -129,13 +396,23 @@
     ...EBOOK_FACTBOX_SOURCE_NOTES,
     editorialCommentary: {
       label: 'editorial commentary',
-      labels: { en: 'editorial commentary', sv: 'redaktionell kommentar' },
+      labels: {
+        en: 'editorial commentary',
+        sv: 'redaktionell kommentar',
+        ...EBOOK_EXTRA_SOURCE_LABELS.editorialCommentary,
+      },
       mixLabel: { en: 'Editorial', sv: 'Redaktionellt' },
+      mixLabels: {
+        en: 'Editorial',
+        sv: 'Redaktionellt',
+        ...EBOOK_EXTRA_SOURCE_MIX_LABELS.editorial,
+      },
       url: '#/sources',
       retrievedDate: 'editorial',
       retrievedLabels: {
         en: 'editorial',
         sv: 'redaktionell',
+        ...EBOOK_EXTRA_EDITORIAL_RETRIEVED_LABELS,
       },
     },
   });
@@ -199,11 +476,13 @@
   }
 
   function sourceMixLabel(note, lang = 'en') {
-    return (
-      (note.mixLabels && (note.mixLabels[lang] || note.mixLabels.en)) ||
-      note.mixLabel ||
-      sourceLabel(note, lang)
-    );
+    if (note.mixLabels && (note.mixLabels[lang] || note.mixLabels.en)) {
+      return note.mixLabels[lang] || note.mixLabels.en;
+    }
+    if (note.mixLabel && typeof note.mixLabel === 'object') {
+      return note.mixLabel[lang] || note.mixLabel.en || sourceLabel(note, lang);
+    }
+    return note.mixLabel || sourceLabel(note, lang);
   }
 
   function sourceRetrievedLabel(note, lang = 'en') {
@@ -237,11 +516,6 @@
 
   function ebookLocalizedLabel(map, lang) {
     return (map && (map[lang] || map.en)) || '';
-  }
-
-  function ebookLocalizedSourceLabel(label, lang) {
-    if (typeof label === 'string') return label;
-    return ebookLocalizedLabel(label, lang);
   }
 
   function ebookSourceNote(lang, sourceKeys) {
@@ -391,9 +665,7 @@
       .map((key) => {
         const note = EBOOK_SOURCE_NOTES[key];
         const count = counts[key];
-        const label =
-          ebookLocalizedSourceLabel(note.mixLabel, lang) ||
-          ebookLocalizedSourceLabel(note.label, lang);
+        const label = sourceMixLabel(note, lang);
         return `${label} (${count} ${ebookSourceCountUnit(lang, count)})`;
       })
       .join(' · ');

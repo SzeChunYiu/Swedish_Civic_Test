@@ -42,6 +42,98 @@ const staticEbookExtraLanguages = [
   'tr',
   'uk',
 ];
+const staticEbookExtraLocaleSourceLabelExpectations = {
+  'zh-Hans': {
+    uhr: /UHR 公共学习材料/,
+    government: /瑞典政府办公室关于加入 NATO 的公告/,
+    governmentMix: /瑞典政府办公室 \(\d+ cites\)/,
+    scb: /SCB 土地和水域面积统计/,
+    riksbank: /瑞典央行历史时间线/,
+    migrationsverket: /移民局 2026 年 6 月 6 日起的公民身份规则变更/,
+    editorial: /编辑说明<\/a> \(编辑内容\)/,
+  },
+  'zh-Hant': {
+    uhr: /UHR 公共學習材料/,
+    government: /瑞典政府辦公室關於加入 NATO 的公告/,
+    governmentMix: /瑞典政府辦公室 \(\d+ cites\)/,
+    scb: /SCB 土地和水域面積統計/,
+    riksbank: /瑞典央行歷史時間線/,
+    migrationsverket: /移民局 2026 年 6 月 6 日起的公民身分規則變更/,
+    editorial: /編輯說明<\/a> \(編輯內容\)/,
+  },
+  ar: {
+    uhr: /مواد UHR الدراسية العامة/,
+    government: /إشعار مكاتب الحكومة بشأن عضوية الناتو/,
+    governmentMix: /مكاتب الحكومة \(\d+ cites\)/,
+    scb: /إحصاءات SCB لمساحات اليابسة والمياه/,
+    riksbank: /الخط الزمني التاريخي للبنك المركزي السويدي/,
+    migrationsverket: /تغييرات قواعد الجنسية لدى مصلحة الهجرة اعتبارًا من 6 يونيو 2026/,
+    editorial: /تعليق تحريري<\/a> \(تحريري\)/,
+  },
+  ckb: {
+    uhr: /مادەی خوێندنی گشتیی UHR/,
+    government: /ئاگاداریی ئۆفیسەکانی حکومەت دەربارەی ئەندامێتی NATO/,
+    governmentMix: /ئۆفیسەکانی حکومەت \(\d+ cites\)/,
+    scb: /ئاماری SCB بۆ ڕووبەری وشکانی و ئاو/,
+    riksbank: /هێڵی کاتی مێژوویی Riksbank/,
+    migrationsverket: /گۆڕانکاریی یاساکانی هاووڵاتیبوون لە Migrationsverket/,
+    editorial: /لێدوانی دەستنووسکاری<\/a> \(دەستنووسکاری\)/,
+  },
+  fa: {
+    uhr: /مواد آموزشی عمومی UHR/,
+    government: /اطلاعیه دفاتر دولت درباره عضویت در ناتو/,
+    governmentMix: /دفاتر دولت \(\d+ cites\)/,
+    scb: /آمار SCB درباره مساحت خشکی و آب/,
+    riksbank: /خط زمانی تاریخی ریکس‌بانک/,
+    migrationsverket: /تغییرات قوانین شهروندی اداره مهاجرت از ۶ ژوئن ۲۰۲۶/,
+    editorial: /یادداشت تحریریه<\/a> \(تحریریه\)/,
+  },
+  pl: {
+    uhr: /publiczne materiały edukacyjne UHR/,
+    government: /komunikat Kancelarii Rządu o członkostwie w NATO/,
+    governmentMix: /Kancelaria Rządu \(\d+ cites\)/,
+    scb: /statystyki SCB o powierzchni lądu i wód/,
+    riksbank: /oś czasu historii Riksbanku/,
+    migrationsverket: /zmiany zasad obywatelstwa w Migrationsverket od 6 czerwca 2026/,
+    editorial: /komentarz redakcyjny<\/a> \(redakcyjne\)/,
+  },
+  so: {
+    uhr: /Agabka waxbarasho ee dadweynaha ee UHR/,
+    government: /Ogeysiiska Xafiisyada Dowladda ee xubinnimada NATO/,
+    governmentMix: /Xafiisyada Dowladda \(\d+ cites\)/,
+    scb: /Tirakoobka SCB ee dhulka iyo biyaha/,
+    riksbank: /Jadwalka taariikhda Riksbank/,
+    migrationsverket: /Isbeddellada xeerarka muwaadinimada ee Migrationsverket/,
+    editorial: /Faallo tifaftireed<\/a> \(tifaftireed\)/,
+  },
+  ti: {
+    uhr: /ህዝባዊ መምሃሪ ናይ UHR/,
+    government: /ምልክታ ቤት ጽሕፈታት መንግስቲ ብዛዕባ ኣባልነት NATO/,
+    governmentMix: /ቤት ጽሕፈታት መንግስቲ \(\d+ cites\)/,
+    scb: /ናይ SCB ስታቲስቲክስ መሬትን ማይን/,
+    riksbank: /ናይ Riksbank ታሪኻዊ መስመር ግዜ/,
+    migrationsverket: /ለውጢ ሕግታት ዜግነት ናይ Migrationsverket/,
+    editorial: /ናይ ኣርታዒ ሓበሬታ<\/a> \(ናይ ኣርታዒ\)/,
+  },
+  tr: {
+    uhr: /UHR'nin kamuya açık çalışma materyali/,
+    government: /Hükümet Ofisleri NATO üyeliği duyurusu/,
+    governmentMix: /Hükümet Ofisleri \(\d+ cites\)/,
+    scb: /SCB kara ve su alanı istatistikleri/,
+    riksbank: /Riksbank tarih zaman çizelgesi/,
+    migrationsverket: /Migrationsverket vatandaşlık kural değişiklikleri/,
+    editorial: /editör yorumu<\/a> \(editoryal\)/,
+  },
+  uk: {
+    uhr: /публічні навчальні матеріали UHR/,
+    government: /повідомлення Урядових офісів про членство в NATO/,
+    governmentMix: /Урядові офіси \(\d+ cites\)/,
+    scb: /статистика SCB про площу суші й води/,
+    riksbank: /історична хронологія Ріксбанку/,
+    migrationsverket: /зміни правил громадянства Migrationsverket від 6 червня 2026 року/,
+    editorial: /редакційний коментар<\/a> \(редакційне\)/,
+  },
+};
 const chapter13EnglishHolidayGlossPattern =
   /[（(](?:Easter|Midsummer Eve|Christmas|New Year's Eve|First of May|Walpurgis Night|All Saints' Day|Advent)[）)]/i;
 const unsupportedEbookOutcomeClaimPatterns = [
@@ -1141,6 +1233,36 @@ test('static ebook source labels localize in rendered Swedish source notes', () 
   assert.doesNotMatch(swedishChapterOne, /editorial commentary/);
   assert.doesNotMatch(swedishChapterOne, /\(editorial\)/);
   assert.doesNotMatch(swedishChapterSeven, /SCB land and water area statistics/);
+});
+
+test('static ebook source labels localize in every extra locale source note', () => {
+  const harness = createEbookHarness();
+  const englishFallbackPatterns = [
+    /UHR public study material/,
+    /Government Offices NATO membership notice/,
+    /Government Offices \(\d+ cites\)/,
+    /SCB land and water area statistics/,
+    /Riksbank historical timeline/,
+    /Migrationsverket citizenship rule changes from 6 June 2026/,
+    /editorial commentary/,
+    /\(editorial\)/,
+  ];
+
+  for (const lang of staticEbookExtraLanguages) {
+    const expectations = staticEbookExtraLocaleSourceLabelExpectations[lang];
+    assert.ok(expectations, `${lang} should define source-label expectations`);
+
+    const html = ['1', '7', '9', '11']
+      .map((chapterId) => renderChapter(harness, lang, chapterId))
+      .join('\n');
+
+    for (const [label, pattern] of Object.entries(expectations)) {
+      assert.match(html, pattern, `${lang} should localize ${label} source metadata`);
+    }
+    for (const pattern of englishFallbackPatterns) {
+      assert.doesNotMatch(html, pattern, `${lang} source metadata should not fall back to English`);
+    }
+  }
 });
 
 test('focus-static-ebook-footnote hash validator mirrors source-counts and route links', () => {
