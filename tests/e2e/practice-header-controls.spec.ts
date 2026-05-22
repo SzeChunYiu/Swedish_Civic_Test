@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
-import { dismissBlockingModals } from './browserLaunch';
+import { dismissBlockingModals, markAboutTheTestSeen, seedSettingsLanguage } from './browserLaunch';
 import { startAllVisiblePractice } from './practiceHub';
 
 type BoundingBox = { x: number; y: number; width: number; height: number };
@@ -122,6 +122,63 @@ test('practice header controls keep English labels, states, and mobile targets',
     ),
   ).toBeVisible();
   await expect(page.getByText('Frågor skrivna utifrån UHR:s studiematerial')).toHaveCount(0);
+
+  expect(consoleErrors).toEqual([]);
+});
+
+test('practice bookmark pressed state persists after reload and unbookmark', async ({ page }) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await seedSettingsLanguage(page, 'en');
+  await markAboutTheTestSeen(page);
+
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+  await startAllVisiblePractice(page, 'en');
+
+  const bookmark = page.getByRole('button', { name: 'Bookmark this question' });
+  await expectStableTarget(bookmark, 'Bookmark control');
+  await expect(bookmark).toHaveAttribute('aria-pressed', 'false');
+  await expect(bookmark).not.toHaveAttribute('aria-selected');
+  await bookmark.click();
+
+  const removeBookmark = page.getByRole('button', { name: 'Remove this question bookmark' });
+  await expect(removeBookmark).toHaveAttribute('aria-pressed', 'true');
+  await expect(removeBookmark).not.toHaveAttribute('aria-selected');
+  await expect(page.getByText('Bookmarked', { exact: true })).toBeVisible();
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+  await startAllVisiblePractice(page, 'en');
+
+  const persistedBookmark = page.getByRole('button', {
+    name: 'Remove this question bookmark',
+  });
+  await expectStableTarget(persistedBookmark, 'Persisted bookmark control');
+  await expect(persistedBookmark).toHaveAttribute('aria-pressed', 'true');
+  await expect(persistedBookmark).not.toHaveAttribute('aria-selected');
+  await expect(page.getByText('Bookmarked', { exact: true })).toBeVisible();
+  await persistedBookmark.click();
+
+  const clearedBookmark = page.getByRole('button', { name: 'Bookmark this question' });
+  await expect(clearedBookmark).toHaveAttribute('aria-pressed', 'false');
+  await expect(clearedBookmark).not.toHaveAttribute('aria-selected');
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+  await startAllVisiblePractice(page, 'en');
+
+  const persistedClearedBookmark = page.getByRole('button', { name: 'Bookmark this question' });
+  await expectStableTarget(persistedClearedBookmark, 'Persisted cleared bookmark control');
+  await expect(persistedClearedBookmark).toHaveAttribute('aria-pressed', 'false');
+  await expect(persistedClearedBookmark).not.toHaveAttribute('aria-selected');
+  await expect(page.getByText('Bookmarked', { exact: true })).toHaveCount(0);
 
   expect(consoleErrors).toEqual([]);
 });
