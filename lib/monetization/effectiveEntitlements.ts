@@ -34,6 +34,9 @@ export interface ReferralGrantSnapshot {
   expiresAtIso?: string | null;
 }
 
+export const REFERRAL_PRO_GRANT_EXPIRES_AT_STORAGE_KEY =
+  'monetization.referral.proGrant.expiresAt.v1';
+
 export interface ProTrialSnapshot {
   expiresAtIso?: string | null;
 }
