@@ -348,6 +348,36 @@ test('UHRReferenceCard accessibility parity uses focused content validation rout
   );
 });
 
+test('SourceCitation accessibility parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const sourceCitationTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-source-citation-accessibility-parity.test.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('sourceCitationAccessibility');
+
+  assert.ok(registryEntry, 'SourceCitation accessibility focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-source-citation-accessibility']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'sourceCitationAccessibilityRulesValidated',
+    'sourceCitationAccessibilityParityValidated',
+  ]);
+  assert.match(validatorSource, /--focus-source-citation-accessibility/);
+  assert.match(
+    validatorSource,
+    /validateSourceCitationAccessibilityParity\(\);[\s\S]*sourceCitationAccessibilityRulesValidated[\s\S]*sourceCitationAccessibilityParityValidated/,
+  );
+  assert.match(sourceCitationTestSource, /--focus-source-citation-accessibility/);
+  assert.doesNotMatch(
+    sourceCitationTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'SourceCitation accessibility tests must not route through full content validation',
+  );
+});
+
 test('theme token schema uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
