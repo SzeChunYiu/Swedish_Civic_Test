@@ -353,7 +353,7 @@ function assertQuestionSearchPunctuationNormalizer(source) {
 function assertSearchRouteQueryHydration(source) {
   const requiredRules = [
     [
-      /import \{ Link, useLocalSearchParams, useRouter \} from 'expo-router';/,
+      /import \{ useLocalSearchParams, useRouter \} from 'expo-router';/,
       'route params and router import',
     ],
     [/type SearchRouteParams = \{/, 'route params type'],

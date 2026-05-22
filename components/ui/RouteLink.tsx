@@ -13,6 +13,7 @@ export type RouteLinkVariant = 'primary' | 'secondary' | 'text' | 'card';
 
 type ExpoLinkProps = ComponentProps<typeof Link>;
 type RouteLinkHandledProps =
+  | 'aria-describedby'
   | 'accessibilityLabel'
   | 'children'
   | 'href'
@@ -48,6 +49,7 @@ function isKeyboardActivationKey(key: string | undefined) {
  * Pass an explicit `accessibilityLabel` that describes the destination.
  */
 export interface RouteLinkProps extends Omit<ExpoLinkProps, RouteLinkHandledProps> {
+  'aria-describedby'?: string;
   accessibilityLabel: string;
   children: ReactNode;
   href: Href;
@@ -67,6 +69,7 @@ export interface RouteLinkProps extends Omit<ExpoLinkProps, RouteLinkHandledProp
 }
 
 export function RouteLink({
+  'aria-describedby': describedBy,
   accessibilityLabel,
   children,
   onBlur,
@@ -155,6 +158,7 @@ export function RouteLink({
     <Link
       {...linkProps}
       {...webInteractionHandlers}
+      aria-describedby={describedBy}
       aria-label={accessibilityLabel}
       accessibilityLabel={accessibilityLabel}
       accessibilityRole="link"

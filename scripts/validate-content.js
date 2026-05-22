@@ -1011,7 +1011,7 @@ const EXPECTED_LEARN_ROUTE_LINK_COPY_SNIPPETS = [
 const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
   {
     file: 'app/search.tsx',
-    pattern: /import \{ Link, useLocalSearchParams, useRouter \} from 'expo-router';/,
+    pattern: /import \{ useLocalSearchParams, useRouter \} from 'expo-router';/,
     message: 'search route must import route params and router',
   },
   {
