@@ -105,6 +105,7 @@ const SOMALI_ENGLISH_GEOGRAPHY_TERM_PATTERN = /\b(?:Mediterranean|Baltic|Atlanti
 const SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS = ['q099', 'q101', 'q125', 'q131', 'q135', 'q141'];
 const SOMALI_HOLIDAY_FOOD_ENGLISH_TOKEN_PATTERN = /\b(?:herring|strawberries|Easter)\b/i;
 const Q062_PUBLIC_SECTOR_NATURALNESS_IDS = ['q062'];
+const Q166_Q169_KOMMUN_REGION_NATURALNESS_IDS = ['q166', 'q169'];
 const Q062_PUBLIC_SECTOR_REQUIREMENTS = {
   en: {
     question: ['public sector'],
@@ -176,6 +177,8 @@ const Q062_PUBLIC_SECTOR_STALE_PATTERNS = {
   explanation:
     /\bThe public sector means activities for which\b|公共部[門门]是指|القطاع العام هو الأنشطة|کەرتی گشتی بریتییە|بخش عمومی به فعالیت|Sektor publiczny to działania|Qaybta dadweynuhu waa hawlo|ህዝባዊ ዘፈር ማለት|^Kamu sektörü, devletin|Державний сектор — це діяльність/i,
 };
+const BARE_KOMMUN_REGION_TERM_PATTERN =
+  /(^|[^\p{L}\p{N}_])(kommun(?:[-'’][\p{L}\p{N}_]+)?|region(?:[-'’][\p{L}\p{N}_]+)?)(?=$|[^\p{L}\p{N}_])/giu;
 const Q050_SOURCE_CRITICISM_NATURALNESS_IDS = ['q050'];
 const Q050_SOURCE_CRITICISM_REQUIRED_TERMS = {
   'zh-Hant': ['來源批判'],
@@ -654,6 +657,87 @@ function checkQ062PublicSectorNaturalness(questions, ids = Q062_PUBLIC_SECTOR_NA
   return errors;
 }
 
+function isApprovedKommunRegionGloss(value, match) {
+  const termStart = (match.index || 0) + match[1].length;
+  const termEnd = termStart + match[2].length;
+  const before = value[termStart - 1];
+  const after = value[termEnd];
+  return (before === '(' && after === ')') || (before === '（' && after === '）');
+}
+
+function q166Q169KommunRegionErrorsForQuestion(question) {
+  const errors = [];
+  const segments = [
+    ['questionText', localizedQuestionMap(question)],
+    ['explanationText', localizedExplanationMap(question)],
+    ...(question.options || []).map((option) => [
+      `options.${option.id}.text`,
+      localizedOptionMap(option),
+    ]),
+  ];
+
+  for (const [path, map] of segments) {
+    for (const locale of REQUIRED_REVIEW_LOCALES) {
+      const value = map?.[locale];
+      if (typeof value !== 'string') continue;
+
+      const bareTerms = Array.from(value.matchAll(BARE_KOMMUN_REGION_TERM_PATTERN))
+        .filter((match) => !isApprovedKommunRegionGloss(value, match))
+        .map((match) => match[2]);
+
+      if (bareTerms.length > 0) {
+        errors.push(
+          `${question.id}.${path}.${locale} uses bare Swedish civic term(s): ${[
+            ...new Set(bareTerms),
+          ].join(', ')}`,
+        );
+      }
+    }
+  }
+
+  return errors;
+}
+
+function summarizeQ166Q169KommunRegionNaturalness(
+  questions,
+  ids = Q166_Q169_KOMMUN_REGION_NATURALNESS_IDS,
+) {
+  const errors = [];
+  const questionById = new Map(questions.map((question) => [question.id, question]));
+  let casesValidated = 0;
+
+  for (const id of ids) {
+    const question = questionById.get(id);
+    const errorCountBefore = errors.length;
+
+    if (!question) {
+      errors.push(`${id}.kommunRegionNaturalness missing`);
+      continue;
+    }
+
+    errors.push(...q166Q169KommunRegionErrorsForQuestion(question));
+
+    if (errors.length === errorCountBefore) {
+      casesValidated += 1;
+    }
+  }
+
+  return {
+    errors,
+    casesValidated,
+    expectedCases: ids.length,
+    parityValidated: errors.length === 0 && casesValidated === ids.length,
+  };
+}
+
+function checkQ166Q169KommunRegionNaturalness(
+  questions,
+  ids = Q166_Q169_KOMMUN_REGION_NATURALNESS_IDS,
+) {
+  const { errors } = summarizeQ166Q169KommunRegionNaturalness(questions, ids);
+  return errors;
+}
+
 function q050SourceCriticismErrorsForQuestion(question) {
   const errors = [];
   const questionMap = localizedQuestionMap(question);
@@ -741,6 +825,10 @@ function isQ062PublicSectorNaturalnessId(id) {
   return Q062_PUBLIC_SECTOR_NATURALNESS_IDS.includes(id);
 }
 
+function isQ166Q169KommunRegionNaturalnessId(id) {
+  return Q166_Q169_KOMMUN_REGION_NATURALNESS_IDS.includes(id);
+}
+
 function isQ050SourceCriticismNaturalnessId(id) {
   return Q050_SOURCE_CRITICISM_NATURALNESS_IDS.includes(id);
 }
@@ -796,6 +884,11 @@ function checkQuestions(questions, ids = QUESTION_LOCALIZATION_PILOT_IDS) {
   const q062PublicSectorIds = ids.filter(isQ062PublicSectorNaturalnessId);
   if (q062PublicSectorIds.length > 0) {
     errors.push(...checkQ062PublicSectorNaturalness(questions, q062PublicSectorIds));
+  }
+
+  const q166Q169KommunRegionIds = ids.filter(isQ166Q169KommunRegionNaturalnessId);
+  if (q166Q169KommunRegionIds.length > 0) {
+    errors.push(...checkQ166Q169KommunRegionNaturalness(questions, q166Q169KommunRegionIds));
   }
 
   const q050SourceCriticismIds = ids.filter(isQ050SourceCriticismNaturalnessId);
@@ -925,12 +1018,14 @@ if (require.main === module) {
 module.exports = {
   Q050_SOURCE_CRITICISM_NATURALNESS_IDS,
   Q062_PUBLIC_SECTOR_NATURALNESS_IDS,
+  Q166_Q169_KOMMUN_REGION_NATURALNESS_IDS,
   SOMALI_GEOGRAPHY_NATURALNESS_IDS,
   SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS,
   checkQuestions,
   checkLocalizationSourceShape,
   checkQ050SourceCriticismNaturalness,
   checkQ062PublicSectorNaturalness,
+  checkQ166Q169KommunRegionNaturalness,
   checkSomaliGeographyNaturalness,
   checkSomaliHolidayFoodNaturalness,
   checkReviewMetadata,
@@ -938,6 +1033,7 @@ module.exports = {
   REQUIRED_REVIEW_LOCALES,
   summarizeQ050SourceCriticismNaturalness,
   summarizeQ062PublicSectorNaturalness,
+  summarizeQ166Q169KommunRegionNaturalness,
   summarizeSomaliGeographyNaturalness,
   summarizeSomaliHolidayFoodNaturalness,
 };
