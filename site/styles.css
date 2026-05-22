@@ -10072,3 +10072,85 @@ button.quiz__dot.is-nav:hover {
     border-radius: 12px;
   }
 }
+
+/* ------------------------------------------------------------------
+   DEMO QUESTION HEADER BOX OPTIMIZATION ROUND
+   Frames the homepage demo prompt with a tactile question header so the
+   chapter chip and question text read as one intentional study module.
+------------------------------------------------------------------ */
+
+.qcard__chip {
+  background: linear-gradient(135deg, rgba(254, 204, 0, 0.96), rgba(255, 236, 140, 0.9));
+  border: 1px solid rgba(11, 31, 51, 0.72);
+  box-shadow:
+    0 0 0 4px rgba(254, 204, 0, 0.14),
+    0 10px 24px -18px rgba(11, 31, 51, 0.72);
+  left: 28px;
+  padding: 6px 13px;
+  top: -16px;
+}
+
+.qcard__q {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(0, 106, 167, 0.08), transparent 38%),
+    rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(0, 106, 167, 0.1);
+  border-radius: 20px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.24);
+  margin: 12px 0 18px;
+  padding: 18px 20px 18px 24px;
+  position: relative;
+}
+
+.qcard__q::before {
+  background: var(--card-rail);
+  border-radius: 999px;
+  content: '';
+  height: calc(100% - 22px);
+  left: 10px;
+  position: absolute;
+  top: 11px;
+  width: 4px;
+}
+
+.qcard__q::after {
+  background: rgba(254, 204, 0, 0.52);
+  border-radius: 999px;
+  bottom: 12px;
+  content: '';
+  height: 3px;
+  left: 24px;
+  position: absolute;
+  width: 78px;
+}
+
+:root[data-theme='dark'] .qcard__q,
+:root[data-theme='dark'] .qcard__chip {
+  background: rgba(255, 255, 255, 0.055);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: var(--ink);
+}
+
+@media (max-width: 560px) {
+  .qcard__chip {
+    left: 20px;
+    max-width: calc(100% - 40px);
+    overflow: hidden;
+    padding: 5px 10px;
+    text-overflow: ellipsis;
+  }
+  .qcard__q {
+    border-radius: 16px;
+    font-size: 22px;
+    margin-top: 16px;
+    padding: 16px 14px 18px 20px;
+  }
+  .qcard__q::before {
+    left: 8px;
+    width: 3px;
+  }
+  .qcard__q::after {
+    left: 20px;
+    width: 56px;
+  }
+}
