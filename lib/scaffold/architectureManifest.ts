@@ -38,6 +38,9 @@ export const architectureRouterShellRuntimeFiles = [
   'app/index.tsx',
   'app/_layout.tsx',
   'app/(tabs)/_layout.tsx',
+  'app/(auth)/_layout.tsx',
+  'app/account.tsx',
+  'app/auth/callback.tsx',
   'app/search.tsx',
   'app/dashboard.tsx',
   'app/citizenship-requirements.tsx',
@@ -114,8 +117,8 @@ export const architectureDesignSystemSupportFiles = [
 
 export const architectureSharedUiRuntimeFiles = [
   'components/Surface.tsx',
+  'components/Button.tsx',
   'components/ui/Badge.tsx',
-  'components/ui/Button.tsx',
   'components/ui/Card.tsx',
   'components/ui/MetricCard.tsx',
   'components/ui/ProgressBar.tsx',
@@ -215,7 +218,7 @@ export const architectureSettingsRuntimeFiles = [
   'lib/localization/language.ts',
   'lib/localization/strings.ts',
   'lib/storage/settingsStore.ts',
-  'components/ui/Button.tsx',
+  'components/Button.tsx',
   'components/ui/MetricCard.tsx',
   'components/ui/ScreenShell.tsx',
   'app/(tabs)/_layout.tsx',
@@ -463,7 +466,7 @@ export const architectureScaffoldFiles = [
     purpose: 'Settings route for local preferences',
   },
   {
-    file: 'components/ui/Button.tsx',
+    file: 'components/Button.tsx',
     area: 'components',
     purpose: 'Shared button primitive',
   },

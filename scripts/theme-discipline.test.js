@@ -231,9 +231,12 @@ test('semantic text tokens meet WCAG AA contrast on app surfaces', () => {
 
 test('disabled button tokens keep labels readable without wrapper opacity', () => {
   const buttonSource = read('components/Button.tsx');
-  const compatibilityButtonSource = read('components/ui/Button.tsx');
 
-  assert.match(compatibilityButtonSource, /export \{ Button \} from '\.\.\/Button';/);
+  assert.equal(
+    fs.existsSync(path.join(ROOT, 'components/ui/Button.tsx')),
+    false,
+    'components/ui/Button.tsx should stay retired so disabled styling lives only in components/Button.tsx',
+  );
   assert.doesNotMatch(
     buttonSource,
     /disabled:\s*\{\s*opacity\s*:/,
@@ -266,11 +269,14 @@ test('disabled button tokens keep labels readable without wrapper opacity', () =
 
 test('form fields and primary button controls consume dedicated radius tokens', () => {
   const buttonSource = read('components/Button.tsx');
-  const compatibilityButtonSource = read('components/ui/Button.tsx');
   const searchSource = read('app/search.tsx');
   const settingsSource = read('app/settings.tsx');
 
-  assert.match(compatibilityButtonSource, /export \{ Button \} from '\.\.\/Button';/);
+  assert.equal(
+    fs.existsSync(path.join(ROOT, 'components/ui/Button.tsx')),
+    false,
+    'components/ui/Button.tsx should stay retired; radius checks target components/Button.tsx',
+  );
   assert.match(buttonSource, /base:\s*\{[^}]*borderRadius:\s*radius\.button/);
   assert.match(searchSource, /searchInput:\s*\{[^}]*borderRadius:\s*radius\.input/);
   assert.match(settingsSource, /importInput:\s*\{[^}]*borderRadius:\s*radius\.input/);

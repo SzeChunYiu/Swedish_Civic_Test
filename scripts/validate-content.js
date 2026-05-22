@@ -17115,7 +17115,6 @@ function validateLegalRouteScrollParity() {
 function validateButtonAccessibilityParity() {
   let valid = true;
   let buttonSource = '';
-  let wrapperSource = '';
 
   function reject(message) {
     valid = false;
@@ -17129,25 +17128,8 @@ function validateButtonAccessibilityParity() {
     return;
   }
 
-  try {
-    wrapperSource = fs.readFileSync(path.join(repoRoot, 'components/ui/Button.tsx'), 'utf8');
-  } catch (error) {
-    reject(
-      `components/ui/Button.tsx could not be read for button compatibility parity: ${error.message}`,
-    );
-    return;
-  }
-
-  if (!/export \{ Button \} from '\.\.\/Button';/.test(wrapperSource)) {
-    reject('components/ui/Button.tsx must re-export the canonical Button implementation');
-  }
-
-  if (
-    !/export type \{ ButtonProps, ButtonSize, ButtonVariant \} from '\.\.\/Button';/.test(
-      wrapperSource,
-    )
-  ) {
-    reject('components/ui/Button.tsx must re-export canonical Button types');
+  if (fs.existsSync(path.join(repoRoot, 'components/ui/Button.tsx'))) {
+    reject('components/ui/Button.tsx must stay retired; use components/Button.tsx instead');
   }
 
   const productButtonImportOffenders = [];
@@ -17162,8 +17144,6 @@ function validateButtonAccessibilityParity() {
       if (!/\.(ts|tsx)$/.test(entry.name)) continue;
 
       const relPath = path.relative(repoRoot, fullPath).replace(/\\/g, '/');
-      if (relPath === 'components/ui/Button.tsx') continue;
-
       const source = fs.readFileSync(fullPath, 'utf8');
       if (/from\s+['"][^'"]*(?:components\/ui\/Button|\/ui\/Button)['"]/.test(source)) {
         productButtonImportOffenders.push(relPath);
