@@ -309,9 +309,18 @@ export default function CitizenshipRequirementsScreen() {
                   checked ? styles.checkboxRowChecked : null,
                   pressed ? styles.checkboxRowPressed : null,
                 ]}
+                testID={`citizenship-requirement-${area.id}-checkbox`}
               >
-                <View style={[styles.checkboxBox, checked ? styles.checkboxBoxChecked : null]}>
-                  {checked ? <View style={styles.checkboxDot} /> : null}
+                <View
+                  style={[styles.checkboxBox, checked ? styles.checkboxBoxChecked : null]}
+                  testID={`citizenship-requirement-${area.id}-checkbox-box`}
+                >
+                  {checked ? (
+                    <View
+                      style={styles.checkboxDot}
+                      testID={`citizenship-requirement-${area.id}-checkbox-check`}
+                    />
+                  ) : null}
                 </View>
                 <Text style={styles.checkboxText}>{area.checklistPrompt[language]}</Text>
               </Pressable>

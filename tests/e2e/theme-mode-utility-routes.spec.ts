@@ -42,6 +42,7 @@ const searchSourceAffordanceCases = [
 
 const citizenshipSourceAffordanceCases = [
   {
+    checkedCheckboxName: /Markerad:/,
     checkboxName: /Ej markerad:/,
     disclaimerBodyName: /^Oberoende studieverktyg\./,
     disclaimerLabel: /Studieinformation: Oberoende studieverktyg/,
@@ -52,6 +53,7 @@ const citizenshipSourceAffordanceCases = [
     sourceTitle: 'Ansök om svenskt medborgarskap',
   },
   {
+    checkedCheckboxName: /Marked:/,
     checkboxName: /Not marked:/,
     disclaimerBodyName: /^Independent study tool\./,
     disclaimerLabel: /Study disclaimer: Independent study tool/,
@@ -62,6 +64,7 @@ const citizenshipSourceAffordanceCases = [
     sourceTitle: 'Apply for Swedish citizenship',
   },
 ] as const satisfies readonly {
+  checkedCheckboxName: RegExp;
   checkboxName: RegExp;
   disclaimerBodyName: RegExp;
   disclaimerLabel: RegExp;
@@ -221,10 +224,48 @@ for (const testCase of citizenshipSourceAffordanceCases) {
     await dismissBlockingModals(page);
 
     const firstChecklistItem = page.getByRole('checkbox', { name: testCase.checkboxName }).first();
+    const firstChecklistRow = page.getByTestId('citizenship-requirement-identity-checkbox');
+    const firstChecklistBox = page.getByTestId('citizenship-requirement-identity-checkbox-box');
     await expect(firstChecklistItem).toBeVisible();
     await expect
       .poll(async () => (await computedColors(firstChecklistItem)).borderColor)
       .toBe(hexToRgb(darkColors.border));
+
+    await firstChecklistItem.click();
+    await expect(
+      page.getByRole('checkbox', { name: testCase.checkedCheckboxName }).first(),
+    ).toBeChecked();
+    await expect(firstChecklistRow).toHaveAttribute('aria-checked', 'true');
+    await expectComputedColor(
+      firstChecklistRow,
+      'backgroundColor',
+      darkColors.successSoft,
+      `Checked Citizenship checklist rows should use the dark success-soft token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      firstChecklistRow,
+      'borderColor',
+      darkColors.success,
+      `Checked Citizenship checklist rows should use the dark success border token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      firstChecklistBox,
+      'backgroundColor',
+      darkColors.success,
+      `Checked Citizenship checkbox boxes should use the dark success fill token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      firstChecklistBox,
+      'borderColor',
+      darkColors.success,
+      `Checked Citizenship checkbox boxes should use the dark success border token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      page.getByTestId('citizenship-requirement-identity-checkbox-check'),
+      'backgroundColor',
+      darkColors.surface,
+      `Checked Citizenship check indicators should use the dark surface token in ${testCase.language}`,
+    );
 
     const disclaimer = page.getByLabel(testCase.disclaimerLabel).first();
     await expect(disclaimer).toBeVisible();
