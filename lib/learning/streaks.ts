@@ -9,11 +9,16 @@ type AnswerAttempt = {
   questionId?: string;
 };
 
-function isOnLocalDate(isoDate: string | undefined, targetDate: string): boolean {
+function isOnLocalDate(
+  isoDate: string | undefined,
+  targetDate: string,
+  maxTimeMs: number,
+): boolean {
   if (!isoDate) return false;
 
   const date = new Date(isoDate);
   if (Number.isNaN(date.getTime())) return false;
+  if (date.getTime() > maxTimeMs) return false;
 
   return getLocalDateKey(date) === targetDate;
 }
@@ -72,9 +77,10 @@ export function countAnswersForLocalDate(
   date: Date = new Date(),
 ): number {
   const targetDate = getLocalDateKey(date);
+  const maxTimeMs = Number.isFinite(date.getTime()) ? date.getTime() : Date.now();
 
   return Object.values(questionProgress).filter((progress) =>
-    isOnLocalDate(progress?.lastAnsweredAt, targetDate),
+    isOnLocalDate(progress?.lastAnsweredAt, targetDate, maxTimeMs),
   ).length;
 }
 
@@ -88,10 +94,12 @@ export function countAnswerAttemptsForLocalDate({
   date?: Date;
 }): number {
   const targetDate = getLocalDateKey(date);
+  const maxTimeMs = Number.isFinite(date.getTime()) ? date.getTime() : Date.now();
 
-  if (Array.isArray(answerAttempts)) {
-    return answerAttempts.filter((attempt) => isOnLocalDate(attempt?.answeredAt, targetDate))
-      .length;
+  if (Array.isArray(answerAttempts) && answerAttempts.length > 0) {
+    return answerAttempts.filter((attempt) =>
+      isOnLocalDate(attempt?.answeredAt, targetDate, maxTimeMs),
+    ).length;
   }
 
   return countAnswersForLocalDate(questionProgress, date);

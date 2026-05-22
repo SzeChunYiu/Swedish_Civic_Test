@@ -47,11 +47,24 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.match(source, /const homeCopy: Record<AppLanguage, HomeCopy>/);
   assert.match(source, /const copy = homeCopy\[language\]/);
   assert.match(source, /computeReadinessFromQuestionProgress/);
-  assert.match(source, /const QUESTION_CHAPTER_INDEX: Record<string, string> = Object\.fromEntries/);
+  assert.match(
+    source,
+    /const QUESTION_CHAPTER_INDEX: Record<string, string> = Object\.fromEntries/,
+  );
   assert.match(source, /const QUESTION_IDS_IN_BANK = new Set\(questions\.map/);
-  assert.match(source, /const dailyChallenge = useMemo\(\(\) => buildDailyChallenge\(\{ bank: questions \}\), \[\]\)/);
+  assert.match(
+    source,
+    /const dailyChallenge = useMemo\(\(\) => buildDailyChallenge\(\{ bank: questions \}\), \[\]\)/,
+  );
   assert.match(source, /const dailyChallengeCompletionKeys = useMemo\(/);
   assert.match(source, /const completedToday = useMemo\(/);
+  assert.match(source, /countAnswerAttemptsForLocalDate/);
+  assert.match(
+    source,
+    /const answerHistory = useProgressStore\(\(state\) => state\.answerHistory\);/,
+  );
+  assert.match(source, /answerAttempts: answerHistory,/);
+  assert.doesNotMatch(source, /countAnswersForLocalDate\(questionProgress\)/);
   assert.match(source, /findWeakChapterIds\(questions, questionProgress, 0\.6\)\.length/);
   assert.match(source, /questionChapterIndex: QUESTION_CHAPTER_INDEX/);
   assert.match(source, /questionIdsInBank: QUESTION_IDS_IN_BANK/);
