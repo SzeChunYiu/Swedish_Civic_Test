@@ -4,15 +4,18 @@ const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
+let cachedSummary;
 
 function validateContentSummary() {
+  if (cachedSummary) return cachedSummary;
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
     cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
-  return JSON.parse(match[0]);
+  cachedSummary = JSON.parse(match[0]);
+  return cachedSummary;
 }
 
 test('TRANSLATE-COMPLETE P0 has explicit SV/EN completeness and naturalness closure evidence', () => {
@@ -43,6 +46,10 @@ test('TRANSLATE-COMPLETE P0 has explicit SV/EN completeness and naturalness clos
     summary.questionNationalMinoritiesEnglishNaturalnessValidated,
     summary.publishedQuestions,
   );
+  assert.equal(
+    summary.questionNewYearsEveDateEnglishNaturalnessValidated,
+    summary.publishedQuestions,
+  );
   assert.equal(summary.questionRecordYearsEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(summary.questionSuffrage1921EnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(summary.questionLuciaExplanationRoleScaffoldValidated, summary.publishedQuestions);
@@ -57,4 +64,13 @@ test('TRANSLATE-COMPLETE P0 has explicit SV/EN completeness and naturalness clos
   );
   assert.equal(summary.somaliGeographyNaturalnessParityValidated, true);
   assert.equal(summary.somaliHolidayFoodNaturalnessParityValidated, true);
+});
+
+test("TRANSLATE-COMPLETE q128 New Year's Eve date naturalness guard is summarized", () => {
+  const summary = validateContentSummary();
+
+  assert.equal(
+    summary.questionNewYearsEveDateEnglishNaturalnessValidated,
+    summary.publishedQuestions,
+  );
 });
