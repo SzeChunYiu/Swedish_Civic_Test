@@ -12224,3 +12224,36 @@ img.ebook__brand-mark {
     padding: 12px 13px 12px 17px;
   }
 }
+
+/* ======================================================================
+   FOOTER COLUMN HEADING BOX OPTIMIZATION ROUND
+   ====================================================================== */
+
+.footer__cols h4 {
+  align-items: center;
+  background:
+    linear-gradient(90deg, rgba(254, 204, 0, 0.16), rgba(254, 204, 0, 0) 62%),
+    rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(254, 204, 0, 0.18);
+  border-radius: 999px;
+  display: inline-flex;
+  gap: 8px;
+  margin: 0 0 16px;
+  padding: 7px 10px 7px 8px;
+  width: fit-content;
+}
+
+.footer__cols h4::before {
+  background: var(--gold);
+  border-radius: 999px;
+  box-shadow: 0 0 0 3px rgba(254, 204, 0, 0.16);
+  content: '';
+  height: 7px;
+  width: 7px;
+}
+
+@media (max-width: 720px) {
+  .footer__cols h4 {
+    margin-bottom: 12px;
+  }
+}
