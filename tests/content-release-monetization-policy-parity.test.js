@@ -19,6 +19,7 @@ const expectedPolicyFields = [
   'realAdsEnvFlag',
   'removeAdsPriceLabel',
   'removeAdsProductId',
+  'removeAdsStoreProductIds',
   'storeDisclosureTopics',
 ];
 
@@ -68,7 +69,13 @@ test('release monetization policy stays aligned with Remove Ads and ad consent r
 
   const summary = JSON.parse(match[0]);
   const appConfig = JSON.parse(fs.readFileSync(path.join(repoRoot, 'app.json'), 'utf8')).expo;
-  const { REMOVE_ADS_PRICE_LABEL, REMOVE_ADS_PRODUCT_ID } = loadTs('lib/monetization/purchases.ts');
+  const {
+    REMOVE_ADS_ANDROID_PRODUCT_ID,
+    REMOVE_ADS_IOS_PRODUCT_ID,
+    REMOVE_ADS_PRICE_LABEL,
+    REMOVE_ADS_PRODUCT_ID,
+    REMOVE_ADS_STORE_PRODUCT_IDS,
+  } = loadTs('lib/monetization/purchases.ts');
   const { isReleaseMonetizationPolicyReady, releaseMonetizationPolicy } = loadTs(
     'lib/monetization/releasePolicy.ts',
   );
@@ -90,8 +97,16 @@ test('release monetization policy stays aligned with Remove Ads and ad consent r
   assert.equal(releaseMonetizationPolicy.proRuntimeScopeOverrideGate, 'release-scope-v11');
   assert.equal(releaseMonetizationPolicy.realAdsEnvFlag, 'EXPO_PUBLIC_REAL_ADS_ENABLED');
   assert.equal(REMOVE_ADS_PRODUCT_ID, `${appConfig.ios.bundleIdentifier}.removeads`);
+  assert.equal(REMOVE_ADS_ANDROID_PRODUCT_ID, 'removeads');
+  assert.equal(REMOVE_ADS_IOS_PRODUCT_ID, REMOVE_ADS_PRODUCT_ID);
   assert.equal(releaseMonetizationPolicy.removeAdsPriceLabel, REMOVE_ADS_PRICE_LABEL);
   assert.equal(releaseMonetizationPolicy.removeAdsProductId, REMOVE_ADS_PRODUCT_ID);
+  assert.deepEqual(
+    releaseMonetizationPolicy.removeAdsStoreProductIds,
+    REMOVE_ADS_STORE_PRODUCT_IDS,
+  );
+  assert.equal(releaseMonetizationPolicy.removeAdsStoreProductIds.android, 'removeads');
+  assert.equal(releaseMonetizationPolicy.removeAdsStoreProductIds.ios, REMOVE_ADS_PRODUCT_ID);
   assert.deepEqual(releaseMonetizationPolicy.storeDisclosureTopics, [
     'Google Mobile Ads',
     'Remove Ads in-app purchase',
@@ -217,6 +232,69 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /releaseMonetizationPolicy\.removeAdsPriceLabel/,
+  );
+});
+
+test('release monetization policy rejects missing platform Remove Ads store ids', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/monetization/releasePolicy.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('  removeAdsStoreProductIds: REMOVE_ADS_STORE_PRODUCT_IDS,\\n', '');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /releaseMonetizationPolicy fields|removeAdsStoreProductIds/,
+  );
+});
+
+test('release monetization policy rejects Android Remove Ads store-id drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/monetization/releasePolicy.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'removeAdsStoreProductIds: REMOVE_ADS_STORE_PRODUCT_IDS',
+        "removeAdsStoreProductIds: { android: REMOVE_ADS_PRODUCT_ID, ios: REMOVE_ADS_PRODUCT_ID }",
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /releaseMonetizationPolicy\.removeAdsStoreProductIds/,
   );
 });
 

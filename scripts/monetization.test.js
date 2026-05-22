@@ -2572,7 +2572,13 @@ test('explicit ad entitlements skip default purchase runtime side effects', asyn
 });
 
 test('release monetization policy requires ad-supported free tier and Remove Ads IAP', () => {
-  const { REMOVE_ADS_PRICE_LABEL, REMOVE_ADS_PRODUCT_ID } = loadTs('lib/monetization/purchases.ts');
+  const {
+    REMOVE_ADS_ANDROID_PRODUCT_ID,
+    REMOVE_ADS_IOS_PRODUCT_ID,
+    REMOVE_ADS_PRICE_LABEL,
+    REMOVE_ADS_PRODUCT_ID,
+    REMOVE_ADS_STORE_PRODUCT_IDS,
+  } = loadTs('lib/monetization/purchases.ts');
   const { isReleaseMonetizationPolicyReady, releaseMonetizationPolicy } = loadTs(
     'lib/monetization/releasePolicy.ts',
   );
@@ -2585,6 +2591,17 @@ test('release monetization policy requires ad-supported free tier and Remove Ads
   assert.equal(releaseMonetizationPolicy.realAdsEnvFlag, 'EXPO_PUBLIC_REAL_ADS_ENABLED');
   assert.equal(releaseMonetizationPolicy.removeAdsProductId, REMOVE_ADS_PRODUCT_ID);
   assert.equal(releaseMonetizationPolicy.removeAdsPriceLabel, REMOVE_ADS_PRICE_LABEL);
+  assert.deepEqual(
+    releaseMonetizationPolicy.removeAdsStoreProductIds,
+    REMOVE_ADS_STORE_PRODUCT_IDS,
+  );
+  assert.equal(releaseMonetizationPolicy.removeAdsStoreProductIds.android, 'removeads');
+  assert.equal(
+    releaseMonetizationPolicy.removeAdsStoreProductIds.android,
+    REMOVE_ADS_ANDROID_PRODUCT_ID,
+  );
+  assert.equal(releaseMonetizationPolicy.removeAdsStoreProductIds.ios, REMOVE_ADS_IOS_PRODUCT_ID);
+  assert.equal(releaseMonetizationPolicy.removeAdsStoreProductIds.ios, REMOVE_ADS_PRODUCT_ID);
   assert.ok(releaseMonetizationPolicy.noAdPlacements.includes('exam_screen'));
   assert.deepEqual(releaseMonetizationPolicy.consentPromptsRequired, [
     'app_tracking_transparency',

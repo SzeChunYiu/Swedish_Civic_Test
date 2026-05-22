@@ -1,4 +1,4 @@
-import { REMOVE_ADS_PRODUCT_ID } from './purchases';
+import { REMOVE_ADS_PRODUCT_ID, REMOVE_ADS_STORE_PRODUCT_IDS } from './purchases';
 
 export const releaseMonetizationPolicy = {
   adSupportedByDefault: true,
@@ -13,6 +13,7 @@ export const releaseMonetizationPolicy = {
   realAdsEnvFlag: 'EXPO_PUBLIC_REAL_ADS_ENABLED',
   removeAdsPriceLabel: '29 SEK',
   removeAdsProductId: REMOVE_ADS_PRODUCT_ID,
+  removeAdsStoreProductIds: REMOVE_ADS_STORE_PRODUCT_IDS,
   storeDisclosureTopics: [
     'Google Mobile Ads',
     'Remove Ads in-app purchase',
@@ -54,6 +55,8 @@ export function isReleaseMonetizationPolicyReady(): boolean {
     releaseMonetizationPolicy.consentPromptsRequired.length === 2 &&
     releaseMonetizationPolicy.noAdPlacements.includes('exam_screen') &&
     releaseMonetizationPolicy.privacyReviewRequiresBinary &&
-    releaseMonetizationPolicy.removeAdsPriceLabel === '29 SEK'
+    releaseMonetizationPolicy.removeAdsPriceLabel === '29 SEK' &&
+    releaseMonetizationPolicy.removeAdsStoreProductIds.android === 'removeads' &&
+    releaseMonetizationPolicy.removeAdsStoreProductIds.ios === REMOVE_ADS_PRODUCT_ID
   );
 }
