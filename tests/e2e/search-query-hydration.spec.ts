@@ -9,6 +9,7 @@ type SearchStateCopy = {
   inputName: string;
   questionLinkName: RegExp;
   questionShownPattern: RegExp;
+  submitButtonName: string;
 };
 
 const searchStateCopy: Record<'sv' | 'en', SearchStateCopy> = {
@@ -19,6 +20,7 @@ const searchStateCopy: Record<'sv' | 'en', SearchStateCopy> = {
     inputName: 'Sök samhällsbegrepp och övningsfrågor',
     questionLinkName: /Öppna övningsfrågan:/,
     questionShownPattern: /8 av \d+ källbaserade övningsfrågor visas/,
+    submitButtonName: 'Sök med den inskrivna texten',
   },
   en: {
     allTermsSummaryPattern: /\d+ civic reference terms/,
@@ -27,6 +29,7 @@ const searchStateCopy: Record<'sv' | 'en', SearchStateCopy> = {
     inputName: 'Search civic terms and practice questions',
     questionLinkName: /Open practice question:/,
     questionShownPattern: /8 of \d+ source-backed practice questions shown/,
+    submitButtonName: 'Submit the typed search',
   },
 };
 
@@ -272,6 +275,12 @@ test('English search route hydrates and clears q/query URL parameters before typ
   );
   await expect(page.getByText(searchStateCopy.en.questionShownPattern)).toBeVisible();
   await expect(page.getByRole('textbox', { name: searchStateCopy.sv.inputName })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: searchStateCopy.sv.submitButtonName })).toHaveCount(
+    0,
+  );
+  await expect(
+    page.getByRole('button', { name: searchStateCopy.en.submitButtonName }),
+  ).toBeEnabled();
   await page.getByRole('button', { name: searchStateCopy.en.clearButtonName }).click();
   await expect(democracyInput).toHaveValue('');
   expectSearchUrlWithoutQueryParams(page);
@@ -303,11 +312,12 @@ test('English search route hydrates and clears q/query URL parameters before typ
   expect(consoleErrors).toEqual([]);
 });
 
-test('search route submits manual typing via Enter before URL hydration and clears empty stale query', async ({
+test('search route submits manual typing via button or Enter before URL hydration and clears empty stale query', async ({
   page,
 }) => {
   const consoleErrors: string[] = [];
   const manualSubmitQuery = 'mänskliga rättigheter';
+  const buttonSubmitQuery = 'kommun';
   const encodedManualSubmitQuery = encodeURIComponent(manualSubmitQuery);
 
   page.on('console', (message) => {
@@ -320,8 +330,28 @@ test('search route submits manual typing via Enter before URL hydration and clea
   await dismissBlockingModals(page);
 
   const input = page.getByRole('textbox', { name: searchStateCopy.sv.inputName });
+  const submitButton = page.getByRole('button', { name: searchStateCopy.sv.submitButtonName });
   await expect(input).toBeVisible();
   await expect(input).toHaveValue('');
+  await expect(submitButton).toBeVisible();
+  await expect(submitButton).toBeDisabled();
+  await expect
+    .poll(() => submitButton.evaluate((element) => element.getBoundingClientRect().height))
+    .toBeGreaterThanOrEqual(44);
+  expectSearchUrlWithoutQueryParams(page);
+
+  await input.fill(buttonSubmitQuery);
+  await expect(input).toHaveValue(buttonSubmitQuery);
+  await expect(submitButton).toBeEnabled();
+  expectSearchUrlWithoutQueryParams(page);
+
+  await submitButton.click();
+  await expectSearchUrlWithQParam(page, buttonSubmitQuery);
+  await expectSearchState(page, buttonSubmitQuery);
+
+  await page.getByRole('button', { name: searchStateCopy.sv.clearButtonName }).click();
+  await expect(input).toHaveValue('');
+  await expect(submitButton).toBeDisabled();
   expectSearchUrlWithoutQueryParams(page);
 
   await input.fill(manualSubmitQuery);

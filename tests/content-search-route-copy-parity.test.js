@@ -410,6 +410,22 @@ function assertSearchRouteQueryHydration(source) {
       'non-empty submit writes q URL param',
     ],
     [/onSubmitEditing=\{handleSubmitSearch\}/, 'search return key submits query'],
+    [/submitSearch: string;/, 'submit search visible copy type'],
+    [/submitSearchAccessibilityLabel: string;/, 'submit search accessibility copy type'],
+    [/submitSearch: 'Sök'/, 'Swedish submit search copy'],
+    [
+      /submitSearchAccessibilityLabel: 'Sök med den inskrivna texten'/,
+      'Swedish submit search accessibility label',
+    ],
+    [/submitSearch: 'Search'/, 'English submit search copy'],
+    [
+      /submitSearchAccessibilityLabel: 'Submit the typed search'/,
+      'English submit search accessibility label',
+    ],
+    [
+      /accessibilityLabel=\{copy\.submitSearchAccessibilityLabel\}[\s\S]*?accessibilityState=\{\{ disabled: trimmedQuery\.length === 0 \}\}[\s\S]*?disabled=\{trimmedQuery\.length === 0\}[\s\S]*?onPress=\{handleSubmitSearch\}[\s\S]*?\{copy\.submitSearch\}/,
+      'visible submit button uses normalized submit path with disabled state',
+    ],
     [/value=\{query\}/, 'hydrated query reaches visible input'],
     [/const trimmedQuery = query\.trim\(\);/, 'hydrated query feeds filtering'],
   ];
@@ -555,6 +571,7 @@ test('Search route e2e covers English query URL clearing', () => {
   assert.match(source, /type SearchStateCopy = \{/);
   assert.match(source, /inputName: 'Search civic terms and practice questions'/);
   assert.match(source, /clearButtonName: 'Clear the search field'/);
+  assert.match(source, /submitButtonName: 'Submit the typed search'/);
   assert.match(source, /allTermsSummaryPattern: \/\\d\+ civic reference terms\//);
   assert.match(source, /questionLinkName: \/Open practice question:\//);
   assert.match(source, /await seedSettingsLanguage\(page, 'en'\)/);
@@ -567,7 +584,9 @@ test('Search route e2e covers English query URL clearing', () => {
     /expectHydratedSearch\([\s\S]*?'\/search\?query=municipality'[\s\S]*?'municipality'[\s\S]*?searchStateCopy\.en/,
   );
   assert.match(source, /name: searchStateCopy\.sv\.inputName[\s\S]*?toHaveCount\(0\)/);
+  assert.match(source, /name: searchStateCopy\.sv\.submitButtonName[\s\S]*?toHaveCount\(\s*0/);
   assert.match(source, /name: searchStateCopy\.sv\.clearButtonName[\s\S]*?toHaveCount\(\s*0/);
+  assert.match(source, /name: searchStateCopy\.en\.submitButtonName[\s\S]*?toBeEnabled\(\)/);
   assert.match(
     source,
     /page\.getByRole\('button', \{ name: searchStateCopy\.en\.clearButtonName \}\)\.click\(\)/,
@@ -584,10 +603,22 @@ test('Search route e2e covers manual Enter submit URL state', () => {
 
   assert.match(
     source,
-    /search route submits manual typing via Enter before URL hydration and clears empty stale query/,
+    /search route submits manual typing via button or Enter before URL hydration/,
   );
   assert.match(source, /const manualSubmitQuery = 'mänskliga rättigheter';/);
+  assert.match(source, /const buttonSubmitQuery = 'kommun';/);
   assert.match(source, /const encodedManualSubmitQuery = encodeURIComponent\(manualSubmitQuery\);/);
+  assert.match(source, /await expect\(submitButton\)\.toBeDisabled\(\)/);
+  assert.match(
+    source,
+    /submitButton\.evaluate\(\(element\) => element\.getBoundingClientRect\(\)\.height\)[\s\S]*?\.toBeGreaterThanOrEqual\(44\)/,
+  );
+  assert.match(
+    source,
+    /await input\.fill\(buttonSubmitQuery\)[\s\S]*?expectSearchUrlWithoutQueryParams\(page\)/,
+  );
+  assert.match(source, /await submitButton\.click\(\)/);
+  assert.match(source, /await expectSearchUrlWithQParam\(page, buttonSubmitQuery\)/);
   assert.match(
     source,
     /await input\.fill\(manualSubmitQuery\)[\s\S]*?expectSearchUrlWithoutQueryParams\(page\)/,

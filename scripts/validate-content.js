@@ -1125,6 +1125,43 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
   },
   {
     file: 'app/search.tsx',
+    pattern: /submitSearch: string;/,
+    message: 'search route copy type must include visible submit text',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /submitSearchAccessibilityLabel: string;/,
+    message: 'search route copy type must include submit accessibility label',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /submitSearch: 'Sök'/,
+    message: 'search route must include Swedish visible submit copy',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /submitSearchAccessibilityLabel: 'Sök med den inskrivna texten'/,
+    message: 'search route must include Swedish submit accessibility copy',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /submitSearch: 'Search'/,
+    message: 'search route must include English visible submit copy',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /submitSearchAccessibilityLabel: 'Submit the typed search'/,
+    message: 'search route must include English submit accessibility copy',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern:
+      /accessibilityLabel=\{copy\.submitSearchAccessibilityLabel\}[\s\S]*?accessibilityState=\{\{ disabled: trimmedQuery\.length === 0 \}\}[\s\S]*?disabled=\{trimmedQuery\.length === 0\}[\s\S]*?onPress=\{handleSubmitSearch\}[\s\S]*?\{copy\.submitSearch\}/,
+    message:
+      'search route submit button must be visible, accessible, disabled when blank, and use the normalized submit action',
+  },
+  {
+    file: 'app/search.tsx',
     pattern: /value=\{query\}/,
     message: 'search route input must render controlled hydrated query',
   },
@@ -1390,7 +1427,7 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
   {
     file: 'tests/e2e/search-query-hydration.spec.ts',
     pattern:
-      /en: \{[\s\S]*?clearButtonName: 'Clear the search field'[\s\S]*?inputName: 'Search civic terms and practice questions'[\s\S]*?questionLinkName: \/Open practice question:\//,
+      /en: \{[\s\S]*?clearButtonName: 'Clear the search field'[\s\S]*?inputName: 'Search civic terms and practice questions'[\s\S]*?questionLinkName: \/Open practice question:[\s\S]*?submitButtonName: 'Submit the typed search'/,
     message: 'search query e2e must define English search labels',
   },
   {
@@ -1418,8 +1455,13 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
   {
     file: 'tests/e2e/search-query-hydration.spec.ts',
     pattern:
-      /name: searchStateCopy\.sv\.inputName[\s\S]*?toHaveCount\(0\)[\s\S]*?name: searchStateCopy\.sv\.clearButtonName[\s\S]*?toHaveCount\(\s*0/,
+      /name: searchStateCopy\.sv\.inputName[\s\S]*?toHaveCount\(0\)[\s\S]*?name: searchStateCopy\.sv\.submitButtonName[\s\S]*?toHaveCount\(\s*0[\s\S]*?name: searchStateCopy\.sv\.clearButtonName[\s\S]*?toHaveCount\(\s*0/,
     message: 'search query e2e must reject Swedish control-label leakage in English',
+  },
+  {
+    file: 'tests/e2e/search-query-hydration.spec.ts',
+    pattern: /name: searchStateCopy\.en\.submitButtonName[\s\S]*?toBeEnabled\(\)/,
+    message: 'search query e2e must prove the English submit button is localized and usable',
   },
   {
     file: 'tests/e2e/search-query-hydration.spec.ts',
@@ -1429,14 +1471,35 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
   },
   {
     file: 'tests/e2e/search-query-hydration.spec.ts',
-    pattern:
-      /search route submits manual typing via Enter before URL hydration and clears empty stale query/,
-    message: 'search query e2e must cover manual Enter submit URL updates',
+    pattern: /search route submits manual typing via button or Enter before URL hydration/,
+    message: 'search query e2e must cover visible submit button and Enter URL updates',
   },
   {
     file: 'tests/e2e/search-query-hydration.spec.ts',
     pattern: /const manualSubmitQuery = 'mänskliga rättigheter';/,
     message: 'search query e2e must use a non-ASCII submitted query',
+  },
+  {
+    file: 'tests/e2e/search-query-hydration.spec.ts',
+    pattern: /const buttonSubmitQuery = 'kommun';/,
+    message: 'search query e2e must cover pointer submit with a typed query',
+  },
+  {
+    file: 'tests/e2e/search-query-hydration.spec.ts',
+    pattern: /await expect\(submitButton\)\.toBeDisabled\(\)/,
+    message: 'search query e2e must assert blank submit button disabled state',
+  },
+  {
+    file: 'tests/e2e/search-query-hydration.spec.ts',
+    pattern:
+      /submitButton\.evaluate\(\(element\) => element\.getBoundingClientRect\(\)\.height\)[\s\S]*?\.toBeGreaterThanOrEqual\(44\)/,
+    message: 'search query e2e must assert the submit button keeps a 44px touch target',
+  },
+  {
+    file: 'tests/e2e/search-query-hydration.spec.ts',
+    pattern:
+      /await input\.fill\(buttonSubmitQuery\)[\s\S]*?expectSearchUrlWithoutQueryParams\(page\)[\s\S]*?await submitButton\.click\(\)[\s\S]*?await expectSearchUrlWithQParam\(page, buttonSubmitQuery\)/,
+    message: 'search query e2e must submit typed search through the visible button',
   },
   {
     file: 'tests/e2e/search-query-hydration.spec.ts',

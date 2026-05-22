@@ -149,17 +149,29 @@ export default function SearchScreen() {
           <Text accessibilityLiveRegion="polite" aria-live="polite" style={styles.resultSummary}>
             {resultSummary}
           </Text>
-          <Button
-            accessibilityLabel={copy.clearSearchAccessibilityLabel}
-            accessibilityRole="button"
-            accessibilityState={{ disabled: query.length === 0 }}
-            disabled={query.length === 0}
-            onPress={handleClearSearch}
-            themeColors={themeColors}
-            variant="secondary"
-          >
-            {copy.clearSearch}
-          </Button>
+          <View style={styles.searchButtonGroup}>
+            <Button
+              accessibilityLabel={copy.submitSearchAccessibilityLabel}
+              accessibilityRole="button"
+              accessibilityState={{ disabled: trimmedQuery.length === 0 }}
+              disabled={trimmedQuery.length === 0}
+              onPress={handleSubmitSearch}
+              themeColors={themeColors}
+            >
+              {copy.submitSearch}
+            </Button>
+            <Button
+              accessibilityLabel={copy.clearSearchAccessibilityLabel}
+              accessibilityRole="button"
+              accessibilityState={{ disabled: query.length === 0 }}
+              disabled={query.length === 0}
+              onPress={handleClearSearch}
+              themeColors={themeColors}
+              variant="secondary"
+            >
+              {copy.clearSearch}
+            </Button>
+          </View>
         </View>
       </Card>
 
@@ -367,6 +379,8 @@ type SearchRouteCopy = {
   sectionSubtitle: string;
   sectionTitle: string;
   sourceLabel: string;
+  submitSearch: string;
+  submitSearchAccessibilityLabel: string;
   subtitle: string;
   termAccessibilityLabel: ({
     chapterName,
@@ -432,6 +446,8 @@ const searchRouteCopy: Record<AppLanguage, SearchRouteCopy> = {
       'Slå upp centrala ord och öppna kapitlet eller övningsfrågan där begreppet används.',
     sectionTitle: 'Begrepp och frågor',
     sourceLabel: 'Källa',
+    submitSearch: 'Sök',
+    submitSearchAccessibilityLabel: 'Sök med den inskrivna texten',
     subtitle:
       'En snabb sökning för centrala samhällsbegrepp, källbaserade frågor och förklaringar.',
     termAccessibilityLabel: ({ chapterName, explanation, primaryTerm }) =>
@@ -491,6 +507,8 @@ const searchRouteCopy: Record<AppLanguage, SearchRouteCopy> = {
       'Look up central words and open the chapter or practice question where the term appears.',
     sectionTitle: 'Civic terms and questions',
     sourceLabel: 'Source',
+    submitSearch: 'Search',
+    submitSearchAccessibilityLabel: 'Submit the typed search',
     subtitle: 'A quick search for key civic terms, source-backed questions, and explanations.',
     termAccessibilityLabel: ({ chapterName, explanation, primaryTerm }) =>
       chapterName
@@ -543,6 +561,12 @@ function createStyles(themeColors: ThemeColors) {
       gap: space[1],
       justifyContent: 'space-between',
       marginTop: space[1.5],
+    },
+    searchButtonGroup: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1],
     },
     resultSummary: {
       color: themeColors.textMuted,
