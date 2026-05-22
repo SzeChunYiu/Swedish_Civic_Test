@@ -65,6 +65,35 @@ function countSourceOccurrences(source, token) {
   return source.match(new RegExp(`\\b${token}\\b`, 'g'))?.length ?? 0;
 }
 
+function parseJsonSummary(output, label) {
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, `${label} should print a JSON summary`);
+  return JSON.parse(match[0]);
+}
+
+function runFocusedValidationCommand(flag) {
+  return spawnSync(process.execPath, ['scripts/validate-content.js', flag], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+  });
+}
+
+function assertFocusedValidationSummary(flag, expectedSummaryKeys) {
+  const result = runFocusedValidationCommand(flag);
+  const combinedOutput = `${result.stdout}\n${result.stderr}`;
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.doesNotMatch(combinedOutput, /ReferenceError|Cannot access .* before initialization/);
+
+  const summary = parseJsonSummary(result.stdout, `${flag} focused validation`);
+  for (const key of expectedSummaryKeys) {
+    assert.ok(Object.prototype.hasOwnProperty.call(summary, key), `${key} is present`);
+  }
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
+
+  return summary;
+}
+
 test('npm test keeps selector routing in the project dispatcher', () => {
   const pkg = readPackageJson();
   const testContentScript = pkg.scripts['test:content'];
@@ -479,6 +508,44 @@ test('question speech text parity uses focused content validation routing', () =
     /\['scripts\/validate-content\.js'\]/,
     'question speech text tests must not route through full content validation',
   );
+});
+
+test('question speech focused validation exits after helper constants initialize', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('questionSpeechTextParity');
+  const helperIndex = validatorSource.indexOf('const SOURCE_AUTHORITY_REPLACEMENTS');
+  const focusIndex = validatorSource.indexOf(
+    "if (process.argv.includes('--focus-question-speech-text-parity'))",
+  );
+
+  assert.ok(registryEntry, 'question speech text parity focus mode must be registered');
+  assert.equal(helperIndex >= 0, true, 'speech text helper constants must stay in source');
+  assert.equal(
+    focusIndex > helperIndex,
+    true,
+    'question speech focus exit must follow helper constants',
+  );
+  assert.match(
+    validatorSource,
+    /function finishFocusedValidation\([\s\S]*exitWithValidationFailures\(\);[\s\S]*printValidationSummary\(summary\);[\s\S]*process\.exit\(0\);/,
+    'focused validation exits should use the shared focused summary helper',
+  );
+  assert.match(
+    validatorSource,
+    /--focus-question-speech-text-parity[\s\S]*validateQuestionSpeechTextParity\(\);[\s\S]*finishFocusedValidation\(\{/,
+    'question speech focus mode must use the shared focused summary helper',
+  );
+
+  const summary = assertFocusedValidationSummary(
+    '--focus-question-speech-text-parity',
+    registryEntry.summaryKeys,
+  );
+
+  assert.equal(summary.questionSpeechTextQuestionsValidated, summary.publishedQuestions);
+  assert.equal(summary.questionSpeechTextParityValidated, true);
 });
 
 test('generated localization overlay parity uses focused content validation routing', () => {
