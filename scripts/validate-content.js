@@ -20013,6 +20013,14 @@ function validateProLifetimeRelaunchParity() {
   const normalizedProLifetimeSource = proLifetimeSource.replace(/\s+/g, ' ');
   const normalizedProHookSource = proHookSource.replace(/\s+/g, ' ');
   const normalizedProIapTestSource = proIapTestSource.replace(/\s+/g, ' ');
+  const proLifetimeImportsSharedCanonicalTimestampHelper =
+    /import\s*\{\s*isCanonicalUtcIsoTimestamp\s*\}\s*from\s*['"]\.\.\/time\/canonicalTimestamp['"]/.test(
+      proLifetimeSource,
+    );
+  const proLifetimeImportsCanonicalTimestampFromPurchases =
+    /import\s*\{[^}]*\bisCanonicalUtcIsoTimestamp\b[^}]*\}\s*from\s*['"]\.\/purchases['"]/.test(
+      proLifetimeSource,
+    );
   const bareTrueCaseIsValid =
     normalizedProLifetimeSource.includes(
       'const record = parseStoredProLifetimeEntitlementRecord(storedValue);',
@@ -20034,6 +20042,8 @@ function validateProLifetimeRelaunchParity() {
     normalizedProLifetimeSource.includes('receiptValidationStatus:') &&
     normalizedProLifetimeSource.includes('receiptValidatedAt:') &&
     normalizedProLifetimeSource.includes('isCanonicalUtcIsoTimestamp') &&
+    proLifetimeImportsSharedCanonicalTimestampHelper &&
+    !proLifetimeImportsCanonicalTimestampFromPurchases &&
     !normalizedProLifetimeSource.includes('isValidIsoDate') &&
     normalizedProLifetimeSource.includes('function parseStoredProLifetimeEntitlementRecord(') &&
     normalizedProLifetimeSource.includes(
