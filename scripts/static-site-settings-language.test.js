@@ -448,6 +448,19 @@ test('Static Settings exposes the shipped extra language choices', () => {
   assert.deepEqual(context.settingLanguageValues(), staticSiteLanguageValues);
 });
 
+test('Translation review log records ebook practice CTA labels as localized', () => {
+  const log = read('docs/localization/translation-review-log.md');
+  const knownGapSection = log.match(
+    /## Not yet translated \(known gaps\)([\s\S]*?)## Per-locale native-review checklist/,
+  );
+
+  assert.ok(knownGapSection, 'translation-review log should keep a known-gaps section');
+  assert.match(log, /practice CTA labels/);
+  assert.match(log, /PRACTICE_LINKS/);
+  assert.match(log, /`appAvailable` remains false pending native-speaker review/);
+  assert.doesNotMatch(knownGapSection[1], /PRACTICE_LINKS/);
+});
+
 test('Settings language change persists extra locales and updates root direction', () => {
   const context = createRenderContext({ hash: '#/', language: 'en' });
   const languageChanges = [];
