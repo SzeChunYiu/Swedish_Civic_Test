@@ -20,11 +20,13 @@ const {
   Q050_SOURCE_CRITICISM_NATURALNESS_IDS,
   Q062_PUBLIC_SECTOR_NATURALNESS_IDS,
   Q093_RELIGIOUS_FREEDOM_1951_NATURALNESS_IDS,
+  Q115_RELIGIOUS_FREEDOM_1860_NATURALNESS_IDS,
   Q166_Q169_KOMMUN_REGION_NATURALNESS_IDS,
   SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS,
   summarizeQ050SourceCriticismNaturalness,
   summarizeQ062PublicSectorNaturalness,
   summarizeQ093ReligiousFreedom1951Naturalness,
+  summarizeQ115ReligiousFreedom1860Naturalness,
   summarizeQ166Q169KommunRegionNaturalness,
   summarizeSomaliHolidayFoodNaturalness,
 } = require('../scripts/check-question-i18n-v8');
@@ -47,6 +49,8 @@ const Q080_SUFFRAGE_REVISED_STATIC_PATTERN =
   /first Riksdag election held after those reforms was in 1921/i;
 const Q093_RELIGIOUS_FREEDOM_STALE_STATIC_PATTERN =
   /完全(?:自由|不屬於|不属于|不選|不选)|بحرية كاملة|إطلاقًا|بە تەواوی|تەواوی ئازادانە|کاملاً|اصلاً|całkowicie swobodny|pełna wolność|si buuxda xor|xorriyadda buuxda|haba yaraatee|ሙሉእ|ብሙሉእ|tamamen özgürce|повністю вільно|взагалі/i;
+const Q115_RELIGIOUS_FREEDOM_STALE_STATIC_PATTERN =
+  /完全(?:自由|不屬於|不属于|不選|不选)|بحرية كاملة|الحرية الكاملة|إطلاقًا|بە تەواوی|تەواوی ئازادانە|ئازادی تەواو|کاملاً|آزادی کامل|اصلاً|całkowicie swobodny|pełna wolność|si buuxda xor|xorriyadda buuxda|haba yaraatee|ሙሉእ|ብሙሉእ|tamamen özgürce|повністю вільно|повна свобода|взагалі/i;
 const SOURCE_CRITICISM_STALE_STATIC_PATTERN =
   /具有(?:來|来)源批判意識|أن تكون ناقدًا للمصادر|سەرچاوە-ڕەخنەیی|منبع‌سنج بودن|krytyczne podejście do źródeł|si naqdineed loo eego ilaha|ንምንጭታት ብነቐፌታዊ መንገዲ ምርኣይ|kaynaklara eleştirel yaklaşmak|критично ставитися до джерел/i;
 const KOMMUN_REGION_STATIC_LOCALE_PATTERNS = {
@@ -431,6 +435,25 @@ test('static site question bank keeps q093 religious-freedom i18n direct', () =>
     [],
   );
   assert.doesNotMatch(staticQuestionVisibleText(q093), Q093_RELIGIOUS_FREEDOM_STALE_STATIC_PATTERN);
+});
+
+test('static site question bank keeps q115 1860 religious-freedom i18n precise', () => {
+  const context = { window: {} };
+  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
+  const questionsById = new Map(
+    context.window.SMT_QUESTIONS.map((question) => [question.id, question]),
+  );
+  const q115 = questionsById.get('q115');
+
+  assert.ok(q115, 'q115 should be present in static question bank');
+  assert.deepEqual(
+    summarizeQ115ReligiousFreedom1860Naturalness(
+      [staticQuestionToI18nQuestion(q115)],
+      Q115_RELIGIOUS_FREEDOM_1860_NATURALNESS_IDS,
+    ).errors,
+    [],
+  );
+  assert.doesNotMatch(staticQuestionVisibleText(q115), Q115_RELIGIOUS_FREEDOM_STALE_STATIC_PATTERN);
 });
 
 test('static site question bank keeps q080 suffrage explanations learner-facing', () => {
