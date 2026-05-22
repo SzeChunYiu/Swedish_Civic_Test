@@ -11,6 +11,7 @@ const {
   extractLocalAssetReferences,
   findAssetReferencesMissingFromManifest,
   listIndexAssetReferences,
+  maxStylesheetImportDepth,
   writeAssetManifest,
 } = require('./update-site-asset-manifest');
 
@@ -476,6 +477,54 @@ test('asset manifest check reports symlinked CSS without reading outside site ro
       /styles\.css: referenced by index\.html or linked stylesheets but missing from committed manifest/,
     );
     assert.doesNotMatch(mismatchText, /leak\.png/);
+  } finally {
+    fs.rmSync(tempDir, { force: true, recursive: true });
+  }
+});
+
+test('asset manifest check fails fast when CSS import depth exceeds the limit', () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'site-css-import-depth-'));
+  const tempSiteDir = path.join(tempDir, 'site');
+  const tempManifestPath = path.join(tempSiteDir, 'asset-manifest.json');
+
+  try {
+    fs.mkdirSync(path.join(tempSiteDir, 'css'), { recursive: true });
+    fs.mkdirSync(path.join(tempSiteDir, 'images'), { recursive: true });
+    fs.writeFileSync(
+      path.join(tempSiteDir, 'index.html'),
+      '<!doctype html><link rel="stylesheet" href="css/depth-0.css">',
+    );
+
+    const deepestStylesheetIndex = maxStylesheetImportDepth + 1;
+    for (let index = 0; index <= deepestStylesheetIndex; index += 1) {
+      const nextImport =
+        index < deepestStylesheetIndex ? `@import "./depth-${index + 1}.css";` : '';
+      const imageReference =
+        index === deepestStylesheetIndex
+          ? '.too-deep { background: url("../images/deep.png"); }'
+          : '';
+      fs.writeFileSync(
+        path.join(tempSiteDir, 'css', `depth-${index}.css`),
+        [nextImport, imageReference].filter(Boolean).join('\n'),
+      );
+    }
+    fs.writeFileSync(path.join(tempSiteDir, 'images', 'deep.png'), 'deep');
+    writeAssetManifest({
+      manifestPath: tempManifestPath,
+      siteDir: tempSiteDir,
+    });
+
+    assert.throws(
+      () =>
+        checkAssetManifest({
+          manifestPath: tempManifestPath,
+          siteDir: tempSiteDir,
+        }),
+      (error) =>
+        error instanceof Error &&
+        error.message.includes('CSS import depth exceeded while scanning') &&
+        error.message.includes(`css/depth-${deepestStylesheetIndex}.css`),
+    );
   } finally {
     fs.rmSync(tempDir, { force: true, recursive: true });
   }
