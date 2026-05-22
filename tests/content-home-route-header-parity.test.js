@@ -369,7 +369,7 @@ test('home route copy parity rejects Swedish mockprov wording', () => {
       '-e',
       `
 const fs = require('node:fs');
-process.argv.push('--focus-sv-native-mock-exam-copy');
+process.argv.push('--focus-home-route-copy');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');

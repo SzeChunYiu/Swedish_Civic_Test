@@ -308,7 +308,7 @@ test('settings route remains scrollable on narrow mobile viewports', () => {
   );
   assert.match(
     source,
-    /<ScrollView style=\{styles\.container\} contentContainerStyle=\{styles\.content\}>/,
+    /<ScrollView[\s\S]*style=\{styles\.container\}[\s\S]*contentContainerStyle=\{styles\.content\}>/,
   );
   assert.match(source, /<\/ScrollView>/);
   assert.match(source, /content: \{\n\s+flexGrow: 1,/);

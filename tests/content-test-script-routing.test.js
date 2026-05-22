@@ -1373,6 +1373,50 @@ test('countdown banner parity uses focused countdown and study-plan validation r
   assert.equal(Object.hasOwn(summary, 'chapters'), false);
 });
 
+test('home route copy parity uses focused validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const homeRouteTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-home-route-header-parity.test.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('homeRouteCopy');
+
+  assert.ok(registryEntry, 'Home route copy focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-home-route-copy']);
+  assert.match(validatorSource, /--focus-home-route-copy/);
+  assert.match(
+    validatorSource,
+    /validateHomeRouteHeaderParity\(\);[\s\S]*validateHomeRouteSwedishMistakeReviewCopyNaturalness\(\);[\s\S]*validateHomeRouteCopyParity\(\);[\s\S]*homeRouteCopyParityValidated/,
+  );
+  assert.match(homeRouteTestSource, /--focus-home-route-copy/);
+  assert.doesNotMatch(
+    homeRouteTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'Home route copy tests must not route through full content validation',
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-home-route-copy'],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused Home route validation should print a JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  for (const key of registryEntry.summaryKeys) {
+    assert.ok(Object.prototype.hasOwnProperty.call(summary, key), `${key} is present`);
+  }
+  assert.equal(summary.homeRouteHeaderParityValidated, true);
+  assert.equal(summary.homeRouteCopyParityValidated, true);
+  assert.equal(summary.homeRouteSwedishMistakeReviewCopyNaturalnessValidated, true);
+  assert.equal(Object.hasOwn(summary, 'questionSchemasValidated'), false);
+});
+
 test('spaced repetition schema parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),

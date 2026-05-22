@@ -12028,7 +12028,10 @@ if (process.argv.includes('--focus-mock-exam-runtime-parity')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-mock-exam-copy-parity')) {
+if (
+  process.argv.includes('--focus-mock-exam-copy-parity') ||
+  process.argv.includes('--focus-sv-native-mock-exam-copy')
+) {
   validateNativeMockExamComponentLegalCopy();
   validateNativeMockExamLibraryAndTierCopy();
   exitWithValidationFailures();
@@ -26802,6 +26805,35 @@ if (process.argv.includes('--focus-mistakes-route-copy')) {
   );
   process.exit(0);
 }
+if (process.argv.includes('--focus-home-route-copy')) {
+  validateStaticValidationSyntaxGate();
+  validateCountdownBannerFocusedParity();
+  validateHomeRouteHeaderParity();
+  validateHomeRouteSwedishMistakeReviewCopyNaturalness();
+  validateHomeRouteCopyParity();
+  if (failures.length) exitWithValidationFailures();
+  console.log('Content validation OK');
+  console.log(
+    JSON.stringify(
+      {
+        staticValidationSyntaxFilesValidated,
+        staticValidationImportChecksValidated,
+        staticValidationSyntaxGateValidated,
+        homeRouteHeadersValidated,
+        homeRouteHeaderParityValidated,
+        homeRouteCopyLabelsValidated,
+        homeRouteCopyParityValidated,
+        homeRouteInternalBenchmarkCopyValidated,
+        homeRouteSwedishMistakeReviewCopyNaturalnessValidated,
+        countdownBannerHomeMountRulesValidated,
+        countdownBannerHomeMountParityValidated,
+      },
+      null,
+      2,
+    ),
+  );
+  process.exit(0);
+}
 if (process.argv.includes('--focus-source-material-link-parity')) {
   validateUhrSectionMapExactSchemaKeys();
   validateUhrSourceMaterialLinkParity();
@@ -26820,12 +26852,16 @@ if (process.argv.includes('--focus-source-material-link-parity')) {
   process.exit(0);
 }
 if (process.argv.includes('--focus-home-sv-mistake-review-copy')) {
+  validateStaticValidationSyntaxGate();
   validateHomeRouteSwedishMistakeReviewCopyNaturalness();
   if (failures.length) exitWithValidationFailures();
   console.log('Content validation OK');
   console.log(
     JSON.stringify(
       {
+        staticValidationSyntaxFilesValidated,
+        staticValidationImportChecksValidated,
+        staticValidationSyntaxGateValidated,
         homeRouteSwedishMistakeReviewCopyNaturalnessValidated,
       },
       null,
