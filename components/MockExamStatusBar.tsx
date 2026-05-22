@@ -2,9 +2,11 @@ import type { ComponentProps } from 'react';
 import { StyleSheet, View } from 'react-native';
 import type { StyleProp, ViewStyle } from 'react-native';
 
+import type { MockExamTimerUrgency } from '../lib/quiz/examGenerator';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, radius, space } from '../lib/theme';
 import { Button } from './Button';
+import type { PillBadgeVariant } from './PillBadge';
 import { PillBadge } from './PillBadge';
 import { Text } from './Text';
 
@@ -12,6 +14,7 @@ type MockExamStatusBarCopy = {
   eyebrowLabel: string;
   submitLabel: string;
   timeLabel: string;
+  timerUrgency: Record<MockExamTimerUrgency, string>;
 };
 
 const mockExamStatusBarCopy: Record<AppLanguage, MockExamStatusBarCopy> = {
@@ -19,19 +22,35 @@ const mockExamStatusBarCopy: Record<AppLanguage, MockExamStatusBarCopy> = {
     eyebrowLabel: 'Övningsprov',
     submitLabel: 'Lämna in',
     timeLabel: 'Tid kvar',
+    timerUrgency: {
+      danger: 'Kritiskt lite tid kvar',
+      steady: 'Gott om tid',
+      warning: 'Tiden börjar ta slut',
+    },
   },
   en: {
     eyebrowLabel: 'Mock exam',
     submitLabel: 'Submit',
     timeLabel: 'Time left',
+    timerUrgency: {
+      danger: 'Critical time remaining',
+      steady: 'Time steady',
+      warning: 'Time running low',
+    },
   },
 };
 
+const timerBadgeVariant: Record<MockExamTimerUrgency, PillBadgeVariant> = {
+  danger: 'danger',
+  steady: 'success',
+  warning: 'accent',
+};
+
 /**
- * Defaults: localized `eyebrowLabel`, `timeLabel`, and `submitLabel` from
- * settings, `timeLow=false`, `submitDisabled=false`, and
- * `accessibilityRole="summary"`. Pass localized labels from the screen for
- * screen-specific copy.
+ * Defaults: localized `eyebrowLabel`, `timeLabel`, `submitLabel`, and timer
+ * urgency labels from settings, `timerUrgency="steady"`,
+ * `submitDisabled=false`, and `accessibilityRole="summary"`. Pass localized
+ * labels from the screen for screen-specific copy.
  */
 export interface MockExamStatusBarProps extends Omit<ComponentProps<typeof View>, 'style'> {
   counterLabel: string;
@@ -44,6 +63,8 @@ export interface MockExamStatusBarProps extends Omit<ComponentProps<typeof View>
   submitLabel?: string;
   timeLabel?: string;
   timeLow?: boolean;
+  timerUrgency?: MockExamTimerUrgency;
+  timerUrgencyLabel?: string;
   timeValue: string;
 }
 
@@ -51,14 +72,16 @@ function getAccessibilityLabel({
   counterLabel,
   eyebrowLabel,
   timeLabel,
+  timerUrgencyLabel,
   timeValue,
 }: {
   counterLabel: string;
   eyebrowLabel: string;
   timeLabel: string;
+  timerUrgencyLabel: string;
   timeValue: string;
 }) {
-  return `${eyebrowLabel}. ${counterLabel}. ${timeLabel}: ${timeValue}.`;
+  return `${eyebrowLabel}. ${counterLabel}. ${timeLabel}: ${timeValue}. ${timerUrgencyLabel}.`;
 }
 
 export function MockExamStatusBar({
@@ -74,6 +97,8 @@ export function MockExamStatusBar({
   submitLabel,
   timeLabel,
   timeLow = false,
+  timerUrgency,
+  timerUrgencyLabel,
   timeValue,
   ...viewProps
 }: MockExamStatusBarProps) {
@@ -83,6 +108,8 @@ export function MockExamStatusBar({
   const resolvedEyebrowLabel = eyebrowLabel ?? copy.eyebrowLabel;
   const resolvedSubmitLabel = submitLabel ?? copy.submitLabel;
   const resolvedTimeLabel = timeLabel ?? copy.timeLabel;
+  const resolvedTimerUrgency = timerUrgency ?? (timeLow ? 'warning' : 'steady');
+  const resolvedTimerUrgencyLabel = timerUrgencyLabel ?? copy.timerUrgency[resolvedTimerUrgency];
 
   return (
     <View
@@ -92,11 +119,12 @@ export function MockExamStatusBar({
           counterLabel,
           eyebrowLabel: resolvedEyebrowLabel,
           timeLabel: resolvedTimeLabel,
+          timerUrgencyLabel: resolvedTimerUrgencyLabel,
           timeValue,
         })
       }
       accessibilityRole={accessibilityRole}
-      style={[styles.bar, timeLow ? styles.lowTimeBar : null, style]}
+      style={[styles.bar, styles[`${resolvedTimerUrgency}TimeBar`], style]}
       {...viewProps}
     >
       <View style={styles.titleGroup}>
@@ -113,11 +141,14 @@ export function MockExamStatusBar({
           {resolvedTimeLabel}
         </Text>
         <PillBadge
-          accessibilityLabel={`${resolvedTimeLabel}: ${timeValue}`}
-          variant={timeLow ? 'warning' : 'neutral'}
+          accessibilityLabel={`${resolvedTimeLabel}: ${timeValue}. ${resolvedTimerUrgencyLabel}`}
+          variant={timerBadgeVariant[resolvedTimerUrgency]}
         >
           {timeValue}
         </PillBadge>
+        <Text align="right" style={styles.timerUrgencyLabel} variant="caption">
+          {resolvedTimerUrgencyLabel}
+        </Text>
       </View>
 
       <Button
@@ -149,9 +180,16 @@ const styles = StyleSheet.create({
     gap: space[1],
     padding: space[1.5],
   },
-  lowTimeBar: {
-    backgroundColor: colors.warningSoft,
-    borderColor: colors.warning,
+  steadyTimeBar: {
+    borderColor: colors.success,
+  },
+  warningTimeBar: {
+    backgroundColor: colors.badgeBlueBg,
+    borderColor: colors.badgeBlueText,
+  },
+  dangerTimeBar: {
+    backgroundColor: colors.dangerSoft,
+    borderColor: colors.danger,
   },
   titleGroup: {
     flexGrow: 1,
@@ -165,6 +203,9 @@ const styles = StyleSheet.create({
   timerGroup: {
     alignItems: 'flex-end',
     gap: space[0.5],
+  },
+  timerUrgencyLabel: {
+    color: colors.textSecondary,
   },
   submit: {
     flexGrow: 0,

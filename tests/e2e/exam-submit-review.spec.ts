@@ -206,7 +206,7 @@ test('mock exam requires all answers before showing Swedish score and source pro
   await expect(page.getByText('Valt svar').first()).toBeVisible();
   await expect(page.getByText('Rätt svar').first()).toBeVisible();
   await expect(page.getByText('Förklaring', { exact: true }).first()).toBeVisible();
-  await expect(reviewQuestionOne.getByText('UHR-källa', { exact: true })).toBeVisible();
+  await expect(reviewQuestionOne.getByRole('heading', { name: 'UHR-källa' })).toBeVisible();
   await expect(reviewQuestionOne.getByLabel(/^UHR-källa:/)).toBeVisible();
   await expectProvenanceSourceNoteToggle(page, {
     buttonName: /Källtyp: UHR-källa/,

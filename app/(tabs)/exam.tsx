@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { findNodeHandle, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { MockExamTimeHeatmap } from '../../components/MockExamTimeHeatmap';
+import { MockExamStatusBar } from '../../components/MockExamStatusBar';
 import { QuestionNavigator } from '../../components/QuestionNavigator';
 import { ResultSummary } from '../../components/ResultSummary';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
@@ -23,6 +24,7 @@ import {
   buildMockExamQuizSession,
   formatExamTime,
   generateExam,
+  getMockExamTimerUrgency,
   scoreExam,
   shouldAutoSubmitExam,
 } from '../../lib/quiz/examGenerator';
@@ -103,8 +105,8 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
       rewarded_exam_credit: 'Extra övningsprov är upplåst.',
     },
     accessTitle: 'Provåtkomst',
-    activeHeroSubtitle: (remainingTime, questionCount) =>
-      `Tid kvar ${remainingTime} · ${questionCount} UHR-baserade frågor · inga annonser under provet`,
+    activeHeroSubtitle: (_remainingTime, questionCount) =>
+      `${questionCount} UHR-baserade frågor · inga annonser under provet`,
     activeQuestionRegionLabel: (questionNumber) => `Fråga ${questionNumber} i övningsprovet`,
     answerAccessibilityLabel: (optionText, questionNumber) =>
       `Välj svaret ${optionText} för fråga ${questionNumber}`,
@@ -176,8 +178,8 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
       rewarded_exam_credit: 'Extra mock exam unlocked.',
     },
     accessTitle: 'Exam access',
-    activeHeroSubtitle: (remainingTime, questionCount) =>
-      `Time left ${remainingTime} · ${questionCount} UHR-based questions · no ads during exam`,
+    activeHeroSubtitle: (_remainingTime, questionCount) =>
+      `${questionCount} UHR-based questions · no ads during exam`,
     activeQuestionRegionLabel: (questionNumber) => `Question ${questionNumber} in mock exam`,
     answerAccessibilityLabel: (optionText, questionNumber) =>
       `Select answer ${optionText} for question ${questionNumber}`,
@@ -351,6 +353,11 @@ export default function Screen() {
     [examQuestions, flaggedQuestionIds],
   );
   const canSubmit = answeredCount === examQuestions.length && examQuestions.length > 0;
+  const totalExamSeconds = defaultMockExamConfig.durationMinutes * 60;
+  const timerUrgency = getMockExamTimerUrgency({
+    remainingSeconds,
+    totalSeconds: totalExamSeconds,
+  });
   const endedByTime = Boolean(result && remainingSeconds <= 0);
   const submittedExamSession = useMemo(
     () =>
@@ -828,14 +835,18 @@ export default function Screen() {
         totalCount={examQuestions.length}
       />
 
-      <View style={styles.progressCard}>
-        <Text accessibilityRole="header" style={styles.sectionTitle}>
-          {copy.progressTitle}
-        </Text>
-        <Text style={styles.subtitle}>
-          {copy.answeredCount(answeredCount, examQuestions.length)}
-        </Text>
-      </View>
+      <Text accessibilityRole="header" style={styles.sectionTitle}>
+        {copy.progressTitle}
+      </Text>
+      <MockExamStatusBar
+        counterLabel={copy.answeredCount(answeredCount, examQuestions.length)}
+        eyebrowLabel={copy.mockExamTitle}
+        languageOverride={language}
+        onSubmit={submitExam}
+        submitDisabled={!canSubmit}
+        timerUrgency={timerUrgency}
+        timeValue={formatExamTime(remainingSeconds)}
+      />
 
       {examQuestions.map((question, index) => {
         const isFlagged = Boolean(flaggedQuestionIds[question.id]);

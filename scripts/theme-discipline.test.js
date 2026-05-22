@@ -60,6 +60,8 @@ const REQUIRED_CONTRAST_PAIRS = [
   ['success', 'successSoft'],
   ['warning', 'surface'],
   ['warning', 'warningSoft'],
+  ['danger', 'surface'],
+  ['danger', 'dangerSoft'],
 ];
 
 function walk(dir) {

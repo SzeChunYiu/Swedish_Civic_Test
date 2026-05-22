@@ -201,14 +201,30 @@ test('mock exam timer and auto-submit runtime guards reject malformed state', ()
   assert.ok(match, 'validation should print JSON summary');
 
   const summary = JSON.parse(match[0]);
-  const { formatExamTime, shouldAutoSubmitExam } = loadTs('lib/quiz/examGenerator.ts');
+  const { formatExamTime, getMockExamTimerUrgency, shouldAutoSubmitExam } = loadTs(
+    'lib/quiz/examGenerator.ts',
+  );
   const examRouteSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
 
   assert.equal(summary.mockExamTimerParityValidated, true);
+  assert.match(examRouteSource, /import \{ MockExamStatusBar \}/);
+  assert.match(examRouteSource, /getMockExamTimerUrgency/);
+  assert.match(
+    examRouteSource,
+    /const totalExamSeconds = defaultMockExamConfig\.durationMinutes \* 60/,
+  );
+  assert.match(
+    examRouteSource,
+    /const timerUrgency = getMockExamTimerUrgency\(\{[\s\S]*remainingSeconds,[\s\S]*totalSeconds: totalExamSeconds[\s\S]*\}\)/,
+  );
+  assert.match(examRouteSource, /<MockExamStatusBar[\s\S]*timerUrgency=\{timerUrgency\}/);
   assert.match(examRouteSource, /examActive: examUnlocked/);
   assert.match(examRouteSource, /formatExamTime\(remainingSeconds\)/);
   assert.match(examRouteSource, /!Number\.isFinite\(remainingSeconds\)/);
   assert.match(examRouteSource, /Number\.isFinite\(current\) \? Math\.max\(0, current - 1\) : 0/);
+  assert.equal(getMockExamTimerUrgency({ remainingSeconds: 1800, totalSeconds: 1800 }), 'steady');
+  assert.equal(getMockExamTimerUrgency({ remainingSeconds: 900, totalSeconds: 1800 }), 'warning');
+  assert.equal(getMockExamTimerUrgency({ remainingSeconds: 449, totalSeconds: 1800 }), 'danger');
   for (const malformedRemainingSeconds of [
     Number.NaN,
     Number.POSITIVE_INFINITY,
