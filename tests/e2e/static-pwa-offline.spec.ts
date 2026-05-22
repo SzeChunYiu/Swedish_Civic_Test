@@ -77,7 +77,7 @@ test('static PWA shell installs and reloads core study routes offline', async ({
   page,
 }) => {
   await seedStaticPwaRun(page);
-  await trapExternalRequests(page, new URL(staticSite.baseUrl).origin, []);
+  await trapExternalRequests(page, new URL(staticSite.baseUrl).origin);
 
   await page.goto(staticSite.baseUrl, { waitUntil: 'load' });
   await waitForServiceWorkerControl(page);
@@ -119,7 +119,7 @@ test('static PWA caches lazy ebook route bundles only after route demand', async
   page,
 }) => {
   await seedStaticPwaRun(page);
-  await trapExternalRequests(page, new URL(staticSite.baseUrl).origin, []);
+  await trapExternalRequests(page, new URL(staticSite.baseUrl).origin);
 
   await page.goto(staticSite.baseUrl, { waitUntil: 'load' });
   await waitForServiceWorkerControl(page);

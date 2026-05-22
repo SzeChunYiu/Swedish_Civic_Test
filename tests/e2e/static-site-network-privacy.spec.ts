@@ -68,6 +68,13 @@ async function expectAdSenseWaitsForConsent(page: Page) {
   ]);
 }
 
+function expectNoUnexpectedExternalRequests(unexpectedExternalRequests: string[]) {
+  expect(
+    unexpectedExternalRequests,
+    'privacy checks should not hide blocked third-party requests',
+  ).toEqual([]);
+}
+
 async function expectAutoAdSenseCopy(page: Page, language: keyof typeof autoAdSenseCopy) {
   const copy = autoAdSenseCopy[language];
   const privacyPage = page.locator('[data-page="/privacy"].is-active');
@@ -91,8 +98,11 @@ test.afterAll(async () => {
 });
 
 test('privacy route renders localized plain-language callout labels', async ({ page }) => {
+  const unexpectedExternalRequests: string[] = [];
   await seedStaticPrivacyRun(page);
-  await trapExternalRequests(page, new URL(staticSite.baseUrl).origin);
+  await trapExternalRequests(page, new URL(staticSite.baseUrl).origin, {
+    unexpectedExternalRequests,
+  });
 
   await page.goto(`${staticSite.baseUrl}/#/privacy`, { waitUntil: 'domcontentloaded' });
 
@@ -108,11 +118,15 @@ test('privacy route renders localized plain-language callout labels', async ({ p
   await expect(page.locator('#consent')).toBeVisible();
   await expectNoVisibleInternalMonetizationCopy(page);
   await expectNoHorizontalOverflow(page);
+  expectNoUnexpectedExternalRequests(unexpectedExternalRequests);
 });
 
 test('privacy and consent copy describe AdSense auto ads in both languages', async ({ page }) => {
+  const unexpectedExternalRequests: string[] = [];
   await seedStaticPrivacyRun(page);
-  await trapExternalRequests(page, new URL(staticSite.baseUrl).origin);
+  await trapExternalRequests(page, new URL(staticSite.baseUrl).origin, {
+    unexpectedExternalRequests,
+  });
 
   await page.goto(`${staticSite.baseUrl}/#/privacy`, { waitUntil: 'domcontentloaded' });
   await expect(page.locator('[data-page="/privacy"].is-active')).toBeVisible();
@@ -126,4 +140,5 @@ test('privacy and consent copy describe AdSense auto ads in both languages', asy
   await expectAutoAdSenseCopy(page, 'sv');
   await expectNoVisibleInternalMonetizationCopy(page);
   await expectNoHorizontalOverflow(page);
+  expectNoUnexpectedExternalRequests(unexpectedExternalRequests);
 });

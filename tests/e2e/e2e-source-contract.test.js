@@ -703,13 +703,28 @@ test('static site network specs share one external request trap helper', () => {
 
   assert.match(
     helperSource,
-    /export async function trapExternalRequests\(\s*page: Page,\s*allowedOrigin: string,\s*capturedGoogleFontRequests\?: string\[\],\s*\): Promise<void>/,
-    'static-site network request trapping should be owned by the shared helper with an optional capture array',
+    /export type TrapExternalRequestOptions = \{[\s\S]*capturedGoogleFontRequests\?: string\[\];[\s\S]*expectedExternalHosts\?: readonly string\[\];[\s\S]*unexpectedExternalRequests\?: string\[\];[\s\S]*\};/,
+    'static-site network request trapping should expose one options object for expected and unexpected captures',
   );
   assert.match(
     helperSource,
-    /capturedGoogleFontRequests\?\.push\(url\)/,
+    /export async function trapExternalRequests\(\s*page: Page,\s*allowedOrigin: string,\s*options: TrapExternalRequestOptions = \{\},\s*\): Promise<void>/,
+    'static-site network request trapping should be owned by the shared helper with an options object',
+  );
+  assert.match(
+    helperSource,
+    /options\.capturedGoogleFontRequests\?\.push\(url\)/,
     'the shared request trap should collect blocked Google Font requests when a caller asks for them',
+  );
+  assert.match(
+    helperSource,
+    /options\.unexpectedExternalRequests\?\.push\(url\)/,
+    'the shared request trap should record blocked unexpected external requests when a caller asks for them',
+  );
+  assert.match(
+    helperSource,
+    /expectedExternalHosts = new Set\(options\.expectedExternalHosts \?\? \[\]\)/,
+    'the shared request trap should allow specs to document expected consented external hosts without treating them as surprises',
   );
 
   for (const [fileName, source] of [
@@ -730,18 +745,39 @@ test('static site network specs share one external request trap helper', () => {
 
   assert.deepEqual(
     callArgumentCounts(privacySource, 'trapExternalRequests'),
-    [2, 2],
-    'privacy network coverage should use the shared helper without a capture array',
+    [3, 3],
+    'privacy network coverage should use the shared helper with an unexpected-external capture array',
   );
   assert.deepEqual(
     callArgumentCounts(networkSource, 'trapExternalRequests'),
     [3, 3, 3, 3],
-    'font/network coverage should use the shared helper with an explicit capture array',
+    'font/network coverage should use the shared helper with explicit options',
   );
   assert.match(
     networkSource,
-    /const googleFontRequests: string\[\] = \[\];[\s\S]*trapExternalRequests\(page, new URL\(staticSite\.baseUrl\)\.origin, googleFontRequests\)/,
-    'Google Fonts coverage should pass a named captured-request array to the shared helper',
+    /const googleFontRequests: string\[\] = \[\];[\s\S]*capturedGoogleFontRequests: googleFontRequests/,
+    'Google Fonts coverage should pass a named captured-request array through the shared helper options',
+  );
+  assert.equal(
+    (
+      privacySource.match(/expectNoUnexpectedExternalRequests\(unexpectedExternalRequests\);/g) ??
+      []
+    ).length,
+    2,
+    'privacy specs should assert no unexpected external requests at the end of each test',
+  );
+  assert.ok(
+    (
+      networkSource.match(
+        /expectNoUnexpectedExternalRequests\([^)]*unexpectedExternalRequests\);/g,
+      ) ?? []
+    ).length >= 4,
+    'font/network specs should assert no unexpected external requests in every route group',
+  );
+  assert.match(
+    networkSource,
+    /expectedExternalHosts: expectedAdSenseExternalHosts/,
+    'necessary-only consent coverage should document the consented AdSense host separately from unexpected requests',
   );
 });
 
