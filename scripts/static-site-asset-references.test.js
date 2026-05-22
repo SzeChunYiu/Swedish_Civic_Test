@@ -73,8 +73,8 @@ test('static ebook route scripts are lazy-loaded and manifest-backed assets', ()
 
   assert.doesNotMatch(indexHtml, /<script\b[^>]+\bsrc=["'][^"']*ebook-tools\.js[^"']*["']/i);
   assert.doesNotMatch(indexHtml, /<script\b[^>]+\bsrc=["'][^"']*ebook\.js[^"']*["']/i);
-  assert.doesNotMatch(appSource, /SMT_EBOOK_SCRIPT_SOURCES/);
-  assert.doesNotMatch(appSource, /window\.smtEnsureEbookScripts/);
+  assert.match(appSource, /SMT_EBOOK_SCRIPT_SOURCES[\s\S]*ebook-tools\.js[\s\S]*ebook\.js/);
+  assert.match(appSource, /window\.smtEnsureEbookScripts/);
 
   for (const assetPath of ['ebook-tools.js', 'ebook.js']) {
     assert.equal(fs.existsSync(path.join(siteRoot, assetPath)), true);
