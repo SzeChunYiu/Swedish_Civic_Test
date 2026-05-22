@@ -9517,3 +9517,116 @@ html[dir='rtl'] .lang-menu {
     min-height: 36px;
   }
 }
+
+/* ------------------------------------------------------------------
+   QUIZ PROGRESS BOX OPTIMIZATION ROUND
+   Turns quiz progress bars and counters into a compact tactile progress
+   tray so question position, right/wrong state, and navigation feel clear.
+------------------------------------------------------------------ */
+
+.quiz__progress {
+  background:
+    linear-gradient(135deg, rgba(0, 106, 167, 0.05), rgba(254, 204, 0, 0.04)),
+    rgba(255, 255, 255, 0.46);
+  border: 1px solid rgba(0, 106, 167, 0.1);
+  border-radius: 999px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.28),
+    0 12px 30px -28px rgba(11, 31, 51, 0.68);
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 0 auto 26px;
+  max-width: min(560px, 100%);
+  padding: 10px 12px;
+}
+
+.quiz__dot {
+  background: rgba(11, 31, 51, 0.14);
+  border: 1px solid rgba(0, 106, 167, 0.08);
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+  flex: 1 1 12px;
+  height: 9px;
+  max-width: 46px;
+  min-width: 12px;
+}
+
+button.quiz__dot.is-nav::after {
+  inset: -11px -3px;
+}
+
+button.quiz__dot.is-nav:hover {
+  background: rgba(0, 106, 167, 0.26);
+  box-shadow: 0 10px 24px -20px rgba(11, 31, 51, 0.74);
+  transform: translateY(-1px) scaleY(1.25);
+}
+
+.quiz__dot.is-on {
+  background: var(--blue);
+  border-color: rgba(0, 106, 167, 0.44);
+  box-shadow:
+    0 0 0 3px rgba(0, 106, 167, 0.12),
+    0 10px 24px -20px rgba(0, 58, 92, 0.72);
+}
+
+.quiz__dot.is-right {
+  background: #1e874b;
+  border-color: rgba(30, 135, 75, 0.42);
+}
+
+.quiz__dot.is-wrong {
+  background: #c2410c;
+  border-color: rgba(194, 65, 12, 0.42);
+}
+
+.quiz__actions {
+  background: rgba(255, 255, 255, 0.42);
+  border: 1px solid rgba(0, 106, 167, 0.08);
+  border-radius: 18px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+  padding: 12px;
+}
+
+.quiz__counter {
+  background: rgba(0, 106, 167, 0.07);
+  border: 1px solid rgba(0, 106, 167, 0.12);
+  border-radius: 999px;
+  color: var(--blue-ink);
+  font-weight: 800;
+  padding: 7px 10px;
+}
+
+:root[data-theme='dark'] .quiz__progress,
+:root[data-theme='dark'] .quiz__actions,
+:root[data-theme='dark'] .quiz__counter,
+:root[data-theme='dark'] .quiz__dot {
+  background: rgba(255, 255, 255, 0.045);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme='dark'] .quiz__counter {
+  color: var(--ink);
+}
+
+@media (max-width: 560px) {
+  .quiz__progress {
+    border-radius: 18px;
+    gap: 6px;
+    padding: 9px;
+  }
+  .quiz__dot {
+    flex-basis: 10px;
+    height: 10px;
+    max-width: 34px;
+    min-width: 10px;
+  }
+  .quiz__actions {
+    align-items: stretch;
+    border-radius: 16px;
+    flex-direction: column-reverse;
+    padding: 10px;
+  }
+  .quiz__counter {
+    align-self: flex-start;
+  }
+}
