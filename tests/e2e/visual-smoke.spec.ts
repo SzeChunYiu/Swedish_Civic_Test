@@ -175,3 +175,32 @@ test('dismissBlockingModals clears forced first-run and language picker overlays
   await expect(languagePage.locator(blockingModalOverlayLocator)).toHaveCount(0);
   await languagePage.close();
 });
+
+test('visual smoke dismissal helper closes forced first-run guide and language picker blockers', async ({
+  page,
+}) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await seedFreshFirstRunSettingsLanguage(page, 'en');
+  await page.goto('/settings', { waitUntil: 'networkidle' });
+  await expect(page.getByRole('dialog', { name: 'What is the Swedish civic test?' })).toBeVisible();
+
+  await page
+    .getByRole('button', { name: /Current language EN\. Open language picker\./ })
+    .dispatchEvent('click');
+  const languagePickerMenu = page.getByRole('menu', { name: 'Language picker' });
+  await expect(languagePickerMenu).toBeVisible();
+  await expect(page.getByRole('dialog', { name: 'What is the Swedish civic test?' })).toBeVisible();
+
+  const dismissal = await dismissBlockingModals(page);
+
+  expect(dismissal.firstRunAboutDismissed).toBe(true);
+  expect(dismissal.languagePickerDismissed).toBe(true);
+  await expect(page.locator(blockingModalOverlayLocator)).toHaveCount(0);
+  expect(consoleErrors).toEqual([]);
+});

@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs';
 
-import { expect, type Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
 import type { AppLanguage } from '../../lib/storage/settingsStore';
 
@@ -66,6 +66,14 @@ export function getChromiumLaunchOptions(): ChromiumLaunchOptions | undefined {
   const executablePath = findSystemChromiumExecutable();
 
   return executablePath ? { executablePath } : undefined;
+}
+
+async function activateBlockingModalControl(control: Locator): Promise<void> {
+  try {
+    await control.click({ timeout: 2_000 });
+  } catch {
+    await control.dispatchEvent('click');
+  }
 }
 
 export async function seedSettingsLanguage(page: Page, language: AppLanguage): Promise<void> {
@@ -295,7 +303,7 @@ export async function closeLaunchAdIfPresent(page: Page): Promise<boolean> {
     .first();
 
   if (await closeLaunchAd.isVisible().catch(() => false)) {
-    await closeLaunchAd.click();
+    await activateBlockingModalControl(closeLaunchAd);
     await expect(page.locator(dialogLocator)).toHaveCount(0);
     return true;
   }
@@ -311,7 +319,7 @@ export async function dismissLanguagePickerIfPresent(page: Page): Promise<boolea
     .first();
 
   if (await closeLanguagePicker.isVisible().catch(() => false)) {
-    await closeLanguagePicker.click();
+    await activateBlockingModalControl(closeLanguagePicker);
     await expect(page.getByRole('menu', { name: /Language picker|Språkväljare/ })).toHaveCount(0);
     return true;
   }
@@ -327,7 +335,7 @@ export async function dismissFirstRunAboutModalIfPresent(page: Page): Promise<bo
     .first();
 
   if (await skipGuide.isVisible().catch(() => false)) {
-    await skipGuide.click();
+    await activateBlockingModalControl(skipGuide);
     await expect(page.locator(dialogLocator)).toHaveCount(0);
     return true;
   }

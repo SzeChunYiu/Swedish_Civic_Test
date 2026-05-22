@@ -94,6 +94,8 @@ test('visual smoke uses the shared route filename contract and blocking modal ov
   assert.match(browserLaunchSource, /export const blockingModalOverlayLocator/);
   assert.match(browserLaunchSource, /\[role="dialog"\]\[aria-modal="true"\]/);
   assert.match(browserLaunchSource, /\[role="menu"\]\[aria-modal="true"\]/);
+  assert.match(browserLaunchSource, /function activateBlockingModalControl/);
+  assert.match(browserLaunchSource, /dispatchEvent\('click'\)/);
   assert.match(
     visualSmokeSource,
     /import \{[\s\S]*visualSmokeRouteManifestEntries[\s\S]*\} from '\.\/visualSmokeRoutes';/,
@@ -118,9 +120,18 @@ test('visual smoke uses the shared route filename contract and blocking modal ov
   );
   assert.match(
     visualSmokeSource,
-    /import \{[\s\S]*blockingModalOverlayLocator[\s\S]*dismissBlockingModals[\s\S]*\} from '\.\/browserLaunch';/,
+    /import \{[\s\S]*blockingModalOverlayLocator,[\s\S]*dismissBlockingModals,[\s\S]*seedFreshFirstRunSettingsLanguage,[\s\S]*\} from '\.\/browserLaunch';/,
   );
   assert.match(visualSmokeSource, /page\.locator\(blockingModalOverlayLocator\)/);
+  assert.match(
+    visualSmokeSource,
+    /visual smoke dismissal helper closes forced first-run guide and language picker blockers/,
+  );
+  assert.match(visualSmokeSource, /seedFreshFirstRunSettingsLanguage\(page, 'en'\)/);
+  assert.match(visualSmokeSource, /page\.goto\('\/settings'/);
+  assert.match(visualSmokeSource, /dispatchEvent\('click'\)/);
+  assert.match(visualSmokeSource, /dismissal\.firstRunAboutDismissed\)\.toBe\(true\)/);
+  assert.match(visualSmokeSource, /dismissal\.languagePickerDismissed\)\.toBe\(true\)/);
   assert.doesNotMatch(
     visualSmokeSource,
     /page\.locator\('\[role="dialog"\]\[aria-modal="true"\]'\)/,
