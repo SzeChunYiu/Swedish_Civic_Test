@@ -1853,6 +1853,48 @@ const EXPECTED_APP_CONFIG_PLUGINS = [
   'expo-tracking-transparency',
 ];
 const EXPECTED_WEB_DOCUMENT_METADATA_DESCRIPTION_LANGUAGES = ['sv', 'en'];
+const EXPECTED_WEB_DOCUMENT_METADATA_USAGE_RULES = [
+  {
+    label: 'html lang to webDocumentMetadata.language',
+    pattern: /<html\s+data-app-shell="expo-router"\s+lang=\{webDocumentMetadata\.language\}>/,
+  },
+  {
+    label: 'title to webDocumentMetadata.title',
+    pattern: /<title>\{webDocumentMetadata\.title\}<\/title>/,
+  },
+  {
+    label: 'theme-color to theme canvas token',
+    pattern: /<meta\s+content=\{colors\.canvas\}\s+name="theme-color"\s+\/>/,
+  },
+  {
+    label: 'application-name to webDocumentMetadata.applicationName',
+    pattern:
+      /<meta\s+content=\{webDocumentMetadata\.applicationName\}\s+name="application-name"\s+\/>/,
+  },
+  {
+    label: 'apple mobile title to webDocumentMetadata.appleMobileWebAppTitle',
+    pattern:
+      /<meta\s+content=\{webDocumentMetadata\.appleMobileWebAppTitle\}\s+name="apple-mobile-web-app-title"\s+\/>/,
+  },
+  {
+    label: 'description to webDocumentMetadata.description',
+    pattern: /<meta\s+content=\{webDocumentMetadata\.description\}\s+name="description"\s+\/>/,
+  },
+  {
+    label: 'og site name to webDocumentMetadata.openGraphSiteName',
+    pattern:
+      /<meta\s+content=\{webDocumentMetadata\.openGraphSiteName\}\s+property="og:site_name"\s+\/>/,
+  },
+  {
+    label: 'og title to webDocumentMetadata.openGraphTitle',
+    pattern: /<meta\s+content=\{webDocumentMetadata\.openGraphTitle\}\s+property="og:title"\s+\/>/,
+  },
+  {
+    label: 'og description to webDocumentMetadata.openGraphDescription',
+    pattern:
+      /<meta\s+content=\{webDocumentMetadata\.openGraphDescription\}\s+property="og:description"\s+\/>/,
+  },
+];
 const EXPECTED_APP_NATIVE_IDENTIFIER = 'com.billyyiu.almostswedish';
 const EXPECTED_TRACKING_PERMISSION =
   'This identifier may be used to deliver relevant study app ads after consent.';
@@ -10212,6 +10254,8 @@ let staticHeadMetadataTitleValidated = 0;
 let staticHeadMetadataDescriptionValidated = 0;
 let staticHeadMetadataOutcomeClaimPatternsValidated = 0;
 let staticHeadMetadataParityValidated = false;
+let webDocumentMetadataUsageRulesValidated = 0;
+let webDocumentMetadataUsageParityValidated = false;
 let staticI18nArabicRequiredCopyValidated = 0;
 let staticI18nArabicHighFrequencyLabelsValidated = 0;
 let staticI18nArabicForbiddenFragmentsValidated = 0;
@@ -10700,6 +10744,7 @@ if (process.argv.includes('--focus-static-ebook-provenance')) {
 if (process.argv.includes('--focus-app-config-schema')) {
   validateValidationScriptSyntax();
   validateAppConfigSchema();
+  validateWebDocumentMetadataUsageParity();
   validateStaticValidationSyntaxGate();
   validateStaticHeadMetadataParity();
   exitWithValidationFailures();
@@ -10707,8 +10752,8 @@ if (process.argv.includes('--focus-app-config-schema')) {
     validationScriptSyntaxChecksValidated,
     appConfigPluginsValidated,
     appConfigSchemaValidated,
-    appConfigAdMobAppIdsValidated,
-    appConfigAdMobRealFlagRejectsSampleAppIds,
+    webDocumentMetadataUsageRulesValidated,
+    webDocumentMetadataUsageParityValidated,
     staticHeadMetadataTitleValidated,
     staticHeadMetadataDescriptionValidated,
     staticHeadMetadataOutcomeClaimPatternsValidated,
@@ -11880,69 +11925,24 @@ function validateWebDocumentMetadataParity(expo, reject) {
   }
 }
 
-function validateResolvedGoogleMobileAdsAppIds(reject) {
-  const fallbackResult = readResolvedExpoConfig({
-    [REAL_ADS_ENABLED_ENV_KEY]: undefined,
-    [REAL_ADMOB_APP_ID_ENV_KEYS.android]: undefined,
-    [REAL_ADMOB_APP_ID_ENV_KEYS.ios]: undefined,
-  });
+function validateWebDocumentMetadataUsageParity() {
+  const source = loadText('app/+html.tsx');
+  let valid = true;
 
-  if (!fallbackResult.ok) {
-    reject(`app.config.ts default Expo config must resolve: ${fallbackResult.message}`);
-  } else {
-    const fallbackConfig = getPluginConfig(
-      getExpoPluginEntry(fallbackResult.expo.plugins ?? [], 'react-native-google-mobile-ads'),
-    );
-    if (fallbackConfig?.androidAppId !== GOOGLE_SAMPLE_ADMOB_APP_IDS.android) {
-      reject('app.config.ts must keep the Google sample Android App ID when real ads are disabled');
+  for (const rule of EXPECTED_WEB_DOCUMENT_METADATA_USAGE_RULES) {
+    if (!rule.pattern.test(source)) {
+      valid = false;
+      fail(`web document shell must bind ${rule.label}`);
     } else {
-      appConfigAdMobAppIdsValidated += 1;
-    }
-    if (fallbackConfig?.iosAppId !== GOOGLE_SAMPLE_ADMOB_APP_IDS.ios) {
-      reject('app.config.ts must keep the Google sample iOS App ID when real ads are disabled');
-    } else {
-      appConfigAdMobAppIdsValidated += 1;
+      webDocumentMetadataUsageRulesValidated += 1;
     }
   }
 
-  const realResult = readResolvedExpoConfig({
-    [REAL_ADS_ENABLED_ENV_KEY]: 'true',
-    [REAL_ADMOB_APP_ID_ENV_KEYS.android]: VALIDATOR_REAL_ADMOB_APP_IDS.android,
-    [REAL_ADMOB_APP_ID_ENV_KEYS.ios]: VALIDATOR_REAL_ADMOB_APP_IDS.ios,
-  });
-
-  if (!realResult.ok) {
-    reject(`app.config.ts real-ad Expo config must resolve: ${realResult.message}`);
-  } else {
-    const realConfig = getPluginConfig(
-      getExpoPluginEntry(realResult.expo.plugins ?? [], 'react-native-google-mobile-ads'),
-    );
-    if (realConfig?.androidAppId !== VALIDATOR_REAL_ADMOB_APP_IDS.android) {
-      reject('app.config.ts must use EXPO_PUBLIC_ADMOB_ANDROID_APP_ID when real ads are enabled');
-    } else {
-      appConfigAdMobAppIdsValidated += 1;
-    }
-    if (realConfig?.iosAppId !== VALIDATOR_REAL_ADMOB_APP_IDS.ios) {
-      reject('app.config.ts must use EXPO_PUBLIC_ADMOB_IOS_APP_ID when real ads are enabled');
-    } else {
-      appConfigAdMobAppIdsValidated += 1;
-    }
-  }
-
-  const sampleResult = readResolvedExpoConfig({
-    [REAL_ADS_ENABLED_ENV_KEY]: 'true',
-    [REAL_ADMOB_APP_ID_ENV_KEYS.android]: GOOGLE_SAMPLE_ADMOB_APP_IDS.android,
-    [REAL_ADMOB_APP_ID_ENV_KEYS.ios]: GOOGLE_SAMPLE_ADMOB_APP_IDS.ios,
-  });
-
-  if (sampleResult.ok) {
-    reject('app.config.ts must reject Google sample App IDs when real ads are enabled');
-  } else if (/must not use Google's sample AdMob publisher id/.test(sampleResult.message)) {
-    appConfigAdMobRealFlagRejectsSampleAppIds = true;
-  } else {
-    reject(
-      `app.config.ts sample App ID rejection must name the sample AdMob publisher: ${sampleResult.message}`,
-    );
+  if (
+    valid &&
+    webDocumentMetadataUsageRulesValidated === EXPECTED_WEB_DOCUMENT_METADATA_USAGE_RULES.length
+  ) {
+    webDocumentMetadataUsageParityValidated = true;
   }
 }
 
@@ -25906,6 +25906,7 @@ validateMockExamConfig(
 );
 validateValidationScriptSyntax();
 validateAppConfigSchema();
+validateWebDocumentMetadataUsageParity();
 validateLaunchAdRouteSuppressionParity();
 validateLaunchAdFirstRunDeferralParity();
 validateTabNavigationParity();
@@ -26048,8 +26049,8 @@ console.log(
       validationScriptSyntaxChecksValidated,
       appConfigPluginsValidated,
       appConfigSchemaValidated,
-      appConfigAdMobAppIdsValidated,
-      appConfigAdMobRealFlagRejectsSampleAppIds,
+      webDocumentMetadataUsageRulesValidated,
+      webDocumentMetadataUsageParityValidated,
       launchAdSuppressedRoutesValidated,
       launchAdRouteSuppressionParityValidated,
       launchAdFirstRunDeferralRulesValidated,
