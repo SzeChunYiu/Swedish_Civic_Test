@@ -472,7 +472,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     'ch05',
     { chapter: 'Lag och rätt', section: 'Rättssäkerhet', pageApprox: 17 },
     'Vilket påstående beskriver rättssäkerhet i Sverige?',
-    'Which statement describes legal certainty in Sweden?',
+    'Which statement describes the rule of law in Sweden?',
     [
       [
         'Domstolarna är oberoende, och alla har rätt att försvara sig och överklaga en dom',
@@ -488,12 +488,12 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
       ],
       [
         'Rättssäkerhet betyder att vissa personer står över lagen',
-        'Legal certainty means that some people are above the law',
+        'The rule of law means that some people are above the law',
       ],
     ],
     0,
     'Rättssäkerhet innebär att alla behandlas lika inför lagen och får en rättvis rättegång där bevis och fakta granskas noggrant. Domstolarna är oberoende; regering och riksdag får inte bestämma hur de ska döma, och den som berörs har rätt att försvara sig med advokat och kan överklaga en dom.',
-    'Legal certainty means everyone is treated equally before the law and receives a fair trial where evidence and facts are carefully reviewed. Courts are independent; the government and Riksdag may not decide how they judge cases, and the person concerned has the right to defend themselves with a lawyer and can appeal a judgment.',
+    'The rule of law means everyone is treated equally before the law and receives a fair trial where evidence and facts are carefully reviewed. Courts are independent; the government and Riksdag may not decide how they judge cases, and the person concerned has the right to defend themselves with a lawyer and can appeal a judgment.',
     ['legal-certainty', 'independent-courts', 'appeal'],
   ),
   single(

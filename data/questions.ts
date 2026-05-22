@@ -399,7 +399,7 @@ const rawBaseQuestions: PracticeQuestion[] = [
       {
         id: 'a',
         textSv: 'Rättssäkerhet',
-        textEn: 'Legal certainty',
+        textEn: 'The rule of law',
       },
       {
         id: 'b',
@@ -421,7 +421,7 @@ const rawBaseQuestions: PracticeQuestion[] = [
     explanationSv:
       'Rättssäkerhet betyder att lagarna gäller för alla och att ingen får dömas utan en rättvis rättegång. Censur, segregation och monarki betyder andra saker.',
     explanationEn:
-      'Legal certainty means that laws apply to everyone and that no one can be convicted without a fair trial. Censorship, segregation, and monarchy mean other things.',
+      'The rule of law means that laws apply to everyone and that no one can be convicted without a fair trial. Censorship, segregation, and monarchy mean other things.',
     uhrReference: {
       chapter: 'Sveriges demokratiska system',
       section: 'Demokrati betyder folkstyre',
