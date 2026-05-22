@@ -484,6 +484,32 @@ test('Search route e2e covers English query URL clearing', () => {
   );
 });
 
+test('Search route e2e covers manual Enter submit URL state', () => {
+  const source = readSearchQueryHydrationE2eSource();
+
+  assert.match(
+    source,
+    /search route submits manual typing via Enter before URL hydration and clears empty stale query/,
+  );
+  assert.match(source, /const manualSubmitQuery = 'mänskliga rättigheter';/);
+  assert.match(source, /const encodedManualSubmitQuery = encodeURIComponent\(manualSubmitQuery\);/);
+  assert.match(
+    source,
+    /await input\.fill\(manualSubmitQuery\)[\s\S]*?expectSearchUrlWithoutQueryParams\(page\)/,
+  );
+  assert.match(source, /await input\.press\('Enter'\)/);
+  assert.match(source, /await expectSearchUrlWithQParam\(page, manualSubmitQuery\)/);
+  assert.match(source, /expect\(page\.url\(\)\)\.toContain\(`q=\$\{encodedManualSubmitQuery\}`\)/);
+  assert.match(
+    source,
+    /await page\.reload\(\{ waitUntil: 'networkidle' \}\)[\s\S]*?await expectSearchState\(page, manualSubmitQuery\)/,
+  );
+  assert.match(
+    source,
+    /await hydratedInput\.fill\('   '\)[\s\S]*?await hydratedInput\.press\('Enter'\)[\s\S]*?expectSearchUrlWithoutQueryParams\(page\)/,
+  );
+});
+
 test('Search dark source-affordance e2e covers Swedish and English locale names', () => {
   const source = readThemeModeUtilityE2eSource();
 

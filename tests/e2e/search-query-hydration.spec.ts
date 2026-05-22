@@ -50,6 +50,12 @@ function expectSearchUrlWithoutQueryParams(page: Page) {
   expect(url.searchParams.has('query')).toBe(false);
 }
 
+async function expectSearchUrlWithQParam(page: Page, expectedQuery: string) {
+  await expect.poll(() => new URL(page.url()).pathname).toBe('/search');
+  await expect.poll(() => new URL(page.url()).searchParams.get('q')).toBe(expectedQuery);
+  await expect.poll(() => new URL(page.url()).searchParams.has('query')).toBe(false);
+}
+
 async function expectHydratedSearch(
   page: Page,
   url: string,
@@ -241,6 +247,51 @@ test('English search route hydrates and clears q/query URL parameters before typ
   await municipalityInput.fill('parliament');
   await expect(municipalityInput).toHaveValue('parliament');
   expectSearchUrlWithoutQueryParams(page);
+
+  expect(consoleErrors).toEqual([]);
+});
+
+test('search route submits manual typing via Enter before URL hydration and clears empty stale query', async ({
+  page,
+}) => {
+  const consoleErrors: string[] = [];
+  const manualSubmitQuery = 'mänskliga rättigheter';
+  const encodedManualSubmitQuery = encodeURIComponent(manualSubmitQuery);
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await markAboutTheTestSeen(page);
+  await page.goto('/search', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  const input = page.getByRole('textbox', { name: searchStateCopy.sv.inputName });
+  await expect(input).toBeVisible();
+  await expect(input).toHaveValue('');
+  expectSearchUrlWithoutQueryParams(page);
+
+  await input.fill(manualSubmitQuery);
+  await expect(input).toHaveValue(manualSubmitQuery);
+  expectSearchUrlWithoutQueryParams(page);
+
+  await input.press('Enter');
+  await expectSearchUrlWithQParam(page, manualSubmitQuery);
+  expect(page.url()).toContain(`q=${encodedManualSubmitQuery}`);
+  await expectSearchState(page, manualSubmitQuery);
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+  const hydratedInput = await expectSearchState(page, manualSubmitQuery);
+  await expectSearchUrlWithQParam(page, manualSubmitQuery);
+
+  await hydratedInput.fill('   ');
+  await expect(hydratedInput).toHaveValue('   ');
+  await hydratedInput.press('Enter');
+  await expect(hydratedInput).toHaveValue('');
+  expectSearchUrlWithoutQueryParams(page);
+  await expect(page.getByText(searchStateCopy.sv.allTermsSummaryPattern)).toBeVisible();
 
   expect(consoleErrors).toEqual([]);
 });
