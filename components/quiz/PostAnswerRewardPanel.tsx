@@ -1,7 +1,9 @@
+import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, radius, space, typography } from '../../lib/theme';
+import { radius, space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 import type { PracticeQuestion } from '../../types/content';
 import { Badge } from '../ui/Badge';
 
@@ -80,6 +82,8 @@ export function PostAnswerRewardPanel({
   streakDays,
   totalXp,
 }: PostAnswerRewardPanelProps) {
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const copy = postAnswerRewardPanelCopy[language];
   const sectionTitle = question.uhrReference.section;
   const answerResult = isCorrect ? copy.answerCorrect : copy.answerWrong;
@@ -102,8 +106,12 @@ export function PostAnswerRewardPanel({
       style={styles.panel}
     >
       <View style={styles.headerRow}>
-        <Badge tone={isCorrect ? 'green' : 'warm'}>{answerResult}</Badge>
-        <Badge tone="blue">{copy.badge}</Badge>
+        <Badge themeColors={themeColors} tone={isCorrect ? 'green' : 'warm'}>
+          {answerResult}
+        </Badge>
+        <Badge themeColors={themeColors} tone="blue">
+          {copy.badge}
+        </Badge>
       </View>
       <View style={styles.factBubble}>
         <Text accessibilityRole="header" style={styles.factTitle}>
@@ -139,65 +147,67 @@ export function PostAnswerRewardPanel({
   );
 }
 
-const styles = StyleSheet.create({
-  panel: {
-    backgroundColor: colors.surfaceWarm,
-    borderColor: colors.border,
-    borderRadius: radius.large,
-    borderWidth: space.hairline,
-    gap: space[1.25],
-    padding: space[2],
-  },
-  headerRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[0.75],
-  },
-  factBubble: {
-    backgroundColor: colors.surface,
-    borderColor: colors.badgeBlueBg,
-    borderRadius: radius.card,
-    borderWidth: space.hairline,
-    gap: space[0.5],
-    padding: space[1.5],
-  },
-  factTitle: {
-    color: colors.text,
-    fontSize: typography.caption.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    lineHeight: typography.caption.lineHeight,
-  },
-  factText: {
-    color: colors.textSecondary,
-    fontSize: typography.body.fontSize,
-    lineHeight: typography.body.lineHeight,
-  },
-  metricRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[0.75],
-  },
-  metricPill: {
-    backgroundColor: colors.badgeBlueBg,
-    borderColor: colors.focusSoft,
-    borderRadius: radius.card,
-    borderWidth: space.hairline,
-    minHeight: space[6],
-    minWidth: space[7],
-    paddingHorizontal: space[1],
-    paddingVertical: space[0.75],
-  },
-  metricValue: {
-    color: colors.text,
-    fontSize: typography.bodyBold.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    lineHeight: typography.bodyBold.lineHeight,
-  },
-  metricLabel: {
-    color: colors.badgeBlueText,
-    fontSize: typography.micro.fontSize,
-    fontWeight: typography.badge.fontWeight,
-    lineHeight: typography.micro.lineHeight,
-    textTransform: 'uppercase',
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    panel: {
+      backgroundColor: themeColors.surfaceWarm,
+      borderColor: themeColors.border,
+      borderRadius: radius.large,
+      borderWidth: space.hairline,
+      gap: space[1.25],
+      padding: space[2],
+    },
+    headerRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[0.75],
+    },
+    factBubble: {
+      backgroundColor: themeColors.surface,
+      borderColor: themeColors.badgeBlueBg,
+      borderRadius: radius.card,
+      borderWidth: space.hairline,
+      gap: space[0.5],
+      padding: space[1.5],
+    },
+    factTitle: {
+      color: themeColors.text,
+      fontSize: typography.caption.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      lineHeight: typography.caption.lineHeight,
+    },
+    factText: {
+      color: themeColors.textSecondary,
+      fontSize: typography.body.fontSize,
+      lineHeight: typography.body.lineHeight,
+    },
+    metricRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[0.75],
+    },
+    metricPill: {
+      backgroundColor: themeColors.badgeBlueBg,
+      borderColor: themeColors.focusSoft,
+      borderRadius: radius.card,
+      borderWidth: space.hairline,
+      minHeight: space[6],
+      minWidth: space[7],
+      paddingHorizontal: space[1],
+      paddingVertical: space[0.75],
+    },
+    metricValue: {
+      color: themeColors.text,
+      fontSize: typography.bodyBold.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      lineHeight: typography.bodyBold.lineHeight,
+    },
+    metricLabel: {
+      color: themeColors.badgeBlueText,
+      fontSize: typography.micro.fontSize,
+      fontWeight: typography.badge.fontWeight,
+      lineHeight: typography.micro.lineHeight,
+      textTransform: 'uppercase',
+    },
+  });
+}

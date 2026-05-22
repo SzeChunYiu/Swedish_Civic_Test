@@ -11,6 +11,7 @@ import { AnswerOption } from '../../components/quiz/AnswerOption';
 import { CelebrationBurst } from '../../components/quiz/CelebrationBurst';
 import { ConfidenceRatingPicker } from '../../components/quiz/ConfidenceRatingPicker';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
+import { PostAnswerRewardPanel } from '../../components/quiz/PostAnswerRewardPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { QuestionReportLink } from '../../components/quiz/QuestionReportLink';
@@ -28,6 +29,8 @@ import {
   stopSpeech,
 } from '../../lib/audio/speak';
 import { filterQuestionsByProvenance } from '../../lib/content/provenance';
+import { calculateStreak } from '../../lib/learning/streaks';
+import { calculateAnswerXp, calculateLevel } from '../../lib/learning/xp';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
 import {
@@ -253,6 +256,8 @@ export default function Screen() {
   const clearProgressPersistenceWarning = useProgressStore(
     (state) => state.clearPersistenceWarning,
   );
+  const totalXp = useProgressStore((state) => state.totalXp);
+  const answerDates = useProgressStore((state) => state.answerDates);
   const recordWrongAnswerReview = useMistakeReviewStore((state) => state.recordWrongAnswerReview);
   const mistakeReviewPersistenceWarning = useMistakeReviewStore(
     (state) => state.persistenceWarning,
@@ -280,9 +285,12 @@ export default function Screen() {
   const [selectedConfidenceRating, setSelectedConfidenceRating] = useState<ConfidenceRating | null>(
     null,
   );
+  const [answerXpAwardedForSelection, setAnswerXpAwardedForSelection] = useState(0);
   const { entitlements: proEntitlements, entitlementsReady: proEntitlementsReady } =
     useProLifetimeEntitlements();
   const copy = practiceCopy[language];
+  const level = calculateLevel(totalXp);
+  const streakDays = useMemo(() => calculateStreak(answerDates), [answerDates]);
   const filteredQuestions = useMemo(
     () => filterQuestionsByProvenance(questions, { includeSupplementary }),
     [includeSupplementary],
@@ -356,6 +364,10 @@ export default function Screen() {
   useEffect(() => {
     setSelectedConfidenceRating(null);
   }, [question?.id]);
+
+  useEffect(() => {
+    setAnswerXpAwardedForSelection(0);
+  }, [question?.id, shuffleSessionId]);
 
   const startPracticeScope = (nextScope: PracticeScope) => {
     const nextQuestionBank = getQuestionsForPracticeScope(filteredQuestions, nextScope);
@@ -486,10 +498,15 @@ export default function Screen() {
     selectOption(question.id, optionId);
     const answerXpAwardKey = getPracticeAnswerXpAwardKey(question.id, shuffleSessionId);
     const shouldAwardXp = answerXpAwardedKey !== answerXpAwardKey;
+    const answerXp = shouldAwardXp
+      ? calculateAnswerXp({ isCorrect: optionIsCorrect, explanationRead: true })
+      : 0;
+
     recordAnswer(question.id, optionIsCorrect, answerConfidenceRating, {
       awardXp: shouldAwardXp,
     });
     if (shouldAwardXp) markAnswerXpAwarded(answerXpAwardKey);
+    setAnswerXpAwardedForSelection(answerXp);
 
     if (!optionIsCorrect && selectedOption) {
       recordWrongAnswerReview({
@@ -505,6 +522,7 @@ export default function Screen() {
   };
   const handleTryAgain = () => {
     setSelectedConfidenceRating(null);
+    setAnswerXpAwardedForSelection(0);
     resetSelection();
   };
 
@@ -683,6 +701,16 @@ export default function Screen() {
               {copy.scoreLabel}: {currentScore.correct}/{currentScore.total}
             </Text>
           ) : null}
+          <PostAnswerRewardPanel
+            answerXp={answerXpAwardedForSelection}
+            correctStreak={celebrationStreak}
+            isCorrect={selectedIsCorrect}
+            language={language}
+            level={level}
+            question={question}
+            streakDays={streakDays}
+            totalXp={totalXp}
+          />
           <ExplanationPanel
             explanationEn={question.explanationEn}
             explanationSv={question.explanationSv}
