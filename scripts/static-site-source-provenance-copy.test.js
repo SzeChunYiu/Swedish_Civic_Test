@@ -760,9 +760,14 @@ test('static ebook prose provenance is footnoted from concrete source metadata',
   assert.match(ebookSource, /data-ebook-source-keys/);
   assert.match(ebookSource, /function ebookLedeSourceKeys\(chapterId\)/);
   assert.match(ebookSource, /UHR public study material/);
+  assert.match(ebookSource, /UHR:s offentliga studiematerial/);
   assert.match(ebookSource, /SCB land and water area statistics/);
+  assert.match(ebookSource, /SCB:s statistik om land- och vattenareal/);
   assert.match(ebookSource, /Riksbank historical timeline/);
   assert.match(ebookSource, /Government Offices NATO membership notice/);
+  assert.match(ebookSource, /Regeringskansliets meddelande om Nato-medlemskapet/);
+  assert.match(ebookSource, /redaktionell kommentar/);
+  assert.match(ebookSource, /retrievedLabels/);
   assert.doesNotMatch(ebookSource, /function ebookChapterSourceKeys/);
   assert.doesNotMatch(ebookSource, /chooseEbookFootnoteKey/);
   assert.doesNotMatch(ebookSource, /<span>Editorial<\/span>/);

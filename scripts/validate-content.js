@@ -6159,16 +6159,29 @@ function validateStaticEbookProseSourceMetadata() {
       message: 'static ebook Swedish practice hints must be marked as editorial prose',
     },
     {
-      snippet: 'function sourceAnchor(note) {',
-      message: 'static ebook must centralize source anchors for safe external-link attributes',
+      snippet: "function sourceAnchor(note, lang = 'en') {",
+      message:
+        'static ebook must centralize localized source anchors for safe external-link attributes',
     },
     {
       snippet: '? \' target="_blank" rel="noreferrer"\'',
       message: 'static ebook external source anchors must use target blank and noreferrer',
     },
     {
-      snippet: 'OFFICIAL_TEST_SOURCE_NOTES.map(sourceAnchor).join',
+      snippet: 'OFFICIAL_TEST_SOURCE_NOTES.map((note) => sourceAnchor(note)).join',
       message: 'static ebook official source note links must use the safe source anchor helper',
+    },
+    {
+      snippet: "function sourceLabel(note, lang = 'en') {",
+      message: 'static ebook source labels must be localized by reader language',
+    },
+    {
+      snippet: "function sourceMixLabel(note, lang = 'en') {",
+      message: 'static ebook source mix labels must be localized by reader language',
+    },
+    {
+      snippet: "function sourceRetrievedLabel(note, lang = 'en') {",
+      message: 'static ebook non-date retrieved labels must be localized by reader language',
     },
   ];
 

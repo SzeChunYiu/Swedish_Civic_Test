@@ -709,7 +709,10 @@ test('static ebook renders every chapter with Swedish and English body parity', 
     assert.match(englishHtml, />Sources: \d+<\/span>/);
     assert.match(swedishHtml, />Källor: \d+<\/span>/);
     assert.match(englishHtml, /UHR \(\d+ cites?\).+Editorial \(\d+ cites?\)/);
-    assert.match(swedishHtml, /UHR \(\d+ (?:källa|källor)\).+Editorial \(\d+ (?:källa|källor)\)/);
+    assert.match(
+      swedishHtml,
+      /UHR \(\d+ (?:källa|källor)\).+Redaktionellt \(\d+ (?:källa|källor)\)/,
+    );
     assert.doesNotMatch(swedishHtml, /\b\d+ cites?\b/);
     assert.match(englishHtml, /data-source-scope="ebook"/);
     assert.match(swedishHtml, /data-source-scope="ebook"/);
@@ -813,14 +816,39 @@ test('static ebook chapters render source footnotes for every prose paragraph an
     assert.match(englishHtml, /class="ebook__footnotes"/);
     assert.match(swedishHtml, /class="ebook__footnotes"/);
     assert.match(englishHtml, /UHR public study material/);
-    assert.match(swedishHtml, /UHR public study material/);
+    assert.match(swedishHtml, /UHR:s offentliga studiematerial/);
+    assert.doesNotMatch(swedishHtml, /UHR public study material/);
     assert.match(englishHtml, /Editorial \(\d+ cites?\)/);
-    assert.match(swedishHtml, /Editorial \(\d+ (?:källa|källor)\)/);
+    assert.match(swedishHtml, /Redaktionellt \(\d+ (?:källa|källor)\)/);
 
     [...englishBlocks, ...swedishBlocks].forEach((block) => {
       assert.match(dataSourceMetadata(block), /^(inline|typed)$/);
     });
   }
+});
+
+test('static ebook source labels localize in rendered Swedish source notes', () => {
+  const harness = createEbookHarness();
+  const englishChapterOne = renderChapter(harness, 'en', '1');
+  const swedishChapterOne = renderChapter(harness, 'sv', '1');
+  const englishChapterSeven = renderChapter(harness, 'en', '7');
+  const swedishChapterSeven = renderChapter(harness, 'sv', '7');
+
+  assert.match(englishChapterOne, /UHR public study material/);
+  assert.match(englishChapterOne, /Government Offices NATO membership notice/);
+  assert.match(englishChapterOne, /editorial commentary/);
+  assert.match(englishChapterSeven, /SCB land and water area statistics/);
+
+  assert.match(swedishChapterOne, /UHR:s offentliga studiematerial/);
+  assert.match(swedishChapterOne, /Regeringskansliets meddelande om Nato-medlemskapet/);
+  assert.match(swedishChapterOne, /redaktionell kommentar/);
+  assert.match(swedishChapterOne, /redaktionell kommentar<\/a> \(redaktionell\)/);
+  assert.match(swedishChapterSeven, /SCB:s statistik om land- och vattenareal/);
+  assert.doesNotMatch(swedishChapterOne, /UHR public study material/);
+  assert.doesNotMatch(swedishChapterOne, /Government Offices NATO membership notice/);
+  assert.doesNotMatch(swedishChapterOne, /editorial commentary/);
+  assert.doesNotMatch(swedishChapterOne, /\(editorial\)/);
+  assert.doesNotMatch(swedishChapterSeven, /SCB land and water area statistics/);
 });
 
 test('focus-static-ebook-footnote hash validator mirrors source-counts and route links', () => {
