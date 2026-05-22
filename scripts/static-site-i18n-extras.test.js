@@ -182,17 +182,11 @@ const expectedCentralKurdishLegalReadingTimes = {
   'privacy.meta3.v': '~3 خولەک',
   'terms.meta3.v': '~2 خولەک خوێندنەوە',
 };
-const expectedExtraLocaleTermsH1a = {
-  'zh-Hans': '规则清楚，',
-  'zh-Hant': '規則清楚，',
-  ar: 'قواعد واضحة،',
-  ckb: 'ڕێساکان ڕوونن،',
-  fa: 'قوانین روشن،',
-  pl: 'Jasne zasady,',
-  so: 'Xeerar cad,',
-  ti: 'ንጹር ሕግታት፣',
-  tr: 'Açık kurallar,',
-  uk: 'Чіткі правила,',
+const supportMetadataValueKeys = ['support.meta1.v', 'support.meta2.v', 'support.meta3.v'];
+const supportMetadataEnglishFallbacks = {
+  'support.meta1.v': /~2 business days/i,
+  'support.meta2.v': /English or Swedish/i,
+  'support.meta3.v': /^Free$/i,
 };
 const forbiddenTigrinyaWorkWelfareTerms = ['kollektivavtal', 'föräldraledighet', 'sjukpenning'];
 const forbiddenStaticHomeEducationTerms = /\b(?:Förskola|förskola|universitet)\b/iu;
@@ -407,21 +401,27 @@ test('Central Kurdish legal reading-time metadata uses localized minutes', () =>
   }
 });
 
-test('extra locale Terms h1a rejects the Plain rules English fallback', () => {
+test('extra locale Support metadata values reject English fallbacks', () => {
   const extra = loadExtraI18n();
 
   for (const locale of extraLocales) {
     const dictionary = extra?.[locale];
     assert.equal(typeof dictionary, 'object', `${locale} dictionary must exist`);
 
-    const h1a = dictionary['terms.h1a'];
-    const h1b = dictionary['terms.h1b'];
-    assert.equal(h1a, expectedExtraLocaleTermsH1a[locale], `${locale}.terms.h1a`);
-    assert.equal(typeof h1b, 'string', `${locale}.terms.h1b must be a string`);
-    assert.notEqual(h1b.trim(), '', `${locale}.terms.h1b must not be empty`);
-    assert.doesNotMatch(h1a, /Plain rules/i, `${locale}.terms.h1a uses English fallback`);
-    assert.doesNotMatch(h1b, /plainly written/i, `${locale}.terms.h1b uses English fallback`);
+    for (const key of supportMetadataValueKeys) {
+      const value = dictionary[key];
+      assert.equal(typeof value, 'string', `${locale}.${key} must be a string`);
+      assert.notEqual(value.trim(), '', `${locale}.${key} must not be empty`);
+      assert.doesNotMatch(
+        value,
+        supportMetadataEnglishFallbacks[key],
+        `${locale}.${key} must not use an English fallback`,
+      );
+    }
   }
+
+  assert.equal(extra.ckb['support.meta1.v'], '~2 ڕۆژی کاری');
+  assert.match(extra.ckb['support.meta1.v'], /ڕۆژی کاری/);
 });
 
 test('extra locale Home chapter 1 folkhemmet glossary terms use localized wording first', () => {

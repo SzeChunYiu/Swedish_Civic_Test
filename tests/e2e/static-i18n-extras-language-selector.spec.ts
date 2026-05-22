@@ -155,30 +155,11 @@ const localizedHomeChapterElevenCitizenshipSnippets: Record<ExtraLocale, RegExp>
   tr: /vatandaşlık\s*\(medborgarskap\)/i,
   uk: /громадянством\s*\(medborgarskap\)/i,
 };
-const q050RenderedSourceCriticismLocales = ['zh-Hans', 'ar', 'pl', 'so', 'tr', 'uk'] as const;
-type Q050RenderedSourceCriticismLocale = (typeof q050RenderedSourceCriticismLocales)[number];
-const localizedQ050SourceCriticismTerms: Record<Q050RenderedSourceCriticismLocale, RegExp> = {
-  'zh-Hans': /来源批判/,
-  ar: /نقد المصادر/,
-  pl: /krytyka źródeł/i,
-  so: /qiimeynta ilaha/i,
-  tr: /kaynak eleştirisi/i,
-  uk: /критика джерел/i,
-};
-const forbiddenQ050SourceCriticismStaleTerms =
-  /具有(?:來|来)源批判意識|أن تكون ناقدًا للمصادر|krytyczne podejście do źródeł|si naqdineed loo eego ilaha|kaynaklara eleştirel yaklaşmak|критично ставитися до джерел/i;
-
-type StaticQ050RenderedCopy = {
-  question: string;
-  explanation: string;
-  answer: number;
-  chapterIndex: number;
-  source: {
-    title?: string;
-    chapter?: string;
-    section?: string;
-    page?: number;
-  };
+const supportMetadataValueKeys = ['support.meta1.v', 'support.meta2.v', 'support.meta3.v'] as const;
+const supportMetadataEnglishFallbacks: Record<(typeof supportMetadataValueKeys)[number], RegExp> = {
+  'support.meta1.v': /~2 business days/i,
+  'support.meta2.v': /English or Swedish/i,
+  'support.meta3.v': /^Free$/i,
 };
 
 type StaticSite = {
@@ -385,11 +366,11 @@ async function switchToTermsRoute(page: Page) {
   await expect(page.locator('[data-page="/terms"]')).toHaveClass(/is-active/);
 }
 
-async function switchToSourcesRoute(page: Page) {
+async function switchToSupportRoute(page: Page) {
   await page.evaluate(() => {
-    window.location.hash = '#/sources';
+    window.location.hash = '#/support';
   });
-  await expect(page.locator('[data-page="/sources"]')).toHaveClass(/is-active/);
+  await expect(page.locator('[data-page="/support"]')).toHaveClass(/is-active/);
 }
 
 async function switchToHomeRoute(page: Page) {
@@ -440,27 +421,27 @@ async function assertLongFormRouteCopy(page: Page, locale: ExtraLocale) {
   await switchToHomeRoute(page);
 }
 
-async function assertSourcesRouteCopy(page: Page, locale: ExtraLocale, settingsSourceHint: string) {
-  await switchToSourcesRoute(page);
+async function assertSupportRouteCopy(page: Page, locale: ExtraLocale) {
+  await switchToSupportRoute(page);
+  await expectDictionaryText(page, locale, 'support.kicker');
+  await expect(page.locator(i18nSelector('support.lede'))).toContainText(
+    await dictionaryText(page, locale, 'support.lede'),
+  );
 
-  for (const key of sourceRouteCopyKeys) {
-    await expectDictionaryRenderedText(page, locale, key);
+  for (const key of supportMetadataValueKeys) {
+    const value = await dictionaryText(page, locale, key);
+
+    await expectDictionaryText(page, locale, key);
+    expect(value).not.toMatch(supportMetadataEnglishFallbacks[key]);
+    if (locale === 'ckb' && key === 'support.meta1.v') {
+      expect(value).toBe('~2 ڕۆژی کاری');
+      expect(value).toMatch(/ڕۆژی کاری/);
+    }
   }
 
-  const sourceRouteText = await page.locator('[data-page="/sources"]').innerText();
-  const sourceCopySurface = `${sourceRouteText}\n${settingsSourceHint}`;
-  const metaText = await page.locator(i18nSelector('sources.meta3.v')).innerText();
-
-  expect(sourceRouteText).toContain('179');
-  expect(sourceRouteText).toContain('716');
-  expect(sourceRouteText).toMatch(/\bUHR\b/);
-  expect(settingsSourceHint).toContain('179');
-  expect(metaText.trim()).not.toBe('Sverige i fokus');
-  expect(sourceCopySurface).not.toMatch(/169|۱۶۹/);
-
-  for (const staleFragment of staleExtraSourceFragments[locale]) {
-    expect(sourceCopySurface).not.toMatch(new RegExp(escapeRegExp(staleFragment)));
-  }
+  await expectRootLocale(page, locale);
+  await expectNoHorizontalOverflow(page);
+  await switchToHomeRoute(page);
 }
 
 async function assertHomeChapterOneFolkhemmetGlossary(page: Page, locale: ExtraLocale) {
@@ -551,7 +532,7 @@ test.afterAll(async () => {
   await staticSite.close();
 });
 
-test('static Settings selects extra languages with localized Terms legal metadata without overflow or outcome slogans', async ({
+test('static Settings selects extra languages with localized legal and Support metadata without overflow or outcome slogans', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
@@ -588,6 +569,7 @@ test('static Settings selects extra languages with localized Terms legal metadat
     expect(await dictionaryText(page, locale, 'footer.app.5')).not.toMatch(/Roadmap/i);
     await expectDictionaryText(page, locale, 'footer.honest.p');
     await assertLongFormRouteCopy(page, locale);
+    await assertSupportRouteCopy(page, locale);
     await expectRootLocale(page, locale);
     await expectNoOutcomeSlogans(page);
     await expectNoHorizontalOverflow(page);
