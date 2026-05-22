@@ -455,6 +455,9 @@ require('./scripts/validate-content.js');
 test('private welfare source and exports use natural tax-funding English', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const actualSiteBank = actualStaticQuestions();
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
   const fileFindings = [
     'data/additionalQuestions.ts',
     'content/question-bank.csv',
@@ -473,15 +476,29 @@ test('private welfare source and exports use natural tax-funding English', () =>
       privateWelfareTaxFundingStiltedEnglishPattern.test(textForQuestion(question)),
     )
     .map((question) => question.id);
+  const trueStatementId = generatedQuestionId(sourceQuestions, 'q155', 'trueStatement');
+  const falseStatementId = generatedQuestionId(sourceQuestions, 'q155', 'falseStatement');
   const q155 = generatedSiteBank.find((question) => question.id === 'q155');
-  const welfareVariantIds = ['q155', 'q776', 'q777', 'q778', 'q779'];
+  const trueStatement = generatedSiteBank.find((question) => question.id === trueStatementId);
+  const falseStatement = generatedSiteBank.find((question) => question.id === falseStatementId);
+  const welfareVariantIds = [
+    'q155',
+    generatedQuestionId(sourceQuestions, 'q155', 'singleChoice'),
+    trueStatementId,
+    falseStatementId,
+    generatedQuestionId(sourceQuestions, 'q155', 'judgement'),
+  ];
   const welfareVariants = generatedSiteBank.filter((question) =>
     welfareVariantIds.includes(question.id),
   );
+  const staticById = new Map(Array.from(actualSiteBank).map((question) => [question.id, question]));
+  const csvRows = contentQuestionBankCsvRowsById([trueStatementId, falseStatementId]);
 
   assert.deepEqual(fileFindings, []);
   assert.deepEqual(bankFindings, []);
   assert.ok(q155, 'q155 should be published in the site bank');
+  assert.ok(trueStatement, `${trueStatementId} should be published in the site bank`);
+  assert.ok(falseStatement, `${falseStatementId} should be published in the site bank`);
   assert.equal(
     q155.q.en,
     'How can a welfare service be provided by a private company but still be funded by tax revenue?',
@@ -491,11 +508,44 @@ test('private welfare source and exports use natural tax-funding English', () =>
     'A private company can provide the service while tax revenue funds it',
   );
   assert.equal(welfareVariants.length, welfareVariantIds.length);
+  assert.equal(
+    trueStatement.q.sv,
+    'En välfärdstjänst kan utföras av ett privat företag och ändå finansieras med skattepengar.',
+  );
+  assert.equal(
+    trueStatement.q.en,
+    'A welfare service can be provided by a private company while tax revenue funds it.',
+  );
+  assert.equal(trueStatement.opts[trueStatement.answer]?.en, 'True');
+  assert.equal(falseStatement.q.sv, 'En välfärdstjänst måste alltid betalas helt med privata lån.');
+  assert.equal(
+    falseStatement.q.en,
+    'A welfare service must always be paid for entirely with private loans.',
+  );
+  assert.equal(falseStatement.opts[falseStatement.answer]?.en, 'False');
+  assert.equal(csvRows.get(trueStatementId)?.[3], trueStatement.q.sv);
+  assert.equal(csvRows.get(trueStatementId)?.[4], trueStatement.q.en);
+  assert.equal(csvRows.get(trueStatementId)?.[7], 'true');
+  assert.equal(csvRows.get(falseStatementId)?.[3], falseStatement.q.sv);
+  assert.equal(csvRows.get(falseStatementId)?.[4], falseStatement.q.en);
+  assert.equal(csvRows.get(falseStatementId)?.[7], 'false');
   for (const question of welfareVariants) {
     assert.equal(
       privateWelfareTaxFundingStiltedEnglishPattern.test(textForQuestion(question)),
       false,
     );
+  }
+  for (const question of [
+    trueStatement,
+    falseStatement,
+    staticById.get(trueStatementId),
+    staticById.get(falseStatementId),
+  ]) {
+    assert.ok(question, 'q155 true/false variant should exist in generated and static banks');
+    assert.doesNotMatch(question.q.sv, /^Tjänsten\b/i);
+    assert.doesNotMatch(question.q.en, /\bthe service\b/i);
+    assert.match(question.q.sv, /\bvälfärdstjänst\b/i);
+    assert.match(question.q.en, /\bwelfare service\b/i);
   }
 });
 
@@ -533,6 +583,52 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q155 uses stilted state-welfare English wording/,
+  );
+});
+
+test('private welfare generated true/false guard rejects contextless service stems', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/lib/content/derivedQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'En välfärdstjänst kan utföras av ett privat företag och ändå finansieras med skattepengar',
+        'Ett privat företag kan utföra tjänsten medan skattepengar betalar den',
+      )
+      .replace(
+        'En välfärdstjänst måste alltid betalas helt med privata lån',
+        'Tjänsten måste alltid betalas helt med privata lån',
+      )
+      .replace(
+        'A welfare service can be provided by a private company while tax revenue funds it',
+        'A private company can provide the service while tax revenue funds it',
+      )
+      .replace(
+        'A welfare service must always be paid for entirely with private loans',
+        'The service must always be paid for entirely with private loans',
+      );
+  }
+  return contents;
+};
+process.argv.push('--focus-generated-true-false-naturalness');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /contains a generated true\/false grammar-splice stem/,
   );
 });
 

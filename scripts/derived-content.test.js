@@ -1655,38 +1655,35 @@ test('derivePublishedQuestions renders q146 political-rights true/false as direc
   assert.doesNotMatch(text, /^(?:Försöka övertyga|Hindra andra|Try to persuade|Stop others)/im);
 });
 
-test('derivePublishedQuestions renders q178 disability-rights aim true/false with scope', () => {
+test('derivePublishedQuestions renders q155 private-welfare true/false with standalone subjects', () => {
   const { questions, sourceQuestions } = loadTs('data/questions.ts');
   const byId = new Map(questions.map((question) => [question.id, question]));
-  const trueStatementId = generatedQuestionId(sourceQuestions, 'q178', 'trueStatement');
-  const falseStatementId = generatedQuestionId(sourceQuestions, 'q178', 'falseStatement');
+  const trueStatementId = generatedQuestionId(sourceQuestions, 'q155', 'trueStatement');
+  const falseStatementId = generatedQuestionId(sourceQuestions, 'q155', 'falseStatement');
 
   assert.equal(
     byId.get(trueStatementId)?.questionSv,
-    'Ett mål med arbetet för personer med funktionsnedsättning är att samhället ska vara tillgängligt så att människor kan delta på jämlika villkor.',
+    'En välfärdstjänst kan utföras av ett privat företag och ändå finansieras med skattepengar.',
   );
   assert.equal(
     byId.get(trueStatementId)?.questionEn,
-    'One aim of disability rights work is that society should be accessible so people can participate on equal terms.',
+    'A welfare service can be provided by a private company while tax revenue funds it.',
   );
   assert.equal(byId.get(trueStatementId)?.correctOptionId, 'true');
   assert.equal(
     byId.get(falseStatementId)?.questionSv,
-    'Ett mål med arbetet för personer med funktionsnedsättning är att personer med funktionsnedsättning inte ska kunna studera eller arbeta.',
+    'En välfärdstjänst måste alltid betalas helt med privata lån.',
   );
   assert.equal(
     byId.get(falseStatementId)?.questionEn,
-    'One aim of disability rights work is that people with disabilities should not be able to study or work.',
+    'A welfare service must always be paid for entirely with private loans.',
   );
   assert.equal(byId.get(falseStatementId)?.correctOptionId, 'false');
 
   const text = [byId.get(trueStatementId), byId.get(falseStatementId)]
-    .map((question) => question?.questionEn)
+    .map((question) => `${question?.questionSv} ${question?.questionEn}`)
     .join('\n');
-  assert.doesNotMatch(
-    text,
-    /^(?:Society should be accessible|People with disabilities should not be able to study or work)/im,
-  );
+  assert.doesNotMatch(text, /^(?:Tjänsten|The service)\b|\bthe service\b/im);
 });
 
 test('derivePublishedQuestions cleans residual generated true/false splice rows', () => {

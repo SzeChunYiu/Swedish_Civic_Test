@@ -7440,6 +7440,7 @@ function findQuestionGeneratedTrueFalseNaturalnessIssue(question) {
   }
 
   return (
+    findQuestionPrivateWelfareServiceSubjectIssue(question) ||
     findGeneratedTrueFalseNaturalnessPatternMatch(question.questionSv) ||
     findGeneratedTrueFalseNaturalnessPatternMatch(question.questionEn)
   );
@@ -7495,10 +7496,26 @@ function findQuestionStateWelfareEnglishNaturalnessIssue(question) {
   );
 }
 
-function findQuestionOlderSickEnglishNaturalnessIssue(question) {
-  return QUESTION_OLDER_SICK_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
-    pattern.test(questionText(question, ['questionEn', 'explanationEn'])),
-  );
+function findQuestionPrivateWelfareServiceSubjectIssue(question) {
+  if (
+    question.type !== 'true_false' ||
+    !question.tags?.includes('published-variant') ||
+    !question.tags?.includes('tax-funding') ||
+    !question.tags?.includes('private-providers')
+  ) {
+    return null;
+  }
+
+  const stemText = questionText(question, ['questionSv', 'questionEn']);
+  if (/^Tjänsten\b/i.test(question.questionSv) || /\bthe service\b/i.test(question.questionEn)) {
+    return 'generated true/false stem drops welfare-service subject';
+  }
+
+  if (!/\bvälfärdstjänst\b/i.test(stemText) || !/\bwelfare service\b/i.test(stemText)) {
+    return 'generated true/false stem omits welfare-service subject';
+  }
+
+  return null;
 }
 
 function findQuestionLuciaExplanationRoleScaffoldIssue(question) {
