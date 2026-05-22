@@ -4,7 +4,7 @@ import { create } from 'zustand';
 
 import { stopSpeech } from '../audio/speak';
 import type { RecoverablePersistenceWarning } from './persistenceWarning';
-import { writeRecoverably } from './persistenceWarning';
+import { readRecoverably, writeRecoverably } from './persistenceWarning';
 
 export type AppLanguage = 'sv' | 'en';
 
@@ -30,6 +30,7 @@ export const supportedDailyGoalAnswerOptions = [5, 10, 20, 40] as const;
 const dailyGoalAnswerOptions = new Set<number>(supportedDailyGoalAnswerOptions);
 
 let settingsStorage: MMKV | null = null;
+let initialPersistenceWarning: RecoverablePersistenceWarning | null = null;
 
 try {
   settingsStorage = createMMKV({ id: 'settings' });
@@ -43,26 +44,32 @@ function readLanguage(): AppLanguage {
 }
 
 function readStorageString(key: string): string | undefined {
-  try {
-    return settingsStorage?.getString(key);
-  } catch {
-    return undefined;
-  }
+  const result = readRecoverably(settingsStorage, settingsStorageId, key, () =>
+    settingsStorage?.getString(key),
+  );
+  rememberInitialReadWarning(result.warning);
+  return result.value;
 }
 
 function readStorageBoolean(key: string): boolean | undefined {
-  try {
-    return settingsStorage?.getBoolean(key);
-  } catch {
-    return undefined;
-  }
+  const result = readRecoverably(settingsStorage, settingsStorageId, key, () =>
+    settingsStorage?.getBoolean(key),
+  );
+  rememberInitialReadWarning(result.warning);
+  return result.value;
 }
 
 function readStorageNumber(key: string): number | undefined {
-  try {
-    return settingsStorage?.getNumber(key);
-  } catch {
-    return undefined;
+  const result = readRecoverably(settingsStorage, settingsStorageId, key, () =>
+    settingsStorage?.getNumber(key),
+  );
+  rememberInitialReadWarning(result.warning);
+  return result.value;
+}
+
+function rememberInitialReadWarning(warning: RecoverablePersistenceWarning | null): void {
+  if (!initialPersistenceWarning && warning) {
+    initialPersistenceWarning = warning;
   }
 }
 
@@ -164,7 +171,7 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   dailyGoalAnswers: readDailyGoalAnswers(),
   includeSupplementaryQuestions: readIncludeSupplementary(),
   hasSeenAboutTheTest: readHasSeenAboutTheTest(),
-  persistenceWarning: null,
+  persistenceWarning: initialPersistenceWarning,
   setLanguage: (language) => {
     const persistenceWarning = writeRecoverably(
       settingsStorage,

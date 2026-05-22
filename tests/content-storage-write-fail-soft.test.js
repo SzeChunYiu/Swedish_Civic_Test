@@ -5,6 +5,7 @@ const test = require('node:test');
 
 const {
   createMemoryMMKV,
+  createThrowingReadMMKV,
   createThrowingSetMMKV,
   loadTsWithStorage,
 } = require('./helpers/storageStoreHarness.cjs');
@@ -116,6 +117,30 @@ test('settings writes keep in-memory choices and clear warnings after a later su
   assert.equal(storage.values.get('audioEnabled'), false);
 });
 
+test('settings read failures fall back to defaults with a recoverable warning', () => {
+  const storage = createThrowingReadMMKV('settings read failed');
+  const { useSettingsStore } = loadTsWithStorage(repoRoot, 'lib/storage/settingsStore.ts', {
+    settings: storage,
+  });
+
+  let state = useSettingsStore.getState();
+  assert.equal(state.language, 'sv');
+  assert.equal(state.audioEnabled, true);
+  assert.equal(state.dailyGoalAnswers, 10);
+  assert.equal(state.includeSupplementaryQuestions, false);
+  assert.equal(state.hasSeenAboutTheTest, false);
+  assert.equal(state.persistenceWarning.recoverable, true);
+  assert.equal(state.persistenceWarning.operation, 'read');
+  assert.equal(state.persistenceWarning.storageId, 'settings');
+  assert.equal(state.persistenceWarning.key, 'language');
+  assert.match(state.persistenceWarning.errorMessage, /settings read failed/);
+
+  state.setLanguage('en');
+  state = useSettingsStore.getState();
+  assert.equal(state.language, 'en');
+  assert.equal(state.persistenceWarning, null);
+});
+
 test('mistake-review writes keep selected answers and expose dismissible warnings', () => {
   const storage = createThrowingSetMMKV('disk full');
   const { useMistakeReviewStore } = loadTsWithStorage(
@@ -222,6 +247,22 @@ test('PersistenceWarningNotice copy selector covers warning scope and operation 
           title: 'Preference saved only for this session',
         },
       },
+      settingsPreferences: {
+        read: {
+          accessibilityLabel:
+            'Settings could not be loaded. The app is using default choices for this session.',
+          body: 'Saved settings could not be loaded. The app is using default choices for language, audio, daily goal, and supplementary questions for this session until storage is available again.',
+          dismiss: 'Got it',
+          title: 'Settings could not be loaded',
+        },
+        write: {
+          accessibilityLabel:
+            'The setting could not be saved. The change is available temporarily in this session.',
+          body: 'The change works now, but could not be saved on this device. Try the same setting again when storage is available.',
+          dismiss: 'Got it',
+          title: 'Setting saved only for this session',
+        },
+      },
       studyData: {
         read: {
           accessibilityLabel:
@@ -251,6 +292,22 @@ test('PersistenceWarningNotice copy selector covers warning scope and operation 
           accessibilityLabel:
             'Tillgänglighetsinställningar kunde inte sparas. Ändringen fungerar tillfälligt i den här sessionen.',
           body: 'Ändringen för tema, text eller ljud fungerar nu, men kunde inte sparas på enheten. Prova samma ändring igen när lagringen fungerar.',
+          dismiss: 'Jag förstår',
+          title: 'Inställningen sparades bara tillfälligt',
+        },
+      },
+      settingsPreferences: {
+        read: {
+          accessibilityLabel:
+            'Inställningar kunde inte läsas. Appen använder standardval i den här sessionen.',
+          body: 'Sparade inställningar kunde inte läsas. Appen använder standardval för språk, ljud, dagligt mål och kompletterande frågor i den här sessionen tills lagringen fungerar igen.',
+          dismiss: 'Jag förstår',
+          title: 'Inställningar kunde inte läsas',
+        },
+        write: {
+          accessibilityLabel:
+            'Inställningen kunde inte sparas. Ändringen fungerar tillfälligt i den här sessionen.',
+          body: 'Ändringen fungerar nu, men kunde inte sparas på enheten. Prova samma inställning igen när lagringen fungerar.',
           dismiss: 'Jag förstår',
           title: 'Inställningen sparades bara tillfälligt',
         },
@@ -306,7 +363,7 @@ test('routes render localized storage warning notices with dismiss hooks', () =>
   assert.match(componentSource, /RecoverablePersistenceWarning\['operation'\]/);
   assert.match(
     componentSource,
-    /PersistenceWarningNoticeScope = 'accessibilityPreferences' \| 'studyData'/,
+    /PersistenceWarningNoticeScope =[\s\S]*'accessibilityPreferences'[\s\S]*'settingsPreferences'[\s\S]*'studyData'/,
   );
   assert.match(componentSource, /Sparades bara tillfälligt/);
   assert.match(componentSource, /Saved only for this session/);
@@ -318,6 +375,10 @@ test('routes render localized storage warning notices with dismiss hooks', () =>
   assert.match(componentSource, /Accessibility preferences could not be loaded/);
   assert.match(componentSource, /standardinställningar för tema, text och ljud/);
   assert.match(componentSource, /default theme, text, and audio preferences/);
+  assert.match(componentSource, /Inställningar kunde inte läsas/);
+  assert.match(componentSource, /Sparade inställningar kunde inte läsas/);
+  assert.match(componentSource, /Settings could not be loaded/);
+  assert.match(componentSource, /Saved settings could not be loaded/);
   assert.match(componentSource, /warningScope = 'studyData'/);
   assert.match(componentSource, /getPersistenceWarningNoticeCopy\(\{/);
   assert.match(componentSource, /warning\.operation/);
@@ -330,6 +391,10 @@ test('routes render localized storage warning notices with dismiss hooks', () =>
   assert.match(practiceSource, /clearMistakeReviewPersistenceWarning/);
   assert.match(settingsSource, /persistenceWarning = useSettingsStore/);
   assert.match(settingsSource, /clearPersistenceWarning = useSettingsStore/);
+  assert.match(
+    settingsSource,
+    /warning=\{persistenceWarning\}[\s\S]*warningScope="settingsPreferences"/,
+  );
   assert.match(settingsSource, /accessibilityPersistenceWarning = useAccessibilityStore/);
   assert.match(settingsSource, /clearAccessibilityPersistenceWarning = useAccessibilityStore/);
   assert.match(settingsSource, /warning=\{accessibilityPersistenceWarning\}/);
