@@ -1745,6 +1745,14 @@ test('streak rules parity uses focused content validation routing', () => {
     path.join(repoRoot, 'tests/content-streak-rules-parity.test.js'),
     'utf8',
   );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('streakRules');
+
+  assert.ok(registryEntry, 'streak rules focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-streak-rules']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'streakRulesValidated',
+    'streakRulesParityValidated',
+  ]);
 
   assert.match(validatorSource, /--focus-streak-rules/);
   assert.match(
@@ -1757,6 +1765,23 @@ test('streak rules parity uses focused content validation routing', () => {
     /\['scripts\/validate-content\.js'\]/,
     'streak rules tests must not route through full content validation',
   );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-streak-rules'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const summary = parseJsonSummary(result.stdout, 'focused streak rules validation');
+
+  assert.deepEqual(Object.keys(summary).sort(), registryEntry.summaryKeys.slice().sort());
+  assert.equal(summary.streakRulesValidated, 17);
+  assert.equal(summary.streakRulesParityValidated, true);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'xpRulesParityValidated'), false);
 });
 
 test('streak freeze counter runtime input focus reports isolated summary', () => {
