@@ -1,8 +1,11 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
 import {
   clearSpeechEvents,
+  currentProgressStateStorageKey,
   dismissBlockingModals,
   installSpeechSynthesisMock,
   seedFreshSettingsLanguageAndAboutSeen,
@@ -13,6 +16,24 @@ import {
 import { startAllVisiblePractice, type PracticeHubLanguage } from './practiceHub';
 
 const accessibilityAudioPlaybackRateKey = 'accessibility\\a11y.audioPlaybackRate.v1';
+const includeSupplementaryStorageKey = 'settings\\includeSupplementaryQuestions';
+const legacyIncludeSupplementaryStorageKey = 'includeSupplementaryQuestions';
+
+function sourceQuestionIdsBeforeFirstSupplementaryQuestion() {
+  const csv = readFileSync(resolve('content/question-bank.csv'), 'utf8');
+  const ids: string[] = [];
+
+  for (const line of csv.split(/\r?\n/).slice(1)) {
+    if (!line.trim()) continue;
+    const idMatch = /^"([^"]+)"/.exec(line);
+    const provenanceMatch = /,"([^"]+)"$/.exec(line);
+    if (!idMatch || !provenanceMatch) continue;
+    if (provenanceMatch[1] !== 'uhr') break;
+    ids.push(idMatch[1]);
+  }
+
+  return ids;
+}
 
 async function closeLaunchAdIfPresent(page: Page) {
   const closeLaunchAd = page.getByRole('button', {
@@ -502,6 +523,77 @@ test('practice flow answers a question, shows source feedback, and advances', as
   ).toBeVisible();
   await expect(page.getByText('Easy', { exact: true })).toBeVisible();
   await expect(page.getByText('Score: 1/1')).toHaveCount(0);
+
+  expect(consoleErrors).toEqual([]);
+});
+
+test('Practice source filter restart clears hidden supplementary answer state', async ({
+  page,
+}) => {
+  const consoleErrors: string[] = [];
+  const completedUhrQuestionIds = sourceQuestionIdsBeforeFirstSupplementaryQuestion();
+  const firstSupplementaryQuestionNumber = completedUhrQuestionIds.length + 1;
+
+  expect(completedUhrQuestionIds.length).toBeGreaterThan(0);
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, 'en', {
+    localStorageValues: {
+      [currentProgressStateStorageKey]: JSON.stringify({
+        completedQuestionIds: completedUhrQuestionIds,
+      }),
+      [includeSupplementaryStorageKey]: 'true',
+      [legacyIncludeSupplementaryStorageKey]: 'true',
+    },
+  });
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await closeLaunchAdIfPresent(page);
+  await dismissBlockingModals(page);
+  await page.getByRole('button', { name: 'Start practice with all visible questions' }).click();
+
+  await expect(
+    page.getByText(`Question ${firstSupplementaryQuestionNumber}`, { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(`Completed questions: ${completedUhrQuestionIds.length}`, { exact: true }),
+  ).toBeVisible();
+
+  await answerRadio(page, 'Select answer In southern Europe').click();
+
+  await expect(answerRadio(page, 'In southern Europe, Wrong')).toBeVisible();
+  await expect(page.getByText('Score: 0/1')).toBeVisible();
+  await expect(
+    page.getByText(`Completed questions: ${firstSupplementaryQuestionNumber}`, { exact: true }),
+  ).toBeVisible();
+
+  await page.getByRole('switch', { name: 'Include supplementary questions' }).click();
+
+  await expect(page.getByRole('switch', { name: 'UHR questions only' })).toHaveAttribute(
+    'aria-checked',
+    'false',
+  );
+  await expect(page.getByText('Question 1', { exact: true })).toBeVisible();
+  await expect(
+    page.getByText(`Completed questions: ${completedUhrQuestionIds.length}`, { exact: true }),
+  ).toBeVisible();
+  await expect(page.getByText('Score: 0/1')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Try this practice question again' })).toHaveCount(
+    0,
+  );
+
+  await page.getByRole('switch', { name: 'UHR questions only' }).click();
+
+  await expect(
+    page.getByText(`Question ${firstSupplementaryQuestionNumber + 1}`, { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(`Completed questions: ${firstSupplementaryQuestionNumber}`, { exact: true }),
+  ).toBeVisible();
+  await expect(page.getByText('Score: 0/1')).toHaveCount(0);
 
   expect(consoleErrors).toEqual([]);
 });

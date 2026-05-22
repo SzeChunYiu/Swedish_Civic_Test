@@ -400,10 +400,34 @@ export default function Screen() {
 
   const startPracticeScope = (nextScope: PracticeScope) => {
     const nextQuestionBank = getQuestionsForPracticeScope(filteredQuestions, nextScope);
-    startSession(nextQuestionBank[0]?.id ?? null);
+    const nextQuestion = getPracticeQuestionForSession(
+      nextQuestionBank,
+      completedQuestionIds,
+      null,
+    );
+    startSession(nextQuestion?.id ?? null);
     setAboutSourcesOpen(false);
     setSelectedConfidenceRating(null);
     setPracticeScope(nextScope);
+  };
+  const handleSupplementaryToggle = () => {
+    const nextIncludeSupplementary = !includeSupplementary;
+    setIncludeSupplementary(nextIncludeSupplementary);
+
+    if (!practiceScope) return;
+
+    const nextFilteredQuestions = filterQuestionsByProvenance(questions, {
+      includeSupplementary: nextIncludeSupplementary,
+    });
+    const nextQuestionBank = getQuestionsForPracticeScope(nextFilteredQuestions, practiceScope);
+    const nextQuestion = getPracticeQuestionForSession(
+      nextQuestionBank,
+      completedQuestionIds,
+      null,
+    );
+    startSession(nextQuestion?.id ?? null);
+    setAboutSourcesOpen(false);
+    setSelectedConfidenceRating(null);
   };
   const handleStartChapter = (chapterId: string) => {
     const chapterQuestions = filteredQuestions.filter(
@@ -605,7 +629,7 @@ export default function Screen() {
             hitSlop={space[1]}
             onBlur={() => setFocusedHeaderControl(null)}
             onFocus={() => setFocusedHeaderControl('supplementary')}
-            onPress={() => setIncludeSupplementary(!includeSupplementary)}
+            onPress={handleSupplementaryToggle}
             style={({ pressed }) => [
               styles.bookmarkButton,
               includeSupplementary ? styles.bookmarkButtonActive : null,
