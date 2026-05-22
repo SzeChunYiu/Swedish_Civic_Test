@@ -213,6 +213,36 @@ test('settings controls expose selected state and radio arrow keyboard navigatio
       name: /Cinnamon bun is selected as study companion\. Fika and everyday culture\./,
     }),
   ).toHaveAttribute('aria-checked', 'true');
+  const selectedCinnamonCompanion = page.getByRole('radio', {
+    name: /Cinnamon bun is selected as study companion\. Fika and everyday culture\./,
+  });
+
+  await selectedCinnamonCompanion.focus();
+  await page.keyboard.press('ArrowRight');
+  const selectedRyeLoafCompanion = page.getByRole('radio', {
+    name: /Swedish rye loaf is selected as study companion\. Dark rye bread and everyday Swedish food\./,
+  });
+  await expect(selectedRyeLoafCompanion).toHaveAttribute('aria-checked', 'true');
+  await expect(selectedRyeLoafCompanion).toBeFocused();
+
+  await selectedRyeLoafCompanion.focus();
+  await page.keyboard.press('ArrowLeft');
+  await expect(selectedCinnamonCompanion).toHaveAttribute('aria-checked', 'true');
+  await expect(selectedCinnamonCompanion).toBeFocused();
+
+  await selectedCinnamonCompanion.focus();
+  await page.keyboard.press('ArrowLeft');
+  const snowmanCompanion = page.getByRole('radio', {
+    name: /Snowman is selected as study companion\. Winter and climate\./,
+  });
+  await expect(snowmanCompanion).toHaveAttribute('aria-checked', 'true');
+  await expect(snowmanCompanion).toBeFocused();
+
+  await snowmanCompanion.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(selectedCinnamonCompanion).toHaveAttribute('aria-checked', 'true');
+  await expect(selectedCinnamonCompanion).toBeFocused();
+
   await page
     .getByRole('radio', {
       name: /Choose Dala horse as study companion\. Folk symbol from Dalarna\./,
