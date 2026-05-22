@@ -1558,6 +1558,15 @@ export function deriveCivicStatementSv(source: PracticeQuestion, option: Questio
     }
   }
 
+  if (source.id === 'q155') {
+    if (/^Ett privat företag kan utföra tjänsten medan skattepengar betalar den$/i.test(answer)) {
+      return 'En välfärdstjänst kan utföras av ett privat företag och ändå finansieras med skattepengar';
+    }
+    if (/^Tjänsten måste alltid betalas helt med privata lån$/i.test(answer)) {
+      return 'En välfärdstjänst måste alltid betalas helt med privata lån';
+    }
+  }
+
   if (source.id === 'q152') {
     if (
       /^De finns också på internet och uppdateras med nyheter flera gånger per dag$/i.test(answer)
@@ -2190,6 +2199,15 @@ export function deriveCivicStatementEn(source: PracticeQuestion, option: Questio
     }
     if (/^They may never sell advertising space$/i.test(answer)) {
       return 'Advertising-funded media may never sell advertising space';
+    }
+  }
+
+  if (source.id === 'q155') {
+    if (/^A private company can provide the service while tax revenue funds it$/i.test(answer)) {
+      return 'A welfare service can be provided by a private company while tax revenue funds it';
+    }
+    if (/^The service must always be paid for entirely with private loans$/i.test(answer)) {
+      return 'A welfare service must always be paid for entirely with private loans';
     }
   }
 

@@ -57728,8 +57728,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "A private company can provide the service while tax revenue funds it.",
-      "sv": "Ett privat företag kan utföra tjänsten medan skattepengar betalar den."
+      "en": "A welfare service can be provided by a private company while tax revenue funds it.",
+      "sv": "En välfärdstjänst kan utföras av ett privat företag och ändå finansieras med skattepengar."
     },
     "opts": [
       {
@@ -57769,8 +57769,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "The service must always be paid for entirely with private loans.",
-      "sv": "Tjänsten måste alltid betalas helt med privata lån."
+      "en": "A welfare service must always be paid for entirely with private loans.",
+      "sv": "En välfärdstjänst måste alltid betalas helt med privata lån."
     },
     "opts": [
       {
