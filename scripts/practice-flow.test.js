@@ -139,6 +139,33 @@ test('practice session separates retry from next-question advancement', () => {
   );
 });
 
+test('practice session start clears answer state when visible sources change', () => {
+  const { getPracticeAnswerXpAwardKey, usePracticeSessionStore } = loadTs(
+    'lib/quiz/practiceSessionStore.ts',
+  );
+
+  usePracticeSessionStore.setState({
+    activeQuestionId: 'q180',
+    answeredQuestionIds: ['q180'],
+    answerXpAwardedKey: getPracticeAnswerXpAwardKey('q180', 'practice-session-7'),
+    selectedOptionId: 'b',
+    shuffleSessionId: 'practice-session-7',
+    struckOptionIdsByQuestionId: {
+      q001: ['a'],
+      q180: ['c'],
+    },
+  });
+
+  usePracticeSessionStore.getState().startSession('q001');
+
+  assert.equal(usePracticeSessionStore.getState().activeQuestionId, 'q001');
+  assert.deepEqual(usePracticeSessionStore.getState().answeredQuestionIds, []);
+  assert.equal(usePracticeSessionStore.getState().answerXpAwardedKey, null);
+  assert.equal(usePracticeSessionStore.getState().selectedOptionId, null);
+  assert.deepEqual(usePracticeSessionStore.getState().struckOptionIdsByQuestionId, {});
+  assert.equal(usePracticeSessionStore.getState().shuffleSessionId, 'practice-session-8');
+});
+
 test('chapter quiz session id resolves to the first question in that chapter', () => {
   const { getChapterQuizSessionId, getFirstQuestionForChapter } = loadTs(
     'lib/quiz/practiceFlow.ts',

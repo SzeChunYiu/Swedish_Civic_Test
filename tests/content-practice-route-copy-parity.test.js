@@ -124,6 +124,26 @@ test('practice route shell copy follows the persisted settings language', () => 
     source,
     /getCompletedQuestionIdsForQuestionBank\(practiceQuestionBank, completedQuestionIds\)/,
   );
+  assert.match(source, /const handleSupplementaryToggle = \(\) => \{/);
+  assert.match(source, /const nextIncludeSupplementary = !includeSupplementary;/);
+  assert.match(
+    source,
+    /const nextFilteredQuestions = filterQuestionsByProvenance\(questions, \{[\s\S]*?includeSupplementary: nextIncludeSupplementary,[\s\S]*?\}\);/,
+  );
+  assert.match(
+    source,
+    /const nextQuestionBank = getQuestionsForPracticeScope\(nextFilteredQuestions, practiceScope\);/,
+  );
+  assert.match(
+    source,
+    /const nextQuestion = getPracticeQuestionForSession\(\s*nextQuestionBank,\s*completedQuestionIds,\s*null,\s*\);/,
+  );
+  assert.match(source, /startSession\(nextQuestion\?\.id \?\? null\);/);
+  assert.match(source, /onPress=\{handleSupplementaryToggle\}/);
+  assert.doesNotMatch(
+    source,
+    /onPress=\{\(\) => setIncludeSupplementary\(!includeSupplementary\)\}/,
+  );
   assert.match(source, /<Badge>\{copy\.badge\}<\/Badge>/);
   assert.match(source, /copy\.completedQuestions\(visibleCompletedQuestionIds\.length\)/);
   assert.doesNotMatch(source, /copy\.completedQuestions\(completedQuestionIds\.length\)/);
