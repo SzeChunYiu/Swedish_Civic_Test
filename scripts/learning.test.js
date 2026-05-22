@@ -1170,6 +1170,59 @@ test('weekly recap runtime guards reject malformed imported progress', () => {
   assert.equal(recap.mockExamsTaken, 2);
   assert.equal(recap.bestMockScore, 1);
   assert.equal(recap.chapterNowMastered, null);
+  assert.equal(recap.readinessDelta, null);
+});
+
+test('weekly recap readiness delta compares current preparation with previous recap point', () => {
+  const { generateWeeklyRecap } = loadAllTs('lib/learning/weeklyRecap.ts');
+  const previousAnswers = Array.from({ length: 30 }, (_, index) => ({
+    questionId: `q${String(index + 1).padStart(3, '0')}`,
+    selectedOptionIds: ['a'],
+    isCorrect: false,
+    answeredAt: `2026-05-11T10:${String(index).padStart(2, '0')}:00.000Z`,
+    timeSpentSeconds: 10,
+  }));
+  const currentAnswers = Array.from({ length: 30 }, (_, index) => ({
+    questionId: `q${String(index + 31).padStart(3, '0')}`,
+    selectedOptionIds: ['a'],
+    isCorrect: true,
+    answeredAt: `2026-05-20T10:${String(index).padStart(2, '0')}:00.000Z`,
+    timeSpentSeconds: 10,
+  }));
+  const questionChapterIndex = Object.fromEntries(
+    [...previousAnswers, ...currentAnswers].map((answer, index) => [
+      answer.questionId,
+      index % 2 === 0 ? 'ch01' : 'ch02',
+    ]),
+  );
+
+  const recap = generateWeeklyRecap({
+    progress: {
+      totalXp: 0,
+      level: 1,
+      currentStreak: 5,
+      dailyGoalAnswers: 10,
+      questionProgress: {},
+      sessions: [
+        {
+          id: 'readiness-history',
+          mode: 'study',
+          questionIds: [...previousAnswers, ...currentAnswers].map((answer) => answer.questionId),
+          startedAt: '2026-05-11T10:00:00.000Z',
+          answers: [...previousAnswers, ...currentAnswers],
+        },
+      ],
+    },
+    questionChapterIndex,
+    readinessChapters: [
+      { id: 'ch01', questionCount: 50 },
+      { id: 'ch02', questionCount: 50 },
+    ],
+    now: new Date('2026-05-20T12:00:00.000Z'),
+  });
+
+  assert.equal(typeof recap.readinessDelta, 'number');
+  assert.ok(recap.readinessDelta > 0);
 });
 
 test('mock exam completion XP is awarded once per stored session', () => {

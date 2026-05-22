@@ -417,6 +417,53 @@ test('generateWeeklyRecap: zero-activity week returns null accuracy and zero cou
   assert.equal(recap.accuracy, null);
   assert.equal(recap.mockExamsTaken, 0);
   assert.equal(recap.bestMockScore, null);
+  assert.equal(recap.readinessDelta, null);
+});
+
+test('generateWeeklyRecap: computes local readiness delta without official prediction wording', () => {
+  const { generateWeeklyRecap } = loadTs('lib/learning/weeklyRecap.ts');
+  const previousAnswers = Array.from({ length: 30 }, (_, index) => ({
+    questionId: `q${String(index + 1).padStart(3, '0')}`,
+    selectedOptionIds: ['a'],
+    isCorrect: false,
+    answeredAt: `2026-05-11T10:${String(index).padStart(2, '0')}:00.000Z`,
+    timeSpentSeconds: 10,
+  }));
+  const currentAnswers = Array.from({ length: 30 }, (_, index) => ({
+    questionId: `q${String(index + 31).padStart(3, '0')}`,
+    selectedOptionIds: ['a'],
+    isCorrect: true,
+    answeredAt: `2026-05-20T10:${String(index).padStart(2, '0')}:00.000Z`,
+    timeSpentSeconds: 10,
+  }));
+  const questionChapterIndex = Object.fromEntries(
+    [...previousAnswers, ...currentAnswers].map((answer, index) => [
+      answer.questionId,
+      index % 2 === 0 ? 'ch01' : 'ch02',
+    ]),
+  );
+
+  const recap = generateWeeklyRecap({
+    progress: makeProgress([
+      {
+        id: 'readiness-history',
+        mode: 'study',
+        questionIds: [...previousAnswers, ...currentAnswers].map((answer) => answer.questionId),
+        startedAt: '2026-05-11T10:00:00.000Z',
+        answers: [...previousAnswers, ...currentAnswers],
+      },
+    ]),
+    questionChapterIndex,
+    readinessChapters: [
+      { id: 'ch01', questionCount: 50 },
+      { id: 'ch02', questionCount: 50 },
+    ],
+    now: new Date('2026-05-20T12:00:00.000Z'),
+  });
+
+  assert.equal(typeof recap.readinessDelta, 'number');
+  assert.ok(recap.readinessDelta > 0);
+  assert.equal(Object.prototype.hasOwnProperty.call(recap, 'readinessDelta'), true);
 });
 
 test('generateWeeklyRecap: detects newly-mastered chapter', () => {
@@ -644,7 +691,15 @@ test('weekly recap screen and Profile entry point surface the selector locally',
   assert.match(recapRoute, /buildWeeklyRecapProgress/);
   assert.match(recapRoute, /answerHistory: AnswerHistoryEntry\[\]/);
   assert.match(recapRoute, /mockExamSessions: MockExamProgress\[\]/);
-  assert.match(recapRoute, /generateWeeklyRecap\(\{ progress, questionChapterIndex \}\)/);
+  assert.match(
+    recapRoute,
+    /generateWeeklyRecap\(\{\s*progress,\s*questionChapterIndex,\s*readinessChapters: chapters\s*\}\)/,
+  );
+  assert.match(recapRoute, /readinessChapters: chapters/);
+  assert.match(recapRoute, /readinessDeltaLabel: 'readiness change'/);
+  assert.match(recapRoute, /local preparation signal, not an official prediction/);
+  assert.match(recapRoute, /readinessDeltaValue/);
+  assert.doesNotMatch(recapRoute, /pass prediction|official pass|official outcome/i);
   assert.match(recapRoute, /getTouchedWeakChapter\(recap, progress\)/);
   assert.match(recapRoute, /href=\{`\/chapter\/\$\{touchedWeakChapter\.chapterId\}`\}/);
   assert.match(recapRoute, /No problem\. A quiet week still counts/);

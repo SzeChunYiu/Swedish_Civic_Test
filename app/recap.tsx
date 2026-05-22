@@ -30,11 +30,14 @@ type RecapCopy = {
   mistakesResolvedLabel: string;
   mockExamsLabel: string;
   noAccuracy: string;
+  noReadinessDelta: string;
   practiceWeakChapter: (chapterName: string) => string;
   practiceWeakChapterAccessibilityLabel: (chapterName: string) => string;
   questionsAnsweredLabel: string;
   quietBody: string;
   quietTitle: string;
+  readinessDeltaHelper: string;
+  readinessDeltaLabel: string;
   subtitle: string;
   title: string;
   weekRange: (start: string, end: string) => string;
@@ -53,12 +56,15 @@ const recapCopy: Record<AppLanguage, RecapCopy> = {
     mistakesResolvedLabel: 'rättade misstag',
     mockExamsLabel: 'övningsprov',
     noAccuracy: 'Inte än',
+    noReadinessDelta: 'Inte än',
     practiceWeakChapter: (chapterName) => `Öva ${chapterName}`,
     practiceWeakChapterAccessibilityLabel: (chapterName) =>
       `Öva kapitlet ${chapterName} från veckans översikt`,
     questionsAnsweredLabel: 'svarade frågor',
     quietBody: 'Inga problem. En lugn vecka räknas också; börja med några frågor när det passar.',
     quietTitle: 'Lugn vecka',
+    readinessDeltaHelper: 'lokal förberedelsesignal, inte en officiell prognos',
+    readinessDeltaLabel: 'beredskapsförändring',
     subtitle: 'En lokal summering av veckans svar, övningsprov och nästa rimliga repetition.',
     title: 'Din vecka i studierna',
     weekRange: (start, end) => `${start} till ${end}`,
@@ -76,12 +82,15 @@ const recapCopy: Record<AppLanguage, RecapCopy> = {
     mistakesResolvedLabel: 'mistakes resolved',
     mockExamsLabel: 'mock exams',
     noAccuracy: 'Not yet',
+    noReadinessDelta: 'Not yet',
     practiceWeakChapter: (chapterName) => `Practise ${chapterName}`,
     practiceWeakChapterAccessibilityLabel: (chapterName) =>
       `Practise the chapter ${chapterName} from this weekly recap`,
     questionsAnsweredLabel: 'questions answered',
     quietBody: 'No problem. A quiet week still counts; start with a few questions when it fits.',
     quietTitle: 'Quiet week',
+    readinessDeltaHelper: 'local preparation signal, not an official prediction',
+    readinessDeltaLabel: 'readiness change',
     subtitle: 'A local summary of this week’s answers, mock exams, and next sensible review.',
     title: 'Your study week',
     weekRange: (start, end) => `${start} to ${end}`,
@@ -108,6 +117,12 @@ function formatDateKey(dateKey: string, language: AppLanguage): string {
 
 function formatPercent(value: number | null, fallback: string): string {
   return value === null ? fallback : `${Math.round(value * 100)}%`;
+}
+
+function formatSignedDelta(value: number | null, fallback: string): string {
+  if (value === null) return fallback;
+  if (value === 0) return '0';
+  return value > 0 ? `+${value}` : String(value);
 }
 
 function buildWeeklyRecapProgress({
@@ -229,7 +244,10 @@ export default function Screen() {
       totalXp,
     ],
   );
-  const recap = useMemo(() => generateWeeklyRecap({ progress, questionChapterIndex }), [progress]);
+  const recap = useMemo(
+    () => generateWeeklyRecap({ progress, questionChapterIndex, readinessChapters: chapters }),
+    [progress],
+  );
   const touchedWeakChapter = useMemo(
     () => getTouchedWeakChapter(recap, progress),
     [progress, recap],
@@ -238,6 +256,7 @@ export default function Screen() {
     ? chapterName(touchedWeakChapter.chapterId, language)
     : null;
   const accuracyValue = formatPercent(recap.accuracy, copy.noAccuracy);
+  const readinessDeltaValue = formatSignedDelta(recap.readinessDelta, copy.noReadinessDelta);
   const bestMockScore =
     recap.bestMockScore === null
       ? undefined
@@ -273,6 +292,11 @@ export default function Screen() {
         />
         <MetricCard label={copy.mistakesResolvedLabel} value={recap.mistakesResolved} />
       </View>
+      <MetricCard
+        helper={copy.readinessDeltaHelper}
+        label={copy.readinessDeltaLabel}
+        value={readinessDeltaValue}
+      />
 
       {quietWeek ? (
         <Card

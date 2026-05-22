@@ -10,6 +10,7 @@ import {
 type RecapFixture = {
   language: AppLanguage;
   profileCta: string;
+  profileCtaAccessibilityLabel: string;
   questionMetric: string;
   recapTitle: string;
   weakCta: RegExp;
@@ -19,6 +20,7 @@ const recapFixtures: RecapFixture[] = [
   {
     language: 'en',
     profileCta: 'View this week',
+    profileCtaAccessibilityLabel: 'Open this week’s study recap',
     questionMetric: 'questions answered: 2',
     recapTitle: 'Your study week',
     weakCta: /Practise /,
@@ -26,6 +28,7 @@ const recapFixtures: RecapFixture[] = [
   {
     language: 'sv',
     profileCta: 'Visa veckan',
+    profileCtaAccessibilityLabel: 'Öppna veckans studieöversikt',
     questionMetric: 'svarade frågor: 2',
     recapTitle: 'Din vecka i studierna',
     weakCta: /Öva /,
@@ -109,6 +112,38 @@ function progressSeed() {
   };
 }
 
+function readinessDeltaProgressSeed() {
+  const previousAnswers = Array.from({ length: 30 }, (_, index) => ({
+    answeredAt: dateInCurrentLocalWeek(-7, index).toISOString(),
+    isCorrect: false,
+    questionId: `q${String(index + 1).padStart(3, '0')}`,
+    timeSpentSeconds: 10,
+  }));
+  const currentAnswers = Array.from({ length: 30 }, (_, index) => ({
+    answeredAt: dateInCurrentLocalWeek(2, index).toISOString(),
+    isCorrect: true,
+    questionId: `q${String(index + 31).padStart(3, '0')}`,
+    timeSpentSeconds: 10,
+  }));
+
+  return {
+    answerDates: [localDateKey(dateInCurrentLocalWeek(2))],
+    answerHistory: [...previousAnswers, ...currentAnswers],
+    completedQuestionIds: currentAnswers.map((answer) => answer.questionId),
+    dailyChallengeCompletions: {},
+    mockExamSessions: [],
+    questionProgress: {},
+    streakFreezeState: {
+      available: 0,
+      lastEarnedAt: null,
+      lifetimeEarned: 0,
+      lifetimeSpent: 0,
+      rescuedDayKeys: [],
+    },
+    totalXp: 300,
+  };
+}
+
 async function openSeededProfile(page: Page, language: AppLanguage) {
   await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, language, {
     localStorageValues: {
@@ -123,13 +158,34 @@ for (const fixture of recapFixtures) {
   test(`Profile opens localized weekly recap in ${fixture.language}`, async ({ page }) => {
     await openSeededProfile(page, fixture.language);
 
-    await page.getByRole('link', { name: fixture.profileCta }).click();
+    const profileRecapLink = page.getByRole('link', {
+      name: fixture.profileCtaAccessibilityLabel,
+    });
+    await expect(profileRecapLink.getByText(fixture.profileCta)).toBeVisible();
+    await profileRecapLink.click();
     await expect(page).toHaveURL(/\/recap/);
     await expect(page.getByRole('heading', { name: fixture.recapTitle })).toBeVisible();
     await expect(page.getByLabel(fixture.questionMetric)).toBeVisible();
     await expect(page.getByRole('link', { name: fixture.weakCta })).toBeVisible();
   });
 }
+
+test('Weekly recap surfaces readiness delta as a local preparation signal', async ({ page }) => {
+  await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, 'en', {
+    localStorageValues: {
+      [currentProgressStateStorageKey]: JSON.stringify(readinessDeltaProgressSeed()),
+    },
+  });
+
+  await page.goto('/recap', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  await expect(page.getByLabel(/readiness change: \+\d+/)).toBeVisible();
+  await expect(
+    page.getByText('local preparation signal, not an official prediction'),
+  ).toBeVisible();
+  await expect(page.getByText(/official pass|pass prediction|official outcome/i)).toHaveCount(0);
+});
 
 test('Weekly recap keeps quiet weeks encouraging and local-only', async ({ page }) => {
   await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, 'en', {
@@ -156,7 +212,13 @@ test('Weekly recap keeps quiet weeks encouraging and local-only', async ({ page 
   await page.goto('/recap', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
 
-  await expect(page.getByText('Quiet week')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Quiet week' })).toBeVisible();
   await expect(page.getByText(/A quiet week still counts/)).toBeVisible();
-  await expect(page.getByText(/Pro|Remove Ads|account/i)).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: /\bPro\b|Remove Ads|\baccount\b/i })).toHaveCount(
+    0,
+  );
+  await expect(page.getByRole('link', { name: /\bPro\b|Remove Ads|\baccount\b/i })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /\bPro\b|Remove Ads|\baccount\b/i })).toHaveCount(
+    0,
+  );
 });

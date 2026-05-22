@@ -10,10 +10,12 @@
 
 import { getLocalDateKey } from './streaks';
 import { validAnswerTimestampMs } from './answerDates';
-import type { UserProgress } from '../../types/progress';
+import { computeReadinessScore } from './readiness';
+import type { QuizAnswer, QuizSession, UserProgress } from '../../types/progress';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const DEFAULT_MASTERY_THRESHOLD = 0.8;
+type ReadinessChapter = { id: string; questionCount: number };
 
 export interface WeeklyRecap {
   weekStart: string; // local date key, Monday
@@ -36,6 +38,11 @@ export interface WeeklyRecap {
   bestMockScore: number | null;
   /** Accuracy delta vs the previous week, in percentage points. null when no prior data. */
   accuracyDeltaPoints: number | null;
+  /**
+   * Local readiness-score change vs the previous recap point. null when there
+   * is not enough current or previous data to make the comparison meaningful.
+   */
+  readinessDelta: number | null;
 }
 
 export interface WeeklyRecapInput {
@@ -48,6 +55,8 @@ export interface WeeklyRecapInput {
   masteryThreshold?: number;
   /** Question → chapterId map, for chaptersTouched computation. */
   questionChapterIndex?: Record<string, string>;
+  /** Chapters used to compute the local readiness delta. */
+  readinessChapters?: ReadonlyArray<ReadinessChapter>;
   now?: Date;
 }
 
@@ -222,6 +231,73 @@ function countMocks(
   return { count, bestScore: best };
 }
 
+function filterAnswersThrough(
+  answers: readonly QuizAnswer[],
+  cutoff: Date,
+  now: Date,
+): QuizAnswer[] {
+  const cutoffMs = cutoff.getTime();
+  return answers.filter((answer) => {
+    const answeredAtMs = validAnswerTimestampMs(answer.answeredAt, now);
+    return answeredAtMs !== null && answeredAtMs <= cutoffMs;
+  });
+}
+
+function progressThrough(progress: UserProgress, cutoff: Date, now: Date): UserProgress {
+  const cutoffMs = cutoff.getTime();
+  const sessions = progressSessions(progress).flatMap((session) => {
+    if (!isRecord(session)) return [];
+    if (!Array.isArray(session.answers)) return [];
+
+    const typedSession = session as unknown as QuizSession;
+    if (typedSession.mode === 'exam') {
+      const completedAtMs = validAnswerTimestampMs(typedSession.completedAt, now);
+      return completedAtMs !== null && completedAtMs <= cutoffMs ? [typedSession] : [];
+    }
+
+    const answers = filterAnswersThrough(typedSession.answers, cutoff, now);
+    if (answers.length === 0) return [];
+
+    return [
+      {
+        ...typedSession,
+        answers,
+        questionIds: answers.map((answer) => answer.questionId),
+      },
+    ];
+  });
+
+  return {
+    ...progress,
+    questionProgress: {},
+    sessions,
+  };
+}
+
+function readinessDeltaForWindow(
+  input: WeeklyRecapInput,
+  previousEnd: Date,
+  now: Date,
+): number | null {
+  if (!input.readinessChapters || !input.questionChapterIndex) return null;
+
+  const currentReadiness = computeReadinessScore({
+    progress: input.progress,
+    chapters: input.readinessChapters,
+    questionChapterIndex: input.questionChapterIndex,
+    now,
+  });
+  const previousReadiness = computeReadinessScore({
+    progress: progressThrough(input.progress, previousEnd, now),
+    chapters: input.readinessChapters,
+    questionChapterIndex: input.questionChapterIndex,
+    now: previousEnd,
+  });
+
+  if (currentReadiness.isSparse || previousReadiness.isSparse) return null;
+  return currentReadiness.score - previousReadiness.score;
+}
+
 export function generateWeeklyRecap(input: WeeklyRecapInput): WeeklyRecap {
   const now = input.now ?? new Date();
   const start = startOfWeek(now);
@@ -249,6 +325,7 @@ export function generateWeeklyRecap(input: WeeklyRecapInput): WeeklyRecap {
     accuracy === null || previousAccuracy === null
       ? null
       : Math.round((accuracy - previousAccuracy) * 100);
+  const readinessDelta = readinessDeltaForWindow(input, previousEnd, now);
 
   const chapterNowMastered =
     input.chapterMasteryAtWeekStart && input.chapterMasteryNow
@@ -274,5 +351,6 @@ export function generateWeeklyRecap(input: WeeklyRecapInput): WeeklyRecap {
     mockExamsTaken: mocks.count,
     bestMockScore: mocks.bestScore,
     accuracyDeltaPoints,
+    readinessDelta,
   };
 }
