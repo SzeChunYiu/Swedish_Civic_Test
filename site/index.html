@@ -157,7 +157,7 @@
             <span class="hero__eyebrow"
               ><i class="dot"></i
               ><span data-i18n="hero.eyebrow"
-                >Unofficial study tool · source-backed · no account</span
+                >Unofficial study tool · source-backed · optional account</span
               ></span
             >
             <h1>
@@ -472,9 +472,9 @@
             <details class="faq__item">
               <summary data-i18n="faq.3.q">Do I need an account?</summary>
               <p data-i18n="faq.3.a">
-                No — you can do everything without registering, and your progress lives on your
-                device. Signing in is optional, but it unlocks more: your highlights, notes, and
-                dashboard sync across all your devices.
+                Core study works without sign-in, and your progress lives on your device. Signing in
+                is optional, but it unlocks more: your highlights, notes, and dashboard sync across
+                all your devices.
               </p>
             </details>
             <details class="faq__item">
@@ -566,7 +566,7 @@
             An unofficial companion to the citizenship test.
           </p>
           <p class="ebook__local-note">
-            Highlights and notes stay in this browser. No account is needed.
+            Highlights and notes stay in this browser and work locally without sign-in.
           </p>
           <nav class="ebook__nav" aria-label="Ebook chapters">
             <a href="#/ebook?c=intro" data-eb="intro" class="is-active"
@@ -644,9 +644,10 @@
             <em data-i18n="privacy.h1b">stays on your phone.</em>
           </h1>
           <p class="doc__lede" data-i18n="privacy.lede">
-            Almost Swedish is an independent study app. We don't ask for an account, and study
-            progress stays local. This page explains Google AdSense web ads, Google Mobile Ads app
-            ads, and optional one-time Remove Ads purchase.
+            Almost Swedish is an independent study app. Core study works without sign-in, optional
+            account features may use Supabase or Google sign-in, and study progress stays local by
+            default. This page explains Google AdSense web ads, Google Mobile Ads app ads, and
+            optional purchases.
           </p>
           <div class="doc__meta">
             <span
@@ -668,7 +669,7 @@
               <h5 data-i18n="privacy.toc">In this policy</h5>
               <ol>
                 <li><a href="#/privacy#p1" data-i18n="privacy.s1.t">Independence</a></li>
-                <li><a href="#/privacy#p2" data-i18n="privacy.s2.t">No account required</a></li>
+                <li><a href="#/privacy#p2" data-i18n="privacy.s2.t">Account optional</a></li>
                 <li><a href="#/privacy#p3" data-i18n="privacy.s3.t">Local progress</a></li>
                 <li><a href="#/privacy#p4" data-i18n="privacy.s4.t">Current data posture</a></li>
                 <li><a href="#/privacy#p5" data-i18n="privacy.s5.t">Ads &amp; purchases</a></li>
@@ -684,10 +685,11 @@
                 <em>this app</em> does — nothing more.
               </p>
 
-              <h2 id="p2" data-i18n="privacy.s2.t">No account required</h2>
+              <h2 id="p2" data-i18n="privacy.s2.t">Account optional</h2>
               <p data-i18n="privacy.s2.p">
-                The app requires no account, email address, phone number, or profile registration.
-                You open the app, you study, you close the app. That's the deal.
+                The core study experience works without sign-in. Optional v1.1 account features can
+                use Supabase and Google sign-in for account-backed purchases, highlights, notes, or
+                sync.
               </p>
 
               <h2 id="p3" data-i18n="privacy.s3.t">Local study progress</h2>
@@ -707,9 +709,10 @@
                 </p>
               </div>
               <p data-i18n="privacy.s4.p">
-                We do not run account profiles or send study answers, mistakes, progress, settings,
-                XP, streaks, badges, bookmarks, or audio preferences to ad providers. Google ad
-                systems may process ad and consent signals as described below.
+                We do not send study answers, mistakes, progress, settings, XP, streaks, badges,
+                bookmarks, or audio preferences to ad providers. Optional account features process
+                only the account identity needed for that feature. Google ad systems may process ad
+                and consent signals as described below.
               </p>
 
               <h2 id="p5" data-i18n="privacy.s5.t">Ads and purchases</h2>
@@ -1365,8 +1368,8 @@
         <div class="modal__body">
           <div class="signin__login">
             <p class="signin__lede" data-sk="signin.lede">
-              Save your highlights, notes, and progress across devices. Totally optional —
-              everything works without an account.
+              Save your highlights, notes, and progress across devices. Totally optional — the core
+              study flow works without sign-in.
             </p>
             <button class="signin__btn" type="button" data-prov="google">
               <span class="signin__btn-icon" aria-hidden="true">G</span>

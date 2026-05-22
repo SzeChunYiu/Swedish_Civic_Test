@@ -316,7 +316,7 @@ const i18n = (window.i18n = {
     'nav.terms': 'Terms',
     'nav.sources': 'Sources',
     'nav.cta': 'Get the app ↗',
-    'hero.eyebrow': 'Unofficial study tool · source-backed · no account',
+    'hero.eyebrow': 'Unofficial study tool · source-backed · optional account',
     'hero.h1a': 'Learn Sweden.',
     'hero.h1b': 'Practise with sources.',
     'hero.h1c': 'Go in prepared.',
@@ -326,7 +326,7 @@ const i18n = (window.i18n = {
     'hero.cta2': 'Try one question',
     'hero.stat1': 'civic questions',
     'hero.stat2': 'chapters, lagom-sized',
-    'hero.stat3': 'to start, no account',
+    'hero.stat3': 'to start without sign-in',
     'phone.crumb': 'Chapter 3 · Society & Rights',
     'phone.q': 'Which Swedish principle gives everyone the right to roam in nature?',
     'phone.hint': 'Nice. 18 streak days. Keep going.',
@@ -363,7 +363,7 @@ const i18n = (window.i18n = {
     'numbers.1': 'questions sourced from public records',
     'numbers.2': 'chapters covering history, society & rights',
     'numbers.3': 'daily — a fika-sized study habit',
-    'numbers.4': 'to start. No login. Study progress stays local.',
+    'numbers.4': 'to start. Core study works without sign-in.',
     'chap.eyebrow': "What's inside",
     'chap.h1': 'Short chapters.',
     'chap.h2': 'Clear Swedish context.',
@@ -442,7 +442,7 @@ const i18n = (window.i18n = {
       "It'll help you <em>study</em>. The rest depends on you, the official source material, and how much fika you take. We pull questions from the public bank and explain each one in plain language.",
     'faq.3.q': 'Do I need an account?',
     'faq.3.a':
-      'No — you can do everything without registering, and your progress lives on your device. Signing in is optional, but it unlocks more: your highlights, notes, and dashboard sync across all your devices.',
+      'Core study works without sign-in, and your progress lives on your device. Signing in is optional, but it unlocks more: your highlights, notes, and dashboard sync across all your devices.',
     'faq.4.q': 'Is it free?',
     'faq.4.a':
       'Free to start, free to study, and free to take mock exams. Ads help keep the core app available; Remove Ads is an optional one-time 29 SEK purchase that removes ads.',
@@ -457,7 +457,7 @@ const i18n = (window.i18n = {
     'privacy.h1a': 'Your data',
     'privacy.h1b': 'stays on your phone.',
     'privacy.lede':
-      "Almost Swedish is an independent study app. We don't ask for an account, and study progress stays local. This page explains Google AdSense web ads, Google Mobile Ads app ads, and optional one-time Remove Ads purchase.",
+      'Almost Swedish is an independent study app. Core study works without sign-in, optional account features may use Supabase or Google sign-in, and study progress stays local by default. This page explains Google AdSense web ads, Google Mobile Ads app ads, and optional purchases.',
     'privacy.meta1.b': 'Effective',
     'privacy.meta1.v': '2026-05-15',
     'privacy.meta2.b': 'Version',
@@ -468,9 +468,9 @@ const i18n = (window.i18n = {
     'privacy.s1.t': 'Independence',
     'privacy.s1.p':
       'Almost Swedish is an independent study app for Swedish civic knowledge practice. It is not official and is not affiliated with UHR, Skolverket, Migrationsverket, or the Swedish government. Anything you read here represents what <em>this app</em> does — nothing more.',
-    'privacy.s2.t': 'No account required',
+    'privacy.s2.t': 'Account optional',
     'privacy.s2.p':
-      "The app requires no account, email address, phone number, or profile registration. You open the app, you study, you close the app. That's the deal.",
+      'The core study experience works without sign-in. Optional v1.1 account features can use Supabase and Google sign-in for account-backed purchases, highlights, notes, or sync.',
     'privacy.s3.t': 'Local study progress',
     'privacy.s3.p':
       'Study progress, settings, mistakes, XP, streaks, badges, bookmarks, and audio preferences are stored locally on your device. They never leave it. If you uninstall the app, that data is gone — fair warning.',
@@ -479,7 +479,7 @@ const i18n = (window.i18n = {
     'privacy.s4.callout.p':
       'study progress and answers stay local; ad systems do not receive them.',
     'privacy.s4.p':
-      'We do not run account profiles or send study answers, mistakes, progress, settings, XP, streaks, badges, bookmarks, or audio preferences to ad providers. Google ad systems may process ad and consent signals as described below.',
+      'We do not send study answers, mistakes, progress, settings, XP, streaks, badges, bookmarks, or audio preferences to ad providers. Optional account features process only the account identity needed for that feature. Google ad systems may process ad and consent signals as described below.',
     'privacy.s5.t': 'Ads and purchases',
     'privacy.s5.p':
       "This website uses Google AdSense auto ads after your cookie choice. Manual in-content panels in Practice and Ebook stay as reserved spaces until reviewed slot IDs are configured. The mobile app uses Google Mobile Ads (AdMob) behind Google's consent flow. Remove Ads is an optional one-time 29 SEK purchase that removes ads. Ads help fund the free study experience, and ads never collect study answers or progress.",
@@ -735,7 +735,7 @@ const i18n = (window.i18n = {
     'nav.terms': 'Villkor',
     'nav.sources': 'Källor',
     'nav.cta': 'Hämta appen ↗',
-    'hero.eyebrow': 'Fristående studieverktyg · källstött · inget konto',
+    'hero.eyebrow': 'Fristående studieverktyg · källstött · valfritt konto',
     'hero.h1a': 'Lär känna Sverige.',
     'hero.h1b': 'Öva med källor.',
     'hero.h1c': 'Känn dig förberedd.',
@@ -745,7 +745,7 @@ const i18n = (window.i18n = {
     'hero.cta2': 'Testa en fråga',
     'hero.stat1': 'samhällsfrågor',
     'hero.stat2': 'kapitel, i lagom format',
-    'hero.stat3': 'att börja, inget konto',
+    'hero.stat3': 'att börja utan inloggning',
     'phone.crumb': 'Kapitel 3 · Samhälle & Rättigheter',
     'phone.q': 'Vilken svensk princip ger alla rätt att vistas fritt i naturen?',
     'phone.hint': 'Snyggt. 18 dagars streak. Fortsätt.',
@@ -781,7 +781,7 @@ const i18n = (window.i18n = {
     'numbers.1': 'frågor från offentliga källor',
     'numbers.2': 'kapitel om historia, samhälle & rättigheter',
     'numbers.3': 'om dagen — en kort studievana',
-    'numbers.4': 'att börja. Ingen inloggning. Dina framsteg sparas lokalt.',
+    'numbers.4': 'att börja. Kärnövningen fungerar utan inloggning.',
     'chap.eyebrow': 'Vad ingår',
     'chap.h1': 'Korta kapitel.',
     'chap.h2': 'Tydligt svenskt sammanhang.',
@@ -860,7 +860,7 @@ const i18n = (window.i18n = {
       'Det hjälper dig att <em>plugga</em>. Resten beror på dig, det officiella materialet och hur många fikapauser du tar. Vi hämtar frågor från den offentliga banken och förklarar varje en på enkel svenska.',
     'faq.3.q': 'Behöver jag ett konto?',
     'faq.3.a':
-      'Nej — du kan göra allt utan att registrera dig, och dina framsteg sparas på din enhet. Att logga in är valfritt, men låser upp mer: dina markeringar, anteckningar och panel synkas mellan alla dina enheter.',
+      'Kärnövningen fungerar utan inloggning, och dina framsteg sparas på din enhet. Att logga in är valfritt, men låser upp mer: dina markeringar, anteckningar och panel synkas mellan alla dina enheter.',
     'faq.4.q': 'Är den gratis?',
     'faq.4.a':
       'Gratis att börja, plugga och öva med övningsprov. Du kan göra övningsprov i appen utan betalning; annonser hjälper oss hålla kärnfunktionerna tillgängliga, och Ta bort annonser är ett valfritt engångsköp på 29 SEK som tar bort annonser.',
@@ -875,7 +875,7 @@ const i18n = (window.i18n = {
     'privacy.h1a': 'Dina data',
     'privacy.h1b': 'stannar i telefonen.',
     'privacy.lede':
-      'Almost Swedish är en fristående studieapp. Vi ber inte om konto, och studieframsteg stannar lokalt. Den här sidan förklarar Google AdSense-annonser på webben, Google Mobile Ads i appen och det valfria engångsköpet Ta bort annonser.',
+      'Almost Swedish är en fristående studieapp. Kärnövningen fungerar utan inloggning, valfria kontofunktioner kan använda Supabase eller Google-inloggning och studieframsteg sparas lokalt som standard. Den här sidan förklarar Google AdSense-annonser på webben, Google Mobile Ads i appen och valfria köp.',
     'privacy.meta1.b': 'Gäller från',
     'privacy.meta1.v': '2026-05-15',
     'privacy.meta2.b': 'Version',
@@ -886,9 +886,9 @@ const i18n = (window.i18n = {
     'privacy.s1.t': 'Oberoende',
     'privacy.s1.p':
       'Almost Swedish är en fristående studieapp för övning av svensk samhällskunskap. Den är inte officiell och inte kopplad till UHR, Skolverket, Migrationsverket eller svenska staten. Allt du läser här gäller bara vad <em>denna app</em> gör — inget mer.',
-    'privacy.s2.t': 'Inget konto krävs',
+    'privacy.s2.t': 'Konto är valfritt',
     'privacy.s2.p':
-      'Appen kräver inget konto, ingen e-post, inget telefonnummer och ingen profilregistrering. Du öppnar appen, pluggar, stänger appen. Det är avtalet.',
+      'Den grundläggande studieupplevelsen fungerar utan inloggning. Valfria v1.1-kontofunktioner kan använda Supabase och Google-inloggning för kontoanknutna köp, markeringar, anteckningar eller synk.',
     'privacy.s3.t': 'Lokala studieframsteg',
     'privacy.s3.p':
       'Framsteg, inställningar, misstag, XP, streaks, märken, bokmärken och ljudpreferenser lagras lokalt på din enhet. De lämnar den aldrig. Avinstallerar du appen är de borta — bra att veta.',
@@ -896,7 +896,7 @@ const i18n = (window.i18n = {
     'privacy.s4.callout.b': 'På klarspråk:',
     'privacy.s4.callout.p': 'studieframsteg och svar stannar lokalt; annonssystem får inte dem.',
     'privacy.s4.p':
-      'Vi kör inga kontoprofiler och skickar inte studiesvar, misstag, framsteg, inställningar, XP, streaks, märken, bokmärken eller ljudpreferenser till annonsleverantörer. Googles annonssystem kan behandla annons- och samtyckessignaler enligt beskrivningen nedan.',
+      'Vi skickar inte studiesvar, misstag, framsteg, inställningar, XP, streaks, märken, bokmärken eller ljudpreferenser till annonsleverantörer. Valfria kontofunktioner behandlar bara den kontoidentitet som behövs för funktionen. Googles annonssystem kan behandla annons- och samtyckessignaler enligt beskrivningen nedan.',
     'privacy.s5.t': 'Annonser och köp',
     'privacy.s5.p':
       'Den här webbplatsen använder automatiska Google AdSense-annonser efter ditt cookieval. Manuella annonsytor i övning och e-bok visas som reserverade ytor tills granskade annonsplats-ID:n är konfigurerade. Mobilappen använder Google Mobile Ads (AdMob) bakom Googles samtyckesflöde. Ta bort annonser är ett valfritt engångsköp på 29 SEK som tar bort annonser. Annonser hjälper till att finansiera den kostnadsfria studieupplevelsen, och annonser samlar aldrig in dina studiesvar eller framsteg.',

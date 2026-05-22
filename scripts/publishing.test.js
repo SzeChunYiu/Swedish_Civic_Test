@@ -307,7 +307,12 @@ test('public support and privacy URL copy is ready for hosting', () => {
   assert.match(publicCopy, /Privacy Policy URL/i);
   assert.match(publicCopy, /app-ads\.txt/i);
   assert.match(publicCopy, /no personal data/i);
-  assert.match(publicCopy, /no account/i);
+  assert.match(publicCopy, /core .*study experience works without sign-in/i);
+  assert.match(publicCopy, /optional .*account-backed features/i);
+  assert.doesNotMatch(
+    publicCopy,
+    /requires no account|no account, email address|profile registration/i,
+  );
   assert.match(publicCopy, /not affiliated/i);
   assertCurrentPublicPrivacyPosture(publicCopy);
 });
@@ -324,7 +329,13 @@ test('hostable public support, privacy, and app-ads files are prepared', () => {
   assert.match(support, /<html lang="en">/i);
 
   assert.match(privacy, /Almost Swedish privacy policy/i);
-  assert.match(privacy, /no account/i);
+  assert.match(privacy, /Account optional/i);
+  assert.match(privacy, /core .*study experience works without sign-in/i);
+  assert.match(privacy, /Supabase and Google sign-in/i);
+  assert.doesNotMatch(
+    privacy,
+    /requires no account|no account, email address|profile registration/i,
+  );
   assert.match(privacy, /stored locally on the device/i);
   assertCurrentPublicPrivacyPosture(privacy);
   assert.match(privacy, /<html lang="en">/i);

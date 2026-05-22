@@ -85,8 +85,8 @@ test('static site privacy copy avoids unqualified no-tracking claims', () => {
   const surface = [read('site/app.js'), read('site/index.html')].join('\n');
 
   unqualifiedNoTrackingPatterns.forEach((pattern) => assert.doesNotMatch(surface, pattern));
-  assert.match(surface, /No login\. Study progress stays local\./);
-  assert.match(surface, /Ingen inloggning\. Dina framsteg sparas lokalt\./);
+  assert.match(surface, /Core study works without sign-in\./);
+  assert.match(surface, /K[aä]rn[oö]vningen fungerar utan inloggning/);
 });
 
 test('static site privacy copy names current ads, consent, and Remove Ads behavior', () => {
@@ -206,10 +206,19 @@ test('static site public copy does not label the release as MVP', () => {
 
   assert.equal(assertNoUnsupportedStaticReleaseCopy(repoRoot), 3);
   assert.equal(findUnsupportedStaticReleaseCopyInSource(surface).length, 0);
-  assert.match(surface, /No — you can do everything without registering/);
-  assert.match(surface, /Nej — du kan göra allt utan att registrera dig/);
-  assert.match(surface, /The app requires no account/);
-  assert.match(surface, /Appen kräver inget konto/);
+  [
+    /No account required/i,
+    /The app requires no account/i,
+    /without registering/i,
+    /no account, email address, phone number, or profile registration/i,
+    /Inget konto krävs/i,
+    /Appen kräver inget konto/i,
+    /utan att registrera dig/i,
+  ].forEach((pattern) => assert.doesNotMatch(surface, pattern));
+  assert.match(surface, /Core study works without sign-in/);
+  assert.match(surface, /K[aä]rn[oö]vningen fungerar utan inloggning/);
+  assert.match(surface, /Account optional/);
+  assert.match(surface, /Konto [aä]r valfritt/);
   assert.match(surface, /data-i18n="privacy\.meta2\.v">1\.0</);
 
   const mutated = findUnsupportedStaticReleaseCopyInSource(

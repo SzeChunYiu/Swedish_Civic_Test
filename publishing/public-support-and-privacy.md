@@ -39,12 +39,13 @@ provide official exam answers, migration advice, or government decisions.
 
 # Almost Swedish privacy policy
 
-The Almost Swedish v1.0 app requires no account, email address, phone number,
-or profile registration.
+The core Almost Swedish study experience works without sign-in. Optional
+v1.1 account-backed features may use Supabase and Google sign-in for
+account identity, purchases, highlights, notes, or sync.
 
 Study progress, settings, mistakes, XP, streaks, badges, bookmarks, and audio
-preferences are stored locally on the device. The app itself still has no
-account database, remote progress sync, analytics SDK, crash reporting SDK, or
+preferences are stored locally on the device by default. Anonymous core study
+does not use remote progress sync, analytics SDK, crash reporting SDK, or a
 support form.
 
 The v1.0 native build includes Google Mobile Ads, App Tracking Transparency,
@@ -56,10 +57,11 @@ labels and Google Play Data safety drafts.
 
 Free study screens may show Google Mobile Ads or AdMob placements when real ads
 are enabled. Timed mock exam screens stay ad-free. Remove Ads can be restored
-through the app store. If analytics, crash reporting, accounts, remote progress
-sync, or support collection are enabled later, this privacy policy, Apple
-privacy labels, Google Play Data safety answers, and in-app privacy copy must be
-reviewed and updated before submission.
+through the app store. If analytics, crash reporting, remote progress sync, or
+support collection are enabled beyond the optional account-backed features
+described here, this privacy policy, Apple privacy labels, Google Play Data
+safety answers, and in-app privacy copy must be reviewed and updated before
+submission.
 
 ## Hosting checklist
 
@@ -68,8 +70,10 @@ reviewed and updated before submission.
       `publishing/public-site/app-ads.txt` to the chosen public host.
 - [x] Publish these pages/files on public HTTPS URLs.
 - [x] Confirm the pages/files are reachable without login.
-- [x] Confirm the hosted text says no account, local progress storage, Google
-      Mobile Ads, ATT/UMP consent, and the 29 SEK Remove Ads purchase.
+- [x] Confirm the hosted text says core study works without sign-in, local
+      progress storage remains the default, optional account-backed features are
+      disclosed, and Google Mobile Ads, ATT/UMP consent, and the 29 SEK Remove
+      Ads purchase are covered.
 - [x] Confirm hosted `app-ads.txt` matches the local AdMob seller declaration.
 - [ ] Enter the Support URL in App Store Connect and Google Play Console.
 - [ ] Enter the Privacy Policy URL in App Store Connect and Google Play Console.

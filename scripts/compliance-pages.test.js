@@ -125,7 +125,9 @@ test('compliance pages and source links are present', () => {
 
   assert.match(read('app/disclaimer.tsx'), /not official/i);
   assert.match(read('app/disclaimer.tsx'), /not real exam questions/i);
-  assert.match(read('app/privacy.tsx'), /no account/i);
+  assert.match(read('app/privacy.tsx'), /Account optional/);
+  assert.match(read('app/privacy.tsx'), /core study experience works without sign-in/i);
+  assert.match(read('app/privacy.tsx'), /Supabase and Google sign-in/);
   assert.match(read('app/privacy.tsx'), /local/i);
   assert.match(read('app/privacy.tsx'), /studiesviter/);
   assert.doesNotMatch(

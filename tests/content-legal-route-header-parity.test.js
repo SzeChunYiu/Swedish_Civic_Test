@@ -33,10 +33,11 @@ const expectedLegalRoutes = [
       'const language = useSettingsStore((state) => state.language);',
       'const copy = privacyCopy[language];',
       'Integritetspolicy',
-      'Inget konto krävs',
+      'Konto är valfritt',
       'köpet gör att annonser inte visas på den här enheten',
       'Privacy policy',
-      'No account required',
+      'Account optional',
+      'Supabase and Google sign-in',
       'turns off ads on this device',
     ],
     sectionPatterns: [
@@ -49,7 +50,7 @@ const expectedLegalRoutes = [
     title: 'Privacy policy',
     titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
     sections: [
-      'No account required',
+      'Account optional',
       'Local progress storage',
       'Ads and purchases',
       'Ad consent',
@@ -240,6 +241,17 @@ test('legal, source, and support routes stay on shared accessible header path', 
         routeSource,
         /<LegalSection\s+title=\{copy\.sections\.publicSupportPage\.title\}[\s\S]*body=\{copy\.sections\.publicSupportPage\.body\}[\s\S]*<LegalExternalLink/,
       );
+    }
+
+    if (expectedRoute.file === 'app/privacy.tsx') {
+      [
+        /No account (?:is )?required/i,
+        /without sign-in, email address, phone number, or profile registration/i,
+        /registered profile details/i,
+        /Inget konto krävs/i,
+        /kräver inget konto/i,
+        /profilregistrering/i,
+      ].forEach((pattern) => assert.doesNotMatch(routeSource, pattern));
     }
   }
 });

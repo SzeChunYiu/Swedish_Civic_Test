@@ -12,10 +12,12 @@ Reference:
 
 Select **Yes, data is collected from this app** for the v1.0 release draft.
 
-The app itself still has no account system, developer profile database, remote
-progress sync, support form, analytics SDK, or crash reporting SDK. Study
-progress, settings, mistakes, XP, streaks, bookmarks, and audio preference stay
-on the local device.
+Core study works without sign-in, and study progress, settings, mistakes, XP,
+streaks, bookmarks, and audio preference stay on the local device by default.
+Optional v1.1 account-backed features may use Supabase and Google sign-in for
+account identity, purchases, highlights, notes, or sync. The app does not use an
+analytics SDK, crash reporting SDK, or remote progress sync for anonymous core
+study.
 
 The release binary does include Google Mobile Ads, App Tracking Transparency,
 Google UMP consent, and a one-time Remove Ads non-consumable IAP for **29 SEK**.
@@ -47,7 +49,8 @@ release posture.
 - Third-party advertising: Google Mobile Ads on study screens.
 - Analytics / measurement: Google Mobile Ads SDK performance and ad measurement
   signals.
-- App functionality: Remove Ads purchase, restore, and local entitlement state.
+- App functionality: Remove Ads purchase, restore, optional account identity for
+  account-backed features, and local entitlement state.
 - Tracking: the app includes `expo-tracking-transparency`; on iOS, tracking-based
   advertising must wait for ATT authorization. Where required, Google UMP consent
   must be gathered before real AdMob serving.
@@ -65,5 +68,6 @@ release posture.
 - Confirm Remove Ads purchase and restore use
   `com.billyyiu.almostswedish.removeads` and the displayed price remains
   **29 SEK**.
-- Update this file before submission if analytics, crash reporting, accounts,
-  remote content, or support collection is enabled.
+- Update this file before submission if analytics, crash reporting, remote
+  progress sync, or support collection is enabled beyond the optional
+  account-backed features described above.
