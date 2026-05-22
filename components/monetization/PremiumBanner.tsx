@@ -24,6 +24,7 @@ type PremiumBannerCopy = {
   buyAccessibilityHint: string;
   buyAccessibilityLabel: (price: string) => string;
   buyIdle: (price: string) => string;
+  buyNativeUnavailable: string;
   buyUnavailable: string;
   buying: string;
   eyebrowActive: string;
@@ -31,12 +32,16 @@ type PremiumBannerCopy = {
   restoreAccessibilityHint: string;
   restoreAccessibilityLabel: string;
   restoreIdle: string;
+  restoreNativeUnavailable: string;
   restoreUnavailable: string;
   restoring: string;
   statusAccessibilityLabel: (message: string) => string;
   statusMessages: Record<PurchaseUiStatus, string>;
   titleActive: string;
   titleIdle: string;
+  nativeUnavailableAccessibilityHint: string;
+  nativeUnavailableBody: (price: string) => string;
+  nativeUnavailableStatus: string;
   webUnavailableAccessibilityHint: string;
   webUnavailableBody: (price: string) => string;
 };
@@ -49,6 +54,7 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
       'Köpet tar bort annonser efter butikens bekräftelse. Tidsatta övningsprov i appen är redan annonsfria.',
     buyAccessibilityLabel: (price) => `Köp Ta bort annonser för ${price}`,
     buyIdle: (price) => `Köp ${price}`,
+    buyNativeUnavailable: 'Köp inte tillgängligt',
     buyUnavailable: 'Köp i mobilappen',
     buying: 'Köper...',
     eyebrowActive: 'Annonsfri aktiv',
@@ -57,6 +63,7 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
       'Kontrollerar om Ta bort annonser redan har köpts på samma butikskonto.',
     restoreAccessibilityLabel: 'Återställ köp av Ta bort annonser',
     restoreIdle: 'Återställ',
+    restoreNativeUnavailable: 'Återställ inte tillgängligt',
     restoreUnavailable: 'Återställ i mobilappen',
     restoring: 'Återställer...',
     statusAccessibilityLabel: (message) => `Status för Ta bort annonser: ${message}`,
@@ -75,6 +82,12 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
     },
     titleActive: 'Annonsfri studie är aktiv',
     titleIdle: 'Ta bort annonser',
+    nativeUnavailableAccessibilityHint:
+      'Köp är tillfälligt inte tillgängliga eftersom kvittovalidering inte är konfigurerad.',
+    nativeUnavailableBody: (price) =>
+      `Ta bort annonser för ${price} är tillfälligt inte tillgängligt eftersom kvittovalidering inte är konfigurerad för den här versionen.`,
+    nativeUnavailableStatus:
+      'Köp är tillfälligt inte tillgängliga eftersom kvittovalidering inte är konfigurerad.',
     webUnavailableAccessibilityHint:
       'Ta bort annonser är ett butiksköp i mobilappen och kan inte köpas från webbversionen.',
     webUnavailableBody: (price) =>
@@ -87,6 +100,7 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
       'Purchase removes ads after store confirmation. Exam mode is already ad-free.',
     buyAccessibilityLabel: (price) => `Buy Remove Ads for ${price}`,
     buyIdle: (price) => `Buy ${price}`,
+    buyNativeUnavailable: 'Buy unavailable',
     buyUnavailable: 'Buy in mobile app',
     buying: 'Buying...',
     eyebrowActive: 'Remove Ads active',
@@ -95,6 +109,7 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
       'Checks whether Remove Ads was already bought with the same store account.',
     restoreAccessibilityLabel: 'Restore Remove Ads purchase',
     restoreIdle: 'Restore',
+    restoreNativeUnavailable: 'Restore unavailable',
     restoreUnavailable: 'Restore in mobile app',
     restoring: 'Restoring...',
     statusAccessibilityLabel: (message) => `Remove Ads status: ${message}`,
@@ -113,6 +128,12 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
     },
     titleActive: 'Ad-free study is active',
     titleIdle: 'Remove Ads',
+    nativeUnavailableAccessibilityHint:
+      'Purchases are temporarily unavailable because receipt validation is not configured.',
+    nativeUnavailableBody: (price) =>
+      `Remove Ads for ${price} is temporarily unavailable because receipt validation is not configured for this build.`,
+    nativeUnavailableStatus:
+      'Purchases are temporarily unavailable because receipt validation is not configured.',
     webUnavailableAccessibilityHint:
       'Remove Ads is a mobile app store purchase and cannot be bought from the web version.',
     webUnavailableBody: (price) =>
@@ -150,8 +171,11 @@ export function PremiumBanner({
   const [status, setStatus] = useState<PurchaseUiStatus>('idle');
   const purchaseActionInFlightRef = useRef(false);
   const adsDisabled = currentEntitlements.adsDisabled === true;
-  const purchaseUnavailable =
+  const webPurchaseUnavailable =
     purchaseRuntime?.purchaseUnavailableReason === 'web_store_unavailable';
+  const nativePurchaseUnavailable =
+    purchaseRuntime?.purchaseUnavailableReason === 'native_receipt_validator_unavailable';
+  const purchaseUnavailable = webPurchaseUnavailable || nativePurchaseUnavailable;
   const updateEntitlements = useCallback(
     (nextEntitlements: PremiumEntitlements) => {
       setCurrentEntitlements(nextEntitlements);
@@ -172,7 +196,10 @@ export function PremiumBanner({
         : purchaseUnavailable
           ? 'unavailable'
           : status;
-  const statusMessage = getStatusMessage(visibleStatus, copy);
+  const statusMessage =
+    nativePurchaseUnavailable && visibleStatus === 'unavailable'
+      ? copy.nativeUnavailableStatus
+      : getStatusMessage(visibleStatus, copy);
   const actionsDisabled = activeAction !== null || adsDisabled || purchaseUnavailable;
 
   async function runPurchaseAction(action: PurchaseAction) {
@@ -208,14 +235,20 @@ export function PremiumBanner({
         {adsDisabled ? copy.titleActive : copy.titleIdle}
       </Text>
       <Text style={styles.meta}>
-        {purchaseUnavailable
-          ? copy.webUnavailableBody(resolvedPriceLabel)
-          : copy.body(resolvedPriceLabel)}
+        {nativePurchaseUnavailable
+          ? copy.nativeUnavailableBody(resolvedPriceLabel)
+          : webPurchaseUnavailable
+            ? copy.webUnavailableBody(resolvedPriceLabel)
+            : copy.body(resolvedPriceLabel)}
       </Text>
       <View style={styles.actions}>
         <Button
           accessibilityHint={
-            purchaseUnavailable ? copy.webUnavailableAccessibilityHint : copy.buyAccessibilityHint
+            nativePurchaseUnavailable
+              ? copy.nativeUnavailableAccessibilityHint
+              : webPurchaseUnavailable
+                ? copy.webUnavailableAccessibilityHint
+                : copy.buyAccessibilityHint
           }
           accessibilityLabel={copy.buyAccessibilityLabel(resolvedPriceLabel)}
           accessibilityRole="button"
@@ -229,15 +262,19 @@ export function PremiumBanner({
         >
           {activeAction === 'buy'
             ? copy.buying
-            : purchaseUnavailable
-              ? copy.buyUnavailable
-              : copy.buyIdle(resolvedPriceLabel)}
+            : nativePurchaseUnavailable
+              ? copy.buyNativeUnavailable
+              : webPurchaseUnavailable
+                ? copy.buyUnavailable
+                : copy.buyIdle(resolvedPriceLabel)}
         </Button>
         <Button
           accessibilityHint={
-            purchaseUnavailable
-              ? copy.webUnavailableAccessibilityHint
-              : copy.restoreAccessibilityHint
+            nativePurchaseUnavailable
+              ? copy.nativeUnavailableAccessibilityHint
+              : webPurchaseUnavailable
+                ? copy.webUnavailableAccessibilityHint
+                : copy.restoreAccessibilityHint
           }
           accessibilityLabel={copy.restoreAccessibilityLabel}
           accessibilityRole="button"
@@ -249,9 +286,11 @@ export function PremiumBanner({
         >
           {activeAction === 'restore'
             ? copy.restoring
-            : purchaseUnavailable
-              ? copy.restoreUnavailable
-              : copy.restoreIdle}
+            : nativePurchaseUnavailable
+              ? copy.restoreNativeUnavailable
+              : webPurchaseUnavailable
+                ? copy.restoreUnavailable
+                : copy.restoreIdle}
         </Button>
       </View>
       <Text

@@ -45,7 +45,7 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
       /async function revalidateStoredRemoveAdsEntitlementRecordWithConnectedProvider\(\{[\s\S]*?\nfunction createResult/,
     )?.[0] ?? '';
 
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 36);
+  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 39);
   assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
   assert.match(purchaseSource, /REMOVE_ADS_RECORD_SCHEMA_VERSION = 1/);
   assert.match(purchaseSource, /interface RemoveAdsProductMetadata/);
@@ -118,12 +118,24 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.match(placementCtaSource, /restoreRemoveAdsPurchase/);
   assert.match(placementCtaSource, /runPurchaseAction\('restore', restoreRemoveAdsPurchase\)/);
   assert.match(placementCtaSource, /purchaseUnavailableReason === 'web_store_unavailable'/);
+  assert.match(
+    placementCtaSource,
+    /purchaseUnavailableReason === 'native_receipt_validator_unavailable'/,
+  );
   assert.match(placementCtaSource, /copy\.webUnavailableBody\(REMOVE_ADS_PRICE_LABEL\)/);
+  assert.match(placementCtaSource, /copy\.nativeUnavailableBody\(REMOVE_ADS_PRICE_LABEL\)/);
   assert.match(placementCtaSource, /copy\.webUnavailableAccessibilityHint/);
+  assert.match(placementCtaSource, /copy\.nativeUnavailableAccessibilityHint/);
   assert.match(placementCtaSource, /Buy in mobile app/);
   assert.match(placementCtaSource, /Köp i mobilappen/);
+  assert.match(placementCtaSource, /Buy unavailable/);
+  assert.match(placementCtaSource, /Köp inte tillgängligt/);
   assert.match(placementCtaSource, /Restore in mobile app/);
   assert.match(placementCtaSource, /Återställ i mobilappen/);
+  assert.match(placementCtaSource, /Restore unavailable/);
+  assert.match(placementCtaSource, /Återställ inte tillgängligt/);
+  assert.match(placementCtaSource, /receipt validation is not configured/);
+  assert.match(placementCtaSource, /kvittovalidering inte är konfigurerad/);
   assert.match(placementCtaSource, /mobile app store purchase/);
   assert.match(placementCtaSource, /butiksköp i mobilappen/);
   assert.match(
@@ -149,9 +161,16 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.match(paywallSource, /useRemoveAdsPriceLabel\(purchaseRuntime, priceLabel\)/);
   assert.match(paywallSource, /resolvedPriceLabel/);
   assert.match(paywallSource, /copy\.webUnavailableBody\(resolvedPriceLabel\)/);
+  assert.match(paywallSource, /copy\.nativeUnavailableBody\(resolvedPriceLabel\)/);
   assert.match(paywallSource, /copy\.body\(resolvedPriceLabel\)/);
   assert.match(paywallSource, /copy\.buyAccessibilityLabel\(resolvedPriceLabel\)/);
   assert.match(paywallSource, /copy\.buyIdle\(resolvedPriceLabel\)/);
+  assert.match(paywallSource, /copy\.nativeUnavailableAccessibilityHint/);
+  assert.match(paywallSource, /Buy unavailable/);
+  assert.match(paywallSource, /Köp inte tillgängligt/);
+  assert.match(paywallSource, /Restore unavailable/);
+  assert.match(paywallSource, /Återställ inte tillgängligt/);
+  assert.match(paywallSource, /receipt validation is not configured/);
   assert.match(
     homeSource,
     /const removeAdsPriceLabel = useRemoveAdsPriceLabel\(purchaseRuntime\);/,

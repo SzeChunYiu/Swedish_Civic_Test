@@ -22,17 +22,22 @@ type RemoveAdsPlacementCtaCopy = {
   buyAccessibilityHint: string;
   buyAccessibilityLabel: (price: string) => string;
   buyIdle: (price: string) => string;
+  buyNativeUnavailable: string;
   buyUnavailable: string;
   buying: string;
   eyebrow: string;
   restoreAccessibilityHint: string;
   restoreAccessibilityLabel: string;
   restoreIdle: string;
+  restoreNativeUnavailable: string;
   restoreUnavailable: string;
   restoring: string;
   statusAccessibilityLabel: (message: string) => string;
   statusMessages: Record<PlacementPurchaseStatus, string>;
   title: (placementLabel: string) => string;
+  nativeUnavailableAccessibilityHint: string;
+  nativeUnavailableBody: (price: string) => string;
+  nativeUnavailableStatus: string;
   webUnavailableAccessibilityHint: string;
   webUnavailableBody: (price: string) => string;
 };
@@ -47,6 +52,7 @@ const removeAdsPlacementCtaCopy: Record<AppLanguage, RemoveAdsPlacementCtaCopy> 
       'Köpet döljer den här annonsplaceringen och andra studieannonser på den här enheten.',
     buyAccessibilityLabel: (price) => `Köp Ta bort annonser för ${price}`,
     buyIdle: (price) => `Köp ${price}`,
+    buyNativeUnavailable: 'Köp inte tillgängligt',
     buyUnavailable: 'Köp i mobilappen',
     buying: 'Köper...',
     eyebrow: 'Ta bort annonser',
@@ -54,6 +60,7 @@ const removeAdsPlacementCtaCopy: Record<AppLanguage, RemoveAdsPlacementCtaCopy> 
       'Kontrollerar butikskontot efter ett tidigare köp av Ta bort annonser.',
     restoreAccessibilityLabel: 'Återställ köp av Ta bort annonser',
     restoreIdle: 'Återställ',
+    restoreNativeUnavailable: 'Återställ inte tillgängligt',
     restoreUnavailable: 'Återställ i mobilappen',
     restoring: 'Återställer...',
     statusAccessibilityLabel: (message) => `Status för Ta bort annonser: ${message}`,
@@ -70,6 +77,12 @@ const removeAdsPlacementCtaCopy: Record<AppLanguage, RemoveAdsPlacementCtaCopy> 
       unavailable: 'Ta bort annonser kan köpas eller återställas i mobilappen.',
     },
     title: (placementLabel) => `Ta bort annonser vid ${placementLabel.toLowerCase()}`,
+    nativeUnavailableAccessibilityHint:
+      'Köp är tillfälligt inte tillgängliga eftersom kvittovalidering inte är konfigurerad.',
+    nativeUnavailableBody: (price) =>
+      `Ta bort annonser för ${price} är tillfälligt inte tillgängligt eftersom kvittovalidering inte är konfigurerad för den här versionen.`,
+    nativeUnavailableStatus:
+      'Köp är tillfälligt inte tillgängliga eftersom kvittovalidering inte är konfigurerad.',
     webUnavailableAccessibilityHint:
       'Ta bort annonser är ett butiksköp i mobilappen och kan inte köpas från webbversionen.',
     webUnavailableBody: (price) =>
@@ -80,12 +93,14 @@ const removeAdsPlacementCtaCopy: Record<AppLanguage, RemoveAdsPlacementCtaCopy> 
     buyAccessibilityHint: 'Purchase hides this ad placement and other study ads on this device.',
     buyAccessibilityLabel: (price) => `Buy Remove Ads for ${price}`,
     buyIdle: (price) => `Buy ${price}`,
+    buyNativeUnavailable: 'Buy unavailable',
     buyUnavailable: 'Buy in mobile app',
     buying: 'Buying...',
     eyebrow: 'Remove Ads',
     restoreAccessibilityHint: 'Checks the store account for a previous Remove Ads purchase.',
     restoreAccessibilityLabel: 'Restore Remove Ads purchase',
     restoreIdle: 'Restore',
+    restoreNativeUnavailable: 'Restore unavailable',
     restoreUnavailable: 'Restore in mobile app',
     restoring: 'Restoring...',
     statusAccessibilityLabel: (message) => `Remove Ads status: ${message}`,
@@ -102,6 +117,12 @@ const removeAdsPlacementCtaCopy: Record<AppLanguage, RemoveAdsPlacementCtaCopy> 
       unavailable: 'Remove Ads can be bought or restored in the mobile app.',
     },
     title: (placementLabel) => `Remove ads near ${placementLabel.toLowerCase()}`,
+    nativeUnavailableAccessibilityHint:
+      'Purchases are temporarily unavailable because receipt validation is not configured.',
+    nativeUnavailableBody: (price) =>
+      `Remove Ads for ${price} is temporarily unavailable because receipt validation is not configured for this build.`,
+    nativeUnavailableStatus:
+      'Purchases are temporarily unavailable because receipt validation is not configured.',
     webUnavailableAccessibilityHint:
       'Remove Ads is a mobile app store purchase and cannot be bought from the web version.',
     webUnavailableBody: (price) =>
@@ -122,8 +143,11 @@ export function RemoveAdsPlacementCta({ placement }: { placement: AdPlacement })
   const purchaseActionInFlightRef = useRef(false);
 
   if (!entitlementsReady || isStrictEntitlementFlag(entitlements.adsDisabled)) return null;
-  const purchaseUnavailable =
+  const webPurchaseUnavailable =
     purchaseRuntime?.purchaseUnavailableReason === 'web_store_unavailable';
+  const nativePurchaseUnavailable =
+    purchaseRuntime?.purchaseUnavailableReason === 'native_receipt_validator_unavailable';
+  const purchaseUnavailable = webPurchaseUnavailable || nativePurchaseUnavailable;
 
   async function runPurchaseAction(
     action: ActivePurchaseAction,
@@ -153,7 +177,9 @@ export function RemoveAdsPlacementCta({ placement }: { placement: AdPlacement })
 
   const actionsDisabled = activeAction !== null || purchaseUnavailable;
   const statusMessage = purchaseUnavailable
-    ? copy.statusMessages.unavailable
+    ? nativePurchaseUnavailable
+      ? copy.nativeUnavailableStatus
+      : copy.statusMessages.unavailable
     : status
       ? copy.statusMessages[status]
       : undefined;
@@ -167,13 +193,21 @@ export function RemoveAdsPlacementCta({ placement }: { placement: AdPlacement })
             {copy.title(placementLabel)}
           </Text>
           <Text style={styles.body}>
-            {purchaseUnavailable ? copy.webUnavailableBody(REMOVE_ADS_PRICE_LABEL) : copy.body}
+            {nativePurchaseUnavailable
+              ? copy.nativeUnavailableBody(REMOVE_ADS_PRICE_LABEL)
+              : webPurchaseUnavailable
+                ? copy.webUnavailableBody(REMOVE_ADS_PRICE_LABEL)
+                : copy.body}
           </Text>
         </View>
         <View style={styles.actions}>
           <Button
             accessibilityHint={
-              purchaseUnavailable ? copy.webUnavailableAccessibilityHint : copy.buyAccessibilityHint
+              nativePurchaseUnavailable
+                ? copy.nativeUnavailableAccessibilityHint
+                : webPurchaseUnavailable
+                  ? copy.webUnavailableAccessibilityHint
+                  : copy.buyAccessibilityHint
             }
             accessibilityLabel={copy.buyAccessibilityLabel(REMOVE_ADS_PRICE_LABEL)}
             accessibilityRole="button"
@@ -184,15 +218,19 @@ export function RemoveAdsPlacementCta({ placement }: { placement: AdPlacement })
           >
             {activeAction === 'buy'
               ? copy.buying
-              : purchaseUnavailable
-                ? copy.buyUnavailable
-                : copy.buyIdle(REMOVE_ADS_PRICE_LABEL)}
+              : nativePurchaseUnavailable
+                ? copy.buyNativeUnavailable
+                : webPurchaseUnavailable
+                  ? copy.buyUnavailable
+                  : copy.buyIdle(REMOVE_ADS_PRICE_LABEL)}
           </Button>
           <Button
             accessibilityHint={
-              purchaseUnavailable
-                ? copy.webUnavailableAccessibilityHint
-                : copy.restoreAccessibilityHint
+              nativePurchaseUnavailable
+                ? copy.nativeUnavailableAccessibilityHint
+                : webPurchaseUnavailable
+                  ? copy.webUnavailableAccessibilityHint
+                  : copy.restoreAccessibilityHint
             }
             accessibilityLabel={copy.restoreAccessibilityLabel}
             accessibilityRole="button"
@@ -204,9 +242,11 @@ export function RemoveAdsPlacementCta({ placement }: { placement: AdPlacement })
           >
             {activeAction === 'restore'
               ? copy.restoring
-              : purchaseUnavailable
-                ? copy.restoreUnavailable
-                : copy.restoreIdle}
+              : nativePurchaseUnavailable
+                ? copy.restoreNativeUnavailable
+                : webPurchaseUnavailable
+                  ? copy.restoreUnavailable
+                  : copy.restoreIdle}
           </Button>
         </View>
       </View>
