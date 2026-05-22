@@ -169,7 +169,11 @@
     }
     const t = document.createElement('div');
     t.className = 'smt-toast' + (opts.flavor ? ' smt-toast--' + opts.flavor : '');
-    t.innerHTML = msg;
+    if (opts.trustedHtml === true) {
+      t.innerHTML = String(msg ?? '');
+    } else {
+      t.textContent = String(msg ?? '');
+    }
     host.appendChild(t);
     const dur = opts.duration ?? 2400;
     setTimeout(() => {
