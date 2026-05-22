@@ -229,6 +229,9 @@ test('citizenship requirement area copy states sourced facts without UHR-says ph
 
 test('citizenship requirements screen renders interactive sourced checklist without eligibility overclaim', () => {
   const routeSource = read('app/citizenship-requirements.tsx');
+  const checkboxRowCheckedStyle = extractNamedStyle(routeSource, 'checkboxRowChecked');
+  const checkboxBoxCheckedStyle = extractNamedStyle(routeSource, 'checkboxBoxChecked');
+  const checkboxDotStyle = extractNamedStyle(routeSource, 'checkboxDot');
 
   assert.match(routeSource, /citizenshipRequirementAreas\.map/);
   assert.match(routeSource, /useSettingsStore/);
@@ -254,9 +257,17 @@ test('citizenship requirements screen renders interactive sourced checklist with
     routeSource,
     /const styles = useMemo\(\(\) => createStyles\(themeColors\), \[themeColors\]\);/,
   );
+  assert.match(routeSource, /testID=\{`citizenship-requirement-\$\{area\.id\}-checkbox`\}/);
+  assert.match(routeSource, /testID=\{`citizenship-requirement-\$\{area\.id\}-checkbox-box`\}/);
+  assert.match(routeSource, /testID=\{`citizenship-requirement-\$\{area\.id\}-checkbox-check`\}/);
   assert.match(routeSource, /<ScreenShell[\s\S]*themeColors=\{themeColors\}/);
   assert.match(routeSource, /<QuestionDisclaimer themeColors=\{themeColors\}/);
   assert.match(routeSource, /function createStyles\(themeColors: ThemeColors\)/);
+  assert.match(checkboxRowCheckedStyle, /backgroundColor: themeColors\.successSoft/);
+  assert.match(checkboxRowCheckedStyle, /borderColor: themeColors\.success/);
+  assert.match(checkboxBoxCheckedStyle, /backgroundColor: themeColors\.success/);
+  assert.match(checkboxBoxCheckedStyle, /borderColor: themeColors\.success/);
+  assert.match(checkboxDotStyle, /backgroundColor: themeColors\.surface/);
   assert.doesNotMatch(routeSource, /import \{ colors[,}]/);
   assert.doesNotMatch(routeSource, /\bcolors\./);
   assert.doesNotMatch(routeSource, /guaranteed eligible|garanterat behörig|official app/i);
@@ -306,6 +317,13 @@ test('citizenship dark source-affordance e2e covers Swedish and English locale n
     source,
     /checkboxName: \/Not marked:\/[\s\S]*disclaimerLabel: \/Study disclaimer: Independent study tool\/[\s\S]*language: 'en'[\s\S]*practiceLinkName: 'Open civic knowledge practice mode'[\s\S]*sourceLinkName: \/Migrationsverket: Apply for Swedish citizenship\//,
   );
+  assert.match(source, /checkedCheckboxName: \/Markerad:\//);
+  assert.match(source, /checkedCheckboxName: \/Marked:\//);
+  assert.match(source, /citizenship-requirement-identity-checkbox/);
+  assert.match(source, /citizenship-requirement-identity-checkbox-box/);
+  assert.match(source, /citizenship-requirement-identity-checkbox-check/);
+  assert.match(source, /darkColors\.successSoft/);
+  assert.match(source, /darkColors\.success/);
   assert.match(source, /darkColors\.surfaceWarm/);
   assert.match(source, /darkColors\.textDisclaimer/);
   assert.match(source, /darkColors\.accent/);
