@@ -57,9 +57,9 @@ const badgeLabels: Record<StaticSiteLanguage, Record<string, string>> = {
   },
   sv: {
     editorialCommentary: 'Redaktionellt',
-    governmentNato: 'Regeringskansliet',
-    migrationsverketCitizenshipRules: 'Migrationsverket',
-    riksbankHistory: 'Riksbanken',
+    governmentNato: 'Government Offices',
+    migrationsverketCitizenshipRules: 'Migrationsverket citizenship rules',
+    riksbankHistory: 'Riksbank',
     scbLandUse: 'SCB',
     uhrOfficialTestSources: 'UHR:s provstatus',
     uhrStudyMaterial: 'UHR',

@@ -1096,18 +1096,59 @@
 
   /* ----------------------------------------------- hook into app lifecycle */
 
-  function onRouteChange() {
-    const h = location.hash;
+  function isDashboardRoute() {
+    const h = location.hash || '#/';
     // Dashboard now has its own login-walled page.
-    if (h.startsWith('#/dashboard')) requestAnimationFrame(renderDashboard);
+    return h.startsWith('#/dashboard');
+  }
+
+  function dashboardQuestionBankReady() {
+    return typeof window.smtQuestionBankIsReady === 'function'
+      ? window.smtQuestionBankIsReady()
+      : Boolean(window.SMT_QUESTIONS && window.SMT_CHAPTERS_META);
+  }
+
+  function renderDashboardStatus(kind) {
+    const el = document.getElementById('v11-dashboard');
+    if (!el) return;
+    el.style.display = 'block';
+    const message =
+      kind === 'error'
+        ? dtr({
+            sv: 'Dashboard-data kunde inte laddas. Uppdatera sidan och försök igen.',
+            en: 'Dashboard data could not be loaded. Refresh the page and try again.',
+          })
+        : dtr({ sv: 'Laddar dashboard...', en: 'Loading dashboard...' });
+    el.innerHTML = `<div class="v11-card"><p>${esc(message)}</p></div>`;
+  }
+
+  function renderDashboardWhenReady() {
+    if (!isDashboardRoute()) return;
+    if (dashboardQuestionBankReady()) {
+      requestAnimationFrame(renderDashboard);
+      return;
+    }
+    if (typeof window.smtEnsureQuestionBank !== 'function') return;
+    renderDashboardStatus('loading');
+    window.smtEnsureQuestionBank().then(
+      () => {
+        if (isDashboardRoute()) requestAnimationFrame(renderDashboard);
+      },
+      () => renderDashboardStatus('error'),
+    );
+  }
+
+  function onRouteChange() {
+    renderDashboardWhenReady();
   }
 
   window.addEventListener('hashchange', onRouteChange);
-  window.addEventListener('smt:answer', renderDashboard);
+  window.addEventListener('smt:answer', renderDashboardWhenReady);
   // Re-render when the user signs in/out (dashboard is login-gated).
-  window.addEventListener('smt:authchange', renderDashboard);
+  window.addEventListener('smt:authchange', renderDashboardWhenReady);
   // Re-render so all dashboard strings (and the eyebrow) follow the active locale.
-  window.addEventListener('smt:languagechange', renderDashboard);
+  window.addEventListener('smt:languagechange', renderDashboardWhenReady);
+  window.addEventListener('smt:questionbankready', renderDashboardWhenReady);
 
   const _orig = window.smtRecordAnswer;
   window.smtRecordAnswer = function (chapterId, correct) {
@@ -1115,17 +1156,9 @@
     window.dispatchEvent(new Event('smt:answer'));
   };
 
-  function tryInit() {
-    if (window.SMT_QUESTIONS && window.SMT_CHAPTERS_META) {
-      renderDashboard();
-    } else {
-      setTimeout(tryInit, 200);
-    }
-  }
-
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', tryInit);
+    document.addEventListener('DOMContentLoaded', renderDashboardWhenReady);
   } else {
-    tryInit();
+    renderDashboardWhenReady();
   }
 })();

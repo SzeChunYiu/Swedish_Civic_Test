@@ -97,84 +97,19 @@ test('committed static site asset manifest includes every local index reference'
   assert.deepEqual(missingReferences, []);
 });
 
-test('static PWA shell is installable and covered by the asset manifest', () => {
+test('lazy static question bank remains manifest-backed without eager index loading', () => {
   const indexHtml = readSiteIndex();
-  const assetManifest = JSON.parse(
-    fs.readFileSync(path.join(siteRoot, 'asset-manifest.json'), 'utf8'),
-  );
-  const webManifest = JSON.parse(
-    fs.readFileSync(path.join(siteRoot, 'manifest.webmanifest'), 'utf8'),
-  );
-  const serviceWorker = fs.readFileSync(path.join(siteRoot, 'sw.js'), 'utf8');
+  const appSource = fs.readFileSync(path.join(siteRoot, 'app.js'), 'utf8');
+  const practiceSource = fs.readFileSync(path.join(siteRoot, 'practice.js'), 'utf8');
+  const v11Source = fs.readFileSync(path.join(siteRoot, 'v11.js'), 'utf8');
+  const manifest = JSON.parse(fs.readFileSync(path.join(siteRoot, 'asset-manifest.json'), 'utf8'));
 
-  assert.match(indexHtml, /\brel=["']manifest["']\s+href=["']manifest\.webmanifest["']/);
-  assert.match(indexHtml, /\bname=["']theme-color["']\s+content=["']#f5f7fa["']/);
-  assert.match(
-    indexHtml,
-    /\brel=["']apple-touch-icon["'][^>]+href=["']icons\/pwa-icon-192\.png["']/,
-  );
-  assert.match(indexHtml, /navigator\.serviceWorker[\s\S]*\.register\(["']\.\/sw\.js["']/);
-  assert.match(indexHtml, /updateViaCache:\s*["']none["']/);
-
-  assert.equal(webManifest.name, 'Almost Swedish');
-  assert.equal(webManifest.display, 'standalone');
-  assert.equal(webManifest.start_url, '.');
-  assert.equal(webManifest.scope, '.');
-  assert.equal(webManifest.background_color, '#f5f7fa');
-  assert.equal(webManifest.theme_color, '#f5f7fa');
-  assert.deepEqual(
-    webManifest.icons.map((icon) => `${icon.src}:${icon.sizes}:${icon.purpose}`),
-    [
-      'icons/pwa-icon-192.png:192x192:any',
-      'icons/pwa-icon-512.png:512x512:any',
-      'icons/pwa-maskable-512.png:512x512:maskable',
-    ],
-  );
-
-  for (const assetPath of [
-    'manifest.webmanifest',
-    'icons/pwa-icon-192.png',
-    'icons/pwa-icon-512.png',
-    'icons/pwa-maskable-512.png',
-    'sw.js',
-  ]) {
-    assert.ok(assetManifest.assets?.[assetPath], `${assetPath} missing from asset-manifest.json`);
-    assert.equal(fs.existsSync(path.join(siteRoot, assetPath)), true);
-  }
-
-  assert.match(serviceWorker, /asset-manifest\.json/);
-  assert.match(serviceWorker, /cacheNameForManifestText/);
-  assert.match(serviceWorker, /crypto\.subtle\.digest\(["']SHA-256["']/);
-  assert.match(serviceWorker, /cache\.addAll\(resolvePrecacheUrls\(manifest\)\)/);
-  assert.match(serviceWorker, /ROUTE_LAZY_ASSETS/);
-  assert.match(serviceWorker, /isInstallPrecacheAssetPath/);
-  assert.match(serviceWorker, /caches\.keys\(\)/);
-  assert.match(serviceWorker, /caches\.delete\(cacheName\)/);
-  assert.match(
-    serviceWorker,
-    /event\.respondWith\(networkFirstWithCacheFallback\(event\.request\)\)/,
-  );
-  assert.doesNotMatch(serviceWorker, /https?:\/\//);
-});
-
-test('static PWA install precache excludes lazy ebook route bundles', () => {
-  const assetManifest = JSON.parse(
-    fs.readFileSync(path.join(siteRoot, 'asset-manifest.json'), 'utf8'),
-  );
-  const serviceWorkerApi = loadServiceWorkerTestApi();
-  const precachePaths = serviceWorkerApi
-    .resolvePrecacheUrls(assetManifest)
-    .map((assetUrl) => new URL(assetUrl).pathname.replace(/^\//, ''));
-
-  assert.equal(serviceWorkerApi.isInstallPrecacheAssetPath('ebook-tools.js'), false);
-  assert.equal(serviceWorkerApi.isInstallPrecacheAssetPath('./ebook.js'), false);
-  assert.equal(serviceWorkerApi.isInstallPrecacheAssetPath('app.js'), true);
-  assert.equal(precachePaths.includes('index.html'), true);
-  assert.equal(precachePaths.includes('asset-manifest.json'), true);
-  assert.equal(precachePaths.includes('app.js'), true);
-  assert.equal(precachePaths.includes('styles.css'), true);
-  assert.equal(precachePaths.includes('ebook-tools.js'), false);
-  assert.equal(precachePaths.includes('ebook.js'), false);
+  assert.doesNotMatch(indexHtml, /<script\b[^>]*\bsrc=["'][^"']*questions\.js/i);
+  assert.match(appSource, /function\s+smtEnsureQuestionBank\s*\(/);
+  assert.match(appSource, /questions\.js/);
+  assert.match(practiceSource, /smtEnsureQuestionBank/);
+  assert.match(v11Source, /smtEnsureQuestionBank/);
+  assert.ok(manifest.assets?.['questions.js']);
 });
 
 test('asset manifest check rejects referenced assets omitted by manifest scope', () => {

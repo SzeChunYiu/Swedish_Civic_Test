@@ -8,8 +8,8 @@
       "sha256": "fa08d5f935a0f425e591e8ddc00b027fc9737d6f8e11f765677aa3bfb1ee1959"
     },
     "app.js": {
-      "bytes": 119262,
-      "sha256": "ed0dbbf4268b8c95a94aa97881f34db86685f9e8f0990cfc8c245e10af7e29db"
+      "bytes": 117444,
+      "sha256": "772aca6b9255a4b3f872547f2e97d3edf323a68a6f51e89ebd776340ca6e0992"
     },
     "assets/banner.png": {
       "bytes": 254757,
@@ -76,8 +76,8 @@
       "sha256": "a7a08f26bfe1000acb83a3825c40e9a58cc2366221cbb2c71a40c1b6ce989a79"
     },
     "ebook.js": {
-      "bytes": 520958,
-      "sha256": "1d2a739fcc8813f7cda24c56e54262cf6dad0badf5988db015d0680f4019845c"
+      "bytes": 520872,
+      "sha256": "45e22b245d58df0ddb2248471837770c8122a0d593565019a7597469682c0199"
     },
     "extras.js": {
       "bytes": 31378,
@@ -108,16 +108,12 @@
       "sha256": "c70dfeacdb677177592f67a5a943e04c56d84506332615bd1c4c4427740b343c"
     },
     "index.html": {
-      "bytes": 73456,
-      "sha256": "9c83e40fc06ab4e3e130fc9bca46471577436f9a613fc657b9005cf1b14837da"
-    },
-    "manifest.webmanifest": {
-      "bytes": 752,
-      "sha256": "449d620d867ac89d7f54c571927c4753f025ef182dafb9afda331ce68a55b05f"
+      "bytes": 72906,
+      "sha256": "dcc3beaf7952299b58937322174ac3e61381cb685fce147d4eb6ed8427c4bbef"
     },
     "practice.js": {
-      "bytes": 69197,
-      "sha256": "502386f596a3ba159d39d8e3429c9a5820951c519c6d386a7e30c25e126185bb"
+      "bytes": 70856,
+      "sha256": "9f54a128e45be0e2cfb439399e7ddd0b02c8071697dae87e2245b079952194cf"
     },
     "purchase.js": {
       "bytes": 4965,
@@ -156,8 +152,8 @@
       "sha256": "67435e90bc00665d368d0d6c39e217485a8014e5d394ecb463a5fef166d36bcc"
     },
     "v11.js": {
-      "bytes": 41391,
-      "sha256": "e78483bae88489a5e7367848443eead96b37e854ca613b24e3c9d9498f3b6bf5"
+      "bytes": 42410,
+      "sha256": "53720b085b7997bd81ad54753d068f9b76c214e26f10fbd9625cace520f9d664"
     }
   }
 }

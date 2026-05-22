@@ -42,58 +42,50 @@ test('static site first load and necessary-only consent do not request Google Fo
   expect(googleFontRequests).toEqual([]);
 });
 
-test('static Home defers ebook route bundles until ebook route demand', async ({ page }) => {
-  await seedStaticNetworkRun(page);
-  await trapExternalRequests(page, new URL(staticSite.baseUrl).origin, []);
+test('static site lazy-loads the question bank only on study-data routes', async ({ browser }) => {
+  const quietPage = await browser.newPage();
+  const quietQuestionBankRequests: string[] = [];
+  try {
+    await seedStaticNetworkRun(quietPage);
+    await trapExternalRequests(quietPage, new URL(staticSite.baseUrl).origin, []);
+    quietPage.on('request', (request) => {
+      if (new URL(request.url()).pathname.endsWith('/questions.js')) {
+        quietQuestionBankRequests.push(request.url());
+      }
+    });
 
-  await page.goto(`${staticSite.baseUrl}/#/`, { waitUntil: 'domcontentloaded' });
-  await expect(page.locator('#consent')).toBeVisible();
-  await expect(page.locator('[data-page="/"]')).toHaveClass(/is-active/);
+    for (const hash of ['#/', '#/privacy', '#/terms', '#/support']) {
+      await quietPage.goto(`${staticSite.baseUrl}/${hash}`, { waitUntil: 'domcontentloaded' });
+      await quietPage.waitForTimeout(150);
+    }
 
-  await expect
-    .poll(() =>
-      page.evaluate(() =>
-        performance
-          .getEntriesByType('resource')
-          .map((entry) => new URL(entry.name).pathname.replace(/^\//, '')),
-      ),
-    )
-    .not.toContain('ebook.js');
-  await expect
-    .poll(() =>
-      page.evaluate(() =>
-        performance
-          .getEntriesByType('resource')
-          .map((entry) => new URL(entry.name).pathname.replace(/^\//, '')),
-      ),
-    )
-    .not.toContain('ebook-tools.js');
+    expect(quietQuestionBankRequests).toEqual([]);
+  } finally {
+    await quietPage.close();
+  }
 
-  await page.evaluate(() => {
-    window.location.hash = '#/privacy';
-  });
-  await expect(page.locator('[data-page="/privacy"]')).toHaveClass(/is-active/);
-  const nonEbookRouteResources = await page.evaluate(() =>
-    performance
-      .getEntriesByType('resource')
-      .map((entry) => new URL(entry.name).pathname.replace(/^\//, '')),
-  );
-  expect(nonEbookRouteResources).not.toContain('ebook.js');
-  expect(nonEbookRouteResources).not.toContain('ebook-tools.js');
+  for (const hash of ['#/practice', '#/mock', '#/sources', '#/dashboard']) {
+    const page = await browser.newPage();
+    const questionBankRequests: string[] = [];
+    try {
+      await seedStaticNetworkRun(page);
+      await trapExternalRequests(page, new URL(staticSite.baseUrl).origin, []);
+      page.on('request', (request) => {
+        if (new URL(request.url()).pathname.endsWith('/questions.js')) {
+          questionBankRequests.push(request.url());
+        }
+      });
 
-  await page.evaluate(() => {
-    window.location.hash = '#/ebook?c=1';
-  });
-  await expect(page.locator('#ebook-reader .ebook__h1')).toBeVisible();
-  await expect(page.locator('.ebook__nav a[data-eb="1"]')).toHaveClass(/is-active/);
+      await page.goto(`${staticSite.baseUrl}/${hash}`, { waitUntil: 'domcontentloaded' });
+      await page.waitForFunction(() =>
+        Array.isArray((window as unknown as { SMT_QUESTIONS?: unknown }).SMT_QUESTIONS),
+      );
 
-  const ebookRouteResources = await page.evaluate(() =>
-    performance
-      .getEntriesByType('resource')
-      .map((entry) => new URL(entry.name).pathname.replace(/^\//, '')),
-  );
-  expect(ebookRouteResources.filter((asset) => asset === 'ebook-tools.js')).toHaveLength(1);
-  expect(ebookRouteResources.filter((asset) => asset === 'ebook.js')).toHaveLength(1);
+      expect(questionBankRequests.length, `${hash} should request questions.js`).toBeGreaterThan(0);
+    } finally {
+      await page.close();
+    }
+  }
 });
 
 test('static system font fallback keeps primary routes inside mobile and desktop viewports', async ({
