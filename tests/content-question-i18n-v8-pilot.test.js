@@ -5,11 +5,13 @@ const test = require('node:test');
 const {
   Q050_SOURCE_CRITICISM_NATURALNESS_IDS,
   Q062_PUBLIC_SECTOR_NATURALNESS_IDS,
+  Q093_RELIGIOUS_FREEDOM_1951_NATURALNESS_IDS,
   Q166_Q169_KOMMUN_REGION_NATURALNESS_IDS,
   checkQuestions,
   checkLocalizationSourceShape,
   checkQ050SourceCriticismNaturalness,
   checkQ062PublicSectorNaturalness,
+  checkQ093ReligiousFreedom1951Naturalness,
   checkQ166Q169KommunRegionNaturalness,
   checkSomaliGeographyNaturalness,
   checkSomaliHolidayFoodNaturalness,
@@ -20,6 +22,7 @@ const {
   SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS,
   summarizeQ050SourceCriticismNaturalness,
   summarizeQ062PublicSectorNaturalness,
+  summarizeQ093ReligiousFreedom1951Naturalness,
   summarizeQ166Q169KommunRegionNaturalness,
   summarizeSomaliGeographyNaturalness,
   summarizeSomaliHolidayFoodNaturalness,
@@ -391,6 +394,74 @@ test('question localization v8 summarizes q062 public-sector naturalness cases',
   const summary = summarizeQ062PublicSectorNaturalness(
     [q062PublicSectorFixture()],
     Q062_PUBLIC_SECTOR_NATURALNESS_IDS,
+  );
+
+  assert.deepEqual(summary.errors, []);
+  assert.equal(summary.casesValidated, 1);
+  assert.equal(summary.expectedCases, 1);
+  assert.equal(summary.parityValidated, true);
+});
+
+function q093ReligiousFreedomFixture({ stale = false } = {}) {
+  return {
+    id: 'q093',
+    questionSv: 'Vilken lag markerade religionsfrihetens slutliga genombrott 1951?',
+    questionEn: 'Which law marked the final breakthrough for religious freedom in 1951?',
+    explanationSv: 'Religionsfrihetslagen från 1951 markerade religionsfrihetens genombrott.',
+    explanationEn:
+      'The Religious Freedom Act of 1951 marked the breakthrough for religious freedom.',
+    explanationText: stale
+      ? {
+          'zh-Hant': '該法律使人們可以完全自由地選擇宗教，或完全不屬於任何宗教。',
+          'zh-Hans': '该法律使人们可以完全自由地选择宗教，或完全不属于任何宗教。',
+          ar: 'جعل القانون من الممكن اختيار أي دين بحرية كاملة أو عدم الانتماء إلى أي دين إطلاقًا.',
+          ckb: 'ئەم یاسایە وای کرد بە تەواوی ئازادانە هەر ئایینێک هەڵبژێردرێت.',
+          fa: 'این قانون امکان داد که افراد کاملاً آزادانه هر دینی را انتخاب کنند.',
+          pl: 'Ustawa umożliwiła całkowicie swobodny wybór religii.',
+          so: 'Sharcigu wuxuu suurto geliyay in si buuxda xor loogu doorto diin.',
+          ti: 'እቲ ሕጊ ሃይማኖት ብሙሉእ ናጽነት ክትመርጽ ኣኽኢሉ።',
+          tr: 'Yasa, herhangi bir dini tamamen özgürce seçmeyi mümkün kıldı.',
+          uk: 'Закон дав змогу повністю вільно обирати будь-яку релігію.',
+        }
+      : {
+          'zh-Hant': '該法律讓人們可以選擇任何宗教，也可以不屬於任何宗教。',
+          'zh-Hans': '该法律让人们可以选择任何宗教，也可以不属于任何宗教。',
+          ar: 'جعل القانون من الممكن اختيار أي دين أو عدم الانتماء إلى أي دين.',
+          ckb: 'ئەم یاسایە وای کرد هەر ئایینێک هەڵبژێردرێت یان کەس سەر بە هیچ ئایینێک نەبێت.',
+          fa: 'این قانون امکان داد افراد هر دینی را انتخاب کنند یا به هیچ دینی تعلق نداشته باشند.',
+          pl: 'Ustawa pozwoliła wybierać dowolną religię albo nie należeć do żadnej.',
+          so: 'Sharcigu wuxuu suurtageliyay in qofku doorto diin kasta ama uusan diin ka tirsanaan.',
+          ti: 'እቲ ሕጊ ሰባት ዝኾነ ሃይማኖት ክመርጹ ወይ ናብ ምንም ሃይማኖት ከይጽንበሩ ኣኽኢሉ።',
+          tr: 'Yasa, herhangi bir dini seçmeyi ya da hiçbir dine mensup olmamayı mümkün kıldı.',
+          uk: 'Закон дав змогу обирати будь-яку релігію або не належати до жодної релігії.',
+        },
+    options: [{ id: 'a', textSv: 'Religionsfrihetslagen', textEn: 'The Religious Freedom Act' }],
+    correctOptionId: 'a',
+  };
+}
+
+test('question localization v8 rejects over-intensified q093 religious-freedom wording', () => {
+  const errors = checkQ093ReligiousFreedom1951Naturalness([
+    q093ReligiousFreedomFixture({ stale: true }),
+  ]);
+
+  assert.ok(
+    errors.includes(
+      'q093.explanationText.zh-Hant uses over-intensified 1951 religious-freedom wording',
+    ),
+  );
+  assert.ok(
+    errors.includes('q093.explanationText.ar uses over-intensified 1951 religious-freedom wording'),
+  );
+  assert.ok(
+    errors.includes('q093.explanationText.tr uses over-intensified 1951 religious-freedom wording'),
+  );
+});
+
+test('question localization v8 summarizes q093 religious-freedom naturalness cases', () => {
+  const summary = summarizeQ093ReligiousFreedom1951Naturalness(
+    [q093ReligiousFreedomFixture()],
+    Q093_RELIGIOUS_FREEDOM_1951_NATURALNESS_IDS,
   );
 
   assert.deepEqual(summary.errors, []);

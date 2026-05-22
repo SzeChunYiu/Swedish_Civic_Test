@@ -7234,17 +7234,17 @@ export const questionLocalizationPilot: Record<
     },
     explanationText: {
       'zh-Hant':
-        '1951 年的《宗教自由法》標誌著宗教自由的最終突破。該法律使人們可以完全自由地選擇宗教，或完全不屬於任何宗教，因此《宗教自由法》是正確答案。',
+        '1951 年的《宗教自由法》標誌著宗教自由的最終突破。該法律讓人們可以選擇任何宗教，也可以不屬於任何宗教，因此《宗教自由法》是正確答案。',
       'zh-Hans':
-        '1951 年的《宗教自由法》标志着宗教自由的最终突破。该法律使人们可以完全自由地选择宗教，或完全不属于任何宗教，因此《宗教自由法》是正确答案。',
-      ar: 'مثّل قانون حرية الدين عام 1951 الاختراق النهائي لحرية الدين. جعل القانون من الممكن اختيار أي دين بحرية كاملة أو عدم الانتماء إلى أي دين إطلاقًا، لذلك فإن قانون حرية الدين هو الإجابة الصحيحة.',
-      ckb: 'یاسای ئازادی ئایینی لە 1951دا کۆتایی پێشکەوتنی ئازادی ئایینی نیشان دا. ئەم یاسایە وای کرد بە تەواوی ئازادانە هەر ئایینێک هەڵبژێردرێت یان هیچ سەر بە هیچ ئایینێک نەبیت، بۆیە یاسای ئازادی ئایینی وەڵامی ڕاستە.',
-      fa: 'قانون آزادی دین در سال ۱۹۵۱ نشانه پیشرفت نهایی آزادی دین بود. این قانون امکان داد که افراد کاملاً آزادانه هر دینی را انتخاب کنند یا اصلاً به هیچ دینی تعلق نداشته باشند، بنابراین قانون آزادی دین پاسخ درست است.',
-      pl: 'Ustawa o wolności religijnej z 1951 roku oznaczała ostateczny przełom wolności religijnej. Ustawa umożliwiła całkowicie swobodny wybór religii albo nienależenie do żadnej religii, dlatego Ustawa o wolności religijnej jest prawidłową odpowiedzią.',
-      so: 'Sharciga Xorriyadda Diinta ee 1951 wuxuu calaamad u ahaa guushii ugu dambeysay ee xorriyadda diinta. Sharcigu wuxuu suurto geliyay in si buuxda xor loogu doorto diin ama aan lagu tirsan diin haba yaraatee, sidaas darteed Sharciga Xorriyadda Diinta waa jawaabta saxda ah.',
-      ti: 'ሕጊ ናጽነት ሃይማኖት 1951 እቲ ናይ መወዳእታ ምዕዋት ናጽነት ሃይማኖት ኣመልኪቱ። እቲ ሕጊ ሃይማኖት ብሙሉእ ናጽነት ክትመርጽ ወይ ምሉእ ብምሉእ ናብ ምንም ሃይማኖት ከይትጽንበር ኣኽኢሉ፣ ስለዚ ሕጊ ናጽነት ሃይማኖት ትኽክለኛ መልሲ እዩ።',
-      tr: '1951 Din Özgürlüğü Yasası, din özgürlüğünün kesin atılımını simgeledi. Yasa, herhangi bir dini tamamen özgürce seçmeyi veya hiçbir dine mensup olmamayı mümkün kıldı; bu nedenle Din Özgürlüğü Yasası doğru cevaptır.',
-      uk: 'Закон про свободу релігії 1951 року ознаменував остаточний прорив релігійної свободи. Закон дав змогу повністю вільно обирати будь-яку релігію або взагалі не належати до жодної релігії, тому Закон про свободу релігії є правильною відповіддю.',
+        '1951 年的《宗教自由法》标志着宗教自由的最终突破。该法律让人们可以选择任何宗教，也可以不属于任何宗教，因此《宗教自由法》是正确答案。',
+      ar: 'مثّل قانون حرية الدين عام 1951 الاختراق النهائي لحرية الدين. جعل القانون من الممكن اختيار أي دين أو عدم الانتماء إلى أي دين، لذلك فإن قانون حرية الدين هو الإجابة الصحيحة.',
+      ckb: 'یاسای ئازادی ئایینی لە 1951دا کۆتایی پێشکەوتنی ئازادی ئایینی نیشان دا. ئەم یاسایە وای کرد هەر ئایینێک هەڵبژێردرێت یان کەس سەر بە هیچ ئایینێک نەبێت، بۆیە یاسای ئازادی ئایینی وەڵامی ڕاستە.',
+      fa: 'قانون آزادی دین در سال ۱۹۵۱ نشانه پیشرفت نهایی آزادی دین بود. این قانون امکان داد افراد هر دینی را انتخاب کنند یا به هیچ دینی تعلق نداشته باشند، بنابراین قانون آزادی دین پاسخ درست است.',
+      pl: 'Ustawa o wolności religijnej z 1951 roku oznaczała ostateczny przełom wolności religijnej. Ustawa pozwoliła wybierać dowolną religię albo nie należeć do żadnej, dlatego Ustawa o wolności religijnej jest prawidłową odpowiedzią.',
+      so: 'Sharciga Xorriyadda Diinta ee 1951 wuxuu calaamad u ahaa guushii ugu dambeysay ee xorriyadda diinta. Sharcigu wuxuu suurtageliyay in qofku doorto diin kasta ama uusan diin ka tirsanaan, sidaas darteed Sharciga Xorriyadda Diinta waa jawaabta saxda ah.',
+      ti: 'ሕጊ ናጽነት ሃይማኖት 1951 እቲ ናይ መወዳእታ ምዕዋት ናጽነት ሃይማኖት ኣመልኪቱ። እቲ ሕጊ ሰባት ዝኾነ ሃይማኖት ክመርጹ ወይ ናብ ምንም ሃይማኖት ከይጽንበሩ ኣኽኢሉ፣ ስለዚ ሕጊ ናጽነት ሃይማኖት ትኽክለኛ መልሲ እዩ።',
+      tr: '1951 Din Özgürlüğü Yasası, din özgürlüğünün kesin atılımını simgeledi. Yasa, herhangi bir dini seçmeyi ya da hiçbir dine mensup olmamayı mümkün kıldı; bu nedenle Din Özgürlüğü Yasası doğru cevaptır.',
+      uk: 'Закон про свободу релігії 1951 року ознаменував остаточний прорив релігійної свободи. Закон дав змогу обирати будь-яку релігію або не належати до жодної релігії, тому Закон про свободу релігії є правильною відповіддю.',
     },
   },
   q094: {
