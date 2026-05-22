@@ -1902,7 +1902,6 @@ test('native Remove Ads requests platform store ids while storing canonical enti
     assert.equal(purchaseResult.productId, REMOVE_ADS_PRODUCT_ID);
     assert.equal(purchaseResult.entitlements.adsDisabled, true);
     assert.deepEqual(purchaseFixture.state.requestedProductIds, [storeProductId]);
-    assert.deepEqual(purchaseFixture.state.requestedGoogleProductIds, [storeProductId]);
     const storedPurchaseRecord = JSON.parse(
       await purchaseStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY),
     );

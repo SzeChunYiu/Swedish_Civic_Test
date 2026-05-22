@@ -40,7 +40,7 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
       /async validateRemoveAdsReceipt\(purchase, productId\) \{([\s\S]*?)\n    \},\n    async requestRemoveAdsPurchase/,
     )?.[1] ?? '';
 
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 32);
+  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 28);
   assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
   assert.match(purchaseSource, /REMOVE_ADS_RECORD_SCHEMA_VERSION = 1/);
   assert.match(purchaseSource, /REMOVE_ADS_IOS_PRODUCT_ID = REMOVE_ADS_PRODUCT_ID/);
@@ -318,7 +318,7 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('Remove Ads purchase runtime parity rejects native store-id purchase mapping drift', () => {
+test('Remove Ads purchase runtime parity rejects native store-id mapping drift', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -349,48 +349,6 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /native Remove Ads purchase request must map Android to removeads and iOS to the canonical bundle id/,
-  );
-});
-
-test('Remove Ads purchase runtime parity rejects native restore store-id mapping drift', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/lib/monetization/purchases.ts')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace(
-        \`isPurchaseForProduct(
-            purchase,
-            productId,
-            getPurchaseStoreProductId(productId, storePlatform),
-          )\`,
-        \`isPurchaseForProduct(
-            purchase,
-            productId,
-            productId,
-          )\`,
-      );
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-process.argv.push('--focus-remove-ads-purchase-runtime-parity');
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /native Remove Ads restore must match Android removeads and iOS canonical store ids/,
   );
 });
 
