@@ -15,6 +15,13 @@ export type VisualSmokeDuplicateExplanation = {
   reason: string;
 };
 
+export type VisualSmokeDuplicateHashGroup = {
+  captures: readonly VisualSmokeDuplicateCapture[];
+  explained: boolean;
+  names: readonly string[];
+  sha256: string;
+};
+
 const visualSmokeRouteFilePattern = /^[a-z0-9]+(?:-[a-z0-9]+)*\.png$/;
 
 export const visualSmokeRoutes = [
@@ -223,10 +230,10 @@ function formatVisualSmokeDuplicateCapture(capture: VisualSmokeDuplicateCapture)
   return `${capture.name} (${capture.route} -> ${capture.file})`;
 }
 
-export function findUnexplainedVisualSmokeDuplicateReports(
+export function collectVisualSmokeDuplicateHashGroups(
   captures: readonly VisualSmokeDuplicateCapture[],
   explanations: readonly VisualSmokeDuplicateExplanation[] = visualSmokeDuplicateExplanations,
-): string[] {
+): VisualSmokeDuplicateHashGroup[] {
   const capturesByHash = new Map<string, VisualSmokeDuplicateCapture[]>();
 
   for (const capture of captures) {
@@ -237,15 +244,29 @@ export function findUnexplainedVisualSmokeDuplicateReports(
 
   return [...capturesByHash.entries()]
     .filter(([, hashCaptures]) => hashCaptures.length > 1)
-    .filter(([, hashCaptures]) => {
+    .map(([sha256, hashCaptures]) => {
       const names = hashCaptures.map((capture) => capture.name);
-      return !isExplainedVisualSmokeDuplicate(names, explanations);
-    })
-    .map(([hash, hashCaptures]) => {
-      const captureDetails = [...hashCaptures]
+
+      return {
+        captures: [...hashCaptures],
+        explained: isExplainedVisualSmokeDuplicate(names, explanations),
+        names,
+        sha256,
+      };
+    });
+}
+
+export function findUnexplainedVisualSmokeDuplicateReports(
+  captures: readonly VisualSmokeDuplicateCapture[],
+  explanations: readonly VisualSmokeDuplicateExplanation[] = visualSmokeDuplicateExplanations,
+): string[] {
+  return collectVisualSmokeDuplicateHashGroups(captures, explanations)
+    .filter((group) => !group.explained)
+    .map((group) => {
+      const captureDetails = [...group.captures]
         .sort((a, b) => a.name.localeCompare(b.name))
         .map(formatVisualSmokeDuplicateCapture)
         .join(', ');
-      return `${hash}: ${captureDetails}`;
+      return `${group.sha256}: ${captureDetails}`;
     });
 }

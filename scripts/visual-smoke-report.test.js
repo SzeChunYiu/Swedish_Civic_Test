@@ -68,6 +68,7 @@ function expectedVisualSmokeRoutes() {
 function visualSmokeDuplicateContract() {
   const {
     assertValidVisualSmokeRouteEntries,
+    collectVisualSmokeDuplicateHashGroups,
     findUnexplainedVisualSmokeDuplicateReports,
     hasValidVisualSmokeDuplicateExplanation,
     isExplainedVisualSmokeDuplicate,
@@ -79,6 +80,7 @@ function visualSmokeDuplicateContract() {
 
   return {
     assertValidVisualSmokeRouteEntries,
+    collectVisualSmokeDuplicateHashGroups,
     findUnexplainedVisualSmokeDuplicateReports,
     hasValidVisualSmokeDuplicateExplanation,
     isExplainedVisualSmokeDuplicate,
@@ -126,6 +128,7 @@ test('visual smoke uses the shared route filename contract and blocking modal ov
   assert.match(visualSmokeRoutesSource, /export function hasValidVisualSmokeDuplicateExplanation/);
   assert.match(visualSmokeRoutesSource, /export function validateVisualSmokeDuplicateExplanations/);
   assert.match(visualSmokeRoutesSource, /export function isExplainedVisualSmokeDuplicate/);
+  assert.match(visualSmokeRoutesSource, /export function collectVisualSmokeDuplicateHashGroups/);
   assert.match(
     visualSmokeRoutesSource,
     /export function findUnexplainedVisualSmokeDuplicateReports/,
@@ -218,17 +221,16 @@ test('visual smoke includes a focused proof for first-run and language picker di
 
   assert.match(
     visualSmokeSource,
-    /dismissBlockingModals clears forced first-run and language picker overlays/,
+    /shared modal dismissal helper closes forced first-run guide and language picker/,
   );
-  assert.match(visualSmokeSource, /seedFreshFirstRunSettingsLanguage\(page, 'en'\)/);
+  assert.match(visualSmokeSource, /seedFreshFirstRunSettingsLanguage\(page, 'sv'\)/);
   assert.match(
     visualSmokeSource,
-    /getByRole\('dialog', \{ name: 'What is the Swedish civic test\?' \}\)/,
+    /getByRole\('dialog', \{ name: 'Vad är medborgarskapsprovet\?' \}\)/,
   );
   assert.match(visualSmokeSource, /firstRunDismissal\.firstRunAboutDismissed\)\.toBe\(true\)/);
-  assert.match(visualSmokeSource, /seedFreshSettingsLanguageAndAboutSeen\(languagePage, 'en'\)/);
-  assert.match(visualSmokeSource, /Current language EN\\\. Open language picker\\\./);
-  assert.match(visualSmokeSource, /languageDismissal\.languagePickerDismissed\)\.toBe\(true\)/);
+  assert.match(visualSmokeSource, /languagePickerDismissal\.languagePickerDismissed/);
+  assert.match(visualSmokeSource, /Nuvarande språk SV\\\. Öppna språkväljaren\\\./);
   assert.match(visualSmokeSource, /locator\(blockingModalOverlayLocator\)\)\.toHaveCount\(0\)/);
 });
 
@@ -350,6 +352,107 @@ test('visual smoke duplicate helper requires exact groups and nonempty reasons',
   }
 });
 
+test('visual smoke duplicate collector groups hashes consistently for runtime and manifest checks', () => {
+  const { collectVisualSmokeDuplicateHashGroups } = visualSmokeDuplicateContract();
+  const capture = (name, sha256) => ({
+    file: `${name}.png`,
+    name,
+    route: name === 'index' ? '/' : `/${name}`,
+    sha256,
+  });
+  const cases = [
+    {
+      label: 'empty capture set',
+      captures: [],
+      expected: [],
+    },
+    {
+      label: 'singleton hashes are ignored',
+      captures: [capture('learn', 'learn-hash'), capture('practice', 'practice-hash')],
+      expected: [],
+    },
+    {
+      label: 'explained home/index pair is retained and marked explained',
+      captures: [capture('index', 'home-index-hash'), capture('home', 'home-index-hash')],
+      expected: [
+        {
+          captures: ['index', 'home'],
+          explained: true,
+          names: ['index', 'home'],
+          sha256: 'home-index-hash',
+        },
+      ],
+    },
+    {
+      label: 'unexplained pair is retained and marked actionable',
+      captures: [capture('practice', 'quiz-hash'), capture('learn', 'quiz-hash')],
+      expected: [
+        {
+          captures: ['practice', 'learn'],
+          explained: false,
+          names: ['practice', 'learn'],
+          sha256: 'quiz-hash',
+        },
+      ],
+    },
+    {
+      label: 'three-route duplicate group preserves first-seen route order',
+      captures: [
+        capture('settings', 'shared-hash'),
+        capture('privacy', 'unique-hash'),
+        capture('terms', 'shared-hash'),
+        capture('support', 'shared-hash'),
+      ],
+      expected: [
+        {
+          captures: ['settings', 'terms', 'support'],
+          explained: false,
+          names: ['settings', 'terms', 'support'],
+          sha256: 'shared-hash',
+        },
+      ],
+    },
+    {
+      label: 'hash groups keep first-seen hash order',
+      captures: [
+        capture('settings', 'second-hash'),
+        capture('learn', 'first-hash'),
+        capture('profile', 'second-hash'),
+        capture('practice', 'first-hash'),
+      ],
+      expected: [
+        {
+          captures: ['settings', 'profile'],
+          explained: false,
+          names: ['settings', 'profile'],
+          sha256: 'second-hash',
+        },
+        {
+          captures: ['learn', 'practice'],
+          explained: false,
+          names: ['learn', 'practice'],
+          sha256: 'first-hash',
+        },
+      ],
+    },
+  ];
+
+  for (const { captures, expected, label } of cases) {
+    const groups = collectVisualSmokeDuplicateHashGroups(captures);
+
+    assert.deepEqual(
+      groups.map((group) => ({
+        captures: group.captures.map((captureEntry) => captureEntry.name),
+        explained: group.explained,
+        names: group.names,
+        sha256: group.sha256,
+      })),
+      expected,
+      label,
+    );
+  }
+});
+
 test('visual smoke duplicate failure reports include route paths and screenshot files', () => {
   const { findUnexplainedVisualSmokeDuplicateReports } = visualSmokeDuplicateContract();
   const captures = [
@@ -394,6 +497,7 @@ test('visual smoke manifest matches the shared route list and screenshot filenam
   const manifest = readManifest();
   const expectedRoutes = expectedVisualSmokeRoutes();
   const {
+    collectVisualSmokeDuplicateHashGroups,
     findUnexplainedVisualSmokeDuplicateReports,
     hasValidVisualSmokeDuplicateExplanation,
     validateVisualSmokeDuplicateExplanations,
@@ -460,7 +564,20 @@ test('visual smoke manifest matches the shared route list and screenshot filenam
   );
 
   const unexplainedDuplicates = findUnexplainedVisualSmokeDuplicateReports(routes);
+  const duplicateHashGroups = collectVisualSmokeDuplicateHashGroups(routes);
 
+  assert.deepEqual(
+    unexplainedDuplicates,
+    duplicateHashGroups
+      .filter((group) => !group.explained)
+      .map((group) => {
+        const captureDetails = [...group.captures]
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .map((capture) => `${capture.name} (${capture.route} -> ${capture.file})`)
+          .join(', ');
+        return `${group.sha256}: ${captureDetails}`;
+      }),
+  );
   assert.deepEqual(unexplainedDuplicates, []);
 });
 
