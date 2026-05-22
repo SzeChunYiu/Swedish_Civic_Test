@@ -12483,3 +12483,32 @@ img.ebook__brand-mark {
     padding: 8px 10px;
   }
 }
+
+/* ======================================================================
+   TOPBAR TOOL BUTTON FOCUS BOX OPTIMIZATION ROUND
+   ====================================================================== */
+
+.topbar__tools .icon-btn:focus-visible,
+.topbar__tools .signin-trigger:focus-visible {
+  background: rgba(255, 255, 255, 0.78);
+  border-color: rgba(0, 106, 167, 0.22);
+  box-shadow:
+    0 0 0 3px rgba(0, 106, 167, 0.12),
+    var(--shadow-sm);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.topbar__tools .icon-btn[aria-expanded='true'],
+.topbar__tools .signin-trigger[aria-expanded='true'] {
+  background: rgba(254, 204, 0, 0.16);
+  border-color: rgba(217, 169, 0, 0.32);
+  color: var(--blue-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .topbar__tools .icon-btn:focus-visible,
+  .topbar__tools .signin-trigger:focus-visible {
+    transform: none;
+  }
+}
