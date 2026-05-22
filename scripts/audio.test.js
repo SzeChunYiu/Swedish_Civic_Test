@@ -41,6 +41,38 @@ function loadTs(relativePath, options = {}) {
   return mod.exports;
 }
 
+function countMatches(source, pattern) {
+  return source.match(pattern)?.length ?? 0;
+}
+
+function assertPracticeAudioAutoplaySingleton(source) {
+  assert.equal(
+    countMatches(source, /const hasSelectedAnswer =/g),
+    1,
+    'Practice must declare hasSelectedAnswer exactly once',
+  );
+  assert.equal(
+    countMatches(source, /const questionSpeechText = useMemo\(/g),
+    1,
+    'Practice must declare questionSpeechText exactly once',
+  );
+  assert.equal(
+    countMatches(source, /\buseQuestionAudioAutoplay\(\{/g),
+    1,
+    'Practice must call useQuestionAudioAutoplay exactly once',
+  );
+  assert.match(
+    source,
+    /questionKey:\s*question\s*\?\s*`practice:\$\{question\.id\}:\$\{shuffleSessionId\}`\s*:\s*null/,
+    'Practice autoplay key must include question id and shuffle session id',
+  );
+  assert.doesNotMatch(
+    source,
+    /questionKey:\s*question\s*\?\s*`practice:\$\{question\.id\}`\s*:\s*null/,
+    'Practice autoplay key must not fall back to the question id alone',
+  );
+}
+
 test('buildQuestionSpeechText reads Swedish question and answer options', () => {
   const { buildQuestionSpeechText } = loadTs('lib/audio/speak.ts');
   const text = buildQuestionSpeechText({
@@ -332,4 +364,7 @@ test('practice and routed quiz screens honor the persisted audio setting', () =>
     assert.match(source, /\(state\) => state\.listenFirstAudioEnabled\)?[,)]/);
     assert.match(source, /useQuestionAudioAutoplay\(\{/);
   }
+
+  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
+  assertPracticeAudioAutoplaySingleton(practiceSource);
 });
