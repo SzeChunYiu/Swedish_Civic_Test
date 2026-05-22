@@ -11089,3 +11089,60 @@ img.ebook__brand-mark {
     padding: 3px 6px;
   }
 }
+
+/* ======================================================================
+   EBOOK FOOTNOTE SOURCE LINK BOX OPTIMIZATION ROUND
+   ====================================================================== */
+
+.ebook__footnote-body a {
+  align-items: center;
+  background: rgba(0, 106, 167, 0.07);
+  border: 1px solid rgba(0, 106, 167, 0.14);
+  border-radius: 999px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.34);
+  color: var(--blue-ink);
+  display: inline-flex;
+  font-weight: 900;
+  gap: 5px;
+  line-height: 1.2;
+  padding: 3px 8px;
+  text-decoration: none;
+  text-underline-offset: 0;
+}
+.ebook__footnote-body a::after {
+  content: '↗';
+  font-family: var(--mono);
+  font-size: 0.78em;
+  line-height: 1;
+  opacity: 0.74;
+}
+.ebook__footnote-body a:hover,
+.ebook__footnote-body a:focus-visible {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--gold);
+  text-decoration: none;
+}
+.ebook__footnote-body a:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+:root[data-theme='dark'] .ebook__footnote-body a {
+  background: rgba(45, 168, 255, 0.12);
+  border-color: rgba(45, 168, 255, 0.22);
+  color: var(--blue-soft);
+}
+:root[data-theme='dark'] .ebook__footnote-body a:hover,
+:root[data-theme='dark'] .ebook__footnote-body a:focus-visible {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #0b1f33;
+}
+
+@media (max-width: 560px) {
+  .ebook__footnote-body a {
+    border-radius: 12px;
+    padding: 4px 8px;
+  }
+}

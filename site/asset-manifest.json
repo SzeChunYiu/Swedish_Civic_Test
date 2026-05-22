@@ -8,8 +8,8 @@
       "sha256": "fa08d5f935a0f425e591e8ddc00b027fc9737d6f8e11f765677aa3bfb1ee1959"
     },
     "app.js": {
-      "bytes": 113084,
-      "sha256": "7e3f1f3388c8f5e34b6801306e5218db4b0ac03f385d1851b97ca145be7636ff"
+      "bytes": 113104,
+      "sha256": "655ab893f0df6fe24864f8457537362b143ace6531036edc824ce4eda9c8660f"
     },
     "assets/banner.png": {
       "bytes": 254757,
@@ -124,8 +124,8 @@
       "sha256": "4e2dca9706273065513ca97fb0d493f6ea67d852034a03166d67f1ee03c9975b"
     },
     "styles.css": {
-      "bytes": 240609,
-      "sha256": "de04f690436d97ca85ecb0720b06a8b5dd1dc06a42930d0ebb7166b9e22ea7b1"
+      "bytes": 242084,
+      "sha256": "ba7a522e22dac700fca47a55cc0882f9471c3279c6963806cc9db3d80660ae6d"
     },
     "tweaks-panel.jsx": {
       "bytes": 25802,
