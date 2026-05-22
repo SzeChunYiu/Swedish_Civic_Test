@@ -19,9 +19,11 @@ const {
 const {
   Q050_SOURCE_CRITICISM_NATURALNESS_IDS,
   Q062_PUBLIC_SECTOR_NATURALNESS_IDS,
+  Q166_Q169_KOMMUN_REGION_NATURALNESS_IDS,
   SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS,
   summarizeQ050SourceCriticismNaturalness,
   summarizeQ062PublicSectorNaturalness,
+  summarizeQ166Q169KommunRegionNaturalness,
   summarizeSomaliHolidayFoodNaturalness,
 } = require('../scripts/check-question-i18n-v8');
 
@@ -373,6 +375,38 @@ test('static site question bank keeps q050 source-criticism i18n noun-based', ()
     [],
   );
   assert.doesNotMatch(staticQuestionVisibleText(q050), SOURCE_CRITICISM_STALE_STATIC_PATTERN);
+});
+
+test('static site question bank keeps q166/q169 kommun-region i18n target-language-first', () => {
+  const expectedBank = buildSiteQuestionBank();
+  const uhrQuestions = expectedBank.questions.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const generatedIds = ['q166', 'q169'].flatMap((id) => [
+    generatedQuestionId(uhrQuestions, id, 'singleChoice'),
+    generatedQuestionId(uhrQuestions, id, 'judgement'),
+  ]);
+  const context = { window: {} };
+  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
+  const questionsById = new Map(
+    context.window.SMT_QUESTIONS.map((question) => [question.id, question]),
+  );
+  const sourceQuestions = Q166_Q169_KOMMUN_REGION_NATURALNESS_IDS.map((id) => {
+    const question = questionsById.get(id);
+    assert.ok(question, `${id} should be present in static question bank`);
+    return staticQuestionToI18nQuestion(question);
+  });
+  const generatedQuestions = generatedIds.map((id) => {
+    const question = questionsById.get(id);
+    assert.ok(question, `${id} should be present in static question bank`);
+    return staticQuestionToI18nQuestion(question);
+  });
+
+  assert.deepEqual(summarizeQ166Q169KommunRegionNaturalness(sourceQuestions).errors, []);
+  assert.deepEqual(
+    summarizeQ166Q169KommunRegionNaturalness(generatedQuestions, generatedIds).errors,
+    [],
+  );
 });
 
 test('chapter localization metadata avoids parenthetical English welfare glosses', () => {

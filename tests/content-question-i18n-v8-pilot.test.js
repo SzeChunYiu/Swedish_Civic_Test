@@ -5,10 +5,12 @@ const test = require('node:test');
 const {
   Q050_SOURCE_CRITICISM_NATURALNESS_IDS,
   Q062_PUBLIC_SECTOR_NATURALNESS_IDS,
+  Q166_Q169_KOMMUN_REGION_NATURALNESS_IDS,
   checkQuestions,
   checkLocalizationSourceShape,
   checkQ050SourceCriticismNaturalness,
   checkQ062PublicSectorNaturalness,
+  checkQ166Q169KommunRegionNaturalness,
   checkSomaliGeographyNaturalness,
   checkSomaliHolidayFoodNaturalness,
   checkReviewMetadata,
@@ -18,6 +20,7 @@ const {
   SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS,
   summarizeQ050SourceCriticismNaturalness,
   summarizeQ062PublicSectorNaturalness,
+  summarizeQ166Q169KommunRegionNaturalness,
   summarizeSomaliGeographyNaturalness,
   summarizeSomaliHolidayFoodNaturalness,
 } = require('../scripts/check-question-i18n-v8');
@@ -393,6 +396,77 @@ test('question localization v8 summarizes q062 public-sector naturalness cases',
   assert.deepEqual(summary.errors, []);
   assert.equal(summary.casesValidated, 1);
   assert.equal(summary.expectedCases, 1);
+  assert.equal(summary.parityValidated, true);
+});
+
+function q166KommunRegionFixture({ stale = false } = {}) {
+  const staleQuestion = {
+    pl: 'Która odpowiedź opisuje prawo do głosowania w wyborach do kommun i regionów?',
+    so: 'Jawaabtee qeexaysa doorashooyinka kommun iyo region?',
+    tr: 'Hangi cevap kommun ve region seçimlerini tanımlar?',
+  };
+  const freshQuestion = {
+    pl: 'Która odpowiedź opisuje prawo do głosowania w wyborach gminnych i regionalnych?',
+    so: 'Jawaabtee qeexaysa doorashooyinka degmooyinka iyo gobollada?',
+    tr: 'Hangi cevap belediye (kommun) ve bölge (region) seçimlerini tanımlar?',
+  };
+
+  return {
+    id: 'q166',
+    questionText: {
+      ...completeMap('Municipal and regional election text'),
+      ...(stale ? staleQuestion : freshQuestion),
+    },
+    explanationText: {
+      ...completeMap('Municipal and regional election explanation'),
+      ...(stale
+        ? { so: 'Doorashooyinka kommun iyo region mar walba uma baahna jinsiyad.' }
+        : {
+            so: 'Doorashooyinka degmooyinka iyo gobollada mar walba uma baahna jinsiyad.',
+          }),
+    },
+    options: [
+      {
+        id: 'a',
+        text: {
+          ...completeMap('Correct municipal election answer'),
+          ...(stale
+            ? { uk: 'Ніхто не може голосувати на виборах до kommun чи region' }
+            : {
+                uk: 'Ніхто не може голосувати на муніципальних (kommun) чи регіональних (region) виборах',
+              }),
+        },
+      },
+    ],
+    correctOptionId: 'a',
+  };
+}
+
+test('question localization v8 rejects bare kommun and region overlays for q166/q169', () => {
+  const errors = checkQ166Q169KommunRegionNaturalness([q166KommunRegionFixture({ stale: true })]);
+
+  assert.ok(errors.includes('q166.questionText.pl uses bare Swedish civic term(s): kommun'));
+  assert.ok(
+    errors.includes('q166.questionText.so uses bare Swedish civic term(s): kommun, region'),
+  );
+  assert.ok(
+    errors.includes('q166.explanationText.so uses bare Swedish civic term(s): kommun, region'),
+  );
+  assert.ok(
+    errors.includes('q166.options.a.text.uk uses bare Swedish civic term(s): kommun, region'),
+  );
+});
+
+test('question localization v8 summarizes q166/q169 kommun-region naturalness cases', () => {
+  const questions = Q166_Q169_KOMMUN_REGION_NATURALNESS_IDS.map((id) => ({
+    ...q166KommunRegionFixture(),
+    id,
+  }));
+  const summary = summarizeQ166Q169KommunRegionNaturalness(questions);
+
+  assert.deepEqual(summary.errors, []);
+  assert.equal(summary.casesValidated, 2);
+  assert.equal(summary.expectedCases, 2);
   assert.equal(summary.parityValidated, true);
 });
 
