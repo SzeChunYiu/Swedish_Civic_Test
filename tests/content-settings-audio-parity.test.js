@@ -92,7 +92,7 @@ test('audio setting stays in parity between storage and settings switch', () => 
   assert.match(settingsStore, /return storedValue \?\? true;/);
   assert.match(
     settingsStore,
-    /function readStorageBoolean\(key: string\): boolean \| undefined \{[\s\S]*settingsStorage\?\.getBoolean\(key\);[\s\S]*return undefined;/,
+    /function readStorageBoolean\(key: string\): boolean \| undefined \{[\s\S]*readRecoverably\(settingsStorage, settingsStorageId, key,[\s\S]*settingsStorage\?\.getBoolean\(key\),[\s\S]*return result\.value;/,
   );
   assert.match(settingsRoute, /accessibilityRole="switch"/);
   assert.match(settingsRoute, /accessibilityState=\{\{ checked: audioEnabled \}\}/);

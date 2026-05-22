@@ -240,6 +240,9 @@ export function importSettingsSnapshot(
       ) ?? persistenceWarning;
   }
   if (normalizedSettings.audioEnabled !== undefined) {
+    if (normalizedSettings.audioEnabled === false) {
+      stopSpeech();
+    }
     persistenceWarning =
       writeRecoverably(
         settingsStorage,
