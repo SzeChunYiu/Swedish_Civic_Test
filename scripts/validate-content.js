@@ -635,6 +635,10 @@ const QUESTION_RECORD_YEARS_ENGLISH_NATURALNESS_PATTERNS = [
   /\blong-lasting strong economic growth\b/i,
   /\bstrong economic growth for a long time\b/i,
 ];
+const QUESTION_SUFFRAGE_1921_ENGLISH_NATURALNESS_PATTERNS = [
+  /\b1921 is the year of the election asked about here\b/i,
+  /\bthe year of the election asked about here\b/i,
+];
 const QUESTION_SOURCE_CRITICISM_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhat does it mean to be source-critical\b/i,
   /\b(?:Being|To be) source-critical means\b/i,
@@ -5655,6 +5659,7 @@ function translationNaturalnessGuardParityIsValidated() {
     questionLargestLakesEnglishNaturalnessValidated === publishedQuestions &&
     questionNationalMinoritiesEnglishNaturalnessValidated === publishedQuestions &&
     questionRecordYearsEnglishNaturalnessValidated === publishedQuestions &&
+    questionSuffrage1921EnglishNaturalnessValidated === publishedQuestions &&
     questionLuciaExplanationRoleScaffoldValidated === publishedQuestions &&
     questionGoodFridayEnglishNaturalnessValidated === publishedQuestions &&
     questionReferendumAdvisorySwedishNaturalnessValidated === publishedQuestions &&
@@ -7302,6 +7307,13 @@ function findQuestionNationalMinoritiesEnglishNaturalnessIssue(question) {
 function findQuestionRecordYearsEnglishNaturalnessIssue(question) {
   if (!question.tags?.includes('record-years')) return null;
   return QUESTION_RECORD_YEARS_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(questionText(question, ['questionEn', 'explanationEn'])),
+  );
+}
+
+function findQuestionSuffrage1921EnglishNaturalnessIssue(question) {
+  if (!question.tags?.includes('suffrage')) return null;
+  return QUESTION_SUFFRAGE_1921_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
     pattern.test(questionText(question, ['questionEn', 'explanationEn'])),
   );
 }
@@ -9708,6 +9720,7 @@ let questionPublicServiceBroadcasterEnglishNaturalnessValidated = 0;
 let questionLargestLakesEnglishNaturalnessValidated = 0;
 let questionNationalMinoritiesEnglishNaturalnessValidated = 0;
 let questionRecordYearsEnglishNaturalnessValidated = 0;
+let questionSuffrage1921EnglishNaturalnessValidated = 0;
 let questionLuciaExplanationRoleScaffoldValidated = 0;
 let questionGoodFridayEnglishNaturalnessValidated = 0;
 let questionReferendumAdvisorySwedishNaturalnessValidated = 0;
@@ -24217,6 +24230,8 @@ if (Array.isArray(questions)) {
         findQuestionNationalMinoritiesEnglishNaturalnessIssue(question);
       const recordYearsEnglishNaturalnessIssue =
         findQuestionRecordYearsEnglishNaturalnessIssue(question);
+      const suffrage1921EnglishNaturalnessIssue =
+        findQuestionSuffrage1921EnglishNaturalnessIssue(question);
       const councilOfEuropeWorkForEnglishNaturalnessIssue =
         findQuestionCouncilOfEuropeWorkForEnglishNaturalnessIssue(question);
       const mayDayEnglishNaturalnessIssue = findQuestionMayDayEnglishNaturalnessIssue(question);
@@ -24299,6 +24314,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses stilted record-years English wording`);
       } else {
         questionRecordYearsEnglishNaturalnessValidated += 1;
+      }
+      if (suffrage1921EnglishNaturalnessIssue) {
+        fail(`${label} uses meta suffrage-election English wording`);
+      } else {
+        questionSuffrage1921EnglishNaturalnessValidated += 1;
       }
       if (councilOfEuropeWorkForEnglishNaturalnessIssue) {
         fail(`${label} uses literal Council of Europe work-for English wording`);
@@ -24925,6 +24945,7 @@ console.log(
       questionLargestLakesEnglishNaturalnessValidated,
       questionNationalMinoritiesEnglishNaturalnessValidated,
       questionRecordYearsEnglishNaturalnessValidated,
+      questionSuffrage1921EnglishNaturalnessValidated,
       questionLuciaExplanationRoleScaffoldValidated,
       questionGoodFridayEnglishNaturalnessValidated,
       questionReferendumAdvisorySwedishNaturalnessValidated,

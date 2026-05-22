@@ -32,6 +32,10 @@ const CHAPTER_LOCALIZATION_ENGLISH_WELFARE_GLOSS_PATTERN = /\(welfare\)/i;
 const PUBLIC_SERVICE_LOANWORD_PATTERN = /\bpublic service\b|\(welfare\)/i;
 const PUBLIC_SECTOR_STALE_STATIC_PATTERN =
   /\bWhat is meant by the public sector in Sweden\b|\bActivities for which the state, regions, and municipalities are responsible\b|\bThe public sector(?: in Sweden)? means\b/i;
+const SUFFRAGE_1921_STALE_STATIC_PATTERN =
+  /\b1921 is the year of the election asked about here\b|\bthe year of the election asked about here\b/i;
+const SUFFRAGE_1921_EXPECTED_STATIC_EXPLANATION =
+  "the first Riksdag election with both women's and men's voting rights and women's eligibility was held in 1921";
 const SOURCE_CRITICISM_STALE_STATIC_PATTERN =
   /具有(?:來|来)源批判意識|أن تكون ناقدًا للمصادر|سەرچاوە-ڕەخنەیی|منبع‌سنج بودن|krytyczne podejście do źródeł|si naqdineed loo eego ilaha|ንምንጭታት ብነቐፌታዊ መንገዲ ምርኣይ|kaynaklara eleştirel yaklaşmak|критично ставитися до джерел/i;
 const BASE_LOCALES = new Set(['sv', 'en']);
@@ -288,6 +292,33 @@ test('static site question bank keeps q062 public-sector i18n and generated vari
         `${id}.opts.${question.answer}.${locale} should include ${term}`,
       );
     }
+  }
+});
+
+test('static site question bank keeps q080 suffrage explanations learner-facing', () => {
+  const expectedBank = buildSiteQuestionBank();
+  const sourceQuestions = expectedBank.questions.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const suffrageIds = [
+    'q080',
+    generatedQuestionId(sourceQuestions, 'q080', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q080', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q080', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q080', 'judgement'),
+  ];
+  const context = { window: {} };
+  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
+  const questionsById = new Map(
+    context.window.SMT_QUESTIONS.map((question) => [question.id, question]),
+  );
+
+  for (const id of suffrageIds) {
+    const question = questionsById.get(id);
+    assert.ok(question, `${id} should be present in static question bank`);
+    const visibleText = staticQuestionVisibleText(question);
+    assert.ok(visibleText.includes(SUFFRAGE_1921_EXPECTED_STATIC_EXPLANATION));
+    assert.doesNotMatch(visibleText, SUFFRAGE_1921_STALE_STATIC_PATTERN);
   }
 });
 

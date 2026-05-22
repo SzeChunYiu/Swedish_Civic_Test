@@ -4,7 +4,14 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 
+const { buildSiteQuestionBank } = require('../scripts/export-site-question-bank');
+const { generatedQuestionId } = require('../scripts/generated-question-fixture-ids');
+
 const repoRoot = path.resolve(__dirname, '..');
+const SUFFRAGE_1921_STALE_CSV_PATTERN =
+  /\b1921 is the year of the election asked about here\b|\bthe year of the election asked about here\b/i;
+const SUFFRAGE_1921_EXPECTED_CSV_EXPLANATION =
+  "the first Riksdag election with both women's and men's voting rights and women's eligibility was held in 1921";
 
 function parseExportedCsvLine(line) {
   return [...line.matchAll(/"((?:""|[^"])*)"(?:,|$)/g)].map((match) =>
@@ -95,6 +102,38 @@ require('./scripts/validate-content.js');
     `${result.stdout}\n${result.stderr}`,
     /question provenance runtime guard .* tags .* expected "uhr"/i,
   );
+});
+
+test('question-bank CSV keeps q080 suffrage explanations learner-facing', () => {
+  const sourceQuestions = buildSiteQuestionBank().questions.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const expectedIds = [
+    'q080',
+    generatedQuestionId(sourceQuestions, 'q080', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q080', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q080', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q080', 'judgement'),
+  ];
+  const csv = fs.readFileSync(path.join(repoRoot, 'content', 'question-bank.csv'), 'utf8');
+  const rowsById = new Map(
+    csv
+      .trimEnd()
+      .split('\n')
+      .slice(1)
+      .map((line) => {
+        const columns = parseExportedCsvLine(line);
+        return [columns[0], columns];
+      }),
+  );
+
+  for (const id of expectedIds) {
+    const columns = rowsById.get(id);
+    assert.ok(columns, `${id} should be present in content/question-bank.csv`);
+    const visibleText = `${columns[4]}\n${columns[6]}`;
+    assert.ok(visibleText.includes(SUFFRAGE_1921_EXPECTED_CSV_EXPLANATION));
+    assert.doesNotMatch(visibleText, SUFFRAGE_1921_STALE_CSV_PATTERN);
+  }
 });
 
 test('question-bank CSV has unique public header names', () => {
