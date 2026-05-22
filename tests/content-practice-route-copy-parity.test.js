@@ -258,6 +258,23 @@ test('web aria false-state e2e covers localized Practice control labels', () => 
   );
 });
 
+test('practice bookmark e2e covers reload persistence without selected state', () => {
+  const source = fs.readFileSync(
+    path.join(repoRoot, 'tests/e2e/practice-header-controls.spec.ts'),
+    'utf8',
+  );
+
+  assert.match(source, /practice bookmark pressed state persists after reload and unbookmark/);
+  assert.match(source, /await page\.reload\(\{ waitUntil: 'networkidle' \}\);/);
+  assert.match(source, /Remove this question bookmark/);
+  assert.match(source, /Persisted bookmark control/);
+  assert.match(source, /Persisted cleared bookmark control/);
+  assert.match(source, /toHaveAttribute\('aria-pressed', 'true'\)/);
+  assert.match(source, /toHaveAttribute\('aria-pressed', 'false'\)/);
+  assert.match(source, /not\.toHaveAttribute\('aria-selected'\)/);
+  assert.match(source, /page\.getByText\('Bookmarked', \{ exact: true \}\)\)\.toHaveCount\(0\)/);
+});
+
 test('practice route coverage keeps hero controls at the touch-target bar', () => {
   const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
   const e2eSource = fs.readFileSync(
