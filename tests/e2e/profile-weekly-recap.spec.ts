@@ -10,6 +10,8 @@ import {
 type RecapFixture = {
   language: AppLanguage;
   profileCta: string;
+  profileCtaAccessibilityLabel: string;
+  practiceQuestionLabel: string;
   questionMetric: string;
   recapTitle: string;
   weakCta: RegExp;
@@ -19,6 +21,8 @@ const recapFixtures: RecapFixture[] = [
   {
     language: 'en',
     profileCta: 'View this week',
+    profileCtaAccessibilityLabel: 'Open this week’s study recap',
+    practiceQuestionLabel: 'Question 1',
     questionMetric: 'questions answered: 2',
     recapTitle: 'Your study week',
     weakCta: /Practise /,
@@ -26,6 +30,8 @@ const recapFixtures: RecapFixture[] = [
   {
     language: 'sv',
     profileCta: 'Visa veckan',
+    profileCtaAccessibilityLabel: 'Öppna veckans studieöversikt',
+    practiceQuestionLabel: 'Fråga 1',
     questionMetric: 'svarade frågor: 2',
     recapTitle: 'Din vecka i studierna',
     weakCta: /Öva /,
@@ -123,11 +129,23 @@ for (const fixture of recapFixtures) {
   test(`Profile opens localized weekly recap in ${fixture.language}`, async ({ page }) => {
     await openSeededProfile(page, fixture.language);
 
-    await page.getByRole('link', { name: fixture.profileCta }).click();
+    const profileRecapLink = page.getByRole('link', {
+      name: fixture.profileCtaAccessibilityLabel,
+    });
+    await expect(profileRecapLink.getByText(fixture.profileCta)).toBeVisible();
+    await profileRecapLink.click();
     await expect(page).toHaveURL(/\/recap/);
     await expect(page.getByRole('heading', { name: fixture.recapTitle })).toBeVisible();
     await expect(page.getByLabel(fixture.questionMetric)).toBeVisible();
-    await expect(page.getByRole('link', { name: fixture.weakCta })).toBeVisible();
+    const weakChapterLink = page.getByRole('link', { name: fixture.weakCta });
+    await expect(weakChapterLink).toBeVisible();
+    await expect(weakChapterLink).toHaveAttribute('href', /\/practice\?chapterId=ch01/);
+
+    await weakChapterLink.click();
+
+    await expect(page).toHaveURL(/\/practice\?chapterId=ch01/);
+    await expect(page.getByText(fixture.practiceQuestionLabel, { exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: fixture.recapTitle })).toHaveCount(0);
   });
 }
 
@@ -156,7 +174,13 @@ test('Weekly recap keeps quiet weeks encouraging and local-only', async ({ page 
   await page.goto('/recap', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
 
-  await expect(page.getByText('Quiet week')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Quiet week' })).toBeVisible();
   await expect(page.getByText(/A quiet week still counts/)).toBeVisible();
-  await expect(page.getByText(/Pro|Remove Ads|account/i)).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: /\bPro\b|Remove Ads|\baccount\b/i })).toHaveCount(
+    0,
+  );
+  await expect(page.getByRole('link', { name: /\bPro\b|Remove Ads|\baccount\b/i })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /\bPro\b|Remove Ads|\baccount\b/i })).toHaveCount(
+    0,
+  );
 });

@@ -304,7 +304,7 @@ export default function Screen() {
           />
           <ComplianceActionLink
             accessibilityLabel={copy.practiceWeakChapterAccessibilityLabel(touchedWeakChapterName)}
-            href={`/chapter/${touchedWeakChapter.chapterId}`}
+            href={`/practice?chapterId=${touchedWeakChapter.chapterId}`}
             label={copy.practiceWeakChapter(touchedWeakChapterName)}
             variant="primary"
           />

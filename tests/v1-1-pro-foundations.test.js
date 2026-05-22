@@ -634,6 +634,7 @@ test('generateWeeklyRecap: guards malformed runtime recap inputs', () => {
 
 test('weekly recap screen and Profile entry point surface the selector locally', () => {
   const recapRoute = fs.readFileSync(path.join(repoRoot, 'app/recap.tsx'), 'utf8');
+  const practiceRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
   const profileRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
 
   assert.match(recapRoute, /import \{ generateWeeklyRecap, type WeeklyRecap \}/);
@@ -646,10 +647,18 @@ test('weekly recap screen and Profile entry point surface the selector locally',
   assert.match(recapRoute, /mockExamSessions: MockExamProgress\[\]/);
   assert.match(recapRoute, /generateWeeklyRecap\(\{ progress, questionChapterIndex \}\)/);
   assert.match(recapRoute, /getTouchedWeakChapter\(recap, progress\)/);
-  assert.match(recapRoute, /href=\{`\/chapter\/\$\{touchedWeakChapter\.chapterId\}`\}/);
+  assert.match(recapRoute, /href=\{`\/practice\?chapterId=\$\{touchedWeakChapter\.chapterId\}`\}/);
+  assert.doesNotMatch(recapRoute, /href=\{`\/chapter\/\$\{touchedWeakChapter\.chapterId\}`\}/);
   assert.match(recapRoute, /No problem\. A quiet week still counts/);
   assert.match(recapRoute, /En lugn vecka räknas också/);
   assert.doesNotMatch(recapRoute, /useProLifetimeEntitlements|useRemoveAdsEntitlements|account/i);
+  assert.match(practiceRoute, /chapterId\?: string \| string\[\]/);
+  assert.match(practiceRoute, /normalizePracticeChapterRouteScope\(chapterId, filteredQuestions\)/);
+  assert.match(
+    practiceRoute,
+    /questionBank\.some\(\(question\) => question\.chapterId === chapterId\)/,
+  );
+  assert.match(practiceRoute, /key: `chapter:\$\{routeChapterScope\.chapterId\}`/);
 
   assert.match(profileRoute, /weeklyRecapTitle: 'Veckans översikt'/);
   assert.match(profileRoute, /weeklyRecapTitle: 'Weekly recap'/);
