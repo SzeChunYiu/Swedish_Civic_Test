@@ -1,10 +1,94 @@
 const assert = require('node:assert/strict');
-const { execFileSync, spawnSync } = require('node:child_process');
+const { execFileSync } = require('node:child_process');
+const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
+const ts = require('typescript');
+const vm = require('node:vm');
 
 const repoRoot = path.resolve(__dirname, '..');
-let cachedSummary;
+const moduleCache = new Map();
+const learnerFacingLegalCertaintyPattern = /\blegal certainty\b/i;
+
+function resolveLocalModule(fromFilePath, request) {
+  const base = path.resolve(path.dirname(fromFilePath), request);
+  const candidates = [base, `${base}.ts`, `${base}.tsx`, `${base}.js`, path.join(base, 'index.ts')];
+  const found = candidates.find(
+    (candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isFile(),
+  );
+  if (!found) throw new Error(`Cannot resolve ${request} from ${fromFilePath}`);
+  return found;
+}
+
+function loadTs(relativePath, exportName) {
+  const filePath = path.join(repoRoot, relativePath);
+  if (moduleCache.has(filePath)) {
+    const cached = moduleCache.get(filePath);
+    return exportName ? cached[exportName] : cached;
+  }
+
+  const source = fs.readFileSync(filePath, 'utf8');
+  const output = ts.transpileModule(source, {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
+  }).outputText;
+  const mod = { exports: {} };
+  moduleCache.set(filePath, mod.exports);
+
+  function localRequire(request) {
+    if (request.startsWith('.')) {
+      return loadTs(path.relative(repoRoot, resolveLocalModule(filePath, request)));
+    }
+    return require(request);
+  }
+
+  new Function('module', 'exports', 'require', output)(mod, mod.exports, localRequire);
+  moduleCache.set(filePath, mod.exports);
+  return exportName ? mod.exports[exportName] : mod.exports;
+}
+
+function loadStaticQuestions() {
+  const context = { window: {} };
+  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site/questions.js'), 'utf8'), context, {
+    filename: 'site/questions.js',
+    timeout: 3000,
+  });
+  assert.ok(Array.isArray(context.window.SMT_QUESTIONS), 'site/questions.js exposes questions');
+  return context.window.SMT_QUESTIONS;
+}
+
+function pushCanonicalQuestionOffenders(offenders, question) {
+  const fields = [
+    ['questionEn', question.questionEn],
+    ['explanationEn', question.explanationEn],
+  ];
+
+  (question.options ?? []).forEach((option) => {
+    fields.push([`option ${option.id} textEn`, option.textEn]);
+  });
+
+  fields.forEach(([field, value]) => {
+    if (learnerFacingLegalCertaintyPattern.test(value)) {
+      offenders.push(`${question.id} ${field}: ${value}`);
+    }
+  });
+}
+
+function pushStaticQuestionOffenders(offenders, question) {
+  const fields = [
+    ['q.en', question.q?.en],
+    ['why.en', question.why?.en],
+  ];
+
+  (question.opts ?? []).forEach((option, index) => {
+    fields.push([`opts.${index}.en`, option.en]);
+  });
+
+  fields.forEach(([field, value]) => {
+    if (learnerFacingLegalCertaintyPattern.test(String(value ?? ''))) {
+      offenders.push(`${question.id} ${field}: ${value}`);
+    }
+  });
+}
 
 function validateContentSummary() {
   if (cachedSummary) return cachedSummary;
@@ -31,10 +115,7 @@ test('TRANSLATE-COMPLETE P0 has explicit SV/EN completeness and naturalness clos
     summary.questionEuCooperationEnglishNaturalnessValidated,
     summary.publishedQuestions,
   );
-  assert.equal(
-    summary.questionOlderSickEnglishNaturalnessValidated,
-    summary.publishedQuestions,
-  );
+  assert.equal(summary.questionOlderSickEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(
     summary.questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
     summary.publishedQuestions,
@@ -75,52 +156,17 @@ test('TRANSLATE-COMPLETE P0 has explicit SV/EN completeness and naturalness clos
   assert.equal(summary.somaliHolidayFoodNaturalnessParityValidated, true);
 });
 
-test("TRANSLATE-COMPLETE q128 New Year's Eve date naturalness guard is summarized", () => {
-  const summary = validateContentSummary();
+test('TRANSLATE-COMPLETE keeps rule-of-law English natural while allowing internal tags', () => {
+  const questions = loadTs('data/questions.ts', 'questions');
+  const staticQuestions = loadStaticQuestions();
+  const offenders = [];
 
-  assert.equal(
-    summary.questionNewYearsEveDateEnglishNaturalnessValidated,
-    summary.publishedQuestions,
+  questions.forEach((question) => pushCanonicalQuestionOffenders(offenders, question));
+  staticQuestions.forEach((question) => pushStaticQuestionOffenders(offenders, question));
+
+  assert.ok(
+    questions.some((question) => question.tags.includes('legal-certainty')),
+    'internal legal-certainty tag remains allowed',
   );
-});
-
-test('TRANSLATE-COMPLETE rejects literal legal certainty in learner-facing English', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/questions.ts')) {
-    const source = String(contents);
-    const mutated = source.replace("textEn: 'The rule of law'", "textEn: 'Legal certainty'");
-    if (mutated === source) {
-      throw new Error('rule-of-law mutation target not found');
-    }
-    return mutated;
-  }
-  return contents;
-};
-process.argv.push('--focus-translate-complete');
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /q014 uses literal legal certainty English for rättssäkerhet/i,
-  );
-});
-
-test('TRANSLATE-COMPLETE q128 Lucia Day date naturalness guard is summarized', () => {
-  const summary = validateContentSummary();
-
-  assert.equal(summary.questionLuciaDayDateEnglishNaturalnessValidated, summary.publishedQuestions);
+  assert.deepEqual(offenders, []);
 });

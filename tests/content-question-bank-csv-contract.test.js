@@ -8,10 +8,7 @@ const { buildSiteQuestionBank } = require('../scripts/export-site-question-bank'
 const { generatedQuestionId } = require('../scripts/generated-question-fixture-ids');
 
 const repoRoot = path.resolve(__dirname, '..');
-const SUFFRAGE_1921_STALE_CSV_PATTERN =
-  /\b1921 is the year of the election asked about here\b|\bthe year of the election asked about here\b/i;
-const SUFFRAGE_1921_EXPECTED_CSV_EXPLANATION =
-  "the first Riksdag election with both women's and men's voting rights and women's eligibility was held in 1921";
+const learnerFacingLegalCertaintyPattern = /\blegal certainty\b/i;
 
 function parseExportedCsvLine(line) {
   return [...line.matchAll(/"((?:""|[^"])*)"(?:,|$)/g)].map((match) =>
@@ -227,6 +224,46 @@ test('question-bank CSV has unique public header names', () => {
   assert.deepEqual(duplicateHeaderNames, []);
   assert.equal(header.filter((field) => field === 'uhrSourcePublisher').length, 1);
   assert.equal(header.filter((field) => field === 'supplementalSourcePublisher').length, 1);
+});
+
+test('question-bank CSV keeps rule-of-law English natural while allowing internal tags', () => {
+  const csv = fs.readFileSync(path.join(repoRoot, 'content', 'question-bank.csv'), 'utf8');
+  const lines = csv.trimEnd().split('\n');
+  const header = parseExportedCsvLine(lines[0]);
+  const rows = lines.slice(1).map(parseExportedCsvLine);
+  const fieldIndexes = ['id', 'questionEn', 'explanationEn', 'optionEn', 'tags'].reduce(
+    (indexes, field) => {
+      const index = header.indexOf(field);
+      assert.notEqual(index, -1, `${field} column should exist`);
+      return { ...indexes, [field]: index };
+    },
+    {},
+  );
+  const offenders = [];
+
+  rows.forEach((row) => {
+    const id = row[fieldIndexes.id];
+    const learnerFields = [
+      ['questionEn', row[fieldIndexes.questionEn]],
+      ['explanationEn', row[fieldIndexes.explanationEn]],
+      ...JSON.parse(row[fieldIndexes.optionEn]).map((option) => [
+        `option ${option.id} text`,
+        option.text,
+      ]),
+    ];
+
+    learnerFields.forEach(([field, value]) => {
+      if (learnerFacingLegalCertaintyPattern.test(value)) {
+        offenders.push(`${id} ${field}: ${value}`);
+      }
+    });
+  });
+
+  assert.ok(
+    rows.some((row) => row[fieldIndexes.tags].split('|').includes('legal-certainty')),
+    'internal legal-certainty tag remains allowed',
+  );
+  assert.deepEqual(offenders, []);
 });
 
 test('question-bank CSV contract rejects public header drift', () => {
