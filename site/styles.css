@@ -10934,3 +10934,96 @@ img.ebook__brand-mark {
     padding: 2px 7px;
   }
 }
+
+/* ======================================================================
+   EBOOK HIGHLIGHT PANEL BOX OPTIMIZATION ROUND
+   ====================================================================== */
+
+.ebook__notes {
+  background:
+    linear-gradient(135deg, rgba(0, 106, 167, 0.055), rgba(254, 204, 0, 0.06)),
+    rgba(255, 255, 255, 0.48);
+  border: 1px solid rgba(0, 106, 167, 0.12);
+  border-radius: 22px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.32),
+    0 16px 36px -32px rgba(11, 31, 51, 0.68);
+  margin-top: 22px;
+  overflow: hidden;
+  padding: 16px;
+  position: relative;
+}
+.ebook__notes::before {
+  background: var(--card-rail);
+  border-radius: inherit;
+  content: '';
+  inset: 0 auto 0 0;
+  opacity: 0.78;
+  position: absolute;
+  width: 4px;
+}
+.ebook__notes h2 {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.56);
+  border: 1px solid rgba(0, 106, 167, 0.1);
+  border-radius: 16px;
+  display: flex;
+  justify-content: space-between;
+  margin: 0 0 12px;
+  padding: 10px 12px 10px 14px;
+  position: relative;
+  z-index: 1;
+}
+.ebook__notes h2::after {
+  content: 'local';
+  display: inline-flex;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(0, 106, 167, 0.08);
+  border: 1px solid rgba(0, 106, 167, 0.14);
+  color: var(--blue-ink);
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+#eb-notes-list {
+  position: relative;
+  z-index: 1;
+}
+.eb-notes-empty {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.62), rgba(0, 106, 167, 0.035)),
+    rgba(255, 255, 255, 0.5) !important;
+  border-style: dashed;
+  border-color: rgba(0, 106, 167, 0.16) !important;
+  color: var(--ink-soft) !important;
+}
+
+:root[data-theme='dark'] .ebook__notes,
+:root[data-theme='dark'] .ebook__notes h2,
+:root[data-theme='dark'] .eb-notes-empty {
+  background: rgba(255, 255, 255, 0.045) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+:root[data-theme='dark'] .ebook__notes h2::after {
+  background: rgba(45, 168, 255, 0.12);
+  border-color: rgba(45, 168, 255, 0.22);
+  color: var(--blue-soft);
+}
+
+@media (max-width: 560px) {
+  .ebook__notes {
+    border-radius: 18px;
+    margin-top: 18px;
+    padding: 14px;
+  }
+  .ebook__notes::before {
+    width: 3px;
+  }
+  .ebook__notes h2 {
+    border-radius: 14px;
+    padding: 9px 10px 9px 12px;
+  }
+}
