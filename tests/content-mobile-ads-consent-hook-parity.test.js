@@ -29,9 +29,10 @@ test('mobile ads consent hook fails closed around Remove Ads and cached initiali
 
   assert.equal(summary.mobileAdsConsentHookCasesValidated, 6);
   assert.equal(summary.mobileAdsConsentHookParityValidated, true);
+  assert.match(hookSource, /shouldCollectMobileAdsConsent\(\{/);
   assert.match(
     hookSource,
-    /!isStrictEntitlementFlag\(entitlements\.adsDisabled\) &&\s*adsConfig\.realAdsEnabled/,
+    /mobileAdsTestUnitConsentEnabled:\s*adsConfig\.mobileAdsTestUnitConsentEnabled/,
   );
   assert.match(hookSource, /trackingTransparencyStatus:/);
   assert.match(hookSource, /umpConsentStatus:/);
@@ -63,8 +64,42 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace(
-        'adsConfig.googleMobileAdsEnabled &&\\n    !isStrictEntitlementFlag(entitlements.adsDisabled) &&\\n    adsConfig.realAdsEnabled;',
-        'adsConfig.googleMobileAdsEnabled &&\\n    adsConfig.realAdsEnabled;'
+        'entitlements,\\n    googleMobileAdsEnabled: adsConfig.googleMobileAdsEnabled,',
+        'entitlements: { adsDisabled: false },\\n    googleMobileAdsEnabled: adsConfig.googleMobileAdsEnabled,'
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /Mobile Ads consent hook must derive initial prompt state from ads config and Remove Ads entitlements/,
+  );
+});
+
+test('mobile ads consent hook parity rejects test-unit consent flag drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+process.argv.push('--focus-mobile-ads-consent-hook');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/monetization/useMobileAdsConsent.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'mobileAdsTestUnitConsentEnabled: adsConfig.mobileAdsTestUnitConsentEnabled,',
+        'mobileAdsTestUnitConsentEnabled: false,'
       );
   }
   return originalReadFileSync.call(this, filePath, ...args);

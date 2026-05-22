@@ -5402,6 +5402,7 @@ const EXPECTED_MOBILE_ADS_CONSENT_INTERFACES = [
     fields: [
       { name: 'entitlements', type: "Pick<PremiumEntitlements, 'adsDisabled'>", optional: false },
       { name: 'googleMobileAdsEnabled', type: 'boolean', optional: true },
+      { name: 'mobileAdsTestUnitConsentEnabled', type: 'boolean', optional: true },
       { name: 'realAdsEnabled', type: 'boolean', optional: true },
       { name: 'region', type: 'AdConsentRegion', optional: true },
       { name: 'runtime', type: 'MobileAdsConsentRuntime', optional: false },
@@ -19811,10 +19812,13 @@ function validateMobileAdsConsentRuntimeParity() {
   const normalizedMobileConsentSource = mobileConsentSource.replace(/\s+/g, ' ');
   const runtimeCases = [
     [
-      normalizedMobileConsentSource.includes(
-        'const shouldCollectConsent = googleMobileAdsEnabled && entitlements.adsDisabled !== true && realAdsEnabled;',
-      ),
-      'Mobile Ads consent runtime must gate consent collection on ads config, real ads, and Remove Ads entitlements',
+      /export\s+function\s+shouldCollectMobileAdsConsent\([\s\S]*mobileAdsTestUnitConsentEnabled\s*=\s*adsConfig\.mobileAdsTestUnitConsentEnabled[\s\S]*normalizeAdConsentPlatform\(platform\)[\s\S]*!isStrictEntitlementFlag\(entitlements\.adsDisabled\)[\s\S]*realAdsEnabled[\s\S]*mobileAdsTestUnitConsentEnabled[\s\S]*isNativeMobileAdsConsentPlatform\(normalizedPlatform\)/.test(
+        mobileConsentSource,
+      ) &&
+        /const\s+shouldCollectConsent\s*=\s*shouldCollectMobileAdsConsent\(\{[\s\S]*entitlements,[\s\S]*googleMobileAdsEnabled,[\s\S]*mobileAdsTestUnitConsentEnabled,[\s\S]*platform,[\s\S]*realAdsEnabled,[\s\S]*\}\);/.test(
+          mobileConsentSource,
+        ),
+      'Mobile Ads consent runtime must gate collection on ads config, real ads or native test-unit consent, and Remove Ads entitlements',
     ],
     [
       mobileConsentSource.includes('region: normalizeAdConsentRegion(region),') &&
@@ -19908,8 +19912,8 @@ function validateMobileAdsConsentHookParity() {
   const normalizedHookSource = hookSource.replace(/\s+/g, ' ');
   const hookCases = [
     [
-      normalizedHookSource.includes(
-        'const shouldCollectConsent = adsConfig.googleMobileAdsEnabled && entitlements.adsDisabled !== true && adsConfig.realAdsEnabled;',
+      /const\s+shouldCollectConsent\s*=\s*shouldCollectMobileAdsConsent\(\{[\s\S]*entitlements,[\s\S]*googleMobileAdsEnabled:\s*adsConfig\.googleMobileAdsEnabled,[\s\S]*mobileAdsTestUnitConsentEnabled:\s*adsConfig\.mobileAdsTestUnitConsentEnabled,[\s\S]*platform,[\s\S]*realAdsEnabled:\s*adsConfig\.realAdsEnabled,[\s\S]*\}\);/.test(
+        hookSource,
       ) &&
         normalizedHookSource.includes('platform,') &&
         normalizedHookSource.includes(
@@ -19927,7 +19931,7 @@ function validateMobileAdsConsentHookParity() {
       'Mobile Ads consent hook must route initial state through the consent SDK decision helper',
     ],
     [
-      /if\s*\(\s*entitlements\.adsDisabled\s*===\s*true\s*\)\s*\{\s*return\s+initializeGoogleMobileAdsAfterConsent\(\{[\s\S]*entitlements,[\s\S]*runtime:\s*createNativeMobileAdsConsentRuntime\(platform\),[\s\S]*\}\);\s*\}/.test(
+      /if\s*\(\s*isStrictEntitlementFlag\(entitlements\.adsDisabled\)\s*\)\s*\{\s*return\s+initializeGoogleMobileAdsAfterConsent\(\{[\s\S]*entitlements,[\s\S]*runtime:\s*createNativeMobileAdsConsentRuntime\(platform\),[\s\S]*\}\);\s*\}/.test(
         hookSource,
       ),
       'Mobile Ads consent hook must bypass cached initialization when Remove Ads is active',
@@ -19948,7 +19952,7 @@ function validateMobileAdsConsentHookParity() {
       'Mobile Ads consent hook must reset shared initialization after blocked consent results without caching them',
     ],
     [
-      /if\s*\([\s\S]*entitlements\.adsDisabled\s*!==\s*true[\s\S]*cachedInitialization[\s\S]*cachedInitializationPlatform\s*===\s*platform[\s\S]*\)\s*\{\s*return\s+cachedInitialization;\s*\}/.test(
+      /if\s*\([\s\S]*!isStrictEntitlementFlag\(entitlements\.adsDisabled\)[\s\S]*cachedInitialization[\s\S]*cachedInitializationPlatform\s*===\s*platform[\s\S]*\)\s*\{\s*return\s+cachedInitialization;\s*\}/.test(
         hookSource,
       ) &&
         normalizedHookSource.includes('setResult(initialResult);') &&

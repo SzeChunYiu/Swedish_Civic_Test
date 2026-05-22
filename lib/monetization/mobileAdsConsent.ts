@@ -38,6 +38,7 @@ export interface MobileAdsConsentRuntime {
 export interface MobileAdsConsentOptions {
   entitlements: Pick<PremiumEntitlements, 'adsDisabled'>;
   googleMobileAdsEnabled?: boolean;
+  mobileAdsTestUnitConsentEnabled?: boolean;
   realAdsEnabled?: boolean;
   region?: AdConsentRegion;
   runtime: MobileAdsConsentRuntime;
@@ -56,6 +57,32 @@ function normalizeStatus(value: string | undefined): string {
 export function normalizeAdConsentPlatform(platform: string): AdConsentPlatform {
   if (platform === 'android' || platform === 'ios' || platform === 'web') return platform;
   return 'unknown';
+}
+
+function isNativeMobileAdsConsentPlatform(platform: AdConsentPlatform): boolean {
+  return platform === 'android' || platform === 'ios';
+}
+
+export function shouldCollectMobileAdsConsent({
+  entitlements,
+  googleMobileAdsEnabled = adsConfig.googleMobileAdsEnabled,
+  mobileAdsTestUnitConsentEnabled = adsConfig.mobileAdsTestUnitConsentEnabled,
+  platform,
+  realAdsEnabled = adsConfig.realAdsEnabled,
+}: {
+  entitlements: Pick<PremiumEntitlements, 'adsDisabled'>;
+  googleMobileAdsEnabled?: boolean;
+  mobileAdsTestUnitConsentEnabled?: boolean;
+  platform: AdConsentPlatform | string;
+  realAdsEnabled?: boolean;
+}): boolean {
+  const normalizedPlatform = normalizeAdConsentPlatform(platform);
+  return (
+    googleMobileAdsEnabled &&
+    !isStrictEntitlementFlag(entitlements.adsDisabled) &&
+    (realAdsEnabled ||
+      (mobileAdsTestUnitConsentEnabled && isNativeMobileAdsConsentPlatform(normalizedPlatform)))
+  );
 }
 
 export function mapTrackingTransparencyStatus(
@@ -107,9 +134,9 @@ export function createInitialAdConsentState({
 async function getCurrentTrackingTransparencyStatus(
   runtime: MobileAdsConsentRuntime,
   platform: AdConsentPlatform,
-  realAdsEnabled: boolean,
+  shouldCollectConsent: boolean,
 ): Promise<AppTrackingTransparencyStatus> {
-  if (platform !== 'ios' || !realAdsEnabled) return 'unavailable';
+  if (platform !== 'ios' || !shouldCollectConsent) return 'unavailable';
 
   return mapTrackingTransparencyStatus(await runtime.getTrackingPermissionsAsync?.(), platform);
 }
@@ -117,10 +144,10 @@ async function getCurrentTrackingTransparencyStatus(
 async function requestTrackingTransparencyStatusIfNeeded(
   runtime: MobileAdsConsentRuntime,
   platform: AdConsentPlatform,
-  realAdsEnabled: boolean,
+  shouldCollectConsent: boolean,
   currentStatus: AppTrackingTransparencyStatus,
 ): Promise<AppTrackingTransparencyStatus> {
-  if (platform !== 'ios' || !realAdsEnabled) return 'unavailable';
+  if (platform !== 'ios' || !shouldCollectConsent) return 'unavailable';
   if (currentStatus !== 'not_determined') return currentStatus;
 
   return mapTrackingTransparencyStatus(await runtime.requestTrackingPermissionsAsync?.(), platform);
@@ -142,14 +169,20 @@ async function resolveUmpConsentStatus(
 export async function collectMobileAdsConsentState({
   entitlements,
   googleMobileAdsEnabled = adsConfig.googleMobileAdsEnabled,
+  mobileAdsTestUnitConsentEnabled = adsConfig.mobileAdsTestUnitConsentEnabled,
   realAdsEnabled = adsConfig.realAdsEnabled,
   region = 'unknown',
   runtime,
 }: MobileAdsConsentOptions): Promise<AdConsentState> {
   const platform = normalizeAdConsentPlatform(runtime.platform);
   const normalizedRegion = normalizeAdConsentRegion(region);
-  const shouldCollectConsent =
-    googleMobileAdsEnabled && !isStrictEntitlementFlag(entitlements.adsDisabled) && realAdsEnabled;
+  const shouldCollectConsent = shouldCollectMobileAdsConsent({
+    entitlements,
+    googleMobileAdsEnabled,
+    mobileAdsTestUnitConsentEnabled,
+    platform,
+    realAdsEnabled,
+  });
   const currentTrackingTransparencyStatus = await getCurrentTrackingTransparencyStatus(
     runtime,
     platform,
