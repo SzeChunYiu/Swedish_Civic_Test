@@ -7,7 +7,10 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
-const { assertPurchaseActionInFlightGuard } = require('../scripts/purchase-inflight-guard');
+const {
+  assertPurchaseActionInFlightGuard,
+  assertPurchaseInflightKeyboardSpecGuard,
+} = require('../scripts/purchase-inflight-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -547,6 +550,64 @@ test('ProPaywall: buy and restore actions use the shared in-flight guard contrac
       awaitedCalls: ['await buyProLifetime(', 'await restoreProLifetime('],
       surfaceName: 'ProPaywall',
     }),
+  );
+});
+
+test('ProPaywall: purchase-inflight keyboard spec keeps buy and restore guards', () => {
+  const specSource = read('tests/e2e/purchase-inflight-guard.spec.ts');
+
+  assert.doesNotThrow(() =>
+    assertPurchaseInflightKeyboardSpecGuard(specSource, {
+      cases: ['proPaywallBuy', 'proPaywallRestore'],
+      surfaceName: 'ProPaywall purchase-inflight keyboard E2E spec',
+    }),
+  );
+});
+
+test('ProPaywall: purchase-inflight keyboard spec guard rejects weakened E2E coverage', () => {
+  const specSource = read('tests/e2e/purchase-inflight-guard.spec.ts');
+
+  assert.throws(
+    () =>
+      assertPurchaseInflightKeyboardSpecGuard(
+        specSource.replace(
+          "test('ProPaywall restore suppresses rapid Space keyboard purchase in-flight calls'",
+          "test.skip('ProPaywall restore suppresses rapid Space keyboard purchase in-flight calls'",
+        ),
+        {
+          cases: ['proPaywallRestore'],
+          surfaceName: 'ProPaywall purchase-inflight keyboard E2E spec',
+        },
+      ),
+    /missing ProPaywall restore suppresses rapid Space keyboard purchase in-flight calls/,
+  );
+  assert.throws(
+    () =>
+      assertPurchaseInflightKeyboardSpecGuard(
+        specSource.replace(
+          'await page.keyboard.press(key);\n  await page.keyboard.press(key);',
+          "await action.evaluate((node) => node.dispatchEvent(new KeyboardEvent('keydown')));",
+        ),
+        {
+          cases: ['proPaywallBuy'],
+          surfaceName: 'ProPaywall purchase-inflight keyboard E2E spec',
+        },
+      ),
+    /must use real Playwright keyboard input|must not replace Playwright keyboard input/,
+  );
+  assert.throws(
+    () =>
+      assertPurchaseInflightKeyboardSpecGuard(
+        specSource.replaceAll(
+          "  await expectSingleStoreCall(page, 'proLifetime.restore');\n  expect(consoleErrors.get()).toEqual([]);",
+          '  expect(consoleErrors.get()).toEqual([]);',
+        ),
+        {
+          cases: ['proPaywallRestore'],
+          surfaceName: 'ProPaywall purchase-inflight keyboard E2E spec',
+        },
+      ),
+    /must assert proLifetime\.restore stays exactly one before and after completion/,
   );
 });
 

@@ -10,6 +10,7 @@ const {
   createTsLoader,
   withGlobalProperties,
 } = require('../tests/helpers/monetizationRuntimeHarness.cjs');
+const { assertPurchaseInflightKeyboardSpecGuard } = require('./purchase-inflight-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
 const loadTs = createTsLoader(repoRoot);
@@ -2824,6 +2825,20 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
     /const actionsDisabled = activeAction !== null \|\| purchaseUnavailable;/,
   );
   assert.match(placementCtaSource, /disabled=\{actionsDisabled\}/);
+});
+
+test('purchase-inflight keyboard spec keeps PremiumBanner buy and restore guards', () => {
+  const specSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/e2e/purchase-inflight-guard.spec.ts'),
+    'utf8',
+  );
+
+  assert.doesNotThrow(() =>
+    assertPurchaseInflightKeyboardSpecGuard(specSource, {
+      cases: ['premiumBannerBuy', 'premiumBannerRestore'],
+      surfaceName: 'PremiumBanner purchase-inflight keyboard E2E spec',
+    }),
+  );
 });
 
 test('home remove-ads pricing copy uses store price label with canonical fallback', () => {
