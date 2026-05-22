@@ -153,8 +153,26 @@ test('home monetization ad surfaces use dark theme tokens', async ({ page }) => 
 
 test('profile Remove Ads and Pro surfaces use dark theme tokens', async ({ page }) => {
   await seedDarkEnglishMonetization(page);
-  await page.goto('/profile', { waitUntil: 'networkidle' });
+  await page.goto('/profile?focus=remove-ads', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
+
+  const focusedPaywall = page.getByTestId('remove-ads-paywall');
+  await focusedPaywall.scrollIntoViewIfNeeded();
+  await expect(focusedPaywall).toBeVisible();
+  await expectComputedColor(
+    focusedPaywall,
+    'borderColor',
+    darkColors.focus,
+    'Focused Remove Ads wrapper should use the dark focus token',
+  );
+  await expectComputedColor(
+    page.getByText('Remove Ads is highlighted. Buy and Restore controls are here.', {
+      exact: true,
+    }),
+    'color',
+    darkColors.accent,
+    'Focused Remove Ads cue should use the dark accent token',
+  );
 
   const removeAdsTitle = page.getByRole('heading', { name: 'Remove Ads' }).first();
   await removeAdsTitle.scrollIntoViewIfNeeded();

@@ -331,6 +331,38 @@ test('monetization surfaces resolve semantic colors from the active theme', () =
   }
 });
 
+test('profile Remove Ads focus styles resolve from active theme colors', () => {
+  const source = read('app/(tabs)/profile.tsx');
+
+  assert.match(source, /useThemeColors\(\)/, 'Profile should read the active theme context');
+  assert.match(
+    source,
+    /function createStyles\(themeColors: ThemeColors\)/,
+    'Profile should derive local styles from ThemeColors',
+  );
+  assert.match(
+    source,
+    /const styles = useMemo\(\(\) => createStyles\(themeColors\), \[themeColors\]\)/,
+    'Profile should memoize active-theme styles',
+  );
+  assert.match(
+    source,
+    /removeAdsPaywallFocused:\s*\{[\s\S]*borderColor:\s*themeColors\.focus/,
+    'Focused Remove Ads wrapper should use the active focus token',
+  );
+  assert.match(
+    source,
+    /removeAdsFocusCue:\s*\{[\s\S]*color:\s*themeColors\.accent/,
+    'Focused Remove Ads cue should use the active accent token',
+  );
+  assert.doesNotMatch(
+    source,
+    /import \{[^}]*\bcolors\b[^}]*\} from ['"]\.\.\/\.\.\/lib\/theme['"]/,
+    'Profile must not import the static light colors singleton',
+  );
+  assert.doesNotMatch(source, /\bcolors\./, 'Profile must not read static colors.* values');
+});
+
 test('post-answer reward surfaces resolve semantic colors from the active theme', () => {
   for (const componentPath of PRO_LEARNING_THEME_SURFACES) {
     const source = read(componentPath);

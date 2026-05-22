@@ -27,7 +27,8 @@ import { isProRuntimeScopeEnabled } from '../../lib/monetization/releasePolicy';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, radius, space, typography } from '../../lib/theme';
+import { radius, space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 
 type ProfileCopy = {
   answersPerDay: string;
@@ -165,6 +166,8 @@ export default function Screen() {
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
   const copy = profileCopy[language];
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const removeAdsFocused = focus === 'remove-ads';
   const proRuntimeScopeEnabled = isProRuntimeScopeEnabled();
   const level = calculateLevel(totalXp);
@@ -331,53 +334,55 @@ export default function Screen() {
   );
 }
 
-const styles = StyleSheet.create({
-  statsRow: {
-    flexDirection: 'row',
-    gap: space[1.5],
-  },
-  cardWide: {
-    gap: space[1.5],
-  },
-  streakFreezeCard: {
-    gap: space[1],
-  },
-  streakFreezeText: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  pillRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-  },
-  badgeList: {
-    gap: space[1],
-  },
-  noBadgesText: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  settingsLink: {
-    alignSelf: 'flex-start',
-    minHeight: space[6],
-  },
-  removeAdsPaywall: {
-    gap: space[1],
-  },
-  removeAdsPaywallFocused: {
-    borderColor: colors.accent,
-    borderRadius: radius.card,
-    borderWidth: space.hairline,
-    padding: space[1],
-  },
-  removeAdsFocusCue: {
-    color: colors.accent,
-    fontSize: typography.caption.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    lineHeight: typography.caption.lineHeight,
-    textAlign: 'center',
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    statsRow: {
+      flexDirection: 'row',
+      gap: space[1.5],
+    },
+    cardWide: {
+      gap: space[1.5],
+    },
+    streakFreezeCard: {
+      gap: space[1],
+    },
+    streakFreezeText: {
+      color: themeColors.textSecondary,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+    pillRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1],
+    },
+    badgeList: {
+      gap: space[1],
+    },
+    noBadgesText: {
+      color: themeColors.textMuted,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+    settingsLink: {
+      alignSelf: 'flex-start',
+      minHeight: space[6],
+    },
+    removeAdsPaywall: {
+      gap: space[1],
+    },
+    removeAdsPaywallFocused: {
+      borderColor: themeColors.focus,
+      borderRadius: radius.card,
+      borderWidth: space.hairline,
+      padding: space[1],
+    },
+    removeAdsFocusCue: {
+      color: themeColors.accent,
+      fontSize: typography.caption.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      lineHeight: typography.caption.lineHeight,
+      textAlign: 'center',
+    },
+  });
+}
