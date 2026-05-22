@@ -82,6 +82,21 @@ async function expectTouchTarget(locator: Locator) {
   expect(Math.floor(box?.height ?? 0)).toBeGreaterThanOrEqual(44);
 }
 
+async function expectNoSourceNoteRelationship(control: Locator) {
+  await expect(control).not.toHaveAttribute('aria-controls', /.+/);
+  await expect(control).not.toHaveAttribute('aria-describedby', /.+/);
+}
+
+async function expectSourceNoteRelationship(control: Locator, sourceNote: Locator) {
+  const noteId = await sourceNote.getAttribute('id');
+
+  expect(noteId, 'source note should expose a stable id').not.toBeNull();
+  const resolvedNoteId = noteId ?? '';
+  expect(resolvedNoteId).toMatch(/^provenance-source-note-/);
+  await expect(control).toHaveAttribute('aria-controls', resolvedNoteId);
+  await expect(control).toHaveAttribute('aria-describedby', resolvedNoteId);
+}
+
 for (const labels of localeCases) {
   test(`Practice controls expose aria state and 44px targets on web in ${labels.language}`, async ({
     page,
@@ -147,6 +162,7 @@ for (const labels of localeCases) {
     const provenance = page.getByRole('button', { name: labels.provenance }).first();
     const sourceNote = page.getByText(labels.sourceNote);
     await expect(provenance).toHaveAttribute('aria-expanded', 'false');
+    await expectNoSourceNoteRelationship(provenance);
     await expect(sourceNote).toHaveCount(0);
     await provenance.evaluate((element: HTMLElement) => element.blur());
     await expect(provenance).not.toBeFocused();
@@ -154,28 +170,36 @@ for (const labels of localeCases) {
     await expect(provenance).toHaveAttribute('aria-expanded', 'true');
     await expect(sourceNote).toBeVisible();
     await expect(sourceNote).toHaveAttribute('aria-live', 'polite');
+    await expectSourceNoteRelationship(provenance, sourceNote);
     await provenance.click();
     await expect(provenance).toHaveAttribute('aria-expanded', 'false');
+    await expectNoSourceNoteRelationship(provenance);
     await expect(sourceNote).toHaveCount(0);
     await provenance.evaluate((element: HTMLElement) => element.blur());
     await provenance.focus();
     await expect(provenance).toHaveAttribute('aria-expanded', 'true');
     await expect(sourceNote).toBeVisible();
+    await expectSourceNoteRelationship(provenance, sourceNote);
     await provenance.evaluate((element: HTMLElement) => element.blur());
     await expect(provenance).not.toBeFocused();
     await expect(provenance).toHaveAttribute('aria-expanded', 'false');
+    await expectNoSourceNoteRelationship(provenance);
     await expect(sourceNote).toHaveCount(0);
     await provenance.click();
     await expect(provenance).toHaveAttribute('aria-expanded', 'true');
     await expect(sourceNote).toBeVisible();
+    await expectSourceNoteRelationship(provenance, sourceNote);
     await page.keyboard.press('Enter');
     await expect(provenance).toHaveAttribute('aria-expanded', 'false');
+    await expectNoSourceNoteRelationship(provenance);
     await expect(sourceNote).toHaveCount(0);
     await page.keyboard.press('Enter');
     await expect(provenance).toHaveAttribute('aria-expanded', 'true');
     await expect(sourceNote).toBeVisible();
+    await expectSourceNoteRelationship(provenance, sourceNote);
     await page.keyboard.press('Enter');
     await expect(provenance).toHaveAttribute('aria-expanded', 'false');
+    await expectNoSourceNoteRelationship(provenance);
     await expect(sourceNote).toHaveCount(0);
 
     expect(consoleErrors).toEqual([]);

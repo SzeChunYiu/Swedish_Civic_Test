@@ -33,7 +33,7 @@ test('quiz QuestionCard keeps question text and accessibility summary in parity'
   );
   const helperSource = fs.readFileSync(path.join(repoRoot, 'lib/quiz/questionText.ts'), 'utf8');
 
-  assert.equal(summary.questionCardAccessibilityRulesValidated, 22);
+  assert.equal(summary.questionCardAccessibilityRulesValidated, 25);
   assert.equal(summary.questionCardAccessibilityParityValidated, true);
   assert.match(source, /const questionAccessibilityLabel =/);
   assert.match(source, /language\?: AppLanguage/);
@@ -88,6 +88,20 @@ test('quiz QuestionCard keeps question text and accessibility summary in parity'
     provenanceSource,
     /useEffect\(\(\) =>\s*\{[\s\S]*setSourceNoteVisible\(false\);[\s\S]*\},\s*\[\s*question\?\.id,\s*language\s*\]\s*\);/,
   );
+  assert.match(
+    provenanceSource,
+    /function sourceNoteIdFor\(questionId: string \| undefined, language: AppLanguage\)/,
+  );
+  assert.match(
+    provenanceSource,
+    /const sourceNoteId = useMemo\([\s\S]*\(\) => sourceNoteIdFor\(question\?\.id, language\),[\s\S]*\[question\?\.id, language\],[\s\S]*\);/,
+  );
+  assert.match(provenanceSource, /aria-controls=\{sourceNoteVisible \? sourceNoteId : undefined\}/);
+  assert.match(
+    provenanceSource,
+    /aria-describedby=\{sourceNoteVisible \? sourceNoteId : undefined\}/,
+  );
+  assert.match(provenanceSource, /nativeID=\{sourceNoteId\}/);
   assert.match(
     provenanceSource,
     /sourceNote:\s*\{[\s\S]*backgroundColor: themeColors\.surfaceWarm,[\s\S]*borderColor: themeColors\.border,[\s\S]*borderRadius: radius\.small,[\s\S]*color: themeColors\.textSecondary,[\s\S]*\}/,
@@ -320,6 +334,38 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /QuestionCard missing expanded source note native polite live region for accessibility parity/,
+  );
+});
+
+test('QuestionCard accessibility parity rejects source note without control relationship', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/quiz/ProvenanceBadge.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('        aria-controls={sourceNoteVisible ? sourceNoteId : undefined}\\n', '')
+      .replace('        aria-describedby={sourceNoteVisible ? sourceNoteId : undefined}\\n', '');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-question-card-accessibility');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /QuestionCard missing expanded source note control relationship for accessibility parity/,
   );
 });
 

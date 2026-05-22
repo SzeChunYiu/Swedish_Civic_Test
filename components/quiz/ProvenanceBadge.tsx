@@ -39,6 +39,11 @@ const provenanceBadgeCopy: Record<AppLanguage, ProvenanceBadgeCopy> = {
   },
 };
 
+function sourceNoteIdFor(questionId: string | undefined, language: AppLanguage) {
+  const safeQuestionId = (questionId ?? 'unknown').replace(/[^a-zA-Z0-9_-]/g, '-');
+  return `provenance-source-note-${language}-${safeQuestionId}`;
+}
+
 export function ProvenanceBadge({
   question,
   language = 'sv',
@@ -56,6 +61,10 @@ export function ProvenanceBadge({
   const [focused, setFocused] = useState(false);
   const [hovered, setHovered] = useState(false);
   const focusRevealTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const sourceNoteId = useMemo(
+    () => sourceNoteIdFor(question?.id, language),
+    [question?.id, language],
+  );
 
   const clearFocusRevealTimeout = () => {
     if (focusRevealTimeoutRef.current == null) return;
@@ -125,6 +134,8 @@ export function ProvenanceBadge({
         accessibilityLabel={`${copy.accessibilityPrefix}: ${label}`}
         accessibilityRole="button"
         accessibilityState={{ expanded: sourceNoteVisible }}
+        aria-controls={sourceNoteVisible ? sourceNoteId : undefined}
+        aria-describedby={sourceNoteVisible ? sourceNoteId : undefined}
         aria-expanded={sourceNoteVisible}
         hitSlop={space[1]}
         onBlur={hideSourceNote}
@@ -146,6 +157,7 @@ export function ProvenanceBadge({
           accessibilityLiveRegion="polite"
           accessibilityRole="text"
           aria-live="polite"
+          nativeID={sourceNoteId}
           style={styles.sourceNote}
         >
           {copy.sourceNoteLabel}: {sourceNote}
