@@ -74,7 +74,23 @@ async function expectReachableTarget(locator: Locator) {
 
   const box = await locator.boundingBox();
   expect(box).not.toBeNull();
+  expect(box!.width).toBeGreaterThanOrEqual(44);
   expect(box!.height).toBeGreaterThanOrEqual(44);
+}
+
+async function expectButtonState(
+  locator: Locator,
+  state: { busy: boolean; disabled: boolean },
+  label: string,
+) {
+  await expect(locator, `${label} disabled state`).toHaveAttribute(
+    'aria-disabled',
+    state.disabled ? 'true' : 'false',
+  );
+  await expect(locator, `${label} busy state`).toHaveAttribute(
+    'aria-busy',
+    state.busy ? 'true' : 'false',
+  );
 }
 
 async function seedDailyFreeMockUsed(page: Page, language: Language) {
@@ -173,6 +189,62 @@ for (const language of ['sv', 'en'] as const) {
     await expect(page.getByText(t.activeCount)).toBeVisible();
     await expect(page.getByText(t.timeLeft)).toBeVisible();
     await expect(await readRewardedCredits(page)).toBe(0);
+
+    expect(consoleErrors).toEqual([]);
+  });
+
+  test(`Home rewarded extra exam accessibility states in ${language.toUpperCase()}`, async ({
+    page,
+  }) => {
+    const consoleErrors = collectConsoleErrors(page);
+    const t = copy[language];
+
+    await seedDailyFreeMockUsed(page, language);
+
+    await page.goto('/home', { waitUntil: 'networkidle' });
+    await dismissBlockingModals(page);
+
+    await expect(page.getByRole('heading', { name: t.homeHeading })).toBeVisible();
+
+    const completionButton = page.getByRole('button', { name: t.previewButtonLabel });
+    const unlockButton = page.getByRole('button', { name: t.unlockButtonLabel });
+
+    await expectReachableTarget(completionButton);
+    await expectReachableTarget(unlockButton);
+    await expectButtonState(completionButton, { busy: false, disabled: false }, 'preview button');
+    await expectButtonState(
+      unlockButton,
+      { busy: false, disabled: true },
+      'unlock button before preview',
+    );
+
+    await completionButton.click();
+    await expectButtonState(
+      completionButton,
+      { busy: false, disabled: true },
+      'preview button after completion',
+    );
+    await expectButtonState(
+      unlockButton,
+      { busy: false, disabled: false },
+      'unlock button after preview',
+    );
+
+    const unlockClick = unlockButton.click();
+    await expect(unlockButton, 'unlock button should expose a busy transition').toHaveAttribute(
+      'aria-busy',
+      'true',
+    );
+    await unlockClick;
+
+    await expect(page.getByText(t.unlockedStatus)).toBeVisible();
+    const unlockedLink = page.getByRole('link', { name: t.unlockedCtaLabel });
+    await expectReachableTarget(unlockedLink);
+    await unlockedLink.click();
+
+    await expect(page).toHaveURL(/\/exam$/);
+    await dismissBlockingModals(page);
+    await expect(page.getByRole('heading', { name: t.examHeading }).first()).toBeVisible();
 
     expect(consoleErrors).toEqual([]);
   });
