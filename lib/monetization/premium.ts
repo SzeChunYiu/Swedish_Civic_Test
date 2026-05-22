@@ -30,7 +30,8 @@ export const PRO_LIFETIME_ENTITLEMENTS: ProTierEntitlements = {
   unlimitedMockExams: true,
   fullMistakeReview: true,
   spacedRepetition: true,
-  nativeLangExplanations: true,
+  // Deferred until a production explanation-language selector exists.
+  nativeLangExplanations: false,
   customStudyPlan: true,
   notesExport: true,
   // Fail closed until a production route renders a real local pass-readiness projection.
@@ -83,9 +84,9 @@ export function unionEntitlements(
       isStrictEntitlementFlag(a.fullMistakeReview) || isStrictEntitlementFlag(b.fullMistakeReview),
     spacedRepetition:
       isStrictEntitlementFlag(a.spacedRepetition) || isStrictEntitlementFlag(b.spacedRepetition),
-    nativeLangExplanations:
-      isStrictEntitlementFlag(a.nativeLangExplanations) ||
-      isStrictEntitlementFlag(b.nativeLangExplanations),
+    // The optional schema field exists for the planned feature, but no shipped route
+    // fulfills it yet, so stale stored/referral inputs must not re-enable it.
+    nativeLangExplanations: false,
     customStudyPlan:
       isStrictEntitlementFlag(a.customStudyPlan) || isStrictEntitlementFlag(b.customStudyPlan),
     notesExport: isStrictEntitlementFlag(a.notesExport) || isStrictEntitlementFlag(b.notesExport),
