@@ -34,7 +34,7 @@ const privacyCopy: Record<AppLanguage, PrivacyRouteCopy> = {
         title: 'Dina rättigheter enligt GDPR',
       },
       adsAndPurchases: {
-        body: 'Gratisappen finansieras med annonser på studieskärmar via Google Mobile Ads. Tidsatta provskärmar är annonsfria. Ta bort annonser är ett engångsköp för 29 SEK som inte förbrukas; köpet gör att annonser inte visas på den här enheten och kan återställas via appbutiken.',
+        body: 'Gratisappen finansieras med annonser på studieskärmar via Google Mobile Ads. Tidsatta provskärmar är annonsfria. Ta bort annonser är ett engångsköp för 29 SEK som inte förbrukas; köpet gör att annonser inte visas på den här enheten och kan återställas via appbutiken. För att återställa eller kontrollera köpet sparar appen en lokal köpstatuspost som kan innehålla appbutikens produkt-id, köptoken eller transaktions-id och tidpunkten när kvittot kontrollerades.',
         title: 'Annonser och köp',
       },
       adConsent: {
@@ -63,7 +63,7 @@ const privacyCopy: Record<AppLanguage, PrivacyRouteCopy> = {
         title: 'Your rights under GDPR',
       },
       adsAndPurchases: {
-        body: 'The free app is ad-supported on study screens through Google Mobile Ads. Timed mock exam screens stay ad-free. Remove Ads is a one-time, non-consumable purchase for 29 SEK that turns off ads on this device and can be restored through the app store.',
+        body: 'The free app is ad-supported on study screens through Google Mobile Ads. Timed mock exam screens stay ad-free. Remove Ads is a one-time, non-consumable purchase for 29 SEK that turns off ads on this device and can be restored through the app store. To restore or revalidate the purchase, the app stores a local purchase-status record that can include the store product ID, purchase token or transaction ID, and receipt-validation timestamp.',
         title: 'Ads and purchases',
       },
       adConsent: {

@@ -2789,10 +2789,11 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
       'const language = useSettingsStore((state) => state.language);',
       'const copy = privacyCopy[language];',
       'Integritetspolicy',
-      'Konto är valfritt',
+      'Inget konto krävs',
+      'köptoken eller transaktions-id',
       'Privacy policy',
-      'Account optional',
-      'Supabase and Google sign-in',
+      'No account required',
+      'purchase token or transaction ID',
     ],
     sectionPatterns: [
       /<LegalSection\s+title=\{copy\.sections\.noAccountRequired\.title\}[\s\S]*?>/,
@@ -15750,20 +15751,20 @@ function validateLegalRouteHeaderParity() {
     }
 
     if (expectedRoute.file === 'app/privacy.tsx') {
-      const staleNoAccountPrivacyPatterns = [
-        /No account (?:is )?required/i,
-        /without sign-in, email address, phone number, or profile registration/i,
-        /registered profile details/i,
-        /Inget konto krävs/i,
-        /kräver inget konto/i,
-        /profilregistrering/i,
-      ];
-      for (const pattern of staleNoAccountPrivacyPatterns) {
-        if (pattern.test(routeSource)) {
-          reject(
-            `app/privacy.tsx must use the optional-account v1.1 privacy contract, not stale no-account copy matching ${pattern}`,
-          );
-        }
+      if (!/köptoken eller transaktions-id/.test(routeSource)) {
+        reject(
+          'app/privacy.tsx Swedish Remove Ads privacy copy must disclose local receipt metadata',
+        );
+      }
+      if (!/purchase token or transaction ID/.test(routeSource)) {
+        reject(
+          'app/privacy.tsx English Remove Ads privacy copy must disclose local receipt metadata',
+        );
+      }
+      if (!/receipt-validation timestamp/.test(routeSource)) {
+        reject(
+          'app/privacy.tsx Remove Ads privacy copy must disclose receipt-validation timestamp',
+        );
       }
 
       const swedishPrivacyBlock = routeSource.match(
