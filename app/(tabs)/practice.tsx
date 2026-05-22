@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'expo-router';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Link, useLocalSearchParams } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AudioButton } from '../../components/learning/AudioButton';
@@ -28,6 +28,7 @@ import {
   stopSpeech,
 } from '../../lib/audio/speak';
 import { filterQuestionsByProvenance } from '../../lib/content/provenance';
+import { buildDailyChallenge } from '../../lib/learning/dailyChallenge';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
 import {
@@ -56,7 +57,10 @@ type PracticeHeaderControl = 'bookmark' | 'supplementary' | 'sources';
 type PracticeScope =
   | { type: 'all' }
   | { type: 'quick'; limit: number }
-  | { type: 'chapter'; chapterId: string };
+  | { type: 'chapter'; chapterId: string }
+  | { type: 'challenge'; questionIds: string[] };
+
+type PracticeRouteLaunchMode = 'challenge' | 'quick';
 
 type PracticeCopy = {
   badge: string;
@@ -201,8 +205,22 @@ function getQuestionsForPracticeScope(
 ): PracticeQuestion[] {
   if (!practiceScope || practiceScope.type === 'all') return questionBank;
   if (practiceScope.type === 'quick') return questionBank.slice(0, practiceScope.limit);
+  if (practiceScope.type === 'challenge') {
+    const questionsById = new Map(questionBank.map((question) => [question.id, question]));
+    return practiceScope.questionIds.flatMap((questionId) => {
+      const question = questionsById.get(questionId);
+      return question ? [question] : [];
+    });
+  }
 
   return questionBank.filter((question) => question.chapterId === practiceScope.chapterId);
+}
+
+function normalizePracticeRouteLaunchMode(
+  value: string | string[] | undefined,
+): PracticeRouteLaunchMode | null {
+  const rawValue = Array.isArray(value) ? value[0] : value;
+  return rawValue === 'challenge' || rawValue === 'quick' ? rawValue : null;
 }
 
 function getLocalizedChapterName(chapter: Chapter, language: AppLanguage): string {
@@ -233,6 +251,8 @@ function getChapterAccuracy(questionBank: PracticeQuestion[], questionProgress: 
 }
 
 export default function Screen() {
+  const { mode } = useLocalSearchParams<{ mode?: string | string[] }>();
+  const consumedRouteLaunchModeRef = useRef<PracticeRouteLaunchMode | null>(null);
   const answerXpAwardedKey = usePracticeSessionStore((state) => state.answerXpAwardedKey);
   const activeQuestionId = usePracticeSessionStore((state) => state.activeQuestionId);
   const markAnswerXpAwarded = usePracticeSessionStore((state) => state.markAnswerXpAwarded);
@@ -286,6 +306,11 @@ export default function Screen() {
     () => filterQuestionsByProvenance(questions, { includeSupplementary }),
     [includeSupplementary],
   );
+  const dailyChallenge = useMemo(
+    () => buildDailyChallenge({ bank: filteredQuestions }),
+    [filteredQuestions],
+  );
+  const routeLaunchMode = normalizePracticeRouteLaunchMode(mode);
   const practiceQuestionBank = useMemo(
     () => getQuestionsForPracticeScope(filteredQuestions, practiceScope),
     [filteredQuestions, practiceScope],
@@ -355,6 +380,23 @@ export default function Screen() {
   useEffect(() => {
     setSelectedConfidenceRating(null);
   }, [question?.id]);
+
+  useEffect(() => {
+    if (!routeLaunchMode || consumedRouteLaunchModeRef.current === routeLaunchMode) return;
+
+    const nextScope: PracticeScope =
+      routeLaunchMode === 'challenge'
+        ? { type: 'challenge', questionIds: dailyChallenge.questionIds }
+        : { type: 'quick', limit: 10 };
+    const nextQuestionBank = getQuestionsForPracticeScope(filteredQuestions, nextScope);
+    if (nextQuestionBank.length === 0) return;
+
+    consumedRouteLaunchModeRef.current = routeLaunchMode;
+    startSession(nextQuestionBank[0]?.id ?? null);
+    setAboutSourcesOpen(false);
+    setSelectedConfidenceRating(null);
+    setPracticeScope(nextScope);
+  }, [dailyChallenge.questionIds, filteredQuestions, routeLaunchMode, startSession]);
 
   const startPracticeScope = (nextScope: PracticeScope) => {
     const nextQuestionBank = getQuestionsForPracticeScope(filteredQuestions, nextScope);
