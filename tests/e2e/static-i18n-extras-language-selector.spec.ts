@@ -191,6 +191,12 @@ const supportMetadataEnglishFallbacks: Record<(typeof supportMetadataValueKeys)[
   'support.meta2.v': /English or Swedish/i,
   'support.meta3.v': /^Free$/i,
 };
+const renderedFooterAppLinks = [
+  ['footer.app.1', '#/'],
+  ['footer.app.2', '#/practice'],
+  ['footer.app.3', '#/ebook'],
+  ['footer.app.4', '#/mock'],
+] as const;
 
 type StaticSite = {
   baseUrl: string;
@@ -365,6 +371,15 @@ async function expectNoOutcomeSlogans(page: Page) {
 
   for (const pattern of forbiddenOutcomeSlogans) {
     expect(visibleText).not.toMatch(pattern);
+  }
+}
+
+async function expectRenderedFooterAppLinks(page: Page, locale: ExtraLocale) {
+  for (const [key, href] of renderedFooterAppLinks) {
+    const selector = `footer a[data-i18n="${key}"]`;
+
+    await expectDictionaryText(page, locale, key, selector);
+    await expect(page.locator(selector)).toHaveAttribute('href', href);
   }
 }
 
@@ -631,6 +646,7 @@ test('static Settings selects extra languages with localized legal and Support m
     await expectDictionaryText(page, locale, 'consent.title');
     await expectDictionaryText(page, locale, 'consent.min');
     await expectDictionaryText(page, locale, 'footer.t1');
+    await expectRenderedFooterAppLinks(page, locale);
     expect(await dictionaryText(page, locale, 'footer.app.5')).not.toMatch(/Roadmap/i);
     await expectDictionaryText(page, locale, 'footer.honest.p');
     await assertLongFormRouteCopy(page, locale);
