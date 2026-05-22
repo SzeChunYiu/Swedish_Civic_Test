@@ -75,46 +75,28 @@ function assertSearchRouteAccessibilityParity(source) {
   assert.match(source, /aria-describedby=\{questionSummaryId\}/);
   assert.match(source, /accessibilityLabel=\{copy\.openQuestionAccessibilityLabel\(title\)\}/);
   assert.match(source, /href=\{getQuestionResultHref\(result\.question\.id, trimmedQuery\)\}/);
-  assert.match(source, /accessibilityRole="link"/);
-  assert.match(source, /function SearchRouteLink\(/);
-  assert.match(source, /Platform\.OS === 'web'/);
-  assert.match(source, /onMouseEnter:\s*\(\) => \{/);
-  assert.match(source, /onMouseLeave:\s*\(\) => \{/);
-  assert.match(source, /onMouseDown:\s*\(\) => \{/);
-  assert.match(source, /onMouseUp:\s*\(\) => \{/);
-  assert.match(source, /onFocus:\s*\(\) => \{/);
-  assert.match(source, /onPressIn=\{\(\) => \{/);
-  assert.match(source, /styles\.routeLinkInteractive/);
-  assert.match(source, /styles\.routeLinkPressed/);
-  assert.match(source, /const reduceMotion = useReducedMotion\(\);/);
-  assert.match(
-    source,
-    /isFocused \|\| isHovered[\s\S]*styles\.routeLinkInteractiveReducedMotion[\s\S]*styles\.routeLinkInteractive/,
-  );
-  assert.match(
-    source,
-    /isPressed[\s\S]*styles\.routeLinkPressedReducedMotion[\s\S]*styles\.routeLinkPressed/,
-  );
-  assert.match(source, /minHeight:\s*space\[6\]/);
+  assert.match(source, /import \{ RouteLink \} from '\.\.\/components\/ui\/RouteLink';/);
+  assert.doesNotMatch(source, /function SearchRouteLink\(/);
+  assert.doesNotMatch(source, /Platform\.OS === 'web'/);
+  assert.doesNotMatch(source, /useReducedMotion/);
+  assert.match(source, /searchRouteLink: \{/);
   assert.match(source, /minWidth:\s*space\[6\]/);
-  assert.match(source, /transform:\s*\[\{ scale: motion\.hoverScale \}\]/);
-  assert.match(source, /transform:\s*\[\{ scale: motion\.pressedScale \}\]/);
   assert.match(
     source,
-    /<SearchRouteLink[\s\S]*aria-describedby=\{termSummaryId\}[\s\S]*linkStyle=\{styles\.chapterLink\}/,
+    /<RouteLink[\s\S]*aria-describedby=\{termSummaryId\}[\s\S]*style=\{\[styles\.searchRouteLink, styles\.chapterLink\]\}[\s\S]*variant="secondary"/,
   );
   assert.match(
     source,
-    /<SearchRouteLink[\s\S]*aria-describedby=\{questionSummaryId\}[\s\S]*linkStyle=\{styles\.questionLink\}/,
+    /<RouteLink[\s\S]*aria-describedby=\{questionSummaryId\}[\s\S]*style=\{\[styles\.searchRouteLink, styles\.questionLink\]\}[\s\S]*variant="secondary"/,
   );
   assert.match(
     source,
-    /<SearchRouteLink[\s\S]*accessibilityLabel=\{copy\.browseChaptersAccessibilityLabel\}[\s\S]*linkStyle=\{styles\.backLink\}/,
+    /<RouteLink[\s\S]*accessibilityLabel=\{copy\.browseChaptersAccessibilityLabel\}[\s\S]*style=\{\[styles\.searchRouteLink, styles\.backLink\]\}[\s\S]*variant="text"/,
   );
   assert.doesNotMatch(
     source,
     /<Link[\s\S]{0,220}style=\{styles\.(?:chapterLink|questionLink|backLink)\}/,
-    'Search route links must use SearchRouteLink feedback wrapper instead of direct Link styling',
+    'Search route links must use shared RouteLink instead of direct Link styling',
   );
   assert.match(source, /accessibilitySummaryText/);
   assert.match(source, /Övningsfrågor/);
@@ -175,13 +157,11 @@ test('search route accessibility parity rejects dropped term summary text', () =
   );
 });
 
-test('search route accessibility parity rejects missing route link pressed feedback', () => {
-  const mutatedSource = readSearchRoute()
-    .replace(/    routeLinkInteractive: \{[\s\S]*?    \},\n/, '')
-    .replace(/    routeLinkPressed: \{[\s\S]*?    \},\n/, '');
-
-  assert.throws(
-    () => assertSearchRouteAccessibilityParity(mutatedSource),
-    /routeLinkInteractive|routeLinkPressed/,
+test('search route accessibility parity rejects dropping shared RouteLink', () => {
+  const mutatedSource = readSearchRoute().replace(
+    "import { RouteLink } from '../components/ui/RouteLink';\n",
+    '',
   );
+
+  assert.throws(() => assertSearchRouteAccessibilityParity(mutatedSource), /RouteLink/);
 });

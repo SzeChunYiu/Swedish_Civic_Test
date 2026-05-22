@@ -50,6 +50,9 @@ test('RouteLink preserves web anchors, keyboard feedback, caller handlers, and r
   assert.match(source, /export function RouteLink\(/);
   assert.match(source, /<Link\s/);
   assert.doesNotMatch(source, /<Link[^>]*\basChild\b/);
+  assert.match(source, /'aria-describedby'\?: string;/);
+  assert.match(source, /'aria-describedby': describedBy,/);
+  assert.match(source, /aria-describedby=\{describedBy\}/);
   assert.match(source, /accessibilityRole="link"/);
   assert.match(source, /keyboardActivationKeys = new Set\(\['Enter', ' ', 'Space', 'Spacebar'\]\)/);
   assert.match(source, /const reduceMotion = useReducedMotion\(\);/);

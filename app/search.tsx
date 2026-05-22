@@ -1,13 +1,12 @@
 import type { Href } from 'expo-router';
-import { Link, useLocalSearchParams, useRouter } from 'expo-router';
-import type { ReactNode } from 'react';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Platform, StyleSheet, Text, TextInput, useColorScheme, View } from 'react-native';
-import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
+import { StyleSheet, Text, TextInput, useColorScheme, View } from 'react-native';
 
 import { ProvenanceBadge } from '../components/quiz/ProvenanceBadge';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/Button';
+import { RouteLink } from '../components/ui/RouteLink';
 import { ScreenShell, SectionHeader } from '../components/ui/ScreenShell';
 import { chapters } from '../data/chapters';
 import { glossaryTerms } from '../data/glossary';
@@ -24,97 +23,15 @@ import {
   getQuestionSearchTitle,
   searchQuestions,
 } from '../lib/search/questionSearch';
-import { useReducedMotion } from '../lib/motion/useReducedMotion';
 import { useAccessibilityStore } from '../lib/storage/accessibilityStore';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
-import { colorsForThemeMode, motion, radius, space, typography } from '../lib/theme';
+import { colorsForThemeMode, radius, space, typography } from '../lib/theme';
 import type { ThemeColors } from '../lib/theme';
 
 type SearchRouteParams = {
   q?: string | string[];
   query?: string | string[];
 };
-
-type SearchRouteStyles = ReturnType<typeof createStyles>;
-
-type SearchRouteLinkProps = {
-  'aria-describedby'?: string;
-  accessibilityLabel: string;
-  children: ReactNode;
-  href: Href;
-  linkStyle: StyleProp<TextStyle | ViewStyle>;
-  styles: SearchRouteStyles;
-};
-
-function SearchRouteLink({
-  'aria-describedby': describedBy,
-  accessibilityLabel,
-  children,
-  href,
-  linkStyle,
-  styles,
-}: SearchRouteLinkProps) {
-  const [isFocused, setIsFocused] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
-  const [isPressed, setIsPressed] = useState(false);
-  const reduceMotion = useReducedMotion();
-  const webInteractionHandlers =
-    Platform.OS === 'web'
-      ? {
-          onBlur: () => {
-            setIsFocused(false);
-          },
-          onFocus: () => {
-            setIsFocused(true);
-          },
-          onMouseEnter: () => {
-            setIsHovered(true);
-          },
-          onMouseLeave: () => {
-            setIsHovered(false);
-            setIsPressed(false);
-          },
-          onMouseDown: () => {
-            setIsPressed(true);
-          },
-          onMouseUp: () => {
-            setIsPressed(false);
-          },
-        }
-      : {};
-
-  return (
-    <Link
-      {...webInteractionHandlers}
-      aria-describedby={describedBy}
-      accessibilityLabel={accessibilityLabel}
-      accessibilityRole="link"
-      href={href}
-      onPressIn={() => {
-        setIsPressed(true);
-      }}
-      onPressOut={() => {
-        setIsPressed(false);
-      }}
-      style={[
-        styles.routeLinkBase,
-        linkStyle,
-        isFocused || isHovered
-          ? reduceMotion
-            ? styles.routeLinkInteractiveReducedMotion
-            : styles.routeLinkInteractive
-          : null,
-        isPressed
-          ? reduceMotion
-            ? styles.routeLinkPressedReducedMotion
-            : styles.routeLinkPressed
-          : null,
-      ]}
-    >
-      {children}
-    </Link>
-  );
-}
 
 function getQuestionResultHref(questionId: string, query: string): Href {
   const trimmedQuery = query.trim();
@@ -270,15 +187,15 @@ export default function SearchScreen() {
                     <Text style={styles.termSubtitle}>{secondaryTerm}</Text>
                   </View>
                   {term.chapterId && chapterName ? (
-                    <SearchRouteLink
+                    <RouteLink
                       aria-describedby={termSummaryId}
                       accessibilityLabel={copy.openChapterAccessibilityLabel(chapterName)}
                       href={`/chapter/${term.chapterId}`}
-                      linkStyle={styles.chapterLink}
-                      styles={styles}
+                      style={[styles.searchRouteLink, styles.chapterLink]}
+                      variant="secondary"
                     >
                       {chapterName}
-                    </SearchRouteLink>
+                    </RouteLink>
                   ) : null}
                 </View>
                 <Text style={styles.explanation}>{explanation}</Text>
@@ -353,15 +270,15 @@ export default function SearchScreen() {
                           <Text style={styles.questionMeta}>{chapterName}</Text>
                         ) : null}
                       </View>
-                      <SearchRouteLink
+                      <RouteLink
                         aria-describedby={questionSummaryId}
                         accessibilityLabel={copy.openQuestionAccessibilityLabel(title)}
                         href={getQuestionResultHref(result.question.id, trimmedQuery)}
-                        linkStyle={styles.questionLink}
-                        styles={styles}
+                        style={[styles.searchRouteLink, styles.questionLink]}
+                        variant="secondary"
                       >
                         {copy.openQuestion}
-                      </SearchRouteLink>
+                      </RouteLink>
                     </View>
                     <Text style={styles.explanation}>{excerpt}</Text>
                     <ProvenanceBadge
@@ -393,14 +310,14 @@ export default function SearchScreen() {
         </View>
       ) : null}
 
-      <SearchRouteLink
+      <RouteLink
         accessibilityLabel={copy.browseChaptersAccessibilityLabel}
         href="/(tabs)/learn"
-        linkStyle={styles.backLink}
-        styles={styles}
+        style={[styles.searchRouteLink, styles.backLink]}
+        variant="text"
       >
         {copy.browseChapters}
-      </SearchRouteLink>
+      </RouteLink>
     </ScreenShell>
   );
 }
@@ -585,35 +502,11 @@ function getRouteSearchQuery(params: SearchRouteParams) {
 
 function createStyles(themeColors: ThemeColors) {
   return StyleSheet.create({
-    routeLinkBase: {
-      alignItems: 'center',
-      borderColor: 'transparent',
+    searchRouteLink: {
       borderRadius: radius.pill,
-      borderWidth: space.hairline,
-      justifyContent: 'center',
-      minHeight: space[6],
       minWidth: space[6],
       paddingHorizontal: space[1.25],
       paddingVertical: space[0.75],
-      textDecorationLine: 'none',
-    },
-    routeLinkInteractive: {
-      backgroundColor: themeColors.focusSoft,
-      borderColor: themeColors.focus,
-      transform: [{ scale: motion.hoverScale }],
-    },
-    routeLinkInteractiveReducedMotion: {
-      backgroundColor: themeColors.focusSoft,
-      borderColor: themeColors.focus,
-    },
-    routeLinkPressed: {
-      backgroundColor: themeColors.focusSoft,
-      borderColor: themeColors.accentActive,
-      transform: [{ scale: motion.pressedScale }],
-    },
-    routeLinkPressedReducedMotion: {
-      backgroundColor: themeColors.focusSoft,
-      borderColor: themeColors.accentActive,
     },
     searchLabel: {
       color: themeColors.text,
@@ -688,17 +581,11 @@ function createStyles(themeColors: ThemeColors) {
       lineHeight: typography.body.lineHeight,
     },
     chapterLink: {
-      backgroundColor: themeColors.surfaceMuted,
       borderColor: themeColors.focus,
-      borderRadius: radius.pill,
-      borderWidth: space.hairline,
       color: themeColors.text,
       fontFamily: typography.navButton.fontFamily,
       fontSize: typography.navButton.fontSize,
       fontWeight: typography.navButton.fontWeight,
-      paddingHorizontal: space[1.25],
-      paddingVertical: space[0.75],
-      textDecorationLine: 'none',
     },
     questionSection: {
       gap: space[1.5],
@@ -752,17 +639,11 @@ function createStyles(themeColors: ThemeColors) {
       lineHeight: typography.caption.lineHeight,
     },
     questionLink: {
-      backgroundColor: themeColors.surfaceMuted,
       borderColor: themeColors.accent,
-      borderRadius: radius.pill,
-      borderWidth: space.hairline,
       color: themeColors.text,
       fontFamily: typography.navButton.fontFamily,
       fontSize: typography.navButton.fontSize,
       fontWeight: typography.navButton.fontWeight,
-      paddingHorizontal: space[1.25],
-      paddingVertical: space[0.75],
-      textDecorationLine: 'none',
     },
     emptyTitle: {
       color: themeColors.text,
@@ -776,7 +657,6 @@ function createStyles(themeColors: ThemeColors) {
       fontFamily: typography.navButton.fontFamily,
       fontSize: typography.navButton.fontSize,
       fontWeight: typography.navButton.fontWeight,
-      textDecorationLine: 'none',
     },
   });
 }
