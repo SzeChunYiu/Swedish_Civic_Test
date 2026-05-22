@@ -17,7 +17,7 @@ type LegalExternalLinkFixture = {
   sectionTitle: string;
   title: string;
   url: string;
-  visibleLabel?: string;
+  visibleLabel: string;
 };
 
 type LegalSourceMaterialLinkLayoutFixture = {
@@ -569,6 +569,7 @@ for (const viewport of legalSourceMaterialViewports) {
           `${fixture.retrievedLabel}: ${SOURCE_MATERIAL_LINK_RETRIEVED_DATE}`,
           `${fixture.urlLabel}: ${UHR_EDUCATION_MATERIAL_URL}`,
         ]);
+        await expect(link).not.toContainText(fixture.actionLabel);
 
         const linkBox = await expectRenderedBox(
           link,
@@ -607,7 +608,8 @@ for (const fixture of legalExternalLinkFixtures) {
 
     await expect(body).toBeVisible();
     await expect(link).toBeVisible();
-    await expect(link).toContainText(fixture.visibleLabel ?? fixture.actionLabel);
+    await expect(link).toContainText(fixture.visibleLabel);
+    await expect(link).not.toContainText(fixture.actionLabel);
     await expect(link).toContainText(fixture.url);
     await expect(link).toHaveAttribute('href', fixture.url);
     await expect(link).toHaveAttribute('target', '_blank');

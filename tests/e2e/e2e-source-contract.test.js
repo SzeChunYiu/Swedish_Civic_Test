@@ -56,10 +56,7 @@ function assertPortCanBind(port) {
 
 function waitForServerReady(
   child,
-  {
-    readyText = 'Serving dist-web on http://127.0.0.1:4173',
-    serverName = 'dist-web server',
-  } = {},
+  { readyText = 'Serving dist-web on http://127.0.0.1:4173', serverName = 'dist-web server' } = {},
 ) {
   return new Promise((resolve, reject) => {
     let output = '';
@@ -581,6 +578,26 @@ test('static Home chapter 2 civic-term e2e keeps a focused grep target', () => {
     /i18nSelector\('chap\.2\.d'\)/,
     'static Home civic-term e2e should inspect the rendered chapter 2 description element',
   );
+});
+
+test('legal external-link e2e fixtures preserve visible-title and action-label split', () => {
+  const source = readRelative('legal-external-links.spec.ts');
+
+  assert.match(
+    source,
+    /type LegalExternalLinkFixture = \{[\s\S]*actionLabel: string;[\s\S]*visibleLabel: string;[\s\S]*\}/,
+    'legal external-link fixtures should require both action and visible labels',
+  );
+  assert.match(source, /visibleLabel: 'UHR: Utbildningsmaterial om det svenska samhället'/);
+  assert.match(source, /visibleLabel: 'UHR: Study material about Swedish society'/);
+  assert.match(source, /visibleLabel: 'UHR: Om medborgarskapsprovet'/);
+  assert.match(source, /visibleLabel: 'UHR: About the citizenship test'/);
+  assert.match(source, /visibleLabel: 'Offentlig supportsida'/);
+  assert.match(source, /visibleLabel: 'Public support page'/);
+  assert.match(source, /getByRole\('link', \{ name: fixture\.actionLabel \}\)/);
+  assert.match(source, /await expect\(link\)\.toContainText\(fixture\.visibleLabel\)/);
+  assert.match(source, /await expect\(link\)\.not\.toContainText\(fixture\.actionLabel\)/);
+  assert.doesNotMatch(source, /visibleLabel \?\? fixture\.actionLabel/);
 });
 
 test('static site network specs share one external request trap helper', () => {
