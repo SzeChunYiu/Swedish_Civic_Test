@@ -494,6 +494,32 @@ test('mastery blends accuracy, coverage, and recency', () => {
   assert.deepEqual(findWeakChapterIds(questions, progress, 0.7), ['ch01']);
 });
 
+test('weak chapter selector reuses a prebuilt chapter question index', () => {
+  const { buildChapterQuestionIndex, calculateChapterMastery, findWeakChapterIds } =
+    loadAllTs('lib/learning/mastery.ts');
+
+  const questions = [
+    { id: 'q1', chapterId: 'ch01' },
+    { id: 'q2', chapterId: 'ch01' },
+    { id: 'q3', chapterId: 'ch02' },
+    { id: 'q4', chapterId: 'ch02' },
+  ];
+  const progress = {
+    q1: { correctCount: 0, seenCount: 2, wrongCount: 2 },
+    q2: { correctCount: 1, seenCount: 1, wrongCount: 0 },
+    q3: { correctCount: 3, seenCount: 3, wrongCount: 0 },
+  };
+  const chapterQuestionIndex = buildChapterQuestionIndex(questions);
+
+  assert.deepEqual(Object.keys(chapterQuestionIndex), ['ch01', 'ch02']);
+  assert.deepEqual(
+    chapterQuestionIndex.ch01.map((question) => question.id),
+    ['q1', 'q2'],
+  );
+  assert.equal(calculateChapterMastery('ch01', questions, progress, chapterQuestionIndex), 0.67);
+  assert.deepEqual(findWeakChapterIds(questions, progress, 0.7, chapterQuestionIndex), ['ch01']);
+});
+
 test('mastery ignores malformed runtime counters and unsafe thresholds', () => {
   const { calculateChapterMastery, calculateMastery, findWeakChapterIds } =
     loadAllTs('lib/learning/mastery.ts');
@@ -687,6 +713,51 @@ test('readiness adapter can reuse precomputed question-bank indexes', () => {
   assert.equal(precomputedIndexes.components.coverage, 0.5);
 });
 
+test('readiness adapter accepts a prebuilt question bank index', () => {
+  const { buildReadinessQuestionBankIndex, computeReadinessFromQuestionProgress } = loadAllTs(
+    'lib/learning/readiness.ts',
+  );
+  const questions = [
+    { id: 'q1', chapterId: 'ch01' },
+    { id: 'q2', chapterId: 'ch02' },
+  ];
+  const chapters = [
+    { id: 'ch01', questionCount: 1 },
+    { id: 'ch02', questionCount: 1 },
+  ];
+  const questionProgress = {
+    q1: {
+      seenCount: 1,
+      correctCount: 1,
+      wrongCount: 0,
+      lastAnsweredAt: '2026-05-18T10:00:00.000Z',
+    },
+    q999: {
+      seenCount: 20,
+      correctCount: 20,
+      wrongCount: 0,
+      lastAnsweredAt: '2026-05-18T10:00:00.000Z',
+    },
+  };
+  const commonInput = {
+    questionProgress,
+    questions,
+    chapters,
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  };
+  const questionBankIndex = buildReadinessQuestionBankIndex(questions);
+  const indexed = computeReadinessFromQuestionProgress({
+    ...commonInput,
+    questionBankIndex,
+  });
+  const unindexed = computeReadinessFromQuestionProgress(commonInput);
+
+  assert.equal(questionBankIndex.questionChapterIndex.q1, 'ch01');
+  assert.equal(questionBankIndex.questionIdsInBank.has('q999'), false);
+  assert.deepEqual(indexed, unindexed);
+  assert.equal(indexed.components.coverage, 0.5);
+});
+
 test('weak chapter selector builds per-chapter totals without repeated full-bank filters', () => {
   const { calculateChapterMastery, findWeakChapterIds } = loadAllTs('lib/learning/mastery.ts');
   const source = fs.readFileSync(path.join(repoRoot, 'lib/learning/mastery.ts'), 'utf8');
@@ -706,7 +777,8 @@ test('weak chapter selector builds per-chapter totals without repeated full-bank
   assert.equal(calculateChapterMastery('missing', questions, progress), 0);
   assert.deepEqual(findWeakChapterIds(questions, progress, 0.8), ['weak']);
   assert.match(source, /function chapterMasteryTotalsById\(/);
-  assert.match(
+  assert.match(source, /chapterMasteryTotalsById\(chapterQuestionIndex, progress\)/);
+  assert.doesNotMatch(
     source,
     /for \(const \[chapterId, totals\] of chapterMasteryTotalsById\(questions, progress\)\)/,
   );
