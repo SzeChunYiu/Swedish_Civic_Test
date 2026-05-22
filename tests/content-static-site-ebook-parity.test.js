@@ -183,7 +183,7 @@ function getStaticSiteLanguages() {
   );
 }
 
-function createEbookHarness() {
+function createEbookHarness(ebookSource = readSiteFile('site/ebook.js')) {
   const chapterIds = getExpectedChapterIds();
   const reader = { innerHTML: '', scrollTop: 0 };
   const navAnchors = chapterIds.map((id) => ({
@@ -228,7 +228,7 @@ function createEbookHarness() {
   };
   context.globalThis = context;
 
-  vm.runInNewContext(readSiteFile('site/ebook.js'), context, { filename: 'site/ebook.js' });
+  vm.runInNewContext(ebookSource, context, { filename: 'site/ebook.js' });
 
   return { localStorage, location, reader, window };
 }
@@ -239,6 +239,30 @@ function renderChapter(harness, lang, chapterId) {
   harness.reader.innerHTML = '';
   harness.window.smtEbookRender();
   return harness.reader.innerHTML;
+}
+
+function sourceWithExportedPracticeLinks() {
+  const source = readSiteFile('site/ebook.js');
+  const marker = '  function practiceLink(id) {';
+
+  assert.match(source, /const PRACTICE_LINKS = \{/);
+  assert.ok(
+    source.includes(marker),
+    'site/ebook.js should define practiceLink after PRACTICE_LINKS',
+  );
+
+  return source.replace(marker, `  window.__TEST_PRACTICE_LINKS__ = PRACTICE_LINKS;\n${marker}`);
+}
+
+function renderedPrimaryPracticeLink(html) {
+  const match = html.match(/<a class="btn btn--gold btn--sm" href="([^"]+)">([^<]+) →<\/a>/);
+
+  assert.ok(
+    match,
+    `ebook rendered HTML should include primary practice CTA: ${html.slice(0, 500)}`,
+  );
+
+  return { href: match[1], label: match[2] };
 }
 
 function assertNoStaleEbookCopy(value) {
@@ -670,6 +694,58 @@ test('static ebook navigation covers every shipped static chapter', () => {
 
   assert.equal(expectedChapterIds.at(-1), '13');
   assert.deepEqual(getEbookNavChapterIds(), expectedChapterIds);
+});
+
+test('static ebook practice links localize every shipped locale without href drift', () => {
+  const harness = createEbookHarness(sourceWithExportedPracticeLinks());
+  const practiceLinks = harness.window.__TEST_PRACTICE_LINKS__;
+  const chapterIds = getExpectedChapterIds();
+  const languages = getStaticSiteLanguages();
+  const extraLanguages = languages.filter((lang) => !['en', 'sv'].includes(lang));
+
+  assert.ok(practiceLinks, 'PRACTICE_LINKS should be test-exportable');
+  assert.match(
+    readSiteFile('site/ebook.js'),
+    /return PRACTICE_LINKS\[id\] \|\| PRACTICE_LINKS\.intro;/,
+  );
+  assert.deepEqual(
+    Object.keys(practiceLinks).sort((a, b) => chapterIds.indexOf(a) - chapterIds.indexOf(b)),
+    chapterIds,
+    'PRACTICE_LINKS should cover the ebook chapter order exactly',
+  );
+
+  for (const chapterId of chapterIds) {
+    const expectedLink = practiceLinks[chapterId];
+
+    assert.match(expectedLink.href, /^#\/(?:practice|mock)(?:\?c=(?:\d+|mix))?$/);
+
+    for (const language of languages) {
+      assert.equal(
+        typeof expectedLink[language],
+        'string',
+        `PRACTICE_LINKS ${chapterId} missing ${language}`,
+      );
+      assert.notEqual(expectedLink[language].trim(), '', `PRACTICE_LINKS ${chapterId} ${language}`);
+
+      const renderedLink = renderedPrimaryPracticeLink(renderChapter(harness, language, chapterId));
+
+      assert.equal(renderedLink.href, expectedLink.href, `${chapterId} ${language} href`);
+      assert.equal(renderedLink.label, expectedLink[language], `${chapterId} ${language} label`);
+    }
+
+    for (const language of extraLanguages) {
+      assert.notEqual(
+        expectedLink[language],
+        expectedLink.en,
+        `PRACTICE_LINKS ${chapterId} ${language} should not fall back to English`,
+      );
+      assert.notEqual(
+        expectedLink[language],
+        expectedLink.sv,
+        `PRACTICE_LINKS ${chapterId} ${language} should not fall back to Swedish`,
+      );
+    }
+  }
 });
 
 test('static ebook renders every chapter with Swedish and English body parity', () => {
