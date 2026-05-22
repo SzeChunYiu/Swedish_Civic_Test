@@ -1,10 +1,12 @@
 const assert = require('node:assert/strict');
+const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
 const reportPath = path.join(repoRoot, 'reports/2026-05-15-10000-user-ux-simulation.json');
+const markdownReportPath = path.join(repoRoot, 'reports/2026-05-15-10000-user-ux-simulation.md');
 
 function readRepoFile(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
@@ -70,4 +72,39 @@ test('UX simulation web ad preview evidence follows the shared banner copy', () 
   assert.match(homeSource, /href="\/mistakes"/);
   assert.match(simulatorSource, /openSettingsAccessibilityLabel/);
   assert.match(profileSource, /pathname: '\/settings'/);
+});
+
+test('10000-user UX simulation report is idempotent against committed evidence', () => {
+  const beforeJsonText = fs.readFileSync(reportPath, 'utf8');
+  const beforeMarkdownText = fs.readFileSync(markdownReportPath, 'utf8');
+  const beforeReport = JSON.parse(beforeJsonText);
+
+  assert.equal(beforeReport.generatedAt, '2026-05-15T20:52:47.523Z');
+  assert.equal(beforeReport.featureEvidence.webAdPreviewSafe, true);
+  assert.deepEqual(beforeReport.topPainPoints, []);
+  assert.equal(
+    beforeReport.recommendationSummary,
+    'No blocking synthetic UX pain point remains in the modeled study loop.',
+  );
+  assert.match(
+    beforeMarkdownText,
+    /\| Segment\s+\| Users \| Avg satisfaction \|\n\| -+\s+\| -+: \| -+:\s+\|/,
+  );
+  assert.match(
+    beforeMarkdownText,
+    /\| Pain point \| Users affected \|\n\| ---------- \| -------------: \|\n\| None\s+\|\s+0 \|/,
+  );
+  assert.match(
+    beforeMarkdownText,
+    /- Recommendation: No blocking synthetic UX pain point remains in the modeled study loop\./,
+  );
+
+  execFileSync(process.execPath, ['scripts/simulate-ux-users.js'], {
+    cwd: repoRoot,
+    env: { ...process.env, NODE_OPTIONS: '--v8-pool-size=1' },
+    stdio: 'pipe',
+  });
+
+  assert.equal(fs.readFileSync(reportPath, 'utf8'), beforeJsonText);
+  assert.equal(fs.readFileSync(markdownReportPath, 'utf8'), beforeMarkdownText);
 });
