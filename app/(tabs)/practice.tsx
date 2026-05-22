@@ -32,7 +32,6 @@ import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerV
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
 import {
   getCompletedQuestionIdsForQuestionBank,
-  getFirstQuestionForChapter,
   getPracticeQuestionForSession,
 } from '../../lib/quiz/practiceFlow';
 import { useProLifetimeEntitlements } from '../../lib/monetization/useProLifetimeEntitlements';
@@ -365,8 +364,15 @@ export default function Screen() {
     setPracticeScope(nextScope);
   };
   const handleStartChapter = (chapterId: string) => {
-    const firstChapterQuestion = getFirstQuestionForChapter(filteredQuestions, chapterId);
-    startSession(firstChapterQuestion?.id ?? null);
+    const chapterQuestions = filteredQuestions.filter(
+      (question) => question.chapterId === chapterId,
+    );
+    const firstUnansweredQuestion = getPracticeQuestionForSession(
+      chapterQuestions,
+      completedQuestionIds,
+      null,
+    );
+    startSession(firstUnansweredQuestion?.id ?? null);
     setAboutSourcesOpen(false);
     setSelectedConfidenceRating(null);
     setPracticeScope({ type: 'chapter', chapterId });
