@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, Text as NativeText, View } from 'react-native';
 import type { PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native';
-import { useMemo } from 'react';
+import { forwardRef, useMemo } from 'react';
+import type { ElementRef } from 'react';
 
 import { useReducedMotion } from '../lib/motion/useReducedMotion';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
@@ -58,100 +59,110 @@ function getAccessibilityLabel({
   return [label, description, resultLabel ?? stateLabel].filter(Boolean).join('. ');
 }
 
-export function OptionCard({
-  accessibilityLabel,
-  accessibilityRole = 'radio',
-  accessibilityState,
-  description,
-  descriptionStyle,
-  disabled = false,
-  hitSlop,
-  label,
-  labelStyle,
-  languageOverride,
-  resultLabel,
-  state = 'idle',
-  stateLabel,
-  style,
-  struck = false,
-  ...pressableProps
-}: OptionCardProps) {
-  const themeColors = useThemeColors();
-  const reduceMotion = useReducedMotion();
-  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
-  const settingsLanguage = useSettingsStore((settings) => settings.language);
-  const language = languageOverride ?? settingsLanguage;
-  const resolvedStateLabel = stateLabel ?? defaultStateLabels[language][state];
-  const isDisabled = disabled === true;
-  const isChecked = state !== 'idle';
-  const resolvedAccessibilityState = {
-    ...accessibilityState,
-    checked: accessibilityState?.checked ?? isChecked,
-    disabled: isDisabled || accessibilityState?.disabled,
-  };
+export const OptionCard = forwardRef<ElementRef<typeof Pressable>, OptionCardProps>(
+  function OptionCard(
+    {
+      accessibilityLabel,
+      accessibilityRole = 'radio',
+      accessibilityState,
+      description,
+      descriptionStyle,
+      disabled = false,
+      hitSlop,
+      label,
+      labelStyle,
+      languageOverride,
+      resultLabel,
+      state = 'idle',
+      stateLabel,
+      style,
+      struck = false,
+      ...pressableProps
+    },
+    ref,
+  ) {
+    const themeColors = useThemeColors();
+    const reduceMotion = useReducedMotion();
+    const styles = useMemo(() => createStyles(themeColors), [themeColors]);
+    const settingsLanguage = useSettingsStore((settings) => settings.language);
+    const language = languageOverride ?? settingsLanguage;
+    const resolvedStateLabel = stateLabel ?? defaultStateLabels[language][state];
+    const isDisabled = disabled === true;
+    const isChecked = state !== 'idle';
+    const resolvedAccessibilityState = {
+      ...accessibilityState,
+      checked: accessibilityState?.checked ?? isChecked,
+      disabled: isDisabled || accessibilityState?.disabled,
+    };
 
-  return (
-    <Pressable
-      accessibilityLabel={
-        accessibilityLabel ??
-        getAccessibilityLabel({
-          description,
-          label,
-          resultLabel,
-          stateLabel: resolvedStateLabel,
-        })
-      }
-      accessibilityRole={accessibilityRole}
-      accessibilityState={resolvedAccessibilityState}
-      disabled={isDisabled}
-      hitSlop={hitSlop ?? space[1]}
-      style={({ pressed }) => [
-        styles.base,
-        getCardStateStyle(styles, state),
-        struck ? styles.struck : null,
-        pressed && !isDisabled && !reduceMotion ? styles.pressed : null,
-        isDisabled ? styles.disabled : null,
-        style,
-      ]}
-      {...pressableProps}
-    >
-      <View
-        pointerEvents="none"
-        style={[
-          styles.marker,
-          getMarkerStateStyle(styles, state),
-          struck ? styles.struckMarker : null,
+    return (
+      <Pressable
+        accessibilityLabel={
+          accessibilityLabel ??
+          getAccessibilityLabel({
+            description,
+            label,
+            resultLabel,
+            stateLabel: resolvedStateLabel,
+          })
+        }
+        accessibilityRole={accessibilityRole}
+        accessibilityState={resolvedAccessibilityState}
+        disabled={isDisabled}
+        hitSlop={hitSlop ?? space[1]}
+        ref={ref}
+        style={({ pressed }) => [
+          styles.base,
+          getCardStateStyle(styles, state),
+          struck ? styles.struck : null,
+          pressed && !isDisabled && !reduceMotion ? styles.pressed : null,
+          isDisabled ? styles.disabled : null,
+          style,
         ]}
+        {...pressableProps}
       >
-        {isChecked ? <View style={[styles.markerDot, getMarkerDotStyle(styles, state)]} /> : null}
-      </View>
-      <View style={styles.copy}>
-        <NativeText
+        <View
+          pointerEvents="none"
           style={[
-            styles.label,
-            getLabelStateStyle(styles, state),
-            struck ? styles.struckLabel : null,
-            labelStyle,
+            styles.marker,
+            getMarkerStateStyle(styles, state),
+            struck ? styles.struckMarker : null,
           ]}
         >
-          {label}
-        </NativeText>
-        {description ? (
+          {isChecked ? <View style={[styles.markerDot, getMarkerDotStyle(styles, state)]} /> : null}
+        </View>
+        <View style={styles.copy}>
           <NativeText
-            style={[styles.description, struck ? styles.struckDescription : null, descriptionStyle]}
+            style={[
+              styles.label,
+              getLabelStateStyle(styles, state),
+              struck ? styles.struckLabel : null,
+              labelStyle,
+            ]}
           >
-            {description}
+            {label}
+          </NativeText>
+          {description ? (
+            <NativeText
+              style={[
+                styles.description,
+                struck ? styles.struckDescription : null,
+                descriptionStyle,
+              ]}
+            >
+              {description}
+            </NativeText>
+          ) : null}
+        </View>
+        {resultLabel ? (
+          <NativeText style={[styles.resultLabel, getResultLabelStateStyle(styles, state)]}>
+            {resultLabel}
           </NativeText>
         ) : null}
-      </View>
-      {resultLabel ? (
-        <NativeText style={[styles.resultLabel, getResultLabelStateStyle(styles, state)]}>
-          {resultLabel}
-        </NativeText>
-      ) : null}
-    </Pressable>
-  );
-}
+      </Pressable>
+    );
+  },
+);
 
 function getCardStateStyle(styles: ReturnType<typeof createStyles>, state: OptionCardState) {
   switch (state) {

@@ -4443,7 +4443,45 @@ const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
   },
   {
     label: 'selected and disabled state forwarding',
-    pattern: /accessibilityState=\{\{ disabled: optionDisabled, selected \}\}/,
+    pattern: /accessibilityState=\{\{ checked: selected, disabled: optionDisabled, selected \}\}/,
+  },
+  {
+    label: 'web checked state forwarding',
+    pattern: /aria-checked=\{selected\}/,
+  },
+  {
+    label: 'radio keyboard helper export',
+    pattern: /export function getAnswerOptionRadioKeyboardProps\(/,
+  },
+  {
+    label: 'radio keyboard arrow navigation',
+    pattern:
+      /key === 'ArrowRight' \|\| key === 'ArrowDown'[\s\S]*key === 'ArrowLeft' \|\| key === 'ArrowUp'/,
+  },
+  {
+    label: 'radio keyboard Home End navigation',
+    pattern: /key === 'Home'[\s\S]*key === 'End'/,
+  },
+  {
+    label: 'radio keyboard roving tabIndex',
+    pattern: /tabIndex: currentValue === focusableValue \? 0 : -1/,
+  },
+  {
+    label: 'radio keyboard skips disabled values',
+    pattern:
+      /const enabledValues = optionValues\.filter\(\(value\) => !disabledValueSet\.has\(value\)\);/,
+  },
+  {
+    label: 'radio keyboard focuses selected value',
+    pattern: /optionRefs\.current\[nextValue\]\?\.focus\?\.\(\);/,
+  },
+  {
+    label: 'OptionCard focus ref forwarding',
+    pattern: /ref=\{optionRef\}/,
+  },
+  {
+    label: 'radio keyboard prop forwarding',
+    pattern: /\{\.\.\.radioKeyboardProps\}/,
   },
   {
     label: 'disabled interaction forwarding',

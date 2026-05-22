@@ -28,7 +28,7 @@ test('quiz AnswerOption keeps feedback labels and selection state in accessibili
     'utf8',
   );
 
-  assert.equal(summary.answerOptionAccessibilityRulesValidated, 26);
+  assert.equal(summary.answerOptionAccessibilityRulesValidated, 35);
   assert.equal(summary.answerOptionAccessibilityParityValidated, true);
   assert.match(source, /import \{ OptionCard \} from '\.\.\/OptionCard';/);
   assert.match(source, /import type \{ OptionCardState \} from '\.\.\/OptionCard';/);
@@ -57,9 +57,26 @@ test('quiz AnswerOption keeps feedback labels and selection state in accessibili
     /const stateLabel = state === 'idle' \? undefined : copy\.stateLabels\[state\];/,
   );
   assert.match(source, /accessibilityLabel=\{accessibilityLabel\}/);
-  assert.match(source, /accessibilityState=\{\{ disabled: optionDisabled, selected \}\}/);
+  assert.match(source, /aria-checked=\{selected\}/);
+  assert.match(
+    source,
+    /accessibilityState=\{\{ checked: selected, disabled: optionDisabled, selected \}\}/,
+  );
+  assert.match(source, /export function getAnswerOptionRadioKeyboardProps\(/);
+  assert.match(source, /key === 'ArrowRight' \|\| key === 'ArrowDown'/);
+  assert.match(source, /key === 'ArrowLeft' \|\| key === 'ArrowUp'/);
+  assert.match(source, /key === 'Home'/);
+  assert.match(source, /key === 'End'/);
+  assert.match(source, /tabIndex: currentValue === focusableValue \? 0 : -1/);
+  assert.match(
+    source,
+    /const enabledValues = optionValues\.filter\(\(value\) => !disabledValueSet\.has\(value\)\);/,
+  );
+  assert.match(source, /optionRefs\.current\[nextValue\]\?\.focus\?\.\(\);/);
   assert.match(source, /disabled=\{optionDisabled\}/);
+  assert.match(source, /ref=\{optionRef\}/);
   assert.match(source, /struck=\{struck\}/);
+  assert.match(source, /\{\.\.\.radioKeyboardProps\}/);
   assert.match(source, /aria-pressed=\{struck\}/);
   assert.match(source, /resultLabel=\{resultLabel\}/);
   assert.match(source, /state=\{state\}/);
@@ -153,7 +170,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace(
-        'accessibilityState={{ disabled: optionDisabled, selected }}',
+        'accessibilityState={{ checked: selected, disabled: optionDisabled, selected }}',
         'accessibilityState={{ disabled: optionDisabled }}',
       );
   }

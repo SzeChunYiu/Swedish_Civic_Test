@@ -38,6 +38,17 @@ test('routed quiz shell copy follows the persisted settings language', () => {
   assert.match(source, /const quizSessionCopy: Record<AppLanguage, QuizSessionCopy> = \{/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(source, /const copy = quizSessionCopy\[language\];/);
+  assert.match(source, /answerGroupAccessibilityLabel: 'Svarsalternativ för frågepasset'/);
+  assert.match(source, /answerGroupAccessibilityLabel: 'Answer options for this quiz question'/);
+  assert.match(
+    source,
+    /const answerOptionRefs = useRef<Record<string, AnswerOptionFocusableElement \| null>>\(\{\}\);/,
+  );
+  assert.match(source, /accessibilityRole="radiogroup"[\s\S]*style=\{styles\.options\}/);
+  assert.match(
+    source,
+    /getAnswerOptionRadioKeyboardProps\(\{[\s\S]*disabledValues: disabledAnswerOptionValues,[\s\S]*selectedValue: selectedOptionId,/,
+  );
   assert.match(
     source,
     /getChapterContextForQuizSession\(chapters, pickedQuestion, normalizedChapterId\)/,

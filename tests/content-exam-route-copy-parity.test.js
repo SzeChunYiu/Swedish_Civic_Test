@@ -72,6 +72,23 @@ test('exam route shell and review copy follows the persisted settings language',
   assert.match(source, /aria-checked=\{isSelected\}/);
   assert.match(source, /accessibilityRole="radio"/);
   assert.match(source, /accessibilityState=\{\{ checked: isSelected \}\}/);
+  assert.match(
+    source,
+    /const answerOptionRefs = useRef<Record<string, AnswerOptionFocusableElement \| null>>\(\{\}\);/,
+  );
+  assert.match(
+    source,
+    /function getExamAnswerOptionKey\(questionId: string, optionId: string\): string/,
+  );
+  assert.match(
+    source,
+    /const answerOptionValues = question\.options\.map\(\(option\) =>[\s\S]*getExamAnswerOptionKey\(question\.id, option\.id\),/,
+  );
+  assert.match(source, /selectedAnswerOptionValue = answers\[question\.id\]/);
+  assert.match(
+    source,
+    /getAnswerOptionRadioKeyboardProps\(\{[\s\S]*currentValue: optionValue,[\s\S]*selectedValue: selectedAnswerOptionValue,/,
+  );
   assert.doesNotMatch(source, /aria-selected=\{isSelected\}/);
   assert.doesNotMatch(source, /accessibilityState=\{\{ selected: isSelected \}\}/);
   assert.match(source, /const isFlagged = Boolean\(flaggedQuestionIds\[question\.id\]\);/);

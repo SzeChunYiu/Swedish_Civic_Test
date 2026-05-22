@@ -5,7 +5,11 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AudioButton } from '../../components/learning/AudioButton';
 import { FeedbackAudioButton } from '../../components/learning/FeedbackAudioButton';
-import { AnswerOption } from '../../components/quiz/AnswerOption';
+import {
+  AnswerOption,
+  getAnswerOptionRadioKeyboardProps,
+  type AnswerOptionFocusableElement,
+} from '../../components/quiz/AnswerOption';
 import { CelebrationBurst } from '../../components/quiz/CelebrationBurst';
 import { ConfidenceRatingPicker } from '../../components/quiz/ConfidenceRatingPicker';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
@@ -42,6 +46,7 @@ import type { Chapter } from '../../types/content';
 import type { ConfidenceRating } from '../../types/progress';
 
 type QuizSessionCopy = {
+  answerGroupAccessibilityLabel: string;
   backToSearch: string;
   backToSearchAccessibilityLabel: string;
   backToPractice: string;
@@ -63,6 +68,7 @@ type QuizSessionCopy = {
 
 const quizSessionCopy: Record<AppLanguage, QuizSessionCopy> = {
   sv: {
+    answerGroupAccessibilityLabel: 'Svarsalternativ för frågepasset',
     backToSearch: 'Sök övningsfrågor',
     backToSearchAccessibilityLabel: 'Sök efter övningsfrågor',
     backToPractice: 'Tillbaka till övning',
@@ -83,6 +89,7 @@ const quizSessionCopy: Record<AppLanguage, QuizSessionCopy> = {
     tryAgainAccessibilityLabel: 'Försök igen med den här frågan',
   },
   en: {
+    answerGroupAccessibilityLabel: 'Answer options for this quiz question',
     backToSearch: 'Search questions',
     backToSearchAccessibilityLabel: 'Search for practice questions',
     backToPractice: 'Back to Practice',
@@ -191,6 +198,7 @@ export default function QuizSessionScreen() {
   const [selectedConfidenceRating, setSelectedConfidenceRating] = useState<ConfidenceRating | null>(
     null,
   );
+  const answerOptionRefs = useRef<Record<string, AnswerOptionFocusableElement | null>>({});
   const recordWrongAnswerReview = useMistakeReviewStore((state) => state.recordWrongAnswerReview);
   const recordAnswer = useProgressStore((state) => state.recordAnswer);
   const questionProgress = useProgressStore((state) => state.questionProgress);
@@ -330,6 +338,8 @@ export default function QuizSessionScreen() {
     setSelectedOptionId(null);
     setSelectedConfidenceRating(null);
   };
+  const answerOptionValues = question.options.map((option) => option.id);
+  const disabledAnswerOptionValues = hasSelectedAnswer ? answerOptionValues : [];
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -370,7 +380,12 @@ export default function QuizSessionScreen() {
         />
       ) : null}
 
-      <View style={styles.options}>
+      <View
+        aria-label={copy.answerGroupAccessibilityLabel}
+        accessibilityLabel={copy.answerGroupAccessibilityLabel}
+        accessibilityRole="radiogroup"
+        style={styles.options}
+      >
         {question.options.map((option) => {
           const feedback = getAnswerOptionFeedback(
             question,
@@ -385,7 +400,18 @@ export default function QuizSessionScreen() {
               disabled={hasSelectedAnswer}
               language={language}
               option={option}
+              optionRef={(node) => {
+                answerOptionRefs.current[option.id] = node;
+              }}
               onPress={() => handleSelectOption(option.id)}
+              radioKeyboardProps={getAnswerOptionRadioKeyboardProps({
+                currentValue: option.id,
+                disabledValues: disabledAnswerOptionValues,
+                onSelectValue: handleSelectOption,
+                optionRefs: answerOptionRefs,
+                optionValues: answerOptionValues,
+                selectedValue: selectedOptionId,
+              })}
               resultLabel={feedback.resultLabel}
               selected={selectedOptionId === option.id}
               tone={feedback.tone}

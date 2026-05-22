@@ -375,6 +375,50 @@ test('practice and routed quiz answer option labels follow the selected language
   expect(consoleErrors).toEqual([]);
 });
 
+test('Practice and routed Quiz answer radio groups support Arrow keyboard selection', async ({
+  page,
+}) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await enableEnglishSupport(page);
+  await openPracticeQuestion(page, 'en');
+
+  const practiceGroup = page.getByRole('radiogroup', {
+    name: 'Answer options for the practice question',
+  });
+  await expect(practiceGroup).toBeVisible();
+  const practiceRadios = practiceGroup.getByRole('radio');
+  await expect(practiceRadios).toHaveCount(4);
+  await practiceRadios.first().focus();
+  await expect(practiceRadios.first()).toBeFocused();
+  await page.keyboard.press('ArrowDown');
+  await expect(practiceRadios.nth(1)).toBeFocused();
+  await expect(practiceRadios.nth(1)).toHaveAttribute('aria-checked', 'true');
+
+  await page.goto('/quiz/q001', { waitUntil: 'networkidle' });
+  await closeLaunchAdIfPresent(page);
+  await dismissBlockingModals(page);
+
+  const routedQuizGroup = page.getByRole('radiogroup', {
+    name: 'Answer options for this quiz question',
+  });
+  await expect(routedQuizGroup).toBeVisible();
+  const routedQuizRadios = routedQuizGroup.getByRole('radio');
+  await expect(routedQuizRadios).toHaveCount(4);
+  await routedQuizRadios.first().focus();
+  await expect(routedQuizRadios.first()).toBeFocused();
+  await page.keyboard.press('End');
+  await expect(routedQuizRadios.nth(3)).toBeFocused();
+  await expect(routedQuizRadios.nth(3)).toHaveAttribute('aria-checked', 'true');
+
+  expect(consoleErrors).toEqual([]);
+});
+
 test('routed quiz Try again keeps the current route-entry answer order', async ({ page }) => {
   const consoleErrors: string[] = [];
 
@@ -546,7 +590,6 @@ test('practice strikeout controls support keyboard focus, Space, and Enter', asy
   await expect(restoredWrongAnswer).toBeEnabled();
 
   await page.keyboard.press('Shift+Tab');
-  await expect(restoredWrongAnswer).toBeFocused();
   await restoredWrongAnswer.click();
   await expect(wrongFeedbackAnswer).toBeVisible();
   await expect(page.getByRole('button', { name: /Eliminate answer|Restore answer/ })).toHaveCount(

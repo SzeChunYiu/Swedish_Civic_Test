@@ -118,6 +118,17 @@ test('practice route shell copy follows the persisted settings language', () => 
   assert.match(source, /const practiceCopy: Record<AppLanguage, PracticeCopy> = \{/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(source, /const copy = practiceCopy\[language\];/);
+  assert.match(source, /answerGroupAccessibilityLabel: 'Svarsalternativ för övningsfrågan'/);
+  assert.match(source, /answerGroupAccessibilityLabel: 'Answer options for the practice question'/);
+  assert.match(
+    source,
+    /const answerOptionRefs = useRef<Record<string, AnswerOptionFocusableElement \| null>>\(\{\}\);/,
+  );
+  assert.match(source, /accessibilityRole="radiogroup"[\s\S]*style=\{styles\.options\}/);
+  assert.match(
+    source,
+    /getAnswerOptionRadioKeyboardProps\(\{[\s\S]*disabledValues: disabledAnswerOptionValues,[\s\S]*selectedValue: hasSelectedAnswer \? selectedOptionId : null,/,
+  );
   assert.match(source, /5-minutersövning/);
   assert.match(source, /const filteredQuestions = useMemo\(/);
   assert.match(source, /import \{ explainAdaptivePick \}/);
@@ -211,7 +222,7 @@ test('practice route source wires selected companion copy to answer feedback sta
   );
   assert.match(companionCard, /settingsAccessibilityLabel: 'Change study companion in Settings'/);
   assert.match(companionCard, /settingsAccessibilityLabel: 'Byt studiekompis i Inställningar'/);
-  assert.match(companionCard, /href="\/settings"/);
+  assert.match(companionCard, /href="\/settings\?focus=companion"/);
   assert.match(companionCard, /<MascotArtwork[\s\S]*mascotId=\{mascot\.id\}/);
   assert.doesNotMatch(companionCard, /label\.slice\(0,\s*1\)\.toUpperCase\(\)/);
   assert.match(mascotArtwork, /SvgUri/);

@@ -1,6 +1,6 @@
 import type { QuestionOption } from '../../types/content';
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { getQuestionOptionText } from '../../lib/quiz/questionText';
 import { useReducedMotion } from '../../lib/motion/useReducedMotion';
 import { colors, motion, radius, space, typography } from '../../lib/theme';
@@ -9,6 +9,17 @@ import type { OptionCardState } from '../OptionCard';
 
 type AnswerTone = 'idle' | 'correct' | 'incorrect';
 type AnswerLanguage = 'sv' | 'en';
+export type AnswerOptionFocusableElement = { focus?: () => void };
+export type AnswerOptionRefMap = { current: Record<string, AnswerOptionFocusableElement | null> };
+type AnswerOptionKeyboardEvent = {
+  key?: string;
+  nativeEvent?: { key?: string };
+  preventDefault?: () => void;
+};
+export type AnswerOptionRadioKeyboardProps = {
+  onKeyDown?: (event: AnswerOptionKeyboardEvent) => void;
+  tabIndex?: 0 | -1;
+};
 type AnswerOptionCopy = {
   fallbackLabel: string;
   restoreStrikeout: string;
@@ -51,6 +62,89 @@ const answerOptionCopy: Record<AnswerLanguage, AnswerOptionCopy> = {
   },
 };
 
+function getAnswerOptionKeyboardIntent(
+  event: AnswerOptionKeyboardEvent,
+): 'first' | 'last' | 'next' | 'previous' | null {
+  const key = event.nativeEvent?.key ?? event.key;
+  if (key === 'ArrowRight' || key === 'ArrowDown') return 'next';
+  if (key === 'ArrowLeft' || key === 'ArrowUp') return 'previous';
+  if (key === 'Home') return 'first';
+  if (key === 'End') return 'last';
+  return null;
+}
+
+function getNextAnswerOptionValue({
+  currentValue,
+  intent,
+  optionValues,
+  selectedValue,
+}: {
+  currentValue: string;
+  intent: Exclude<ReturnType<typeof getAnswerOptionKeyboardIntent>, null>;
+  optionValues: readonly string[];
+  selectedValue?: string | null;
+}) {
+  if (optionValues.length === 0) return null;
+  if (intent === 'first') return optionValues[0];
+  if (intent === 'last') return optionValues[optionValues.length - 1];
+
+  const currentIndex = optionValues.includes(currentValue)
+    ? optionValues.indexOf(currentValue)
+    : selectedValue && optionValues.includes(selectedValue)
+      ? optionValues.indexOf(selectedValue)
+      : intent === 'next'
+        ? -1
+        : 0;
+  const direction = intent === 'next' ? 1 : -1;
+  return optionValues[(currentIndex + direction + optionValues.length) % optionValues.length];
+}
+
+export function getAnswerOptionRadioKeyboardProps({
+  currentValue,
+  disabledValues = [],
+  onSelectValue,
+  optionRefs,
+  optionValues,
+  selectedValue,
+}: {
+  currentValue: string;
+  disabledValues?: readonly string[];
+  onSelectValue: (value: string) => void;
+  optionRefs: AnswerOptionRefMap;
+  optionValues: readonly string[];
+  selectedValue?: string | null;
+}): AnswerOptionRadioKeyboardProps {
+  if (Platform.OS !== 'web') return {};
+
+  const disabledValueSet = new Set(disabledValues);
+  const enabledValues = optionValues.filter((value) => !disabledValueSet.has(value));
+  const focusableValue =
+    selectedValue && enabledValues.includes(selectedValue) ? selectedValue : enabledValues[0];
+  const isCurrentEnabled = enabledValues.includes(currentValue);
+
+  return {
+    onKeyDown: (event) => {
+      if (!isCurrentEnabled) return;
+
+      const intent = getAnswerOptionKeyboardIntent(event);
+      if (!intent) return;
+
+      event.preventDefault?.();
+      const nextValue = getNextAnswerOptionValue({
+        currentValue,
+        intent,
+        optionValues: enabledValues,
+        selectedValue,
+      });
+      if (!nextValue || nextValue === currentValue) return;
+
+      onSelectValue(nextValue);
+      optionRefs.current[nextValue]?.focus?.();
+    },
+    tabIndex: currentValue === focusableValue ? 0 : -1,
+  };
+}
+
 export function AnswerOption({
   disabled = false,
   language = 'sv',
@@ -62,6 +156,8 @@ export function AnswerOption({
   showStrikeoutControl = false,
   struck = false,
   tone = 'idle',
+  optionRef,
+  radioKeyboardProps,
 }: {
   disabled?: boolean;
   language?: AnswerLanguage;
@@ -73,6 +169,8 @@ export function AnswerOption({
   showStrikeoutControl?: boolean;
   struck?: boolean;
   tone?: AnswerTone;
+  optionRef?: (node: AnswerOptionFocusableElement | null) => void;
+  radioKeyboardProps?: AnswerOptionRadioKeyboardProps;
 }) {
   const copy = answerOptionCopy[language];
   const reduceMotion = useReducedMotion();
@@ -94,15 +192,18 @@ export function AnswerOption({
   return (
     <View style={styles.container}>
       <OptionCard
+        aria-checked={selected}
         accessibilityLabel={accessibilityLabel}
-        accessibilityState={{ disabled: optionDisabled, selected }}
+        accessibilityState={{ checked: selected, disabled: optionDisabled, selected }}
         disabled={optionDisabled}
         label={label}
         onPress={optionDisabled ? undefined : onPress}
+        ref={optionRef}
         resultLabel={resultLabel}
         state={state}
         stateLabel={stateLabel}
         struck={struck}
+        {...radioKeyboardProps}
       />
       {showStrikeoutControl && onToggleStrikeout ? (
         <Pressable

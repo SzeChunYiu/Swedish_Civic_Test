@@ -233,6 +233,43 @@ test('mock exam requires all answers before showing Swedish score and source pro
   expect(consoleErrors).toEqual([]);
 });
 
+test('mock exam answer radio groups support Arrow keyboard selection', async ({ page }) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await openExamWithLanguage(page, 'en');
+
+  await expect(page.getByRole('heading', { name: 'Mock exam' }).first()).toBeVisible();
+  if ((await page.getByText(`0/${totalQuestions} answered`).count()) === 0) {
+    const start = page.getByLabel('Start mock exam');
+    await expect(start).toBeEnabled();
+    await start.click();
+  }
+
+  const activeQuestionOne = examRegion(page, 'Question 1 in mock exam');
+  await expect(activeQuestionOne).toBeVisible();
+  const answerGroup = activeQuestionOne.getByRole('radiogroup', {
+    name: 'Answer options for question 1',
+  });
+  await expect(answerGroup).toBeVisible();
+  const radios = answerGroup.getByRole('radio');
+  await expect(radios).toHaveCount(4);
+  await radios.first().focus();
+  await expect(radios.first()).toBeFocused();
+  await page.keyboard.press('ArrowRight');
+  await expect(radios.nth(1)).toBeFocused();
+  await expect(radios.nth(1)).toHaveAttribute('aria-checked', 'true');
+  await page.keyboard.press('Home');
+  await expect(radios.first()).toBeFocused();
+  await expect(radios.first()).toHaveAttribute('aria-checked', 'true');
+
+  expect(consoleErrors).toEqual([]);
+});
+
 test('mock exam pauses timer while the browser document is hidden', async ({ page }) => {
   const consoleErrors: string[] = [];
 

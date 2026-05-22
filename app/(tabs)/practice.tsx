@@ -7,7 +7,11 @@ import { FeedbackAudioButton } from '../../components/learning/FeedbackAudioButt
 import { Badge } from '../../components/ui/Badge';
 import { PracticeInterstitialAd } from '../../components/monetization/PracticeInterstitialAd';
 import { RemoveAdsPlacementCta } from '../../components/monetization/RemoveAdsPlacementCta';
-import { AnswerOption } from '../../components/quiz/AnswerOption';
+import {
+  AnswerOption,
+  getAnswerOptionRadioKeyboardProps,
+  type AnswerOptionFocusableElement,
+} from '../../components/quiz/AnswerOption';
 import { CelebrationBurst } from '../../components/quiz/CelebrationBurst';
 import { ConfidenceRatingPicker } from '../../components/quiz/ConfidenceRatingPicker';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
@@ -89,6 +93,7 @@ type PracticeCopy = {
   adaptiveSummary: (counts: PracticeAdaptiveSummary) => string;
   adaptiveSummaryAccessibilityLabel: (counts: PracticeAdaptiveSummary) => string;
   adaptiveSummaryTitle: string;
+  answerGroupAccessibilityLabel: string;
   badge: string;
   bookmark: string;
   bookmarked: string;
@@ -140,6 +145,7 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     adaptiveSummaryAccessibilityLabel: (counts) =>
       `Rekommenderad övningsmix: ${counts.recentlyWrong} att repetera efter miss, ${counts.unseen} nya, ${counts.stale} att fräscha upp och ${counts.mastered} bemästrade.`,
     adaptiveSummaryTitle: 'Rekommenderad mix',
+    answerGroupAccessibilityLabel: 'Svarsalternativ för övningsfrågan',
     badge: '5-minutersövning',
     bookmark: 'Bokmärk',
     bookmarked: 'Bokmärkt',
@@ -189,6 +195,7 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     adaptiveSummaryAccessibilityLabel: (counts) =>
       `Recommended practice mix: ${counts.recentlyWrong} recently missed, ${counts.unseen} unseen, ${counts.stale} stale, and ${counts.mastered} mastered.`,
     adaptiveSummaryTitle: 'Recommended mix',
+    answerGroupAccessibilityLabel: 'Answer options for the practice question',
     badge: '5-minute practice',
     bookmark: 'Bookmark',
     bookmarked: 'Bookmarked',
@@ -418,6 +425,7 @@ export default function Screen() {
   const [selectedConfidenceRating, setSelectedConfidenceRating] = useState<ConfidenceRating | null>(
     null,
   );
+  const answerOptionRefs = useRef<Record<string, AnswerOptionFocusableElement | null>>({});
   const [answerXpAwardedForSelection, setAnswerXpAwardedForSelection] = useState(0);
   const { entitlements: proEntitlements, entitlementsReady: proEntitlementsReady } =
     useProLifetimeEntitlements();
@@ -757,6 +765,8 @@ export default function Screen() {
     setAnswerXpAwardedForSelection(0);
     resetSelection();
   };
+  const answerOptionValues = question.options.map((option) => option.id);
+  const disabledAnswerOptionValues = hasSelectedAnswer ? answerOptionValues : struckOptionIds;
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -906,7 +916,12 @@ export default function Screen() {
         />
       ) : null}
 
-      <View style={styles.options}>
+      <View
+        aria-label={copy.answerGroupAccessibilityLabel}
+        accessibilityLabel={copy.answerGroupAccessibilityLabel}
+        accessibilityRole="radiogroup"
+        style={styles.options}
+      >
         {question.options.map((option) => {
           const isStruck = !hasSelectedAnswer && struckOptionIds.includes(option.id);
           const feedback = getAnswerOptionFeedback(
@@ -923,7 +938,18 @@ export default function Screen() {
               language={language}
               onToggleStrikeout={() => toggleStruckOption(question.id, option.id)}
               option={option}
+              optionRef={(node) => {
+                answerOptionRefs.current[option.id] = node;
+              }}
               onPress={isStruck ? undefined : () => handleSelectOption(option.id)}
+              radioKeyboardProps={getAnswerOptionRadioKeyboardProps({
+                currentValue: option.id,
+                disabledValues: disabledAnswerOptionValues,
+                onSelectValue: handleSelectOption,
+                optionRefs: answerOptionRefs,
+                optionValues: answerOptionValues,
+                selectedValue: hasSelectedAnswer ? selectedOptionId : null,
+              })}
               resultLabel={feedback.resultLabel}
               selected={hasSelectedAnswer && selectedOptionId === option.id}
               showStrikeoutControl={!hasSelectedAnswer}

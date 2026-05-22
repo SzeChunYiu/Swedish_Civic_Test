@@ -20,6 +20,10 @@ import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { QuestionReportLink } from '../../components/quiz/QuestionReportLink';
 import { QuestionSourceCitation } from '../../components/quiz/QuestionSourceCitation';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
+import {
+  getAnswerOptionRadioKeyboardProps,
+  type AnswerOptionFocusableElement,
+} from '../../components/quiz/AnswerOption';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
@@ -297,9 +301,14 @@ function isDocumentHidden(): boolean {
   return typeof document !== 'undefined' && document.hidden === true;
 }
 
+function getExamAnswerOptionKey(questionId: string, optionId: string): string {
+  return `${questionId}::${optionId}`;
+}
+
 export default function Screen() {
   const scrollViewRef = useRef<ScrollView | null>(null);
   const reviewCardRefs = useRef<Record<string, View | null>>({});
+  const answerOptionRefs = useRef<Record<string, AnswerOptionFocusableElement | null>>({});
   const examStartedAtIsoRef = useRef(new Date().toISOString());
   const timingCheckpointMsRef = useRef(Date.now());
   const pauseStartedAtMsRef = useRef<number | null>(null);
@@ -1052,6 +1061,12 @@ export default function Screen() {
         const isFlagged = Boolean(flaggedQuestionIds[question.id]);
         const questionNumber = index + 1;
         const activeQuestionRegionLabel = copy.activeQuestionRegionLabel(questionNumber);
+        const answerOptionValues = question.options.map((option) =>
+          getExamAnswerOptionKey(question.id, option.id),
+        );
+        const selectedAnswerOptionValue = answers[question.id]
+          ? getExamAnswerOptionKey(question.id, answers[question.id])
+          : null;
 
         return (
           <View
@@ -1099,6 +1114,7 @@ export default function Screen() {
               {question.options.map((option) => {
                 const isSelected = answers[question.id] === option.id;
                 const optionText = language === 'en' ? option.textEn : option.textSv;
+                const optionValue = getExamAnswerOptionKey(question.id, option.id);
                 return (
                   <Pressable
                     key={option.id}
@@ -1107,7 +1123,21 @@ export default function Screen() {
                     accessibilityRole="radio"
                     accessibilityState={{ checked: isSelected }}
                     onPress={() => recordQuestionAnswer(question.id, option.id)}
+                    ref={(node) => {
+                      answerOptionRefs.current[optionValue] =
+                        node as AnswerOptionFocusableElement | null;
+                    }}
                     style={[styles.option, isSelected ? styles.optionSelected : null]}
+                    {...getAnswerOptionRadioKeyboardProps({
+                      currentValue: optionValue,
+                      onSelectValue: (nextValue) => {
+                        const nextOptionId = nextValue.slice(`${question.id}::`.length);
+                        recordQuestionAnswer(question.id, nextOptionId);
+                      },
+                      optionRefs: answerOptionRefs,
+                      optionValues: answerOptionValues,
+                      selectedValue: selectedAnswerOptionValue,
+                    })}
                   >
                     <Text
                       style={[styles.optionText, isSelected ? styles.optionTextSelected : null]}
