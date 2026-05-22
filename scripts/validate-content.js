@@ -10049,6 +10049,8 @@ let uhrReferenceCardAccessibilityRulesValidated = 0;
 let uhrReferenceCardAccessibilityParityValidated = false;
 let sourceCitationAccessibilityRulesValidated = 0;
 let sourceCitationAccessibilityParityValidated = false;
+let questionSourceCitationAccessibilityRulesValidated = 0;
+let questionSourceCitationAccessibilityParityValidated = false;
 let celebrationBurstAccessibilityRulesValidated = 0;
 let celebrationBurstAccessibilityParityValidated = false;
 let examReviewItemsValidated = 0;
@@ -10578,6 +10580,16 @@ if (process.argv.includes('--focus-source-citation-accessibility')) {
   printValidationSummary({
     sourceCitationAccessibilityRulesValidated,
     sourceCitationAccessibilityParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-question-source-citation-accessibility')) {
+  validateQuestionSourceCitationAccessibilityParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    questionSourceCitationAccessibilityRulesValidated,
+    questionSourceCitationAccessibilityParityValidated,
   });
   process.exit(0);
 }
@@ -17585,6 +17597,93 @@ function validateSourceCitationAccessibilityParity() {
 
   if (valid && sourceCitationAccessibilityRulesValidated === expectedRules.length) {
     sourceCitationAccessibilityParityValidated = true;
+  }
+}
+
+function validateQuestionSourceCitationAccessibilityParity() {
+  let valid = true;
+  let questionSourceCitationSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    questionSourceCitationSource = fs.readFileSync(
+      path.join(repoRoot, 'components/quiz/QuestionSourceCitation.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(
+      `components/quiz/QuestionSourceCitation.tsx could not be read for accessibility parity: ${error.message}`,
+    );
+    return;
+  }
+
+  const expectedRules = [
+    {
+      label: 'source citation helper import',
+      pattern: /import \{ getQuestionSourceCitation \}/,
+    },
+    { label: 'SourceCitation wrapper import', pattern: /import \{ SourceCitation \}/ },
+    { label: 'localized Swedish label', pattern: /label: 'Källhänvisning'/ },
+    { label: 'localized English label', pattern: /label: 'Source citation'/ },
+    {
+      label: 'helper-derived citation fallback',
+      pattern:
+        /const sourceCitation = citationText \?\? getQuestionSourceCitation\(question, language\);/,
+    },
+    {
+      label: 'localized label fallback',
+      pattern: /const resolvedLabel = label \?\? questionSourceCitationLabels\[language\]\.label;/,
+    },
+    {
+      label: 'composite wrapper accessibility label',
+      pattern:
+        /const resolvedAccessibilityLabel = accessibilityLabel \?\? `\$\{resolvedLabel\}: \$\{sourceCitation\}`;/,
+    },
+    {
+      label: 'SourceCitation accessibility label forwarding',
+      pattern: /<SourceCitation[\s\S]*accessibilityLabel=\{resolvedAccessibilityLabel\}/,
+    },
+    {
+      label: 'SourceCitation localized label forwarding',
+      pattern: /<SourceCitation[\s\S]*label=\{resolvedLabel\}/,
+    },
+    {
+      label: 'SourceCitation language forwarding',
+      pattern: /<SourceCitation[\s\S]*language=\{language\}/,
+    },
+    {
+      label: 'UHR reference forwarding',
+      pattern: /<SourceCitation[\s\S]*reference=\{question\?\.uhrReference\}/,
+    },
+    {
+      label: 'resolved theme color forwarding',
+      pattern: /<SourceCitation[\s\S]*themeColors=\{resolvedThemeColors\}/,
+    },
+    { label: 'custom body rendering', pattern: /\{hasCustomBody \? \(/ },
+    {
+      label: 'helper citation body rendering',
+      pattern: /<NativeText style=\{\[styles\.body, bodyStyle\]\}>\{sourceCitation\}<\/NativeText>/,
+    },
+    {
+      label: 'disclaimer typography color',
+      pattern: /color: themeColors\.textDisclaimer/,
+    },
+  ];
+
+  expectedRules.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(questionSourceCitationSource)) {
+      reject(`QuestionSourceCitation missing ${expectedRule.label}`);
+      return;
+    }
+    questionSourceCitationAccessibilityRulesValidated += 1;
+  });
+
+  if (valid && questionSourceCitationAccessibilityRulesValidated === expectedRules.length) {
+    questionSourceCitationAccessibilityParityValidated = true;
   }
 }
 
@@ -26821,6 +26920,7 @@ validateAnswerOptionAccessibilityParity();
 validateExplanationPanelAccessibilityParity();
 validateUhrReferenceCardAccessibilityParity();
 validateSourceCitationAccessibilityParity();
+validateQuestionSourceCitationAccessibilityParity();
 validateCelebrationBurstAccessibilityParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
 validateExamChapterBreakdownParity(defaultMockExamConfig);
@@ -27063,6 +27163,8 @@ console.log(
       uhrReferenceCardAccessibilityParityValidated,
       sourceCitationAccessibilityRulesValidated,
       sourceCitationAccessibilityParityValidated,
+      questionSourceCitationAccessibilityRulesValidated,
+      questionSourceCitationAccessibilityParityValidated,
       celebrationBurstAccessibilityRulesValidated,
       celebrationBurstAccessibilityParityValidated,
       examReviewItemsValidated,

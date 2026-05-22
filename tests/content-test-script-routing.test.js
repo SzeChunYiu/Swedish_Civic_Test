@@ -481,6 +481,46 @@ test('SourceCitation accessibility parity uses focused content validation routin
   );
 });
 
+test('QuestionSourceCitation accessibility parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const questionSourceCitationTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-question-source-citation-accessibility-parity.test.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get(
+    'questionSourceCitationAccessibility',
+  );
+
+  assert.ok(registryEntry, 'QuestionSourceCitation accessibility focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-question-source-citation-accessibility']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'questionSourceCitationAccessibilityRulesValidated',
+    'questionSourceCitationAccessibilityParityValidated',
+  ]);
+  assert.match(validatorSource, /--focus-question-source-citation-accessibility/);
+  assert.match(
+    validatorSource,
+    /validateQuestionSourceCitationAccessibilityParity\(\);[\s\S]*questionSourceCitationAccessibilityRulesValidated[\s\S]*questionSourceCitationAccessibilityParityValidated/,
+  );
+  assert.match(questionSourceCitationTestSource, /--focus-question-source-citation-accessibility/);
+  assert.doesNotMatch(
+    questionSourceCitationTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'QuestionSourceCitation accessibility tests must not route through full content validation',
+  );
+
+  const summary = assertFocusedValidationSummary('--focus-question-source-citation-accessibility', [
+    'questionSourceCitationAccessibilityRulesValidated',
+    'questionSourceCitationAccessibilityParityValidated',
+  ]);
+
+  assert.equal(summary.questionSourceCitationAccessibilityRulesValidated, 15);
+  assert.equal(summary.questionSourceCitationAccessibilityParityValidated, true);
+});
+
 test('theme token schema uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
