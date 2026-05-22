@@ -131,6 +131,12 @@ function pickSessionQuestion(sessionId: string) {
   return exactMatch;
 }
 
+function createRouteEntryShuffleSeed(sessionId: string): string {
+  return `${sessionId}:route-entry:${Date.now().toString(36)}:${Math.random()
+    .toString(36)
+    .slice(2)}`;
+}
+
 export default function QuizSessionScreen() {
   const { chapterId, q, query, sessionId } = useLocalSearchParams<{
     chapterId?: string | string[];
@@ -146,12 +152,16 @@ export default function QuizSessionScreen() {
     () => pickSessionQuestion(normalizedSessionId),
     [normalizedSessionId],
   );
+  const routeEntryShuffleSeed = useMemo(
+    () => createRouteEntryShuffleSeed(normalizedSessionId),
+    [normalizedSessionId],
+  );
   const question = useMemo(
     () =>
       pickedQuestion
-        ? shuffleQuestionOptionsForSession(pickedQuestion, normalizedSessionId)
+        ? shuffleQuestionOptionsForSession(pickedQuestion, routeEntryShuffleSeed)
         : undefined,
-    [normalizedSessionId, pickedQuestion],
+    [pickedQuestion, routeEntryShuffleSeed],
   );
   const chapterContext = useMemo(
     () => getChapterContextForQuizSession(chapters, pickedQuestion, normalizedChapterId),
@@ -197,7 +207,7 @@ export default function QuizSessionScreen() {
   useEffect(() => {
     setSelectedOptionId(null);
     setSelectedConfidenceRating(null);
-  }, [normalizedSessionId, question?.id]);
+  }, [routeEntryShuffleSeed, question?.id]);
 
   if (!question) {
     const unknownSessionId = questions.length > 0;

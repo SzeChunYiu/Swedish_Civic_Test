@@ -242,12 +242,53 @@ test('question delivery surfaces keep answer options behind the session shuffle'
   );
   assert.match(
     routedQuiz,
+    /const routeEntryShuffleSeed = useMemo\(/,
+    'Routed quiz should create a per-entry shuffle seed',
+  );
+  assert.match(
+    routedQuiz,
+    /createRouteEntryShuffleSeed\(normalizedSessionId\)/,
+    'Routed quiz should derive the entry shuffle seed from the route question id',
+  );
+  assert.match(
+    routedQuiz,
+    /shuffleQuestionOptionsForSession\(\s*pickedQuestion,\s*routeEntryShuffleSeed\s*\)/,
+    'Routed quiz sessions should key option order to the route-entry seed',
+  );
+  assert.doesNotMatch(
+    routedQuiz,
     /shuffleQuestionOptionsForSession\(\s*pickedQuestion,\s*normalizedSessionId\s*\)/,
-    'Routed quiz sessions should key option order to the route session id',
+    'Routed quiz sessions must not use only the stable route id as the shuffle seed',
   );
   assert.match(
     examGenerator,
     /selected\.map\(\(question\)\s*=>\s*shuffleQuestionOptionsForSession\(question,\s*sessionId\)\)/,
     'Mock exams should shuffle generated questions with the exam session id',
+  );
+});
+
+test('routed quiz route-entry seeds can move the same question while one entry stays stable', () => {
+  const { shuffleQuestionOptionsForSession } = loadTs('lib/quiz/answerOptionShuffle.ts');
+  const question =
+    singleChoiceQuestions().find((candidate) => candidate.id === 'q001') ??
+    singleChoiceQuestions()[0];
+
+  assert.ok(question, 'published bank should include at least one single-choice question');
+
+  const stableSeed = `${question.id}:route-entry:stable`;
+  const firstOrder = optionTexts(shuffleQuestionOptionsForSession(question, stableSeed));
+  const secondOrder = optionTexts(shuffleQuestionOptionsForSession(question, stableSeed));
+  const routeEntryOrders = new Set(
+    Array.from({ length: 16 }, (_unused, index) =>
+      optionTexts(
+        shuffleQuestionOptionsForSession(question, `${question.id}:route-entry:${index}`),
+      ).join('|'),
+    ),
+  );
+
+  assert.deepEqual(firstOrder, secondOrder, 'Try Again should keep one route-entry order stable');
+  assert.ok(
+    routeEntryOrders.size > 1,
+    'fresh routed quiz entries for the same question should be able to produce different orders',
   );
 });
