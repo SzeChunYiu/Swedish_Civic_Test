@@ -11,22 +11,47 @@ type RecapFixture = {
   language: AppLanguage;
   profileCta: string;
   questionMetric: string;
+  rangeLabel: string;
   recapTitle: string;
   weakCta: RegExp;
 };
 
+function formatCurrentWeekRange(language: AppLanguage) {
+  const start = dateInCurrentLocalWeek(0);
+  const end = dateInCurrentLocalWeek(6);
+  const startDay = start.getDate();
+  const endDay = end.getDate();
+  const sameYear = start.getFullYear() === end.getFullYear();
+  const sameMonth = sameYear && start.getMonth() === end.getMonth();
+  const locale = language === 'sv' ? 'sv-SE' : 'en-US';
+  const startMonth = new Intl.DateTimeFormat(locale, { month: 'long' }).format(start);
+  const endMonth = new Intl.DateTimeFormat(locale, { month: 'long' }).format(end);
+
+  if (language === 'sv') {
+    if (sameMonth) return `${startDay}-${endDay} ${endMonth} ${end.getFullYear()}`;
+    if (sameYear) return `${startDay} ${startMonth} - ${endDay} ${endMonth} ${end.getFullYear()}`;
+    return `${startDay} ${startMonth} ${start.getFullYear()} - ${endDay} ${endMonth} ${end.getFullYear()}`;
+  }
+
+  if (sameMonth) return `${endMonth} ${startDay}-${endDay}, ${end.getFullYear()}`;
+  if (sameYear) return `${startMonth} ${startDay} - ${endMonth} ${endDay}, ${end.getFullYear()}`;
+  return `${startMonth} ${startDay}, ${start.getFullYear()} - ${endMonth} ${endDay}, ${end.getFullYear()}`;
+}
+
 const recapFixtures: RecapFixture[] = [
   {
     language: 'en',
-    profileCta: 'View this week',
+    profileCta: 'Open this week’s study recap',
     questionMetric: 'questions answered: 2',
+    rangeLabel: formatCurrentWeekRange('en'),
     recapTitle: 'Your study week',
     weakCta: /Practise /,
   },
   {
     language: 'sv',
-    profileCta: 'Visa veckan',
+    profileCta: 'Öppna veckans studieöversikt',
     questionMetric: 'svarade frågor: 2',
+    rangeLabel: formatCurrentWeekRange('sv'),
     recapTitle: 'Din vecka i studierna',
     weakCta: /Öva /,
   },
@@ -126,6 +151,8 @@ for (const fixture of recapFixtures) {
     await page.getByRole('link', { name: fixture.profileCta }).click();
     await expect(page).toHaveURL(/\/recap/);
     await expect(page.getByRole('heading', { name: fixture.recapTitle })).toBeVisible();
+    await expect(page.getByText(fixture.rangeLabel)).toBeVisible();
+    await expect(page.getByText(/\d{4}-\d{2}-\d{2}/)).toHaveCount(0);
     await expect(page.getByLabel(fixture.questionMetric)).toBeVisible();
     await expect(page.getByRole('link', { name: fixture.weakCta })).toBeVisible();
   });
@@ -156,7 +183,8 @@ test('Weekly recap keeps quiet weeks encouraging and local-only', async ({ page 
   await page.goto('/recap', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
 
-  await expect(page.getByText('Quiet week')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Quiet week' })).toBeVisible();
   await expect(page.getByText(/A quiet week still counts/)).toBeVisible();
-  await expect(page.getByText(/Pro|Remove Ads|account/i)).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: /Remove Ads|account/i })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: /Remove Ads|account/i })).toHaveCount(0);
 });

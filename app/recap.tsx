@@ -8,6 +8,7 @@ import { ScreenShell, SectionHeader } from '../components/ui/ScreenShell';
 import { chapters } from '../data/chapters';
 import { questions } from '../data/questions';
 import { generateWeeklyRecap, type WeeklyRecap } from '../lib/learning/weeklyRecap';
+import { formatWeeklyRecapDateRange } from '../lib/learning/weeklyRecapDateRange';
 import { calculateStreakWithFreeze } from '../lib/learning/streakWithFreeze';
 import { topWeakChapters } from '../lib/learning/weakChapters';
 import {
@@ -36,7 +37,6 @@ type RecapCopy = {
   quietTitle: string;
   subtitle: string;
   title: string;
-  weekRange: (start: string, end: string) => string;
   weakChapterBody: (chapterName: string) => string;
   weakChapterTitle: string;
 };
@@ -60,7 +60,6 @@ const recapCopy: Record<AppLanguage, RecapCopy> = {
     quietTitle: 'Lugn vecka',
     subtitle: 'En lokal summering av veckans svar, övningsprov och nästa rimliga repetition.',
     title: 'Din vecka i studierna',
-    weekRange: (start, end) => `${start} till ${end}`,
     weakChapterBody: (chapterName) =>
       `${chapterName} dök upp i veckans svar och är ett bra nästa steg för repetition.`,
     weakChapterTitle: 'Nästa lugna repetition',
@@ -83,7 +82,6 @@ const recapCopy: Record<AppLanguage, RecapCopy> = {
     quietTitle: 'Quiet week',
     subtitle: 'A local summary of this week’s answers, mock exams, and next sensible review.',
     title: 'Your study week',
-    weekRange: (start, end) => `${start} to ${end}`,
     weakChapterBody: (chapterName) =>
       `${chapterName} appeared in this week’s answers and is a good next review step.`,
     weakChapterTitle: 'Next calm review',
@@ -94,16 +92,6 @@ const questionChapterIndex = Object.fromEntries(
   questions.map((question) => [question.id, question.chapterId]),
 );
 const chapterById = new Map(chapters.map((chapter) => [chapter.id, chapter]));
-
-function formatDateKey(dateKey: string, language: AppLanguage): string {
-  const [year, month, day] = dateKey.split('-').map(Number);
-  if (!year || !month || !day) return dateKey;
-
-  return new Intl.DateTimeFormat(language === 'sv' ? 'sv-SE' : 'en-US', {
-    day: 'numeric',
-    month: 'short',
-  }).format(new Date(year, month - 1, day));
-}
 
 function formatPercent(value: number | null, fallback: string): string {
   return value === null ? fallback : `${Math.round(value * 100)}%`;
@@ -239,15 +227,14 @@ export default function Screen() {
     recap.bestMockScore === null
       ? undefined
       : copy.bestMockScore(Math.round(recap.bestMockScore * 100));
-  const weekStart = formatDateKey(recap.weekStart, language);
-  const weekEnd = formatDateKey(recap.weekEnd, language);
+  const weekRange = formatWeeklyRecapDateRange(recap.weekStart, recap.weekEnd, language);
   const quietWeek = recap.questionsAnswered === 0 && recap.mockExamsTaken === 0;
 
   return (
     <ScreenShell
       eyebrow={copy.eyebrow}
       title={copy.title}
-      subtitle={`${copy.subtitle} ${copy.weekRange(weekStart, weekEnd)}.`}
+      subtitle={`${copy.subtitle} ${weekRange}.`}
     >
       <View style={styles.statsRow}>
         <MetricCard
