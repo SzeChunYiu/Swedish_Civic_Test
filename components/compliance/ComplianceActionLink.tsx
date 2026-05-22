@@ -1,10 +1,11 @@
 import { Link } from 'expo-router';
 import type { ComponentProps } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Platform, StyleSheet, Text } from 'react-native';
 
 import { useReducedMotion } from '../../lib/motion/useReducedMotion';
-import { colors, motion, radius, space, typography } from '../../lib/theme';
+import { motion, radius, space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 
 type ComplianceActionLinkHref = ComponentProps<typeof Link>['href'];
 type ComplianceActionLinkVariant = 'primary' | 'secondary';
@@ -35,12 +36,12 @@ export function getVisibleLinkDestination(url: string) {
   }
 }
 
-function useComplianceActionLinkWebStyles() {
+function useComplianceActionLinkWebStyles(themeColors: ThemeColors) {
   useEffect(() => {
     if (Platform.OS !== 'web' || typeof document === 'undefined') return;
-    if (document.getElementById(complianceActionLinkStyleElementId)) return;
 
-    const styleElement = document.createElement('style');
+    const existingStyleElement = document.getElementById(complianceActionLinkStyleElementId);
+    const styleElement = existingStyleElement ?? document.createElement('style');
     styleElement.id = complianceActionLinkStyleElementId;
     styleElement.textContent = `
 .${complianceActionLinkClassName} {
@@ -55,15 +56,15 @@ function useComplianceActionLinkWebStyles() {
 .${complianceActionLinkClassName}--primary:hover,
 .${complianceActionLinkClassName}--primary:focus-visible,
 .${complianceActionLinkClassName}--primary:active {
-  background-color: ${colors.accentActive};
-  border-color: ${colors.accentActive};
+  background-color: ${themeColors.accentActive};
+  border-color: ${themeColors.accentActive};
 }
 
 .${complianceActionLinkClassName}--secondary:hover,
 .${complianceActionLinkClassName}--secondary:focus-visible,
 .${complianceActionLinkClassName}--secondary:active {
-  background-color: ${colors.focusSoft};
-  border-color: ${colors.focus};
+  background-color: ${themeColors.focusSoft};
+  border-color: ${themeColors.focus};
 }
 
 .${complianceActionLinkClassName}:active {
@@ -82,8 +83,10 @@ function useComplianceActionLinkWebStyles() {
   }
 }
 `;
-    document.head.appendChild(styleElement);
-  }, []);
+    if (!existingStyleElement) {
+      document.head.appendChild(styleElement);
+    }
+  }, [themeColors]);
 }
 
 export function ComplianceActionLink({
@@ -93,7 +96,9 @@ export function ComplianceActionLink({
   label,
   variant = 'secondary',
 }: ComplianceActionLinkProps) {
-  useComplianceActionLinkWebStyles();
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
+  useComplianceActionLinkWebStyles(themeColors);
 
   const [isPressed, setIsPressed] = useState(false);
   const reduceMotion = useReducedMotion();
@@ -146,70 +151,72 @@ export function ComplianceActionLink({
   );
 }
 
-const styles = StyleSheet.create({
-  link: {
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    borderColor: colors.border,
-    borderRadius: radius.small,
-    borderWidth: space.hairline,
-    display: 'flex',
-    justifyContent: 'center',
-    minHeight: space[6],
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
-  },
-  linkWithDetail: {
-    alignItems: 'flex-start',
-    alignSelf: 'stretch',
-    gap: space[0.5],
-  },
-  primary: {
-    backgroundColor: colors.accent,
-    borderColor: colors.accent,
-  },
-  primaryPressed: {
-    backgroundColor: colors.accentActive,
-    borderColor: colors.accentActive,
-    transform: [{ scale: motion.pressedScale }],
-  },
-  primaryPressedReducedMotion: {
-    backgroundColor: colors.accentActive,
-    borderColor: colors.accentActive,
-  },
-  secondary: {
-    backgroundColor: colors.surfaceMuted,
-  },
-  secondaryPressed: {
-    backgroundColor: colors.focusSoft,
-    borderColor: colors.focus,
-    transform: [{ scale: motion.pressedScale }],
-  },
-  secondaryPressedReducedMotion: {
-    backgroundColor: colors.focusSoft,
-    borderColor: colors.focus,
-  },
-  label: {
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    lineHeight: typography.navButton.lineHeight,
-  },
-  primaryLabel: {
-    color: colors.surface,
-  },
-  secondaryLabel: {
-    color: colors.text,
-  },
-  detail: {
-    fontSize: typography.caption.fontSize,
-    fontWeight: typography.caption.fontWeight,
-    lineHeight: typography.caption.lineHeight,
-  },
-  primaryDetail: {
-    color: colors.surface,
-  },
-  secondaryDetail: {
-    color: colors.textMuted,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    link: {
+      alignItems: 'center',
+      alignSelf: 'flex-start',
+      borderColor: themeColors.border,
+      borderRadius: radius.small,
+      borderWidth: space.hairline,
+      display: 'flex',
+      justifyContent: 'center',
+      minHeight: space[6],
+      paddingHorizontal: space[2],
+      paddingVertical: space[1],
+      textDecorationLine: 'none',
+    },
+    linkWithDetail: {
+      alignItems: 'flex-start',
+      alignSelf: 'stretch',
+      gap: space[0.5],
+    },
+    primary: {
+      backgroundColor: themeColors.accent,
+      borderColor: themeColors.accent,
+    },
+    primaryPressed: {
+      backgroundColor: themeColors.accentActive,
+      borderColor: themeColors.accentActive,
+      transform: [{ scale: motion.pressedScale }],
+    },
+    primaryPressedReducedMotion: {
+      backgroundColor: themeColors.accentActive,
+      borderColor: themeColors.accentActive,
+    },
+    secondary: {
+      backgroundColor: themeColors.surfaceMuted,
+    },
+    secondaryPressed: {
+      backgroundColor: themeColors.focusSoft,
+      borderColor: themeColors.focus,
+      transform: [{ scale: motion.pressedScale }],
+    },
+    secondaryPressedReducedMotion: {
+      backgroundColor: themeColors.focusSoft,
+      borderColor: themeColors.focus,
+    },
+    label: {
+      fontSize: typography.navButton.fontSize,
+      fontWeight: typography.navButton.fontWeight,
+      lineHeight: typography.navButton.lineHeight,
+    },
+    primaryLabel: {
+      color: themeColors.surface,
+    },
+    secondaryLabel: {
+      color: themeColors.text,
+    },
+    detail: {
+      fontSize: typography.caption.fontSize,
+      fontWeight: typography.caption.fontWeight,
+      lineHeight: typography.caption.lineHeight,
+    },
+    primaryDetail: {
+      color: themeColors.surface,
+    },
+    secondaryDetail: {
+      color: themeColors.textMuted,
+    },
+  });
+}

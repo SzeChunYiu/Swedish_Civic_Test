@@ -33,6 +33,10 @@ const HEADER_THEME_ICONS = [
 ];
 const PRO_LEARNING_THEME_SURFACES = ['components/quiz/PostAnswerRewardPanel.tsx'];
 const POST_ANSWER_REWARD_CALLERS = ['app/(tabs)/practice.tsx', 'app/quiz/[sessionId].tsx'];
+const WEEKLY_RECAP_THEME_SURFACES = [
+  'app/recap.tsx',
+  'components/compliance/ComplianceActionLink.tsx',
+];
 const COLOR_LITERAL = /#[0-9a-fA-F]{6}|rgba?\(/;
 const SPACING_LITERAL = /\b(?:padding(?:Horizontal|Vertical)?|marginTop|gap|borderRadius):\s*\d/;
 const TYPOGRAPHY_LITERAL =
@@ -362,6 +366,63 @@ test('profile Remove Ads focus styles resolve from active theme colors', () => {
     'Profile must not import the static light colors singleton',
   );
   assert.doesNotMatch(source, /\bcolors\./, 'Profile must not read static colors.* values');
+});
+
+test('weekly recap quiet-week and action link colors resolve from active theme colors', () => {
+  for (const sourcePath of WEEKLY_RECAP_THEME_SURFACES) {
+    const source = read(sourcePath);
+
+    assert.match(
+      source,
+      /useThemeColors\(\)/,
+      `${sourcePath} should read the active theme context`,
+    );
+    assert.match(
+      source,
+      /function createStyles\(themeColors: ThemeColors\)/,
+      `${sourcePath} should derive styles from ThemeColors`,
+    );
+    assert.doesNotMatch(
+      source,
+      /import \{[^}]*\bcolors\b[^}]*\} from ['"][^'"]*lib\/theme['"]/,
+      `${sourcePath} must not import the static light colors singleton`,
+    );
+    assert.doesNotMatch(source, /\bcolors\./, `${sourcePath} must not read static colors.* values`);
+  }
+
+  const recapSource = read('app/recap.tsx');
+  assert.match(
+    recapSource,
+    /const styles = useMemo\(\(\) => createStyles\(themeColors\), \[themeColors\]\)/,
+    'Weekly recap should memoize route-local styles from active theme colors',
+  );
+  assert.match(
+    recapSource,
+    /cardTitle:\s*\{[\s\S]*color:\s*themeColors\.text/,
+    'Quiet-week title should use the active text token',
+  );
+  assert.match(
+    recapSource,
+    /cardBody:\s*\{[\s\S]*color:\s*themeColors\.textSecondary/,
+    'Quiet-week body should use the active secondary text token',
+  );
+
+  const actionLinkSource = read('components/compliance/ComplianceActionLink.tsx');
+  assert.match(
+    actionLinkSource,
+    /useComplianceActionLinkWebStyles\(themeColors\)/,
+    'Compliance action link hover/focus CSS should receive active theme colors',
+  );
+  assert.match(
+    actionLinkSource,
+    /background-color: \$\{themeColors\.focusSoft\}/,
+    'Secondary compliance link web focus background should use active theme colors',
+  );
+  assert.match(
+    actionLinkSource,
+    /secondaryLabel:\s*\{[\s\S]*color:\s*themeColors\.text/,
+    'Secondary compliance link label should use the active text token',
+  );
 });
 
 test('post-answer reward surfaces resolve semantic colors from the active theme', () => {
