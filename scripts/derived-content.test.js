@@ -1561,7 +1561,7 @@ test('derivePublishedQuestions renders q058 national-minorities judgement natura
   );
 });
 
-test("derivePublishedQuestions keeps q128 New Year's Eve option date appositive", () => {
+test('derivePublishedQuestions keeps q128 holiday date options appositive', () => {
   const { questions, sourceQuestions } = loadTs('data/questions.ts');
   const byId = new Map(questions.map((question) => [question.id, question]));
   const source = byId.get('q128');
@@ -1579,6 +1579,10 @@ test("derivePublishedQuestions keeps q128 New Year's Eve option date appositive"
     source?.options.find((option) => option.id === 'c')?.textEn,
     "On New Year's Eve, 31 December",
   );
+  assert.equal(
+    source?.options.find((option) => option.id === 'd')?.textEn,
+    'On Lucia Day, 13 December',
+  );
   assert.equal(byId.get(trueStatementId)?.correctOptionId, 'true');
   assert.equal(byId.get(falseStatementId)?.correctOptionId, 'false');
 
@@ -1589,6 +1593,10 @@ test("derivePublishedQuestions keeps q128 New Year's Eve option date appositive"
       question.options.find((option) => option.id === 'c')?.textEn,
       "On New Year's Eve, 31 December",
     );
+    assert.equal(
+      question.options.find((option) => option.id === 'd')?.textEn,
+      'On Lucia Day, 13 December',
+    );
   }
 
   const text = [source, byId.get(singleChoiceId), byId.get(judgementId)]
@@ -1598,6 +1606,7 @@ test("derivePublishedQuestions keeps q128 New Year's Eve option date appositive"
     )
     .join('\n');
   assert.doesNotMatch(text, /New Year(?:’|')s Eve on 31 December/i);
+  assert.doesNotMatch(text, /Lucia Day on 13 December/i);
 });
 
 test('derivePublishedQuestions renders q146 political-rights true/false as direct propositions', () => {

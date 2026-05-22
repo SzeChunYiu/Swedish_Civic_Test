@@ -39,6 +39,7 @@ const SUFFRAGE_1921_EXPECTED_STATIC_EXPLANATION =
 const SOURCE_CRITICISM_STALE_STATIC_PATTERN =
   /具有(?:來|来)源批判意識|أن تكون ناقدًا للمصادر|سەرچاوە-ڕەخنەیی|منبع‌سنج بودن|krytyczne podejście do źródeł|si naqdineed loo eego ilaha|ንምንጭታት ብነቐፌታዊ መንገዲ ምርኣይ|kaynaklara eleştirel yaklaşmak|критично ставитися до джерел/i;
 const NEW_YEARS_EVE_DATE_STALE_PATTERN = /\bNew Year(?:’|')s Eve on 31 December\b/i;
+const LUCIA_DAY_DATE_STALE_PATTERN = /\bLucia Day on 13 December\b/i;
 const BASE_LOCALES = new Set(['sv', 'en']);
 
 function withSvEn(localizedText, sv, en) {
@@ -323,7 +324,7 @@ test('static site question bank keeps q080 suffrage explanations learner-facing'
   }
 });
 
-test("static site question bank keeps q128 New Year's Eve option date appositive", () => {
+test('static site question bank keeps q128 holiday date options appositive', () => {
   const expectedBank = buildSiteQuestionBank();
   const sourceQuestions = expectedBank.questions.filter(
     (question) => question.questionProvenance === 'uhr',
@@ -345,7 +346,9 @@ test("static site question bank keeps q128 New Year's Eve option date appositive
   for (const id of ['q128', singleChoiceId, judgementId]) {
     const question = questionsById.get(id);
     assert.equal(question.opts[2].en, "On New Year's Eve, 31 December");
+    assert.equal(question.opts[3].en, 'On Lucia Day, 13 December');
     assert.doesNotMatch(staticQuestionVisibleText(question), NEW_YEARS_EVE_DATE_STALE_PATTERN);
+    assert.doesNotMatch(staticQuestionVisibleText(question), LUCIA_DAY_DATE_STALE_PATTERN);
   }
 
   assert.equal(questionsById.get('q128').answer, 0);
