@@ -192,10 +192,10 @@ test('static optional account surface preserves anonymous local study boundaries
   assert.match(staticSurface, /Continue with Google|Forts[aä]tt med Google/i);
   assert.match(staticSurface, /Continue with Apple|Forts[aä]tt med Apple/i);
   assert.match(staticSurface, /Email me a magic link|Mejla mig en magisk l[aä]nk/i);
-  assert.match(app, /No — you can do everything without registering/);
+  assert.match(app, /Core study works without sign-in, and your progress lives on your device/);
   assert.match(app, /Signing in is optional, but it unlocks more/);
-  assert.match(app, /Study progress stays local/);
-  assert.match(app, /Dina framsteg sparas lokalt/);
+  assert.match(app, /Your study progress, answers, mistakes, and settings stay local/);
+  assert.match(app, /Dina studieframsteg, svar, misstag och inställningar sparas lokalt/);
 
   assert.match(index, /window\.SMT_SITE_ORIGIN = 'https:\/\/almostswedish\.se'/);
   assert.match(
@@ -243,10 +243,25 @@ test('ebook highlights and notes stay local without account prompts', () => {
   const index = read('site/index.html');
   const ebookTools = read('site/ebook-tools.js');
 
-  assert.match(index, /Highlights and notes stay in this browser\. No account is needed\./);
+  assert.match(
+    index,
+    /Highlights and notes stay in this browser and work locally without sign-in\./,
+  );
   assert.match(ebookTools, /localStorage\.setItem\(\s*['"]smt_hl_['"]\s*\+/);
   assert.match(ebookTools, /function showPopForSelection\(\)/);
   assert.doesNotMatch(ebookTools, /isSignedIn|showSigninNudge|data-act="signin"/);
+});
+
+test('static toast helper keeps account and study messages text-safe by default', () => {
+  const fx = read('site/fx.js');
+  const purchase = read('site/purchase.js');
+  const signin = read('site/signin.js');
+  const extras = read('site/extras.js');
+  const ebookTools = read('site/ebook-tools.js');
+
+  assert.match(fx, /t\.textContent\s*=\s*String\(msg \?\? ''\)/);
+  assert.doesNotMatch(fx, /t\.innerHTML\s*=\s*msg/);
+  assert.doesNotMatch([purchase, signin, extras, ebookTools].join('\n'), /trustedHtml\s*:\s*true/);
 });
 
 test('ebook highlight and note controls expose localized accessible names', () => {
