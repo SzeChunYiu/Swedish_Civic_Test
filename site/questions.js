@@ -20490,7 +20490,7 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "What is correct about Sweden's largest lakes?",
+      "en": "What is correct about Sweden's three largest lakes?",
       "sv": "Vad stämmer om Sveriges största sjöar?"
     },
     "opts": [
@@ -20664,8 +20664,8 @@
     "chapter": "Ch. 01 · The country of Sweden",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct about Sweden's largest lakes?",
-      "sv": "Vilken uppgift stämmer om Sveriges största sjöar?"
+      "en": "Which fact is correct about Sweden's three largest lakes?",
+      "sv": "Vilken uppgift stämmer om Sveriges tre största sjöar?"
     },
     "opts": [
       {
@@ -24810,7 +24810,7 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "What is correct about the foremost task of Sweden's regions?",
+      "en": "What is correct about the main responsibility of Sweden's regions?",
       "sv": "Vad stämmer om regionernas främsta uppgift i Sverige?"
     },
     "opts": [
@@ -24978,7 +24978,7 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct about the foremost task of Sweden's regions?",
+      "en": "Which fact is correct about the main responsibility of Sweden's regions?",
       "sv": "Vilken uppgift stämmer om regionernas främsta uppgift i Sverige?"
     },
     "opts": [
@@ -30494,7 +30494,7 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "What is correct about public service companies in Sweden?",
+      "en": "What is correct about Sweden's public service broadcasters?",
       "sv": "Vad stämmer om tre företag som kallas public service i Sverige?"
     },
     "opts": [
@@ -30665,7 +30665,7 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct about public service companies in Sweden?",
+      "en": "Which fact is correct about Sweden's public service broadcasters?",
       "sv": "Vilken uppgift stämmer om tre företag som kallas public service i Sverige?"
     },
     "opts": [
@@ -33150,8 +33150,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct about Sweden's national minorities?",
-      "sv": "Vilken uppgift stämmer om Sveriges nationella minoriteter?"
+      "en": "Which fact is correct about Sweden's five national minorities?",
+      "sv": "Vilken uppgift stämmer om Sveriges fem nationella minoriteter?"
     },
     "opts": [
       {
@@ -34174,8 +34174,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct about the public sector in Sweden?",
-      "sv": "Vilken uppgift stämmer om offentlig sektor i Sverige?"
+      "en": "Which statement about Sweden's public sector is correct?",
+      "sv": "Vilken uppgift om offentlig sektor i Sverige stämmer?"
     },
     "opts": [
       {

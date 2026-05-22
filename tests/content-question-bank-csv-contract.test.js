@@ -10,8 +10,10 @@ const { generatedQuestionId } = require('../scripts/generated-question-fixture-i
 const repoRoot = path.resolve(__dirname, '..');
 const SUFFRAGE_1921_STALE_CSV_PATTERN =
   /\b1921 is the year of the election asked about here\b|\bthe year of the election asked about here\b/i;
+const SUFFRAGE_1921_REVISED_CSV_PATTERN =
+  /\bfirst Riksdag election held after those reforms was in 1921\b/i;
 const SUFFRAGE_1921_EXPECTED_CSV_EXPLANATION =
-  "the first Riksdag election with both women's and men's voting rights and women's eligibility was held in 1921";
+  'first Riksdag election held after those reforms was in 1921';
 const GENERATED_SINGLE_CHOICE_ANSWER_LOGIC_OPTION_PATTERN =
   /\b(?:Båda påståendena är korrekta|Both statements are correct|Inget av påståendena är korrekt|Neither statement is correct)\b/i;
 
@@ -288,8 +290,8 @@ test('question-bank CSV keeps q080 suffrage explanation learner-facing', () => {
   for (const id of expectedIds) {
     const row = rowsById.get(id);
     assert.ok(row, `${id} should be exported to content/question-bank.csv`);
-    assert.doesNotMatch(row[explanationEnIndex], Q080_SUFFRAGE_STALE_PATTERN);
-    assert.match(row[explanationEnIndex], Q080_SUFFRAGE_REVISED_PATTERN);
+    assert.doesNotMatch(row[explanationEnIndex], SUFFRAGE_1921_STALE_CSV_PATTERN);
+    assert.match(row[explanationEnIndex], SUFFRAGE_1921_REVISED_CSV_PATTERN);
   }
 });
 

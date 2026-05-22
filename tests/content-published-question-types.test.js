@@ -537,15 +537,16 @@ test('private welfare source and exports use natural tax-funding English', () =>
       privateWelfareTaxFundingStiltedEnglishPattern.test(textForQuestion(question)),
     )
     .map((question) => question.id);
-  const sourceQuestions = generatedSiteBank.filter(
-    (question) => question.questionProvenance === 'uhr',
-  );
   const q155 = generatedSiteBank.find((question) => question.id === 'q155');
+  const trueStatementId = generatedQuestionId(sourceQuestions, 'q155', 'trueStatement');
+  const falseStatementId = generatedQuestionId(sourceQuestions, 'q155', 'falseStatement');
+  const trueStatement = generatedSiteBank.find((question) => question.id === trueStatementId);
+  const falseStatement = generatedSiteBank.find((question) => question.id === falseStatementId);
   const welfareVariantIds = [
     'q155',
     generatedQuestionId(sourceQuestions, 'q155', 'singleChoice'),
-    generatedQuestionId(sourceQuestions, 'q155', 'trueStatement'),
-    generatedQuestionId(sourceQuestions, 'q155', 'falseStatement'),
+    trueStatementId,
+    falseStatementId,
     generatedQuestionId(sourceQuestions, 'q155', 'judgement'),
   ];
   const welfareVariants = generatedSiteBank.filter((question) =>
