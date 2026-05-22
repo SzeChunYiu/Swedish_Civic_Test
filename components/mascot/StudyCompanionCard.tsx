@@ -98,7 +98,7 @@ export function StudyCompanionCard({
           accessibilityLabel={copy.settingsAccessibilityLabel}
           accessibilityRole="link"
           asChild
-          href="/settings"
+          href="/settings?focus=companion"
         >
           <Button
             accessibilityLabel={copy.settingsAccessibilityLabel}

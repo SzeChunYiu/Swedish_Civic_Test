@@ -323,7 +323,17 @@ test('practice shows the selected study companion and answer-state guidance', as
   ).toBeVisible();
 
   await page.getByRole('link', { name: 'Change study companion in Settings' }).click();
-  await expect(page).toHaveURL(/\/settings/);
+  await expect(page).toHaveURL(/\/settings\?focus=companion$/);
+  await dismissBlockingModals(page);
+  await expect(
+    page.getByText('The study companion picker from Practice is highlighted here.'),
+  ).toBeVisible();
+  await expect(page.getByRole('radiogroup', { name: 'Choose study companion' })).toBeVisible();
+  await expect(
+    page.getByRole('radio', {
+      name: 'Dala horse is selected as study companion. Folk symbol from Dalarna.',
+    }),
+  ).toHaveAttribute('aria-checked', 'true');
 
   expect(consoleErrors).toEqual([]);
 });
@@ -727,11 +737,10 @@ test('Practice adaptive summary announces recommendation mix updates without tak
   await expect.poll(async () => adaptiveSummary.textContent()).not.toBe(initialSummary);
   await expect(adaptiveSummary).not.toBeFocused();
 
-  await page.getByRole('switch', { name: 'Include supplementary questions' }).click();
-  await expect(page.getByRole('switch', { name: 'UHR questions only' })).toHaveAttribute(
-    'aria-checked',
-    'false',
-  );
+  await page.getByRole('switch', { name: 'UHR questions only' }).click();
+  await expect(
+    page.getByRole('switch', { name: 'Include supplementary questions' }),
+  ).toHaveAttribute('aria-checked', 'true');
   await expect(adaptiveSummary).toHaveAttribute('aria-live', 'polite');
 
   expect(consoleErrors).toEqual([]);

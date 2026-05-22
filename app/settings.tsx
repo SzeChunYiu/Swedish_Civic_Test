@@ -1,6 +1,7 @@
 import { useLocalSearchParams } from 'expo-router';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import type { LayoutChangeEvent } from 'react-native';
 
 import { ComplianceActionLink } from '../components/compliance/ComplianceActionLink';
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
@@ -37,6 +38,7 @@ type SettingsCopy = {
   backToProfile: string;
   backToProfileAccessibilityLabel: string;
   companionSubtitle: string;
+  companionFocusLabel: string;
   companionTitle: string;
   dailyGoalPresetLabel: (goal: number) => string;
   dailyGoalSummary: (answerCount: number) => string;
@@ -146,6 +148,7 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     backToProfileAccessibilityLabel: 'Tillbaka till profil',
     companionSubtitle:
       'Välj en studiekompis för övningen. Valet är gratis och sparas bara på enheten.',
+    companionFocusLabel: 'Studiekompisen från övningen är markerad här.',
     companionTitle: 'Studiekompis',
     dailyGoalPresetLabel: (goal) => {
       if (goal === 5) return 'Snabb';
@@ -252,6 +255,7 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     backToProfileAccessibilityLabel: 'Back to profile',
     companionSubtitle:
       'Choose a study companion for practice. It is free and saved only on this device.',
+    companionFocusLabel: 'The study companion picker from Practice is highlighted here.',
     companionTitle: 'Study companion',
     dailyGoalPresetLabel: (goal) => {
       if (goal === 5) return 'Quick';
@@ -452,10 +456,13 @@ export default function Screen() {
   const { colors: themeColors } = useTheme();
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const studyFocusActive = focus === 'study';
+  const companionFocusActive = focus === 'companion';
   const [importText, setImportText] = useState('');
   const [importPreview, setImportPreview] = useState<LocalStudyDataImportPreview | null>(null);
   const [importFeedback, setImportFeedback] = useState<ImportFeedback | null>(null);
+  const [companionSectionY, setCompanionSectionY] = useState(0);
   const [focusedControl, setFocusedControl] = useState<string | null>(null);
+  const scrollViewRef = useRef<ScrollView | null>(null);
   const dailyGoalOptionRefs = useRef<Record<string, FocusableElement | null>>({});
   const languageOptionRefs = useRef<Record<string, FocusableElement | null>>({});
   const themeOptionRefs = useRef<Record<string, FocusableElement | null>>({});
@@ -477,6 +484,29 @@ export default function Screen() {
         localStudyDataImportMaxLabel,
       )
     : null;
+
+  useEffect(() => {
+    if (!companionFocusActive) return;
+
+    const scrollToCompanion = () => {
+      scrollViewRef.current?.scrollTo({
+        animated: !reduceMotion,
+        y: Math.max(companionSectionY - space[2], 0),
+      });
+    };
+
+    if (Platform.OS === 'web' && typeof requestAnimationFrame === 'function') {
+      const frame = requestAnimationFrame(scrollToCompanion);
+      return () => cancelAnimationFrame(frame);
+    }
+
+    const timeout = setTimeout(scrollToCompanion, 0);
+    return () => clearTimeout(timeout);
+  }, [companionFocusActive, companionSectionY, reduceMotion]);
+
+  const handleCompanionSectionLayout = (event: LayoutChangeEvent) => {
+    setCompanionSectionY(event.nativeEvent.layout.y);
+  };
 
   const handleRadioGroupKeyDown = <T extends RadioOptionValue>(
     event: KeyboardEventLike,
@@ -655,7 +685,7 @@ export default function Screen() {
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView ref={scrollViewRef} style={styles.container} contentContainerStyle={styles.content}>
       <ComplianceActionLink
         accessibilityLabel={copy.backToProfileAccessibilityLabel}
         href="/(tabs)/profile"
@@ -854,7 +884,16 @@ export default function Screen() {
         </View>
       </View>
 
-      <View style={styles.section}>
+      <View
+        accessibilityLabel={copy.companionTitle}
+        nativeID="companion-settings-controls"
+        onLayout={handleCompanionSectionLayout}
+        style={[styles.section, companionFocusActive ? styles.companionControlsGroupFocused : null]}
+        testID="companion-settings-controls"
+      >
+        {companionFocusActive ? (
+          <Text style={styles.studyFocusText}>{copy.companionFocusLabel}</Text>
+        ) : null}
         <Text accessibilityRole="header" style={styles.sectionTitle}>
           {copy.companionTitle}
         </Text>
@@ -1028,6 +1067,10 @@ function createStyles(themeColors: ThemeColors) {
       padding: space[0.5],
     },
     studyControlsGroupFocused: {
+      backgroundColor: themeColors.focusSoft,
+      borderColor: themeColors.focus,
+    },
+    companionControlsGroupFocused: {
       backgroundColor: themeColors.focusSoft,
       borderColor: themeColors.focus,
     },

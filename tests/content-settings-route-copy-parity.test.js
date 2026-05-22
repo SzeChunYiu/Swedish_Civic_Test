@@ -46,11 +46,12 @@ test('settings route shell copy follows the persisted settings language', () => 
     'utf8',
   );
 
-  assert.equal(summary.settingsRouteCopyLabelsValidated, 125);
+  assert.equal(summary.settingsRouteCopyLabelsValidated, 127);
   assert.equal(summary.settingsRouteCopyParityValidated, true);
   assert.match(source, /import \{ useLocalSearchParams \} from 'expo-router';/);
   assert.match(source, /const \{ focus \} = useLocalSearchParams<\{ focus\?: string \}>\(\);/);
   assert.match(source, /const studyFocusActive = focus === 'study';/);
+  assert.match(source, /const companionFocusActive = focus === 'companion';/);
   assert.match(source, /studyControlsTitle: 'Dagligt mål, språk och ljud'/);
   assert.match(source, /studyControlsTitle: 'Daily goal, language, and audio'/);
   assert.match(
@@ -61,11 +62,24 @@ test('settings route shell copy follows the persisted settings language', () => 
     source,
     /studyControlsFocusLabel: 'The study setup controls from Profile are highlighted here\.'/,
   );
+  assert.match(source, /companionFocusLabel: 'Studiekompisen från övningen är markerad här\.'/);
+  assert.match(
+    source,
+    /companionFocusLabel: 'The study companion picker from Practice is highlighted here\.'/,
+  );
   assert.match(source, /nativeID="study-settings-controls"/);
   assert.match(source, /testID="study-settings-controls"/);
+  assert.match(source, /nativeID="companion-settings-controls"/);
+  assert.match(source, /testID="companion-settings-controls"/);
+  assert.match(source, /ref=\{scrollViewRef\}/);
+  assert.match(source, /scrollViewRef\.current\?\.scrollTo/);
+  assert.match(source, /onLayout=\{handleCompanionSectionLayout\}/);
   assert.match(source, /studyFocusActive \? styles\.studyControlsGroupFocused : null/);
+  assert.match(source, /companionFocusActive \? styles\.companionControlsGroupFocused : null/);
   assert.match(source, /\{studyFocusActive \? \(/);
   assert.match(source, /\{copy\.studyControlsFocusLabel\}/);
+  assert.match(source, /\{companionFocusActive \? \(/);
+  assert.match(source, /\{copy\.companionFocusLabel\}/);
   assert.match(source, /type SettingsCopy =/);
   assert.match(source, /const settingsCopy: Record<AppLanguage, SettingsCopy> = \{/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
@@ -245,7 +259,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/app/settings.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('<ScrollView style={styles.container} contentContainerStyle={styles.content}>', '<View style={styles.container}>')
+      .replace(/<ScrollView[^>]*style=\{styles\.container\}[^>]*contentContainerStyle=\{styles\.content\}[^>]*>/, '<View style={styles.container}>')
       .replace('</ScrollView>', '</View>');
   }
   return originalReadFileSync.call(this, filePath, ...args);
