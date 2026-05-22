@@ -6,6 +6,7 @@ import path from 'node:path';
 declare global {
   interface Window {
     i18n?: Record<string, Record<string, string>>;
+    smtOpenSignin?: () => void;
     smtSetLanguage?: (lang: string) => void;
     SMT_QUESTIONS?: Array<{
       id?: string;
@@ -46,6 +47,37 @@ const purchaseSurfaceLocales = [
   'ti',
   'tr',
 ] as const satisfies readonly ExtraLocale[];
+const signedInAccountLabels: Record<ExtraLocale, string> = {
+  'zh-Hans': '账户',
+  'zh-Hant': '帳號',
+  ar: 'الحساب',
+  ckb: 'هەژمار',
+  fa: 'حساب',
+  pl: 'Konto',
+  so: 'Akoon',
+  ti: 'ሕሳብ',
+  tr: 'Hesap',
+  uk: 'Обліковий запис',
+};
+const signedInCopySnippets: Record<ExtraLocale, readonly RegExp[]> = {
+  'zh-Hans': [/已登录/, /标注/, /笔记/, /学习面板/, /同步/, /设备/],
+  'zh-Hant': [/已登入/, /標註/, /筆記/, /學習面板/, /同步/, /裝置/],
+  ar: [/سجّلت الدخول/, /تظليلاتك/, /ملاحظاتك/, /لوحتك/, /تتزامن/, /أجهزتك/],
+  ckb: [/چوویتە ژوورەوە/, /هایلایت/, /تێبینی/, /داشبۆرد/, /هاوکات/, /ئامێرەکانت/],
+  fa: [/وارد شده‌ای/, /هایلایت/, /یادداشت/, /داشبورد/, /همگام/, /دستگاه/],
+  pl: [/zalogowan/i, /zaznaczenia/i, /notatki/i, /panel/i, /synchronizują/i, /urządzeniami/i],
+  so: [
+    /Waad gashay/i,
+    /Calaamadahaaga/i,
+    /qoraalladaada/i,
+    /dashboard-kaaga/i,
+    /isku waafajinayaa/i,
+    /qalabkaaga/i,
+  ],
+  ti: [/ኣቲኻ/, /ምልክታትካ/, /መዘኻኸር/, /ዳሽቦርድካ/, /ይሳነዩ/, /መሳርሕታትካ/],
+  tr: [/Giriş yaptın/i, /Vurguların/i, /notların/i, /panon/i, /senkronize/i, /cihazlarında/i],
+  uk: [/увійшли/i, /Виділення/i, /нотатки/i, /панель/i, /синхронізуються/i, /пристроями/i],
+};
 
 const contentTypeByExtension: Record<string, string> = {
   '.css': 'text/css; charset=utf-8',
@@ -860,6 +892,52 @@ test('static Home chapter 1 folkhemmet glossary keeps localized term before Swed
     await expectRootLocale(page, locale);
     await assertHomeChapterOneFolkhemmetGlossary(page, locale);
     await expect(page.locator('.list-quiet > li')).toHaveCount(13);
+  }
+
+  expect(pageErrors).toEqual([]);
+});
+
+test('static sign-in signed-in account view localizes in extra languages', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const pageErrors = collectPageErrors(page);
+  await page.addInitScript(() => {
+    for (const key of ['SMT_SUPABASE_URL', 'SMT_SUPABASE_ANON_KEY'] as const) {
+      Object.defineProperty(window, key, {
+        configurable: true,
+        get: () => '',
+        set: () => undefined,
+      });
+    }
+  });
+  await openStaticHome(page, staticSite.baseUrl);
+
+  await page.evaluate(() => {
+    window.localStorage.setItem('smt_signed_in', '1');
+    window.localStorage.setItem('smt_account_id', 'acct-extra-locale');
+    window.localStorage.setItem('smt_account_email', 'learner@example.test');
+    window.dispatchEvent(new Event('smt:authchange'));
+  });
+
+  for (const locale of extraLocales) {
+    await switchStaticSiteLanguage(page, locale);
+
+    const trigger = page.locator('#signin-open');
+    await expect(trigger).toHaveText(signedInAccountLabels[locale]);
+    await expect(trigger).toHaveAttribute('aria-label', signedInAccountLabels[locale]);
+    await trigger.click();
+    await expect(page.locator('#signin-modal')).toBeVisible();
+    await expect(page.locator('#signin-modal .signin__account')).toBeVisible();
+    await expect(page.locator('#signin-modal .signin__login')).toBeHidden();
+
+    const signedInCopy = await page.locator('#signin-modal .signin__signedin').innerText();
+    expect(signedInCopy).not.toMatch(/You're signed in|Your highlights, notes, and dashboard/i);
+    expect(signedInCopy).not.toMatch(/\bdhban\b|isugu\s+dhban/i);
+    for (const pattern of signedInCopySnippets[locale]) {
+      expect(signedInCopy).toMatch(pattern);
+    }
+
+    await page.locator('#signin-modal button[data-close="signin"]').click();
+    await expect(page.locator('#signin-modal')).toBeHidden();
   }
 
   expect(pageErrors).toEqual([]);
