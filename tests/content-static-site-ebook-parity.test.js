@@ -1322,6 +1322,25 @@ test('static ebook footnote links preserve route hashes and rendered source coun
   }
 });
 
+test('static ebook chapters expose heterogeneous source provenance in the source-count badge', () => {
+  const harness = createEbookHarness();
+  const chapterIds = getExpectedChapterIds();
+
+  for (const chapterId of chapterIds) {
+    for (const lang of ['en', 'sv']) {
+      const html = renderChapter(harness, lang, chapterId);
+      const counts = renderedSourceCounts(html);
+      const nonUhrSourceKeys = Object.keys(counts).filter((key) => !key.startsWith('uhr'));
+
+      assert.ok(
+        nonUhrSourceKeys.length > 0,
+        `chapter ${chapterId} ${lang} should show at least one non-UHR source or editorial note`,
+      );
+      assert.match(html, /ebook__provenance-badge--source-mix/);
+    }
+  }
+});
+
 test('static ebook external source links use safe attributes while internal hashes stay in-page', () => {
   const harness = createEbookHarness();
   const html = ['en', 'sv']
