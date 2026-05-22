@@ -52,6 +52,19 @@ function validHighlight(overrides = {}) {
   };
 }
 
+function createSpeechStub() {
+  return {
+    stopCalls: 0,
+    speakCalls: [],
+    speak(text, options) {
+      this.speakCalls.push({ text, options });
+    },
+    stop() {
+      this.stopCalls += 1;
+    },
+  };
+}
+
 function loadImportModule(storageById, moduleStubs = {}) {
   return loadTsWithStorage(
     repoRoot,
@@ -184,6 +197,8 @@ test('local study data import summary keeps Swedish copy learner-facing', () => 
   assert.match(swedishCopyMatch[0], /other: 'sparade inställningar'/);
   assert.match(swedishCopyMatch[0], /one: 'tillgänglighetsval'/);
   assert.match(swedishCopyMatch[0], /one: 'vald studiekompis'/);
+  assert.match(swedishCopyMatch[0], /section === 'accessibility'\) return 'tillgänglighetsval'/);
+  assert.match(swedishCopyMatch[0], /section === 'companion'\) return 'studiekompis'/);
   assert.match(swedishCopyMatch[0], /Studiesvit och svitskydd ingår/);
   assert.match(swedishCopyMatch[0], /högst \$\{localStudyDataImportMaxLabel\}/);
   assert.match(
@@ -212,6 +227,11 @@ test('local study data import summary keeps Swedish copy learner-facing', () => 
   assert.match(englishCopyMatch[0], /one: 'accessibility preference'/);
   assert.match(englishCopyMatch[0], /other: 'accessibility preferences'/);
   assert.match(englishCopyMatch[0], /one: 'selected study companion'/);
+  assert.match(
+    englishCopyMatch[0],
+    /section === 'accessibility'\) return 'accessibility preferences'/,
+  );
+  assert.match(englishCopyMatch[0], /section === 'companion'\) return 'study companion'/);
   assert.match(englishCopyMatch[0], /under \$\{localStudyDataImportMaxLabel\}/);
   assert.match(
     englishCopyMatch[0],
@@ -224,6 +244,8 @@ test('local study data import summary keeps Swedish copy learner-facing', () => 
   assert.match(source, /getLocalStudyDataImportPayloadByteCount/);
   assert.match(importSource, /type LocalStudyDataImportApplyResult/);
   assert.match(importSource, /warnings: LocalStudyDataImportApplyWarning\[\]/);
+  assert.match(importSource, /\| 'accessibility'/);
+  assert.match(importSource, /recordWarning\(\s*'accessibility'/);
   assert.match(source, /applyResult\.warnings\.length > 0/);
   assert.match(source, /copy\.importPersistenceWarning\(sectionList\)/);
   assert.match(
@@ -357,6 +379,7 @@ test('local study data import previews and applies all learner snapshot sections
     previewResult.preview.highlights.byChapter.ch01.map((highlight) => highlight.id),
     ['hl-safe-1'],
   );
+  assertNoSnapshotWrites(storageById);
 
   const applyResult = applyLocalStudyDataImport(previewResult.preview);
   assert.deepEqual(applyResult.summary, previewResult.preview.summary);
@@ -481,7 +504,9 @@ test('local study data import does not stop speech when audioEnabled is true abs
 
 test('local study data import apply result reports section write warnings', () => {
   const storageById = {
+    accessibility: createThrowingSetMMKV('accessibility disk full'),
     'citizenship-requirements': createThrowingSetMMKV('requirements disk full'),
+    companion: createThrowingSetMMKV('companion disk full'),
     progress: createThrowingSetMMKV('progress disk full'),
     'mistake-review': createThrowingSetMMKV('mistake disk full'),
     reviews: createThrowingSetMMKV('reviews disk full'),
@@ -536,6 +561,16 @@ test('local study data import apply result reports section write warnings', () =
       audioEnabled: false,
       dailyGoalAnswers: 20,
     },
+    accessibility: {
+      easyReadFont: true,
+      fontSizeStep: 3,
+      audioPlaybackRate: 1.25,
+      listenFirstAudioEnabled: true,
+      themeMode: 'dark',
+    },
+    companion: {
+      selectedId: 'dala-horse',
+    },
     citizenshipRequirements: {
       checkedAreaIds: ['identity'],
     },
@@ -553,7 +588,16 @@ test('local study data import apply result reports section write warnings', () =
   assert.deepEqual(applyResult.summary, previewResult.preview.summary);
   assert.deepEqual(
     applyResult.warnings.map((item) => item.section),
-    ['progress', 'mistakeReview', 'reviews', 'settings', 'citizenshipRequirements', 'highlights'],
+    [
+      'accessibility',
+      'companion',
+      'progress',
+      'mistakeReview',
+      'reviews',
+      'settings',
+      'citizenshipRequirements',
+      'highlights',
+    ],
   );
   for (const item of applyResult.warnings) {
     assert.equal(item.warning.type, 'recoverable-persistence-warning');

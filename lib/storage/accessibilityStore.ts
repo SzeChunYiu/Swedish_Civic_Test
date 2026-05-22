@@ -293,7 +293,7 @@ export function fontScaleFor(step: unknown): number {
 
 export function importAccessibilityPreferencesSnapshot(
   preferences: ImportableAccessibilityPreferences,
-): void {
+): RecoverablePersistenceWarning | null {
   const normalizedPreferences = normalizeImportedAccessibilityPreferences(preferences);
   let persistenceWarning: RecoverablePersistenceWarning | null = null;
   if (normalizedPreferences.easyReadFont !== undefined) {
@@ -343,4 +343,5 @@ export function importAccessibilityPreferencesSnapshot(
   }
 
   useAccessibilityStore.setState({ ...normalizedPreferences, persistenceWarning });
+  return persistenceWarning;
 }
