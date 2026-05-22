@@ -1,11 +1,4 @@
-Blocked until COMPONENTS publishes the core component set (Screen, Text, Button, OptionCard, ProgressBar, DisclaimerBanner at minimum).
-
-Planned (do NOT start until manager confirms components are accepted):
-1. app/_layout.tsx — root layout: theme provider, status bar style, font loading stub.
-2. app/(tabs)/_layout.tsx — tab bar styled with tokens, icon + label.
-3. app/(tabs)/index.tsx — Home: greeting, progress card, Continue CTA, recent chapter rows.
-4. app/(tabs)/practice.tsx — chapter picker + Start CTA.
-5. app/quiz/[chapterId].tsx — full quiz flow: progress bar, question, four OptionCards, explanation, next.
-6. app/(tabs)/chapters.tsx — chapter list with ChapterRow.
-7. app/(tabs)/settings.tsx — language toggle, about, disclaimer, version.
-8. app/quiz/results.tsx — score, breakdown, retry/next CTAs.
+LANE SUSPENDED — VISUAL DESIGN FROZEN (operator directive 2026-05-22).
+Do NOT work any UI / card / box / frame / layout / design-token / visual-restyle task.
+This lane is paused until the operator lifts the freeze in GOAL.md.
+All previously-queued tasks in this lane are CANCELLED.

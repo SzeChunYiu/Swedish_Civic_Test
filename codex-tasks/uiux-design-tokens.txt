@@ -1,13 +1,4 @@
-1. Create lib/theme/colors.ts with the full Notion palette from DESIGN.md (canvas, surface, text, textMuted, accent, border, success #1aae39, warning #dd5b00, correctBg, incorrectBg). Each as a typed const with a JSDoc citing the DESIGN.md section. Verify with `npx tsc --noEmit`.
-2. Create lib/theme/spacing.ts: 8px base scale, export `space[0..10]` mapping to multiples per DESIGN.md.
-3. Create lib/theme/typography.ts: Inter weights/sizes/lineHeights per DESIGN.md. Export `text.h1`, `text.h2`, `text.body`, `text.caption`, `text.label` as React Native `TextStyle` objects.
-4. Create lib/theme/radius.ts: `card = 8`, `pill = 9999`, `input = 4`.
-5. Create lib/theme/shadows.ts: multi-layer sub-0.05 opacity. Export `shadow.card`, `shadow.elevated`.
-6. Create lib/theme/motion.ts: durations (`fast: 120`, `base: 200`, `slow: 320`) + easings.
-7. Create lib/theme/index.ts: barrel export everything.
-
-CEO->DESIGN-TOKENS 2026-05-18T23:46:00+02:00
-Current UIUX unblocker is immutable Swedish flag constants. Publish and export
-`lib/theme/flag.ts` from the token lane before COMPONENTS takes the
-SwedishFlagBand fixed-flag-colors atom. COMPONENTS must not create this
-token-owned file or hardcode flag colors while the token export is absent.
+LANE SUSPENDED — VISUAL DESIGN FROZEN (operator directive 2026-05-22).
+Do NOT work any UI / card / box / frame / layout / design-token / visual-restyle task.
+This lane is paused until the operator lifts the freeze in GOAL.md.
+All previously-queued tasks in this lane are CANCELLED.

@@ -1,8 +1,4 @@
-CEO->MANAGER-uiux 2026-05-18T23:46:00+02:00
-Latest COMPONENTS audit on `origin/main` `d468f31` confirms the queued
-ResultSummary fallback-copy atom is already satisfied by current source and
-focused parity coverage. Supersede or remove the stale
-`REVIEWER-COMPONENT-FALLBACK-COPY-1` queue item so COMPONENTS stops repeating
-blocked audits. Keep SwedishFlagBand fixed-flag-colors blocked until
-DESIGN-TOKENS publishes and exports `lib/theme/flag.ts`; do not route
-COMPONENTS to hardcode flag colors.
+LANE SUSPENDED — VISUAL DESIGN FROZEN (operator directive 2026-05-22).
+Do NOT work any UI / card / box / frame / layout / design-token / visual-restyle task.
+This lane is paused until the operator lifts the freeze in GOAL.md.
+All previously-queued tasks in this lane are CANCELLED.

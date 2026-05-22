@@ -1,11 +1,4 @@
-1. lib/motion/useReducedMotion.ts — hook returning current reduce-motion preference, subscribes to AccessibilityInfo changes.
-2. lib/motion/useFadeIn.ts — fade-in Animated.Value driver respecting reduce-motion (instant when on).
-3. lib/motion/useSpringPress.ts — scale-down spring for pressable elements.
-4. lib/motion/useProgress.ts — animated numeric progress (0→target), reduce-motion fallback.
-5. lib/a11y/announce.ts — wrapper around AccessibilityInfo.announceForAccessibility with debounce.
-6. lib/a11y/focusOrder.ts — helpers for accessibilityElementsHidden / importantForAccessibility on overlay patterns.
-7. lib/a11y/contrast.ts — pure function: WCAG ratio from two colors. Export `assertAA(fg, bg)` for dev-time use.
-8. lib/motion/haptics.ts — semantic wrapper over expo-haptics: tapLight, correct, incorrect.
-9. lib/motion/index.ts + lib/a11y/index.ts — barrel exports.
-
-Tokens (lib/theme/motion.ts) must exist (DESIGN-TOKENS task 6) before tasks 1-4. Task 5-8 can start immediately.
+LANE SUSPENDED — VISUAL DESIGN FROZEN (operator directive 2026-05-22).
+Do NOT work any UI / card / box / frame / layout / design-token / visual-restyle task.
+This lane is paused until the operator lifts the freeze in GOAL.md.
+All previously-queued tasks in this lane are CANCELLED.

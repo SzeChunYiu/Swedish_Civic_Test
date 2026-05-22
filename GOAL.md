@@ -2,6 +2,16 @@
 
 Updated: 2026-05-21 by billy (operator) — NOW BUILDING THE FINAL VERSION (v1.1). The "no-account MVP" scope is SUPERSEDED: account/sign-in (Supabase + Google) and the full Pro tier + all v1.1 lanes are IN SCOPE and ACTIVE now. v1.0 Remove-Ads + Source-Provenance must not regress.
 
+## 🛑 VISUAL DESIGN FROZEN — operator directive 2026-05-22 (P0)
+
+The visual design / layout of BOTH the static site (`site/`) and the native app is **LOCKED**. The "card/box" redesign overran (`site/styles.css` ballooned 5.2k→12.7k lines, 64→431 card rules) and has been reverted on the live site. Effective immediately, **all lanes, all workers**:
+
+- **Do NOT** add/modify/"polish" cards, boxes, frames, borders, shadows, chips, surfaces, radii, spacing, or any layout/visual styling in `site/styles.css`, `site/*.html`, `app/`, `components/`, or `lib/theme/`. Such commits are **reverted on sight**.
+- **No** "Polish X box/card/frame", "card depth", "focus box", "design-token", or visual-restyle iterations of any kind.
+- The **UIUX lanes are SUSPENDED**: `uiux-components`, `uiux-design-tokens`, `uiux-manager`, `uiux-motion-a11y`, `uiux-screens`. Stop staffing and iterating them. CEO/managers must not queue UI/visual tasks.
+- **EVERYTHING ELSE CONTINUES UNCHANGED**: content, ebook provenance, pro-tier, fsrs-review, data-integrity, language/i18n, mock-exam, bug fixes, functional accessibility (ARIA/semantics/labels only — **no visual restyling**). Functional work is unaffected.
+- This freeze is operator-owned and stays until the operator lifts it here.
+
 ## Source-Provenance Contract (P0 — every release)
 
 Every user-visible piece of factual content MUST carry a visible provenance
