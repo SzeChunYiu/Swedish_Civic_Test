@@ -11,8 +11,13 @@ import {
 } from './browserLaunch';
 
 const dayMs = 24 * 60 * 60 * 1000;
+const proLifetimeStorageKey = 'monetization.proLifetime.entitled.v1';
+const proLifetimeProductId = 'com.billyyiu.almostswedish.prolifetime';
 
 type DashboardLocaleFixture = {
+  advancedAnalyticsLockedBody: string;
+  advancedAnalyticsTitle: string;
+  advancedAnalyticsUpgradeLabel: string;
   activityTitle: string;
   chapterAccuracyText: string;
   dashboardLinkLabel: RegExp | string;
@@ -40,6 +45,9 @@ type DashboardLocaleFixture = {
   mockHistoryTrendLabel: string;
   mockHistoryTrendPoint: string;
   mockHistoryTrendSummary: string;
+  mistakeConvergencePoint: string;
+  mistakeConvergenceSummary: string;
+  mistakeConvergenceTitle: string;
   profilePath: string;
   chapterOrderSortLabel: string;
   summaryLine: string;
@@ -48,6 +56,9 @@ type DashboardLocaleFixture = {
   chapterProgressTitle: string;
   strongerChapterLink: string;
   streakXpTitle: string;
+  timeOfDayBinLabel: string;
+  timeOfDaySummary: string;
+  timeOfDayTitle: string;
   weakestChapterLink: string;
   weakestFirstSortLabel: string;
 };
@@ -61,6 +72,10 @@ type DashboardProgressSeed = {
 
 const dashboardLocales: DashboardLocaleFixture[] = [
   {
+    advancedAnalyticsLockedBody:
+      'Mockprovstrend, bästa studietid och misstagskurva låses upp med Pro när Pro-funktionerna är aktiva.',
+    advancedAnalyticsTitle: 'Avancerad Pro-analys',
+    advancedAnalyticsUpgradeLabel: 'Öppna Profil för att jämföra Pro',
     activityTitle: 'Aktiva dagar',
     chapterAccuracyText: 'Rätt: 75%',
     chapterProgressTitle: 'Kapitelframsteg',
@@ -91,17 +106,27 @@ const dashboardLocales: DashboardLocaleFixture[] = [
     mockHistoryTrendPoint: 'Trendpunkt 2 av 2: 84% den 20 maj 2026.',
     mockHistoryTrendSummary:
       'Resultattrend för 2 senaste bedömda prov: senast 84%, 12 procentenheter högre än äldsta som visas.',
+    mistakeConvergencePoint: '20 maj 2026: 1 olösta misstag',
+    mistakeConvergenceSummary: '1 olösta misstag nu. 1 lösta under 30 dagar.',
+    mistakeConvergenceTitle: 'Misstagskurva',
     profilePath: '/profile',
     chapterOrderSortLabel: 'Sortera kapitel: Kapitelordning',
     chapterProgressSortGroup: 'Sortera kapitelframsteg',
     strongerChapterLink: 'Öppna Landet Sverige',
     streakXpTitle: 'Svit och XP',
+    timeOfDayBinLabel: '11:00: 3 svar, 67% rätt',
+    timeOfDaySummary: '5 svar analyserade. Bäst träffsäkerhet runt 11:00: 67% rätt.',
+    timeOfDayTitle: 'Tid på dygnet',
     summaryLine: '0 svar den här veckan · 0 kapitel provade · 0 olösta misstag',
     title: 'Framstegsöversikt',
     weakestChapterLink: 'Öppna Sveriges demokratiska system',
     weakestFirstSortLabel: 'Sortera kapitel: Svagast först',
   },
   {
+    advancedAnalyticsLockedBody:
+      'Mock exam trends, best study hours, and mistake convergence unlock with Pro when Pro features are active.',
+    advancedAnalyticsTitle: 'Advanced Pro analytics',
+    advancedAnalyticsUpgradeLabel: 'Open Profile to compare Pro',
     activityTitle: 'Active days',
     chapterAccuracyText: 'Accuracy: 75%',
     chapterProgressTitle: 'Chapter progress',
@@ -132,11 +157,17 @@ const dashboardLocales: DashboardLocaleFixture[] = [
     mockHistoryTrendPoint: 'Trend point 2 of 2: 84% on May 20, 2026.',
     mockHistoryTrendSummary:
       'Score trend across 2 recent scored exams: latest 84%, 12 points higher than the oldest shown.',
+    mistakeConvergencePoint: 'May 20, 2026: 1 unresolved mistakes',
+    mistakeConvergenceSummary: '1 unresolved mistakes now. 1 resolved across 30 days.',
+    mistakeConvergenceTitle: 'Mistake convergence',
     profilePath: '/profile',
     chapterOrderSortLabel: 'Sort chapters: Chapter order',
     chapterProgressSortGroup: 'Sort chapter progress',
     strongerChapterLink: 'Open The country of Sweden',
     streakXpTitle: 'Streak and XP',
+    timeOfDayBinLabel: '11:00: 3 answers, 67% correct',
+    timeOfDaySummary: '5 answers analyzed. Best accuracy around 11:00: 67% correct.',
+    timeOfDayTitle: 'Time-of-day pattern',
     summaryLine: '0 answers this week · 0 chapters tried · 0 unresolved mistakes',
     title: 'Progress dashboard',
     weakestChapterLink: "Open Sweden's democratic system",
@@ -301,20 +332,51 @@ async function seedNonEmptyDashboardProgress(page: Page, language: AppLanguage) 
 }
 
 async function seedMockExamHistory(page: Page, language: AppLanguage) {
-  await page.addInitScript((seededLanguage) => {
-    const completedAt = '2026-05-20T12:00:00.000Z';
-    window.localStorage.clear();
-    window.sessionStorage.clear();
-    window.localStorage.setItem('settings\\language', seededLanguage);
-    window.localStorage.setItem('settings\\hasSeenAboutTheTest', 'true');
-    window.localStorage.setItem(
-      'progress\\progressState',
-      JSON.stringify({
-        completedQuestionIds: [],
+  const completedAt = '2026-05-20T12:00:00.000Z';
+  const proStoredRecord = {
+    grantedAt: '2026-05-19T12:00:00.000Z',
+    productId: proLifetimeProductId,
+    purchaseToken: 'e2e-dashboard-pro-token',
+    receiptValidatedAt: '2026-05-19T12:00:00.000Z',
+    receiptValidationStatus: 'valid',
+    schemaVersion: 1,
+    source: 'purchase',
+    transactionId: 'e2e-dashboard-pro-transaction',
+  };
+  await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, language, {
+    localStorageValues: {
+      [currentProgressStateStorageKey]: JSON.stringify({
+        completedQuestionIds: ['q001', 'q003'],
         questionProgress: {},
         totalXp: 0,
-        answerDates: [],
-        answerHistory: [],
+        answerDates: ['2026-05-16', '2026-05-18', '2026-05-20'],
+        answerHistory: [
+          {
+            questionId: 'q003',
+            isCorrect: false,
+            answeredAt: '2026-05-16T08:00:00.000Z',
+          },
+          {
+            questionId: 'q001',
+            isCorrect: false,
+            answeredAt: '2026-05-18T09:00:00.000Z',
+          },
+          {
+            questionId: 'q001',
+            isCorrect: true,
+            answeredAt: '2026-05-20T09:00:00.000Z',
+          },
+          {
+            questionId: 'q003',
+            isCorrect: true,
+            answeredAt: '2026-05-20T09:30:00.000Z',
+          },
+          {
+            questionId: 'q002',
+            isCorrect: false,
+            answeredAt: '2026-05-20T16:00:00.000Z',
+          },
+        ],
         dailyChallengeCompletions: {},
         mockExamSessions: [
           {
@@ -348,9 +410,14 @@ async function seedMockExamHistory(page: Page, language: AppLanguage) {
           rescuedDayKeys: [],
         },
       }),
-    );
-  }, language);
-  await markAboutTheTestSeen(page);
+      [proLifetimeStorageKey]: JSON.stringify(proStoredRecord),
+    },
+    windowValues: {
+      __SMT_E2E__: true,
+      __SMT_ENABLE_PRO_RUNTIME_SCOPE__: true,
+      __SMT_PRO_LIFETIME_MOCK_OWNED__: true,
+    },
+  });
 }
 
 async function seedChapterProgress(page: Page, language: AppLanguage) {
@@ -429,8 +496,14 @@ async function expectDashboardVisible(page: Page, fixture: DashboardLocaleFixtur
     page.getByRole('heading', { name: fixture.chapterProgressTitle }).last(),
   ).toBeVisible();
   await expect(page.getByRole('heading', { name: fixture.streakXpTitle }).last()).toBeVisible();
-  await expect(page.getByRole('heading', { name: fixture.mockHistoryTitle }).last()).toBeVisible();
-  await expect(page.getByText(fixture.mockHistoryEmptyState, { exact: true }).last()).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: fixture.advancedAnalyticsTitle }).last(),
+  ).toBeVisible();
+  await expect(page.getByText(fixture.advancedAnalyticsLockedBody, { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole('link', { name: fixture.advancedAnalyticsUpgradeLabel }).last(),
+  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: fixture.mockHistoryTitle })).toHaveCount(0);
   await expectNoHorizontalOverflow(page);
 }
 
@@ -450,9 +523,23 @@ async function expectMockHistoryVisible(page: Page, fixture: DashboardLocaleFixt
   await expect(page.getByText('72%', { exact: true }).last()).toBeVisible();
   await expect(page.getByText(fixture.mockHistoryRecentRowLabel, { exact: true })).toBeVisible();
   await expect(page.getByText(fixture.mockHistoryRawDatePattern)).toHaveCount(0);
-  await expect(page.getByLabel(fixture.mockHistoryRawDatePattern)).toHaveCount(0);
+  await expect(
+    page.getByLabel(
+      new RegExp(`(?:Trendpunkt|Trend point).*${fixture.mockHistoryRawDatePattern.source}`),
+    ),
+  ).toHaveCount(0);
   await expect(page.getByText(fixture.mockHistoryTimeUsed, { exact: true }).last()).toBeVisible();
   await expect(page.getByRole('link', { name: fixture.mockHistoryExamLink }).last()).toBeVisible();
+  await expect(page.getByRole('heading', { name: fixture.timeOfDayTitle }).last()).toBeVisible();
+  await expect(page.getByText(fixture.timeOfDaySummary, { exact: true }).last()).toBeVisible();
+  await expect(page.getByLabel(fixture.timeOfDayBinLabel).last()).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: fixture.mistakeConvergenceTitle }).last(),
+  ).toBeVisible();
+  await expect(
+    page.getByText(fixture.mistakeConvergenceSummary, { exact: true }).last(),
+  ).toBeVisible();
+  await expect(page.getByLabel(fixture.mistakeConvergencePoint).last()).toBeVisible();
   await expectNoHorizontalOverflow(page);
 }
 
@@ -501,8 +588,11 @@ async function expectNonEmptyProgressVisible(
   await expect(page.getByLabel(`${seed.todayKey}: 10`).first()).toBeVisible();
   await expect(page.getByLabel(`${seed.yesterdayKey}: 10`).first()).toBeVisible();
   await expect(page.getByLabel(`${seed.dayBeforeYesterdayKey}: 10`).first()).toBeVisible();
-  await expect(page.getByText(fixture.mockHistoryTitle, { exact: true }).last()).toBeVisible();
-  await expect(page.getByText(fixture.mockHistoryEmptyState, { exact: true })).toHaveCount(0);
+  await expect(
+    page.getByRole('heading', { name: fixture.advancedAnalyticsTitle }).last(),
+  ).toBeVisible();
+  await expect(page.getByText(fixture.advancedAnalyticsLockedBody, { exact: true })).toBeVisible();
+  await expect(page.getByText(fixture.mockHistoryTitle, { exact: true })).toHaveCount(0);
   await expectNoHorizontalOverflow(page);
 }
 

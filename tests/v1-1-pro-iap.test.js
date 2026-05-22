@@ -498,7 +498,7 @@ test('mergeWithRemoveAds: Pro purchase preserves shipped flags even if Remove-Ad
     nativeLangExplanations: false,
     customStudyPlan: true,
     notesExport: true,
-    predictedPassProbability: false,
+    predictedPassProbability: true,
     confidenceSlider: true,
     multiColorHighlights: true,
   };
@@ -507,7 +507,7 @@ test('mergeWithRemoveAds: Pro purchase preserves shipped flags even if Remove-Ad
   assert.equal(merged.spacedRepetition, true);
   assert.equal(merged.unlimitedMockExams, true);
   assert.equal(merged.nativeLangExplanations, false);
-  assert.equal(merged.predictedPassProbability, false);
+  assert.equal(merged.predictedPassProbability, true);
 });
 
 test('mergeWithRemoveAds: Remove-Ads alone does NOT promote to Pro', () => {

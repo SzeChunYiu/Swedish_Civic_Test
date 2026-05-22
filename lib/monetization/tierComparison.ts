@@ -142,6 +142,15 @@ export const TIER_ROWS: readonly TierRow[] = [
     pro: CHECK,
   },
   {
+    id: 'advancedDashboard',
+    labelSv: 'Avancerad framstegsanalys',
+    labelEn: 'Advanced progress analytics',
+    flag: 'predictedPassProbability',
+    free: CROSS,
+    adFree: CROSS,
+    pro: CHECK,
+  },
+  {
     id: 'confidenceSlider',
     labelSv: 'Säkerhetsskala + kalibrering',
     labelEn: 'Confidence rating + calibration',

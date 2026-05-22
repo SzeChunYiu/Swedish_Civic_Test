@@ -52,7 +52,7 @@ type ProPaywallCopy = {
 
 const proPaywallCopy: Record<AppLanguage, ProPaywallCopy> = {
   sv: {
-    body: `Pro är ett separat engångsköp med annonsfri studie, avancerad repetition, studieplanering, anteckningsexport och fler markeringar. Ta bort annonser för ${REMOVE_ADS_PRICE_LABEL} finns kvar som en egen enklare annonsfri väg.`,
+    body: `Pro är ett separat engångsköp med annonsfri studie, avancerad repetition, studieplanering, avancerad framstegsanalys, anteckningsexport och fler markeringar. Ta bort annonser för ${REMOVE_ADS_PRICE_LABEL} finns kvar som en egen enklare annonsfri väg.`,
     columnHeader: 'Funktion',
     excluded: 'Ingår inte',
     included: 'Ingår',
@@ -91,7 +91,7 @@ const proPaywallCopy: Record<AppLanguage, ProPaywallCopy> = {
     upgrading: 'Köper...',
   },
   en: {
-    body: `Pro is a separate one-time purchase with ad-free study, advanced review, study planning, notes export, and richer highlights. Remove Ads for ${REMOVE_ADS_PRICE_LABEL} stays available as its own simpler ad-free path.`,
+    body: `Pro is a separate one-time purchase with ad-free study, advanced review, study planning, advanced progress analytics, notes export, and richer highlights. Remove Ads for ${REMOVE_ADS_PRICE_LABEL} stays available as its own simpler ad-free path.`,
     columnHeader: 'Feature',
     excluded: 'Not included',
     included: 'Included',
