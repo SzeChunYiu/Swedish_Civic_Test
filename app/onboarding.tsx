@@ -3,12 +3,23 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
 import { QuestionDisclaimer } from '../components/quiz/QuestionDisclaimer';
 import { RouteLink } from '../components/ui/RouteLink';
-import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
+import {
+  supportedDailyGoalAnswerOptions,
+  useSettingsStore,
+  type AppLanguage,
+} from '../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../lib/theme';
 
-const onboardingDailyGoalPresetValues = [10, 20, 40] as const;
+type DailyGoalPresetValue = Exclude<(typeof supportedDailyGoalAnswerOptions)[number], 5>;
 
-type DailyGoalPresetValue = (typeof onboardingDailyGoalPresetValues)[number];
+function isOnboardingDailyGoalPresetValue(
+  goal: (typeof supportedDailyGoalAnswerOptions)[number],
+): goal is DailyGoalPresetValue {
+  return goal !== 5;
+}
+
+const onboardingDailyGoalPresetValues: readonly DailyGoalPresetValue[] =
+  supportedDailyGoalAnswerOptions.filter(isOnboardingDailyGoalPresetValue);
 
 type OnboardingGoalPresetCopy = {
   accessibilityLabel: string;
