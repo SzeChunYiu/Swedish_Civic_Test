@@ -1143,7 +1143,7 @@
     },
     "opts": [
       {
-        "en": "Everyone who has the right to vote has one vote each",
+        "en": "Everyone who is eligible to vote has one vote",
         "sv": "Alla som har rätt att rösta har en röst var",
         "zh-Hant": "每個有投票權的人各有一票",
         "zh-Hans": "每个有投票权的人各有一票",
@@ -1201,7 +1201,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Free elections mean that everyone who has the right to vote has one vote each. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret.",
+      "en": "Free elections mean that everyone who is eligible to vote has one vote. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret.",
       "sv": "Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka sina åsikter utan hot eller tvång, det ska finnas flera partier och valet ska vara hemligt.",
       "zh-Hant": "自由選舉表示每個有投票權的人各有一票。選民應能在沒有威脅或強迫的情況下表達意見，應有多個政黨，而且投票應是秘密的。",
       "zh-Hans": "自由选举表示每个有投票权的人各有一票。选民应能在没有威胁或强迫的情况下表达意见，应有多个政党，而且投票应是秘密的。",
@@ -21531,7 +21531,7 @@
     },
     "opts": [
       {
-        "en": "Everyone who has the right to vote has one vote each",
+        "en": "Everyone who is eligible to vote has one vote",
         "sv": "Alla som har rätt att rösta har en röst var",
         "zh-Hant": "每個有投票權的人各有一票",
         "zh-Hans": "每个有投票权的人各有一票",
@@ -21589,7 +21589,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Free elections mean that everyone who has the right to vote has one vote each. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret.",
+      "en": "Free elections mean that everyone who is eligible to vote has one vote. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret.",
       "sv": "Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka sina åsikter utan hot eller tvång, det ska finnas flera partier och valet ska vara hemligt."
     },
     "source": {
@@ -21614,7 +21614,7 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "A feature of free elections in a democracy is that everyone who has the right to vote has one vote each.",
+      "en": "A feature of free elections in a democracy is that everyone who is eligible to vote has one vote.",
       "sv": "Ett inslag i fria val i en demokrati är att alla som har rätt att rösta har en röst var."
     },
     "opts": [
@@ -21629,7 +21629,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Free elections mean that everyone who has the right to vote has one vote each. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret.",
+      "en": "Free elections mean that everyone who is eligible to vote has one vote. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret.",
       "sv": "Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka sina åsikter utan hot eller tvång, det ska finnas flera partier och valet ska vara hemligt."
     },
     "source": {
@@ -21669,7 +21669,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Free elections mean that everyone who has the right to vote has one vote each. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret.",
+      "en": "Free elections mean that everyone who is eligible to vote has one vote. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret.",
       "sv": "Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka sina åsikter utan hot eller tvång, det ska finnas flera partier och valet ska vara hemligt."
     },
     "source": {
@@ -21699,7 +21699,7 @@
     },
     "opts": [
       {
-        "en": "Everyone who has the right to vote has one vote each",
+        "en": "Everyone who is eligible to vote has one vote",
         "sv": "Alla som har rätt att rösta har en röst var",
         "zh-Hant": "每個有投票權的人各有一票",
         "zh-Hans": "每个有投票权的人各有一票",
@@ -21757,7 +21757,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Free elections mean that everyone who has the right to vote has one vote each. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret.",
+      "en": "Free elections mean that everyone who is eligible to vote has one vote. Voters should be able to express their views without threats or coercion, there should be several parties, and the vote should be secret.",
       "sv": "Fria val innebär att alla som har rätt att rösta har en röst var. Väljare ska kunna uttrycka sina åsikter utan hot eller tvång, det ska finnas flera partier och valet ska vara hemligt."
     },
     "source": {
