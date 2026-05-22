@@ -544,10 +544,7 @@ test('native intent resolves weekly recap deep links before the Home fallback', 
     }),
     '/recap',
   );
-  assert.equal(
-    redirectSystemPath({ initial: true, path: `${appScheme}://recap` }),
-    '/recap',
-  );
+  assert.equal(redirectSystemPath({ initial: true, path: `${appScheme}://recap` }), '/recap');
   assert.equal(redirectSystemPath({ initial: true, path: '/recap/archive' }), '/home');
 });
 
