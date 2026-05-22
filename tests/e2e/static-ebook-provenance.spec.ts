@@ -56,15 +56,12 @@ const badgeLabels: Record<StaticSiteLanguage, Record<string, string>> = {
     uhrStudyMaterial: 'UHR',
   },
   sv: {
-    editorialCommentary: 'Editorial',
-    governmentNato: 'Government Offices',
-    migrationsverketCitizenshipRules: 'Migrationsverket citizenship rules',
+    editorialCommentary: 'Redaktionellt',
+    governmentNato: 'Regeringskansliet',
+    migrationsverketCitizenshipRules: 'Migrationsverket',
     riksbankHistory: 'Riksbank',
     scbLandUse: 'SCB',
-    uhrOfficialTestAbout: 'UHR test overview',
-    uhrOfficialTestFaq: 'UHR test FAQ',
-    uhrOfficialTestSignup: 'UHR sign-up',
-    uhrOfficialTestStudyMaterial: 'UHR study material',
+    uhrOfficialTestSources: 'UHR provstatus',
     uhrStudyMaterial: 'UHR',
   },
 };
@@ -288,6 +285,16 @@ test('static ebook language switching keeps localized source labels', async ({ p
   await expect(badge).toHaveAttribute('aria-label', /^Källor:/);
   await expect(badge).toContainText('Redaktionellt');
   await expect(badge).not.toContainText('Editorial');
+  await expect(
+    page.getByRole('link', { name: 'UHR:s offentliga utbildningsmaterial' }).first(),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('link', { name: 'Regeringskansliets besked om Nato-medlemskap' }).first(),
+  ).toBeVisible();
+  await expect(page.getByRole('link', { name: 'UHR public study material' })).toHaveCount(0);
+  await expect(
+    page.getByRole('link', { name: 'Government Offices NATO membership notice' }),
+  ).toHaveCount(0);
   await expect(page.locator('#ebook-reader .ebook__footnotes')).toHaveAttribute(
     'aria-label',
     'Källnoter för kapitlet',
@@ -296,6 +303,10 @@ test('static ebook language switching keeps localized source labels', async ({ p
   await renderEbookAfterLanguageSwitch(page, 'en');
   await expect(badge).toHaveAttribute('aria-label', /^Sources:/);
   await expect(badge).toContainText('Editorial');
+  await expect(page.getByRole('link', { name: 'UHR public study material' }).first()).toBeVisible();
+  await expect(
+    page.getByRole('link', { name: 'Government Offices NATO membership notice' }).first(),
+  ).toBeVisible();
   await expect(page.locator('#ebook-reader .ebook__footnotes')).toHaveAttribute(
     'aria-label',
     'Chapter source notes',

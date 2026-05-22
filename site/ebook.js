@@ -9,13 +9,16 @@
   const EBOOK_FACTBOX_SOURCE_NOTES = Object.freeze({
     uhrStudyMaterial: {
       label: 'UHR public study material',
+      labelSv: 'UHR:s offentliga utbildningsmaterial',
       mixLabel: 'UHR',
       url: 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
       retrievedDate: '2026-05-19',
     },
-    uhrOfficialTestAbout: {
-      label: 'UHR: Om medborgarskapsprovet',
-      mixLabel: 'UHR test overview',
+    uhrOfficialTestSources: {
+      label: 'UHR current medborgarskapsprovet source pages',
+      labelSv: 'UHR:s aktuella sidor om medborgarskapsprovet',
+      mixLabel: 'UHR test status',
+      mixLabelSv: 'UHR provstatus',
       url: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
       retrievedDate: '2026-05-19',
     },
@@ -39,24 +42,29 @@
     },
     scbLandUse: {
       label: 'SCB land and water area statistics',
+      labelSv: 'SCB:s statistik om land- och vattenareal',
       mixLabel: 'SCB',
       url: 'https://www.scb.se/mi0803-en',
       retrievedDate: '2026-05-19',
     },
     riksbankHistory: {
       label: 'Riksbank historical timeline',
+      labelSv: 'Riksbankens historiska tidslinje',
       mixLabel: 'Riksbank',
       url: 'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
       retrievedDate: '2026-05-19',
     },
     governmentNato: {
       label: 'Government Offices NATO membership notice',
+      labelSv: 'Regeringskansliets besked om Nato-medlemskap',
       mixLabel: 'Government Offices',
+      mixLabelSv: 'Regeringskansliet',
       url: 'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
       retrievedDate: '2026-05-19',
     },
     migrationsverketCitizenshipRules: {
       label: 'Migrationsverket citizenship rule changes from 6 June 2026',
+      labelSv: 'Migrationsverkets ändrade medborgarskapsregler från 6 juni 2026',
       mixLabel: 'Migrationsverket',
       url: 'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html',
       retrievedDate: '2026-05-20',
@@ -67,7 +75,9 @@
     ...EBOOK_FACTBOX_SOURCE_NOTES,
     editorialCommentary: {
       label: 'editorial commentary',
+      labelSv: 'redaktionell kommentar',
       mixLabel: 'Editorial',
+      mixLabelSv: 'Redaktionellt',
       url: '#/sources',
       retrievedDate: 'editorial',
     },
@@ -127,15 +137,25 @@
     },
   ]);
 
-  function sourceAnchor(note) {
+  function sourceLabel(note, lang) {
+    return lang === 'sv' ? note.labelSv || note.label : note.label;
+  }
+
+  function sourceMixLabel(note, lang) {
+    return lang === 'sv'
+      ? note.mixLabelSv || note.mixLabel || sourceLabel(note, lang)
+      : note.mixLabel || note.label;
+  }
+
+  function sourceAnchor(note, lang = 'en') {
     const safeExternalAttrs = /^https?:\/\//.test(note.url)
       ? ' target="_blank" rel="noreferrer"'
       : '';
-    return `<a href="${note.url}"${safeExternalAttrs}>${note.label}</a>`;
+    return `<a href="${note.url}"${safeExternalAttrs}>${sourceLabel(note, lang)}</a>`;
   }
 
-  function sourceLink(note) {
-    return `${sourceAnchor(note)} (${note.retrievedDate})`;
+  function sourceLink(note, lang = 'en') {
+    return `${sourceAnchor(note, lang)} (${note.retrievedDate})`;
   }
 
   function ebookSourceNotes(sourceKeys) {
@@ -171,7 +191,7 @@
       },
       lang,
     );
-    return `<p class="ebook__source-note">${label}: ${notes.map(sourceLink).join(' · ')}</p>`;
+    return `<p class="ebook__source-note">${label}: ${notes.map((note) => sourceLink(note, lang)).join(' · ')}</p>`;
   }
 
   function assertEbookSourceKeys(sourceKeys, label) {
@@ -299,7 +319,7 @@
       .map((key) => {
         const note = EBOOK_SOURCE_NOTES[key];
         const count = counts[key];
-        return `${note.mixLabel || note.label} (${count} ${ebookSourceCountUnit(lang, count)})`;
+        return `${sourceMixLabel(note, lang)} (${count} ${ebookSourceCountUnit(lang, count)})`;
       })
       .join(' · ');
   }
@@ -341,14 +361,17 @@
   function renderEbookFootnotes(lang, chapterId, footnotes) {
     if (footnotes.length === 0) return '';
     const heading = lang === 'sv' ? 'Källor i kapitlet' : 'Chapter sources';
+    const ariaLabel = lang === 'sv' ? 'Källnoter för kapitlet' : 'Chapter source notes';
     const items = footnotes
       .map((footnote) => {
-        const sources = ebookSourceNotes(footnote.sourceKeys).map(sourceLink).join(' · ');
+        const sources = ebookSourceNotes(footnote.sourceKeys)
+          .map((note) => sourceLink(note, lang))
+          .join(' · ');
         const sourceKeys = Array.from(new Set(footnote.sourceKeys)).join(' ');
         return `<li id="${footnote.id}" data-source-key="${sourceKeys}"><a href="${ebookRouteHash(chapterId, 'fnref', footnote.id)}"><span>${footnote.index}</span></a> ${sources}</li>`;
       })
       .join('');
-    return `<section class="ebook__footnotes" aria-label="${heading}"><h2>${heading}</h2><ol>${items}</ol></section>`;
+    return `<section class="ebook__footnotes" aria-label="${ariaLabel}"><h2>${heading}</h2><ol>${items}</ol></section>`;
   }
 
   function renderEbookProvenanceBadge(lang, footnotes) {
