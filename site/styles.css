@@ -10530,3 +10530,112 @@ button.quiz__dot.is-nav:hover {
     padding: 26px 18px;
   }
 }
+
+/* ======================================================================
+   EBOOK STUDY ACTION BOX OPTIMIZATION ROUND
+   ====================================================================== */
+
+.ebook__study-actions {
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  overflow: hidden;
+  position: relative;
+  background:
+    linear-gradient(135deg, rgba(0, 106, 167, 0.07), rgba(254, 204, 0, 0.08)),
+    rgba(255, 255, 255, 0.56) !important;
+  border: 1px solid rgba(0, 106, 167, 0.16) !important;
+  border-radius: 22px;
+  padding: 18px;
+  box-shadow: var(--card-shadow), inset 0 0 0 1px rgba(255, 255, 255, 0.38);
+}
+.ebook__study-actions::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  width: 4px;
+  height: calc(100% - 20px);
+  border-radius: 999px;
+  background: var(--card-rail);
+  box-shadow: 0 0 0 4px rgba(0, 106, 167, 0.06);
+}
+.ebook__study-actions > * {
+  position: relative;
+  z-index: 1;
+}
+.ebook__study-actions p {
+  display: block;
+  max-width: 58ch;
+  margin: 8px 0 0;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.42);
+  border: 1px solid rgba(0, 106, 167, 0.1);
+  border-radius: 16px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.46);
+}
+.ebook__progress {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 5px 9px;
+  border: 1px solid rgba(0, 106, 167, 0.14);
+  border-radius: 999px;
+  background: rgba(0, 106, 167, 0.08);
+  color: var(--blue);
+}
+.ebook__study-links {
+  align-items: center;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.38);
+  border: 1px solid rgba(0, 106, 167, 0.11);
+  border-radius: 18px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.44);
+}
+.ebook__study-links .btn {
+  min-height: 46px;
+  border-radius: 16px;
+  box-shadow: 0 10px 24px rgba(0, 43, 73, 0.08);
+}
+
+:root[data-theme='dark'] .ebook__study-actions {
+  background:
+    linear-gradient(135deg, rgba(45, 168, 255, 0.12), rgba(254, 204, 0, 0.08)),
+    rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+:root[data-theme='dark'] .ebook__study-actions p,
+:root[data-theme='dark'] .ebook__study-links {
+  background: rgba(255, 255, 255, 0.055);
+  border-color: rgba(255, 255, 255, 0.09);
+}
+:root[data-theme='dark'] .ebook__progress {
+  background: rgba(45, 168, 255, 0.14);
+  border-color: rgba(45, 168, 255, 0.24);
+  color: var(--blue-soft);
+}
+
+@media (max-width: 560px) {
+  .ebook__study-actions {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    border-radius: 18px;
+    padding: 16px;
+  }
+  .ebook__study-actions::before {
+    left: 8px;
+    top: 12px;
+    width: 3px;
+    height: calc(100% - 24px);
+  }
+  .ebook__study-actions p {
+    max-width: none;
+  }
+  .ebook__study-links {
+    justify-content: stretch;
+  }
+  .ebook__study-links .btn {
+    flex: 1 1 100%;
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
