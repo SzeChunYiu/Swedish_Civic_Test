@@ -18,6 +18,7 @@ const citizenshipRequirementsCheckedAreaIdsKey =
   'citizenship-requirements\\citizenshipRequirements.checkedAreaIds.v1';
 const citizenshipRequirementsLegacyStateKey =
   'citizenship-requirements\\citizenshipRequirementsChecklistState';
+const highlightsStateKey = 'highlights\\ebook.highlights.v1';
 
 type ImportExpectation = {
   completedQuestionIds: string[];
@@ -28,6 +29,7 @@ type ImportExpectation = {
   reviewIds: string[];
   gradedPerDay: Record<string, number>;
   checkedAreaIds: string[];
+  highlightIds: string[];
 };
 
 type ImportPayloadCase = {
@@ -90,6 +92,7 @@ const importPayloadCases: ImportPayloadCase[] = [
       reviewIds: ['q001'],
       gradedPerDay: { '2026-05-20': 2 },
       checkedAreaIds: [],
+      highlightIds: ['hl-e2e-singular'],
     },
     summaryTexts: {
       sv: [
@@ -99,6 +102,7 @@ const importPayloadCases: ImportPayloadCase[] = [
         '1 genomfört övningsprov',
         '1 repetitionskort',
         '1 repetitionsdag',
+        '1 markering i e-boken',
         '5 sparade inställningar',
         'Studiesvit och svitskydd ingår',
       ],
@@ -109,13 +113,14 @@ const importPayloadCases: ImportPayloadCase[] = [
         '1 completed mock exam',
         '1 FSRS review card',
         '1 FSRS review day',
+        '1 ebook highlight',
         '5 saved settings',
         'Study streak and freeze status included',
       ],
     },
     absentSummaryTexts: {
-      sv: ['0 markeringar i e-boken', '0 markerade kravområden'],
-      en: ['0 ebook highlights', '0 marked requirements'],
+      sv: ['0 markerade kravområden'],
+      en: ['0 marked requirements'],
     },
   },
   {
@@ -130,6 +135,7 @@ const importPayloadCases: ImportPayloadCase[] = [
       reviewIds: ['q001', 'q002'],
       gradedPerDay: { '2026-05-20': 2, '2026-05-21': 1 },
       checkedAreaIds: ['identity', 'residenceStatus', 'conduct'],
+      highlightIds: ['hl-e2e-plural-1', 'hl-e2e-plural-2'],
     },
     summaryTexts: {
       sv: [
@@ -139,6 +145,7 @@ const importPayloadCases: ImportPayloadCase[] = [
         '2 genomförda övningsprov',
         '2 repetitionskort',
         '2 repetitionsdagar',
+        '2 markeringar i e-boken',
         '5 sparade inställningar',
         '3 markerade kravområden',
         'Studiesvit och svitskydd ingår',
@@ -150,6 +157,7 @@ const importPayloadCases: ImportPayloadCase[] = [
         '2 completed mock exams',
         '2 FSRS review cards',
         '2 FSRS review days',
+        '2 ebook highlights',
         '5 saved settings',
         '3 marked requirements',
         'Study streak and freeze status included',
@@ -161,6 +169,21 @@ const importPayloadCases: ImportPayloadCase[] = [
     },
   },
 ];
+
+function createHighlight(id: string, overrides: Record<string, unknown> = {}) {
+  return {
+    id,
+    chapterId: 'ch01',
+    blockId: 'intro-1',
+    startOffset: 4,
+    endOffset: 18,
+    color: 'yellow',
+    note: 'Portable browser highlight',
+    createdAt: '2026-05-21T08:00:00.000Z',
+    updatedAt: '2026-05-21T08:05:00.000Z',
+    ...overrides,
+  };
+}
 
 function buildSingularImportPayload(importedLanguage: AppLanguage): string {
   return JSON.stringify({
@@ -229,6 +252,11 @@ function buildSingularImportPayload(importedLanguage: AppLanguage): string {
       dailyGoalAnswers: 20,
       includeSupplementaryQuestions: true,
       hasSeenAboutTheTest: true,
+    },
+    highlights: {
+      byChapter: {
+        ch01: [createHighlight('hl-e2e-singular')],
+      },
     },
   });
 }
@@ -336,6 +364,21 @@ function buildPluralImportPayload(importedLanguage: AppLanguage): string {
     citizenshipRequirements: {
       checkedAreaIds: ['conduct', 'identity', 'residenceStatus', 'identity'],
     },
+    highlights: {
+      byChapter: {
+        ch01: [createHighlight('hl-e2e-plural-1')],
+        ch02: [
+          createHighlight('hl-e2e-plural-2', {
+            chapterId: 'ch02',
+            blockId: 'democracy-1',
+            startOffset: 8,
+            endOffset: 24,
+            color: 'blue',
+            note: 'Second portable browser highlight',
+          }),
+        ],
+      },
+    },
   });
 }
 
@@ -348,6 +391,7 @@ async function readImportStorage(page: Page) {
       dailyGoalKey,
       includeSupplementaryKey,
       languageKey,
+      highlightsKey,
       mistakeKey,
       progressKey,
       reviewKey,
@@ -365,12 +409,14 @@ async function readImportStorage(page: Page) {
         checkedAreaIds: window.localStorage.getItem(citizenshipRequirementsCheckedKey),
         legacyState: window.localStorage.getItem(citizenshipRequirementsLegacyKey),
       },
+      highlights: window.localStorage.getItem(highlightsKey),
     }),
     {
       audioKey: settingsAudioEnabledKey,
       citizenshipRequirementsCheckedKey: citizenshipRequirementsCheckedAreaIdsKey,
       citizenshipRequirementsLegacyKey: citizenshipRequirementsLegacyStateKey,
       dailyGoalKey: settingsDailyGoalKey,
+      highlightsKey: highlightsStateKey,
       includeSupplementaryKey: settingsIncludeSupplementaryKey,
       languageKey: settingsLanguageKey,
       mistakeKey: mistakeReviewStateKey,
@@ -397,6 +443,7 @@ async function expectNoImportApplied(page: Page, language: AppLanguage) {
         checkedAreaIds: null,
         legacyState: null,
       },
+      highlights: null,
     });
 }
 
@@ -430,6 +477,7 @@ async function expectImportApplied(
       const legacyState = storage.citizenshipRequirements.legacyState
         ? JSON.parse(storage.citizenshipRequirements.legacyState)
         : null;
+      const highlights = storage.highlights ? JSON.parse(storage.highlights) : null;
       const questionProgress = (progress?.questionProgress ?? {}) as Record<
         string,
         { bookmarked?: boolean }
@@ -451,6 +499,14 @@ async function expectImportApplied(
         gradedPerDay: reviews?.gradedPerDay ?? {},
         checkedAreaIds,
         legacyCheckedAreaIds: legacyState?.checkedAreaIds ?? [],
+        highlightIds: Object.values(highlights?.byChapter ?? {})
+          .flatMap((list) =>
+            Array.isArray(list)
+              ? list.map((highlight) => (typeof highlight?.id === 'string' ? highlight.id : ''))
+              : [],
+          )
+          .filter(Boolean)
+          .sort(),
         settings: storage.settings,
       };
     })
