@@ -66,6 +66,12 @@ function assertNaturalSwedishDashboardCopy(sources) {
   assert.match(sources.dashboard, /title: 'Streak and XP'/);
   assert.match(sources.dashboard, /title: 'Övningsprov över tid'/);
   assert.match(sources.dashboard, /title: 'Mock exam history'/);
+  assert.match(sources.dashboard, /lockedTitle: 'Avancerad Pro-analys'/);
+  assert.match(sources.dashboard, /lockedTitle: 'Advanced Pro analytics'/);
+  assert.match(sources.dashboard, /title: 'Tid på dygnet'/);
+  assert.match(sources.dashboard, /title: 'Time-of-day pattern'/);
+  assert.match(sources.dashboard, /title: 'Misstagskurva'/);
+  assert.match(sources.dashboard, /title: 'Mistake convergence'/);
   assert.match(sources.dashboard, /trendLabel: 'Resultattrend'/);
   assert.match(sources.dashboard, /trendLabel: 'Score trend'/);
   assert.match(sources.dashboard, /procentenheter/);

@@ -640,17 +640,23 @@ test('tierComparison: every flag referenced in TIER_ROWS exists on PRO_LIFETIME_
   }
 });
 
-test('tierComparison: pass-probability promise stays hidden until a route fulfills it', () => {
+test('tierComparison: advanced dashboard analytics promise is backed by a route', () => {
   const tier = loadTs('lib/monetization/tierComparison.ts');
   const premium = loadTs('lib/monetization/premium.ts');
   const rowIds = tier.TIER_ROWS.map((row) => row.id);
   const rowFlags = tier.TIER_ROWS.map((row) => row.flag).filter(Boolean);
   const rowLabels = tier.TIER_ROWS.map((row) => `${row.labelSv}\n${row.labelEn}`).join('\n');
+  const dashboardSource = fs.readFileSync(path.join(repoRoot, 'app/dashboard.tsx'), 'utf8');
 
   assert.equal(rowIds.includes('predictedPass'), false);
-  assert.equal(rowFlags.includes('predictedPassProbability'), false);
+  assert.equal(rowIds.includes('advancedDashboard'), true);
+  assert.equal(rowFlags.includes('predictedPassProbability'), true);
   assert.doesNotMatch(rowLabels, /Provberedskap|Predicted pass probability/i);
-  assert.equal(premium.PRO_LIFETIME_ENTITLEMENTS.predictedPassProbability, false);
+  assert.match(rowLabels, /Avancerad framstegsanalys|Advanced progress analytics/);
+  assert.match(dashboardSource, /isProRuntimeScopeEnabled\(\)/);
+  assert.match(dashboardSource, /predictedPassProbability === true/);
+  assert.match(dashboardSource, /<TimeOfDayPattern[\s\S]*?<MistakeConvergence/);
+  assert.equal(premium.PRO_LIFETIME_ENTITLEMENTS.predictedPassProbability, true);
   assert.equal(
     premium.unionEntitlements(
       {
@@ -670,7 +676,7 @@ test('tierComparison: pass-probability promise stays hidden until a route fulfil
         spacedRepetition: true,
       },
     ).predictedPassProbability,
-    false,
+    true,
   );
 });
 

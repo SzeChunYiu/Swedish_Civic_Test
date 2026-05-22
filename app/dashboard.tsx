@@ -1,11 +1,13 @@
 import { Link } from 'expo-router';
 import { useMemo } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { ActivityHeatmap } from '../components/dashboard/ActivityHeatmap';
+import { MistakeConvergence } from '../components/dashboard/MistakeConvergence';
 import { MockExamHistoryCard } from '../components/dashboard/MockExamHistoryCard';
 import { PerChapterProgressBars } from '../components/dashboard/PerChapterProgressBars';
 import { StreakXpSparkline } from '../components/dashboard/StreakXpSparkline';
+import { TimeOfDayPattern } from '../components/dashboard/TimeOfDayPattern';
 import { Badge } from '../components/ui/Badge';
 import { Card } from '../components/ui/Card';
 import { ScreenShell } from '../components/ui/ScreenShell';
@@ -14,8 +16,10 @@ import { questions } from '../data/questions';
 import {
   dailyActivityHistogram,
   dashboardSummary,
+  mistakeConvergence,
   mockHistory,
   perChapterProgress,
+  timeOfDayPattern,
   xpSparkline,
 } from '../lib/learning/dashboardStats';
 import {
@@ -25,6 +29,9 @@ import {
 import { formatDashboardCompletedDate } from '../lib/learning/dashboardDateFormat';
 import { buildDashboardProgressSnapshot } from '../lib/learning/dashboardProgressSnapshot';
 import { calculateStreakWithFreeze } from '../lib/learning/streakWithFreeze';
+import { hasProEntitlement } from '../lib/monetization/premium';
+import { isProRuntimeScopeEnabled } from '../lib/monetization/releasePolicy';
+import { useProLifetimeEntitlements } from '../lib/monetization/useProLifetimeEntitlements';
 import { useProgressStore } from '../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { radius, space, typography, type ThemeColors } from '../lib/theme';
@@ -32,6 +39,7 @@ import { useThemeColors } from '../lib/theme/ThemeProvider';
 
 const ACTIVITY_DAYS = 53 * 7;
 const XP_DAYS = 30;
+const ADVANCED_ANALYTICS_DAYS = 30;
 
 type DashboardCopy = {
   activity: {
@@ -47,6 +55,13 @@ type DashboardCopy = {
     summary: (totalAnswers: number, activeDays: number, maxDayCount: number) => string;
     subtitle: string;
     title: string;
+  };
+  advancedAnalytics: {
+    lockedBody: string;
+    lockedSubtitle: string;
+    lockedTitle: string;
+    upgradeAccessibilityLabel: string;
+    upgradeLink: string;
   };
   chapterProgress: {
     accuracyLabel: string;
@@ -94,6 +109,15 @@ type DashboardCopy = {
     ) => string;
     trendSummary: (pointCount: number, firstScore: number, latestScore: number) => string;
   };
+  mistakeConvergence: {
+    emptyState: string;
+    pointAccessibilityLabel: (date: string, unresolvedMistakes: number) => string;
+    resolvedLabel: (resolvedCount: number) => string;
+    subtitle: string;
+    summary: (latestUnresolved: number, resolvedCount: number, days: number) => string;
+    title: string;
+    unresolvedLabel: (unresolvedCount: number) => string;
+  };
   streakXp: {
     emptyState: string;
     levelLabel: string;
@@ -105,6 +129,14 @@ type DashboardCopy = {
   subtitle: string;
   summaryAccessibilityLabel: (questions: number, chapters: number, unresolved: number) => string;
   summaryLine: (questions: number, chapters: number, unresolved: number) => string;
+  timeOfDay: {
+    binAccessibilityLabel: (hourLabel: string, answers: number, accuracy: number | null) => string;
+    emptyState: string;
+    hourLabel: (hour: number) => string;
+    summary: (totalAnswers: number, bestHourLabel: string, bestAccuracy: number) => string;
+    subtitle: string;
+    title: string;
+  };
   title: string;
 };
 
@@ -124,6 +156,14 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
         `${totalAnswers} svar under perioden. ${activeDays} aktiva dagar. Högsta dag: ${maxDayCount} svar.`,
       subtitle: 'Varje ruta visar svar under en dag.',
       title: 'Aktiva dagar',
+    },
+    advancedAnalytics: {
+      lockedBody:
+        'Mockprovstrend, bästa studietid och misstagskurva låses upp med Pro när Pro-funktionerna är aktiva.',
+      lockedSubtitle: 'Gratis och Annonsfri behåller aktivitetskarta, kapitelframsteg och XP.',
+      lockedTitle: 'Avancerad Pro-analys',
+      upgradeAccessibilityLabel: 'Öppna Profil för att jämföra Pro',
+      upgradeLink: 'Jämför Pro i Profil',
     },
     chapterProgress: {
       accuracyLabel: 'Rätt',
@@ -176,6 +216,18 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
         } än äldsta som visas.`;
       },
     },
+    mistakeConvergence: {
+      emptyState: 'När du har rättat tidigare fel visas misstagskurvan här.',
+      pointAccessibilityLabel: (date, unresolvedMistakes) =>
+        `${formatDashboardCompletedDate(`${date}T12:00:00.000Z`, 'sv')}: ${unresolvedMistakes} olösta misstag`,
+      resolvedLabel: (resolvedCount) => (resolvedCount === 1 ? 'misstag löst' : 'misstag lösta'),
+      subtitle: 'Se om gamla fel blir färre över tid.',
+      summary: (latestUnresolved, resolvedCount, days) =>
+        `${latestUnresolved} olösta misstag nu. ${resolvedCount} lösta under ${days} dagar.`,
+      title: 'Misstagskurva',
+      unresolvedLabel: (unresolvedCount) =>
+        unresolvedCount === 1 ? 'olöst misstag' : 'olösta misstag',
+    },
     streakXp: {
       emptyState: 'XP-kurvan visas när du börjar få rätt svar.',
       levelLabel: 'nivå',
@@ -195,6 +247,18 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
       ),
     summaryLine: (questionsAnswered, touchedChapters, unresolved) =>
       formatDashboardSummaryLine('sv', questionsAnswered, touchedChapters, unresolved),
+    timeOfDay: {
+      binAccessibilityLabel: (hourLabel, answers, accuracy) =>
+        accuracy === null
+          ? `${hourLabel}: ${answers} svar, ingen träffsäkerhet ännu`
+          : `${hourLabel}: ${answers} svar, ${Math.round(accuracy * 100)}% rätt`,
+      emptyState: 'Svara vid olika tider så visas ditt tydligaste studiemönster här.',
+      hourLabel: (hour) => `${String(hour).padStart(2, '0')}:00`,
+      summary: (totalAnswers, bestHourLabel, bestAccuracy) =>
+        `${totalAnswers} svar analyserade. Bäst träffsäkerhet runt ${bestHourLabel}: ${bestAccuracy}% rätt.`,
+      subtitle: 'Jämför träffsäkerhet per timme utan att skicka data till någon server.',
+      title: 'Tid på dygnet',
+    },
     title: 'Framstegsöversikt',
   },
   en: {
@@ -212,6 +276,14 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
         `${totalAnswers} answers in this period. ${activeDays} active days. Highest day: ${maxDayCount} answers.`,
       subtitle: 'Each square shows answers from one day.',
       title: 'Active days',
+    },
+    advancedAnalytics: {
+      lockedBody:
+        'Mock exam trends, best study hours, and mistake convergence unlock with Pro when Pro features are active.',
+      lockedSubtitle: 'Free and Ad-Free keep the activity map, chapter progress, and XP timeline.',
+      lockedTitle: 'Advanced Pro analytics',
+      upgradeAccessibilityLabel: 'Open Profile to compare Pro',
+      upgradeLink: 'Compare Pro in Profile',
     },
     chapterProgress: {
       accuracyLabel: 'Accuracy',
@@ -264,6 +336,19 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
         } than the oldest shown.`;
       },
     },
+    mistakeConvergence: {
+      emptyState: 'Resolve earlier mistakes and the convergence curve will appear here.',
+      pointAccessibilityLabel: (date, unresolvedMistakes) =>
+        `${formatDashboardCompletedDate(`${date}T12:00:00.000Z`, 'en')}: ${unresolvedMistakes} unresolved mistakes`,
+      resolvedLabel: (resolvedCount) =>
+        resolvedCount === 1 ? 'mistake resolved' : 'mistakes resolved',
+      subtitle: 'Watch old mistakes shrink as you correct them.',
+      summary: (latestUnresolved, resolvedCount, days) =>
+        `${latestUnresolved} unresolved mistakes now. ${resolvedCount} resolved across ${days} days.`,
+      title: 'Mistake convergence',
+      unresolvedLabel: (unresolvedCount) =>
+        unresolvedCount === 1 ? 'unresolved mistake' : 'unresolved mistakes',
+    },
     streakXp: {
       emptyState: 'The XP line appears once you start getting answers right.',
       levelLabel: 'level',
@@ -284,6 +369,18 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
       ),
     summaryLine: (questionsAnswered, touchedChapters, unresolved) =>
       formatDashboardSummaryLine('en', questionsAnswered, touchedChapters, unresolved),
+    timeOfDay: {
+      binAccessibilityLabel: (hourLabel, answers, accuracy) =>
+        accuracy === null
+          ? `${hourLabel}: ${answers} answers, no accuracy yet`
+          : `${hourLabel}: ${answers} answers, ${Math.round(accuracy * 100)}% correct`,
+      emptyState: 'Answer at different times and your clearest study pattern will appear here.',
+      hourLabel: (hour) => `${String(hour).padStart(2, '0')}:00`,
+      summary: (totalAnswers, bestHourLabel, bestAccuracy) =>
+        `${totalAnswers} answers analyzed. Best accuracy around ${bestHourLabel}: ${bestAccuracy}% correct.`,
+      subtitle: 'Compare accuracy by hour without sending data to a server.',
+      title: 'Time-of-day pattern',
+    },
     title: 'Progress dashboard',
   },
 };
@@ -301,9 +398,16 @@ export default function DashboardScreen() {
   const totalXp = useProgressStore((state) => state.totalXp);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const language = useSettingsStore((state) => state.language);
+  const { entitlements: proEntitlements, entitlementsReady } = useProLifetimeEntitlements();
   const copy = dashboardCopy[language];
   const themeColors = useThemeColors();
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
+  const proRuntimeScopeEnabled = isProRuntimeScopeEnabled();
+  const advancedAnalyticsUnlocked =
+    proRuntimeScopeEnabled &&
+    entitlementsReady &&
+    hasProEntitlement(proEntitlements) &&
+    proEntitlements.predictedPassProbability === true;
   const progress = useMemo(
     () =>
       buildDashboardProgressSnapshot({
@@ -327,6 +431,11 @@ export default function DashboardScreen() {
   );
   const xpPoints = useMemo(() => xpSparkline(progress, { daysBack: XP_DAYS }), [progress]);
   const mockHistoryEntries = useMemo(() => mockHistory(progress), [progress]);
+  const timeOfDayBins = useMemo(() => timeOfDayPattern(progress), [progress]);
+  const mistakeConvergencePoints = useMemo(
+    () => mistakeConvergence(progress, { daysBack: ADVANCED_ANALYTICS_DAYS }),
+    [progress],
+  );
   const summary = useMemo(
     () => dashboardSummary(progress, questionChapterIndex),
     [progress, questionChapterIndex],
@@ -382,11 +491,38 @@ export default function DashboardScreen() {
         level={progress.level}
         points={xpPoints}
       />
-      <MockExamHistoryCard
-        bestScore={summary.bestMockScore}
-        copy={copy.mockHistory}
-        entries={mockHistoryEntries}
-      />
+      {advancedAnalyticsUnlocked ? (
+        <>
+          <MockExamHistoryCard
+            bestScore={summary.bestMockScore}
+            copy={copy.mockHistory}
+            entries={mockHistoryEntries}
+          />
+          <TimeOfDayPattern bins={timeOfDayBins} copy={copy.timeOfDay} />
+          <MistakeConvergence copy={copy.mistakeConvergence} points={mistakeConvergencePoints} />
+        </>
+      ) : (
+        <Card style={styles.advancedLockedCard}>
+          <View style={styles.advancedLockedHeader}>
+            <Badge tone="warm">Pro</Badge>
+            <Text accessibilityRole="header" style={styles.advancedLockedTitle}>
+              {copy.advancedAnalytics.lockedTitle}
+            </Text>
+            <Text style={styles.advancedLockedSubtitle}>
+              {copy.advancedAnalytics.lockedSubtitle}
+            </Text>
+          </View>
+          <Text style={styles.advancedLockedBody}>{copy.advancedAnalytics.lockedBody}</Text>
+          <Link
+            accessibilityLabel={copy.advancedAnalytics.upgradeAccessibilityLabel}
+            accessibilityRole="link"
+            href="/profile"
+            style={styles.advancedLockedLink}
+          >
+            {copy.advancedAnalytics.upgradeLink}
+          </Link>
+        </Card>
+      )}
     </ScreenShell>
   );
 }
@@ -402,6 +538,41 @@ function createStyles(themeColors: ThemeColors) {
     },
     summaryCard: {
       gap: space[1],
+    },
+    advancedLockedCard: {
+      gap: space[1.5],
+    },
+    advancedLockedHeader: {
+      alignItems: 'flex-start',
+      gap: space[0.5],
+    },
+    advancedLockedTitle: {
+      color: themeColors.text,
+      fontSize: typography.cardTitle.fontSize,
+      fontWeight: typography.cardTitle.fontWeight,
+      lineHeight: typography.cardTitle.lineHeight,
+    },
+    advancedLockedSubtitle: {
+      color: themeColors.textMuted,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+    advancedLockedBody: {
+      color: themeColors.text,
+      fontSize: typography.body.fontSize,
+      lineHeight: typography.body.lineHeight,
+    },
+    advancedLockedLink: {
+      alignSelf: 'flex-start',
+      backgroundColor: themeColors.badgeBlueBg,
+      borderRadius: radius.micro,
+      color: themeColors.text,
+      fontSize: typography.navButton.fontSize,
+      fontWeight: typography.navButton.fontWeight,
+      minHeight: space[6],
+      paddingHorizontal: space[2],
+      paddingVertical: space[1],
+      textDecorationLine: 'none',
     },
     summaryText: {
       color: themeColors.text,

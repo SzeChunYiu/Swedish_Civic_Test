@@ -11,8 +11,10 @@ const sourcePaths = {
   chapters: 'components/dashboard/PerChapterProgressBars.tsx',
   e2e: 'tests/e2e/dashboard-route.spec.ts',
   history: 'components/dashboard/MockExamHistoryCard.tsx',
+  mistake: 'components/dashboard/MistakeConvergence.tsx',
   sparkline: 'components/dashboard/StreakXpSparkline.tsx',
   stats: 'lib/learning/dashboardStats.ts',
+  timeOfDay: 'components/dashboard/TimeOfDayPattern.tsx',
 };
 
 function read(relativePath) {
@@ -37,7 +39,7 @@ function extractNamedStyle(source, styleName) {
 function assertDashboardAccessibilitySeparation(sources) {
   assert.doesNotMatch(
     sources.dashboard,
-    /createDashboardProEntitlements|advancedAnalyticsUnlocked|proAnalyticsPlaceholder|hasProEntitlement|ProTierEntitlements/,
+    /createDashboardProEntitlements|proAnalyticsPlaceholder|ProTierEntitlements/,
     'Dashboard must not keep unreachable Pro entitlement placeholders in the free route',
   );
   assert.doesNotMatch(
@@ -49,6 +51,31 @@ function assertDashboardAccessibilitySeparation(sources) {
     sources.dashboard,
     /const summaryAccessibilityLabel = copy\.summaryAccessibilityLabel\(/,
     'Dashboard must compute a standalone summary label',
+  );
+  assert.match(
+    sources.dashboard,
+    /useProLifetimeEntitlements\(\)/,
+    'Dashboard advanced analytics must read the real Pro entitlement hook',
+  );
+  assert.match(
+    sources.dashboard,
+    /const proRuntimeScopeEnabled = isProRuntimeScopeEnabled\(\);/,
+    'Dashboard advanced analytics must stay behind the Pro runtime scope flag',
+  );
+  assert.match(
+    sources.dashboard,
+    /hasProEntitlement\(proEntitlements\)[\s\S]*?proEntitlements\.predictedPassProbability === true/,
+    'Dashboard advanced analytics must require active Pro plus predictedPassProbability',
+  );
+  assert.match(
+    sources.dashboard,
+    /advancedAnalyticsUnlocked \? \([\s\S]*?<MockExamHistoryCard[\s\S]*?<TimeOfDayPattern[\s\S]*?<MistakeConvergence[\s\S]*?\) : \(/,
+    'Dashboard must render all three advanced analytics sections only when unlocked',
+  );
+  assert.match(
+    sources.dashboard,
+    /copy\.advancedAnalytics\.lockedTitle[\s\S]*?copy\.advancedAnalytics\.lockedBody[\s\S]*?href="\/profile"/,
+    'Dashboard must render a localized locked Pro teaser when advanced analytics are unavailable',
   );
   assert.match(
     sources.dashboard,
@@ -393,6 +420,36 @@ function assertDashboardAccessibilitySeparation(sources) {
   assert.match(sources.activity, /accessibilitySummary:\s*\{[\s\S]*?position: 'absolute'/);
   assert.match(sources.history, /accessibilitySummary:\s*\{[\s\S]*?position: 'absolute'/);
   assert.match(sources.history, /trendSummary:\s*\{[\s\S]*?position: 'absolute'/);
+  assert.match(
+    sources.timeOfDay,
+    /<Text accessibilityRole="summary" style=\{styles\.accessibilitySummary\}>\s*\{summary\}\s*<\/Text>/,
+    'TimeOfDayPattern must expose a standalone summary before the visual chart',
+  );
+  assert.match(
+    sources.timeOfDay,
+    /copy\.binAccessibilityLabel\(/,
+    'TimeOfDayPattern must label each hourly bin',
+  );
+  assert.match(
+    sources.timeOfDay,
+    /themeColors\.accent/,
+    'TimeOfDayPattern must use theme-token chart colors',
+  );
+  assert.match(
+    sources.mistake,
+    /<Text accessibilityRole="summary" style=\{styles\.accessibilitySummary\}>\s*\{summary\}\s*<\/Text>/,
+    'MistakeConvergence must expose a standalone summary before the visual chart',
+  );
+  assert.match(
+    sources.mistake,
+    /copy\.pointAccessibilityLabel\(/,
+    'MistakeConvergence must label each convergence point',
+  );
+  assert.match(
+    sources.mistake,
+    /themeColors\.focusSoft/,
+    'MistakeConvergence must use theme-token chart colors',
+  );
 }
 
 test('dashboard accessibility summaries do not group interactive descendants', () => {

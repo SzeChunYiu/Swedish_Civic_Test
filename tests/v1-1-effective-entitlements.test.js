@@ -157,7 +157,7 @@ test('resolveEffectiveEntitlement: Pro Lifetime contributes only strict boolean 
   assert.equal(r.entitlements.nativeLangExplanations, false);
   assert.equal(r.entitlements.customStudyPlan, true);
   assert.equal(r.entitlements.notesExport, false);
-  assert.equal(r.entitlements.predictedPassProbability, false);
+  assert.equal(r.entitlements.predictedPassProbability, true);
   assert.equal(r.entitlements.confidenceSlider, false);
   assert.equal(r.entitlements.multiColorHighlights, false);
   Object.values(r.entitlements).forEach((value) => assert.equal(typeof value, 'boolean'));
