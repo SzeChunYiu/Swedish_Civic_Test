@@ -1,5 +1,5 @@
 const assert = require('node:assert/strict');
-const { execFileSync } = require('node:child_process');
+const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
@@ -58,12 +58,48 @@ function parseFocusedMockExamCopySummary() {
   return JSON.parse(match[0]);
 }
 
-function findFirstSectionStart(source, labels) {
-  for (const label of labels) {
-    const index = source.indexOf(label);
-    if (index >= 0) return index;
+function runFocusedMockExamCopyWithSourcePatch(patches) {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const patches = ${JSON.stringify(patches)};
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  for (const [fileSuffix, replacements] of Object.entries(patches)) {
+    if (!normalizedPath.endsWith(fileSuffix)) continue;
+    let next = String(contents);
+    for (const [from, to] of replacements) {
+      if (!next.includes(from)) {
+        throw new Error(\`Patch fixture could not find "\${from}" in \${fileSuffix}\`);
+      }
+      next = next.replace(from, to);
+    }
+    return next;
   }
-  return -1;
+  return contents;
+};
+process.argv.push('--focus-mock-exam-copy-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  return result;
+}
+
+function assertFocusedMockExamCopyPatchFails(patches, expectedPattern) {
+  const result = runFocusedMockExamCopyWithSourcePatch(patches);
+  assert.notEqual(result.status, 0, result.stdout);
+  assert.match(`${result.stdout}\n${result.stderr}`, expectedPattern);
 }
 
 test('default mock exam config generates a full UHR-based exam from bundled questions', () => {
@@ -148,6 +184,51 @@ test('mock exam copy parity keeps Swedish övningsprov labels and English Mock E
   assert.match(tierSource, /labelSv: 'Övningsprov'/);
   assert.match(tierSource, /labelEn: 'Mock exams'/);
   assert.doesNotMatch(`${librarySource}\n${tierSource}`, /\bprovexamen\b|\bprovexamina\b/i);
+});
+
+test('mock exam copy focused guard rejects provexamen and provexamina regressions', () => {
+  assertFocusedMockExamCopyPatchFails(
+    {
+      'lib/learning/mockExamLibrary.ts': [
+        ['Övningsprov 1 – Mjuk start', 'Provexamen 1 – Mjuk start'],
+      ],
+    },
+    /Swedish mock-exam copy must use Övningsprov, not provexamen\/provexamina/,
+  );
+
+  assertFocusedMockExamCopyPatchFails(
+    {
+      'lib/monetization/tierComparison.ts': [['Övningsprov', 'Provexamina']],
+    },
+    /Swedish mock-exam copy must use Övningsprov, not provexamen\/provexamina/,
+  );
+});
+
+test('mock exam copy focused guard rejects random mock and tier label drift', () => {
+  assertFocusedMockExamCopyPatchFails(
+    {
+      'lib/learning/mockExamLibrary.ts': [['Slumpmässigt övningsprov', 'Slumpmässigt test']],
+    },
+    /MOCK_EXAM_LIBRARY\[6\] labelSv is "Slumpmässigt test", expected "Slumpmässigt övningsprov"/,
+  );
+
+  assertFocusedMockExamCopyPatchFails(
+    {
+      'lib/monetization/tierComparison.ts': [["labelSv: 'Övningsprov'", "labelSv: 'Prov'"]],
+    },
+    /TIER_ROWS mockExams row must use Övningsprov \/ Mock exams labels/,
+  );
+});
+
+test('mock exam copy focused guard rejects weakened English Mock Exam labels', () => {
+  assertFocusedMockExamCopyPatchFails(
+    {
+      'lib/learning/mockExamLibrary.ts': [
+        ['Mock Exam 1 – Gentle start', 'Practice Test 1 – Gentle start'],
+      ],
+    },
+    /MOCK_EXAM_LIBRARY must preserve the English Mock Exam labels/,
+  );
 });
 
 test('active mock exam keeps full UHR reference cards out of pre-submit questions', () => {
