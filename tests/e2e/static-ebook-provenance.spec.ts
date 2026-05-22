@@ -409,6 +409,32 @@ test('static ebook language switching keeps localized source labels', async ({ p
   expect(pageErrors).toEqual([]);
 });
 
+test('static ebook local note follows language switching', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const pageErrors = collectPageErrors(page);
+
+  await openStaticEbook(page, staticSite.baseUrl, 'en', '#/ebook?c=1');
+
+  const localNote = page.locator('.ebook__local-note');
+  await expect(localNote).toContainText(
+    'Highlights and notes stay in this browser and work locally without sign-in.',
+  );
+  await expect(localNote.locator('.ebook__local-note-chip')).toHaveText('Local browser');
+  await expect(localNote).not.toContainText('browser note');
+
+  await renderEbookAfterLanguageSwitch(page, 'sv');
+  await expect(localNote).toContainText(
+    'Markeringar och anteckningar sparas i den här webbläsaren och fungerar lokalt utan inloggning.',
+  );
+  await expect(localNote.locator('.ebook__local-note-chip')).toHaveText('Lokal webbläsare');
+
+  await renderEbookAfterLanguageSwitch(page, 'zh-Hans');
+  await expect(localNote).toContainText('标注和笔记会保存在这个浏览器中，无需登录也能本地使用。');
+  await expect(localNote.locator('.ebook__local-note-chip')).toHaveText('本地浏览器');
+
+  expect(pageErrors).toEqual([]);
+});
+
 test('static ebook reader has no decorative orb pseudo-element', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   const pageErrors = collectPageErrors(page);

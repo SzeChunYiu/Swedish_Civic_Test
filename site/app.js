@@ -817,6 +817,9 @@ const i18n = (window.i18n = {
     'ebook.ch.13.title': 'Traditions, holidays & everyday culture',
     'ebook.title': 'The Field Guide',
     'ebook.sub': 'An unofficial companion to the citizenship test.',
+    'ebook.localNote.body':
+      'Highlights and notes stay in this browser and work locally without sign-in.',
+    'ebook.localNote.chip': 'Local browser',
     'footer.h.study': 'Study',
     'footer.h.about': 'About',
     'footer.h.fika': 'Mood',
@@ -1237,6 +1240,9 @@ const i18n = (window.i18n = {
     'ebook.ch.13.title': 'Traditioner, helgdagar & vardagskultur',
     'ebook.title': 'Fältguiden',
     'ebook.sub': 'En inofficiell följeslagare till medborgarskapsprovet.',
+    'ebook.localNote.body':
+      'Markeringar och anteckningar sparas i den här webbläsaren och fungerar lokalt utan inloggning.',
+    'ebook.localNote.chip': 'Lokal webbläsare',
     'footer.h.study': 'Studera',
     'footer.h.about': 'Om',
     'footer.h.fika': 'Stämning',

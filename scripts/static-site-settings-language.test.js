@@ -485,6 +485,41 @@ test('Static Settings exposes the shipped extra language choices', () => {
   assert.deepEqual(context.settingLanguageValues(), staticSiteLanguageValues);
 });
 
+test('static ebook local browser note is localized for every static locale', () => {
+  const html = read('site/index.html');
+  const css = read('site/styles.css');
+
+  assert.match(html, /class="ebook__local-note"[\s\S]*data-i18n="ebook\.localNote\.body"/);
+  assert.match(html, /class="ebook__local-note-chip" data-i18n="ebook\.localNote\.chip"/);
+  assert.doesNotMatch(css, /content:\s*['"]browser note['"]/);
+
+  const context = createRenderContext({ hash: '#/ebook', language: 'en' });
+  loadScripts(context);
+  const dictionaries = context.sandbox.window.i18n;
+  const englishBody = dictionaries.en['ebook.localNote.body'];
+  const englishChip = dictionaries.en['ebook.localNote.chip'];
+
+  assert.equal(
+    dictionaries.sv['ebook.localNote.body'],
+    'Markeringar och anteckningar sparas i den här webbläsaren och fungerar lokalt utan inloggning.',
+  );
+  assert.equal(dictionaries.sv['ebook.localNote.chip'], 'Lokal webbläsare');
+
+  for (const language of staticSiteLanguageValues) {
+    const dict = dictionaries[language];
+    assert.equal(typeof dict['ebook.localNote.body'], 'string', `${language} body missing`);
+    assert.equal(typeof dict['ebook.localNote.chip'], 'string', `${language} chip missing`);
+    assert.ok(dict['ebook.localNote.body'].trim().length > 0, `${language} body empty`);
+    assert.ok(dict['ebook.localNote.chip'].trim().length > 0, `${language} chip empty`);
+
+    if (language === 'en') continue;
+    assert.notEqual(dict['ebook.localNote.body'], englishBody, `${language} body uses English`);
+    assert.notEqual(dict['ebook.localNote.chip'], englishChip, `${language} chip uses English`);
+    assert.doesNotMatch(dict['ebook.localNote.body'], /Highlights and notes|without sign-in/i);
+    assert.doesNotMatch(dict['ebook.localNote.chip'], /Local browser|browser note/i);
+  }
+});
+
 test('static sign-in email field labels are localized for every static locale', () => {
   const index = read('site/index.html');
   const signin = read('site/signin.js');

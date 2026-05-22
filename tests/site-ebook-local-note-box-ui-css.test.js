@@ -19,15 +19,17 @@ test('static ebook local browser note uses a tactile helper box', () => {
   );
   assert.match(
     css,
-    /\.ebook__local-note::after\s*{[\s\S]*content: 'browser note';[\s\S]*border-radius: 999px;[\s\S]*font-family: var\(--mono\);/,
+    /\.ebook__local-note-chip\s*{[\s\S]*display: inline-flex;[\s\S]*border-radius: 999px;[\s\S]*font-family: var\(--mono\);/,
   );
+  assert.doesNotMatch(css, /\.ebook__local-note::after\s*{[\s\S]*content:/);
+  assert.doesNotMatch(css, /content:\s*['"]browser note['"]/);
   assert.match(
     css,
     /:root\[data-theme='dark'\] \.ebook__local-note\s*{[\s\S]*rgba\(45, 168, 255, 0\.12\)[\s\S]*border-color: rgba\(255, 255, 255, 0\.08\);/,
   );
   assert.match(
     css,
-    /:root\[data-theme='dark'\] \.ebook__local-note::after\s*{[\s\S]*background: rgba\(45, 168, 255, 0\.12\);[\s\S]*color: var\(--blue-soft\);/,
+    /:root\[data-theme='dark'\] \.ebook__local-note-chip\s*{[\s\S]*background: rgba\(45, 168, 255, 0\.12\);[\s\S]*color: var\(--blue-soft\);/,
   );
   assert.match(
     css,
