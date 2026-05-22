@@ -61,6 +61,19 @@ function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
+function extractQuotedArray(source, declarationName) {
+  const match = source.match(new RegExp(`const\\s+${declarationName}\\s*=\\s*\\[([\\s\\S]*?)\\];`));
+  assert.ok(match, `${declarationName} array should be declared`);
+  return Array.from(match[1].matchAll(/['"]([^'"]+)['"]/g), (entry) => entry[1]);
+}
+
+function extractAttributeValues(html, attributeName) {
+  return Array.from(
+    html.matchAll(new RegExp(`\\s${attributeName}="([^"]+)"`, 'g')),
+    (entry) => entry[1],
+  );
+}
+
 function createRenderContext({
   hash,
   language = 'en',
@@ -689,6 +702,32 @@ test('Static document table-of-contents hashes preserve legal routes and focus h
     assert.equal(scrollOptions.behavior, 'auto', `${hash} scroll behavior`);
     assert.equal(focusOptions.preventScroll, true, `${hash} focus`);
   }
+});
+
+test('Static hash route allowlist covers every linked page route', () => {
+  const appSource = read('site/app.js');
+  const html = read('site/index.html');
+  const knownRoutes = new Set(extractQuotedArray(appSource, 'known'));
+  const pageRoutes = new Set(extractAttributeValues(html, 'data-page'));
+  const linkedRoutes = extractAttributeValues(html, 'data-route');
+  const missingPages = linkedRoutes.filter((route) => !pageRoutes.has(route));
+  const missingAllowlistEntries = linkedRoutes.filter(
+    (route) => pageRoutes.has(route) && !knownRoutes.has(route),
+  );
+
+  assert.equal(
+    missingPages.length,
+    0,
+    `static nav links should target real data-page routes: ${missingPages.join(', ')}`,
+  );
+  assert.equal(
+    missingAllowlistEntries.length,
+    0,
+    `linked static page routes should be in the hash-router allowlist: ${missingAllowlistEntries.join(
+      ', ',
+    )}`,
+  );
+  assert.ok(knownRoutes.has('/dashboard'), 'dashboard hash route should not fall back to Home');
 });
 
 test('Settings language change rerenders an active Practice question without reload', () => {
