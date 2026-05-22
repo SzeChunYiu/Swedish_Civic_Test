@@ -66,6 +66,8 @@ const sourceRecallPromptPattern =
 const sourceCriticismStiltedEnglishPattern = /\bsource-critical\b/i;
 const publicSectorStiltedEnglishPattern =
   /\b(?:What is meant by the public sector in Sweden|Activities for which the state, regions, and municipalities are responsible|The public sector(?: in Sweden)? means (?:activities|all privately owned companies))\b/i;
+const elderlyCareObligationMismatchPattern =
+  /\bSveriges kommuner ska inte erbjuda äldre personer stöd och hjälp\b/i;
 const generatedIdLiteralPatterns = [
   {
     label: 'question.id equality',
@@ -4771,6 +4773,96 @@ test('q062 public-sector exports natural English in canonical and static banks',
   assert.deepEqual(
     csvRows.filter((line) => stalePattern.test(line)),
     [],
+  );
+});
+
+test('q074 elderly-care generated false statement keeps obligation force aligned', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q074 = generatedSiteBank.find((question) => question.id === 'q074');
+  const q473 = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q074', 'trueStatement'),
+  );
+  const q474Id = generatedQuestionId(sourceQuestions, 'q074', 'falseStatement');
+  const q474 = generatedSiteBank.find((question) => question.id === q474Id);
+  const actualQ474 = Array.from(actualSiteBank).find((question) => question.id === q474Id);
+  const csvRowsById = contentQuestionBankCsvRowsById(['q074', q473?.id, q474Id].filter(Boolean));
+
+  assert.equal(q074?.q.sv, 'Sveriges kommuner ska erbjuda äldre personer stöd och hjälp.');
+  assert.equal(q074?.q.en, 'Swedish municipalities must offer older people support and help.');
+  assert.equal(
+    q473?.q.sv,
+    'Kommunerna ansvarar för att äldre och sjuka personer kan få hjälp när de inte klarar vardagen på egen hand.',
+  );
+  assert.equal(
+    q473?.q.en,
+    'Municipalities are responsible for helping older and sick people when they cannot manage everyday life on their own.',
+  );
+  assert.equal(q474?.q.sv, 'Sveriges kommuner behöver inte erbjuda äldre personer stöd och hjälp.');
+  assert.equal(
+    q474?.q.en,
+    'Swedish municipalities do not have to offer older people support and help.',
+  );
+  assert.equal(actualQ474?.q.sv, q474?.q.sv);
+  assert.equal(actualQ474?.q.en, q474?.q.en);
+  assert.equal(csvRowsById.get(q474Id)?.[3], q474?.q.sv);
+  assert.equal(csvRowsById.get(q474Id)?.[4], q474?.q.en);
+  assert.doesNotMatch(
+    [q074, q473, q474, actualQ474]
+      .map((question) => `${question?.q?.sv ?? ''} ${question?.q?.en ?? ''}`)
+      .join('\n'),
+    elderlyCareObligationMismatchPattern,
+  );
+});
+
+test('elderly-care obligation guard rejects mismatched q474 Swedish force', () => {
+  const sourceQuestions = buildSiteQuestionBank().questions.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q474Id = generatedQuestionId(sourceQuestions, 'q074', 'falseStatement');
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "const obligationForceResiduals = {",
+        "  [generatedFixtureId('q074', 2)]: { questionSv: 'Sveriges kommuner ska inte erbjuda äldre personer stöd och hjälp.' },",
+        "};",
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  obligationForceResiduals[question.id]",
+        "    ? { ...question, ...obligationForceResiduals[question.id] }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+process.argv.push('--focus-generated-true-false-naturalness');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    new RegExp(`${q474Id} contains a generated true/false grammar-splice stem`),
   );
 });
 

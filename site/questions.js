@@ -37096,7 +37096,7 @@
       },
       {
         "en": "Swedish municipalities do not have to offer older people support and help.",
-        "sv": "Sveriges kommuner ska inte erbjuda äldre personer stöd och hjälp."
+        "sv": "Sveriges kommuner behöver inte erbjuda äldre personer stöd och hjälp."
       },
       {
         "en": "Both statements are correct",
@@ -37175,7 +37175,7 @@
     "type": "true_false",
     "q": {
       "en": "Swedish municipalities do not have to offer older people support and help.",
-      "sv": "Sveriges kommuner ska inte erbjuda äldre personer stöd och hjälp."
+      "sv": "Sveriges kommuner behöver inte erbjuda äldre personer stöd och hjälp."
     },
     "opts": [
       {
@@ -37224,7 +37224,7 @@
       },
       {
         "en": "Swedish municipalities do not have to offer older people support and help.",
-        "sv": "Sveriges kommuner ska inte erbjuda äldre personer stöd och hjälp."
+        "sv": "Sveriges kommuner behöver inte erbjuda äldre personer stöd och hjälp."
       },
       {
         "en": "Both statements are correct",

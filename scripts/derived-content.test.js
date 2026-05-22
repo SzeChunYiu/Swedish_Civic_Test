@@ -1290,7 +1290,7 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
       'Marriage between people of the same sex is prohibited in Sweden.',
     ],
     [generatedQuestionId(sourceQuestions, 'q074', 'falseStatement')]: [
-      'Sveriges kommuner ska inte erbjuda äldre personer stöd och hjälp.',
+      'Sveriges kommuner behöver inte erbjuda äldre personer stöd och hjälp.',
       'Swedish municipalities do not have to offer older people support and help.',
     ],
     [generatedQuestionId(sourceQuestions, 'q091', 'falseStatement')]: [

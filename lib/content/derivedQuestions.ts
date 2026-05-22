@@ -1211,6 +1211,7 @@ function sourceDirectStatementEn(
 function sourceOppositeStatementSv(statement: string): string {
   const replacements: Array<[RegExp, string]> = [
     [/\bmåste\b/i, 'behöver inte'],
+    [/\bska\s+erbjuda\b/i, 'behöver inte erbjuda'],
     [/\bska\b/i, 'ska inte'],
     [/\bhar rätt att\b/i, 'har inte rätt att'],
     [/\bbrukar\b/i, 'brukar inte'],
