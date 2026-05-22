@@ -11027,3 +11027,65 @@ img.ebook__brand-mark {
     padding: 9px 10px 9px 12px;
   }
 }
+
+/* ======================================================================
+   EBOOK INLINE FOOTNOTE REF BOX OPTIMIZATION ROUND
+   ====================================================================== */
+
+.ebook__footnote-ref {
+  display: inline-flex;
+  margin-left: 5px;
+  transform: translateY(-0.18em);
+  vertical-align: baseline;
+}
+.ebook__footnote-ref a {
+  align-items: center;
+  background: rgba(0, 106, 167, 0.08);
+  border: 1px solid rgba(0, 106, 167, 0.14);
+  border-radius: 999px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.36);
+  color: var(--blue-ink);
+  display: inline-flex;
+  font-family: var(--mono);
+  font-size: 0.86em;
+  font-weight: 900;
+  justify-content: center;
+  line-height: 1;
+  min-height: 18px;
+  min-width: 20px;
+  padding: 2px 6px;
+}
+.ebook__footnote-ref a:hover,
+.ebook__footnote-ref a:focus-visible {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--ink);
+  text-decoration: none;
+}
+.ebook__footnote-ref a:focus-visible {
+  outline: 2px solid rgba(0, 106, 167, 0.32);
+  outline-offset: 2px;
+}
+
+:root[data-theme='dark'] .ebook__footnote-ref a {
+  background: rgba(45, 168, 255, 0.12);
+  border-color: rgba(45, 168, 255, 0.22);
+  color: var(--blue-soft);
+}
+:root[data-theme='dark'] .ebook__footnote-ref a:hover,
+:root[data-theme='dark'] .ebook__footnote-ref a:focus-visible {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #0b1f33;
+}
+
+@media (max-width: 560px) {
+  .ebook__footnote-ref {
+    margin-left: 4px;
+  }
+  .ebook__footnote-ref a {
+    min-height: 20px;
+    min-width: 22px;
+    padding: 3px 6px;
+  }
+}
