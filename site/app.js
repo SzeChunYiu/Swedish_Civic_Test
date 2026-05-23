@@ -13,6 +13,57 @@ const SMT_QUESTION_BANK_LOAD = {
   error: null,
   promise: null,
 };
+const SMT_SERVICE_WORKER_UPDATE_CHECK_THROTTLE_MS = 60 * 1000;
+
+function smtCreateServiceWorkerUpdateChecker(registration, options = {}) {
+  const update =
+    registration && typeof registration.update === 'function'
+      ? registration.update.bind(registration)
+      : null;
+  const target = options.target || (typeof window !== 'undefined' ? window : null);
+  const documentRef = options.documentRef || (typeof document !== 'undefined' ? document : null);
+  const now = typeof options.now === 'function' ? options.now : () => Date.now();
+  const throttleMs =
+    Number.isFinite(options.throttleMs) && options.throttleMs >= 0
+      ? options.throttleMs
+      : SMT_SERVICE_WORKER_UPDATE_CHECK_THROTTLE_MS;
+  let lastUpdateCheckAt = Number.NEGATIVE_INFINITY;
+
+  function checkForUpdate() {
+    if (!update) return false;
+    const currentTime = now();
+    if (currentTime - lastUpdateCheckAt < throttleMs) return false;
+    lastUpdateCheckAt = currentTime;
+    Promise.resolve(update()).catch(() => {});
+    return true;
+  }
+
+  function checkWhenVisible() {
+    if (documentRef?.visibilityState && documentRef.visibilityState !== 'visible') return false;
+    return checkForUpdate();
+  }
+
+  if (target && typeof target.addEventListener === 'function') {
+    target.addEventListener('focus', checkForUpdate);
+    target.addEventListener('visibilitychange', checkWhenVisible);
+  }
+
+  return {
+    checkForUpdate,
+    dispose() {
+      if (!target || typeof target.removeEventListener !== 'function') return;
+      target.removeEventListener('focus', checkForUpdate);
+      target.removeEventListener('visibilitychange', checkWhenVisible);
+    },
+  };
+}
+
+function smtInstallServiceWorkerUpdateChecks(registration) {
+  return smtCreateServiceWorkerUpdateChecker(registration);
+}
+
+window.smtCreateServiceWorkerUpdateChecker = smtCreateServiceWorkerUpdateChecker;
+window.smtInstallServiceWorkerUpdateChecks = smtInstallServiceWorkerUpdateChecks;
 
 function smtStaticRoutePath() {
   const hash = (location.hash || '#/').replace(/^#/, '');

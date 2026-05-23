@@ -6,6 +6,19 @@ import {
 } from './staticSiteServer';
 import { trapExternalRequests } from './staticSiteNetworkGuards';
 
+declare global {
+  interface Window {
+    smtCreateServiceWorkerUpdateChecker(
+      registration: { update: () => Promise<void> },
+      options: {
+        documentRef: { visibilityState: string };
+        now: () => number;
+        throttleMs: number;
+      },
+    ): { dispose: () => void };
+  }
+}
+
 async function seedStaticPwaRun(page: Page) {
   await page.addInitScript(() => {
     localStorage.setItem('smt_consent', 'min');
@@ -140,4 +153,46 @@ test('static PWA caches lazy ebook route bundles only after route demand', async
   await expectOfflineRoute(page, context, staticSite, '#/ebook?c=1', '/ebook');
   await expect(page.locator('#ebook-reader .ebook__h1')).toBeVisible();
   await expect(page.locator('.ebook__nav a[data-eb="1"]')).toHaveClass(/is-active/);
+});
+
+test('static PWA foreground and visibility update checks are throttled', async ({ page }) => {
+  await seedStaticPwaRun(page);
+  await trapExternalRequests(page, new URL(staticSite.baseUrl).origin, []);
+
+  await page.goto(staticSite.baseUrl, { waitUntil: 'load' });
+
+  const result = await page.evaluate(async () => {
+    let currentTime = 1000;
+    const updateCalls: number[] = [];
+    const visibility = { visibilityState: 'visible' };
+    const checker = window.smtCreateServiceWorkerUpdateChecker(
+      {
+        update() {
+          updateCalls.push(currentTime);
+          return Promise.resolve();
+        },
+      },
+      {
+        documentRef: visibility,
+        now: () => currentTime,
+        throttleMs: 5000,
+      },
+    );
+
+    window.dispatchEvent(new Event('focus'));
+    currentTime += 1000;
+    window.dispatchEvent(new Event('focus'));
+    currentTime += 5000;
+    window.dispatchEvent(new Event('visibilitychange'));
+    currentTime += 6000;
+    visibility.visibilityState = 'hidden';
+    window.dispatchEvent(new Event('visibilitychange'));
+    visibility.visibilityState = 'visible';
+    window.dispatchEvent(new Event('visibilitychange'));
+    checker.dispose();
+
+    return updateCalls;
+  });
+
+  expect(result).toEqual([1000, 7000, 13000]);
 });

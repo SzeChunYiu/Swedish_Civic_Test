@@ -82,6 +82,22 @@ test('static ebook route scripts are lazy-loaded and manifest-backed assets', ()
   }
 });
 
+test('static PWA registration wires throttled foreground update checks', () => {
+  const indexHtml = readSiteIndex();
+  const appSource = fs.readFileSync(path.join(siteRoot, 'app.js'), 'utf8');
+
+  assert.match(appSource, /SMT_SERVICE_WORKER_UPDATE_CHECK_THROTTLE_MS\s*=\s*60\s*\*\s*1000/);
+  assert.match(appSource, /function\s+smtCreateServiceWorkerUpdateChecker\s*\(/);
+  assert.match(appSource, /function\s+smtInstallServiceWorkerUpdateChecks\s*\(/);
+  assert.match(appSource, /addEventListener\(['"]focus['"],\s*checkForUpdate\)/);
+  assert.match(appSource, /addEventListener\(['"]visibilitychange['"],\s*checkWhenVisible\)/);
+  assert.match(appSource, /registration\.update\.bind\(registration\)/);
+  assert.match(indexHtml, /register\('\.\/sw\.js',\s*\{\s*scope:\s*'\.\/'/);
+  assert.match(indexHtml, /updateViaCache:\s*'none'/);
+  assert.match(indexHtml, /\.then\(function\s*\(registration\)\s*\{/);
+  assert.match(indexHtml, /smtInstallServiceWorkerUpdateChecks\(registration\)/);
+});
+
 test('committed static site asset manifest matches shipped assets', () => {
   const result = checkAssetManifest();
 
