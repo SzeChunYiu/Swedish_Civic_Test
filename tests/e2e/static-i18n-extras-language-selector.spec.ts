@@ -342,6 +342,10 @@ async function expectDictionaryRenderedText(
 }
 
 async function expectStaticFooterAppLinkCoverage(page: Page, locale: ExtraLocale) {
+  await expect(page.locator('footer.footer nav.footer__cols')).toHaveAttribute(
+    'aria-label',
+    await dictionaryText(page, locale, 'a11y.footer.nav'),
+  );
   await expectDictionaryText(
     page,
     locale,

@@ -178,6 +178,20 @@ const expectedFooterRoadmapLabels = {
   so: 'Qorshaha horumarinta',
   ti: 'መደብ ምዕባለ',
 };
+const expectedFooterNavAriaLabels = {
+  en: 'Footer navigation',
+  sv: 'Sidfotsnavigering',
+  'zh-Hans': '页脚导航',
+  'zh-Hant': '頁尾導覽',
+  ar: 'تنقّل التذييل',
+  ckb: 'ڕێنیشاندانی پێپەڕە',
+  fa: 'پیمایش پانویس',
+  pl: 'Nawigacja w stopce',
+  so: 'Hagidda qaybta hoose',
+  ti: 'ናይ ታሕቲ ገጽ መምርሒ',
+  tr: 'Alt bilgi gezinmesi',
+  uk: 'Навігація нижнього колонтитула',
+};
 const unusedStaticFooterAppKeyAllowlist = {
   'footer.app.1':
     'Retained for legacy marketing-footer dictionaries; the current static footer renders nav.home instead.',
@@ -692,6 +706,37 @@ test('static footer app dictionary keys are rendered links or explicit legacy un
     Object.keys(unusedStaticFooterAppKeyAllowlist).sort(),
     'unused footer.app.* dictionary keys should be intentionally allowlisted with rationale',
   );
+});
+
+test('static footer navigation landmark uses localized aria label keys', () => {
+  const base = loadBaseI18n();
+  const extra = loadExtraI18n();
+  const dictionaries = { en: base.en, sv: base.sv, ...extra };
+  const footer = staticFooterHtml();
+
+  assert.match(
+    footer,
+    /<nav class="footer__cols"[^>]*\bdata-a11y-label="a11y\.footer\.nav"/,
+    'static footer nav should opt into the data-a11y-label localization pass',
+  );
+  assert.doesNotMatch(
+    footer,
+    /<nav class="footer__cols"[^>]*aria-label="Footer"/,
+    'static footer nav should not keep the English-only Footer label',
+  );
+
+  for (const [locale, expected] of Object.entries(expectedFooterNavAriaLabels)) {
+    const value = dictionaries[locale]?.['a11y.footer.nav'];
+    assert.equal(value, expected, `${locale}.a11y.footer.nav`);
+    assert.notEqual(value, 'Footer', `${locale} should not expose the old English-only label`);
+    if (locale !== 'en') {
+      assert.notEqual(
+        value,
+        'Footer navigation',
+        `${locale} should not fall back to the English footer landmark label`,
+      );
+    }
+  }
 });
 
 test('Central Kurdish legal reading-time metadata uses localized minutes', () => {
