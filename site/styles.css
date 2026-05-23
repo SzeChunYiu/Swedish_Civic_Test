@@ -8613,8 +8613,9 @@ html[dir='rtl'] .lang-menu {
   font-size: 12px;
   font-weight: 800;
   gap: 6px;
-  min-height: 36px;
-  padding: 8px 11px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 10px 12px;
   transition:
     background 0.15s ease,
     border-color 0.15s ease,
@@ -8671,9 +8672,9 @@ html[dir='rtl'] .lang-menu {
   flex: 0 0 auto;
   font: inherit;
   font-weight: 900;
-  height: 30px;
+  height: 44px;
   justify-content: center;
-  width: 30px;
+  width: 44px;
 }
 
 .eb-note__ta {
@@ -8712,8 +8713,14 @@ html[dir='rtl'] .lang-menu {
   font: inherit;
   font-size: 12px;
   font-weight: 800;
-  min-height: 36px;
-  padding: 8px 12px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 10px 14px;
+}
+
+.eb-note__save {
+  min-height: 44px;
+  min-width: 44px;
 }
 
 .eb-notes-empty,
@@ -8745,6 +8752,9 @@ html[dir='rtl'] .lang-menu {
   background: rgba(255, 255, 255, 0.58);
   border-color: rgba(0, 106, 167, 0.16);
   box-shadow: 0 10px 22px -20px rgba(11, 31, 51, 0.68);
+  min-height: 44px;
+  min-width: 44px;
+  padding: 10px 14px;
 }
 
 :root[data-theme='dark'] .eb-pop,
