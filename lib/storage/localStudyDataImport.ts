@@ -23,6 +23,7 @@ import {
   normalizeImportedSettings,
   type ImportableSettings,
 } from './settingsStore';
+import type { StudyIntensity } from '../learning/examDate';
 import {
   importAccessibilityPreferencesSnapshot,
   normalizeImportedAccessibilityPreferences,
@@ -61,6 +62,9 @@ export type LocalStudyDataImportSummary = {
   fsrsReviewCardCount: number;
   gradedReviewDayCount: number;
   settingCount: number;
+  studyPlanTestDateIsoIncluded: string | null;
+  studyPlanTestDateCleared: boolean;
+  studyPlanIntensityIncluded: StudyIntensity | null;
   accessibilityPreferenceCount: number;
   companionPreferenceCount: number;
   citizenshipRequirementChecklistCount: number;
@@ -339,6 +343,18 @@ function buildSummary(
     fsrsReviewCardCount: sections.reviews ? Object.keys(reviews.byId).length : 0,
     gradedReviewDayCount: sections.reviews ? Object.keys(reviews.gradedPerDay).length : 0,
     settingCount: sections.settings ? countImportedSettings(settings) : 0,
+    studyPlanTestDateIsoIncluded:
+      sections.settings && typeof settings.studyPlanTestDateIso === 'string'
+        ? settings.studyPlanTestDateIso
+        : null,
+    studyPlanTestDateCleared:
+      sections.settings &&
+      Object.prototype.hasOwnProperty.call(settings, 'studyPlanTestDateIso') &&
+      settings.studyPlanTestDateIso === null,
+    studyPlanIntensityIncluded:
+      sections.settings && settings.studyPlanIntensity !== undefined
+        ? settings.studyPlanIntensity
+        : null,
     accessibilityPreferenceCount: sections.accessibility
       ? countImportedAccessibilityPreferences(accessibility)
       : 0,
@@ -459,6 +475,9 @@ export function previewLocalStudyDataImport(rawText: string): LocalStudyDataImpo
       fsrsReviewCardCount: 0,
       gradedReviewDayCount: 0,
       settingCount: 0,
+      studyPlanTestDateIsoIncluded: null,
+      studyPlanTestDateCleared: false,
+      studyPlanIntensityIncluded: null,
       accessibilityPreferenceCount: 0,
       companionPreferenceCount: 0,
       citizenshipRequirementChecklistCount: 0,

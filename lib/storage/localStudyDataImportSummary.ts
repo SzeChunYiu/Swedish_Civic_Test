@@ -1,3 +1,4 @@
+import type { StudyIntensity } from '../learning/examDate';
 import type { LocalStudyDataImportSummary } from './localStudyDataImport';
 
 export type ImportSummaryCountLabels = {
@@ -16,6 +17,9 @@ export type LocalStudyDataImportSummaryCopy = {
   importSummaryHighlights: (count: number) => string;
   importSummaryMockExams: (count: number) => string;
   importSummarySettings: (count: number) => string;
+  importSummaryStudyPlanIntensity: (intensity: StudyIntensity) => string;
+  importSummaryStudyPlanTestDate: (dateLabel: string) => string;
+  importSummaryStudyPlanTestDateCleared: string;
   importSummaryStreakFreeze: string;
   importSummaryWrongAnswers: (count: number) => string;
 };
@@ -54,6 +58,16 @@ export function buildLocalStudyDataImportSummaryLines(
   addPositiveImportSummaryLine(lines, summary.gradedReviewDayCount, copy.importSummaryFsrsDays);
   addPositiveImportSummaryLine(lines, summary.highlightCount, copy.importSummaryHighlights);
   addPositiveImportSummaryLine(lines, summary.settingCount, copy.importSummarySettings);
+  if (summary.studyPlanTestDateIsoIncluded) {
+    lines.push(
+      copy.importSummaryStudyPlanTestDate(summary.studyPlanTestDateIsoIncluded.slice(0, 10)),
+    );
+  } else if (summary.studyPlanTestDateCleared) {
+    lines.push(copy.importSummaryStudyPlanTestDateCleared);
+  }
+  if (summary.studyPlanIntensityIncluded) {
+    lines.push(copy.importSummaryStudyPlanIntensity(summary.studyPlanIntensityIncluded));
+  }
   addPositiveImportSummaryLine(
     lines,
     summary.accessibilityPreferenceCount,

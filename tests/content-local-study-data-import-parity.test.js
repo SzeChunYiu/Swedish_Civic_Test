@@ -197,6 +197,9 @@ test('local study data import summary keeps Swedish copy learner-facing', () => 
   assert.match(swedishCopyMatch[0], /other: 'granskningar av fel svar'/);
   assert.match(swedishCopyMatch[0], /one: 'sparad inställning'/);
   assert.match(swedishCopyMatch[0], /other: 'sparade inställningar'/);
+  assert.match(swedishCopyMatch[0], /Studieplanens provdatum: \$\{dateLabel\}/);
+  assert.match(swedishCopyMatch[0], /Studieplanens provdatum rensas/);
+  assert.match(swedishCopyMatch[0], /Studietakt: jämn/);
   assert.match(swedishCopyMatch[0], /one: 'tillgänglighetsval'/);
   assert.match(swedishCopyMatch[0], /one: 'vald studiekompis'/);
   assert.match(swedishCopyMatch[0], /Studiesvit och svitskydd ingår/);
@@ -224,6 +227,9 @@ test('local study data import summary keeps Swedish copy learner-facing', () => 
   assert.match(englishCopyMatch[0], /other: 'wrong-answer reviews'/);
   assert.match(englishCopyMatch[0], /one: 'saved setting'/);
   assert.match(englishCopyMatch[0], /other: 'saved settings'/);
+  assert.match(englishCopyMatch[0], /Study plan test date: \$\{dateLabel\}/);
+  assert.match(englishCopyMatch[0], /Study plan test date will be cleared/);
+  assert.match(englishCopyMatch[0], /Study intensity: regular/);
   assert.match(englishCopyMatch[0], /one: 'accessibility preference'/);
   assert.match(englishCopyMatch[0], /other: 'accessibility preferences'/);
   assert.match(englishCopyMatch[0], /one: 'selected study companion'/);
@@ -256,8 +262,14 @@ test('settings import browser fixtures cover accessibility and companion preview
     'utf8',
   );
 
-  assert.match(source, /const accessibilityEasyReadFontKey = 'accessibility\\\\a11y\.easyReadFont\.v1';/);
-  assert.match(source, /const accessibilityFontSizeStepKey = 'accessibility\\\\a11y\.fontSizeStep\.v1';/);
+  assert.match(
+    source,
+    /const accessibilityEasyReadFontKey = 'accessibility\\\\a11y\.easyReadFont\.v1';/,
+  );
+  assert.match(
+    source,
+    /const accessibilityFontSizeStepKey = 'accessibility\\\\a11y\.fontSizeStep\.v1';/,
+  );
   assert.match(
     source,
     /const accessibilityAudioPlaybackRateKey = 'accessibility\\\\a11y\.audioPlaybackRate\.v1';/,
@@ -354,6 +366,8 @@ test('local study data import previews and applies all learner snapshot sections
       dailyGoalAnswers: 20,
       includeSupplementaryQuestions: true,
       hasSeenAboutTheTest: true,
+      studyPlanTestDateIso: '2026-08-15T12:00:00.000Z',
+      studyPlanIntensity: 'regular',
       ignoredSetting: 'skip',
     },
     accessibility: {
@@ -396,7 +410,10 @@ test('local study data import previews and applies all learner snapshot sections
     streakFreezeStateIncluded: true,
     fsrsReviewCardCount: 1,
     gradedReviewDayCount: 1,
-    settingCount: 5,
+    settingCount: 7,
+    studyPlanTestDateIsoIncluded: '2026-08-15T00:00:00.000Z',
+    studyPlanTestDateCleared: false,
+    studyPlanIntensityIncluded: 'regular',
     accessibilityPreferenceCount: 5,
     companionPreferenceCount: 1,
     citizenshipRequirementChecklistCount: 2,
@@ -431,6 +448,8 @@ test('local study data import previews and applies all learner snapshot sections
   assert.equal(storageById.settings.values.get('dailyGoalAnswers'), 20);
   assert.equal(storageById.settings.values.get('includeSupplementaryQuestions'), true);
   assert.equal(storageById.settings.values.get('hasSeenAboutTheTest'), true);
+  assert.equal(storageById.settings.values.get('studyPlanTestDateIso'), '2026-08-15T00:00:00.000Z');
+  assert.equal(storageById.settings.values.get('studyPlanIntensity'), 'regular');
   assert.equal(storageById.accessibility.values.get('a11y.easyReadFont.v1'), true);
   assert.equal(storageById.accessibility.values.get('a11y.fontSizeStep.v1'), 3);
   assert.equal(storageById.accessibility.values.get('a11y.audioPlaybackRate.v1'), 1.25);
@@ -702,6 +721,8 @@ test('local study data import summary reports plural bookmark wrong-answer mock 
       dailyGoalAnswers: 20,
       includeSupplementaryQuestions: true,
       hasSeenAboutTheTest: true,
+      studyPlanTestDateIso: null,
+      studyPlanIntensity: 'serious',
     },
     citizenshipRequirements: {
       checkedAreaIds: ['conduct', 'identity', 'residenceStatus', 'identity', 'unknown'],
@@ -738,7 +759,10 @@ test('local study data import summary reports plural bookmark wrong-answer mock 
     streakFreezeStateIncluded: true,
     fsrsReviewCardCount: 2,
     gradedReviewDayCount: 2,
-    settingCount: 5,
+    settingCount: 7,
+    studyPlanTestDateIsoIncluded: null,
+    studyPlanTestDateCleared: true,
+    studyPlanIntensityIncluded: 'serious',
     accessibilityPreferenceCount: 0,
     companionPreferenceCount: 0,
     citizenshipRequirementChecklistCount: 3,

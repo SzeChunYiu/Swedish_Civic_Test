@@ -16771,6 +16771,13 @@ function validateSettingsImportSummaryNonzeroParity() {
         }),
       importSummarySettings: (count) =>
         formatSummaryCount(count, { one: 'sparad inställning', other: 'sparade inställningar' }),
+      importSummaryStudyPlanIntensity: (intensity) => {
+        if (intensity === 'casual') return 'Studietakt: lugn';
+        if (intensity === 'serious') return 'Studietakt: intensiv';
+        return 'Studietakt: jämn';
+      },
+      importSummaryStudyPlanTestDate: (dateLabel) => `Studieplanens provdatum: ${dateLabel}`,
+      importSummaryStudyPlanTestDateCleared: 'Studieplanens provdatum rensas',
       importSummaryStreakFreeze: 'Studiesvit och svitskydd ingår',
       importSummaryWrongAnswers: (count) =>
         formatSummaryCount(count, {
@@ -16808,6 +16815,13 @@ function validateSettingsImportSummaryNonzeroParity() {
         formatSummaryCount(count, { one: 'completed mock exam', other: 'completed mock exams' }),
       importSummarySettings: (count) =>
         formatSummaryCount(count, { one: 'saved setting', other: 'saved settings' }),
+      importSummaryStudyPlanIntensity: (intensity) => {
+        if (intensity === 'casual') return 'Study intensity: relaxed';
+        if (intensity === 'serious') return 'Study intensity: intensive';
+        return 'Study intensity: regular';
+      },
+      importSummaryStudyPlanTestDate: (dateLabel) => `Study plan test date: ${dateLabel}`,
+      importSummaryStudyPlanTestDateCleared: 'Study plan test date will be cleared',
       importSummaryStreakFreeze: 'Study streak and freeze status included',
       importSummaryWrongAnswers: (count) =>
         formatSummaryCount(count, { one: 'wrong-answer review', other: 'wrong-answer reviews' }),
@@ -16821,7 +16835,10 @@ function validateSettingsImportSummaryNonzeroParity() {
     streakFreezeStateIncluded: true,
     fsrsReviewCardCount: 2,
     gradedReviewDayCount: 2,
-    settingCount: 5,
+    settingCount: 7,
+    studyPlanTestDateIsoIncluded: '2026-08-15T00:00:00.000Z',
+    studyPlanTestDateCleared: false,
+    studyPlanIntensityIncluded: 'regular',
     accessibilityPreferenceCount: 0,
     companionPreferenceCount: 0,
     citizenshipRequirementChecklistCount: 0,
@@ -16835,7 +16852,9 @@ function validateSettingsImportSummaryNonzeroParity() {
       '2 genomförda övningsprov',
       '2 repetitionskort',
       '2 repetitionsdagar',
-      '5 sparade inställningar',
+      '7 sparade inställningar',
+      'Studieplanens provdatum: 2026-08-15',
+      'Studietakt: jämn',
       'Studiesvit och svitskydd ingår',
     ],
     en: [
@@ -16845,7 +16864,9 @@ function validateSettingsImportSummaryNonzeroParity() {
       '2 completed mock exams',
       '2 FSRS review cards',
       '2 FSRS review days',
-      '5 saved settings',
+      '7 saved settings',
+      'Study plan test date: 2026-08-15',
+      'Study intensity: regular',
       'Study streak and freeze status included',
     ],
   };

@@ -217,6 +217,13 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
         one: 'sparad inställning',
         other: 'sparade inställningar',
       }),
+    importSummaryStudyPlanIntensity: (intensity) => {
+      if (intensity === 'casual') return 'Studietakt: lugn';
+      if (intensity === 'serious') return 'Studietakt: intensiv';
+      return 'Studietakt: jämn';
+    },
+    importSummaryStudyPlanTestDate: (dateLabel) => `Studieplanens provdatum: ${dateLabel}`,
+    importSummaryStudyPlanTestDateCleared: 'Studieplanens provdatum rensas',
     importSummaryStreakFreeze: 'Studiesvit och svitskydd ingår',
     importSummaryTitle: 'Sammanfattning före import',
     importSummaryWrongAnswers: (count) =>
@@ -338,6 +345,13 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
       }),
     importSummarySettings: (count) =>
       formatImportSummaryCount(count, { one: 'saved setting', other: 'saved settings' }),
+    importSummaryStudyPlanIntensity: (intensity) => {
+      if (intensity === 'casual') return 'Study intensity: relaxed';
+      if (intensity === 'serious') return 'Study intensity: intensive';
+      return 'Study intensity: regular';
+    },
+    importSummaryStudyPlanTestDate: (dateLabel) => `Study plan test date: ${dateLabel}`,
+    importSummaryStudyPlanTestDateCleared: 'Study plan test date will be cleared',
     importSummaryStreakFreeze: 'Study streak and freeze status included',
     importSummaryTitle: 'Summary before import',
     importSummaryWrongAnswers: (count) =>
