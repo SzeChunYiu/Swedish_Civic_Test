@@ -12,8 +12,11 @@ test.afterAll(async () => {
   await staticSite.close();
 });
 
-async function configureHostedSupabase(page: Page, options: { seedLocalDemo?: boolean } = {}) {
-  await page.addInitScript(({ seedLocalDemo }) => {
+async function configureHostedSupabase(
+  page: Page,
+  options: { seedLocalDemo?: boolean; seedRealSession?: boolean } = {},
+) {
+  await page.addInitScript(({ seedLocalDemo, seedRealSession }) => {
     window.localStorage.clear();
     window.sessionStorage.clear();
     window.localStorage.setItem('smt_buddy_hidden', '1');
@@ -23,6 +26,11 @@ async function configureHostedSupabase(page: Page, options: { seedLocalDemo?: bo
       window.localStorage.setItem('smt_signed_in', '1');
       window.localStorage.setItem('smt_account_id', 'local-demo');
       window.localStorage.setItem('smt_account_email', 'local-demo@example.invalid');
+    }
+    if (seedRealSession) {
+      window.localStorage.setItem('smt_signed_in', '1');
+      window.localStorage.setItem('smt_account_id', 'user-stored-session');
+      window.localStorage.setItem('smt_account_email', 'stored@example.com');
     }
     window.sessionStorage.setItem('smt_buddy_greeted', '1');
 
@@ -37,6 +45,55 @@ async function configureHostedSupabase(page: Page, options: { seedLocalDemo?: bo
       set: () => undefined,
     });
   }, options);
+}
+
+function supabaseSessionFixture(email = 'learner@example.com') {
+  return {
+    user: {
+      email,
+      id: 'user-real-session',
+      user_metadata: {
+        email,
+      },
+    },
+  };
+}
+
+async function fulfillSupabaseClient(page: Page, session = supabaseSessionFixture()) {
+  let sdkRequests = 0;
+  await page.route(/https:\/\/esm\.sh\/@supabase\/supabase-js@2.*/, (route) => {
+    sdkRequests += 1;
+    return route.fulfill({
+      body: `
+export function createClient() {
+  const session = ${JSON.stringify(session)};
+  return {
+    auth: {
+      getSession() {
+        return Promise.resolve({ data: { session } });
+      },
+      onAuthStateChange(callback) {
+        callback('SIGNED_IN', session);
+        return { data: { subscription: { unsubscribe() {} } } };
+      },
+      signInWithOAuth() {
+        return Promise.resolve({ data: {}, error: null });
+      },
+      signInWithOtp() {
+        return Promise.resolve({ data: {}, error: null });
+      },
+      signOut() {
+        return Promise.resolve();
+      },
+    },
+  };
+}
+`,
+      contentType: 'text/javascript',
+      headers: { 'access-control-allow-origin': '*' },
+    });
+  });
+  return () => sdkRequests;
 }
 
 async function expectSignedOutFailClosed(page: Page) {
@@ -70,6 +127,98 @@ async function expectSignedOutFailClosed(page: Page) {
 function unexpectedPageErrors(errors: string[]) {
   return errors.filter((message) => !/Failed to load resource: net::ERR_FAILED/.test(message));
 }
+
+test('configured Supabase signed-out boot does not request the SDK before sign-in action', async ({
+  page,
+}) => {
+  const pageErrors = collectPageErrors(page);
+  let sdkRequests = 0;
+  await configureHostedSupabase(page);
+  await page.route(/https:\/\/esm\.sh\/@supabase\/supabase-js@2.*/, (route) => {
+    sdkRequests += 1;
+    return route.abort();
+  });
+
+  await page.goto(`${staticSite.baseUrl}/#/dashboard`, { waitUntil: 'load' });
+
+  await expect(page.locator('#signin-open')).toHaveText(/Sign in/);
+  await expect(page.locator('#v11-dashboard')).toHaveClass(/v11-dashboard--locked/);
+  await expect
+    .poll(() =>
+      page.evaluate(() => ({
+        accountEmail: window.localStorage.getItem('smt_account_email'),
+        accountId: window.localStorage.getItem('smt_account_id'),
+        signedIn: window.localStorage.getItem('smt_signed_in'),
+      })),
+    )
+    .toEqual({
+      accountEmail: null,
+      accountId: null,
+      signedIn: null,
+    });
+  expect(sdkRequests).toBe(0);
+  expect(unexpectedPageErrors(pageErrors)).toEqual([]);
+});
+
+test('configured Supabase OAuth callback boot loads the SDK and reconciles the session', async ({
+  page,
+}) => {
+  const pageErrors = collectPageErrors(page);
+  await configureHostedSupabase(page);
+  const getSdkRequests = await fulfillSupabaseClient(
+    page,
+    supabaseSessionFixture('callback@example.com'),
+  );
+
+  await page.goto(`${staticSite.baseUrl}/?code=fake-oauth-code#/dashboard`, { waitUntil: 'load' });
+
+  await expect(page.locator('#signin-open')).toHaveText(/Account/);
+  await expect
+    .poll(() =>
+      page.evaluate(() => ({
+        accountEmail: window.localStorage.getItem('smt_account_email'),
+        accountId: window.localStorage.getItem('smt_account_id'),
+        signedIn: window.localStorage.getItem('smt_signed_in'),
+      })),
+    )
+    .toEqual({
+      accountEmail: 'callback@example.com',
+      accountId: 'user-real-session',
+      signedIn: '1',
+    });
+  expect(getSdkRequests()).toBe(1);
+  expect(unexpectedPageErrors(pageErrors)).toEqual([]);
+});
+
+test('configured Supabase stored session boot loads the SDK and reconciles the account', async ({
+  page,
+}) => {
+  const pageErrors = collectPageErrors(page);
+  await configureHostedSupabase(page, { seedRealSession: true });
+  const getSdkRequests = await fulfillSupabaseClient(
+    page,
+    supabaseSessionFixture('stored@example.com'),
+  );
+
+  await page.goto(`${staticSite.baseUrl}/#/dashboard`, { waitUntil: 'load' });
+
+  await expect(page.locator('#signin-open')).toHaveText(/Account/);
+  await expect
+    .poll(() =>
+      page.evaluate(() => ({
+        accountEmail: window.localStorage.getItem('smt_account_email'),
+        accountId: window.localStorage.getItem('smt_account_id'),
+        signedIn: window.localStorage.getItem('smt_signed_in'),
+      })),
+    )
+    .toEqual({
+      accountEmail: 'stored@example.com',
+      accountId: 'user-real-session',
+      signedIn: '1',
+    });
+  expect(getSdkRequests()).toBe(1);
+  expect(unexpectedPageErrors(pageErrors)).toEqual([]);
+});
 
 test('configured Supabase SDK load failure keeps static account surfaces signed out', async ({
   page,

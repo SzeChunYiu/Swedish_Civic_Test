@@ -209,9 +209,11 @@ test('static site optional account surface keeps ebook highlights account-free',
   assert.match(signin, /function\s+isConfigured\(\)/);
   assert.match(signin, /if\s*\(!isConfigured\(\)\)\s+return Promise\.resolve\(null\)/);
   assert.match(signin, /import\('https:\/\/esm\.sh\/@supabase\/supabase-js@2'\)/);
+  assert.match(signin, /function\s+hasStoredRealAccountSession\(\)/);
+  assert.match(signin, /function\s+hasSupabaseCallbackParams\(\)/);
   assert.match(
     signin,
-    /if\s*\(!isConfigured\(\)\)\s+return;[\s\S]*clearConfiguredLocalDemoSession\(\);[\s\S]*getClient\(\)\.then/,
+    /if\s*\(!isConfigured\(\)\)\s+return;[\s\S]*clearConfiguredLocalDemoSession\(\);[\s\S]*if \(!hasSupabaseCallbackParams\(\) && !hasStoredRealAccountSession\(\)\) return;[\s\S]*getClient\(\)\.then/,
   );
   assert.match(signin, /window\.smtOpenSignin = open/);
   assert.match(signin, /window\.smtIsSignedIn = signedIn/);

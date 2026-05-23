@@ -415,6 +415,40 @@
     } catch {}
   }
 
+  function hasStoredRealAccountSession() {
+    try {
+      const accountId = localStorage.getItem('smt_account_id') || '';
+      return (
+        localStorage.getItem('smt_signed_in') === '1' &&
+        Boolean(accountId) &&
+        accountId !== 'local-demo'
+      );
+    } catch {
+      return false;
+    }
+  }
+
+  function hasSupabaseCallbackParams() {
+    try {
+      const search = new URLSearchParams(location.search || '');
+      if (search.has('code') || search.has('error') || search.has('error_description')) {
+        return true;
+      }
+      const hash = String(location.hash || '');
+      if (!hash || hash.startsWith('#/')) return false;
+      const hashParams = new URLSearchParams(hash.replace(/^#/, ''));
+      return (
+        hashParams.has('access_token') ||
+        hashParams.has('refresh_token') ||
+        hashParams.has('type') ||
+        hashParams.has('error') ||
+        hashParams.has('error_description')
+      );
+    } catch {
+      return false;
+    }
+  }
+
   function showSignedOutModalState() {
     const m = document.getElementById('signin-modal');
     if (!m) return;
@@ -602,12 +636,12 @@
   });
 
   // On load: when configured, load the client (which registers
-  // onAuthStateChange) and read any existing session — this also captures the
-  // session created by an OAuth redirect-back. When unconfigured this is a
-  // no-op (getClient resolves null without touching the network).
+  // onAuthStateChange) only when there is a callback to reconcile or a stored
+  // real account to verify. Ordinary signed-out visits never touch the SDK.
   function initAuth() {
     if (!isConfigured()) return;
     clearConfiguredLocalDemoSession();
+    if (!hasSupabaseCallbackParams() && !hasStoredRealAccountSession()) return;
     getClient().then((client) => {
       if (!client) {
         applySession(null);
