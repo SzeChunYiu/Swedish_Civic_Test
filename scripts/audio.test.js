@@ -41,6 +41,188 @@ function loadTs(relativePath, options = {}) {
   return mod.exports;
 }
 
+function createHookRuntime() {
+  const hooks = [];
+  const effects = [];
+  let hookIndex = 0;
+  let pendingEffects = [];
+
+  const react = {
+    useEffect(effect, deps) {
+      const index = hookIndex;
+      hookIndex += 1;
+      const previous = effects[index];
+      const changed =
+        !previous ||
+        !deps ||
+        !previous.deps ||
+        deps.length !== previous.deps.length ||
+        deps.some((dep, depIndex) => !Object.is(dep, previous.deps[depIndex]));
+
+      if (changed) pendingEffects.push({ deps, effect, index });
+    },
+    useRef(initialValue) {
+      const index = hookIndex;
+      hookIndex += 1;
+      if (!hooks[index]) hooks[index] = { current: initialValue };
+      return hooks[index];
+    },
+    useState(initialValue) {
+      const index = hookIndex;
+      hookIndex += 1;
+      if (!hooks[index]) {
+        hooks[index] = {
+          value: typeof initialValue === 'function' ? initialValue() : initialValue,
+        };
+      }
+      return [
+        hooks[index].value,
+        (nextValue) => {
+          hooks[index].value =
+            typeof nextValue === 'function' ? nextValue(hooks[index].value) : nextValue;
+        },
+      ];
+    },
+  };
+
+  return {
+    react,
+    render(Component, props) {
+      hookIndex = 0;
+      pendingEffects = [];
+      const element = Component(props);
+      for (const pendingEffect of pendingEffects) {
+        const previous = effects[pendingEffect.index];
+        if (typeof previous?.cleanup === 'function') previous.cleanup();
+        effects[pendingEffect.index] = {
+          deps: pendingEffect.deps,
+          cleanup: pendingEffect.effect(),
+        };
+      }
+      return element;
+    },
+  };
+}
+
+function loadAudioControlComponent(relativePath, exportName, runtime, speechMock) {
+  const filePath = path.resolve(repoRoot, relativePath);
+  const source = fs.readFileSync(filePath, 'utf8');
+  const output = ts.transpileModule(source, {
+    compilerOptions: {
+      jsx: ts.JsxEmit.ReactJSX,
+      module: ts.ModuleKind.CommonJS,
+      target: ts.ScriptTarget.ES2020,
+    },
+  }).outputText;
+  const mod = { exports: {} };
+  const jsxRuntime = {
+    jsx(type, props) {
+      return typeof type === 'function' ? type(props) : { props, type };
+    },
+    jsxs(type, props) {
+      return typeof type === 'function' ? type(props) : { props, type };
+    },
+  };
+
+  new Function('module', 'exports', 'require', output)(mod, mod.exports, (request) => {
+    if (request === 'react') return runtime.react;
+    if (request === 'react/jsx-runtime') return jsxRuntime;
+    if (request === '../Button') {
+      return {
+        Button(props) {
+          return { props, type: 'Button' };
+        },
+      };
+    }
+    if (request === '../../lib/audio/speak') return speechMock;
+    throw new Error(`Unexpected ${relativePath} dependency in runtime audio fixture: ${request}`);
+  });
+
+  return mod.exports[exportName];
+}
+
+function mountAudioControl(relativePath, exportName, props) {
+  const runtime = createHookRuntime();
+  const speakCalls = [];
+  const stopCalls = [];
+  const speechMock = {
+    speakSwedish(text, options) {
+      speakCalls.push({ options, text });
+    },
+    stopSpeech() {
+      stopCalls.push({ afterSpeakCalls: speakCalls.length });
+    },
+  };
+  const Component = loadAudioControlComponent(relativePath, exportName, runtime, speechMock);
+  let currentProps = props;
+  let element = runtime.render(Component, currentProps);
+
+  return {
+    get element() {
+      return element;
+    },
+    rerender(nextProps = currentProps) {
+      currentProps = nextProps;
+      element = runtime.render(Component, currentProps);
+      return element;
+    },
+    speakCalls,
+    stopCalls,
+  };
+}
+
+function assertStaleSpeechCallbackCannotClearCurrentRun({
+  callbackName,
+  expectedPlayLabel,
+  expectedStopLabel,
+  exportName,
+  relativePath,
+}) {
+  const control = mountAudioControl(relativePath, exportName, {
+    enabled: true,
+    language: 'en',
+    rate: 1.3,
+    text: '  Vad betyder demokrati?  ',
+  });
+
+  assert.equal(control.element.props.children, expectedPlayLabel);
+  assert.equal(control.element.props.accessibilityState.busy, false);
+
+  control.element.props.onPress();
+  control.rerender();
+  assert.equal(control.speakCalls.length, 1);
+  assert.equal(control.speakCalls[0].text, 'Vad betyder demokrati?');
+  assert.equal(control.speakCalls[0].options.rate, 1.3);
+  assert.equal(control.element.props.children, expectedStopLabel);
+  assert.equal(control.element.props.accessibilityState.busy, true);
+
+  control.element.props.onPress();
+  control.rerender();
+  assert.equal(control.element.props.children, expectedPlayLabel);
+  assert.equal(control.element.props.accessibilityState.busy, false);
+
+  control.element.props.onPress();
+  control.rerender();
+  assert.equal(control.speakCalls.length, 2);
+  assert.equal(control.element.props.children, expectedStopLabel);
+  assert.equal(control.element.props.accessibilityState.busy, true);
+
+  control.speakCalls[0].options[callbackName]();
+  control.rerender();
+  assert.equal(
+    control.element.props.children,
+    expectedStopLabel,
+    `${exportName} must ignore stale ${callbackName} from an earlier playback run`,
+  );
+  assert.equal(control.element.props.accessibilityState.busy, true);
+
+  control.speakCalls[1].options.onDone();
+  control.rerender();
+  assert.equal(control.element.props.children, expectedPlayLabel);
+  assert.equal(control.element.props.accessibilityState.busy, false);
+  assert.equal(control.stopCalls.length, 3);
+}
+
 function countMatches(source, pattern) {
   return source.match(pattern)?.length ?? 0;
 }
@@ -316,6 +498,30 @@ test('speakSwedish forwards lifecycle callbacks to Expo Speech', () => {
   assert.equal(speakCalls[0].options.onDone, callbacks.onDone);
   assert.equal(speakCalls[0].options.onError, callbacks.onError);
   assert.equal(speakCalls[0].options.onStopped, callbacks.onStopped);
+});
+
+test('AudioButton ignores stale speech callbacks after a newer playback run starts', () => {
+  for (const callbackName of ['onDone', 'onError', 'onStopped']) {
+    assertStaleSpeechCallbackCannotClearCurrentRun({
+      callbackName,
+      expectedPlayLabel: 'Listen to the Swedish question and answers',
+      expectedStopLabel: 'Stop question audio',
+      exportName: 'AudioButton',
+      relativePath: 'components/learning/AudioButton.tsx',
+    });
+  }
+});
+
+test('FeedbackAudioButton ignores stale speech callbacks after a newer playback run starts', () => {
+  for (const callbackName of ['onDone', 'onError', 'onStopped']) {
+    assertStaleSpeechCallbackCannotClearCurrentRun({
+      callbackName,
+      expectedPlayLabel: 'Listen to feedback',
+      expectedStopLabel: 'Stop feedback',
+      exportName: 'FeedbackAudioButton',
+      relativePath: 'components/learning/FeedbackAudioButton.tsx',
+    });
+  }
 });
 
 test('question and feedback audio buttons guard stale speech callbacks by playback run', () => {
