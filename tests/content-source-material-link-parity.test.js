@@ -209,6 +209,42 @@ test('source material e2e covers Sources route wrapped focus-visible links', () 
   assert.match(e2eSource, /expectNoHorizontalOverflow\(page\)/);
 });
 
+test('source material e2e covers Sources authority-boundary wrapped focus-visible links', () => {
+  const e2eSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/e2e/legal-external-links.spec.ts'),
+    'utf8',
+  );
+
+  assert.match(
+    e2eSource,
+    /type SourcesAuthorityBoundaryFixture = \{[\s\S]*publisherLabel: string;[\s\S]*retrievedLabel: string;[\s\S]*urlLabel: string;/,
+  );
+  assert.match(
+    e2eSource,
+    /for \(const viewport of legalSourceMaterialViewports\)[\s\S]*sources authority-boundary link layout/,
+  );
+  assert.match(
+    e2eSource,
+    /\/sources keeps \$\{fixture\.language\} authority-boundary source link text wrapped and focus-visible/,
+  );
+  assert.match(
+    e2eSource,
+    /expectLinkTextSegmentsStayInsideBox\(authorityBoundaryLink, \[[\s\S]*fixture\.visibleLabel[\s\S]*fixture\.publisherLabel[\s\S]*SOURCE_MATERIAL_LINK_RETRIEVED_DATE[\s\S]*UHR_AUTHORITY_BOUNDARY_URL/,
+  );
+  assert.match(
+    e2eSource,
+    /focusLinkWithKeyboard\(page, authorityBoundaryLink, fixture\.actionLabel\)/,
+  );
+  assert.match(
+    e2eSource,
+    /expectKeyboardFocusVisible\(authorityBoundaryLink, fixture\.actionLabel\)/,
+  );
+  assert.match(
+    e2eSource,
+    /expect\.poll\(\(\) => popup\.url\(\)\)\.toBe\(UHR_AUTHORITY_BOUNDARY_URL\)/,
+  );
+});
+
 test('source material parity rejects Disclaimer body source-authority phrasing', () => {
   const englishResult = runValidationWithRoutePatch(
     'app/disclaimer.tsx',
