@@ -2103,82 +2103,96 @@ function smtQuizEscapeHtml(value) {
 }
 
 const SMT_QUIZ_SOURCE_CITATION_COPY = {
-  en: { source: 'Source', page: 'p.' },
-  sv: { source: 'Källa', page: 's.' },
-  'zh-Hans': { source: '来源', page: '页' },
-  'zh-Hant': { source: '來源', page: '頁' },
-  ar: { source: 'المصدر', page: 'ص.' },
-  ckb: { source: 'سەرچاوە', page: 'ل.' },
-  fa: { source: 'منبع', page: 'ص.' },
-  pl: { source: 'Źródło', page: 's.' },
-  so: { source: 'Ilaha', page: 'b.' },
-  ti: { source: 'ምንጪ', page: 'ገጽ' },
-  tr: { source: 'Kaynak', page: 's.' },
-  uk: { source: 'Джерело', page: 'с.' },
+  en: { source: 'Source', supplementalSource: 'Additional source', page: 'p.' },
+  sv: { source: 'Källa', supplementalSource: 'Kompletterande källa', page: 's.' },
+  'zh-Hans': { source: '来源', supplementalSource: '补充来源', page: '页' },
+  'zh-Hant': { source: '來源', supplementalSource: '補充來源', page: '頁' },
+  ar: { source: 'المصدر', supplementalSource: 'مصدر إضافي', page: 'ص.' },
+  ckb: { source: 'سەرچاوە', supplementalSource: 'سەرچاوەی تەواوکەر', page: 'ل.' },
+  fa: { source: 'منبع', supplementalSource: 'منبع تکمیلی', page: 'ص.' },
+  pl: { source: 'Źródło', supplementalSource: 'Dodatkowe źródło', page: 's.' },
+  so: { source: 'Ilaha', supplementalSource: 'Ilo dheeraad ah', page: 'b.' },
+  ti: { source: 'ምንጪ', supplementalSource: 'ተወሳኺ ምንጪ', page: 'ገጽ' },
+  tr: { source: 'Kaynak', supplementalSource: 'Ek kaynak', page: 's.' },
+  uk: { source: 'Джерело', supplementalSource: 'Додаткове джерело', page: 'с.' },
 };
 
-function smtQuizSourceCitation(question, lang) {
+function smtQuizSourceCitationFallback(lang) {
+  return smtTr({
+    sv: 'Källhänvisning saknas',
+    en: 'Source citation unavailable',
+    'zh-Hans': '缺少资料来源标注',
+    'zh-Hant': '缺少資料來源標註',
+    ar: 'لا تتوفر إشارة إلى المصدر',
+    ckb: 'ئاماژە بە سەرچاوە بەردەست نییە',
+    fa: 'ارجاع به منبع در دسترس نیست',
+    pl: 'Brak źródła',
+    so: 'Tixraac lama hayo',
+    ti: 'ምንጪ የለን',
+    tr: 'Kaynak gösterimi yok',
+    uk: 'Джерело недоступне',
+  });
+}
+
+function smtQuizPrimarySourceCitation(question, lang) {
   const source = question && question.source;
-  if (!source)
-    return smtTr({
-      sv: 'Källhänvisning saknas',
-      en: 'Source citation unavailable',
-      'zh-Hans': '缺少资料来源标注',
-      'zh-Hant': '缺少資料來源標註',
-      ar: 'لا تتوفر إشارة إلى المصدر',
-      ckb: 'ئاماژە بە سەرچاوە بەردەست نییە',
-      fa: 'ارجاع به منبع در دسترس نیست',
-      pl: 'Brak źródła',
-      so: 'Tixraac lama hayo',
-      ti: 'ምንጪ የለን',
-      tr: 'Kaynak gösterimi yok',
-      uk: 'Джерело недоступне',
-    });
+  if (!source) return smtQuizSourceCitationFallback(lang);
   const title = source.title || 'Sverige i fokus';
   if (!source.chapter || !source.section || source.page === undefined || source.page === null) {
-    return smtTr({
-      sv: 'Källhänvisning saknas',
-      en: 'Source citation unavailable',
-      'zh-Hans': '缺少资料来源标注',
-      'zh-Hant': '缺少資料來源標註',
-      ar: 'لا تتوفر إشارة إلى المصدر',
-      ckb: 'ئاماژە بە سەرچاوە بەردەست نییە',
-      fa: 'ارجاع به منبع در دسترس نیست',
-      pl: 'Brak źródła',
-      so: 'Tixraac lama hayo',
-      ti: 'ምንጪ የለን',
-      tr: 'Kaynak gösterimi yok',
-      uk: 'Джерело недоступне',
-    });
+    return smtQuizSourceCitationFallback(lang);
   }
   const copy = SMT_QUIZ_SOURCE_CITATION_COPY[lang] || SMT_QUIZ_SOURCE_CITATION_COPY.en;
-  const uhrCitation = `${copy.source}: ${title}, ${source.chapter}, ${source.section}, ${copy.page} ${source.page}`;
-  const supplementalCitations = Array.isArray(source.supplementalSources)
-    ? source.supplementalSources
-        .filter((supplementalSource) => supplementalSource && supplementalSource.title)
-        .map((supplementalSource) => {
-          const published = supplementalSource.publishedDate
-            ? lang === 'sv'
-              ? `publicerad ${supplementalSource.publishedDate}`
-              : `published ${supplementalSource.publishedDate}`
-            : '';
-          const retrieved = supplementalSource.retrievedDate
-            ? lang === 'sv'
-              ? `hämtad ${supplementalSource.retrievedDate}`
-              : `retrieved ${supplementalSource.retrievedDate}`
-            : '';
-          return [
-            `${copy.source}: ${supplementalSource.title}`,
-            supplementalSource.publisher,
-            published,
-            retrieved,
-            supplementalSource.url,
-          ]
-            .filter(Boolean)
-            .join(', ');
-        })
-    : [];
-  return [uhrCitation, ...supplementalCitations].join('; ');
+  return `${copy.source}: ${title}, ${source.chapter}, ${source.section}, ${copy.page} ${source.page}`;
+}
+
+function smtQuizSupplementalSourceCitations(question, lang) {
+  const source = question && question.source;
+  if (!source || !Array.isArray(source.supplementalSources)) return [];
+  const copy = SMT_QUIZ_SOURCE_CITATION_COPY[lang] || SMT_QUIZ_SOURCE_CITATION_COPY.en;
+  return source.supplementalSources
+    .filter(
+      (supplementalSource) =>
+        supplementalSource &&
+        supplementalSource.title &&
+        supplementalSource.publisher &&
+        supplementalSource.url,
+    )
+    .map((supplementalSource) => {
+      const published = supplementalSource.publishedDate
+        ? lang === 'sv'
+          ? `publicerad ${supplementalSource.publishedDate}`
+          : `published ${supplementalSource.publishedDate}`
+        : '';
+      const retrieved = supplementalSource.retrievedDate
+        ? lang === 'sv'
+          ? `hämtad ${supplementalSource.retrievedDate}`
+          : `retrieved ${supplementalSource.retrievedDate}`
+        : '';
+      return {
+        label: copy.supplementalSource,
+        title: supplementalSource.title,
+        meta: [supplementalSource.publisher, published, retrieved].filter(Boolean).join(', '),
+        url: supplementalSource.url,
+      };
+    });
+}
+
+function smtQuizSourceCitation(question, lang) {
+  const supplementalCitations = smtQuizSupplementalSourceCitations(question, lang).map((source) =>
+    [`${source.label}: ${source.title}`, source.meta, source.url].filter(Boolean).join(', '),
+  );
+  return [smtQuizPrimarySourceCitation(question, lang), ...supplementalCitations].join('; ');
+}
+
+function smtQuizSupplementalSourceLinks(question, lang) {
+  return smtQuizSupplementalSourceCitations(question, lang)
+    .map((source) => {
+      const accessibilityLabel = [source.label, source.title, source.meta, source.url]
+        .filter(Boolean)
+        .join(', ');
+      return `<a class="quiz__supplemental-source-link" href="${smtQuizEscapeHtml(source.url)}" target="_blank" rel="noreferrer" aria-label="${smtQuizEscapeHtml(accessibilityLabel)}">${smtQuizEscapeHtml(source.label)}: ${smtQuizEscapeHtml(source.title)}<span>${smtQuizEscapeHtml(source.meta)}</span></a>`;
+    })
+    .join('');
 }
 
 function smtQuizQuestionDisclaimer(lang) {
@@ -2325,11 +2339,13 @@ function smtQuizProvenanceBadge(question, lang) {
 }
 
 function smtQuizQuestionSourceRow(question, lang, citationClassName = 'quiz__source') {
-  const sourceCitation = smtQuizEscapeHtml(smtQuizSourceCitation(question, lang));
   return `
       <div class="quiz__source-row">
         ${smtQuizProvenanceBadge(question, lang)}
-        <p class="${citationClassName}">${sourceCitation}</p>
+        <div class="${citationClassName}">
+          <p>${smtQuizEscapeHtml(smtQuizPrimarySourceCitation(question, lang))}</p>
+          ${smtQuizSupplementalSourceLinks(question, lang)}
+        </div>
       </div>
     `;
 }
@@ -2649,12 +2665,12 @@ function smtQuizRender() {
   let feedback = '';
   if (answered) {
     const right = ans === q.answer;
-    const feedbackSource = smtQuizEscapeHtml(smtQuizSourceCitation(q, lang));
     const feedbackExplanation = smtQuizEscapeHtml(q.why[lang] || q.why.en);
+    const feedbackSourceRow = smtQuizQuestionSourceRow(q, lang, 'quiz__feedback-source');
     feedback = `
       <div class="quiz__feedback ${right ? '' : 'is-wrong'}">
         <b>${right ? copy.correct : copy.wrong}</b> ${feedbackExplanation}
-        <p class="quiz__feedback-source">${feedbackSource}</p>
+        ${feedbackSourceRow}
       </div>
     `;
   }

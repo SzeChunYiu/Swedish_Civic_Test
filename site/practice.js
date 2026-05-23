@@ -42,82 +42,92 @@
     return question && question.chapter ? question.chapter : `Ch ${chapterId || ''}`.trim();
   }
   const sourceCitationCopy = {
-    en: { source: 'Source', page: 'p.' },
-    sv: { source: 'Källa', page: 's.' },
-    'zh-Hans': { source: '来源', page: '页' },
-    'zh-Hant': { source: '來源', page: '頁' },
-    ar: { source: 'المصدر', page: 'ص.' },
-    ckb: { source: 'سەرچاوە', page: 'ل.' },
-    fa: { source: 'منبع', page: 'ص.' },
-    pl: { source: 'Źródło', page: 's.' },
-    so: { source: 'Ilaha', page: 'b.' },
-    ti: { source: 'ምንጪ', page: 'ገጽ' },
-    tr: { source: 'Kaynak', page: 's.' },
-    uk: { source: 'Джерело', page: 'с.' },
+    en: { source: 'Source', supplementalSource: 'Additional source', page: 'p.' },
+    sv: { source: 'Källa', supplementalSource: 'Kompletterande källa', page: 's.' },
+    'zh-Hans': { source: '来源', supplementalSource: '补充来源', page: '页' },
+    'zh-Hant': { source: '來源', supplementalSource: '補充來源', page: '頁' },
+    ar: { source: 'المصدر', supplementalSource: 'مصدر إضافي', page: 'ص.' },
+    ckb: { source: 'سەرچاوە', supplementalSource: 'سەرچاوەی تەواوکەر', page: 'ل.' },
+    fa: { source: 'منبع', supplementalSource: 'منبع تکمیلی', page: 'ص.' },
+    pl: { source: 'Źródło', supplementalSource: 'Dodatkowe źródło', page: 's.' },
+    so: { source: 'Ilaha', supplementalSource: 'Ilo dheeraad ah', page: 'b.' },
+    ti: { source: 'ምንጪ', supplementalSource: 'ተወሳኺ ምንጪ', page: 'ገጽ' },
+    tr: { source: 'Kaynak', supplementalSource: 'Ek kaynak', page: 's.' },
+    uk: { source: 'Джерело', supplementalSource: 'Додаткове джерело', page: 'с.' },
   };
-  function sourceCitation(question) {
+  function sourceCitationFallback() {
+    return tr({
+      sv: 'Källhänvisning saknas',
+      en: 'Source citation unavailable',
+      'zh-Hans': '缺少资料来源标注',
+      'zh-Hant': '缺少資料來源標註',
+      ar: 'لا تتوفر إشارة إلى المصدر',
+      ckb: 'ئاماژە بە سەرچاوە بەردەست نییە',
+      fa: 'ارجاع به منبع در دسترس نیست',
+      pl: 'Brak źródła',
+      so: 'Tixraac lama hayo',
+      ti: 'ምንጪ የለን',
+      tr: 'Kaynak gösterimi yok',
+      uk: 'Джерело недоступне',
+    });
+  }
+  function primarySourceCitation(question) {
     const source = question && question.source;
-    if (!source)
-      return tr({
-        sv: 'Källhänvisning saknas',
-        en: 'Source citation unavailable',
-        'zh-Hans': '缺少资料来源标注',
-        'zh-Hant': '缺少資料來源標註',
-        ar: 'لا تتوفر إشارة إلى المصدر',
-        ckb: 'ئاماژە بە سەرچاوە بەردەست نییە',
-        fa: 'ارجاع به منبع در دسترس نیست',
-        pl: 'Brak źródła',
-        so: 'Tixraac lama hayo',
-        ti: 'ምንጪ የለን',
-        tr: 'Kaynak gösterimi yok',
-        uk: 'Джерело недоступне',
-      });
+    if (!source) return sourceCitationFallback();
     const title = source.title || 'Sverige i fokus';
     if (!source.chapter || !source.section || source.page === undefined || source.page === null) {
-      return tr({
-        sv: 'Källhänvisning saknas',
-        en: 'Source citation unavailable',
-        'zh-Hans': '缺少资料来源标注',
-        'zh-Hant': '缺少資料來源標註',
-        ar: 'لا تتوفر إشارة إلى المصدر',
-        ckb: 'ئاماژە بە سەرچاوە بەردەست نییە',
-        fa: 'ارجاع به منبع در دسترس نیست',
-        pl: 'Brak źródła',
-        so: 'Tixraac lama hayo',
-        ti: 'ምንጪ የለን',
-        tr: 'Kaynak gösterimi yok',
-        uk: 'Джерело недоступне',
-      });
+      return sourceCitationFallback();
     }
     const copy = sourceCitationCopy[lang()] || sourceCitationCopy.en;
+    return `${copy.source}: ${title}, ${source.chapter}, ${source.section}, ${copy.page} ${source.page}`;
+  }
+  function supplementalSourceCitations(question) {
+    const source = question && question.source;
+    if (!source || !Array.isArray(source.supplementalSources)) return [];
     const currentLang = lang();
-    const uhrCitation = `${copy.source}: ${title}, ${source.chapter}, ${source.section}, ${copy.page} ${source.page}`;
-    const supplementalCitations = Array.isArray(source.supplementalSources)
-      ? source.supplementalSources
-          .filter((supplementalSource) => supplementalSource && supplementalSource.title)
-          .map((supplementalSource) => {
-            const published = supplementalSource.publishedDate
-              ? currentLang === 'sv'
-                ? `publicerad ${supplementalSource.publishedDate}`
-                : `published ${supplementalSource.publishedDate}`
-              : '';
-            const retrieved = supplementalSource.retrievedDate
-              ? currentLang === 'sv'
-                ? `hämtad ${supplementalSource.retrievedDate}`
-                : `retrieved ${supplementalSource.retrievedDate}`
-              : '';
-            return [
-              `${copy.source}: ${supplementalSource.title}`,
-              supplementalSource.publisher,
-              published,
-              retrieved,
-              supplementalSource.url,
-            ]
-              .filter(Boolean)
-              .join(', ');
-          })
-      : [];
-    return [uhrCitation, ...supplementalCitations].join('; ');
+    const copy = sourceCitationCopy[currentLang] || sourceCitationCopy.en;
+    return source.supplementalSources
+      .filter(
+        (supplementalSource) =>
+          supplementalSource &&
+          supplementalSource.title &&
+          supplementalSource.publisher &&
+          supplementalSource.url,
+      )
+      .map((supplementalSource) => {
+        const published = supplementalSource.publishedDate
+          ? currentLang === 'sv'
+            ? `publicerad ${supplementalSource.publishedDate}`
+            : `published ${supplementalSource.publishedDate}`
+          : '';
+        const retrieved = supplementalSource.retrievedDate
+          ? currentLang === 'sv'
+            ? `hämtad ${supplementalSource.retrievedDate}`
+            : `retrieved ${supplementalSource.retrievedDate}`
+          : '';
+        return {
+          label: copy.supplementalSource,
+          title: supplementalSource.title,
+          meta: [supplementalSource.publisher, published, retrieved].filter(Boolean).join(', '),
+          url: supplementalSource.url,
+        };
+      });
+  }
+  function sourceCitation(question) {
+    const supplementalCitations = supplementalSourceCitations(question).map((source) =>
+      [`${source.label}: ${source.title}`, source.meta, source.url].filter(Boolean).join(', '),
+    );
+    return [primarySourceCitation(question), ...supplementalCitations].join('; ');
+  }
+  function supplementalSourceLinks(question) {
+    return supplementalSourceCitations(question)
+      .map((source) => {
+        const accessibilityLabel = [source.label, source.title, source.meta, source.url]
+          .filter(Boolean)
+          .join(', ');
+        return `<a class="quiz__supplemental-source-link" href="${escapeHtml(source.url)}" target="_blank" rel="noreferrer" aria-label="${escapeHtml(accessibilityLabel)}">${escapeHtml(source.label)}: ${escapeHtml(source.title)}<span>${escapeHtml(source.meta)}</span></a>`;
+      })
+      .join('');
   }
   function questionReviewDisclaimer() {
     return tr({
@@ -338,7 +348,10 @@
     return `
       <div class="quiz__source-row">
         ${provenanceBadge(question)}
-        <p class="${citationClassName}">${escapeHtml(sourceCitation(question))}</p>
+        <div class="${citationClassName}">
+          <p>${escapeHtml(primarySourceCitation(question))}</p>
+          ${supplementalSourceLinks(question)}
+        </div>
       </div>
     `;
   }

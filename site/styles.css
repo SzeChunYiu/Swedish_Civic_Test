@@ -8860,6 +8860,26 @@ html[dir='rtl'] .lang-menu {
   min-width: 0;
 }
 
+.quiz__source-row .quiz__source p,
+.quiz__source-row .quiz__feedback-source p,
+.quiz__source-row .mock-review__source p {
+  margin: 0;
+}
+
+.quiz__supplemental-source-link {
+  color: var(--blue);
+  display: block;
+  margin-top: 6px;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.quiz__supplemental-source-link span {
+  color: var(--ink-soft);
+  display: block;
+  text-decoration: none;
+}
+
 .quiz__provenance {
   background: rgba(255, 255, 255, 0.68);
   border-color: rgba(0, 106, 167, 0.16);

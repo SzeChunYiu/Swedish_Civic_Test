@@ -12,27 +12,33 @@ function readSiteFile(relativePath) {
 function assertLocalizedSourceCitation(source, copyIdentifier) {
   assert.match(
     source,
-    new RegExp(`${copyIdentifier} = \\{[\\s\\S]*en: \\{ source: 'Source', page: 'p\\.' \\}`),
+    new RegExp(
+      `${copyIdentifier} = \\{[\\s\\S]*en: \\{ source: 'Source', supplementalSource: 'Additional source', page: 'p\\.' \\}`,
+    ),
   );
   assert.match(
     source,
-    new RegExp(`${copyIdentifier} = \\{[\\s\\S]*sv: \\{ source: 'Källa', page: 's\\.' \\}`),
+    new RegExp(
+      `${copyIdentifier} = \\{[\\s\\S]*sv: \\{ source: 'Källa', supplementalSource: 'Kompletterande källa', page: 's\\.' \\}`,
+    ),
   );
   assert.match(
     source,
-    new RegExp(`${copyIdentifier} = \\{[\\s\\S]*'zh-Hans': \\{ source: '来源', page: '页' \\}`),
+    new RegExp(
+      `${copyIdentifier} = \\{[\\s\\S]*'zh-Hans': \\{ source: '来源', supplementalSource: '补充来源', page: '页' \\}`,
+    ),
   );
   assert.match(source, /const copy = .*?\|\| .*?\.en;/);
   assert.match(
     source,
-    /const uhrCitation = `\$\{copy\.source\}: \$\{title\}, \$\{source\.chapter\}, \$\{source\.section\}, \$\{copy\.page\} \$\{source\.page\}`;/,
+    /return `\$\{copy\.source\}: \$\{title\}, \$\{source\.chapter\}, \$\{source\.section\}, \$\{copy\.page\} \$\{source\.page\}`;/,
   );
   assert.match(source, /supplementalSources/);
-  assert.match(
-    source,
-    /const supplementalCitations = Array\.isArray\(source\.supplementalSources\)/,
-  );
-  assert.match(source, /return \[uhrCitation, \.\.\.supplementalCitations\]\.join\('; '\);/);
+  assert.match(source, /function \w*[sS]upplementalSourceCitations\(question(?:, lang)?\)/);
+  assert.match(source, /class="quiz__supplemental-source-link"/);
+  assert.match(source, /rel="noreferrer"/);
+  assert.match(source, /target="_blank"/);
+  assert.match(source, /\.\.\.supplementalCitations\]\.join\('; '\);/);
 }
 
 test('static practice quiz renders localized source citations below each question', () => {
@@ -48,8 +54,15 @@ test('static practice quiz renders localized source citations below each questio
   );
   assert.match(source, /const sourceRow = smtQuizQuestionSourceRow\(q, lang\);/);
   assert.match(source, /\$\{sourceRow\}/);
+  assert.match(
+    source,
+    /const feedbackSourceRow = smtQuizQuestionSourceRow\(q, lang, 'quiz__feedback-source'\);/,
+  );
+  assert.match(source, /\$\{feedbackSourceRow\}/);
   assert.match(source, /questionProvenance/);
   assert.match(source, /quiz__provenance--\$\{provenance\}/);
+  assert.match(source, /smtQuizPrimarySourceCitation\(question, lang\)/);
+  assert.match(source, /smtQuizSupplementalSourceLinks\(question, lang\)/);
 });
 
 test('static mock exam and review render per-question source citations', () => {
@@ -67,6 +80,8 @@ test('static mock exam and review render per-question source citations', () => {
   assert.match(source, /\$\{questionSourceRow\(q, ['"]mock-review__source['"]\)\}/);
   assert.match(source, /questionProvenance/);
   assert.match(source, /quiz__provenance--\$\{provenance\}/);
+  assert.match(source, /primarySourceCitation\(question\)/);
+  assert.match(source, /supplementalSourceLinks\(question\)/);
 });
 
 test('static source citation lines have dedicated styling', () => {
@@ -76,4 +91,29 @@ test('static source citation lines have dedicated styling', () => {
   assert.match(source, /\.quiz__source-row\s*\{/);
   assert.match(source, /\.quiz__provenance\s*\{/);
   assert.match(source, /\.mock-review__source\s*\{/);
+  assert.match(source, /\.quiz__supplemental-source-link\s*\{/);
+});
+
+test('static supplemental official sources render as structured links', () => {
+  const practiceSource = readSiteFile('site/practice.js');
+  const appSource = readSiteFile('site/app.js');
+  const questionBankSource = readSiteFile('site/questions.js');
+
+  assert.match(questionBankSource, /"id": "q019"[\s\S]*"supplementalSources": \[/);
+  assert.match(questionBankSource, /"id": "q030"[\s\S]*"supplementalSources": \[/);
+  assert.match(questionBankSource, /"id": "q166"[\s\S]*"supplementalSources": \[/);
+  assert.match(questionBankSource, /"publisher": "Valmyndigheten"/);
+  assert.match(questionBankSource, /"url": "https:\/\/www\.val\.se/);
+
+  for (const source of [practiceSource, appSource]) {
+    assert.match(source, /supplementalSource: 'Additional source'/);
+    assert.match(source, /supplementalSource: 'Kompletterande källa'/);
+    assert.match(source, /class="quiz__supplemental-source-link"/);
+    assert.match(source, /aria-label="\$\{.*accessibilityLabel/);
+    assert.doesNotMatch(
+      source,
+      /<p class="\$\{citationClassName\}">\$\{.*sourceCitation\(question/,
+    );
+    assert.doesNotMatch(source, /<p class="quiz__feedback-source">\$\{.*sourceCitation/);
+  }
 });

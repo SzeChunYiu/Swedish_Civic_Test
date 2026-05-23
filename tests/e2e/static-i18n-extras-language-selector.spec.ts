@@ -20,6 +20,13 @@ declare global {
         chapter?: string;
         section?: string;
         page?: number;
+        supplementalSources?: Array<{
+          title?: string;
+          publisher?: string;
+          url?: string;
+          publishedDate?: string;
+          retrievedDate?: string;
+        }>;
       };
     }>;
   }
@@ -1056,6 +1063,68 @@ test('static Home demo question keeps q039 source and UHR provenance in extra la
     await expectNoHorizontalOverflow(page);
   }
 
+  expect(pageErrors).toEqual([]);
+});
+
+test('static Practice renders supplemental official source citations as secondary links', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const pageErrors = collectPageErrors(page);
+  await openStaticHome(page, staticSite.baseUrl);
+
+  const q019Index = await page.evaluate(() => {
+    const questions = window.SMT_QUESTIONS ?? [];
+    const chapterQuestions = questions.filter((question) => question.chapterId === 4);
+    return chapterQuestions.findIndex((question) => question.id === 'q019');
+  });
+  expect(q019Index).toBeGreaterThanOrEqual(0);
+
+  await page.evaluate(() => {
+    window.location.hash = '#/practice?c=4';
+  });
+  await expect(page.locator('[data-page="/practice"]')).toHaveClass(/is-active/);
+  for (let index = 0; index < q019Index; index += 1) {
+    await page.locator('#quiz-skip').dispatchEvent('click');
+  }
+
+  await expect(page.locator('#quiz-stage .quiz__q')).toContainText('right to vote');
+  await expect(page.locator('#quiz-stage .quiz__source-row .quiz__provenance--uhr')).toBeVisible();
+  await expect(page.locator('#quiz-stage .quiz__source-row')).toContainText('Sverige i fokus');
+  await expect(page.locator('#quiz-stage .quiz__source-row')).toContainText('Val och röstning');
+  const sourceLink = page
+    .locator('#quiz-stage .quiz__source-row .quiz__supplemental-source-link')
+    .first();
+  await expect(sourceLink).toBeVisible();
+  await expect(sourceLink).toHaveText(/Additional source: Rösträtten i svenska val/);
+  await expect(sourceLink).toContainText(
+    'Valmyndigheten, published 2025-11-21, retrieved 2026-05-22',
+  );
+  await expect(sourceLink).toHaveAttribute(
+    'href',
+    /https:\/\/www\.val\.se\/det-svenska-valsystemet\/sa-funkar-rostning-i-svenska-val\/rostratten-i-svenska-val/,
+  );
+  await expect(sourceLink).toHaveAttribute(
+    'aria-label',
+    /Additional source, Rösträtten i svenska val, Valmyndigheten, published 2025-11-21, retrieved 2026-05-22, https:\/\/www\.val\.se/,
+  );
+  await expect(page.locator('#quiz-stage .quiz__source-row')).not.toContainText('; https://');
+
+  await page.evaluate(() => window.smtSetLanguage?.('sv'));
+  await expect(page.locator('html')).toHaveAttribute('lang', 'sv');
+  await expect(page.locator('html')).toHaveAttribute('dir', 'ltr');
+  await expect(page.locator('#quiz-stage .quiz__supplemental-source-link').first()).toHaveText(
+    /Kompletterande källa: Rösträtten i svenska val/,
+  );
+  await expect(page.locator('#quiz-stage .quiz__supplemental-source-link').first()).toContainText(
+    'Valmyndigheten, publicerad 2025-11-21, hämtad 2026-05-22',
+  );
+
+  await page.locator('#quiz-stage .quiz__opt').first().click();
+  await expect(
+    page.locator('#quiz-stage .quiz__feedback .quiz__supplemental-source-link'),
+  ).toBeVisible();
+  await expectNoHorizontalOverflow(page);
   expect(pageErrors).toEqual([]);
 });
 
