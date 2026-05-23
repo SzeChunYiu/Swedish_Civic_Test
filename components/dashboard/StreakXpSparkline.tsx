@@ -7,6 +7,7 @@ import { useThemeColors } from '../../lib/theme/ThemeProvider';
 import { Card } from '../ui/Card';
 
 export type StreakXpSparklineCopy = {
+  dayLabel: (date: string, xp: number) => string;
   emptyState: string;
   levelLabel: string;
   streakLabel: string;
@@ -57,13 +58,17 @@ export function StreakXpSparkline({ copy, currentStreak, level, points }: Streak
           style={styles.sparkline}
         >
           {points.map((point) => {
-            const fillPercent = maxXp > 0 ? Math.max(5, Math.round((point.xp / maxXp) * 100)) : 5;
+            const fillPercent =
+              point.xp > 0 && maxXp > 0 ? Math.max(5, Math.round((point.xp / maxXp) * 100)) : 0;
             return (
-              <View key={point.date} style={styles.barTrack}>
-                <View
-                  accessibilityLabel={`${point.date}: ${point.xp}`}
-                  style={[styles.barFill, { height: `${fillPercent}%` }]}
-                />
+              <View
+                key={point.date}
+                accessibilityLabel={copy.dayLabel(point.date, point.xp)}
+                style={styles.barTrack}
+              >
+                {point.xp > 0 ? (
+                  <View style={[styles.barFill, { height: `${fillPercent}%` }]} />
+                ) : null}
               </View>
             );
           })}
