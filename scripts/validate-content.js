@@ -10105,6 +10105,10 @@ let appConfigSchemaValidated = false;
 let webDocumentMetadataUsageParityValidated = false;
 let appConfigAdMobAppIdsValidated = 0;
 let appConfigAdMobRealFlagRejectsSampleAppIds = false;
+let authFoundationDependenciesValidated = 0;
+let authFoundationRoutesValidated = 0;
+let authFoundationFailClosedParityValidated = false;
+let authFoundationAnonymousParityValidated = false;
 let launchAdSuppressedRoutesValidated = 0;
 let launchAdRouteSuppressionParityValidated = false;
 let launchAdFirstRunDeferralRulesValidated = 0;
@@ -11092,6 +11096,18 @@ if (process.argv.includes('--focus-app-config-schema')) {
     staticValidationSyntaxFilesValidated,
     staticValidationImportChecksValidated,
     staticValidationSyntaxGateValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-auth-foundation')) {
+  validateAuthFoundationParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    authFoundationDependenciesValidated,
+    authFoundationRoutesValidated,
+    authFoundationFailClosedParityValidated,
+    authFoundationAnonymousParityValidated,
   });
   process.exit(0);
 }
@@ -12707,6 +12723,163 @@ function validateAppConfigSchema() {
 
   if (valid && appConfigPluginsValidated === EXPECTED_APP_CONFIG_PLUGINS.length) {
     appConfigSchemaValidated = true;
+  }
+}
+
+function validateAuthFoundationSourceRules(rules) {
+  let valid = true;
+
+  for (const rule of rules) {
+    const sourcePath = path.join(repoRoot, rule.relativePath);
+    if (!fs.existsSync(sourcePath)) {
+      fail(`${rule.relativePath} missing for auth foundation ${rule.label}`);
+      valid = false;
+      continue;
+    }
+
+    const source = fs.readFileSync(sourcePath, 'utf8');
+
+    for (const pattern of rule.patterns ?? []) {
+      if (!pattern.test(source)) {
+        fail(`${rule.relativePath} missing auth foundation ${rule.label} contract`);
+        valid = false;
+      }
+    }
+
+    for (const pattern of rule.absentPatterns ?? []) {
+      if (pattern.test(source)) {
+        fail(`${rule.relativePath} violates auth foundation ${rule.label} contract`);
+        valid = false;
+      }
+    }
+  }
+
+  return valid;
+}
+
+function validateAuthFoundationParity() {
+  const authFoundationDependencies = [
+    '@supabase/supabase-js',
+    'expo-apple-authentication',
+    'expo-auth-session',
+    'expo-web-browser',
+    'react-native-url-polyfill',
+  ];
+  const authFoundationRouteFiles = [
+    'app/(auth)/_layout.tsx',
+    'app/(auth)/sign-in.tsx',
+    'app/account.tsx',
+    'app/auth/callback.tsx',
+    'components/auth/AuthProviderButton.tsx',
+    'components/auth/Avatar.tsx',
+    'components/auth/GoogleLogo.tsx',
+    'lib/auth/AuthContext.tsx',
+    'lib/auth/displayName.ts',
+    'lib/supabase.ts',
+  ];
+  const dependencies = packageMetadata.dependencies ?? {};
+
+  for (const dependency of authFoundationDependencies) {
+    if (typeof dependencies[dependency] === 'string') {
+      authFoundationDependenciesValidated += 1;
+    } else {
+      fail(`${dependency} dependency missing for optional auth foundation`);
+    }
+  }
+
+  for (const relativePath of authFoundationRouteFiles) {
+    if (fs.existsSync(path.join(repoRoot, relativePath))) {
+      authFoundationRoutesValidated += 1;
+    } else {
+      fail(`${relativePath} missing for optional auth foundation`);
+    }
+  }
+
+  authFoundationFailClosedParityValidated = validateAuthFoundationSourceRules([
+    {
+      relativePath: 'lib/supabase.ts',
+      label: 'fail-closed Supabase client',
+      patterns: [
+        /EXPO_PUBLIC_SUPABASE_URL/,
+        /EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY/,
+        /isSupabaseConfigured/,
+        /optional-auth-not-configured/,
+        /persistSession:\s*isSupabaseConfigured/,
+        /detectSessionInUrl:\s*isSupabaseConfigured/,
+      ],
+    },
+    {
+      relativePath: 'lib/auth/AuthContext.tsx',
+      label: 'anonymous fallback',
+      patterns: [
+        /if \(!isSupabaseConfigured\) throw authUnavailableError\(\)/,
+        /setStatus\('anonymous'\)/,
+      ],
+    },
+  ]);
+
+  authFoundationAnonymousParityValidated = validateAuthFoundationSourceRules([
+    {
+      relativePath: 'app/_layout.tsx',
+      label: 'anonymous route availability',
+      patterns: [
+        /import \{ AuthProvider \} from '\.\.\/lib\/auth\/AuthContext'/,
+        /<AuthProvider>\s*<RootLayoutContent \/>/,
+        /<Stack\.Screen name="\((?:auth)\)" options=\{\{ headerShown: false \}\}/,
+        /<Stack\.Screen name="account"/,
+        /<Stack\.Screen name="auth\/callback" options=\{\{ headerShown: false \}\}/,
+        /<Stack\.Screen name="\((?:tabs)\)" options=\{\{ headerShown: false \}\}/,
+      ],
+    },
+    {
+      relativePath: 'app/(auth)/sign-in.tsx',
+      label: 'sign-in choices',
+      patterns: [/Continue with Google/, /Continue with Apple/, /Continue without an account/],
+    },
+    {
+      relativePath: 'app/onboarding.tsx',
+      label: 'onboarding auth choices',
+      patterns: [
+        /Continue with Google|Fortsätt med Google/,
+        /Continue with Apple|Fortsätt med Apple/,
+        /Continue without an account|Fortsätt utan konto/,
+        /onboarding-account-section/,
+        /signInWithGoogle/,
+        /signInWithApple/,
+      ],
+    },
+    {
+      relativePath: 'lib/onboarding/firstRunAboutModalRoutes.ts',
+      label: 'auth route modal suppression',
+      patterns: [/'\/\(auth\)'/],
+    },
+    {
+      relativePath: 'app/account.tsx',
+      label: 'local progress and purchase separation',
+      patterns: [
+        /Local study data stays local/,
+        /does not upload study progress/,
+        /Purchases stay separate/,
+        /useRemoveAdsEntitlements\(\{ skipPurchaseRuntime: true \}\)/,
+      ],
+      absentPatterns: [
+        /from\('progress|from\("progress|upsert\(\{[\s\S]*progress/,
+        /adsDisabled\s*=|proLifetime\s*=/,
+      ],
+    },
+  ]);
+
+  if (authFoundationDependenciesValidated !== authFoundationDependencies.length) {
+    fail('auth foundation dependency parity is incomplete');
+  }
+  if (authFoundationRoutesValidated !== authFoundationRouteFiles.length) {
+    fail('auth foundation route parity is incomplete');
+  }
+  if (!authFoundationFailClosedParityValidated) {
+    fail('auth foundation fail-closed parity is incomplete');
+  }
+  if (!authFoundationAnonymousParityValidated) {
+    fail('auth foundation anonymous-first parity is incomplete');
   }
 }
 
@@ -27419,6 +27592,7 @@ validateMockExamConfig(
 );
 validateValidationScriptSyntax();
 validateAppConfigSchema();
+validateAuthFoundationParity();
 validateLaunchAdRouteSuppressionParity();
 validateLaunchAdFirstRunDeferralParity();
 validateNativeLaunchAdLoadTimeoutParity();
@@ -27568,6 +27742,10 @@ console.log(
       appConfigSchemaValidated,
       appConfigAdMobAppIdsValidated,
       appConfigAdMobRealFlagRejectsSampleAppIds,
+      authFoundationDependenciesValidated,
+      authFoundationRoutesValidated,
+      authFoundationFailClosedParityValidated,
+      authFoundationAnonymousParityValidated,
       launchAdSuppressedRoutesValidated,
       launchAdRouteSuppressionParityValidated,
       launchAdFirstRunDeferralRulesValidated,

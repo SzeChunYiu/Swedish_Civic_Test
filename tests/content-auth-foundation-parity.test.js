@@ -1,9 +1,17 @@
 const assert = require('node:assert/strict');
+const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
+const AUTH_FOUNDATION_FOCUS_FLAG = '--focus-auth-foundation';
+const expectedAuthFoundationSummaryKeys = [
+  'authFoundationDependenciesValidated',
+  'authFoundationRoutesValidated',
+  'authFoundationFailClosedParityValidated',
+  'authFoundationAnonymousParityValidated',
+];
 
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
@@ -12,6 +20,31 @@ function read(relativePath) {
 function readJson(relativePath) {
   return JSON.parse(read(relativePath));
 }
+
+function parseJsonSummary(output, label) {
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, `${label} should print a JSON summary`);
+  return JSON.parse(match[0]);
+}
+
+test('optional auth foundation uses focused content validation routing', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', AUTH_FOUNDATION_FOCUS_FLAG],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const summary = parseJsonSummary(result.stdout, 'auth foundation focused validation');
+  assert.deepEqual(Object.keys(summary).sort(), [...expectedAuthFoundationSummaryKeys].sort());
+  assert.equal(summary.authFoundationDependenciesValidated, 5);
+  assert.equal(summary.authFoundationRoutesValidated, 10);
+  assert.equal(summary.authFoundationFailClosedParityValidated, true);
+  assert.equal(summary.authFoundationAnonymousParityValidated, true);
+});
 
 test('optional auth foundation dependencies and routes are present', () => {
   const packageJson = readJson('package.json');

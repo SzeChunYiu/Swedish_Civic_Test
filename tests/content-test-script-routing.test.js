@@ -179,6 +179,7 @@ function validateContentFocusFlags() {
 
 const registryCompletenessFocusIds = [
   'appConfigSchema',
+  'authFoundation',
   'generatedLocalizationTemplateParity',
   'generatedSwedenScopeParity',
   'progressBarAccessibility',
@@ -240,6 +241,38 @@ test('newly registered focus modes expose advertised summary keys', () => {
       assertFocusedValidationSummary(flag, registryEntry.summaryKeys);
     }
   }
+});
+
+test('Auth foundation parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const authFoundationTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-auth-foundation-parity.test.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('authFoundation');
+
+  assert.ok(registryEntry, 'Auth foundation focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-auth-foundation']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'authFoundationDependenciesValidated',
+    'authFoundationRoutesValidated',
+    'authFoundationFailClosedParityValidated',
+    'authFoundationAnonymousParityValidated',
+  ]);
+  assert.match(validatorSource, /--focus-auth-foundation/);
+  assert.match(
+    validatorSource,
+    /validateAuthFoundationParity\(\);[\s\S]*authFoundationDependenciesValidated[\s\S]*authFoundationRoutesValidated[\s\S]*authFoundationFailClosedParityValidated[\s\S]*authFoundationAnonymousParityValidated/,
+  );
+  assert.match(authFoundationTestSource, /--focus-auth-foundation/);
+  assert.doesNotMatch(
+    authFoundationTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'Auth foundation tests must not route through full content validation',
+  );
 });
 
 test('Home route focused mutation fixtures use the shared helper', () => {
