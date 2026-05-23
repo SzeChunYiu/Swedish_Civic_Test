@@ -561,6 +561,31 @@ test('Search route e2e covers q-before-query both-param precedence', () => {
   assert.match(source, /await expectSearchState\(page, 'riksdag'\)/);
 });
 
+test('Search route e2e covers both-param question result links with q precedence', () => {
+  const source = readSearchQueryHydrationE2eSource();
+
+  assert.match(
+    source,
+    /search both params keep q before query through question result and Back to Search/,
+  );
+  assert.match(
+    source,
+    /expectQuestionResultNavigation\(\{[\s\S]*?expectedSearchQuery: 'riksdag'[\s\S]*?url: '\/search\?query=kommun&q=riksdag'/,
+  );
+  assert.match(
+    source,
+    /expect\(questionUrl\.searchParams\.get\('q'\)\)\.toBe\(expectedSearchQuery\)/,
+  );
+  assert.match(
+    source,
+    /toHaveAttribute\(\s*'href',\s*`\/search\?q=\$\{encodeURIComponent\(expectedSearchQuery\)\}`/,
+  );
+  assert.match(
+    source,
+    /new RegExp\(`\/search\\\\\?q=\$\{encodeURIComponent\(expectedSearchQuery\)\}\$`\)/,
+  );
+});
+
 test('Search route e2e covers English query URL clearing', () => {
   const source = readSearchQueryHydrationE2eSource();
 
