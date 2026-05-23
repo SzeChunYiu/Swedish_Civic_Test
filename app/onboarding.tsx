@@ -27,6 +27,7 @@ function isOnboardingDailyGoalPresetValue(
 
 const onboardingDailyGoalPresetValues: readonly DailyGoalPresetValue[] =
   supportedDailyGoalAnswerOptions.filter(isOnboardingDailyGoalPresetValue);
+const testDateFeedbackId = 'onboarding-test-date-feedback';
 
 type OnboardingGoalPresetCopy = {
   accessibilityLabel: string;
@@ -213,6 +214,8 @@ export default function Screen() {
       : testDateFeedback === 'saved' && studyPlanTestDateIso
         ? copy.testDateSaved(formatExamDate(new Date(studyPlanTestDateIso), language))
         : null;
+  const testDateIsInvalid = testDateFeedback === 'invalid';
+  const testDateDescribedBy = testDateFeedbackText ? testDateFeedbackId : undefined;
 
   useEffect(() => {
     if (!studyPlanTestDateIso) return;
@@ -382,6 +385,8 @@ export default function Screen() {
         </Text>
         <Text style={styles.goalSubtitle}>{copy.testDateSubtitle}</Text>
         <TextInput
+          aria-describedby={testDateDescribedBy}
+          aria-invalid={testDateIsInvalid ? true : undefined}
           accessibilityLabel={copy.testDateInputAccessibilityLabel}
           inputMode="numeric"
           keyboardType="numbers-and-punctuation"
@@ -393,7 +398,15 @@ export default function Screen() {
           value={testDateInput}
         />
         {testDateFeedbackText ? (
-          <Text style={styles.goalSubtitle}>{testDateFeedbackText}</Text>
+          <Text
+            nativeID={testDateFeedbackId}
+            role="status"
+            accessibilityLiveRegion="polite"
+            aria-live="polite"
+            style={[styles.goalSubtitle, testDateIsInvalid ? styles.testDateFeedbackInvalid : null]}
+          >
+            {testDateFeedbackText}
+          </Text>
         ) : null}
         <Pressable
           accessibilityLabel={copy.testDateSkipAccessibilityLabel}
@@ -586,6 +599,9 @@ function createStyles(themeColors: ThemeColors) {
       minHeight: space[6],
       paddingHorizontal: space[1.5],
       paddingVertical: space[1],
+    },
+    testDateFeedbackInvalid: {
+      color: themeColors.warning,
     },
     testDateSkipButton: {
       alignItems: 'center',

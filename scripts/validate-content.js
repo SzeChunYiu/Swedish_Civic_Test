@@ -16998,6 +16998,23 @@ function validateOnboardingRouteCopyParity() {
   ) {
     reject('onboarding daily goal presets must use radiogroup/radio checked semantics');
   }
+  const onboardingTestDateFeedbackA11yRules = [
+    /const testDateFeedbackId = 'onboarding-test-date-feedback';/,
+    /const testDateIsInvalid = testDateFeedback === 'invalid';/,
+    /const testDateDescribedBy = testDateFeedbackText \? testDateFeedbackId : undefined;/,
+    /aria-invalid=\{testDateIsInvalid \? true : undefined\}/,
+    /aria-describedby=\{testDateDescribedBy\}/,
+    /nativeID=\{testDateFeedbackId\}/,
+    /role="status"/,
+    /accessibilityLiveRegion="polite"/,
+    /aria-live="polite"/,
+  ];
+  if (!onboardingTestDateFeedbackA11yRules.every((pattern) => pattern.test(onboardingRoute))) {
+    reject('onboarding test-date feedback must be described by the input and announced politely');
+  }
+  if (/aria-invalid=\{testDateIsInvalid\}/.test(onboardingRoute)) {
+    reject('onboarding test-date input must only set aria-invalid while the date is invalid');
+  }
 
   FORBIDDEN_ONBOARDING_SV_MISTAKE_REVIEW_COPY.forEach((pattern) => {
     if (pattern.test(onboardingRoute)) {

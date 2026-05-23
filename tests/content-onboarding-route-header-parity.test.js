@@ -98,9 +98,22 @@ test('onboarding route title stays accessible as a header', () => {
   assert.match(source, /onPress=\{\(\) => handleDailyGoalPress\(goal\)\}/);
   assert.match(source, /<TextInput/);
   assert.match(source, /accessibilityLabel=\{copy\.testDateInputAccessibilityLabel\}/);
+  assert.match(source, /const testDateFeedbackId = 'onboarding-test-date-feedback';/);
+  assert.match(source, /const testDateIsInvalid = testDateFeedback === 'invalid';/);
+  assert.match(
+    source,
+    /const testDateDescribedBy = testDateFeedbackText \? testDateFeedbackId : undefined;/,
+  );
+  assert.match(source, /aria-invalid=\{testDateIsInvalid \? true : undefined\}/);
+  assert.match(source, /aria-describedby=\{testDateDescribedBy\}/);
   assert.match(source, /placeholder=\{copy\.testDateInputPlaceholder\}/);
   assert.match(source, /keyboardType="numbers-and-punctuation"/);
   assert.match(source, /maxLength=\{10\}/);
+  assert.match(source, /nativeID=\{testDateFeedbackId\}/);
+  assert.match(source, /role="status"/);
+  assert.match(source, /accessibilityLiveRegion="polite"/);
+  assert.match(source, /aria-live="polite"/);
+  assert.match(source, /styles\.testDateFeedbackInvalid/);
   assert.match(source, /accessibilityLabel=\{copy\.testDateSkipAccessibilityLabel\}/);
   assert.match(source, /accessibilityLabel=\{copy\.decideLaterAccessibilityLabel\}/);
   assert.match(
@@ -276,6 +289,7 @@ test('onboarding route resolves styles from active ThemeColors', () => {
   assert.match(source, /color: themeColors\.text/);
   assert.match(source, /color: themeColors\.textSecondary/);
   assert.match(source, /color: themeColors\.textMuted/);
+  assert.match(source, /color: themeColors\.warning/);
   assert.match(source, /placeholderTextColor=\{themeColors\.textMuted\}/);
   assert.match(source, /<QuestionDisclaimer themeColors=\{themeColors\}/);
   assert.doesNotMatch(source, /\bcolors\./);
@@ -547,6 +561,41 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /onboarding daily goal presets must use radiogroup\/radio checked semantics/,
+  );
+});
+
+test('onboarding route copy parity rejects inaccessible test-date feedback', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/onboarding.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('aria-invalid={testDateIsInvalid ? true : undefined}\\n', '')
+      .replace('          aria-describedby={testDateDescribedBy}\\n', '')
+      .replace('            role="status"\\n', '')
+      .replace('            accessibilityLiveRegion="polite"\\n', '')
+      .replace('            aria-live="polite"\\n', '');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-onboarding-route-copy');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /onboarding test-date feedback must be described by the input and announced politely/,
   );
 });
 

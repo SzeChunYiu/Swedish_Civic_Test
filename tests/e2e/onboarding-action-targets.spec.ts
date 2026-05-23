@@ -213,7 +213,12 @@ test('Onboarding actions keep mobile-safe targets and daily goal selection', asy
   const testDateInput = page.getByRole('textbox', { name: 'Ange provdatum som ÅÅÅÅ-MM-DD' });
   await expectMinimumTargetSize(testDateInput, 'Test date input');
   await testDateInput.fill('2026-08-15');
-  await expect(page.getByText(/Sparat provdatum:/)).toBeVisible();
+  const testDateFeedback = page.locator('#onboarding-test-date-feedback');
+  await expect(testDateFeedback).toHaveText(/Sparat provdatum:/);
+  await expect(testDateFeedback).toHaveAttribute('role', 'status');
+  await expect(testDateFeedback).toHaveAttribute('aria-live', 'polite');
+  await expect(testDateInput).toHaveAttribute('aria-describedby', 'onboarding-test-date-feedback');
+  await expect(testDateInput).not.toHaveAttribute('aria-invalid', /.+/);
 
   const skipTestDate = page.getByRole('button', { name: 'Fortsätt utan bokat provdatum' });
   await expect(skipTestDate).toContainText('Jag har inte bokat än');
@@ -254,7 +259,12 @@ test('Onboarding optional test date persists locally and skip clears it without 
 
   const testDateInput = page.getByRole('textbox', { name: 'Enter test date as YYYY-MM-DD' });
   await testDateInput.fill('2026-08-15');
-  await expect(page.getByText('Test date saved: 15 August 2026.')).toBeVisible();
+  const testDateFeedback = page.locator('#onboarding-test-date-feedback');
+  await expect(testDateFeedback).toHaveText('Test date saved: 15 August 2026.');
+  await expect(testDateFeedback).toHaveAttribute('role', 'status');
+  await expect(testDateFeedback).toHaveAttribute('aria-live', 'polite');
+  await expect(testDateInput).toHaveAttribute('aria-describedby', 'onboarding-test-date-feedback');
+  await expect(testDateInput).not.toHaveAttribute('aria-invalid', /.+/);
   await expect
     .poll(() =>
       page.evaluate((key) => window.localStorage.getItem(key), settingsStudyPlanTestDateIsoKey),
@@ -262,7 +272,11 @@ test('Onboarding optional test date persists locally and skip clears it without 
     .toBe('2026-08-15T00:00:00.000Z');
 
   await testDateInput.fill('2026-02-31');
-  await expect(page.getByText("Use YYYY-MM-DD, or skip until you've booked.")).toBeVisible();
+  await expect(testDateFeedback).toHaveText("Use YYYY-MM-DD, or skip until you've booked.");
+  await expect(testDateFeedback).toHaveAttribute('role', 'status');
+  await expect(testDateFeedback).toHaveAttribute('aria-live', 'polite');
+  await expect(testDateInput).toHaveAttribute('aria-describedby', 'onboarding-test-date-feedback');
+  await expect(testDateInput).toHaveAttribute('aria-invalid', 'true');
   await expect
     .poll(() =>
       page.evaluate((key) => window.localStorage.getItem(key), settingsStudyPlanTestDateIsoKey),
@@ -271,6 +285,9 @@ test('Onboarding optional test date persists locally and skip clears it without 
 
   await page.getByRole('button', { name: 'Continue without a booked test date' }).click();
   await expect(testDateInput).toHaveValue('');
+  await expect(testDateInput).not.toHaveAttribute('aria-describedby', /.+/);
+  await expect(testDateInput).not.toHaveAttribute('aria-invalid', /.+/);
+  await expect(testDateFeedback).toHaveCount(0);
   await expect
     .poll(() =>
       page.evaluate((key) => window.localStorage.getItem(key), settingsStudyPlanTestDateIsoKey),
