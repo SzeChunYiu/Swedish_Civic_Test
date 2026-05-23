@@ -19,13 +19,41 @@ async function openPracticeRouteMode(page: Page, mode: 'challenge' | 'quick') {
   await dismissBlockingModals(page);
 }
 
-async function expectQuestionMode(page: Page, mode: 'challenge' | 'quick') {
+function collectPageErrors(page: Page) {
   const consoleErrors: string[] = [];
 
   page.on('console', (message) => {
     if (message.type() === 'error') consoleErrors.push(message.text());
   });
   page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  return consoleErrors;
+}
+
+async function expectPracticeHub(page: Page, expectedUrl: RegExp, label: string) {
+  await expect(page).toHaveURL(expectedUrl);
+  await expect(page.getByRole('heading', { name: 'Choose how to practise' })).toBeVisible();
+  await expect(page.getByText('Practice hub', { exact: true })).toBeVisible();
+  await expect(page.getByText('Question 1', { exact: true })).toHaveCount(0);
+
+  const fullBank = page.getByRole('button', { name: 'Start practice with all visible questions' });
+  await expect(fullBank).toBeVisible();
+  await expectTapTarget(fullBank, `${label} full-bank action`);
+}
+
+async function expectInvalidModeStaysOnPracticeHub(page: Page, mode: 'review' | 'bad') {
+  const consoleErrors = collectPageErrors(page);
+
+  await seedFreshSettingsLanguageAndAboutSeen(page, 'en');
+  await page.goto(`/practice?mode=${mode}`, { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  await expectPracticeHub(page, new RegExp(`/practice\\?mode=${mode}`), `mode=${mode}`);
+  expect(consoleErrors).toEqual([]);
+}
+
+async function expectQuestionMode(page: Page, mode: 'challenge' | 'quick') {
+  const consoleErrors = collectPageErrors(page);
 
   await openPracticeRouteMode(page, mode);
 
@@ -62,12 +90,13 @@ test('plain Practice route stays on the Practice hub', async ({ page }) => {
   await page.goto('/practice', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
 
-  await expect(page).toHaveURL(/\/practice$/);
-  await expect(page.getByRole('heading', { name: 'Choose how to practise' })).toBeVisible();
-  await expect(page.getByText('Practice hub', { exact: true })).toBeVisible();
-  await expect(page.getByText('Question 1', { exact: true })).toHaveCount(0);
+  await expectPracticeHub(page, /\/practice$/, 'plain Practice');
+});
 
-  const fullBank = page.getByRole('button', { name: 'Start practice with all visible questions' });
-  await expect(fullBank).toBeVisible();
-  await expectTapTarget(fullBank, 'plain Practice full-bank action');
+test('invalid mode=review route stays on the Practice hub', async ({ page }) => {
+  await expectInvalidModeStaysOnPracticeHub(page, 'review');
+});
+
+test('invalid mode=bad route stays on the Practice hub', async ({ page }) => {
+  await expectInvalidModeStaysOnPracticeHub(page, 'bad');
 });
