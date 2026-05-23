@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
 
 import { dismissBlockingModals, markAboutTheTestSeen, seedSettingsLanguage } from './browserLaunch';
 
@@ -60,6 +60,33 @@ async function expectSearchUrlWithQParam(page: Page, expectedQuery: string) {
   await expect.poll(() => new URL(page.url()).pathname).toBe('/search');
   await expect.poll(() => new URL(page.url()).searchParams.get('q')).toBe(expectedQuery);
   await expect.poll(() => new URL(page.url()).searchParams.has('query')).toBe(false);
+}
+
+async function expectNoHorizontalOverflow(page: Page) {
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        const documentElement = document.documentElement;
+        const body = document.body;
+        return Math.max(documentElement.scrollWidth, body.scrollWidth) - window.innerWidth;
+      }),
+    )
+    .toBeLessThanOrEqual(1);
+}
+
+async function expectLocatorInsideViewport(page: Page, locatorName: string, locator: Locator) {
+  const rect = await locator.evaluate((element) => {
+    const { height, left, right, top, width } = element.getBoundingClientRect();
+    return { height, left, right, top, width };
+  });
+
+  expect(rect.width, `${locatorName} width`).toBeGreaterThan(0);
+  expect(rect.height, `${locatorName} height`).toBeGreaterThan(0);
+  expect(rect.left, `${locatorName} left edge`).toBeGreaterThanOrEqual(0);
+  expect(rect.right, `${locatorName} right edge`).toBeLessThanOrEqual(
+    page.viewportSize()?.width ?? 360,
+  );
+  expect(rect.top, `${locatorName} top edge`).toBeGreaterThanOrEqual(0);
 }
 
 async function expectHydratedSearch(
@@ -374,6 +401,58 @@ test('search route submits manual typing via button or Enter before URL hydratio
   await expect(hydratedInput).toHaveValue('');
   expectSearchUrlWithoutQueryParams(page);
   await expect(page.getByText(searchStateCopy.sv.allTermsSummaryPattern)).toBeVisible();
+
+  expect(consoleErrors).toEqual([]);
+});
+
+test('Search actions mobile wrap submit and clear without horizontal overflow', async ({
+  page,
+}) => {
+  const consoleErrors: string[] = [];
+  const mobileQuery = 'riksdag';
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await page.setViewportSize({ height: 740, width: 360 });
+  await markAboutTheTestSeen(page);
+  await page.goto('/search', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  const input = page.getByRole('textbox', { name: searchStateCopy.sv.inputName });
+  const submitButton = page.getByRole('button', { name: searchStateCopy.sv.submitButtonName });
+  const clearButton = page.getByRole('button', { name: searchStateCopy.sv.clearButtonName });
+
+  await expect(input).toBeVisible();
+  await expect(submitButton).toBeVisible();
+  await expect(clearButton).toBeVisible();
+  await expect(submitButton).toBeDisabled();
+  await expect(clearButton).toBeDisabled();
+  await expectNoHorizontalOverflow(page);
+
+  await input.fill(mobileQuery);
+  await expect(input).toHaveValue(mobileQuery);
+  await expect(submitButton).toBeEnabled();
+  await expect(clearButton).toBeEnabled();
+  await expect(page.getByText(searchStateCopy.sv.filteredSummaryPattern)).toBeVisible();
+  await expectNoHorizontalOverflow(page);
+
+  await submitButton.click();
+  await expectSearchUrlWithQParam(page, mobileQuery);
+  await expect(page.getByText(searchStateCopy.sv.filteredSummaryPattern)).toBeVisible();
+  await expectLocatorInsideViewport(page, 'mobile submit button', submitButton);
+  await expectLocatorInsideViewport(page, 'mobile clear button', clearButton);
+  await expectNoHorizontalOverflow(page);
+
+  await clearButton.click();
+  await expect(input).toHaveValue('');
+  await expect(submitButton).toBeDisabled();
+  await expect(clearButton).toBeDisabled();
+  await expect(page.getByText(searchStateCopy.sv.allTermsSummaryPattern)).toBeVisible();
+  expectSearchUrlWithoutQueryParams(page);
+  await expectNoHorizontalOverflow(page);
 
   expect(consoleErrors).toEqual([]);
 });

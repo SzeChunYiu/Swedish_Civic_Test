@@ -636,6 +636,53 @@ test('Search route e2e covers manual Enter submit URL state', () => {
   );
 });
 
+test('Search route e2e covers mobile action wrapping without overflow', () => {
+  const routeSource = readSearchRouteSource();
+  const e2eSource = readSearchQueryHydrationE2eSource();
+
+  assert.match(
+    e2eSource,
+    /Search actions mobile wrap submit and clear without horizontal overflow/,
+  );
+  assert.match(e2eSource, /await page\.setViewportSize\(\{ height: 740, width: 360 \}\)/);
+  assert.match(e2eSource, /const mobileQuery = 'riksdag';/);
+  assert.match(e2eSource, /async function expectNoHorizontalOverflow\(page: Page\)/);
+  assert.match(
+    e2eSource,
+    /Math\.max\(documentElement\.scrollWidth, body\.scrollWidth\) - window\.innerWidth/,
+  );
+  assert.match(e2eSource, /async function expectLocatorInsideViewport\(page: Page/);
+  assert.match(e2eSource, /searchStateCopy\.sv\.submitButtonName/);
+  assert.match(e2eSource, /searchStateCopy\.sv\.clearButtonName/);
+  assert.match(e2eSource, /await expect\(submitButton\)\.toBeDisabled\(\)/);
+  assert.match(e2eSource, /await expect\(clearButton\)\.toBeDisabled\(\)/);
+  assert.match(e2eSource, /await expect\(submitButton\)\.toBeEnabled\(\)/);
+  assert.match(e2eSource, /await expect\(clearButton\)\.toBeEnabled\(\)/);
+  assert.match(e2eSource, /await expectSearchUrlWithQParam\(page, mobileQuery\)/);
+  assert.match(e2eSource, /await clearButton\.click\(\)/);
+  assert.match(
+    e2eSource,
+    /await expect\(page\.getByText\(searchStateCopy\.sv\.allTermsSummaryPattern\)\)\.toBeVisible\(\)/,
+  );
+  assert.match(e2eSource, /expectSearchUrlWithoutQueryParams\(page\)/);
+  assert.match(e2eSource, /await expectNoHorizontalOverflow\(page\)/);
+  assert.match(
+    e2eSource,
+    /await expectLocatorInsideViewport\(page, 'mobile submit button', submitButton\)/,
+  );
+  assert.match(
+    e2eSource,
+    /await expectLocatorInsideViewport\(page, 'mobile clear button', clearButton\)/,
+  );
+
+  assert.match(routeSource, /searchActions: \{[\s\S]*?flexWrap: 'wrap'/);
+  assert.match(routeSource, /searchButtonGroup: \{[\s\S]*?flexWrap: 'wrap'/);
+  assert.match(routeSource, /searchButtonGroup: \{[\s\S]*?justifyContent: 'flex-end'/);
+  assert.match(routeSource, /searchButtonGroup: \{[\s\S]*?minWidth: space\[15\]/);
+  assert.match(routeSource, /resultSummary: \{[\s\S]*?flexShrink: 1/);
+  assert.match(routeSource, /resultSummary: \{[\s\S]*?minWidth: space\[15\]/);
+});
+
 test('Search dark source-affordance e2e covers Swedish and English locale names', () => {
   const source = readThemeModeUtilityE2eSource();
 

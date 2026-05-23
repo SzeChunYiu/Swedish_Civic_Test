@@ -567,11 +567,15 @@ function createStyles(themeColors: ThemeColors) {
       flexDirection: 'row',
       flexWrap: 'wrap',
       gap: space[1],
+      justifyContent: 'flex-end',
+      minWidth: space[15],
     },
     resultSummary: {
       color: themeColors.textMuted,
+      flexShrink: 1,
       fontSize: typography.caption.fontSize,
       lineHeight: typography.caption.lineHeight,
+      minWidth: space[15],
     },
     accessibilitySummaryText: {
       height: space.divider,
