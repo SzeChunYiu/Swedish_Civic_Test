@@ -40,8 +40,10 @@ const {
   findGeneratedTrueFalseNaturalnessPatternMatch,
 } = require('./generated-true-false-naturalness-patterns');
 const {
+  Q115_RELIGIOUS_FREEDOM_1860_NATURALNESS_IDS,
   SOMALI_GEOGRAPHY_NATURALNESS_IDS,
   SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS,
+  summarizeQ115ReligiousFreedom1860Naturalness,
   summarizeSomaliGeographyNaturalness,
   summarizeSomaliHolidayFoodNaturalness,
 } = require('./check-question-i18n-v8');
@@ -10455,6 +10457,9 @@ let questionOlderSickEnglishNaturalnessValidated = 0;
 let questionReligiousFreedom1951NaturalnessValidated = 0;
 let questionReligiousFreedomParallelismValidated = 0;
 let questionReligiousFreedomParallelismTargetRowsValidated = 0;
+let q115ReligiousFreedom1860NaturalnessCasesValidated = 0;
+let q115ReligiousFreedom1860NaturalnessStaticRowsValidated = 0;
+let q115ReligiousFreedom1860NaturalnessParityValidated = false;
 let questionCouncilOfEuropeWorkForEnglishNaturalnessValidated = 0;
 let questionMayDayEnglishNaturalnessValidated = 0;
 let questionPublicSectorEnglishNaturalnessValidated = 0;
@@ -10601,6 +10606,18 @@ function toStaticSomaliNaturalnessQuestion(question) {
   };
 }
 
+function toStaticQuestionI18nNaturalnessQuestion(question) {
+  return {
+    id: question.id,
+    questionText: question.q,
+    explanationText: question.why,
+    options: (question.opts || []).map((option, index) => ({
+      id: String.fromCharCode('a'.charCodeAt(0) + index),
+      text: option,
+    })),
+  };
+}
+
 function loadCommittedStaticSiteQuestions() {
   const context = { window: {} };
   try {
@@ -10685,6 +10702,42 @@ function validateSomaliHolidayFoodNaturalnessParity() {
   if (!somaliHolidayFoodNaturalnessParityValidated) {
     fail(
       'Somali holiday-food naturalness guard must validate q099, q101, q125, q131, q135, and q141 in canonical and static question banks',
+    );
+  }
+}
+
+function validateQ115ReligiousFreedom1860I18nNaturalnessParity() {
+  const failureCountBefore = failures.length;
+  const canonicalSummary = summarizeQ115ReligiousFreedom1860Naturalness(
+    questions,
+    Q115_RELIGIOUS_FREEDOM_1860_NATURALNESS_IDS,
+  );
+  canonicalSummary.errors.forEach(fail);
+  q115ReligiousFreedom1860NaturalnessCasesValidated = canonicalSummary.casesValidated;
+
+  const staticQuestions = loadCommittedStaticSiteQuestions()
+    .filter((question) => Q115_RELIGIOUS_FREEDOM_1860_NATURALNESS_IDS.includes(question.id))
+    .map(toStaticQuestionI18nNaturalnessQuestion);
+  const staticSummary = summarizeQ115ReligiousFreedom1860Naturalness(
+    staticQuestions,
+    Q115_RELIGIOUS_FREEDOM_1860_NATURALNESS_IDS,
+  );
+  staticSummary.errors.forEach((error) => fail(`static site ${error}`));
+  q115ReligiousFreedom1860NaturalnessStaticRowsValidated = staticSummary.casesValidated;
+
+  const guardFailed = failures.length !== failureCountBefore;
+  q115ReligiousFreedom1860NaturalnessParityValidated =
+    !guardFailed &&
+    canonicalSummary.parityValidated &&
+    staticSummary.parityValidated &&
+    q115ReligiousFreedom1860NaturalnessCasesValidated ===
+      Q115_RELIGIOUS_FREEDOM_1860_NATURALNESS_IDS.length &&
+    q115ReligiousFreedom1860NaturalnessStaticRowsValidated ===
+      Q115_RELIGIOUS_FREEDOM_1860_NATURALNESS_IDS.length;
+
+  if (!q115ReligiousFreedom1860NaturalnessParityValidated) {
+    fail(
+      'q115 religious-freedom 1860 i18n naturalness guard must validate canonical and static question banks',
     );
   }
 }
@@ -11308,6 +11361,17 @@ if (process.argv.includes('--focus-somali-holiday-food-naturalness')) {
     somaliHolidayFoodNaturalnessCasesValidated,
     somaliHolidayFoodNaturalnessStaticRowsValidated,
     somaliHolidayFoodNaturalnessParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-religious-freedom-1860-i18n-naturalness')) {
+  validateQ115ReligiousFreedom1860I18nNaturalnessParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    q115ReligiousFreedom1860NaturalnessCasesValidated,
+    q115ReligiousFreedom1860NaturalnessStaticRowsValidated,
+    q115ReligiousFreedom1860NaturalnessParityValidated,
   });
   process.exit(0);
 }
@@ -26903,6 +26967,7 @@ function validatePublishedQuestionNaturalnessGuards() {
 
 validateSomaliGeographyNaturalnessParity();
 validateSomaliHolidayFoodNaturalnessParity();
+validateQ115ReligiousFreedom1860I18nNaturalnessParity();
 validatePublishedQuestionNaturalnessGuards();
 validateStaticValidationSyntaxGate();
 exitWithValidationFailures();
@@ -27943,6 +28008,9 @@ console.log(
       somaliHolidayFoodNaturalnessCasesValidated,
       somaliHolidayFoodNaturalnessStaticRowsValidated,
       somaliHolidayFoodNaturalnessParityValidated,
+      q115ReligiousFreedom1860NaturalnessCasesValidated,
+      q115ReligiousFreedom1860NaturalnessStaticRowsValidated,
+      q115ReligiousFreedom1860NaturalnessParityValidated,
       questionLuciaRoleEnglishNaturalnessValidated,
       questionEuCooperationEnglishNaturalnessValidated,
       questionOlderSickEnglishNaturalnessValidated,

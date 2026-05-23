@@ -690,7 +690,7 @@ test('QuestionSourceCitation accessibility parity uses focused content validatio
     'questionSourceCitationAccessibilityParityValidated',
   ]);
 
-  assert.equal(summary.questionSourceCitationAccessibilityRulesValidated, 15);
+  assert.equal(summary.questionSourceCitationAccessibilityRulesValidated, 23);
   assert.equal(summary.questionSourceCitationAccessibilityParityValidated, true);
 });
 
@@ -1355,6 +1355,39 @@ test('religious-freedom 1951 naturalness uses focused content validation routing
     publishedQuestionTestSource,
     /religious-freedom 1951 English naturalness guard rejects stale static wording[\s\S]*--focus-religious-freedom-1951-naturalness/,
   );
+});
+
+test('religious-freedom 1860 i18n naturalness uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const questionI18nTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-question-i18n-v8-pilot.test.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get(
+    'religiousFreedom1860I18nNaturalness',
+  );
+
+  assert.ok(registryEntry, 'religious-freedom 1860 i18n focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-religious-freedom-1860-i18n-naturalness']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'q115ReligiousFreedom1860NaturalnessCasesValidated',
+    'q115ReligiousFreedom1860NaturalnessStaticRowsValidated',
+    'q115ReligiousFreedom1860NaturalnessParityValidated',
+  ]);
+  assert.match(validatorSource, /--focus-religious-freedom-1860-i18n-naturalness/);
+  assert.match(
+    validatorSource,
+    /validateQ115ReligiousFreedom1860I18nNaturalnessParity\(\);[\s\S]*q115ReligiousFreedom1860NaturalnessCasesValidated[\s\S]*q115ReligiousFreedom1860NaturalnessStaticRowsValidated[\s\S]*q115ReligiousFreedom1860NaturalnessParityValidated/,
+  );
+  assert.match(questionI18nTestSource, /summarizeQ115ReligiousFreedom1860Naturalness/);
+
+  const summary = assertFocusedValidationSummary(registryEntry.flags[0], registryEntry.summaryKeys);
+  assert.equal(summary.q115ReligiousFreedom1860NaturalnessCasesValidated, 1);
+  assert.equal(summary.q115ReligiousFreedom1860NaturalnessStaticRowsValidated, 1);
+  assert.equal(summary.q115ReligiousFreedom1860NaturalnessParityValidated, true);
 });
 
 test('Mistakes route copy parity uses focused content validation routing', () => {
