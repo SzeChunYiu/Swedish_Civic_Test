@@ -7,6 +7,7 @@ import { ComplianceActionLink } from '../components/compliance/ComplianceActionL
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
 import { CompanionPicker } from '../components/mascot/CompanionPicker';
 import { PersistenceWarningNotice } from '../components/storage/PersistenceWarningNotice';
+import { formatExamDate, type StudyIntensity } from '../lib/learning/examDate';
 import { useReducedMotion } from '../lib/motion/useReducedMotion';
 import {
   LOCAL_STUDY_DATA_IMPORT_MAX_BYTES,
@@ -27,7 +28,11 @@ import type { ThemeMode } from '../lib/storage/accessibilityStore';
 import { useAccessibilityStore } from '../lib/storage/accessibilityStore';
 import { useCompanionStore } from '../lib/storage/companionStore';
 import type { AppLanguage } from '../lib/storage/settingsStore';
-import { supportedDailyGoalAnswerOptions, useSettingsStore } from '../lib/storage/settingsStore';
+import {
+  normalizeStudyPlanTestDateIso,
+  supportedDailyGoalAnswerOptions,
+  useSettingsStore,
+} from '../lib/storage/settingsStore';
 import { motion, radius, shadows, space, typography } from '../lib/theme';
 import type { ThemeColors } from '../lib/theme';
 import { useTheme } from '../lib/theme/ThemeProvider';
@@ -41,6 +46,8 @@ type SettingsCopy = LocalStudyDataImportSummaryCopy & {
   audioTitle: string;
   backToProfile: string;
   backToProfileAccessibilityLabel: string;
+  clearStudyPlanTestDate: string;
+  clearStudyPlanTestDateAccessibilityLabel: string;
   companionSubtitle: string;
   companionFocusLabel: string;
   companionTitle: string;
@@ -83,6 +90,21 @@ type SettingsCopy = LocalStudyDataImportSummaryCopy & {
   studyLanguageTitle: string;
   studyControlsFocusLabel: string;
   studyControlsTitle: string;
+  studyPlanDateCleared: string;
+  studyPlanDateInvalid: string;
+  studyPlanDateSaved: (dateLabel: string) => string;
+  studyPlanIntensityAccessibilityLabel: (label: string) => string;
+  studyPlanIntensityCasualLabel: string;
+  studyPlanIntensityRegularLabel: string;
+  studyPlanIntensitySeriousLabel: string;
+  studyPlanIntensitySummary: (label: string) => string;
+  studyPlanIntensityTitle: string;
+  studyPlanTestDateInputLabel: string;
+  studyPlanTestDatePlaceholder: string;
+  studyPlanTestDateSummary: string;
+  studyPlanTestDateTitle: string;
+  saveStudyPlanTestDate: string;
+  saveStudyPlanTestDateAccessibilityLabel: string;
   setDailyGoalAccessibilityLabel: (goal: number) => string;
   setThemeModeAccessibilityLabel: (label: string) => string;
   subtitle: string;
@@ -133,6 +155,8 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     audioTitle: 'Ljud',
     backToProfile: '← Tillbaka till profil',
     backToProfileAccessibilityLabel: 'Tillbaka till profil',
+    clearStudyPlanTestDate: 'Rensa provdatum',
+    clearStudyPlanTestDateAccessibilityLabel: 'Rensa lokalt provdatum',
     companionSubtitle:
       'Välj en studiekompis för övningen. Valet är gratis och sparas bara på enheten.',
     companionFocusLabel: 'Studiekompisen från övningen är markerad här.',
@@ -236,7 +260,22 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     languageAccessibilityLabel: (label) => `Byt studiespråk till ${label}`,
     studyLanguageTitle: 'Studiespråk',
     studyControlsFocusLabel: 'Studieinställningarna från profilen är markerade här.',
-    studyControlsTitle: 'Dagligt mål, språk och ljud',
+    studyControlsTitle: 'Provdatum, intensitet, dagligt mål, språk och ljud',
+    studyPlanDateCleared: 'Provdatumet är rensat.',
+    studyPlanDateInvalid: 'Ange ett giltigt datum som ÅÅÅÅ-MM-DD.',
+    studyPlanDateSaved: (dateLabel) => `Sparat provdatum: ${dateLabel}.`,
+    studyPlanIntensityAccessibilityLabel: (label) => `Välj studieintensitet: ${label}`,
+    studyPlanIntensityCasualLabel: 'Lugn',
+    studyPlanIntensityRegularLabel: 'Lagom',
+    studyPlanIntensitySeriousLabel: 'Intensiv',
+    studyPlanIntensitySummary: (label) => `Studieintensitet: ${label}`,
+    studyPlanIntensityTitle: 'Studieintensitet',
+    studyPlanTestDateInputLabel: 'Ange provdatum som ÅÅÅÅ-MM-DD',
+    studyPlanTestDatePlaceholder: '2026-08-15',
+    studyPlanTestDateSummary: 'Används bara lokalt för nedräkning och den personliga studieplanen.',
+    studyPlanTestDateTitle: 'Provdatum',
+    saveStudyPlanTestDate: 'Spara provdatum',
+    saveStudyPlanTestDateAccessibilityLabel: 'Spara lokalt provdatum',
     setDailyGoalAccessibilityLabel: (goal) => `Ställ in dagligt mål till ${goal} svar`,
     setThemeModeAccessibilityLabel: (label) => `Välj tema: ${label}`,
     subtitle: 'Styr studiespråk, ljud, tema, studiekompis och ditt dagliga mål.',
@@ -256,6 +295,8 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     audioTitle: 'Audio',
     backToProfile: '← Back to Profile',
     backToProfileAccessibilityLabel: 'Back to profile',
+    clearStudyPlanTestDate: 'Clear test date',
+    clearStudyPlanTestDateAccessibilityLabel: 'Clear local test date',
     companionSubtitle:
       'Choose a study companion for practice. It is free and saved only on this device.',
     companionFocusLabel: 'The study companion picker from Practice is highlighted here.',
@@ -357,7 +398,22 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     languageAccessibilityLabel: (label) => `Set study language to ${label}`,
     studyLanguageTitle: 'Study language',
     studyControlsFocusLabel: 'The study setup controls from Profile are highlighted here.',
-    studyControlsTitle: 'Daily goal, language, and audio',
+    studyControlsTitle: 'Test date, intensity, daily goal, language, and audio',
+    studyPlanDateCleared: 'Test date cleared.',
+    studyPlanDateInvalid: 'Enter a valid date as YYYY-MM-DD.',
+    studyPlanDateSaved: (dateLabel) => `Saved test date: ${dateLabel}.`,
+    studyPlanIntensityAccessibilityLabel: (label) => `Choose study intensity: ${label}`,
+    studyPlanIntensityCasualLabel: 'Calm',
+    studyPlanIntensityRegularLabel: 'Steady',
+    studyPlanIntensitySeriousLabel: 'Intensive',
+    studyPlanIntensitySummary: (label) => `Study intensity: ${label}`,
+    studyPlanIntensityTitle: 'Study intensity',
+    studyPlanTestDateInputLabel: 'Enter test date as YYYY-MM-DD',
+    studyPlanTestDatePlaceholder: '2026-08-15',
+    studyPlanTestDateSummary: 'Used only locally for the countdown and personal study plan.',
+    studyPlanTestDateTitle: 'Test date',
+    saveStudyPlanTestDate: 'Save test date',
+    saveStudyPlanTestDateAccessibilityLabel: 'Save local test date',
     setDailyGoalAccessibilityLabel: (goal) => `Set daily goal to ${goal} answers`,
     setThemeModeAccessibilityLabel: (label) => `Choose theme: ${label}`,
     subtitle: 'Control study language, audio, theme, study companion, and your daily goal.',
@@ -387,6 +443,7 @@ type WebRadioKeyboardProps = {
   onKeyDown?: (event: KeyboardEventLike) => void;
   tabIndex?: 0 | -1;
 };
+type StudyIntensityOption = { value: StudyIntensity; label: string };
 
 function getRadioArrowDirection(event: KeyboardEventLike): -1 | 1 | null {
   const key = event.nativeEvent?.key ?? event.key;
@@ -400,10 +457,14 @@ export default function Screen() {
   const language = useSettingsStore((state) => state.language);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
+  const studyPlanTestDateIso = useSettingsStore((state) => state.studyPlanTestDateIso);
+  const studyPlanIntensity = useSettingsStore((state) => state.studyPlanIntensity);
   const persistenceWarning = useSettingsStore((state) => state.persistenceWarning);
   const setLanguage = useSettingsStore((state) => state.setLanguage);
   const setAudioEnabled = useSettingsStore((state) => state.setAudioEnabled);
   const setDailyGoalAnswers = useSettingsStore((state) => state.setDailyGoalAnswers);
+  const setStudyPlanTestDateIso = useSettingsStore((state) => state.setStudyPlanTestDateIso);
+  const setStudyPlanIntensity = useSettingsStore((state) => state.setStudyPlanIntensity);
   const clearPersistenceWarning = useSettingsStore((state) => state.clearPersistenceWarning);
   const themeMode = useAccessibilityStore((state) => state.themeMode);
   const setThemeMode = useAccessibilityStore((state) => state.setThemeMode);
@@ -432,10 +493,16 @@ export default function Screen() {
   const [importText, setImportText] = useState('');
   const [importPreview, setImportPreview] = useState<LocalStudyDataImportPreview | null>(null);
   const [importFeedback, setImportFeedback] = useState<ImportFeedback | null>(null);
+  const [studyPlanDateInput, setStudyPlanDateInput] = useState(
+    studyPlanTestDateIso ? studyPlanTestDateIso.slice(0, 10) : '',
+  );
+  const [studyPlanDateFeedback, setStudyPlanDateFeedback] = useState<string | null>(null);
+  const [studySectionY, setStudySectionY] = useState(0);
   const [companionSectionY, setCompanionSectionY] = useState(0);
   const [focusedControl, setFocusedControl] = useState<string | null>(null);
   const scrollViewRef = useRef<ScrollView | null>(null);
   const dailyGoalOptionRefs = useRef<Record<string, FocusableElement | null>>({});
+  const studyIntensityOptionRefs = useRef<Record<string, FocusableElement | null>>({});
   const languageOptionRefs = useRef<Record<string, FocusableElement | null>>({});
   const themeOptionRefs = useRef<Record<string, FocusableElement | null>>({});
   const themeOptions: { value: ThemeMode; label: string }[] = [
@@ -443,8 +510,16 @@ export default function Screen() {
     { value: 'light', label: copy.themeLightLabel },
     { value: 'dark', label: copy.themeDarkLabel },
   ];
+  const studyIntensityOptions: StudyIntensityOption[] = [
+    { value: 'casual', label: copy.studyPlanIntensityCasualLabel },
+    { value: 'regular', label: copy.studyPlanIntensityRegularLabel },
+    { value: 'serious', label: copy.studyPlanIntensitySeriousLabel },
+  ];
   const activeThemeLabel =
     themeOptions.find((option) => option.value === themeMode)?.label ?? copy.themeSystemLabel;
+  const activeStudyIntensityLabel =
+    studyIntensityOptions.find((option) => option.value === studyPlanIntensity)?.label ??
+    copy.studyPlanIntensityRegularLabel;
   const importPayloadByteCount = useMemo(
     () => getLocalStudyDataImportPayloadByteCount(importText),
     [importText],
@@ -456,6 +531,29 @@ export default function Screen() {
         localStudyDataImportMaxLabel,
       )
     : null;
+
+  useEffect(() => {
+    setStudyPlanDateInput(studyPlanTestDateIso ? studyPlanTestDateIso.slice(0, 10) : '');
+  }, [studyPlanTestDateIso]);
+
+  useEffect(() => {
+    if (!studyFocusActive) return;
+
+    const scrollToStudyControls = () => {
+      scrollViewRef.current?.scrollTo({
+        animated: !reduceMotion,
+        y: Math.max(studySectionY - space[2], 0),
+      });
+    };
+
+    if (Platform.OS === 'web' && typeof requestAnimationFrame === 'function') {
+      const frame = requestAnimationFrame(scrollToStudyControls);
+      return () => cancelAnimationFrame(frame);
+    }
+
+    const timeout = setTimeout(scrollToStudyControls, 0);
+    return () => clearTimeout(timeout);
+  }, [reduceMotion, studyFocusActive, studySectionY]);
 
   useEffect(() => {
     if (!companionFocusActive) return;
@@ -478,6 +576,10 @@ export default function Screen() {
 
   const handleCompanionSectionLayout = (event: LayoutChangeEvent) => {
     setCompanionSectionY(event.nativeEvent.layout.y);
+  };
+
+  const handleStudySectionLayout = (event: LayoutChangeEvent) => {
+    setStudySectionY(event.nativeEvent.layout.y);
   };
 
   const handleRadioGroupKeyDown = <T extends RadioOptionValue>(
@@ -603,6 +705,75 @@ export default function Screen() {
     );
   };
 
+  const renderStudyIntensityButton = ({ value, label }: StudyIntensityOption) => {
+    const selected = studyPlanIntensity === value;
+    const focusKey = `study-intensity-${value}`;
+
+    return (
+      <Pressable
+        key={value}
+        aria-checked={selected}
+        accessibilityLabel={copy.studyPlanIntensityAccessibilityLabel(label)}
+        accessibilityRole="radio"
+        accessibilityState={{ checked: selected }}
+        hitSlop={space[1]}
+        onBlur={() => setFocusedControl(null)}
+        onFocus={() => setFocusedControl(focusKey)}
+        onPress={() => setStudyPlanIntensity(value)}
+        ref={(node) => {
+          studyIntensityOptionRefs.current[value] = node as FocusableElement | null;
+        }}
+        style={({ pressed }) => [
+          styles.pill,
+          selected ? styles.pillActive : null,
+          focusedControl === focusKey ? styles.controlFocused : null,
+          pressed
+            ? reduceMotion
+              ? styles.controlPressedReducedMotion
+              : styles.controlPressed
+            : null,
+        ]}
+        {...getWebRadioKeyboardProps(
+          studyIntensityOptions.map((option) => option.value),
+          studyPlanIntensity,
+          value,
+          setStudyPlanIntensity,
+          studyIntensityOptionRefs,
+        )}
+      >
+        <Text style={[styles.pillText, selected ? styles.pillTextActive : null]}>{label}</Text>
+      </Pressable>
+    );
+  };
+
+  const handleSaveStudyPlanDate = () => {
+    const trimmedInput = studyPlanDateInput.trim();
+
+    if (!trimmedInput) {
+      setStudyPlanTestDateIso(null);
+      setStudyPlanDateFeedback(copy.studyPlanDateCleared);
+      return;
+    }
+
+    const normalizedDateIso = normalizeStudyPlanTestDateIso(trimmedInput);
+    if (!normalizedDateIso) {
+      setStudyPlanDateFeedback(copy.studyPlanDateInvalid);
+      return;
+    }
+
+    setStudyPlanTestDateIso(normalizedDateIso);
+    setStudyPlanDateInput(normalizedDateIso.slice(0, 10));
+    setStudyPlanDateFeedback(
+      copy.studyPlanDateSaved(formatExamDate(new Date(normalizedDateIso), language)),
+    );
+  };
+
+  const handleClearStudyPlanDate = () => {
+    setStudyPlanDateInput('');
+    setStudyPlanTestDateIso(null);
+    setStudyPlanDateFeedback(copy.studyPlanDateCleared);
+  };
+
   const handleImportTextChange = (text: string) => {
     setImportText(text);
     setImportPreview(null);
@@ -683,6 +854,7 @@ export default function Screen() {
       <View
         accessibilityLabel={copy.studyControlsTitle}
         nativeID="study-settings-controls"
+        onLayout={handleStudySectionLayout}
         style={[
           styles.studyControlsGroup,
           studyFocusActive ? styles.studyControlsGroupFocused : null,
@@ -751,6 +923,81 @@ export default function Screen() {
                 </Pressable>
               );
             })}
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text accessibilityRole="header" style={styles.sectionTitle}>
+            {copy.studyPlanTestDateTitle}
+          </Text>
+          <Text style={styles.subtitle}>{copy.studyPlanTestDateSummary}</Text>
+          <TextInput
+            accessibilityLabel={copy.studyPlanTestDateInputLabel}
+            maxLength={10}
+            onChangeText={(text) => {
+              setStudyPlanDateInput(text);
+              setStudyPlanDateFeedback(null);
+            }}
+            placeholder={copy.studyPlanTestDatePlaceholder}
+            placeholderTextColor={themeColors.textPlaceholder}
+            style={styles.dateInput}
+            value={studyPlanDateInput}
+          />
+          <View style={styles.importActions}>
+            <Pressable
+              accessibilityLabel={copy.saveStudyPlanTestDateAccessibilityLabel}
+              accessibilityRole="button"
+              hitSlop={space[1]}
+              onPress={handleSaveStudyPlanDate}
+              style={({ pressed }) => [
+                styles.secondaryButton,
+                pressed
+                  ? reduceMotion
+                    ? styles.secondaryButtonPressedReducedMotion
+                    : styles.secondaryButtonPressed
+                  : null,
+              ]}
+            >
+              <Text style={styles.secondaryButtonText}>{copy.saveStudyPlanTestDate}</Text>
+            </Pressable>
+            <Pressable
+              accessibilityLabel={copy.clearStudyPlanTestDateAccessibilityLabel}
+              accessibilityRole="button"
+              hitSlop={space[1]}
+              onPress={handleClearStudyPlanDate}
+              style={({ pressed }) => [
+                styles.outlineButton,
+                pressed
+                  ? reduceMotion
+                    ? styles.outlineButtonPressedReducedMotion
+                    : styles.outlineButtonPressed
+                  : null,
+              ]}
+            >
+              <Text style={styles.outlineButtonText}>{copy.clearStudyPlanTestDate}</Text>
+            </Pressable>
+          </View>
+          {studyPlanDateFeedback ? (
+            <Text accessibilityLiveRegion="polite" aria-live="polite" style={styles.feedbackText}>
+              {studyPlanDateFeedback}
+            </Text>
+          ) : null}
+        </View>
+
+        <View style={styles.section}>
+          <Text accessibilityRole="header" style={styles.sectionTitle}>
+            {copy.studyPlanIntensityTitle}
+          </Text>
+          <Text style={styles.subtitle}>
+            {copy.studyPlanIntensitySummary(activeStudyIntensityLabel)}
+          </Text>
+          <View
+            aria-label={copy.studyPlanIntensityTitle}
+            accessibilityLabel={copy.studyPlanIntensityTitle}
+            accessibilityRole="radiogroup"
+            style={styles.row}
+          >
+            {studyIntensityOptions.map((option) => renderStudyIntensityButton(option))}
           </View>
         </View>
 
@@ -1070,6 +1317,18 @@ function createStyles(themeColors: ThemeColors) {
       flexDirection: 'row',
       flexWrap: 'wrap',
       gap: space[1],
+    },
+    dateInput: {
+      backgroundColor: themeColors.surface,
+      borderColor: themeColors.border,
+      borderRadius: radius.button,
+      borderWidth: space.hairline,
+      color: themeColors.text,
+      fontSize: typography.body.fontSize,
+      lineHeight: typography.body.lineHeight,
+      minHeight: space[5] + space[0.5],
+      paddingHorizontal: space[1.5],
+      paddingVertical: space[1],
     },
     pill: {
       alignItems: 'center',

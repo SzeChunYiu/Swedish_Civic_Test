@@ -93,13 +93,19 @@ function proLifetimeRecord() {
 
 async function seedStudyPlan(
   page: Page,
-  { pro = false, testDateIso = futureTestDateIso() }: { pro?: boolean; testDateIso?: string } = {},
+  {
+    pro = false,
+    testDateIso = futureTestDateIso(),
+  }: { pro?: boolean; testDateIso?: string | null } = {},
 ) {
   const localStorageValues: Record<string, string> = {
     [currentProgressStateStorageKey]: JSON.stringify(buildProgressSeed()),
     [settingsStudyPlanIntensityKey]: 'regular',
-    [settingsStudyPlanTestDateIsoKey]: testDateIso,
   };
+
+  if (testDateIso) {
+    localStorageValues[settingsStudyPlanTestDateIsoKey] = testDateIso;
+  }
 
   if (pro) {
     localStorageValues[proLifetimeStorageKey] = JSON.stringify(proLifetimeRecord());
@@ -115,6 +121,17 @@ async function seedStudyPlan(
 }
 
 test.use({ viewport: { width: 390, height: 844 } });
+
+async function expectNoHorizontalOverflow(page: Page) {
+  const overflow = await page.evaluate(() => ({
+    clientWidth: document.documentElement.clientWidth,
+    scrollWidth: document.documentElement.scrollWidth,
+  }));
+
+  expect(overflow.scrollWidth, 'page should not overflow horizontally').toBeLessThanOrEqual(
+    overflow.clientWidth + 1,
+  );
+}
 
 test('Pro study plan detail shows weekly local completion checkmarks', async ({ page }) => {
   await seedStudyPlan(page, { pro: true });
@@ -142,6 +159,33 @@ test('Free study plan detail keeps countdown and upgrade copy', async ({ page })
   await expect(page.getByText(/days until/)).toBeVisible();
   await expect(page.getByRole('link', { name: 'View Pro' })).toBeVisible();
   await expect(page.getByText('This week')).toHaveCount(0);
+});
+
+test('Study plan no-date CTA opens focused Settings study controls on mobile', async ({ page }) => {
+  await seedStudyPlan(page, { testDateIso: null });
+
+  await page.goto('/study-plan', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  await expect(page.getByRole('heading', { name: 'No test date yet' })).toBeVisible();
+  await page.getByRole('link', { name: 'Add test date' }).click();
+
+  await expect(page).toHaveURL(/\/settings\?focus=study$/);
+  await dismissBlockingModals(page);
+
+  await expect(
+    page.getByText('The study setup controls from Profile are highlighted here.'),
+  ).toBeVisible();
+  await expect(page.getByRole('textbox', { name: 'Enter test date as YYYY-MM-DD' })).toBeVisible();
+  await expect(page.getByRole('radiogroup', { name: 'Study intensity' })).toBeVisible();
+  await expect(page.getByRole('radio', { name: 'Choose study intensity: Steady' })).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
+  await expect(page.getByRole('radiogroup', { name: 'Daily goal' })).toBeVisible();
+  await expect(page.getByRole('radiogroup', { name: 'Study language' })).toBeVisible();
+  await expect(page.getByRole('switch', { name: 'Disable audio' })).toBeVisible();
+  await expectNoHorizontalOverflow(page);
 });
 
 test('Home and Dashboard plan cards navigate to the study plan detail route', async ({ page }) => {
