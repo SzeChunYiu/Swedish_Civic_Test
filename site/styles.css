@@ -7732,7 +7732,7 @@ html[dir='rtl'] .lang-menu {
   display: flex;
   font-weight: 700;
   justify-content: flex-start;
-  min-height: 42px;
+  min-height: 44px;
   padding: 10px 12px;
   transition:
     background 0.14s ease,
@@ -7806,6 +7806,10 @@ html[dir='rtl'] .lang-menu {
   .lang-menu {
     left: 0;
     right: auto;
+  }
+  :root[dir='rtl'] .lang-menu {
+    left: auto;
+    right: 0;
   }
 }
 

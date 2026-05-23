@@ -19,7 +19,11 @@ test('static language picker menu uses tactile box treatment', () => {
   );
   assert.match(
     css,
-    /\.lang-menu button\s*{[\s\S]*background: rgba\(255, 255, 255, 0\.48\);[\s\S]*border: 1px solid rgba\(0, 106, 167, 0\.1\);[\s\S]*min-height: 42px;/,
+    /\.lang-menu button\s*{[^}]*background: rgba\(255, 255, 255, 0\.48\);[^}]*border: 1px solid rgba\(0, 106, 167, 0\.1\);[^}]*min-height: 44px;/,
+  );
+  assert.doesNotMatch(
+    css,
+    /\.lang-menu button\s*{[^}]*background: rgba\(255, 255, 255, 0\.48\);[^}]*border: 1px solid rgba\(0, 106, 167, 0\.1\);[^}]*min-height: 42px;/,
   );
   assert.match(
     css,
@@ -32,5 +36,9 @@ test('static language picker menu uses tactile box treatment', () => {
   assert.match(
     css,
     /@media \(max-width: 560px\)\s*{[\s\S]*\.lang-menu\s*{[\s\S]*max-width: calc\(100vw - 28px\);[\s\S]*left: 0;[\s\S]*right: auto;/,
+  );
+  assert.match(
+    css,
+    /@media \(max-width: 560px\)\s*{[\s\S]*:root\[dir='rtl'\] \.lang-menu\s*{[\s\S]*left: auto;[\s\S]*right: 0;/,
   );
 });

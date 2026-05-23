@@ -691,6 +691,53 @@ test.afterAll(async () => {
   await staticSite.close();
 });
 
+test('static language menu keeps 44px targets for extra languages on mobile', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openStaticHome(page, staticSite.baseUrl);
+
+  await page.locator('#lang-open').click();
+  const menu = page.locator('#lang-menu');
+  await expect(menu).toBeVisible();
+
+  const menuBox = await menu.boundingBox();
+  expect(menuBox).not.toBeNull();
+  expect(menuBox?.x ?? 0).toBeGreaterThanOrEqual(0);
+  expect((menuBox?.x ?? 0) + (menuBox?.width ?? 0)).toBeLessThanOrEqual(390);
+
+  const rowBoxes = await menu.locator('button[data-lang]').evaluateAll((buttons) =>
+    buttons.map((button) => {
+      const rect = button.getBoundingClientRect();
+      return {
+        lang: button.getAttribute('data-lang'),
+        height: rect.height,
+        ariaPressed: button.getAttribute('aria-pressed'),
+        afterContent: window.getComputedStyle(button, '::after').content,
+      };
+    }),
+  );
+  expect(rowBoxes.length).toBeGreaterThanOrEqual(extraLocales.length + 2);
+  for (const row of rowBoxes) {
+    expect(
+      row.height,
+      `${row.lang} menu target should be at least 44px high`,
+    ).toBeGreaterThanOrEqual(44);
+  }
+  expect(rowBoxes.find((row) => row.lang === 'en')).toMatchObject({
+    ariaPressed: 'true',
+    afterContent: '"✓"',
+  });
+
+  await menu.locator('button[data-lang="ar"]').click();
+  await expectRootLocale(page, 'ar');
+  await page.locator('#lang-open').click();
+  await expect(menu).toBeVisible();
+  const rtlMenuBox = await menu.boundingBox();
+  expect(rtlMenuBox).not.toBeNull();
+  expect(rtlMenuBox?.x ?? 0).toBeGreaterThanOrEqual(0);
+  expect((rtlMenuBox?.x ?? 0) + (rtlMenuBox?.width ?? 0)).toBeLessThanOrEqual(390);
+  await expect(menu.locator('button[data-lang="ar"]')).toHaveAttribute('dir', 'rtl');
+});
+
 test('static Settings selects extra languages with localized legal and Support metadata without overflow or outcome slogans', async ({
   page,
 }) => {
