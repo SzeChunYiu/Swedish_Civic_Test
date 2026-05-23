@@ -3382,6 +3382,49 @@ const EXPECTED_ONBOARDING_ROUTE_COPY_SNIPPETS = [
   ],
   ['{copy.adjustSettings}', 'onboarding settings link must render localized copy'],
 ];
+const EXPECTED_ONBOARDING_TEST_DATE_ACCESSIBILITY_RULES = [
+  {
+    label: 'stable feedback id',
+    pattern: /const testDateFeedbackId = 'onboarding-test-date-feedback';/,
+  },
+  {
+    label: 'native feedback hint derived from saved or invalid feedback',
+    pattern: /const testDateInputAccessibilityHint = testDateFeedbackText \?\? undefined;/,
+    message: 'onboarding test-date feedback must be mirrored to native input hint',
+  },
+  {
+    label: 'idle web described-by cleared',
+    pattern:
+      /const testDateInputDescribedBy = testDateFeedbackText \? testDateFeedbackId : undefined;/,
+    message: 'onboarding test-date feedback must clear web described-by when idle',
+  },
+  {
+    label: 'web described-by linkage',
+    pattern: /aria-describedby=\{testDateInputDescribedBy\}/,
+    message: 'onboarding test-date feedback must keep web described-by linkage',
+  },
+  {
+    label: 'web invalid state only for invalid feedback',
+    pattern: /aria-invalid=\{testDateFeedback === 'invalid' \? true : undefined\}/,
+  },
+  {
+    label: 'native input hint prop',
+    pattern: /accessibilityHint=\{testDateInputAccessibilityHint\}/,
+    message: 'onboarding test-date feedback must be mirrored to native input hint',
+  },
+  {
+    label: 'polite web status region',
+    pattern: /aria-live="polite"/,
+  },
+  {
+    label: 'polite native status region',
+    pattern: /accessibilityLiveRegion="polite"/,
+  },
+  {
+    label: 'status id target',
+    pattern: /nativeID=\{testDateFeedbackId\}/,
+  },
+];
 const EXPECTED_SCREEN_SHELL_LAYOUT_RULES = [
   {
     label: 'ScrollView import',
@@ -10208,6 +10251,8 @@ let onboardingRouteHeadersValidated = 0;
 let onboardingRouteHeaderParityValidated = false;
 let onboardingRouteCopyLabelsValidated = 0;
 let onboardingRouteCopyParityValidated = false;
+let onboardingTestDateAccessibilityRulesValidated = 0;
+let onboardingTestDateAccessibilityParityValidated = false;
 let aboutTheTestSeenEffectRulesValidated = 0;
 let aboutTheTestSeenEffectParityValidated = false;
 let firstRunAboutModalSuppressedRoutesValidated = 0;
@@ -16966,6 +17011,13 @@ function validateOnboardingRouteCopyParity() {
   EXPECTED_ONBOARDING_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!onboardingRoute.includes(snippet)) reject(message);
   });
+  EXPECTED_ONBOARDING_TEST_DATE_ACCESSIBILITY_RULES.forEach((rule) => {
+    if (!rule.pattern.test(onboardingRoute)) {
+      reject(rule.message || `onboarding route missing ${rule.label}`);
+      return;
+    }
+    onboardingTestDateAccessibilityRulesValidated += 1;
+  });
   if (/const\s+onboardingDailyGoalPresetValues[\s\S]{0,120}=\s*\[/.test(onboardingRoute)) {
     reject('onboarding daily goal preset values must not be an inline numeric tuple');
   }
@@ -17088,9 +17140,12 @@ function validateOnboardingRouteCopyParity() {
   if (
     valid &&
     onboardingRouteCopyLabelsValidated === expectedLabelCount &&
+    onboardingTestDateAccessibilityRulesValidated ===
+      EXPECTED_ONBOARDING_TEST_DATE_ACCESSIBILITY_RULES.length &&
     firstRunAboutModalSuppressedRoutesValidated === expectedFirstRunSuppressedRoutes.length
   ) {
     onboardingRouteCopyParityValidated = true;
+    onboardingTestDateAccessibilityParityValidated = true;
     firstRunAboutModalSuppressionParityValidated = true;
   }
 }
@@ -27690,6 +27745,8 @@ console.log(
       onboardingRouteHeaderParityValidated,
       onboardingRouteCopyLabelsValidated,
       onboardingRouteCopyParityValidated,
+      onboardingTestDateAccessibilityRulesValidated,
+      onboardingTestDateAccessibilityParityValidated,
       aboutTheTestSeenEffectRulesValidated,
       aboutTheTestSeenEffectParityValidated,
       firstRunAboutModalSuppressedRoutesValidated,

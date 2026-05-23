@@ -253,8 +253,16 @@ test('Onboarding optional test date persists locally and skip clears it without 
     .toBe('serious');
 
   const testDateInput = page.getByRole('textbox', { name: 'Enter test date as YYYY-MM-DD' });
+  await expect(testDateInput).not.toHaveAttribute('aria-describedby', /.+/);
+  await expect(testDateInput).not.toHaveAttribute('aria-invalid', 'true');
   await testDateInput.fill('2026-08-15');
-  await expect(page.getByText('Test date saved: 15 August 2026.')).toBeVisible();
+  const savedFeedback = page.getByText('Test date saved: 15 August 2026.');
+  await expect(savedFeedback).toBeVisible();
+  await expect(savedFeedback).toHaveAttribute('aria-live', 'polite');
+  const savedFeedbackId = await savedFeedback.getAttribute('id');
+  expect(savedFeedbackId).toBeTruthy();
+  await expect(testDateInput).toHaveAttribute('aria-describedby', savedFeedbackId!);
+  await expect(testDateInput).not.toHaveAttribute('aria-invalid', 'true');
   await expect
     .poll(() =>
       page.evaluate((key) => window.localStorage.getItem(key), settingsStudyPlanTestDateIsoKey),
@@ -262,7 +270,11 @@ test('Onboarding optional test date persists locally and skip clears it without 
     .toBe('2026-08-15T00:00:00.000Z');
 
   await testDateInput.fill('2026-02-31');
-  await expect(page.getByText("Use YYYY-MM-DD, or skip until you've booked.")).toBeVisible();
+  const invalidFeedback = page.getByText("Use YYYY-MM-DD, or skip until you've booked.");
+  await expect(invalidFeedback).toBeVisible();
+  await expect(invalidFeedback).toHaveAttribute('aria-live', 'polite');
+  await expect(testDateInput).toHaveAttribute('aria-describedby', savedFeedbackId!);
+  await expect(testDateInput).toHaveAttribute('aria-invalid', 'true');
   await expect
     .poll(() =>
       page.evaluate((key) => window.localStorage.getItem(key), settingsStudyPlanTestDateIsoKey),
@@ -271,6 +283,8 @@ test('Onboarding optional test date persists locally and skip clears it without 
 
   await page.getByRole('button', { name: 'Continue without a booked test date' }).click();
   await expect(testDateInput).toHaveValue('');
+  await expect(testDateInput).not.toHaveAttribute('aria-describedby', /.+/);
+  await expect(testDateInput).not.toHaveAttribute('aria-invalid', 'true');
   await expect
     .poll(() =>
       page.evaluate((key) => window.localStorage.getItem(key), settingsStudyPlanTestDateIsoKey),

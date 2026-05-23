@@ -24,6 +24,8 @@ test('onboarding route title stays accessible as a header', () => {
   assert.equal(summary.onboardingRouteHeaderParityValidated, true);
   assert.equal(summary.onboardingRouteCopyLabelsValidated, 17);
   assert.equal(summary.onboardingRouteCopyParityValidated, true);
+  assert.equal(summary.onboardingTestDateAccessibilityRulesValidated, 9);
+  assert.equal(summary.onboardingTestDateAccessibilityParityValidated, true);
   assert.match(source, /type OnboardingCopy =/);
   assert.match(source, /import \{ formatExamDate, type StudyIntensity \}/);
   assert.match(source, /normalizeStudyPlanTestDateIso/);
@@ -97,10 +99,25 @@ test('onboarding route title stays accessible as a header', () => {
   assert.doesNotMatch(source, /accessibilityState=\{\{ selected \}\}/);
   assert.match(source, /onPress=\{\(\) => handleDailyGoalPress\(goal\)\}/);
   assert.match(source, /<TextInput/);
+  assert.match(source, /const testDateFeedbackId = 'onboarding-test-date-feedback';/);
+  assert.match(
+    source,
+    /const testDateInputAccessibilityHint = testDateFeedbackText \?\? undefined;/,
+  );
+  assert.match(
+    source,
+    /const testDateInputDescribedBy = testDateFeedbackText \? testDateFeedbackId : undefined;/,
+  );
+  assert.match(source, /aria-describedby=\{testDateInputDescribedBy\}/);
+  assert.match(source, /aria-invalid=\{testDateFeedback === 'invalid' \? true : undefined\}/);
+  assert.match(source, /accessibilityHint=\{testDateInputAccessibilityHint\}/);
   assert.match(source, /accessibilityLabel=\{copy\.testDateInputAccessibilityLabel\}/);
   assert.match(source, /placeholder=\{copy\.testDateInputPlaceholder\}/);
   assert.match(source, /keyboardType="numbers-and-punctuation"/);
   assert.match(source, /maxLength=\{10\}/);
+  assert.match(source, /aria-live="polite"/);
+  assert.match(source, /accessibilityLiveRegion="polite"/);
+  assert.match(source, /nativeID=\{testDateFeedbackId\}/);
   assert.match(source, /accessibilityLabel=\{copy\.testDateSkipAccessibilityLabel\}/);
   assert.match(source, /accessibilityLabel=\{copy\.decideLaterAccessibilityLabel\}/);
   assert.match(
@@ -110,6 +127,38 @@ test('onboarding route title stays accessible as a header', () => {
   assert.match(source, /accessibilityLabel=\{copy\.startStudyingAccessibilityLabel\}/);
   assert.match(source, /accessibilityLabel=\{copy\.adjustSettingsAccessibilityLabel\}/);
   assert.doesNotMatch(source, /<Text style=\{styles\.title\}>/);
+});
+
+test('onboarding route copy parity rejects date feedback not tied to the input', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/onboarding.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('accessibilityHint={testDateInputAccessibilityHint}', '')
+      .replace('aria-describedby={testDateInputDescribedBy}', '');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-onboarding-route-copy');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /onboarding test-date feedback must be mirrored to native input hint|onboarding test-date feedback must keep web described-by linkage/,
+  );
 });
 
 test('about-the-test marks the first-run guide as seen after mount', () => {

@@ -19,6 +19,8 @@ import { useThemeColors } from '../lib/theme/ThemeProvider';
 
 type DailyGoalPresetValue = Exclude<(typeof supportedDailyGoalAnswerOptions)[number], 5>;
 
+const testDateFeedbackId = 'onboarding-test-date-feedback';
+
 function isOnboardingDailyGoalPresetValue(
   goal: (typeof supportedDailyGoalAnswerOptions)[number],
 ): goal is DailyGoalPresetValue {
@@ -213,6 +215,8 @@ export default function Screen() {
       : testDateFeedback === 'saved' && studyPlanTestDateIso
         ? copy.testDateSaved(formatExamDate(new Date(studyPlanTestDateIso), language))
         : null;
+  const testDateInputAccessibilityHint = testDateFeedbackText ?? undefined;
+  const testDateInputDescribedBy = testDateFeedbackText ? testDateFeedbackId : undefined;
 
   useEffect(() => {
     if (!studyPlanTestDateIso) return;
@@ -382,6 +386,9 @@ export default function Screen() {
         </Text>
         <Text style={styles.goalSubtitle}>{copy.testDateSubtitle}</Text>
         <TextInput
+          aria-describedby={testDateInputDescribedBy}
+          aria-invalid={testDateFeedback === 'invalid' ? true : undefined}
+          accessibilityHint={testDateInputAccessibilityHint}
           accessibilityLabel={copy.testDateInputAccessibilityLabel}
           inputMode="numeric"
           keyboardType="numbers-and-punctuation"
@@ -393,7 +400,14 @@ export default function Screen() {
           value={testDateInput}
         />
         {testDateFeedbackText ? (
-          <Text style={styles.goalSubtitle}>{testDateFeedbackText}</Text>
+          <Text
+            aria-live="polite"
+            accessibilityLiveRegion="polite"
+            nativeID={testDateFeedbackId}
+            style={styles.goalSubtitle}
+          >
+            {testDateFeedbackText}
+          </Text>
         ) : null}
         <Pressable
           accessibilityLabel={copy.testDateSkipAccessibilityLabel}
