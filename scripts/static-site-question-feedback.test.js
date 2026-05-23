@@ -90,6 +90,232 @@ function phrase(parts) {
   return parts.join(' ');
 }
 
+function createClassList(initial = []) {
+  const classes = new Set(initial);
+  return {
+    add(...names) {
+      names.forEach((name) => classes.add(name));
+    },
+    remove(...names) {
+      names.forEach((name) => classes.delete(name));
+    },
+    contains(name) {
+      return classes.has(name);
+    },
+    toggle(name, force) {
+      if (force === undefined ? !classes.has(name) : force) {
+        classes.add(name);
+        return true;
+      }
+      classes.delete(name);
+      return false;
+    },
+  };
+}
+
+function createTextElement({ id, dataset = {}, textContent = '' } = {}) {
+  const element = {
+    id,
+    dataset,
+    attributes: {},
+    textContent,
+    classList: createClassList(),
+    setAttribute(name, value) {
+      this.attributes[name] = String(value);
+    },
+    getAttribute(name) {
+      return Object.prototype.hasOwnProperty.call(this.attributes, name)
+        ? this.attributes[name]
+        : null;
+    },
+    removeAttribute(name) {
+      delete this.attributes[name];
+    },
+  };
+  Object.defineProperty(element, 'innerHTML', {
+    get() {
+      return this.textContent;
+    },
+    set(value) {
+      this.textContent = String(value);
+    },
+  });
+  return element;
+}
+
+function createQcardOption({ key, labelKey, label, correct }) {
+  const labelElement = createTextElement({
+    dataset: { i18n: labelKey },
+    textContent: label,
+  });
+  const option = createTextElement({
+    dataset: { correct: correct ? 'true' : 'false' },
+  });
+  option.classList = createClassList(['qopt']);
+  option.disabled = false;
+  option.children = [labelElement];
+  option.setAttribute('aria-pressed', 'false');
+  Object.defineProperty(option, 'textContent', {
+    get() {
+      return `${key} ${labelElement.textContent}`;
+    },
+    set() {},
+  });
+  option.closest = (selector) => (selector === '.qcard' ? option.card : null);
+  return { option, labelElement };
+}
+
+function createHomeDemoQcardContext({ language = 'en' } = {}) {
+  const listeners = { document: [], window: [] };
+  const i18nElements = [];
+  const attributes = { lang: language };
+  const documentElement = {
+    setAttribute(name, value) {
+      attributes[name] = String(value);
+      if (name === 'lang') this.lang = String(value);
+    },
+    getAttribute(name) {
+      return Object.prototype.hasOwnProperty.call(attributes, name) ? attributes[name] : null;
+    },
+    lang: language,
+  };
+
+  const explanationLead = createTextElement({
+    dataset: { i18n: 'qcard.ex.b' },
+    textContent: 'Allemansrätten',
+  });
+  const explanationBody = createTextElement({
+    dataset: { i18n: 'qcard.ex.p' },
+    textContent:
+      ' — "everyone\'s right" — lets you walk, swim, ski, camp, and forage on most land in Sweden.',
+  });
+  const explanation = createTextElement({ id: 'qcard-explanation' });
+  Object.defineProperty(explanation, 'textContent', {
+    get() {
+      return `${explanationLead.textContent}${explanationBody.textContent}`;
+    },
+    set() {},
+  });
+
+  const status = createTextElement({ id: 'qcard-status' });
+  const options = [
+    createQcardOption({
+      key: 'A',
+      labelKey: 'qcard.a',
+      label: 'Jantelagen — the law of staying humble',
+      correct: false,
+    }),
+    createQcardOption({
+      key: 'B',
+      labelKey: 'qcard.b',
+      label: 'Allemansrätten — the right of public access',
+      correct: true,
+    }),
+    createQcardOption({
+      key: 'C',
+      labelKey: 'qcard.c',
+      label: 'Lagom — the doctrine of just-enough',
+      correct: false,
+    }),
+    createQcardOption({
+      key: 'D',
+      labelKey: 'qcard.d',
+      label: 'Fika — the constitutional coffee break',
+      correct: false,
+    }),
+  ];
+
+  const card = {
+    id: 'qcard',
+    classList: createClassList(['qcard']),
+    querySelectorAll(selector) {
+      if (selector === '.qopt') return options.map(({ option }) => option);
+      return [];
+    },
+    querySelector(selector) {
+      if (selector === '#qcard-status') return status;
+      if (selector === '#qcard-explanation') return explanation;
+      if (selector === ".qopt[data-correct='true']") {
+        return options.find(({ option }) => option.dataset.correct === 'true').option;
+      }
+      if (selector === '.qopt[aria-pressed="true"]') {
+        return options.find(({ option }) => option.getAttribute('aria-pressed') === 'true')?.option;
+      }
+      return null;
+    },
+  };
+  options.forEach(({ option }) => {
+    option.card = card;
+    i18nElements.push(...option.children);
+  });
+  i18nElements.push(explanationLead, explanationBody);
+
+  const sandbox = {
+    console,
+    localStorage: {
+      getItem(key) {
+        return key === 'smt_lang' ? language : null;
+      },
+      setItem(key, value) {
+        if (key === 'smt_lang') language = String(value);
+      },
+    },
+    location: { hash: '#/' },
+    document: {
+      readyState: 'loading',
+      documentElement,
+      getElementById(id) {
+        if (id === 'qcard') return card;
+        if (id === 'qcard-status') return status;
+        if (id === 'qcard-explanation') return explanation;
+        return null;
+      },
+      querySelector() {
+        return null;
+      },
+      querySelectorAll(selector) {
+        if (selector === '[data-i18n]') return i18nElements;
+        return [];
+      },
+      addEventListener(type, handler) {
+        listeners.document.push({ type, handler });
+      },
+    },
+    window: {},
+    CustomEvent: function CustomEvent(type, init = {}) {
+      return { type, ...init };
+    },
+    Event: function Event(type) {
+      return { type };
+    },
+    setInterval: () => 1,
+    clearInterval() {},
+    setTimeout(handler) {
+      if (typeof handler === 'function') handler();
+      return 1;
+    },
+    requestAnimationFrame(handler) {
+      if (typeof handler === 'function') handler();
+      return 1;
+    },
+  };
+  sandbox.window = sandbox;
+  sandbox.window.addEventListener = (type, handler) => {
+    listeners.window.push({ type, handler });
+  };
+  sandbox.window.dispatchEvent = (event) => {
+    listeners.window
+      .filter((listener) => listener.type === event.type)
+      .forEach((listener) => listener.handler(event));
+    return true;
+  };
+  sandbox.window.scrollTo = () => {};
+  sandbox.window.SMT_QUESTIONS = [];
+  sandbox.window.SMT_CHAPTERS_META = [];
+  vm.createContext(sandbox);
+  return { sandbox, listeners, options, status };
+}
+
 function createRenderContext({
   hash = '#/practice?c=1',
   language = 'en',
@@ -333,6 +559,52 @@ test('static Home demo qcard exposes accessible answer state', () => {
     assert.match(appSource, new RegExp(`'${key.replace('.', '\\.')}'`));
     assert.match(extraSource, new RegExp(`'${key.replace('.', '\\.')}'`));
   }
+});
+
+test('static Home demo qcard relocalizes answered state on languagechange', () => {
+  const { sandbox, listeners, options, status } = createHomeDemoQcardContext({ language: 'en' });
+  vm.runInContext(read('site/app.js'), sandbox, { timeout: 3000 });
+
+  const wrongOption = options[0].option;
+  listeners.document
+    .filter((listener) => listener.type === 'click')
+    .forEach((listener) =>
+      listener.handler({
+        target: {
+          closest(selector) {
+            return selector === '.qopt' ? wrongOption : null;
+          },
+        },
+      }),
+    );
+
+  const correctOption = options[1].option;
+  assert.equal(wrongOption.getAttribute('aria-pressed'), 'true');
+  assert.equal(correctOption.getAttribute('aria-pressed'), 'false');
+  assert.match(wrongOption.getAttribute('aria-label'), /Selected answer, incorrect/);
+  assert.match(correctOption.getAttribute('aria-label'), /Correct answer/);
+  assert.match(status.textContent, /^Not quite\./);
+  assert.equal(
+    options.every(({ option }) => option.disabled),
+    true,
+  );
+
+  vm.runInContext('smtSetLanguage("sv")', sandbox, { timeout: 3000 });
+
+  assert.equal(sandbox.document.documentElement.getAttribute('lang'), 'sv');
+  assert.equal(wrongOption.getAttribute('aria-pressed'), 'true');
+  assert.equal(correctOption.getAttribute('aria-pressed'), 'false');
+  assert.equal(
+    options.every(({ option }) => option.disabled),
+    true,
+  );
+  assert.match(wrongOption.getAttribute('aria-label'), /Valt svar, fel/);
+  assert.match(correctOption.getAttribute('aria-label'), /Rätt svar/);
+  assert.match(wrongOption.getAttribute('aria-label'), /Jantelagen — lagen om att vara lagom/);
+  assert.match(correctOption.getAttribute('aria-label'), /Allemansrätten — rätten till naturen/);
+  assert.match(status.textContent, /^Inte riktigt\./);
+  assert.match(status.textContent, /Allemansrätten/);
+  assert.doesNotMatch(status.textContent, /Not quite|right of public access/);
 });
 
 test('static Mock review renders citation and disclaimer for every reviewed question', () => {
