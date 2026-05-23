@@ -152,6 +152,45 @@ function staticQuestionVisibleText(question) {
   return JSON.stringify([question.q, question.why, question.opts]);
 }
 
+function q167StatedOnVotingCardFixture(sourceQuestions) {
+  const singleChoiceId = generatedQuestionId(sourceQuestions, 'q167', 'singleChoice');
+  const judgementId = generatedQuestionId(sourceQuestions, 'q167', 'judgement');
+
+  return {
+    generatedIds: [singleChoiceId, judgementId],
+    expectedPrompts: {
+      [singleChoiceId]: [
+        'Vad visar röstkortet som skickas hem före valet?',
+        'What does the voting card sent home before an election show?',
+      ],
+      [judgementId]: [
+        'Vilken uppgift stämmer om vad röstkortet som skickas hem före valet visar?',
+        'Which fact is correct about what the voting card sent home before an election shows?',
+      ],
+    },
+    stalePattern: /\b(?:röstkortet[^?!.]*innehåll|voting card[^?!.]*contents)\b/i,
+  };
+}
+
+function assertStaticQ167StatedOnVotingCardPrompts(questionsById, sourceQuestions) {
+  const { expectedPrompts, generatedIds, stalePattern } =
+    q167StatedOnVotingCardFixture(sourceQuestions);
+
+  for (const id of generatedIds) {
+    const [expectedSv, expectedEn] = expectedPrompts[id];
+    const question = questionsById.get(id);
+    assert.ok(question, `${id} should be present in static question bank`);
+    assert.equal(question.q?.sv, expectedSv, `${id} static sv prompt should stay natural`);
+    assert.equal(question.q?.en, expectedEn, `${id} static en prompt should stay natural`);
+    assert.equal(question.questionProvenance, 'derived');
+    assert.doesNotMatch(
+      staticQuestionVisibleText(question),
+      stalePattern,
+      `${id} should not use contents/innehåll wording`,
+    );
+  }
+}
+
 function chapterLocalizationWelfareGlossOffenders(chapters, scope) {
   const offenders = [];
   for (const chapter of chapters) {
@@ -374,32 +413,50 @@ test('static site question bank keeps q167 stated-on voting-card prompts natural
   const sourceQuestions = expectedBank.questions.filter(
     (question) => question.questionProvenance === 'uhr',
   );
-  const singleChoiceId = generatedQuestionId(sourceQuestions, 'q167', 'singleChoice');
-  const judgementId = generatedQuestionId(sourceQuestions, 'q167', 'judgement');
   const context = { window: {} };
   vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
   const questionsById = new Map(
     context.window.SMT_QUESTIONS.map((question) => [question.id, question]),
   );
-  const expectedPrompts = {
-    [singleChoiceId]: [
-      'Vad visar röstkortet som skickas hem före valet?',
-      'What does the voting card sent home before an election show?',
-    ],
-    [judgementId]: [
-      'Vilken uppgift stämmer om vad röstkortet som skickas hem före valet visar?',
-      'Which fact is correct about what the voting card sent home before an election shows?',
-    ],
-  };
-  const stalePattern = /\b(?:röstkortet[^?!.]*innehåll|voting card[^?!.]*contents)\b/i;
 
-  for (const [id, [expectedSv, expectedEn]] of Object.entries(expectedPrompts)) {
-    const question = questionsById.get(id);
-    assert.ok(question, `${id} should be present in static question bank`);
-    assert.equal(question.q?.sv, expectedSv);
-    assert.equal(question.q?.en, expectedEn);
-    assert.equal(question.questionProvenance, 'derived');
-    assert.doesNotMatch(staticQuestionVisibleText(question), stalePattern);
+  assertStaticQ167StatedOnVotingCardPrompts(questionsById, sourceQuestions);
+});
+
+test('static site q167 stated-on fixture rejects q844/q847 contents mutations', () => {
+  const expectedBank = buildSiteQuestionBank();
+  const sourceQuestions = expectedBank.questions.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const context = { window: {} };
+  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
+  const questionsById = new Map(
+    context.window.SMT_QUESTIONS.map((question) => [question.id, question]),
+  );
+  const { generatedIds } = q167StatedOnVotingCardFixture(sourceQuestions);
+  const stalePromptsById = {
+    [generatedIds[0]]: {
+      sv: 'Vad är röstkortets innehåll?',
+      en: 'What are the voting card contents?',
+    },
+    [generatedIds[1]]: {
+      sv: 'Vilken uppgift stämmer om röstkortets innehåll?',
+      en: 'Which fact is correct about the voting card contents?',
+    },
+  };
+
+  for (const [id, q] of Object.entries(stalePromptsById)) {
+    const mutatedQuestionsById = new Map(questionsById);
+    mutatedQuestionsById.set(id, {
+      ...questionsById.get(id),
+      q: {
+        ...questionsById.get(id)?.q,
+        ...q,
+      },
+    });
+    assert.throws(
+      () => assertStaticQ167StatedOnVotingCardPrompts(mutatedQuestionsById, sourceQuestions),
+      new RegExp(`${id} static sv prompt should stay natural`),
+    );
   }
 });
 
