@@ -300,6 +300,61 @@ async function seedNonEmptyDashboardProgress(page: Page, language: AppLanguage) 
   return seed;
 }
 
+async function seedSingularDashboardProgress(page: Page, language: AppLanguage) {
+  const today = new Date();
+  const todayKey = localDateKey(today);
+  const todayAnswer = isoAtLocalHour(today, 0, Math.max(0, today.getHours() - 1));
+
+  await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, language, {
+    localStorageValues: {
+      [currentProgressStateStorageKey]: JSON.stringify({
+        answerDates: [todayKey],
+        answerHistory: [
+          {
+            answeredAt: todayAnswer,
+            confidenceRating: 4,
+            isCorrect: true,
+            questionId: 'q001',
+            timeSpentSeconds: 45,
+          },
+        ],
+        completedQuestionIds: ['q001'],
+        dailyChallengeCompletions: {},
+        mockExamSessions: [
+          {
+            completedAt: todayAnswer,
+            correctCount: 42,
+            questionTimings: [{ questionId: 'q001', timeSpentSeconds: 600 }],
+            score: 0.84,
+            sessionId: 'dashboard-singular-mock-1',
+            totalCount: 50,
+          },
+        ],
+        questionProgress: {
+          q001: {
+            correctCount: 1,
+            correctStreak: 1,
+            lastAnsweredAt: todayAnswer,
+            questionId: 'q001',
+            seenCount: 1,
+            wrongCount: 0,
+          },
+        },
+        streakFreezeState: {
+          available: 0,
+          lastEarnedAt: todayKey,
+          lifetimeEarned: 0,
+          lifetimeSpent: 0,
+          rescuedDayKeys: [],
+        },
+        totalXp: 10,
+      }),
+    },
+  });
+
+  return todayKey;
+}
+
 async function seedMockExamHistory(page: Page, language: AppLanguage) {
   await page.addInitScript((seededLanguage) => {
     const completedAt = '2026-05-20T12:00:00.000Z';
@@ -456,6 +511,38 @@ async function expectMockHistoryVisible(page: Page, fixture: DashboardLocaleFixt
   await expectNoHorizontalOverflow(page);
 }
 
+async function expectSingularSecondaryCountsVisible(
+  page: Page,
+  fixture: DashboardLocaleFixture,
+  todayKey: string,
+) {
+  const activitySummary =
+    fixture.language === 'sv'
+      ? '1 svar under perioden. 1 aktiv dag. Högsta dag: 1 svar.'
+      : '1 answer in this period. 1 active day. Highest day: 1 answer.';
+  const dayLabel = fixture.language === 'sv' ? `${todayKey}: 1 svar` : `${todayKey}: 1 answer`;
+  const streakSummary =
+    fixture.language === 'sv'
+      ? '10 XP de senaste 30 dagarna. 1 aktiv dag. 1 dags svit. Nivå 1.'
+      : '10 XP in the last 30 days. 1 active day. 1 day streak. Level 1.';
+  const mockAttemptCount = fixture.language === 'sv' ? '1 övningsprov' : '1 mock exam';
+  const mockSummary =
+    fixture.language === 'sv'
+      ? '1 övningsprov. Senast 84%. Bäst 84%. Snitt 84%. Lägst 84%.'
+      : '1 mock exam. Latest 84%. Best 84%. Average 84%. Lowest 84%.';
+
+  await expect(page.getByText(activitySummary, { exact: true })).toBeVisible();
+  await expect(page.getByLabel(dayLabel).first()).toBeVisible();
+  await expect(page.getByLabel(streakSummary).first()).toBeVisible();
+  await expect(page.getByText(mockAttemptCount, { exact: true }).last()).toBeVisible();
+  await expect(page.getByText(mockSummary, { exact: true })).toHaveCount(1);
+  await expect(page.getByText(/1 answers|1 active days|1 mock exams|1 dagars svit/)).toHaveCount(0);
+  await expect(page.getByLabel(/1 answers|1 active days|1 mock exams|1 dagars svit/)).toHaveCount(
+    0,
+  );
+  await expectNoHorizontalOverflow(page);
+}
+
 async function expectNonEmptyProgressVisible(
   page: Page,
   fixture: DashboardLocaleFixture,
@@ -478,16 +565,14 @@ async function expectNonEmptyProgressVisible(
   ).toBeVisible();
   await expect(
     page.getByLabel(
-      fixture.language === 'sv'
-        ? `${seed.yesterdayKey}: 1 svar`
-        : `${seed.yesterdayKey}: 1 answers`,
+      fixture.language === 'sv' ? `${seed.yesterdayKey}: 1 svar` : `${seed.yesterdayKey}: 1 answer`,
     ),
   ).toBeVisible();
   await expect(
     page.getByLabel(
       fixture.language === 'sv'
         ? `${seed.dayBeforeYesterdayKey}: 1 svar`
-        : `${seed.dayBeforeYesterdayKey}: 1 answers`,
+        : `${seed.dayBeforeYesterdayKey}: 1 answer`,
     ),
   ).toBeVisible();
 
@@ -584,6 +669,19 @@ for (const fixture of dashboardLocales) {
     await page.goto('/dashboard', { waitUntil: 'networkidle' });
     await dismissBlockingModals(page);
     await expectMockHistoryVisible(page, fixture);
+
+    expect(consoleErrors).toEqual([]);
+  });
+
+  test(`dashboard route pluralizes singular secondary counts in ${fixture.language}`, async ({
+    page,
+  }) => {
+    const consoleErrors = collectConsoleErrors(page);
+    const todayKey = await seedSingularDashboardProgress(page, fixture.language);
+
+    await page.goto('/dashboard', { waitUntil: 'networkidle' });
+    await dismissBlockingModals(page);
+    await expectSingularSecondaryCountsVisible(page, fixture, todayKey);
 
     expect(consoleErrors).toEqual([]);
   });

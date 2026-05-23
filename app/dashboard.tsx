@@ -20,6 +20,13 @@ import {
   xpSparkline,
 } from '../lib/learning/dashboardStats';
 import {
+  formatDashboardActivityDayLabel,
+  formatDashboardActivitySummary,
+  formatDashboardMockHistoryAttemptCount,
+  formatDashboardMockHistorySummary,
+  formatDashboardMockHistoryTrendSummary,
+  formatDashboardStreakMetricLabel,
+  formatDashboardStreakXpSummary,
   formatDashboardSummaryAccessibilityLabel,
   formatDashboardSummaryLine,
 } from '../lib/learning/dashboardSummaryCopy';
@@ -99,7 +106,7 @@ type DashboardCopy = {
   streakXp: {
     emptyState: string;
     levelLabel: string;
-    streakLabel: string;
+    streakLabel: (currentStreak: number) => string;
     subtitle: string;
     summary: (totalXp: number, activeDays: number, currentStreak: number, level: number) => string;
     title: string;
@@ -121,7 +128,7 @@ type DashboardCopy = {
 const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
   sv: {
     activity: {
-      dayLabel: (date, answers) => `${date}: ${answers} svar`,
+      dayLabel: (date, answers) => formatDashboardActivityDayLabel('sv', date, answers),
       emptyState: 'Svara på några frågor så byggs din aktivitetskarta här.',
       legend: {
         high: 'Hög aktivitet',
@@ -131,7 +138,7 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
         title: 'Aktivitetsskala',
       },
       summary: (totalAnswers, activeDays, maxDayCount) =>
-        `${totalAnswers} svar under perioden. ${activeDays} aktiva dagar. Högsta dag: ${maxDayCount} svar.`,
+        formatDashboardActivitySummary('sv', totalAnswers, activeDays, maxDayCount),
       subtitle: 'Varje ruta visar svar under en dag.',
       title: 'Aktiva dagar',
     },
@@ -151,7 +158,7 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
     homeLink: 'Till startsidan',
     homeLinkAccessibilityLabel: 'Gå tillbaka till startsidan',
     mockHistory: {
-      attemptCount: (count) => `${count} övningsprov`,
+      attemptCount: (count) => formatDashboardMockHistoryAttemptCount('sv', count),
       averageLabel: 'Snitt',
       bestLabel: 'Bäst',
       emptyState:
@@ -168,31 +175,29 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
           : `${scorePercent}% den ${completedDate}`,
       subtitle: 'Följ de senaste resultaten utan att blanda in någon server.',
       summary: (attemptCount, latestScore, bestScore, averageScore, lowestScore) =>
-        `${attemptCount} övningsprov. Senast ${latestScore}%. Bäst ${bestScore}%. Snitt ${averageScore}%. Lägst ${lowestScore}%.`,
+        formatDashboardMockHistorySummary(
+          'sv',
+          attemptCount,
+          latestScore,
+          bestScore,
+          averageScore,
+          lowestScore,
+        ),
       timeUsedLabel: (duration) => `Tid: ${duration}`,
       title: 'Övningsprov över tid',
       trendLabel: 'Resultattrend',
       trendPointAccessibilityLabel: (pointIndex, pointCount, scorePercent, completedDate) =>
         `Trendpunkt ${pointIndex} av ${pointCount}: ${scorePercent}% den ${completedDate}.`,
-      trendSummary: (pointCount, firstScore, latestScore) => {
-        const delta = latestScore - firstScore;
-        const attempts = pointCount === 1 ? 'prov' : 'prov';
-        if (delta === 0) {
-          return `Resultattrend för ${pointCount} senaste bedömda ${attempts}: senast ${latestScore}%, oförändrat från äldsta som visas.`;
-        }
-
-        return `Resultattrend för ${pointCount} senaste bedömda ${attempts}: senast ${latestScore}%, ${Math.abs(delta)} procentenheter ${
-          delta > 0 ? 'högre' : 'lägre'
-        } än äldsta som visas.`;
-      },
+      trendSummary: (pointCount, firstScore, latestScore) =>
+        formatDashboardMockHistoryTrendSummary('sv', pointCount, firstScore, latestScore),
     },
     streakXp: {
       emptyState: 'XP-kurvan visas när du börjar få rätt svar.',
       levelLabel: 'nivå',
-      streakLabel: 'dagars svit',
+      streakLabel: (currentStreak) => formatDashboardStreakMetricLabel('sv', currentStreak),
       subtitle: 'Senaste 30 dagarna med nivå och dagsvana.',
       summary: (totalXp, activeDays, currentStreak, level) =>
-        `${totalXp} XP de senaste 30 dagarna. ${activeDays} aktiva dagar. ${currentStreak} dagars svit. Nivå ${level}.`,
+        formatDashboardStreakXpSummary('sv', totalXp, activeDays, currentStreak, level),
       title: 'Svit och XP',
     },
     studyPlan: {
@@ -218,7 +223,7 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
   },
   en: {
     activity: {
-      dayLabel: (date, answers) => `${date}: ${answers} answers`,
+      dayLabel: (date, answers) => formatDashboardActivityDayLabel('en', date, answers),
       emptyState: 'Answer a few questions and your activity map will build here.',
       legend: {
         high: 'High activity',
@@ -228,7 +233,7 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
         title: 'Activity scale',
       },
       summary: (totalAnswers, activeDays, maxDayCount) =>
-        `${totalAnswers} answers in this period. ${activeDays} active days. Highest day: ${maxDayCount} answers.`,
+        formatDashboardActivitySummary('en', totalAnswers, activeDays, maxDayCount),
       subtitle: 'Each square shows answers from one day.',
       title: 'Active days',
     },
@@ -248,7 +253,7 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
     homeLink: 'Back to Home',
     homeLinkAccessibilityLabel: 'Go back to Home',
     mockHistory: {
-      attemptCount: (count) => `${count} mock exams`,
+      attemptCount: (count) => formatDashboardMockHistoryAttemptCount('en', count),
       averageLabel: 'Average',
       bestLabel: 'Best',
       emptyState:
@@ -265,31 +270,29 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
           : `${scorePercent}% on ${completedDate}`,
       subtitle: 'Track recent results without sending anything to a server.',
       summary: (attemptCount, latestScore, bestScore, averageScore, lowestScore) =>
-        `${attemptCount} mock exams. Latest ${latestScore}%. Best ${bestScore}%. Average ${averageScore}%. Lowest ${lowestScore}%.`,
+        formatDashboardMockHistorySummary(
+          'en',
+          attemptCount,
+          latestScore,
+          bestScore,
+          averageScore,
+          lowestScore,
+        ),
       timeUsedLabel: (duration) => `Time: ${duration}`,
       title: 'Mock exam history',
       trendLabel: 'Score trend',
       trendPointAccessibilityLabel: (pointIndex, pointCount, scorePercent, completedDate) =>
         `Trend point ${pointIndex} of ${pointCount}: ${scorePercent}% on ${completedDate}.`,
-      trendSummary: (pointCount, firstScore, latestScore) => {
-        const delta = latestScore - firstScore;
-        const attempts = pointCount === 1 ? 'exam' : 'exams';
-        if (delta === 0) {
-          return `Score trend across ${pointCount} recent scored ${attempts}: latest ${latestScore}%, unchanged from the oldest shown.`;
-        }
-
-        return `Score trend across ${pointCount} recent scored ${attempts}: latest ${latestScore}%, ${Math.abs(delta)} points ${
-          delta > 0 ? 'higher' : 'lower'
-        } than the oldest shown.`;
-      },
+      trendSummary: (pointCount, firstScore, latestScore) =>
+        formatDashboardMockHistoryTrendSummary('en', pointCount, firstScore, latestScore),
     },
     streakXp: {
       emptyState: 'The XP line appears once you start getting answers right.',
       levelLabel: 'level',
-      streakLabel: 'day streak',
+      streakLabel: (currentStreak) => formatDashboardStreakMetricLabel('en', currentStreak),
       subtitle: 'The last 30 days with level and daily rhythm.',
       summary: (totalXp, activeDays, currentStreak, level) =>
-        `${totalXp} XP in the last 30 days. ${activeDays} active days. ${currentStreak} day streak. Level ${level}.`,
+        formatDashboardStreakXpSummary('en', totalXp, activeDays, currentStreak, level),
       title: 'Streak and XP',
     },
     studyPlan: {

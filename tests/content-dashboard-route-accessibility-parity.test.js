@@ -242,13 +242,13 @@ function assertDashboardAccessibilitySeparation(sources) {
   );
   assert.match(
     sources.dashboard,
-    /dayLabel: \(date, answers\) => `\$\{date\}: \$\{answers\} svar`/,
-    'Dashboard Swedish activity copy must label heatmap cells as answers',
+    /dayLabel: \(date, answers\) => formatDashboardActivityDayLabel\('sv', date, answers\)/,
+    'Dashboard Swedish activity copy must localize heatmap answer labels',
   );
   assert.match(
     sources.dashboard,
-    /dayLabel: \(date, answers\) => `\$\{date\}: \$\{answers\} answers`/,
-    'Dashboard English activity copy must label heatmap cells as answers',
+    /dayLabel: \(date, answers\) => formatDashboardActivityDayLabel\('en', date, answers\)/,
+    'Dashboard English activity copy must localize heatmap answer labels',
   );
   assert.match(
     sources.activity,

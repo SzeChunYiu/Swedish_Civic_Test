@@ -68,8 +68,8 @@ function assertNaturalSwedishDashboardCopy(sources) {
   assert.match(sources.dashboard, /title: 'Mock exam history'/);
   assert.match(sources.dashboard, /trendLabel: 'Resultattrend'/);
   assert.match(sources.dashboard, /trendLabel: 'Score trend'/);
-  assert.match(sources.dashboard, /procentenheter/);
-  assert.match(sources.dashboard, /recent scored/);
+  assert.match(sources.dashboardSummaryCopy, /procentenheter/);
+  assert.match(sources.dashboardSummaryCopy, /recent scored/);
   assert.match(sources.dashboard, /examLink: 'Gå till övningsprov'/);
   assert.match(sources.dashboard, /examLink: 'Go to mock exam'/);
   assert.match(sources.dashboard, /emptyState:\s*'Genomför ett övningsprov/);
@@ -81,9 +81,17 @@ function assertNaturalSwedishDashboardCopy(sources) {
 }
 
 function assertDashboardSummaryPluralization() {
-  const { formatDashboardSummaryAccessibilityLabel, formatDashboardSummaryLine } = loadTs(
-    'lib/learning/dashboardSummaryCopy.ts',
-  );
+  const {
+    formatDashboardActivityDayLabel,
+    formatDashboardActivitySummary,
+    formatDashboardMockHistoryAttemptCount,
+    formatDashboardMockHistorySummary,
+    formatDashboardMockHistoryTrendSummary,
+    formatDashboardStreakMetricLabel,
+    formatDashboardStreakXpSummary,
+    formatDashboardSummaryAccessibilityLabel,
+    formatDashboardSummaryLine,
+  } = loadTs('lib/learning/dashboardSummaryCopy.ts');
 
   const cases = [
     {
@@ -134,6 +142,62 @@ function assertDashboardSummaryPluralization() {
     assert.equal(formatDashboardSummaryLine(language, ...values), line);
     assert.equal(formatDashboardSummaryAccessibilityLabel(language, ...values), accessibilityLabel);
   }
+
+  assert.equal(
+    formatDashboardActivitySummary('sv', 1, 1, 1),
+    '1 svar under perioden. 1 aktiv dag. Högsta dag: 1 svar.',
+  );
+  assert.equal(formatDashboardActivityDayLabel('sv', '2026-05-20', 1), '2026-05-20: 1 svar');
+  assert.equal(formatDashboardStreakMetricLabel('sv', 1), 'dags svit');
+  assert.equal(
+    formatDashboardStreakXpSummary('sv', 10, 1, 1, 2),
+    '10 XP de senaste 30 dagarna. 1 aktiv dag. 1 dags svit. Nivå 2.',
+  );
+  assert.equal(formatDashboardMockHistoryAttemptCount('sv', 1), '1 övningsprov');
+  assert.equal(
+    formatDashboardMockHistorySummary('sv', 1, 84, 84, 84, 84),
+    '1 övningsprov. Senast 84%. Bäst 84%. Snitt 84%. Lägst 84%.',
+  );
+  assert.equal(
+    formatDashboardMockHistoryTrendSummary('sv', 1, 84, 84),
+    'Resultattrend för 1 bedömt prov: senast 84%, oförändrat från äldsta som visas.',
+  );
+
+  assert.equal(
+    formatDashboardActivitySummary('en', 1, 1, 1),
+    '1 answer in this period. 1 active day. Highest day: 1 answer.',
+  );
+  assert.equal(formatDashboardActivityDayLabel('en', '2026-05-20', 1), '2026-05-20: 1 answer');
+  assert.equal(formatDashboardStreakMetricLabel('en', 1), 'day streak');
+  assert.equal(
+    formatDashboardStreakXpSummary('en', 10, 1, 1, 2),
+    '10 XP in the last 30 days. 1 active day. 1 day streak. Level 2.',
+  );
+  assert.equal(formatDashboardMockHistoryAttemptCount('en', 1), '1 mock exam');
+  assert.equal(
+    formatDashboardMockHistorySummary('en', 1, 84, 84, 84, 84),
+    '1 mock exam. Latest 84%. Best 84%. Average 84%. Lowest 84%.',
+  );
+  assert.equal(
+    formatDashboardMockHistoryTrendSummary('en', 1, 84, 84),
+    'Score trend across 1 recent scored exam: latest 84%, unchanged from the oldest shown.',
+  );
+
+  for (const phrase of [
+    formatDashboardActivitySummary('en', 1, 1, 1),
+    formatDashboardActivityDayLabel('en', '2026-05-20', 1),
+    formatDashboardStreakXpSummary('en', 10, 1, 1, 2),
+    formatDashboardMockHistoryAttemptCount('en', 1),
+    formatDashboardMockHistorySummary('en', 1, 84, 84, 84, 84),
+    formatDashboardMockHistoryTrendSummary('en', 1, 84, 84),
+    formatDashboardActivitySummary('sv', 1, 1, 1),
+    formatDashboardStreakXpSummary('sv', 10, 1, 1, 2),
+  ]) {
+    assert.doesNotMatch(
+      phrase,
+      /1 answers|1 active days|1 mock exams|1 dagars svit|1 aktiva dagar/,
+    );
+  }
 }
 
 function assertLocalizedMockHistoryDates(sources) {
@@ -166,7 +230,21 @@ test('dashboard summary count copy is singular and plural in Swedish and English
   assert.match(sources.dashboard, /formatDashboardSummaryLine\('en'/);
   assert.match(sources.dashboard, /formatDashboardSummaryAccessibilityLabel\(\s*'sv'/);
   assert.match(sources.dashboard, /formatDashboardSummaryAccessibilityLabel\(\s*'en'/);
+  assert.match(sources.dashboard, /formatDashboardActivitySummary\('sv'/);
+  assert.match(sources.dashboard, /formatDashboardActivitySummary\('en'/);
+  assert.match(sources.dashboard, /formatDashboardStreakXpSummary\('sv'/);
+  assert.match(sources.dashboard, /formatDashboardStreakXpSummary\('en'/);
+  assert.match(sources.dashboard, /formatDashboardMockHistorySummary\(\s*'sv'/);
+  assert.match(sources.dashboard, /formatDashboardMockHistorySummary\(\s*'en'/);
+  assert.match(sources.dashboard, /formatDashboardMockHistoryAttemptCount\('sv'/);
+  assert.match(sources.dashboard, /formatDashboardMockHistoryAttemptCount\('en'/);
+  assert.match(sources.dashboard, /formatDashboardMockHistoryTrendSummary\('sv'/);
+  assert.match(sources.dashboard, /formatDashboardMockHistoryTrendSummary\('en'/);
   assert.doesNotMatch(sources.dashboard, /chapters tried, \$\{unresolved\} unresolved mistakes/);
+  assert.doesNotMatch(
+    sources.dashboard,
+    /1 answers|1 active days|1 mock exams|1 dagars svit|activeDays\} active days|count\} mock exams|currentStreak\} dagars svit/,
+  );
   assertDashboardSummaryPluralization();
 });
 
