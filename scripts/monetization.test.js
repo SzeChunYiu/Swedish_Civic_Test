@@ -929,7 +929,7 @@ test('rewarded extra exam access honors real-ad consent readiness', () => {
   );
 });
 
-test('mock exam access persistence stores daily completions and rewarded credits', async () => {
+test('mock exam access counters store daily completions and rewarded credits', async () => {
   const rewardedExamSource = fs.readFileSync(
     path.join(repoRoot, 'lib/monetization/rewardedExam.ts'),
     'utf8',
@@ -941,7 +941,6 @@ test('mock exam access persistence stores daily completions and rewarded credits
     consumeStoredRewardedExtraExamCredit,
     createMemoryMockExamAccessStorage,
     createSecureStoreMockExamAccessStorage,
-    createWebMockExamAccessStorage,
     getMockExamAccessDateKey,
     getStoredMockExamAccess,
     grantStoredRewardedExtraExamCredit,
@@ -1136,28 +1135,6 @@ test('mock exam access persistence stores daily completions and rewarded credits
   );
 
   assert.equal(typeof createSecureStoreMockExamAccessStorage().getItemAsync, 'function');
-
-  await withGlobalProperties({ localStorage: createMemoryLocalStorage() }, async () => {
-    const webStorage = createWebMockExamAccessStorage();
-
-    await recordStoredMockExamCompletion({
-      date: '2026-05-18T09:00:00.000Z',
-      sessionId: 'web-session-1',
-      storage: webStorage,
-    });
-
-    const webStorageAfterReload = createWebMockExamAccessStorage();
-
-    assert.equal(
-      (
-        await getStoredMockExamAccess({
-          date: '2026-05-18T10:00:00.000Z',
-          storage: webStorageAfterReload,
-        })
-      ).completedMockExamsToday,
-      1,
-    );
-  });
 
   assert.deepEqual(
     await clearStoredMockExamAccess({
@@ -1498,7 +1475,6 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
     buyRemoveAds,
     createMemoryPurchaseStorage,
     createMockPurchaseProvider,
-    createWebPurchaseStorage,
     fetchRemoveAdsProductMetadata,
     getPurchaseEntitlements,
     restoreRemoveAdsPurchase,
@@ -1630,26 +1606,6 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
   });
   assert.equal(missingRestore.status, 'not_found');
   assert.equal(missingRestore.entitlements.adsDisabled, false);
-
-  const localStorage = createMemoryLocalStorage();
-  await withGlobalProperties({ localStorage }, async () => {
-    const webProvider = createMockPurchaseProvider();
-    const webStorage = createWebPurchaseStorage();
-    await buyRemoveAds({
-      provider: webProvider,
-      storage: webStorage,
-    });
-
-    const webStorageAfterReload = createWebPurchaseStorage();
-    assert.equal(
-      (await getPurchaseEntitlements({ provider: webProvider, storage: webStorageAfterReload }))
-        .adsDisabled,
-      true,
-    );
-
-    await purchaseExports.setRemoveAdsEntitlement(false, { storage: webStorageAfterReload });
-    assert.equal(localStorage.getItem(REMOVE_ADS_STORAGE_KEY), null);
-  });
 });
 
 test('remove-ads buy persists before native finish and leaves failed persistence unfinished', async () => {

@@ -146,6 +146,14 @@ test('Remove Ads E2E mock owned runtime has a dedicated focused harness', () => 
     path.join(repoRoot, 'tests/remove-ads-web-e2e-mock-runtime.test.js'),
     'utf8',
   );
+  const storageHarnessSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/monetization-storage-harness.test.js'),
+    'utf8',
+  );
+  const monetizationRunnerSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/run-monetization-tests.js'),
+    'utf8',
+  );
   const runtimeHarnessSource = fs.readFileSync(
     path.join(repoRoot, 'tests/helpers/monetizationRuntimeHarness.cjs'),
     'utf8',
@@ -157,9 +165,12 @@ test('Remove Ads E2E mock owned runtime has a dedicated focused harness', () => 
   const monetizationTestFileSources = `${focusedHarnessSource}\n${monetizationSuiteSource}`;
   const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
 
+  assert.match(packageJson.scripts['test:monetization'], /scripts\/run-monetization-tests\.js/);
+  assert.match(monetizationRunnerSource, /tests\/remove-ads-web-e2e-mock-runtime\.test\.js/);
+  assert.match(monetizationRunnerSource, /tests\/monetization-storage-harness\.test\.js/);
   assert.match(
-    packageJson.scripts['test:monetization'],
-    /tests\/remove-ads-web-e2e-mock-runtime\.test\.js/,
+    monetizationRunnerSource,
+    /\['--test', \.\.\.forwardedArgs, \.\.\.monetizationTestFiles\]/,
   );
   assert.match(focusedHarnessSource, /__SMT_E2E__/);
   assert.match(focusedHarnessSource, /__SMT_REMOVE_ADS_MOCK_OWNED__/);
@@ -167,6 +178,10 @@ test('Remove Ads E2E mock owned runtime has a dedicated focused harness', () => 
   assert.match(focusedHarnessSource, /restoreRemoveAdsPurchase/);
   assert.match(focusedHarnessSource, /monetizationRuntimeHarness\.cjs/);
   assert.match(focusedHarnessSource, /createMemoryLocalStorage,\s*[\s\S]*withGlobalProperties,/);
+  assert.match(storageHarnessSource, /monetizationRuntimeHarness\.cjs/);
+  assert.match(storageHarnessSource, /createMemoryLocalStorage,\s*[\s\S]*withGlobalProperties,/);
+  assert.match(storageHarnessSource, /mock exam access persistence reloads from web localStorage/);
+  assert.match(storageHarnessSource, /Remove Ads web storage persists stored entitlement/);
   assert.match(monetizationSuiteSource, /createMemoryLocalStorage,\s*[\s\S]*withGlobalProperties,/);
   assert.match(runtimeHarnessSource, /function createTsLoader/);
   assert.match(runtimeHarnessSource, /function createReactHookStub/);
@@ -178,8 +193,13 @@ test('Remove Ads E2E mock owned runtime has a dedicated focused harness', () => 
   assert.doesNotMatch(focusedHarnessSource, /function withGlobalProperties/);
   assert.doesNotMatch(focusedHarnessSource, /Object\.getOwnPropertyDescriptor\(globalThis/);
   assert.doesNotMatch(focusedHarnessSource, /Object\.defineProperty\(globalThis/);
+  assert.doesNotMatch(storageHarnessSource, /function createMemoryLocalStorage/);
+  assert.doesNotMatch(storageHarnessSource, /function withGlobalProperties/);
+  assert.doesNotMatch(storageHarnessSource, /previousLocalStorage|localStorageValues/);
   assert.doesNotMatch(monetizationSuiteSource, /function createMemoryLocalStorage/);
   assert.doesNotMatch(monetizationSuiteSource, /function withGlobalProperties/);
+  assert.doesNotMatch(monetizationSuiteSource, /webStorageAfterReload/);
+  assert.doesNotMatch(monetizationSuiteSource, /web-session-1/);
   assert.doesNotMatch(
     monetizationSuiteSource,
     /Object\.getOwnPropertyDescriptor\(globalThis,\s*'localStorage'\)/,
