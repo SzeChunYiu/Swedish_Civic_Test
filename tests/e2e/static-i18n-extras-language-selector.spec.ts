@@ -2,6 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
+import { resolveStaticRequestPath } from './staticPathResolver.cjs';
 
 declare global {
   interface Window {
@@ -253,14 +254,7 @@ function sanitizedIndexHtml() {
 async function startStaticSiteServer(): Promise<StaticSite> {
   const server = http.createServer((request, response) => {
     const url = new URL(request.url ?? '/', 'http://127.0.0.1');
-    const safePath = path.normalize(decodeURIComponent(url.pathname)).replace(/^\.\.(?:\/|$)/, '');
-    const requestedPath = path.join(siteRoot, safePath === '/' ? 'index.html' : safePath);
-    const filePath =
-      requestedPath.startsWith(siteRoot) &&
-      fs.existsSync(requestedPath) &&
-      fs.statSync(requestedPath).isFile()
-        ? requestedPath
-        : path.join(siteRoot, 'index.html');
+    const filePath = resolveStaticRequestPath({ root: siteRoot, pathname: url.pathname });
     const extension = path.extname(filePath);
     response.writeHead(200, {
       'content-type': contentTypeByExtension[extension] ?? 'application/octet-stream',
@@ -689,6 +683,23 @@ test.beforeAll(async () => {
 
 test.afterAll(async () => {
   await staticSite.close();
+});
+
+test('static router ignores malformed inner anchors from malformed request paths', async ({
+  page,
+}) => {
+  const pageErrors = collectPageErrors(page);
+
+  await page.goto(`${staticSite.baseUrl}/%E0%A4%A#/sources`, { waitUntil: 'load' });
+  await page.evaluate(() => {
+    localStorage.setItem('smt_consent', 'min');
+    localStorage.setItem('smt_buddy_hidden', '1');
+  });
+
+  await expect(page.locator('[data-page="/sources"]')).toBeVisible();
+  await expect(page.locator(i18nSelector('sources.h1a'))).toBeVisible();
+  await expectNoHorizontalOverflow(page);
+  expect(pageErrors).toEqual([]);
 });
 
 test('static Settings selects extra languages with localized legal and Support metadata without overflow or outcome slogans', async ({

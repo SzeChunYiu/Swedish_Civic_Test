@@ -1,6 +1,7 @@
 const fs = require('node:fs');
 const http = require('node:http');
 const path = require('node:path');
+const { resolveStaticRequestPath } = require('./staticPathResolver.cjs');
 
 const root = path.resolve(process.env.DIST_WEB_ROOT || path.join(__dirname, '../../dist-web'));
 const port = Number(process.env.PORT || 4173);
@@ -32,17 +33,7 @@ function sendFile(res, filePath) {
 function createRequestHandler({ outputDir = root, listenPort = port } = {}) {
   return (req, res) => {
     const url = new URL(req.url || '/', `http://127.0.0.1:${listenPort}`);
-    const safePath = path.normalize(decodeURIComponent(url.pathname)).replace(/^\.\.(?:\/|$)/, '');
-    const requested = path.join(outputDir, safePath);
-    if (
-      requested.startsWith(outputDir) &&
-      fs.existsSync(requested) &&
-      fs.statSync(requested).isFile()
-    ) {
-      sendFile(res, requested);
-      return;
-    }
-    sendFile(res, path.join(outputDir, 'index.html'));
+    sendFile(res, resolveStaticRequestPath({ root: outputDir, pathname: url.pathname }));
   };
 }
 
