@@ -378,6 +378,9 @@ const STATIC_EBOOK_EXTRA_LOCALES = [
   'tr',
   'uk',
 ];
+const STATIC_EBOOK_READER_LOCALES = ['en', 'sv', ...STATIC_EBOOK_EXTRA_LOCALES];
+const STATIC_EBOOK_EXTRA_LOCALE_ENGLISH_SOURCE_CHROME_PATTERN =
+  /Chapter source notes|Sources:|Original study guide|Sources page|aria-label="Source 1"|\b\d+ cites?\b/;
 const STATIC_EBOOK_CHAPTER13_ENGLISH_HOLIDAY_GLOSS_PATTERN =
   /[（(](?:Easter|Midsummer Eve|Christmas|New Year's Eve|First of May|Walpurgis Night|All Saints' Day|Advent)[）)]/i;
 const ABOUT_THE_TEST_OFFICIAL_SOURCE_RETRIEVED_DATE = '2026-05-21';
@@ -6629,7 +6632,7 @@ function staticEbookHasNonUhrSource(counts) {
 
 function validateStaticEbookFootnoteHashParity() {
   const chapterIds = readStaticEbookChapterIds();
-  const languages = ['en', 'sv'];
+  const languages = STATIC_EBOOK_READER_LOCALES;
   const languageValid = new Map(languages.map((language) => [language, true]));
   const harness = createStaticEbookValidationHarness(chapterIds);
   let chaptersValidated = 0;
@@ -6682,6 +6685,12 @@ function validateStaticEbookFootnoteHashParity() {
       }
       if (!staticEbookHasNonUhrSource(renderedCounts)) {
         rejectCase('source mix must include at least one non-UHR citation or editorial note');
+      }
+      if (
+        STATIC_EBOOK_EXTRA_LOCALES.includes(language) &&
+        STATIC_EBOOK_EXTRA_LOCALE_ENGLISH_SOURCE_CHROME_PATTERN.test(html)
+      ) {
+        rejectCase('extra-locale source chrome fell back to English copy');
       }
 
       referenceLinks.forEach((reference, index) => {

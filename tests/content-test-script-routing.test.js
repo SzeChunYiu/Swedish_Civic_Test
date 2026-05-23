@@ -690,7 +690,7 @@ test('QuestionSourceCitation accessibility parity uses focused content validatio
     'questionSourceCitationAccessibilityParityValidated',
   ]);
 
-  assert.equal(summary.questionSourceCitationAccessibilityRulesValidated, 15);
+  assert.equal(summary.questionSourceCitationAccessibilityRulesValidated, 23);
   assert.equal(summary.questionSourceCitationAccessibilityParityValidated, true);
 });
 
@@ -2177,6 +2177,7 @@ test('static ebook provenance umbrella focus routes only static ebook provenance
   assert.equal(summary.staticEbookPracticalTestCurrentnessValidated, true);
   assert.equal(summary.staticEbookFactboxProvenanceValidated, true);
   assert.equal(summary.staticEbookFootnoteHashParityValidated, true);
+  assert.equal(summary.staticEbookFootnoteHashLanguagesValidated, 12);
   assert.equal(summary.staticEbookProvenanceParityValidated, true);
   assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
   assert.equal(

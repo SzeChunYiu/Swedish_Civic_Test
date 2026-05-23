@@ -9,6 +9,7 @@ const {
   assertNoUnsupportedStaticEbookCredentialClaims,
   assertNoUnsupportedStaticEbookCredentialText,
 } = require('../scripts/static-ebook-credential-claim-guard');
+const { runFocusedValidatorMutation } = require('./helpers/focusedValidatorMutation.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
 const phrasePattern = (...parts) => new RegExp(parts.join(''), 'i');
@@ -1173,7 +1174,7 @@ test('focus-static-ebook-footnote hash validator mirrors source-counts and route
   const summary = runFocusedStaticEbookFootnoteHashValidator();
 
   assert.equal(summary.staticEbookFootnoteHashChaptersValidated, getExpectedChapterIds().length);
-  assert.equal(summary.staticEbookFootnoteHashLanguagesValidated, 2);
+  assert.equal(summary.staticEbookFootnoteHashLanguagesValidated, getStaticSiteLanguages().length);
   assert.equal(summary.staticEbookFootnoteHashParityValidated, true);
 });
 
@@ -1184,7 +1185,7 @@ test('focus-static-ebook-provenance validator routes static ebook provenance gua
   assert.equal(summary.staticEbookPracticalTestCurrentnessValidated, true);
   assert.equal(summary.staticEbookFactboxProvenanceValidated, true);
   assert.equal(summary.staticEbookFootnoteHashChaptersValidated, getExpectedChapterIds().length);
-  assert.equal(summary.staticEbookFootnoteHashLanguagesValidated, 2);
+  assert.equal(summary.staticEbookFootnoteHashLanguagesValidated, getStaticSiteLanguages().length);
   assert.equal(summary.staticEbookFootnoteHashParityValidated, true);
   assert.equal(summary.staticEbookProvenanceParityValidated, true);
   assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
@@ -1192,6 +1193,23 @@ test('focus-static-ebook-provenance validator routes static ebook provenance gua
     Object.prototype.hasOwnProperty.call(summary, 'staticFaqFallbackParityValidated'),
     false,
   );
+});
+
+test('focus-static-ebook-provenance rejects extra-locale English source chrome fallback', () => {
+  const result = runFocusedValidatorMutation({
+    focusFlag: '--focus-static-ebook-provenance',
+    targetFile: 'site/ebook.js',
+    mutateSource: (source) => {
+      return source.replace(
+        "footnotesHeading: 'ملاحظات مصادر الفصل'",
+        "footnotesHeading: 'Chapter source notes'",
+      );
+    },
+  });
+  const output = `${result.stdout}\n${result.stderr}`;
+
+  assert.equal(result.status, 1, output);
+  assert.match(output, /extra-locale source chrome fell back to English copy/);
 });
 
 test('focus-static-ebook-ch12 heading validator renders exact Swedish and English H1 copy', () => {
