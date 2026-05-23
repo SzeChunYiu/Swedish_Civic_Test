@@ -7,6 +7,7 @@ type NotificationSubscription = {
 type NotificationResponse = {
   notification?: {
     request?: {
+      identifier?: string;
       content?: {
         data?: unknown;
       };
@@ -18,6 +19,7 @@ type ExpoNotificationsRoutingModule = {
   addNotificationResponseReceivedListener?: (
     listener: (response: NotificationResponse) => void,
   ) => NotificationSubscription;
+  getLastNotificationResponseAsync?: () => Promise<NotificationResponse | null>;
 };
 
 export type StudyReminderNotificationRoute = '/practice';
@@ -26,6 +28,7 @@ export type StudyReminderNotificationRoutingRuntime = {
   addNotificationResponseReceivedListener: (
     listener: (response: NotificationResponse) => void,
   ) => NotificationSubscription;
+  getLastNotificationResponseAsync?: () => Promise<NotificationResponse | null>;
   platformOS?: string;
 };
 
@@ -44,6 +47,10 @@ function notificationData(response: NotificationResponse): Record<string, unknow
   const data = response.notification?.request?.content?.data;
   if (!data || typeof data !== 'object' || Array.isArray(data)) return null;
   return data as Record<string, unknown>;
+}
+
+function notificationRequestIdentifier(response: NotificationResponse): string | null {
+  return firstString(response.notification?.request?.identifier);
 }
 
 export function normalizeStudyReminderNotificationRoute(
@@ -73,12 +80,32 @@ export function registerStudyReminderNotificationResponseRouting(
 ): () => void {
   if (!runtime?.addNotificationResponseReceivedListener) return () => undefined;
 
-  const subscription = runtime.addNotificationResponseReceivedListener((response) => {
+  let active = true;
+  const routedRequestIds = new Set<string>();
+  const routeResponse = (response: NotificationResponse | null | undefined) => {
+    if (!active || !response) return;
     const route = routeFromStudyReminderNotificationResponse(response);
-    if (route) navigate(route);
-  });
+    if (!route) return;
 
-  return () => subscription.remove?.();
+    const requestId = notificationRequestIdentifier(response);
+    if (requestId) {
+      if (routedRequestIds.has(requestId)) return;
+      routedRequestIds.add(requestId);
+    }
+
+    navigate(route);
+  };
+
+  const subscription = runtime.addNotificationResponseReceivedListener(routeResponse);
+
+  if (runtime.getLastNotificationResponseAsync) {
+    void runtime.getLastNotificationResponseAsync().then(routeResponse, () => undefined);
+  }
+
+  return () => {
+    active = false;
+    subscription.remove?.();
+  };
 }
 
 export async function createExpoStudyReminderNotificationRoutingRuntime(): Promise<StudyReminderNotificationRoutingRuntime | null> {
@@ -94,6 +121,7 @@ export async function createExpoStudyReminderNotificationRoutingRuntime(): Promi
     return {
       addNotificationResponseReceivedListener:
         notifications.addNotificationResponseReceivedListener,
+      getLastNotificationResponseAsync: notifications.getLastNotificationResponseAsync,
       platformOS: Platform.OS,
     };
   } catch {
