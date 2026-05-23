@@ -13,6 +13,7 @@ import {
   formatExamDate,
   generateStudyPlan,
   generateStudyPlanWeeklyBreakdown,
+  isStudyPlanTestDateExpired,
   type StudyPlanDayBreakdown,
 } from '../lib/learning/examDate';
 import { getLocalDateKey } from '../lib/learning/streaks';
@@ -36,6 +37,9 @@ type StudyPlanCopy = {
   dayStatusComplete: string;
   dayStatusOpen: string;
   eyebrow: string;
+  expiredBody: (dateLabel: string) => string;
+  expiredCta: string;
+  expiredTitle: string;
   freeBody: string;
   freeCta: string;
   freeTitle: string;
@@ -64,6 +68,10 @@ const studyPlanCopy: Record<AppLanguage, StudyPlanCopy> = {
     dayStatusComplete: 'Klar',
     dayStatusOpen: 'Öppet',
     eyebrow: 'Studieplan',
+    expiredBody: (dateLabel) =>
+      `Provdatumet ${dateLabel} har passerat. Uppdatera datumet när nästa tid är bokad, så räknar appen ut en ny plan utan stress.`,
+    expiredCta: 'Uppdatera provdatum',
+    expiredTitle: 'Provdatumet har passerat',
     freeBody:
       'Nedräkningen och källlänkarna är öppna för alla. Pro låser upp veckoplanen med lokala mål och klarmarkeringar.',
     freeCta: 'Visa Pro',
@@ -95,6 +103,10 @@ const studyPlanCopy: Record<AppLanguage, StudyPlanCopy> = {
     dayStatusComplete: 'Done',
     dayStatusOpen: 'Open',
     eyebrow: 'Study plan',
+    expiredBody: (dateLabel) =>
+      `The test date ${dateLabel} has passed. Update it when your next appointment is booked, and the app will calculate a new plan without pressure.`,
+    expiredCta: 'Update test date',
+    expiredTitle: 'Test date has passed',
     freeBody:
       'The countdown and source links are open to everyone. Pro unlocks the weekly plan with local targets and completion marks.',
     freeCta: 'View Pro',
@@ -251,6 +263,7 @@ export default function StudyPlanScreen() {
     () => safeDateFromIso(studyPlanTestDateIso ?? undefined),
     [studyPlanTestDateIso],
   );
+  const testDateExpired = testDate ? isStudyPlanTestDateExpired(testDate, now) : false;
   const proPlanUnlocked =
     isProRuntimeScopeEnabled() &&
     entitlementsReady &&
@@ -258,7 +271,7 @@ export default function StudyPlanScreen() {
     entitlements.customStudyPlan === true;
 
   const plan = useMemo(() => {
-    if (!testDate) return null;
+    if (!testDate || testDateExpired) return null;
 
     return generateStudyPlan({
       intensity: studyPlanIntensity,
@@ -268,7 +281,14 @@ export default function StudyPlanScreen() {
       testDate,
       totalQuestions: questions.length,
     });
-  }, [mockExamSessions.length, now, questionProgress, studyPlanIntensity, testDate]);
+  }, [
+    mockExamSessions.length,
+    now,
+    questionProgress,
+    studyPlanIntensity,
+    testDate,
+    testDateExpired,
+  ]);
 
   const weeklyBreakdown = useMemo(() => {
     if (!plan) return [];
@@ -282,6 +302,30 @@ export default function StudyPlanScreen() {
   }, [answerHistory, mockExamSessions, now, plan]);
 
   if (!testDate || !plan) {
+    if (testDate && testDateExpired) {
+      return (
+        <ScreenShell
+          eyebrow={copy.eyebrow}
+          title={copy.expiredTitle}
+          subtitle={copy.expiredBody(formatExamDate(testDate, language))}
+        >
+          <CountdownBanner language={language} />
+          <Card style={styles.noticeCard}>
+            <Badge tone="orange">{formatExamDate(testDate, language)}</Badge>
+            <Text style={styles.noticeText}>{copy.localOnly}</Text>
+            <RouteLink
+              accessibilityLabel={copy.expiredCta}
+              href={{ pathname: '/settings', params: { focus: 'study' } }}
+              style={styles.noticeLink}
+              variant="primary"
+            >
+              {copy.expiredCta}
+            </RouteLink>
+          </Card>
+        </ScreenShell>
+      );
+    }
+
     return (
       <ScreenShell eyebrow={copy.eyebrow} title={copy.noDateTitle} subtitle={copy.noDateBody}>
         <CountdownBanner language={language} />

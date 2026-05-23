@@ -25,7 +25,10 @@ test('onboarding route title stays accessible as a header', () => {
   assert.equal(summary.onboardingRouteCopyLabelsValidated, 17);
   assert.equal(summary.onboardingRouteCopyParityValidated, true);
   assert.match(source, /type OnboardingCopy =/);
-  assert.match(source, /import \{ formatExamDate, type StudyIntensity \}/);
+  assert.match(
+    source,
+    /formatExamDate,[\s\S]*isStudyPlanTestDateExpired,[\s\S]*type StudyIntensity/,
+  );
   assert.match(source, /normalizeStudyPlanTestDateIso/);
   assert.match(source, /supportedDailyGoalAnswerOptions,/);
   assert.match(
@@ -67,6 +70,8 @@ test('onboarding route title stays accessible as a header', () => {
   assert.match(source, /setStudyPlanIntensity\(studyIntensityForDailyGoal\(goal\)\);/);
   assert.match(source, /const handleTestDateChange = \(value: string\) => \{/);
   assert.match(source, /const normalizedDate = normalizeStudyPlanTestDateIso\(nextValue\);/);
+  assert.match(source, /isStudyPlanTestDateExpired\(new Date\(normalizedDate\)\)/);
+  assert.match(source, /setTestDateFeedback\('expired'\);/);
   assert.match(source, /setStudyPlanTestDateIso\(normalizedDate\);/);
   assert.match(source, /const handleSkipTestDate = \(\) => \{/);
   assert.match(source, /setStudyPlanTestDateIso\(null\);/);
@@ -80,6 +85,7 @@ test('onboarding route title stays accessible as a header', () => {
   assert.match(source, /When is your test\?/);
   assert.match(source, /Ange provdatum som ÅÅÅÅ-MM-DD/);
   assert.match(source, /Enter test date as YYYY-MM-DD/);
+  assert.match(source, /A past date cannot create an active plan/);
   assert.match(source, /Jag har inte bokat än/);
   assert.match(source, /I haven't booked it yet/);
   assert.doesNotMatch(source, /Get a daily plan|questions\/day|mocks this week|59 kr/);

@@ -288,6 +288,17 @@ test('daysUntil and formatExamDate: invalid dates use safe fallback values', () 
   assert.doesNotMatch(formatExamDate(invalidDate, 'en'), /Invalid Date/);
 });
 
+test('isStudyPlanTestDateExpired: compares custom test dates by local day', () => {
+  const { isStudyPlanTestDateExpired } = loadTs('lib/learning/examDate.ts');
+  const localNow = new Date(2026, 4, 22, 12, 0, 0);
+
+  assert.equal(isStudyPlanTestDateExpired(new Date(2026, 4, 21, 23, 59, 59), localNow), true);
+  assert.equal(isStudyPlanTestDateExpired(new Date(2026, 4, 22, 0, 0, 0), localNow), false);
+  assert.equal(isStudyPlanTestDateExpired(new Date(2026, 4, 23, 0, 0, 0), localNow), false);
+  assert.equal(isStudyPlanTestDateExpired(new Date('not-a-date'), localNow), false);
+  assert.equal(isStudyPlanTestDateExpired(new Date(2026, 4, 21), new Date('not-a-date')), false);
+});
+
 test('generateStudyPlan: normalizes NaN, Invalid Date, and unknown intensity inputs', () => {
   const { generateStudyPlan } = loadTs('lib/learning/examDate.ts');
   let plan;

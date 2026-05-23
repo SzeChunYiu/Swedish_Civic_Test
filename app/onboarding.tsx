@@ -7,7 +7,11 @@ import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
 import { QuestionDisclaimer } from '../components/quiz/QuestionDisclaimer';
 import { RouteLink } from '../components/ui/RouteLink';
 import { useAuth, type AuthProviderId } from '../lib/auth/AuthContext';
-import { formatExamDate, type StudyIntensity } from '../lib/learning/examDate';
+import {
+  formatExamDate,
+  isStudyPlanTestDateExpired,
+  type StudyIntensity,
+} from '../lib/learning/examDate';
 import {
   normalizeStudyPlanTestDateIso,
   supportedDailyGoalAnswerOptions,
@@ -57,6 +61,7 @@ type OnboardingCopy = {
   subtitle: string;
   testDateInputAccessibilityLabel: string;
   testDateInputPlaceholder: string;
+  testDateExpired: string;
   testDateInvalid: string;
   testDateSaved: (formattedDate: string) => string;
   testDateSkip: string;
@@ -116,6 +121,8 @@ const onboardingCopy: Record<AppLanguage, OnboardingCopy> = {
       'En liten, fristående studiekompis för daglig övning, provträning och genomgång av frågor du missat.',
     testDateInputAccessibilityLabel: 'Ange provdatum som ÅÅÅÅ-MM-DD',
     testDateInputPlaceholder: '2026-08-15',
+    testDateExpired:
+      'Välj dagens datum eller ett framtida datum. Ett passerat datum ger ingen aktiv plan.',
     testDateInvalid: 'Använd formatet ÅÅÅÅ-MM-DD eller hoppa över tills du har bokat.',
     testDateSaved: (formattedDate) => `Sparat provdatum: ${formattedDate}.`,
     testDateSkip: 'Jag har inte bokat än',
@@ -172,6 +179,7 @@ const onboardingCopy: Record<AppLanguage, OnboardingCopy> = {
       'A small, independent study companion for daily practice, mock exams, and mistake review.',
     testDateInputAccessibilityLabel: 'Enter test date as YYYY-MM-DD',
     testDateInputPlaceholder: '2026-08-15',
+    testDateExpired: 'Choose today or a future date. A past date cannot create an active plan.',
     testDateInvalid: "Use YYYY-MM-DD, or skip until you've booked.",
     testDateSaved: (formattedDate) => `Test date saved: ${formattedDate}.`,
     testDateSkip: "I haven't booked it yet",
@@ -202,17 +210,19 @@ export default function Screen() {
   const [testDateInput, setTestDateInput] = useState(() =>
     studyPlanTestDateIso ? studyPlanTestDateIso.slice(0, 10) : '',
   );
-  const [testDateFeedback, setTestDateFeedback] = useState<'idle' | 'invalid' | 'saved'>(
-    studyPlanTestDateIso ? 'saved' : 'idle',
-  );
+  const [testDateFeedback, setTestDateFeedback] = useState<
+    'idle' | 'expired' | 'invalid' | 'saved'
+  >(studyPlanTestDateIso ? 'saved' : 'idle');
   const [busyProvider, setBusyProvider] = useState<AuthProviderId | null>(null);
   const copy = onboardingCopy[language];
   const testDateFeedbackText =
     testDateFeedback === 'invalid'
       ? copy.testDateInvalid
-      : testDateFeedback === 'saved' && studyPlanTestDateIso
-        ? copy.testDateSaved(formatExamDate(new Date(studyPlanTestDateIso), language))
-        : null;
+      : testDateFeedback === 'expired'
+        ? copy.testDateExpired
+        : testDateFeedback === 'saved' && studyPlanTestDateIso
+          ? copy.testDateSaved(formatExamDate(new Date(studyPlanTestDateIso), language))
+          : null;
 
   useEffect(() => {
     if (!studyPlanTestDateIso) return;
@@ -238,6 +248,11 @@ export default function Screen() {
 
     const normalizedDate = normalizeStudyPlanTestDateIso(nextValue);
     if (normalizedDate) {
+      if (isStudyPlanTestDateExpired(new Date(normalizedDate))) {
+        setTestDateFeedback('expired');
+        return;
+      }
+
       setStudyPlanTestDateIso(normalizedDate);
       setTestDateFeedback('saved');
       return;

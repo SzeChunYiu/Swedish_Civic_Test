@@ -269,6 +269,16 @@ test('Onboarding optional test date persists locally and skip clears it without 
     )
     .toBe('2026-08-15T00:00:00.000Z');
 
+  await testDateInput.fill('2026-05-20');
+  await expect(
+    page.getByText('Choose today or a future date. A past date cannot create an active plan.'),
+  ).toBeVisible();
+  await expect
+    .poll(() =>
+      page.evaluate((key) => window.localStorage.getItem(key), settingsStudyPlanTestDateIsoKey),
+    )
+    .toBe('2026-08-15T00:00:00.000Z');
+
   await page.getByRole('button', { name: 'Continue without a booked test date' }).click();
   await expect(testDateInput).toHaveValue('');
   await expect
