@@ -187,6 +187,34 @@ async function openStaticMock(page: Page, baseUrl: string, language: Language) {
   await expect(page.locator('#mock-stage')).toBeVisible();
 }
 
+async function openStaticPractice(page: Page, baseUrl: string, language: Language) {
+  const allowedOrigin = new URL(baseUrl).origin;
+
+  await page.route('**/*', async (route) => {
+    const requestUrl = new URL(route.request().url());
+
+    if (requestUrl.origin !== allowedOrigin) {
+      await route.fulfill({ body: '', contentType: 'text/javascript; charset=utf-8', status: 200 });
+      return;
+    }
+
+    await route.continue();
+  });
+  await page.addInitScript((nextLanguage: Language) => {
+    localStorage.setItem('smt_ads_mode', 'none');
+    localStorage.setItem('smt_buddy_hidden', '1');
+    localStorage.setItem('smt_consent', 'min');
+    localStorage.setItem('smt_lang', nextLanguage);
+    localStorage.setItem('smt_motion', 'reduce');
+    sessionStorage.setItem('smt_anchor_closed', '1');
+    sessionStorage.setItem('smt_buddy_greeted', '1');
+  }, language);
+
+  await page.goto(`${baseUrl}/#/practice?c=mix`, { waitUntil: 'load' });
+  await expect(page.locator('html')).toHaveAttribute('lang', language);
+  await expect(page.locator('#quiz-stage .quiz__q')).toBeVisible();
+}
+
 async function submitShortMockAttempt(page: Page, contract: MockCopyContract) {
   const stage = page.locator('#mock-stage');
 
@@ -253,3 +281,34 @@ for (const contract of copyContracts) {
     expect(pageErrors).toEqual([]);
   });
 }
+
+test('static Practice quiz-again restores scroll and focus to the fresh question', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const pageErrors = collectPageErrors(page);
+  const stage = page.locator('#quiz-stage');
+
+  await openStaticPractice(page, staticSite.baseUrl, 'en');
+
+  for (let index = 0; index < 10; index += 1) {
+    await stage.locator('.quiz__opt').first().click();
+    await stage.locator('#quiz-next').click();
+  }
+  await page.evaluate(() => window.scrollTo(0, 800));
+
+  await expect(stage.locator('#quiz-again')).toBeVisible();
+  await stage.locator('#quiz-again').click();
+
+  const questionHeading = stage.locator('.quiz__q');
+  await expect(questionHeading).toBeVisible();
+  await expect(questionHeading).toBeFocused();
+  await expect
+    .poll(() => page.evaluate(() => window.scrollY), {
+      message: 'Practice retry should scroll to the fresh question top',
+    })
+    .toBe(0);
+  await expectNoHorizontalOverflow(page, 'Practice quiz-again focus reset');
+
+  expect(pageErrors).toEqual([]);
+});

@@ -2537,6 +2537,15 @@ function smtQuizSessionId(scope) {
   return `practice:${scope}:attempt:${SMT_QUIZ.attempt || 1}`;
 }
 
+function smtQuizFocusCurrentQuestion() {
+  const stage = document.getElementById('quiz-stage');
+  const target = stage && stage.querySelector('[data-quiz-focus-target]');
+  if (!target || typeof target.focus !== 'function') return;
+  requestAnimationFrame(() => {
+    target.focus({ preventScroll: true });
+  });
+}
+
 function smtQuizRender() {
   const stage = document.getElementById('quiz-stage');
   if (!stage) return;
@@ -2717,7 +2726,7 @@ function smtQuizRender() {
     <div class="quiz__progress">${dots}</div>
     <div class="quiz__card">
       <div class="quiz__crumb">${smtQuizEscapeHtml(smtQuizChapterLabel(q, lang))}</div>
-      <h2 class="quiz__q">${questionText}</h2>
+      <h2 class="quiz__q" tabindex="-1" data-quiz-focus-target>${questionText}</h2>
       ${sourceRow}
       <div class="quiz__opts">${opts}</div>
       ${feedback}
@@ -2836,6 +2845,8 @@ document.addEventListener('click', (e) => {
   }
   if (e.target.closest('#quiz-again')) {
     smtQuizReset();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    smtQuizFocusCurrentQuestion();
     return;
   }
 });

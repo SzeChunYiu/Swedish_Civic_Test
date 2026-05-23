@@ -289,6 +289,20 @@ test('static Practice quiz-again starts a fresh attempt seed for the same scope'
   }
   assert.match(element('quiz-stage').innerHTML, /id="quiz-again"/);
 
+  const focusCalls = [];
+  const scrollCalls = [];
+  element('quiz-stage').querySelector = (selector) =>
+    selector === '[data-quiz-focus-target]'
+      ? {
+          focus(options) {
+            focusCalls.push(options);
+          },
+        }
+      : null;
+  sandbox.window.scrollTo = (options) => {
+    scrollCalls.push(options);
+  };
+
   for (const listener of clickListeners) {
     listener.handler({
       target: {
@@ -301,6 +315,12 @@ test('static Practice quiz-again starts a fresh attempt seed for the same scope'
 
   assert.deepEqual(parseDataIndexes(element('quiz-stage').innerHTML, 'data-i'), secondOrder);
   assert.notDeepEqual(firstOrder, secondOrder);
+  assert.match(element('quiz-stage').innerHTML, /data-quiz-focus-target/);
+  assert.equal(scrollCalls.length, 1);
+  assert.equal(scrollCalls[0].top, 0);
+  assert.equal(scrollCalls[0].behavior, 'smooth');
+  assert.equal(focusCalls.length, 1);
+  assert.equal(focusCalls[0].preventScroll, true);
   assert.equal(vm.runInContext('SMT_QUIZ.attempt', sandbox, { timeout: 3000 }), 2);
   assert.equal(vm.runInContext('SMT_QUIZ.score', sandbox, { timeout: 3000 }), 0);
 });
