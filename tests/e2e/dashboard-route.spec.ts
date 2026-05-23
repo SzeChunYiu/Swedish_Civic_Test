@@ -57,6 +57,7 @@ type DashboardProgressSeed = {
   dayBeforeYesterdayKey: string;
   todayKey: string;
   yesterdayKey: string;
+  zeroDayKey: string;
 };
 
 const dashboardLocales: DashboardLocaleFixture[] = [
@@ -165,6 +166,7 @@ function isoAtLocalHour(baseDate: Date, daysFromBase: number, hour: number): str
 
 function buildNonEmptyDashboardProgressSeed() {
   const today = new Date();
+  const threeDaysAgoDate = dateOffset(today, -3);
   const dayBeforeYesterdayDate = dateOffset(today, -2);
   const yesterdayDate = dateOffset(today, -1);
   const seed: DashboardProgressSeed = {
@@ -176,6 +178,7 @@ function buildNonEmptyDashboardProgressSeed() {
     dayBeforeYesterdayKey: localDateKey(dayBeforeYesterdayDate),
     todayKey: localDateKey(today),
     yesterdayKey: localDateKey(yesterdayDate),
+    zeroDayKey: localDateKey(threeDaysAgoDate),
   };
   const latestPastHour = today.getHours();
   const earlierPastHour = Math.max(0, latestPastHour - 1);
@@ -456,6 +459,43 @@ async function expectMockHistoryVisible(page: Page, fixture: DashboardLocaleFixt
   await expectNoHorizontalOverflow(page);
 }
 
+async function expectStreakSparklineVisualEncoding(page: Page, seed: DashboardProgressSeed) {
+  const zeroTrack = page.locator(`[aria-label="${seed.zeroDayKey}: 0"]`).first();
+  await expect(zeroTrack).toBeAttached();
+
+  const zeroMetrics = await zeroTrack.evaluate((node) => {
+    const element = node as HTMLElement;
+    const fill = element.firstElementChild as HTMLElement | null;
+    return {
+      fillCount: element.children.length,
+      fillHeight: fill?.getBoundingClientRect().height ?? 0,
+      trackHeight: element.getBoundingClientRect().height,
+    };
+  });
+
+  expect(zeroMetrics.trackHeight).toBeGreaterThan(0);
+  expect(zeroMetrics.fillCount).toBe(0);
+  expect(zeroMetrics.fillHeight).toBe(0);
+
+  const activeTrack = page.locator(`[aria-label="${seed.todayKey}: 10"]`).first();
+  await expect(activeTrack).toBeAttached();
+
+  const activeMetrics = await activeTrack.evaluate((node) => {
+    const element = node as HTMLElement;
+    const fill = element.firstElementChild as HTMLElement | null;
+    return {
+      fillCount: element.children.length,
+      fillHeight: fill?.getBoundingClientRect().height ?? 0,
+      trackHeight: element.getBoundingClientRect().height,
+    };
+  });
+
+  expect(activeMetrics.trackHeight).toBeGreaterThan(0);
+  expect(activeMetrics.fillCount).toBe(1);
+  expect(activeMetrics.fillHeight).toBeGreaterThan(0);
+  expect(activeMetrics.fillHeight).toBeLessThanOrEqual(activeMetrics.trackHeight);
+}
+
 async function expectNonEmptyProgressVisible(
   page: Page,
   fixture: DashboardLocaleFixture,
@@ -501,6 +541,7 @@ async function expectNonEmptyProgressVisible(
   await expect(page.getByLabel(`${seed.todayKey}: 10`).first()).toBeVisible();
   await expect(page.getByLabel(`${seed.yesterdayKey}: 10`).first()).toBeVisible();
   await expect(page.getByLabel(`${seed.dayBeforeYesterdayKey}: 10`).first()).toBeVisible();
+  await expectStreakSparklineVisualEncoding(page, seed);
   await expect(page.getByText(fixture.mockHistoryTitle, { exact: true }).last()).toBeVisible();
   await expect(page.getByText(fixture.mockHistoryEmptyState, { exact: true })).toHaveCount(0);
   await expectNoHorizontalOverflow(page);

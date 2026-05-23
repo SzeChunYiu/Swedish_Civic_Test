@@ -350,6 +350,31 @@ function assertDashboardAccessibilitySeparation(sources) {
   );
   assert.match(sources.sparkline, /copy\.emptyState/);
   assert.match(sources.sparkline, /aria-label=\{accessibilityLabel\}/);
+  assert.match(
+    sources.sparkline,
+    /export function xpBarFillPercent\(pointXp: number, maxXp: number\): number \{[\s\S]*pointXp <= 0[\s\S]*return 0;/,
+    'StreakXpSparkline must render zero-XP days as empty tracks',
+  );
+  assert.match(
+    sources.sparkline,
+    /return Math\.max\(5, Math\.round\(\(pointXp \/ maxXp\) \* 100\)\);/,
+    'StreakXpSparkline must keep a visible minimum for positive low-XP days',
+  );
+  assert.match(
+    sources.sparkline,
+    /accessibilityLabel=\{`\$\{point\.date\}: \$\{point\.xp\}`\}[\s\S]*aria-label=\{`\$\{point\.date\}: \$\{point\.xp\}`\}[\s\S]*style=\{styles\.barTrack\}/,
+    'StreakXpSparkline per-day labels must remain on the track so zero-XP days stay inspectable',
+  );
+  assert.match(
+    sources.sparkline,
+    /\{point\.xp > 0 \? \(\s*<View style=\{\[styles\.barFill, \{ height: `\$\{fillPercent\}%` \}\]\} \/>\s*\) : null\}/,
+    'StreakXpSparkline must only render accent fills for positive-XP days',
+  );
+  assert.doesNotMatch(
+    sources.sparkline,
+    /const fillPercent = maxXp > 0 \? Math\.max\(5, Math\.round\(\(point\.xp \/ maxXp\) \* 100\)\) : 5;/,
+    'StreakXpSparkline must not assign the positive minimum to every zero-XP day',
+  );
 
   assert.match(
     sources.dashboard,
@@ -570,6 +595,21 @@ test('dashboard accessibility parity rejects unlabelled mock history trend bars'
         ),
       }),
     /trend bars must keep localized per-attempt labels/,
+  );
+});
+
+test('dashboard accessibility parity rejects filled zero-XP sparkline days', () => {
+  const sources = loadSources();
+
+  assert.throws(
+    () =>
+      assertDashboardAccessibilitySeparation({
+        ...sources,
+        sparkline: sources.sparkline
+          .replace('pointXp <= 0', 'pointXp < 0')
+          .replace('{point.xp > 0 ? (', '{true ? ('),
+      }),
+    /zero-XP days as empty tracks|only render accent fills for positive-XP days/,
   );
 });
 

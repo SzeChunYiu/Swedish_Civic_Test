@@ -57,13 +57,17 @@ export function StreakXpSparkline({ copy, currentStreak, level, points }: Streak
           style={styles.sparkline}
         >
           {points.map((point) => {
-            const fillPercent = maxXp > 0 ? Math.max(5, Math.round((point.xp / maxXp) * 100)) : 5;
+            const fillPercent = xpBarFillPercent(point.xp, maxXp);
             return (
-              <View key={point.date} style={styles.barTrack}>
-                <View
-                  accessibilityLabel={`${point.date}: ${point.xp}`}
-                  style={[styles.barFill, { height: `${fillPercent}%` }]}
-                />
+              <View
+                accessibilityLabel={`${point.date}: ${point.xp}`}
+                aria-label={`${point.date}: ${point.xp}`}
+                key={point.date}
+                style={styles.barTrack}
+              >
+                {point.xp > 0 ? (
+                  <View style={[styles.barFill, { height: `${fillPercent}%` }]} />
+                ) : null}
               </View>
             );
           })}
@@ -71,6 +75,14 @@ export function StreakXpSparkline({ copy, currentStreak, level, points }: Streak
       )}
     </Card>
   );
+}
+
+export function xpBarFillPercent(pointXp: number, maxXp: number): number {
+  if (!Number.isFinite(pointXp) || !Number.isFinite(maxXp) || pointXp <= 0 || maxXp <= 0) {
+    return 0;
+  }
+
+  return Math.max(5, Math.round((pointXp / maxXp) * 100));
 }
 
 function createStyles(themeColors: ThemeColors) {
