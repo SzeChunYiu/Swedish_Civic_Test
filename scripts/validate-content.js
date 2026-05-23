@@ -10133,6 +10133,8 @@ let mockExamRuntimeParityValidated = false;
 let mockExamChapterBalanceParityValidated = false;
 let mockExamChapterDistributionSafetyCasesValidated = 0;
 let mockExamChapterDistributionSafetyParityValidated = false;
+let mockExamDifficultySafetyCasesValidated = 0;
+let mockExamDifficultySafetyParityValidated = false;
 let mockExamTimerParityValidated = false;
 let examSubmissionFinalityParityValidated = false;
 let examRouteHeadersValidated = 0;
@@ -12097,6 +12099,7 @@ if (process.argv.includes('--focus-mock-exam-runtime-parity')) {
   validateMockExamConfigTypeSchemaParity();
   validateMockExamRuntimeParity(defaultMockExamConfig);
   validateMockExamChapterDistributionSafety();
+  validateMockExamDifficultySafety();
   validateMockExamTimerParity(defaultMockExamConfig);
   validateExamRouteHeaderParity();
   validateExamRouteCopyParity();
@@ -12110,6 +12113,8 @@ if (process.argv.includes('--focus-mock-exam-runtime-parity')) {
     mockExamChapterBalanceParityValidated,
     mockExamChapterDistributionSafetyCasesValidated,
     mockExamChapterDistributionSafetyParityValidated,
+    mockExamDifficultySafetyCasesValidated,
+    mockExamDifficultySafetyParityValidated,
     mockExamTimerParityValidated,
     examRouteHeadersValidated,
     examRouteHeaderParityValidated,
@@ -14437,6 +14442,88 @@ function validateMockExamChapterDistributionSafety() {
 
   mockExamChapterDistributionSafetyCasesValidated = casesValidated;
   if (valid && casesValidated === 9) mockExamChapterDistributionSafetyParityValidated = true;
+}
+
+function validateMockExamDifficultySafety() {
+  if (typeof materializeMock !== 'function') return;
+
+  let valid = true;
+  let casesValidated = 0;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  function validateCase(condition, message) {
+    casesValidated += 1;
+    if (!condition) reject(message);
+  }
+
+  const validDifficulties = new Set(['easy', 'medium', 'hard']);
+  const malformedDifficulties = [
+    '',
+    'medium ',
+    'Medium',
+    'expert',
+    null,
+    undefined,
+    1,
+    Number.NaN,
+    ['medium'],
+    { level: 'medium' },
+  ];
+  const bank = [
+    { id: 'difficulty-valid-medium', difficulty: 'medium', chapterId: 'ch01' },
+    { id: 'difficulty-valid-hard', difficulty: 'hard', chapterId: 'ch01' },
+    ...malformedDifficulties.flatMap((difficulty, index) => [
+      { id: `difficulty-invalid-${index}-a`, difficulty, chapterId: 'ch02' },
+      { id: `difficulty-invalid-${index}-b`, difficulty, chapterId: 'ch02' },
+      { id: `difficulty-invalid-${index}-c`, difficulty, chapterId: 'ch02' },
+    ]),
+  ];
+
+  const mediumMock = materializeMock({ mockId: 'mock-2', bank });
+  const mixedMock = materializeMock({ mockId: 'mock-random', bank, seedOverride: 42 });
+  const mediumQuestions = Array.isArray(mediumMock?.questions) ? mediumMock.questions : [];
+  const mixedQuestions = Array.isArray(mixedMock?.questions) ? mixedMock.questions : [];
+
+  validateCase(
+    mediumQuestions.some((question) => question.questionId === 'difficulty-valid-medium'),
+    'mock exam difficulty safety must preserve valid medium picks',
+  );
+  validateCase(
+    mediumQuestions.find((question) => question.questionId === 'difficulty-valid-medium')
+      ?.difficulty === 'medium',
+    'mock exam difficulty safety must preserve valid medium metadata',
+  );
+  validateCase(
+    mediumQuestions.find((question) => question.questionId === 'difficulty-valid-hard')
+      ?.difficulty === 'hard',
+    'mock exam difficulty safety must preserve valid top-up difficulty metadata',
+  );
+  validateCase(
+    mediumQuestions.every(
+      (question) => question.difficulty === undefined || validDifficulties.has(question.difficulty),
+    ),
+    'mock exam difficulty safety must not emit malformed descriptor/top-up difficulties',
+  );
+  validateCase(
+    mixedQuestions.some(
+      (question) =>
+        question.questionId.startsWith('difficulty-invalid-') && question.difficulty === undefined,
+    ),
+    'mock exam difficulty safety must neutralize malformed mixed-mock difficulties',
+  );
+  validateCase(
+    mixedQuestions.every(
+      (question) => question.difficulty === undefined || validDifficulties.has(question.difficulty),
+    ),
+    'mock exam difficulty safety must not emit malformed mixed-mock difficulties',
+  );
+
+  mockExamDifficultySafetyCasesValidated = casesValidated;
+  if (valid && casesValidated === 6) mockExamDifficultySafetyParityValidated = true;
 }
 
 function expectedFormattedExamTime(totalSeconds) {
@@ -27431,6 +27518,7 @@ validateQuestionDisclaimerParity();
 validateMockExamConfigTypeSchemaParity();
 validateMockExamRuntimeParity(defaultMockExamConfig);
 validateMockExamChapterDistributionSafety();
+validateMockExamDifficultySafety();
 validateMockExamTimerParity(defaultMockExamConfig);
 validateExamSubmissionFinalityParity();
 validateExamRouteHeaderParity();
@@ -27596,6 +27684,8 @@ console.log(
       mockExamChapterBalanceParityValidated,
       mockExamChapterDistributionSafetyCasesValidated,
       mockExamChapterDistributionSafetyParityValidated,
+      mockExamDifficultySafetyCasesValidated,
+      mockExamDifficultySafetyParityValidated,
       mockExamTimerParityValidated,
       examSubmissionFinalityParityValidated,
       examRouteHeadersValidated,

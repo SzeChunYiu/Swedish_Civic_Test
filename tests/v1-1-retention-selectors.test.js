@@ -606,6 +606,68 @@ test('materializeMock: small bank gets topped up from wider pool, isUnderfilled 
   assert.equal(mat.isUnderfilled, false);
 });
 
+test('materializeMock: malformed bank difficulties are neutralized in mixed and top-up picks', () => {
+  const { materializeMock } = loadTs('lib/learning/mockExamLibrary.ts');
+  const malformedDifficulties = [
+    '',
+    'medium ',
+    'Medium',
+    'expert',
+    null,
+    undefined,
+    1,
+    Number.NaN,
+    ['medium'],
+    { level: 'medium' },
+  ];
+  const bank = [
+    { id: 'q-valid-medium', difficulty: 'medium', chapterId: 'ch01' },
+    { id: 'q-valid-hard', difficulty: 'hard', chapterId: 'ch01' },
+    ...malformedDifficulties.flatMap((difficulty, index) => [
+      { id: `q-invalid-${index}-a`, difficulty, chapterId: 'ch02' },
+      { id: `q-invalid-${index}-b`, difficulty, chapterId: 'ch02' },
+      { id: `q-invalid-${index}-c`, difficulty, chapterId: 'ch02' },
+    ]),
+  ];
+
+  const mediumMock = materializeMock({ mockId: 'mock-2', bank });
+  assert.ok(mediumMock.questions.some((question) => question.questionId === 'q-valid-medium'));
+  assert.equal(
+    mediumMock.questions.find((question) => question.questionId === 'q-valid-medium').difficulty,
+    'medium',
+  );
+  assert.equal(
+    mediumMock.questions.find((question) => question.questionId === 'q-valid-hard')?.difficulty,
+    'hard',
+  );
+  assert.ok(
+    mediumMock.questions.every(
+      (question) =>
+        question.difficulty === undefined ||
+        question.difficulty === 'easy' ||
+        question.difficulty === 'medium' ||
+        question.difficulty === 'hard',
+    ),
+  );
+
+  const mixedMock = materializeMock({ mockId: 'mock-random', bank, seedOverride: 42 });
+  assert.ok(
+    mixedMock.questions.some(
+      (question) =>
+        question.questionId.startsWith('q-invalid-') && question.difficulty === undefined,
+    ),
+  );
+  assert.ok(
+    mixedMock.questions.every(
+      (question) =>
+        question.difficulty === undefined ||
+        question.difficulty === 'easy' ||
+        question.difficulty === 'medium' ||
+        question.difficulty === 'hard',
+    ),
+  );
+});
+
 test('materializeMock: chapter distribution ignores unsafe and malformed chapter ids', () => {
   const { materializeMock } = loadTs('lib/learning/mockExamLibrary.ts');
   const bank = [

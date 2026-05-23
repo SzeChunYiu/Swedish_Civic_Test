@@ -134,6 +134,10 @@ function normalizeChapterDistributionKey(value: unknown): string | null {
   return chapterId;
 }
 
+function normalizeQuestionDifficulty(value: unknown): MockExamQuestionPick['difficulty'] {
+  return value === 'easy' || value === 'medium' || value === 'hard' ? value : undefined;
+}
+
 export interface MockExamQuestionPick {
   questionId: string;
   /** Difficulty as the bank declared it, kept for the result-screen breakdown. */
@@ -144,7 +148,7 @@ export interface MaterializeMockInput {
   mockId: string;
   bank: ReadonlyArray<{
     id: string;
-    difficulty?: 'easy' | 'medium' | 'hard';
+    difficulty?: unknown;
     chapterId?: string;
   }>;
   /** Overrides the seed (used by 'mock-random' to roll fresh each time). */
@@ -183,7 +187,9 @@ export function materializeMock(input: MaterializeMockInput): MaterializedMock |
   const filtered =
     descriptor.difficulty === 'mixed'
       ? input.bank.slice()
-      : input.bank.filter((q) => q.difficulty === descriptor.difficulty);
+      : input.bank.filter(
+          (q) => normalizeQuestionDifficulty(q.difficulty) === descriptor.difficulty,
+        );
   const filteredShuffled = shuffle(filtered, rand);
 
   let picked = filteredShuffled.slice(0, MOCK_EXAM_QUESTION_COUNT);
@@ -203,7 +209,10 @@ export function materializeMock(input: MaterializeMockInput): MaterializedMock |
 
   return {
     descriptor,
-    questions: picked.map((q) => ({ questionId: q.id, difficulty: q.difficulty })),
+    questions: picked.map((q) => ({
+      questionId: q.id,
+      difficulty: normalizeQuestionDifficulty(q.difficulty),
+    })),
     chapterDistribution,
     isUnderfilled: picked.length < MOCK_EXAM_QUESTION_COUNT,
   };

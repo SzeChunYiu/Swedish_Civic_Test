@@ -600,6 +600,8 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
       'mockExamChapterBalanceParityValidated',
       'mockExamChapterDistributionSafetyCasesValidated',
       'mockExamChapterDistributionSafetyParityValidated',
+      'mockExamDifficultySafetyCasesValidated',
+      'mockExamDifficultySafetyParityValidated',
       'mockExamTimerParityValidated',
       'examRouteHeadersValidated',
       'examRouteHeaderParityValidated',
