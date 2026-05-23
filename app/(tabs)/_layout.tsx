@@ -30,7 +30,7 @@ const tabTitleCopy: Record<AppLanguage, TabTitleCopy> = {
     learn: 'Learn',
     practice: 'Practice',
     exam: 'Exam',
-    mistakes: 'Mistakes',
+    mistakes: 'Review',
     profile: 'Profile',
   },
 };

@@ -75,14 +75,14 @@ const mistakesCopy: Record<AppLanguage, MistakesCopy> = {
     correctAnswerLabel: 'Rätt svar',
     emptyPracticeAccessibilityLabel: 'Öva svåra frågor',
     emptyPracticeLink: 'Starta övning',
-    emptyText: 'När du missar en övningsfråga visas den här.',
-    emptyTitle: 'Inga missade frågor ännu',
+    emptyText: 'Bokmärk en fråga eller svara fel i övningen, så visas den här.',
+    emptyTitle: 'Inga sparade eller missade frågor ännu',
     mistakeBadge: 'Missade frågor',
     mistakeTitle: 'Frågor att öva på',
     selectedWrongAnswerLabel: 'Ditt senaste svar',
     subtitle:
-      'Här samlas frågor du vill öva på igen, med förklaring, källhänvisning och ditt senaste svar.',
-    title: 'Misstag',
+      'Här samlas sparade frågor och sådant du svarat fel på, med förklaring, källhänvisning och ditt senaste svar.',
+    title: 'Repetition',
     wrongAnswers: (count) => `Fel svar: ${count}`,
   },
   en: {
@@ -97,14 +97,15 @@ const mistakesCopy: Record<AppLanguage, MistakesCopy> = {
     correctAnswerLabel: 'Correct answer',
     emptyPracticeAccessibilityLabel: 'Practice weak questions',
     emptyPracticeLink: 'Start practice',
-    emptyText: 'Answer a practice question incorrectly and it will appear here.',
-    emptyTitle: 'No mistakes yet',
+    emptyText:
+      'Bookmark a question or answer one incorrectly in practice, and it will appear here.',
+    emptyTitle: 'No saved or missed questions yet',
     mistakeBadge: 'Mistake log',
     mistakeTitle: 'Wrong answers to revisit',
     selectedWrongAnswerLabel: 'Your latest wrong answer',
     subtitle:
-      'Review wrong answers with the question, explanation, source reference, and repetition count in one place.',
-    title: 'Mistakes',
+      'Review saved questions and wrong answers with explanations, source references, and your latest answer in one place.',
+    title: 'Review',
     wrongAnswers: (count) => `Wrong answers: ${count}`,
   },
 };

@@ -38,7 +38,7 @@ test('Practice bookmark persists into Mistakes saved list after reload and clear
   await expect(page.getByRole('heading', { name: 'Bookmarked questions' })).toBeVisible();
   await expect(page.getByText('Saved for focused review', { exact: true })).toBeVisible();
   await expect(page.locator('[data-testid="mistakes-review-card"]')).toHaveCount(1);
-  await expect(page.getByText('No mistakes yet', { exact: true })).toHaveCount(0);
+  await expect(page.getByText('No saved or missed questions yet', { exact: true })).toHaveCount(0);
 
   await page.goto('/practice', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
@@ -60,6 +60,6 @@ test('Practice bookmark persists into Mistakes saved list after reload and clear
   await expect(page.getByRole('heading', { name: 'Bookmarked questions' })).toHaveCount(0);
   await expect(page.getByText('Saved for focused review', { exact: true })).toHaveCount(0);
   await expect(page.locator('[data-testid="mistakes-review-card"]')).toHaveCount(0);
-  await expect(page.getByText('No mistakes yet', { exact: true })).toBeVisible();
+  await expect(page.getByText('No saved or missed questions yet', { exact: true })).toBeVisible();
   expect(consoleErrors).toEqual([]);
 });

@@ -35,13 +35,13 @@ test('mistakes route shell copy follows the persisted settings language', () => 
   assert.match(source, /const mistakesCopy: Record<AppLanguage, MistakesCopy> = \{/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(source, /const copy = mistakesCopy\[language\];/);
-  assert.match(source, /Här samlas frågor du vill öva på igen, med förklaring, källhänvisning/);
+  assert.match(source, /Här samlas sparade frågor och sådant du svarat fel på, med förklaring/);
   assert.match(source, /Sparad till senare övning/);
-  assert.match(source, /Inga missade frågor ännu/);
+  assert.match(source, /Inga sparade eller missade frågor ännu/);
   assert.doesNotMatch(source, /Inga misstag ännu/);
   assert.match(source, /Frågor att öva på/);
   assert.match(source, /Ditt senaste svar/);
-  assert.match(source, /Review wrong answers with the question, explanation, source reference/);
+  assert.match(source, /Review saved questions and wrong answers with explanations/);
   assert.match(source, /Missade frågor/);
   [
     ['Fell', 'ogg'],
@@ -80,7 +80,7 @@ test('mistakes route shell copy follows the persisted settings language', () => 
   assert.match(mistakesRouteE2eSource, /Bookmarked questions/);
   assert.match(mistakesRouteE2eSource, /Saved for focused review/);
   assert.match(mistakesRouteE2eSource, /Remove this question bookmark/);
-  assert.match(mistakesRouteE2eSource, /No mistakes yet/);
+  assert.match(mistakesRouteE2eSource, /No saved or missed questions yet/);
 });
 
 test('mistakes route copy parity rejects the stale Swedish empty-state title', () => {
@@ -96,7 +96,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/app/(tabs)/mistakes.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace("'Inga missade frågor ännu'", "'Inga misstag ännu'");
+      .replace("'Inga sparade eller missade frågor ännu'", "'Inga misstag ännu'");
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -110,7 +110,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /mistakes route is missing sv copy "Inga missade frågor ännu"/,
+    /mistakes route is missing sv copy "Inga sparade eller missade frågor ännu"/,
   );
 });
 
@@ -158,7 +158,10 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/app/(tabs)/mistakes.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace("'När du missar en övningsfråga visas den här.'", "'No mistakes yet'");
+      .replace(
+        "'Bokmärk en fråga eller svara fel i övningen, så visas den här.'",
+        "'No saved or missed questions yet'",
+      );
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };

@@ -26,11 +26,11 @@ test('mistakes route title, review sections, and empty state stay accessible as 
   assert.match(source, /const mistakesCopy: Record<AppLanguage, MistakesCopy>/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(source, /const copy = mistakesCopy\[language\];/);
-  assert.match(source, /Misstag/);
-  assert.match(source, /Inga missade frågor ännu/);
+  assert.match(source, /Repetition/);
+  assert.match(source, /Inga sparade eller missade frågor ännu/);
   assert.doesNotMatch(source, /Inga misstag ännu/);
   assert.match(source, /Frågor att öva på/);
-  assert.match(source, /Mistakes/);
+  assert.match(source, /Review/);
   assert.match(
     source,
     /<Text accessibilityRole="header" style=\{styles\.title\}>\s*\{copy\.title\}\s*<\/Text>/,

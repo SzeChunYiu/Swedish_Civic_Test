@@ -1158,8 +1158,8 @@ test('home screen surfaces focused review copy and review action', () => {
   assert.match(source, /Fokuserad repetition/);
   assert.match(source, /Keep track of what needs review/);
   assert.match(source, /Håll koll på det som behöver övas/);
-  assert.match(source, /Review saved questions/);
-  assert.match(source, /Repetera sparade frågor/);
+  assert.match(source, /Review saved and missed questions/);
+  assert.match(source, /Repetera sparade och missade frågor/);
   assert.match(source, /href="\/mistakes"/);
 });
 

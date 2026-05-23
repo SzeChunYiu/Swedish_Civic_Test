@@ -46,14 +46,14 @@ const topBarActionsCopy: Record<AppLanguage, TopBarActionsCopy> = {
   sv: {
     audioEnabled: 'Ljud är på, tryck för att stänga av',
     audioMuted: 'Ljud är avstängt, tryck för att slå på',
-    savedQuestions: 'Öppna sparade frågor',
+    savedQuestions: 'Öppna sparade och missade frågor',
     search: 'Sök',
     settings: 'Öppna inställningar',
   },
   en: {
     audioEnabled: 'Audio enabled, tap to mute',
     audioMuted: 'Audio muted, tap to enable',
-    savedQuestions: 'Open saved questions',
+    savedQuestions: 'Open saved and missed questions',
     search: 'Search',
     settings: 'Open settings',
   },

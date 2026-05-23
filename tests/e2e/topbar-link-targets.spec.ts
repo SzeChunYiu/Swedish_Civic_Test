@@ -4,7 +4,7 @@ import { dismissBlockingModals, markAboutTheTestSeen } from './browserLaunch';
 
 const topBarLinks = [
   { href: /\/search$/, label: 'Sök' },
-  { href: /\/mistakes$/, label: 'Öppna sparade frågor' },
+  { href: /\/mistakes$/, label: 'Öppna sparade och missade frågor' },
   { href: /\/settings$/, label: 'Öppna inställningar' },
 ] as const;
 

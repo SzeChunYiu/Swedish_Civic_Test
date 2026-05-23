@@ -101,7 +101,9 @@ async function collectTopBarTargets(page: Page) {
     name: /Ljud är på, tryck för att stänga av|Audio enabled, tap to mute/,
   });
   const search = page.getByRole('link', { name: /Sök|Search/ });
-  const saved = page.getByRole('link', { name: /Öppna sparade frågor|Open saved questions/ });
+  const saved = page.getByRole('link', {
+    name: /Öppna sparade och missade frågor|Open saved and missed questions/,
+  });
   const settings = page.getByRole('link', { name: /Öppna inställningar|Open settings/ });
 
   return [
@@ -143,7 +145,9 @@ test('topbar language picker aligns with adjacent mobile header targets', async 
   );
   await expectTopBarLinkFeedback(
     page,
-    page.getByRole('link', { name: /Öppna sparade frågor|Open saved questions/ }),
+    page.getByRole('link', {
+      name: /Öppna sparade och missade frågor|Open saved and missed questions/,
+    }),
     'Saved questions link',
   );
   await expectTopBarLinkFeedback(

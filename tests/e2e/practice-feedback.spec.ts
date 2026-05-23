@@ -934,7 +934,7 @@ test('wrong practice answer appears in Mistakes with English answer review conte
     answerRadio(page, 'In the Nordic region in northern Europe, Correct answer'),
   ).toBeVisible();
 
-  await page.getByText('Mistakes', { exact: true }).click();
+  await page.getByText('Review', { exact: true }).click();
   await closeLaunchAdIfPresent(page);
 
   await expect(page).toHaveURL(/\/mistakes$/);

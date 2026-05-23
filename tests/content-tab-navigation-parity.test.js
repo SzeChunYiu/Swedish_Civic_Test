@@ -28,7 +28,7 @@ test('tab navigation uses localized labels and suppresses placeholder glyph outp
   assert.match(tabLayout, /exam: 'Övningsprov'/);
   assert.doesNotMatch(tabLayout, /exam:\s*'Prov'/);
   assert.match(tabLayout, /mistakes: 'Repetition'/);
-  assert.match(tabLayout, /mistakes: 'Mistakes'/);
+  assert.match(tabLayout, /mistakes: 'Review'/);
   assert.doesNotMatch(tabLayout, /mistakes:\s*'Misstag'/);
   assert.match(
     tabLayout,

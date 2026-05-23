@@ -581,7 +581,7 @@ test('Expo Router tab scaffold titles follow the persisted settings language', (
   assert.match(tabLayout, /learn: 'Learn'/);
   assert.match(tabLayout, /practice: 'Practice'/);
   assert.match(tabLayout, /exam: 'Exam'/);
-  assert.match(tabLayout, /mistakes: 'Mistakes'/);
+  assert.match(tabLayout, /mistakes: 'Review'/);
   assert.match(tabLayout, /profile: 'Profile'/);
   assert.match(tabLayout, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(tabLayout, /const copy = tabTitleCopy\[language\];/);

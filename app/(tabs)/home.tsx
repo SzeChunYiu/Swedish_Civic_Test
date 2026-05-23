@@ -157,7 +157,7 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     dayStreakMetric: 'dagars svit',
     eyebrow: 'Studieöversikt',
     feedbackBadge: 'Fokuserad repetition',
-    feedbackLink: 'Repetera sparade frågor',
+    feedbackLink: 'Repetera sparade och missade frågor',
     feedbackLinkAccessibilityLabel: 'Granska bokmärkta eller missade frågor',
     feedbackText:
       'Sparade och missade frågor samlas på ett ställe, med källstödda förklaringar och utan annonser i provläget.',
@@ -319,7 +319,7 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     dayStreakMetric: 'day streak',
     eyebrow: 'Study dashboard',
     feedbackBadge: 'Focused review',
-    feedbackLink: 'Review saved questions',
+    feedbackLink: 'Review saved and missed questions',
     feedbackLinkAccessibilityLabel: 'Review bookmarked or missed questions',
     feedbackText:
       'Saved and missed questions stay in one place, with source-backed explanations and no ads in exam mode.',

@@ -10,15 +10,16 @@ test.use({ viewport: { width: 390, height: 844 } });
 const emptyStateCases = [
   {
     ctaLabel: 'Öva svåra frågor',
-    emptyText: 'När du missar en övningsfråga visas den här.',
-    emptyTitle: 'Inga missade frågor ännu',
+    emptyText: 'Bokmärk en fråga eller svara fel i övningen, så visas den här.',
+    emptyTitle: 'Inga sparade eller missade frågor ännu',
     hubTitle: 'Välj hur du vill öva',
     language: 'sv',
   },
   {
     ctaLabel: 'Practice weak questions',
-    emptyText: 'Answer a practice question incorrectly and it will appear here.',
-    emptyTitle: 'No mistakes yet',
+    emptyText:
+      'Bookmark a question or answer one incorrectly in practice, and it will appear here.',
+    emptyTitle: 'No saved or missed questions yet',
     hubTitle: 'Choose how to practise',
     language: 'en',
   },

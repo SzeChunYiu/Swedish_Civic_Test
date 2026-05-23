@@ -17,7 +17,7 @@ const routeSequence: Array<{
   { name: 'learn', path: '/learn', label: { sv: 'Lär dig', en: 'Learn' } },
   { name: 'practice', path: '/practice', label: { sv: 'Öva', en: 'Practice' } },
   { name: 'exam', path: '/exam', label: { sv: 'Övningsprov', en: 'Exam' } },
-  { name: 'mistakes', path: '/mistakes', label: { sv: 'Misstag', en: 'Mistakes' } },
+  { name: 'mistakes', path: '/mistakes', label: { sv: 'Repetition', en: 'Review' } },
   { name: 'profile', path: '/profile', label: { sv: 'Profil', en: 'Profile' } },
 ];
 
