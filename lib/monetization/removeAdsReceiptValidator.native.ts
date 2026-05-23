@@ -23,6 +23,20 @@ type ReceiptValidatorEnv = Record<string, string | undefined>;
 
 type ReceiptValidatorReceiptPayload = Record<string, string>;
 
+export const NATIVE_RECEIPT_VALIDATOR_RAW_FIELD_ALLOWLIST = [
+  'dataAndroid',
+  'originalTransactionDateIOS',
+  'originalTransactionIdentifierIOS',
+  'orderId',
+  'packageNameAndroid',
+  'purchaseToken',
+  'receipt',
+  'receiptData',
+  'signatureAndroid',
+  'transactionId',
+  'transactionReceipt',
+] as const;
+
 interface NativeRemoveAdsReceiptValidatorOptions {
   endpointUrl?: string;
   env?: ReceiptValidatorEnv;
@@ -65,19 +79,7 @@ function createReceiptPayload(raw: unknown): ReceiptValidatorReceiptPayload | nu
   if (!isRecord(raw)) return null;
 
   const payload: ReceiptValidatorReceiptPayload = {};
-  for (const key of [
-    'dataAndroid',
-    'originalTransactionDateIOS',
-    'originalTransactionIdentifierIOS',
-    'orderId',
-    'packageNameAndroid',
-    'purchaseToken',
-    'receipt',
-    'receiptData',
-    'signatureAndroid',
-    'transactionId',
-    'transactionReceipt',
-  ]) {
+  for (const key of NATIVE_RECEIPT_VALIDATOR_RAW_FIELD_ALLOWLIST) {
     copyReceiptString(payload, raw, key);
   }
 

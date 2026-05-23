@@ -49,7 +49,7 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
       /async function revalidateStoredRemoveAdsEntitlementRecordWithConnectedProvider\(\{[\s\S]*?\nfunction createResult/,
     )?.[0] ?? '';
 
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 40);
+  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 41);
   assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
   assert.match(purchaseSource, /REMOVE_ADS_RECORD_SCHEMA_VERSION = 1/);
   assert.match(purchaseSource, /interface RemoveAdsProductMetadata/);
@@ -81,6 +81,14 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.match(purchaseSource, /validateRemoveAdsReceipt\?\(/);
   assert.match(purchaseSource, /export type NativeRemoveAdsReceiptValidator =/);
   assert.match(purchaseSource, /receiptValidator\?: NativeRemoveAdsReceiptValidator/);
+  assert.match(
+    nativeReceiptValidatorSource,
+    /export const NATIVE_RECEIPT_VALIDATOR_RAW_FIELD_ALLOWLIST = \[/,
+  );
+  assert.match(
+    nativeReceiptValidatorSource,
+    /for \(const key of NATIVE_RECEIPT_VALIDATOR_RAW_FIELD_ALLOWLIST\)/,
+  );
   assert.match(nativeReceiptValidatorSource, /function createReceiptPayload\(raw/);
   assert.match(nativeReceiptValidatorSource, /receipt: createReceiptPayload\(purchase\.raw\)/);
   assert.doesNotMatch(nativeReceiptValidatorSource, /raw: purchase\.raw/);
@@ -378,6 +386,68 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /native Remove Ads provider must fail closed without an injected receipt verifier/,
+  );
+});
+
+test('Remove Ads purchase runtime parity rejects receipt-validator raw allowlist private fields', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/monetization/removeAdsReceiptValidator.native.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace("'transactionReceipt',", "'transactionReceipt',\\n  'accountEmail',");
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-remove-ads-purchase-runtime-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /native receipt-validator raw-field allowlist must be a named exact store-receipt contract/,
+  );
+});
+
+test('Remove Ads purchase runtime parity rejects receipt-validator raw allowlist store-key removal', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/monetization/removeAdsReceiptValidator.native.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace("  'transactionReceipt',\\n", '');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-remove-ads-purchase-runtime-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /native receipt-validator raw-field allowlist must be a named exact store-receipt contract/,
   );
 });
 

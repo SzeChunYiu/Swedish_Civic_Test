@@ -1987,9 +1987,8 @@ test('native Remove Ads receipt-validator adapter normalizes backend receipt res
 });
 
 test('native Remove Ads receipt-validator adapter minimizes raw purchase payloads', async () => {
-  const { createNativeRemoveAdsReceiptValidator } = loadTs(
-    'lib/monetization/removeAdsReceiptValidator.native.ts',
-  );
+  const { NATIVE_RECEIPT_VALIDATOR_RAW_FIELD_ALLOWLIST, createNativeRemoveAdsReceiptValidator } =
+    loadTs('lib/monetization/removeAdsReceiptValidator.native.ts');
   const { REMOVE_ADS_PRODUCT_ID } = loadTs('lib/monetization/purchases.ts');
   const { PRO_LIFETIME_PRODUCT_ID } = loadTs('lib/monetization/proLifetimePurchase.ts');
   const requests = [];
@@ -2011,6 +2010,25 @@ test('native Remove Ads receipt-validator adapter minimizes raw purchase payload
   });
 
   assert.equal(typeof validator, 'function');
+  assert.deepEqual(NATIVE_RECEIPT_VALIDATOR_RAW_FIELD_ALLOWLIST, [
+    'dataAndroid',
+    'originalTransactionDateIOS',
+    'originalTransactionIdentifierIOS',
+    'orderId',
+    'packageNameAndroid',
+    'purchaseToken',
+    'receipt',
+    'receiptData',
+    'signatureAndroid',
+    'transactionId',
+    'transactionReceipt',
+  ]);
+  assert.equal(
+    NATIVE_RECEIPT_VALIDATOR_RAW_FIELD_ALLOWLIST.some((key) =>
+      /account|email|user|debug/i.test(key),
+    ),
+    false,
+  );
 
   const removeAdsResult = await validator(
     {

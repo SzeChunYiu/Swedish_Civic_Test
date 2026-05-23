@@ -2178,10 +2178,23 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 15;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 40;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 41;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_RUNTIME_CASES = 9;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
+const EXPECTED_NATIVE_RECEIPT_VALIDATOR_RAW_FIELD_ALLOWLIST = [
+  'dataAndroid',
+  'originalTransactionDateIOS',
+  'originalTransactionIdentifierIOS',
+  'orderId',
+  'packageNameAndroid',
+  'purchaseToken',
+  'receipt',
+  'receiptData',
+  'signatureAndroid',
+  'transactionId',
+  'transactionReceipt',
+];
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   {
     label: 'mock exam title',
@@ -20611,6 +20624,17 @@ function validateRemoveAdsPurchaseRuntimeParity() {
     purchaseSource.match(
       /async validateRemoveAdsReceipt\(purchase, productId\) \{([\s\S]*?)\n    \},\n    async requestRemoveAdsPurchase/,
     )?.[1] ?? '';
+  const nativeReceiptValidatorRawFieldAllowlistBlock =
+    nativeReceiptValidatorSource.match(
+      /export const NATIVE_RECEIPT_VALIDATOR_RAW_FIELD_ALLOWLIST = \[([\s\S]*?)\] as const;/,
+    )?.[1] ?? '';
+  const nativeReceiptValidatorRawFieldAllowlist = Array.from(
+    nativeReceiptValidatorRawFieldAllowlistBlock.matchAll(/'([^']+)'/g),
+    (match) => match[1],
+  );
+  const nativeReceiptValidatorForbiddenRawFields = nativeReceiptValidatorRawFieldAllowlist.filter(
+    (field) => /account|email|user|debug/i.test(field),
+  );
   const storedRevalidationBlock =
     purchaseSource.match(
       /async function revalidateStoredRemoveAdsEntitlementRecordWithConnectedProvider\(\{[\s\S]*?\nfunction createResult/,
@@ -20758,6 +20782,20 @@ function validateRemoveAdsPurchaseRuntimeParity() {
         !normalizedNativeReceiptValidatorSource.includes('debugPayload') &&
         !normalizedNativeReceiptValidatorSource.includes('userId'),
       'native receipt-validator requests must minimize purchase payloads and never post arbitrary raw purchase fields',
+    ],
+    [
+      normalizedNativeReceiptValidatorSource.includes(
+        'export const NATIVE_RECEIPT_VALIDATOR_RAW_FIELD_ALLOWLIST',
+      ) &&
+        normalizedNativeReceiptValidatorSource.includes(
+          'for (const key of NATIVE_RECEIPT_VALIDATOR_RAW_FIELD_ALLOWLIST)',
+        ) &&
+        arrayEquals(
+          nativeReceiptValidatorRawFieldAllowlist,
+          EXPECTED_NATIVE_RECEIPT_VALIDATOR_RAW_FIELD_ALLOWLIST,
+        ) &&
+        nativeReceiptValidatorForbiddenRawFields.length === 0,
+      'native receipt-validator raw-field allowlist must be a named exact store-receipt contract without account, email, user, or debug fields',
     ],
     [
       /if\s*\(\s*!receiptValidator\s*\)\s*\{\s*return\s*\{[\s\S]*productId,[\s\S]*purchaseToken:\s*purchase\.purchaseToken\s*\?\?\s*null,[\s\S]*status:\s*'pending',[\s\S]*transactionId:\s*purchase\.transactionId\s*\?\?\s*null,[\s\S]*\};\s*\}/.test(
