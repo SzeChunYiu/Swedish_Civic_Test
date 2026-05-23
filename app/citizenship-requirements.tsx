@@ -1,7 +1,7 @@
-import { Link } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { ComplianceActionLink } from '../components/compliance/ComplianceActionLink';
 import { PersistenceWarningNotice } from '../components/storage/PersistenceWarningNotice';
 import { QuestionDisclaimer } from '../components/quiz/QuestionDisclaimer';
 import { Badge } from '../components/ui/Badge';
@@ -377,22 +377,18 @@ export default function CitizenshipRequirementsScreen() {
       </Card>
 
       <View style={styles.actions}>
-        <Link
+        <ComplianceActionLink
           accessibilityLabel={copy.openPracticeAccessibilityLabel}
-          accessibilityRole="link"
           href="/practice"
-          style={styles.primaryLink}
-        >
-          {copy.openPractice}
-        </Link>
-        <Link
+          label={copy.openPractice}
+          variant="primary"
+        />
+        <ComplianceActionLink
           accessibilityLabel={copy.backAboutAccessibilityLabel}
-          accessibilityRole="link"
           href="/about-the-test"
-          style={styles.secondaryLink}
-        >
-          {copy.backAbout}
-        </Link>
+          label={copy.backAbout}
+          variant="secondary"
+        />
       </View>
     </ScreenShell>
   );
@@ -591,26 +587,6 @@ function createStyles(themeColors: ThemeColors) {
       flexDirection: 'row',
       flexWrap: 'wrap',
       gap: space[1.5],
-    },
-    primaryLink: {
-      backgroundColor: themeColors.accent,
-      borderRadius: radius.micro,
-      color: themeColors.surface,
-      fontSize: typography.navButton.fontSize,
-      fontWeight: typography.navButton.fontWeight,
-      paddingHorizontal: space[2],
-      paddingVertical: space[1],
-      textDecorationLine: 'none',
-    },
-    secondaryLink: {
-      backgroundColor: themeColors.surfaceMuted,
-      borderRadius: radius.micro,
-      color: themeColors.text,
-      fontSize: typography.navButton.fontSize,
-      fontWeight: typography.navButton.fontWeight,
-      paddingHorizontal: space[2],
-      paddingVertical: space[1],
-      textDecorationLine: 'none',
     },
   });
 }

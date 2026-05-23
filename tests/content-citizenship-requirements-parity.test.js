@@ -319,7 +319,7 @@ test('citizenship requirements cards surface precise source titles and currentne
     routeSource,
     /focusedSourceRow === sourceFocusKey \? styles\.sourceRowFocused : null/,
   );
-  assert.match(routeSource, /accessibilityRole="link"/);
+  assert.match(routeSource, /<RouteLink/);
   assert.match(routeSource, /rel="noreferrer"/);
   assert.match(routeSource, /target="_blank"/);
   assert.match(sourceRefRowStyle, /minHeight: space\[6\]/);
