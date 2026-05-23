@@ -11,7 +11,7 @@ test('static footer links use tactile hoverable boxes', () => {
   assert.match(css, /FOOTER LINK BOX OPTIMIZATION ROUND/);
   assert.match(
     css,
-    /\.footer__cols a\s*{[\s\S]*background: rgba\(255, 255, 255, 0\.035\);[\s\S]*border: 1px solid transparent;[\s\S]*border-radius: 12px;[\s\S]*display: inline-flex;[\s\S]*gap: 7px;[\s\S]*min-height: 32px;[\s\S]*padding: 4px 8px 4px 7px;/,
+    /\.footer__cols a\s*{[\s\S]*background: rgba\(255, 255, 255, 0\.035\);[\s\S]*border: 1px solid transparent;[\s\S]*border-radius: 12px;[\s\S]*display: inline-flex;[\s\S]*gap: 7px;[\s\S]*min-height: 44px;[\s\S]*padding: 4px 8px 4px 7px;/,
   );
   assert.match(
     css,
@@ -31,4 +31,8 @@ test('static footer links use tactile hoverable boxes', () => {
   )?.groups?.rule;
   assert.ok(mobileLinkRule);
   assert.doesNotMatch(mobileLinkRule, /min-height: 3[0-9]px;/);
+
+  const baseLinkRule = css.match(/\.footer__cols a\s*{(?<rule>[\s\S]*?)}/)?.groups?.rule;
+  assert.ok(baseLinkRule);
+  assert.doesNotMatch(baseLinkRule, /min-height: 3[0-9]px;/);
 });

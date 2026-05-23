@@ -877,6 +877,17 @@ test('static footer extra languages render footer.app links without Roadmap dict
   expect(pageErrors).toEqual([]);
 });
 
+test('static footer column links keep 44px targets on desktop', async ({ page }) => {
+  await page.setViewportSize({ width: 1024, height: 768 });
+  const pageErrors = collectPageErrors(page);
+  await openStaticHome(page, staticSite.baseUrl);
+
+  await expectStaticFooterColumnLinksTargetSize(page);
+  await expectNoHorizontalOverflow(page);
+
+  expect(pageErrors).toEqual([]);
+});
+
 test('static Sources route renders extra-language UHR and Derived provenance copy', async ({
   page,
 }) => {
