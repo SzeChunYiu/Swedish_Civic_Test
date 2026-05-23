@@ -24,7 +24,7 @@ function localAssetReferences(indexHtml, options) {
   return extractLocalAssetReferences(indexHtml, options);
 }
 
-function loadServiceWorkerTestApi() {
+function loadServiceWorkerTestApi(options = {}) {
   const serviceWorker = fs.readFileSync(path.join(siteRoot, 'sw.js'), 'utf8');
   const self = {
     __SMT_PWA_TEST__: null,
@@ -38,8 +38,11 @@ function loadServiceWorkerTestApi() {
   vm.runInNewContext(
     serviceWorker,
     {
+      Request,
+      Response,
       URL,
       TextEncoder,
+      caches: options.caches,
       self,
     },
     { filename: 'site/sw.js' },
@@ -79,7 +82,75 @@ test('static ebook route scripts are lazy-loaded and manifest-backed assets', ()
   for (const assetPath of ['ebook-tools.js', 'ebook.js']) {
     assert.equal(fs.existsSync(path.join(siteRoot, assetPath)), true);
     assert.ok(manifest.assets?.[assetPath], `${assetPath} missing from asset-manifest.json`);
+    assert.deepEqual(
+      manifest.assets?.[assetPath]?.cachePolicy,
+      { installPrecache: false, runtimeCache: true },
+      `${assetPath} should stay route-lazy during install and runtime-cacheable on demand`,
+    );
   }
+});
+
+test('static service worker honors manifest install and runtime cache policy', async () => {
+  const putRequests = [];
+  const testApi = loadServiceWorkerTestApi({
+    caches: {
+      async keys() {
+        return ['almost-swedish-static-test'];
+      },
+      async open() {
+        return {
+          async addAll() {},
+          async match() {
+            return null;
+          },
+          async put(request) {
+            putRequests.push(request.url);
+          },
+        };
+      },
+    },
+  });
+  const manifest = {
+    assets: {
+      'app.js': {},
+      'ebook.js': { cachePolicy: { installPrecache: false, runtimeCache: true } },
+      'never-cache.js': { cachePolicy: { installPrecache: false, runtimeCache: false } },
+      'malformed-policy.js': { cachePolicy: { installPrecache: 'no', runtimeCache: 'no' } },
+    },
+  };
+
+  assert.equal(testApi.isInstallPrecacheAssetPath('app.js', manifest), true);
+  assert.equal(testApi.isInstallPrecacheAssetPath('ebook.js', manifest), false);
+  assert.equal(testApi.isInstallPrecacheAssetPath('never-cache.js', manifest), false);
+  assert.equal(testApi.shouldRuntimeCacheAssetPath('ebook.js', manifest), true);
+  assert.equal(testApi.shouldRuntimeCacheAssetPath('never-cache.js', manifest), false);
+  assert.equal(testApi.shouldRuntimeCacheAssetPath('malformed-policy.js', manifest), true);
+  assert.deepEqual(Array.from(testApi.resolvePrecacheUrls(manifest)), [
+    'https://almost-swedish.test/',
+    'https://almost-swedish.test/index.html',
+    'https://almost-swedish.test/asset-manifest.json',
+    'https://almost-swedish.test/app.js',
+    'https://almost-swedish.test/malformed-policy.js',
+  ]);
+
+  testApi.setActiveAssetManifest(manifest);
+  await testApi.cacheNetworkResponse(
+    { method: 'GET', url: 'https://almost-swedish.test/never-cache.js' },
+    new Response('private cache skip'),
+  );
+  await testApi.cacheNetworkResponse(
+    { method: 'GET', url: 'https://almost-swedish.test/ebook.js' },
+    new Response('route lazy runtime cache'),
+  );
+  await testApi.cacheNetworkResponse(
+    { method: 'GET', url: 'https://almost-swedish.test/unknown.js' },
+    new Response('default runtime cache'),
+  );
+
+  assert.deepEqual(putRequests, [
+    'https://almost-swedish.test/ebook.js',
+    'https://almost-swedish.test/unknown.js',
+  ]);
 });
 
 test('committed static site asset manifest matches shipped assets', () => {

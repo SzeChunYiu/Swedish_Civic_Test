@@ -1,9 +1,9 @@
 const CACHE_PREFIX = 'almost-swedish-static';
 const ASSET_MANIFEST_PATH = 'asset-manifest.json';
 const CORE_ASSETS = ['.', 'index.html', ASSET_MANIFEST_PATH];
-const ROUTE_LAZY_ASSETS = new Set(['ebook-tools.js', 'ebook.js']);
 
 let activeCacheName = null;
+let activeAssetManifest = null;
 
 function sameOriginUrl(pathname) {
   return new URL(pathname, self.registration.scope);
@@ -33,12 +33,27 @@ async function cacheNameForManifestText(manifestText) {
   return `${CACHE_PREFIX}-${digest.slice(0, 16)}`;
 }
 
-function isInstallPrecacheAssetPath(assetPath) {
-  return isLocalPath(assetPath) && !ROUTE_LAZY_ASSETS.has(assetPath.replace(/^\.\//, ''));
+function readAssetCachePolicy(assetManifest, assetPath) {
+  const cachePolicy = assetManifest?.assets?.[assetPath]?.cachePolicy;
+  return cachePolicy && typeof cachePolicy === 'object' && !Array.isArray(cachePolicy)
+    ? cachePolicy
+    : {};
+}
+
+function isInstallPrecacheAssetPath(assetPath, assetManifest) {
+  if (!isLocalPath(assetPath)) return false;
+  return readAssetCachePolicy(assetManifest, assetPath).installPrecache !== false;
+}
+
+function shouldRuntimeCacheAssetPath(assetPath, assetManifest) {
+  if (!isLocalPath(assetPath)) return true;
+  return readAssetCachePolicy(assetManifest, assetPath).runtimeCache !== false;
 }
 
 function resolvePrecacheUrls(assetManifest) {
-  const assetPaths = Object.keys(assetManifest?.assets || {}).filter(isInstallPrecacheAssetPath);
+  const assetPaths = Object.keys(assetManifest?.assets || {}).filter((assetPath) =>
+    isInstallPrecacheAssetPath(assetPath, assetManifest),
+  );
   const urls = [...CORE_ASSETS, ...assetPaths].map((assetPath) =>
     sameOriginUrl(assetPath).toString(),
   );
@@ -76,6 +91,7 @@ async function latestStaticCache() {
 async function precacheAppShell() {
   const { cacheName, manifest } = await readAssetManifest();
   activeCacheName = cacheName;
+  activeAssetManifest = manifest;
   const cache = await caches.open(cacheName);
   await cache.addAll(resolvePrecacheUrls(manifest));
 }
@@ -115,9 +131,27 @@ async function cachedAppShell() {
 
 async function cacheNetworkResponse(request, response) {
   if (!response || !response.ok || response.type === 'opaque') return;
+  if (!shouldRuntimeCacheRequest(request)) return;
   const cache = await latestStaticCache();
   if (!cache) return;
   await cache.put(request, response.clone());
+}
+
+function requestAssetPath(request) {
+  const requestUrl = new URL(request.url);
+  const scopeUrl = new URL(self.registration.scope);
+  if (requestUrl.origin !== scopeUrl.origin || !requestUrl.pathname.startsWith(scopeUrl.pathname)) {
+    return null;
+  }
+
+  const relativePath = requestUrl.pathname.slice(scopeUrl.pathname.length).replace(/^\/+/, '');
+  return relativePath || '.';
+}
+
+function shouldRuntimeCacheRequest(request) {
+  const assetPath = requestAssetPath(request);
+  if (!assetPath || !activeAssetManifest) return true;
+  return shouldRuntimeCacheAssetPath(assetPath, activeAssetManifest);
 }
 
 async function networkFirstWithCacheFallback(request) {
@@ -154,6 +188,13 @@ self.addEventListener('fetch', (event) => {
 
 self.__SMT_PWA_TEST__ = {
   cacheNameForManifestText,
+  cacheNetworkResponse,
   isInstallPrecacheAssetPath,
+  requestAssetPath,
   resolvePrecacheUrls,
+  setActiveAssetManifest(manifest) {
+    activeAssetManifest = manifest;
+  },
+  shouldRuntimeCacheAssetPath,
+  shouldRuntimeCacheRequest,
 };

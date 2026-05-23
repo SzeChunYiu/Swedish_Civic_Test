@@ -68,20 +68,28 @@
       "sha256": "668e12cef108a8614ab7952977d268bfc50cf75889d15b29bb59f6c731b88fca"
     },
     "buddies.js": {
-      "bytes": 37640,
-      "sha256": "4b8df718811d7ab605a23317f9cba88f5d75d9ad50a59c0e1f9891cd9f634d8d"
+      "bytes": 37887,
+      "sha256": "b4b5f267bc0ac28176e35f771916aeb5bda7bc860421c889faae00a7c418e2e2"
     },
     "ebook-tools.js": {
       "bytes": 19195,
-      "sha256": "df3be43f7732ede467a16efca66941dc99f2ac5aea39ce6d54058645783718ed"
+      "sha256": "df3be43f7732ede467a16efca66941dc99f2ac5aea39ce6d54058645783718ed",
+      "cachePolicy": {
+        "installPrecache": false,
+        "runtimeCache": true
+      }
     },
     "ebook.js": {
       "bytes": 543974,
-      "sha256": "5e3bb519d2a367250163a08805740a25d9d7d6f12d85f5298c08f27000b9723b"
+      "sha256": "5e3bb519d2a367250163a08805740a25d9d7d6f12d85f5298c08f27000b9723b",
+      "cachePolicy": {
+        "installPrecache": false,
+        "runtimeCache": true
+      }
     },
     "extras.js": {
-      "bytes": 31370,
-      "sha256": "ca0cbef4208bfa9cd72a5b15854ba5f64ca4ff9e232c280977f595a3e6b18dda"
+      "bytes": 41666,
+      "sha256": "06cf670046633b662cf1fdb8471513089e62f1d4d6e84517b7486ab5958a73e6"
     },
     "fx.js": {
       "bytes": 7155,
@@ -140,12 +148,12 @@
       "sha256": "4e2dca9706273065513ca97fb0d493f6ea67d852034a03166d67f1ee03c9975b"
     },
     "styles.css": {
-      "bytes": 279578,
-      "sha256": "31ebeb4f8664ae8a99be991aec72ae817faf92076bec2b57e5f5cca64a27b9d4"
+      "bytes": 279632,
+      "sha256": "28e11ed376ab2022368e472d6de1d4a7cf1b371e3fd9e85050487d72b43ccf8a"
     },
     "sw.js": {
-      "bytes": 4844,
-      "sha256": "28365f50df2820cc68f4254ccecef4f8ddb89edf3fd3d034da6bffbae1b65a99"
+      "bytes": 6222,
+      "sha256": "ff348ab3d5d428f33668bd70bcb34ef1481f5bf9cdfcd91dcb6bfddafbb908bd"
     },
     "tweaks-panel.jsx": {
       "bytes": 25802,

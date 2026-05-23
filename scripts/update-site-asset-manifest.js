@@ -9,6 +9,7 @@ const defaultSiteDir = path.join(repoRoot, 'site');
 const defaultManifestPath = path.join(defaultSiteDir, 'asset-manifest.json');
 const manifestFileName = 'asset-manifest.json';
 const maxStylesheetImportDepth = 16;
+const routeLazyRuntimeCacheAssets = new Set(['ebook-tools.js', 'ebook.js']);
 
 function normalizeRelativePath(filePath) {
   return filePath.split(path.sep).join('/');
@@ -258,6 +259,12 @@ function buildAssetManifest(options = {}) {
       bytes: fs.statSync(absolutePath).size,
       sha256: hashFile(absolutePath),
     };
+    if (routeLazyRuntimeCacheAssets.has(relativePath)) {
+      assets[relativePath].cachePolicy = {
+        installPrecache: false,
+        runtimeCache: true,
+      };
+    }
   }
 
   return {
