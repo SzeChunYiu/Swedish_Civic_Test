@@ -39,6 +39,7 @@ const MOCK_EXAM_RESULT_THEME_SURFACES = [
   'components/ResultSummary.tsx',
   'components/MockExamTimeHeatmap.tsx',
 ];
+const QUESTION_NAVIGATOR_THEME_SURFACES = ['components/QuestionNavigator.tsx'];
 const NATIVE_LEARNING_THEME_SURFACES = [
   'components/learning/BadgeRow.tsx',
   'components/learning/ChapterCard.tsx',
@@ -655,6 +656,49 @@ test('native learning child components resolve semantic colors from the active t
     flashcardSource,
     /<QuestionSourceCitation[\s\S]*themeColors=\{themeColors\}/,
     'Flashcard source citations should receive active theme colors',
+  );
+});
+
+test('QuestionNavigator resolves status colors from the active theme', () => {
+  for (const componentPath of QUESTION_NAVIGATOR_THEME_SURFACES) {
+    const source = read(componentPath);
+
+    assert.match(
+      source,
+      /useThemeColors\(\)/,
+      `${componentPath} should read the active theme color context`,
+    );
+    assert.match(
+      source,
+      /const styles = useMemo\(\(\) => createStyles\(themeColors\), \[themeColors\]\)/,
+      `${componentPath} should memoize styles from active ThemeColors`,
+    );
+    assert.match(
+      source,
+      /function createStyles\(themeColors: ThemeColors\)/,
+      `${componentPath} should derive styles from ThemeColors`,
+    );
+    assert.match(
+      source,
+      /themeColors\.(?:surfaceWarm|border|focusSoft|accent|badgeBlueBg|badgeBlueText|text|textSecondary|surface)/,
+      `${componentPath} should use semantic ThemeColors for navigator states`,
+    );
+    assert.doesNotMatch(
+      source,
+      /import \{[^}]*\bcolors\b[^}]*\} from ['"]\.\.\/lib\/theme['"]/,
+      `${componentPath} must not import the static light colors singleton`,
+    );
+    assert.doesNotMatch(
+      source,
+      /\bcolors\./,
+      `${componentPath} must not read static colors.* values`,
+    );
+  }
+
+  const examRouteSource = read('app/(tabs)/exam.tsx');
+  assert.match(
+    examRouteSource,
+    /<QuestionNavigator[\s\S]*stateLabels=\{copy\.navigatorStateLabels\}/,
   );
 });
 

@@ -1,10 +1,11 @@
-import type { ComponentProps } from 'react';
+import { useMemo, type ComponentProps } from 'react';
 import { Pressable, StyleSheet, Text as NativeText, View } from 'react-native';
 import type { AccessibilityRole, StyleProp, TextStyle, ViewStyle } from 'react-native';
 
 import { useReducedMotion } from '../lib/motion/useReducedMotion';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
-import { colors, motion, radius, space, typography } from '../lib/theme';
+import { motion, radius, space, typography, type ThemeColors } from '../lib/theme';
+import { useThemeColors } from '../lib/theme/ThemeProvider';
 
 export type QuestionNavigatorItemState = 'current' | 'answered' | 'flagged' | 'unanswered';
 
@@ -122,6 +123,8 @@ export function QuestionNavigator({
   ...viewProps
 }: QuestionNavigatorProps) {
   const reduceMotion = useReducedMotion();
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const settingsLanguage = useSettingsStore((state) => state.language);
   const language = languageOverride ?? settingsLanguage;
   const copy = questionNavigatorCopy[language];
@@ -215,56 +218,58 @@ export function QuestionNavigator({
   );
 }
 
-const styles = StyleSheet.create({
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[0.75],
-  },
-  item: {
-    alignItems: 'center',
-    borderRadius: radius.small,
-    borderWidth: space.hairline,
-    justifyContent: 'center',
-    minHeight: space[6],
-    minWidth: space[6],
-    paddingHorizontal: space[0.5],
-  },
-  unanswered: {
-    backgroundColor: colors.surfaceWarm,
-    borderColor: colors.border,
-  },
-  answered: {
-    backgroundColor: colors.focusSoft,
-    borderColor: colors.accent,
-  },
-  flagged: {
-    backgroundColor: colors.badgeBlueBg,
-    borderColor: colors.badgeBlueText,
-  },
-  current: {
-    backgroundColor: colors.text,
-    borderColor: colors.text,
-  },
-  pressed: {
-    transform: [{ scale: motion.pressedScale }],
-  },
-  disabled: {
-    opacity: motion.pressedScale,
-  },
-  itemText: {
-    ...typography.badge,
-  },
-  unansweredText: {
-    color: colors.textSecondary,
-  },
-  answeredText: {
-    color: colors.accent,
-  },
-  flaggedText: {
-    color: colors.badgeBlueText,
-  },
-  currentText: {
-    color: colors.surface,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    grid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[0.75],
+    },
+    item: {
+      alignItems: 'center',
+      borderRadius: radius.small,
+      borderWidth: space.hairline,
+      justifyContent: 'center',
+      minHeight: space[6],
+      minWidth: space[6],
+      paddingHorizontal: space[0.5],
+    },
+    unanswered: {
+      backgroundColor: themeColors.surfaceWarm,
+      borderColor: themeColors.border,
+    },
+    answered: {
+      backgroundColor: themeColors.focusSoft,
+      borderColor: themeColors.accent,
+    },
+    flagged: {
+      backgroundColor: themeColors.badgeBlueBg,
+      borderColor: themeColors.badgeBlueText,
+    },
+    current: {
+      backgroundColor: themeColors.text,
+      borderColor: themeColors.text,
+    },
+    pressed: {
+      transform: [{ scale: motion.pressedScale }],
+    },
+    disabled: {
+      opacity: motion.pressedScale,
+    },
+    itemText: {
+      ...typography.badge,
+    },
+    unansweredText: {
+      color: themeColors.textSecondary,
+    },
+    answeredText: {
+      color: themeColors.accent,
+    },
+    flaggedText: {
+      color: themeColors.badgeBlueText,
+    },
+    currentText: {
+      color: themeColors.surface,
+    },
+  });
+}
