@@ -1534,12 +1534,66 @@ test('computeReadinessScore: mock recency uses completedAt instead of exam answe
     questionChapterIndex: {},
     now,
   });
+  const futureCompletedAt = computeReadinessScore({
+    progress: progressWithSessions([
+      {
+        id: 'future-completed-at-mock',
+        mode: 'exam',
+        questionIds: [],
+        startedAt: '2026-05-19T09:00:00.000Z',
+        completedAt: '2099-01-01T00:00:00.000Z',
+        score: 0.8,
+        answers: recentExamAnswers,
+      },
+    ]),
+    chapters: [{ id: 'a', questionCount: 10 }],
+    questionChapterIndex: {},
+    now,
+  });
+  const rolloverCompletedAt = computeReadinessScore({
+    progress: progressWithSessions([
+      {
+        id: 'rollover-completed-at-mock',
+        mode: 'exam',
+        questionIds: [],
+        startedAt: '2026-05-19T09:00:00.000Z',
+        completedAt: '2026-02-30T10:00:00.000Z',
+        score: 0.8,
+        answers: recentExamAnswers,
+      },
+    ]),
+    chapters: [{ id: 'a', questionCount: 10 }],
+    questionChapterIndex: {},
+    now,
+  });
+  const localTimeCompletedAt = computeReadinessScore({
+    progress: progressWithSessions([
+      {
+        id: 'local-time-completed-at-mock',
+        mode: 'exam',
+        questionIds: [],
+        startedAt: '2026-05-19T09:00:00.000Z',
+        completedAt: '2026-05-19T10:00:00',
+        score: 0.8,
+        answers: recentExamAnswers,
+      },
+    ]),
+    chapters: [{ id: 'a', questionCount: 10 }],
+    questionChapterIndex: {},
+    now,
+  });
 
   assert.equal(scoreOnlyMock.components.recency, countedMock.components.recency);
   assert.ok(scoreOnlyMock.components.recency > 0.99);
   assert.equal(countedMock.components.accuracy, 0);
   assert.equal(invalidCompletedAt.components.recency, 0);
   assert.equal(invalidCompletedAt.components.accuracy, 0);
+  assert.equal(futureCompletedAt.components.recency, 0);
+  assert.equal(futureCompletedAt.components.accuracy, 0);
+  assert.equal(rolloverCompletedAt.components.recency, 0);
+  assert.equal(rolloverCompletedAt.components.accuracy, 0);
+  assert.equal(localTimeCompletedAt.components.recency, 0);
+  assert.equal(localTimeCompletedAt.components.accuracy, 0);
 });
 
 test('computeReadinessScore: truthy non-boolean study correctness does not raise readiness', () => {

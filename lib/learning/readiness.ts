@@ -54,12 +54,6 @@ function clamp01(value: number): number {
   return Math.max(0, Math.min(1, value));
 }
 
-function validTimestampMs(value: string | undefined): number | null {
-  if (!value) return null;
-  const timestampMs = new Date(value).getTime();
-  return Number.isFinite(timestampMs) ? timestampMs : null;
-}
-
 function recencyFromProgressEvents(progress: UserProgress, now: Date): number {
   let mostRecent: number | null = null;
   const recordTimestamp = (timestampMs: number | null) => {
@@ -69,7 +63,7 @@ function recencyFromProgressEvents(progress: UserProgress, now: Date): number {
 
   for (const session of progress.sessions ?? []) {
     if (session.mode === 'exam') {
-      recordTimestamp(validTimestampMs(session.completedAt));
+      recordTimestamp(validAnswerTimestampMs(session.completedAt, now));
       continue;
     }
 

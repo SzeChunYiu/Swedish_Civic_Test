@@ -774,6 +774,7 @@ const EXPECTED_STREAK_FREEZE_COUNTER_RUNTIME_CASE_COUNT = 4;
 const EXPECTED_XP_RULE_COUNT = 24;
 const EXPECTED_MASTERY_RULE_COUNT = 17;
 const EXPECTED_WEAK_CHAPTER_RULE_COUNT = 5;
+const EXPECTED_READINESS_SCORE_RULE_COUNT = 5;
 const EXPECTED_READINESS_ADAPTER_RULE_COUNT = 6;
 const EXPECTED_SUPPORTED_LANGUAGES = ['sv', 'en'];
 const BASE_CONTENT_LOCALES = new Set(['sv', 'en']);
@@ -10050,6 +10051,7 @@ const chapterWeaknesses = weakChaptersModule.chapterWeaknesses;
 const topWeakChapters = weakChaptersModule.topWeakChapters;
 const readinessModule = loadTs('lib/learning/readiness.ts');
 const computeReadinessFromQuestionProgress = readinessModule.computeReadinessFromQuestionProgress;
+const computeReadinessScore = readinessModule.computeReadinessScore;
 const themeModule = loadTs('lib/theme/index.ts');
 const colors = themeModule.colors;
 const darkColors = themeModule.darkColors;
@@ -10427,6 +10429,8 @@ let masteryRulesValidated = 0;
 let masteryRulesParityValidated = false;
 let weakChapterRulesValidated = 0;
 let weakChapterRulesParityValidated = false;
+let readinessScoreRulesValidated = 0;
+let readinessScoreRuntimeParityValidated = false;
 let readinessAdapterRulesValidated = 0;
 let readinessAdapterRuntimeParityValidated = false;
 let uhrReferencesValidated = 0;
@@ -11767,6 +11771,16 @@ if (process.argv.includes('--focus-readiness-adapter-rules')) {
   printValidationSummary({
     readinessAdapterRulesValidated,
     readinessAdapterRuntimeParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-readiness-score-rules')) {
+  validateReadinessScoreRules();
+  exitWithValidationFailures();
+  printValidationSummary({
+    readinessScoreRulesValidated,
+    readinessScoreRuntimeParityValidated,
   });
   process.exit(0);
 }
@@ -25215,6 +25229,154 @@ function validateWeakChapterRules() {
   }
 }
 
+function progressWithReadinessSessions(sessions) {
+  return {
+    totalXp: 0,
+    level: 1,
+    currentStreak: 0,
+    dailyGoalAnswers: 10,
+    questionProgress: {},
+    sessions,
+    dailyChallengeCompletions: {},
+  };
+}
+
+function buildReadinessMockSession(completedAt) {
+  return {
+    id: `mock-${String(completedAt)}`,
+    mode: 'exam',
+    questionIds: [],
+    startedAt: '2026-05-19T09:00:00.000Z',
+    completedAt,
+    score: 0.8,
+    answers: [],
+  };
+}
+
+function validateReadinessScoreRules() {
+  if (typeof computeReadinessScore !== 'function') return;
+
+  const now = new Date('2026-05-20T12:00:00.000Z');
+  const baseInput = {
+    chapters: [{ id: 'ch01', questionCount: 10 }],
+    questionChapterIndex: {},
+    now,
+  };
+
+  const cases = [
+    {
+      label: 'valid score-only mock completion raises recency and mock average',
+      actual: () => {
+        const result = computeReadinessScore({
+          ...baseInput,
+          progress: progressWithReadinessSessions([
+            buildReadinessMockSession('2026-05-20T10:00:00.000Z'),
+          ]),
+        });
+        return {
+          accuracy: result.components.accuracy,
+          mockAverage: result.components.mockAverage,
+          recencyPositive: result.components.recency > 0.99,
+          sparse: result.isSparse,
+        };
+      },
+      expected: { accuracy: 0, mockAverage: 0.8, recencyPositive: true, sparse: true },
+    },
+    {
+      label: 'future mock completion does not raise recency',
+      actual: () => {
+        const result = computeReadinessScore({
+          ...baseInput,
+          progress: progressWithReadinessSessions([
+            buildReadinessMockSession('2099-01-01T00:00:00.000Z'),
+          ]),
+        });
+        return {
+          accuracy: result.components.accuracy,
+          mockAverage: result.components.mockAverage,
+          recency: result.components.recency,
+          sparse: result.isSparse,
+        };
+      },
+      expected: { accuracy: 0, mockAverage: 0, recency: 0, sparse: true },
+    },
+    {
+      label: 'rollover mock completion does not raise recency',
+      actual: () => {
+        const result = computeReadinessScore({
+          ...baseInput,
+          progress: progressWithReadinessSessions([
+            buildReadinessMockSession('2026-02-30T10:00:00.000Z'),
+          ]),
+        });
+        return {
+          mockAverage: result.components.mockAverage,
+          recency: result.components.recency,
+        };
+      },
+      expected: { mockAverage: 0, recency: 0 },
+    },
+    {
+      label: 'local-time mock completion does not raise recency',
+      actual: () => {
+        const result = computeReadinessScore({
+          ...baseInput,
+          progress: progressWithReadinessSessions([
+            buildReadinessMockSession('2026-05-20T10:00:00'),
+          ]),
+        });
+        return {
+          mockAverage: result.components.mockAverage,
+          recency: result.components.recency,
+        };
+      },
+      expected: { mockAverage: 0, recency: 0 },
+    },
+    {
+      label: 'non-string mock completion does not raise recency',
+      actual: () => {
+        const result = computeReadinessScore({
+          ...baseInput,
+          progress: progressWithReadinessSessions([buildReadinessMockSession(1779271200000)]),
+        });
+        return {
+          mockAverage: result.components.mockAverage,
+          recency: result.components.recency,
+        };
+      },
+      expected: { mockAverage: 0, recency: 0 },
+    },
+  ];
+
+  let rulesAreValid = true;
+
+  cases.forEach(({ label, actual, expected }) => {
+    let actualValue;
+    try {
+      actualValue = actual();
+    } catch (error) {
+      rulesAreValid = false;
+      fail(`readiness score rule ${label} threw ${error.message}`);
+      return;
+    }
+
+    if (!jsonEqual(actualValue, expected)) {
+      rulesAreValid = false;
+      fail(
+        `readiness score rule ${label} returned ${JSON.stringify(
+          actualValue,
+        )}, expected ${JSON.stringify(expected)}`,
+      );
+    } else {
+      readinessScoreRulesValidated += 1;
+    }
+  });
+
+  if (rulesAreValid && readinessScoreRulesValidated === EXPECTED_READINESS_SCORE_RULE_COUNT) {
+    readinessScoreRuntimeParityValidated = true;
+  }
+}
+
 function validateReadinessAdapterRules() {
   if (typeof computeReadinessFromQuestionProgress !== 'function') return;
 
@@ -27539,6 +27701,7 @@ validateStreakRules();
 validateXpRules();
 validateMasteryRules();
 validateWeakChapterRules();
+validateReadinessScoreRules();
 validateReadinessAdapterRules();
 validateQuestionReligiousFreedomParallelism();
 validateQuestionProvenanceRuntime();
@@ -27899,6 +28062,8 @@ console.log(
       masteryRulesParityValidated,
       weakChapterRulesValidated,
       weakChapterRulesParityValidated,
+      readinessScoreRulesValidated,
+      readinessScoreRuntimeParityValidated,
       readinessAdapterRulesValidated,
       readinessAdapterRuntimeParityValidated,
       questions: questions.length,

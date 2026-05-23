@@ -951,11 +951,27 @@ test('readiness mock recency uses completion metadata without depending on synth
       },
     ],
   });
+  const futureMock = computeReadinessFromQuestionProgress({
+    ...commonInput,
+    mockExamSessions: [
+      { sessionId: 'future', score: 0.8, completedAt: '2099-01-01T00:00:00.000Z' },
+    ],
+  });
+  const rolloverMock = computeReadinessFromQuestionProgress({
+    ...commonInput,
+    mockExamSessions: [
+      { sessionId: 'rollover', score: 0.8, completedAt: '2026-02-30T10:00:00.000Z' },
+    ],
+  });
 
   assert.equal(scoreOnlyMock.components.recency, countedMock.components.recency);
   assert.ok(scoreOnlyMock.components.recency > 0.99);
   assert.equal(scoreOnlyMock.components.accuracy, 0);
   assert.equal(countedMock.components.accuracy, 0);
+  assert.equal(futureMock.components.recency, 0);
+  assert.equal(futureMock.components.mockAverage, 0);
+  assert.equal(rolloverMock.components.recency, 0);
+  assert.equal(rolloverMock.components.mockAverage, 0);
 });
 
 test('dashboard mock history ignores invalid completions and nulls invalid duration math', () => {
