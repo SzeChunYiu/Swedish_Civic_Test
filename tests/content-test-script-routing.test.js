@@ -690,7 +690,7 @@ test('QuestionSourceCitation accessibility parity uses focused content validatio
     'questionSourceCitationAccessibilityParityValidated',
   ]);
 
-  assert.equal(summary.questionSourceCitationAccessibilityRulesValidated, 15);
+  assert.equal(summary.questionSourceCitationAccessibilityRulesValidated, 23);
   assert.equal(summary.questionSourceCitationAccessibilityParityValidated, true);
 });
 
@@ -2279,6 +2279,18 @@ test('monetization selector runs only the focused monetization suite', () => {
     const selectedResult = runDispatcher(['--', 'monetization'], env);
     assert.equal(selectedResult.status, 0, selectedResult.stderr || selectedResult.stdout);
     assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:monetization\n');
+
+    const pkg = readPackageJson();
+    const monetizationScript = pkg.scripts['test:monetization'];
+    assert.match(monetizationScript, /scripts\/monetization\.test\.js/);
+    assert.match(monetizationScript, /tests\/remove-ads-web-e2e-mock-runtime\.test\.js/);
+    assert.match(monetizationScript, /tests\/remove-ads-native-validation\.test\.js/);
+    assert.equal(
+      (monetizationScript.match(/tests\/remove-ads-native-validation\.test\.js/g) ?? []).length,
+      1,
+      'test:monetization must include the native validation probe exactly once',
+    );
+    assert.doesNotMatch(monetizationScript, /npm run test:content|npm run test:all|npm test/);
 
     fs.writeFileSync(npmLog, '');
     const fullResult = runDispatcher([], env);

@@ -146,6 +146,10 @@ test('Remove Ads E2E mock owned runtime has a dedicated focused harness', () => 
     path.join(repoRoot, 'tests/remove-ads-web-e2e-mock-runtime.test.js'),
     'utf8',
   );
+  const nativeValidationSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/remove-ads-native-validation.test.js'),
+    'utf8',
+  );
   const runtimeHarnessSource = fs.readFileSync(
     path.join(repoRoot, 'tests/helpers/monetizationRuntimeHarness.cjs'),
     'utf8',
@@ -160,6 +164,10 @@ test('Remove Ads E2E mock owned runtime has a dedicated focused harness', () => 
   assert.match(
     packageJson.scripts['test:monetization'],
     /tests\/remove-ads-web-e2e-mock-runtime\.test\.js/,
+  );
+  assert.match(
+    packageJson.scripts['test:monetization'],
+    /tests\/remove-ads-native-validation\.test\.js/,
   );
   assert.match(focusedHarnessSource, /__SMT_E2E__/);
   assert.match(focusedHarnessSource, /__SMT_REMOVE_ADS_MOCK_OWNED__/);
@@ -194,6 +202,16 @@ test('Remove Ads E2E mock owned runtime has a dedicated focused harness', () => 
     focusedHarnessSource,
     /non-E2E web runtime must revalidate and clear copied Remove Ads records/,
   );
+  assert.match(
+    nativeValidationSource,
+    /native Remove Ads provider fails closed unless a platform verifier validates the receipt/,
+  );
+  assert.match(nativeValidationSource, /createNativePurchaseProvider/);
+  assert.match(nativeValidationSource, /unverifiedNativeProvider/);
+  assert.match(nativeValidationSource, /receiptValidator/);
+  assert.match(nativeValidationSource, /storedBeforeRelaunch/);
+  assert.match(nativeValidationSource, /getPurchaseEntitlements/);
+  assert.match(nativeValidationSource, /relaunchEntitlements\.adsDisabled/);
   assert.doesNotMatch(
     monetizationSuiteSource,
     /web Remove Ads E2E mock-owned runtime cannot spoof outside E2E/,
