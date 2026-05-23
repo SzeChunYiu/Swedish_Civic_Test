@@ -239,6 +239,12 @@ test('local study data import summary keeps Swedish copy learner-facing', () => 
   assert.match(source, /getLocalStudyDataImportPayloadByteCount/);
   assert.match(importSource, /type LocalStudyDataImportApplyResult/);
   assert.match(importSource, /warnings: LocalStudyDataImportApplyWarning\[\]/);
+  assert.match(importSource, /\| 'accessibility'/);
+  assert.match(importSource, /\| 'companion'/);
+  assert.match(source, /section === 'accessibility'\) return 'tillgänglighetsval'/);
+  assert.match(source, /section === 'companion'\) return 'studiekompis'/);
+  assert.match(source, /section === 'accessibility'\) return 'accessibility preferences'/);
+  assert.match(source, /section === 'companion'\) return 'study companion'/);
   assert.match(source, /applyResult\.warnings\.length > 0/);
   assert.match(source, /copy\.importPersistenceWarning\(sectionList\)/);
   assert.match(
@@ -256,8 +262,14 @@ test('settings import browser fixtures cover accessibility and companion preview
     'utf8',
   );
 
-  assert.match(source, /const accessibilityEasyReadFontKey = 'accessibility\\\\a11y\.easyReadFont\.v1';/);
-  assert.match(source, /const accessibilityFontSizeStepKey = 'accessibility\\\\a11y\.fontSizeStep\.v1';/);
+  assert.match(
+    source,
+    /const accessibilityEasyReadFontKey = 'accessibility\\\\a11y\.easyReadFont\.v1';/,
+  );
+  assert.match(
+    source,
+    /const accessibilityFontSizeStepKey = 'accessibility\\\\a11y\.fontSizeStep\.v1';/,
+  );
   assert.match(
     source,
     /const accessibilityAudioPlaybackRateKey = 'accessibility\\\\a11y\.audioPlaybackRate\.v1';/,
@@ -268,6 +280,13 @@ test('settings import browser fixtures cover accessibility and companion preview
   );
   assert.match(source, /const accessibilityThemeModeKey = 'accessibility\\\\a11y\.themeMode\.v1';/);
   assert.match(source, /const companionSelectedIdKey = 'companion\\\\companion\.selectedId\.v1';/);
+  assert.match(source, /const importWriteFailureCases: ImportWriteFailureCase\[\]/);
+  assert.match(source, /name: 'accessibility'/);
+  assert.match(source, /storageKey: accessibilityThemeModeKey/);
+  assert.match(source, /durable storage failed for: accessibility preferences/);
+  assert.match(source, /name: 'companion'/);
+  assert.match(source, /storageKey: companionSelectedIdKey/);
+  assert.match(source, /durable storage failed for: study companion/);
   assert.match(source, /accessibility:\s*\{\s*themeMode: 'dark',\s*\}/);
   assert.match(
     source,
@@ -531,7 +550,9 @@ test('local study data import does not stop speech when audioEnabled is true abs
 
 test('local study data import apply result reports section write warnings', () => {
   const storageById = {
+    accessibility: createThrowingSetMMKV('accessibility disk full'),
     'citizenship-requirements': createThrowingSetMMKV('requirements disk full'),
+    companion: createThrowingSetMMKV('companion disk full'),
     progress: createThrowingSetMMKV('progress disk full'),
     'mistake-review': createThrowingSetMMKV('mistake disk full'),
     reviews: createThrowingSetMMKV('reviews disk full'),
@@ -586,6 +607,13 @@ test('local study data import apply result reports section write warnings', () =
       audioEnabled: false,
       dailyGoalAnswers: 20,
     },
+    accessibility: {
+      easyReadFont: true,
+      themeMode: 'dark',
+    },
+    companion: {
+      selectedId: 'dala-horse',
+    },
     citizenshipRequirements: {
       checkedAreaIds: ['identity'],
     },
@@ -603,7 +631,16 @@ test('local study data import apply result reports section write warnings', () =
   assert.deepEqual(applyResult.summary, previewResult.preview.summary);
   assert.deepEqual(
     applyResult.warnings.map((item) => item.section),
-    ['progress', 'mistakeReview', 'reviews', 'settings', 'citizenshipRequirements', 'highlights'],
+    [
+      'accessibility',
+      'companion',
+      'progress',
+      'mistakeReview',
+      'reviews',
+      'settings',
+      'citizenshipRequirements',
+      'highlights',
+    ],
   );
   for (const item of applyResult.warnings) {
     assert.equal(item.warning.type, 'recoverable-persistence-warning');

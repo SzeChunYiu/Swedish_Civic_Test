@@ -226,6 +226,8 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
       }),
     importTitle: 'Importera studiedata',
     importWarningSectionLabel: (section) => {
+      if (section === 'accessibility') return 'tillgänglighetsval';
+      if (section === 'companion') return 'studiekompis';
       if (section === 'progress') return 'progression';
       if (section === 'mistakeReview') return 'granskningar av fel svar';
       if (section === 'reviews') return 'repetitionskort';
@@ -347,6 +349,8 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
       }),
     importTitle: 'Import study data',
     importWarningSectionLabel: (section) => {
+      if (section === 'accessibility') return 'accessibility preferences';
+      if (section === 'companion') return 'study companion';
       if (section === 'progress') return 'progress';
       if (section === 'mistakeReview') return 'wrong-answer reviews';
       if (section === 'reviews') return 'review cards';
