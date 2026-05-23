@@ -23,8 +23,8 @@ import {
   formatImportSummaryCount,
   type LocalStudyDataImportSummaryCopy,
 } from '../lib/storage/localStudyDataImportSummary';
-import type { ThemeMode } from '../lib/storage/accessibilityStore';
-import { useAccessibilityStore } from '../lib/storage/accessibilityStore';
+import type { AudioPlaybackRate, ThemeMode } from '../lib/storage/accessibilityStore';
+import { AUDIO_PLAYBACK_RATES, useAccessibilityStore } from '../lib/storage/accessibilityStore';
 import { useCompanionStore } from '../lib/storage/companionStore';
 import type { AppLanguage } from '../lib/storage/settingsStore';
 import { supportedDailyGoalAnswerOptions, useSettingsStore } from '../lib/storage/settingsStore';
@@ -38,6 +38,8 @@ type SettingsCopy = LocalStudyDataImportSummaryCopy & {
   audioListenFirstDisabledLabel: string;
   audioListenFirstEnabledLabel: string;
   audioListenFirstTitle: string;
+  audioPlaybackRateSummary: (label: string) => string;
+  audioPlaybackRateTitle: string;
   audioTitle: string;
   backToProfile: string;
   backToProfileAccessibilityLabel: string;
@@ -84,6 +86,7 @@ type SettingsCopy = LocalStudyDataImportSummaryCopy & {
   studyControlsFocusLabel: string;
   studyControlsTitle: string;
   setDailyGoalAccessibilityLabel: (goal: number) => string;
+  setAudioPlaybackRateAccessibilityLabel: (label: string) => string;
   setThemeModeAccessibilityLabel: (label: string) => string;
   subtitle: string;
   themeDarkLabel: string;
@@ -130,6 +133,8 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     audioListenFirstDisabledLabel: 'Lyssna först av',
     audioListenFirstEnabledLabel: 'Lyssna först på',
     audioListenFirstTitle: 'Lyssna först',
+    audioPlaybackRateSummary: (label) => `Vald hastighet: ${label}`,
+    audioPlaybackRateTitle: 'Uppläsningshastighet',
     audioTitle: 'Ljud',
     backToProfile: '← Tillbaka till profil',
     backToProfileAccessibilityLabel: 'Tillbaka till profil',
@@ -238,6 +243,8 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     studyControlsFocusLabel: 'Studieinställningarna från profilen är markerade här.',
     studyControlsTitle: 'Dagligt mål, språk och ljud',
     setDailyGoalAccessibilityLabel: (goal) => `Ställ in dagligt mål till ${goal} svar`,
+    setAudioPlaybackRateAccessibilityLabel: (label) =>
+      `Ställ in uppläsningshastighet till ${label}`,
     setThemeModeAccessibilityLabel: (label) => `Välj tema: ${label}`,
     subtitle: 'Styr studiespråk, ljud, tema, studiekompis och ditt dagliga mål.',
     themeDarkLabel: 'Mörkt',
@@ -253,6 +260,8 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     audioListenFirstDisabledLabel: 'Listen first disabled',
     audioListenFirstEnabledLabel: 'Listen first enabled',
     audioListenFirstTitle: 'Listen first',
+    audioPlaybackRateSummary: (label) => `Selected speed: ${label}`,
+    audioPlaybackRateTitle: 'Playback speed',
     audioTitle: 'Audio',
     backToProfile: '← Back to Profile',
     backToProfileAccessibilityLabel: 'Back to profile',
@@ -359,6 +368,7 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     studyControlsFocusLabel: 'The study setup controls from Profile are highlighted here.',
     studyControlsTitle: 'Daily goal, language, and audio',
     setDailyGoalAccessibilityLabel: (goal) => `Set daily goal to ${goal} answers`,
+    setAudioPlaybackRateAccessibilityLabel: (label) => `Set audio playback rate to ${label}`,
     setThemeModeAccessibilityLabel: (label) => `Choose theme: ${label}`,
     subtitle: 'Control study language, audio, theme, study companion, and your daily goal.',
     themeDarkLabel: 'Dark',
@@ -388,6 +398,21 @@ type WebRadioKeyboardProps = {
   tabIndex?: 0 | -1;
 };
 
+const audioPlaybackRateLabels: Record<AppLanguage, Record<string, string>> = {
+  sv: {
+    '0.5': '0,5x',
+    '0.75': '0,75x',
+    '1': '1,0x',
+    '1.25': '1,25x',
+  },
+  en: {
+    '0.5': '0.5x',
+    '0.75': '0.75x',
+    '1': '1.0x',
+    '1.25': '1.25x',
+  },
+};
+
 function getRadioArrowDirection(event: KeyboardEventLike): -1 | 1 | null {
   const key = event.nativeEvent?.key ?? event.key;
   if (key === 'ArrowRight' || key === 'ArrowDown') return 1;
@@ -407,6 +432,8 @@ export default function Screen() {
   const clearPersistenceWarning = useSettingsStore((state) => state.clearPersistenceWarning);
   const themeMode = useAccessibilityStore((state) => state.themeMode);
   const setThemeMode = useAccessibilityStore((state) => state.setThemeMode);
+  const audioPlaybackRate = useAccessibilityStore((state) => state.audioPlaybackRate);
+  const setAudioPlaybackRate = useAccessibilityStore((state) => state.setAudioPlaybackRate);
   const listenFirstAudioEnabled = useAccessibilityStore((state) => state.listenFirstAudioEnabled);
   const setListenFirstAudioEnabled = useAccessibilityStore(
     (state) => state.setListenFirstAudioEnabled,
@@ -437,6 +464,7 @@ export default function Screen() {
   const scrollViewRef = useRef<ScrollView | null>(null);
   const dailyGoalOptionRefs = useRef<Record<string, FocusableElement | null>>({});
   const languageOptionRefs = useRef<Record<string, FocusableElement | null>>({});
+  const audioPlaybackRateOptionRefs = useRef<Record<string, FocusableElement | null>>({});
   const themeOptionRefs = useRef<Record<string, FocusableElement | null>>({});
   const themeOptions: { value: ThemeMode; label: string }[] = [
     { value: 'system', label: copy.themeSystemLabel },
@@ -445,6 +473,10 @@ export default function Screen() {
   ];
   const activeThemeLabel =
     themeOptions.find((option) => option.value === themeMode)?.label ?? copy.themeSystemLabel;
+  const formatAudioPlaybackRateLabel = (rate: AudioPlaybackRate) => {
+    return audioPlaybackRateLabels[language][String(rate)];
+  };
+  const activeAudioPlaybackRateLabel = formatAudioPlaybackRateLabel(audioPlaybackRate);
   const importPayloadByteCount = useMemo(
     () => getLocalStudyDataImportPayloadByteCount(importText),
     [importText],
@@ -596,6 +628,48 @@ export default function Screen() {
           value,
           setThemeMode,
           themeOptionRefs,
+        )}
+      >
+        <Text style={[styles.pillText, selected ? styles.pillTextActive : null]}>{label}</Text>
+      </Pressable>
+    );
+  };
+
+  const renderAudioPlaybackRateButton = (rate: AudioPlaybackRate) => {
+    const label = formatAudioPlaybackRateLabel(rate);
+    const selected = audioPlaybackRate === rate;
+    const focusKey = `audio-playback-rate-${rate}`;
+
+    return (
+      <Pressable
+        key={rate}
+        aria-checked={selected}
+        accessibilityLabel={copy.setAudioPlaybackRateAccessibilityLabel(label)}
+        accessibilityRole="radio"
+        accessibilityState={{ checked: selected }}
+        hitSlop={space[1]}
+        onBlur={() => setFocusedControl(null)}
+        onFocus={() => setFocusedControl(focusKey)}
+        onPress={() => setAudioPlaybackRate(rate)}
+        ref={(node) => {
+          audioPlaybackRateOptionRefs.current[String(rate)] = node as FocusableElement | null;
+        }}
+        style={({ pressed }) => [
+          styles.pill,
+          selected ? styles.pillActive : null,
+          focusedControl === focusKey ? styles.controlFocused : null,
+          pressed
+            ? reduceMotion
+              ? styles.controlPressedReducedMotion
+              : styles.controlPressed
+            : null,
+        ]}
+        {...getWebRadioKeyboardProps(
+          AUDIO_PLAYBACK_RATES,
+          audioPlaybackRate,
+          rate,
+          setAudioPlaybackRate,
+          audioPlaybackRateOptionRefs,
         )}
       >
         <Text style={[styles.pillText, selected ? styles.pillTextActive : null]}>{label}</Text>
@@ -832,6 +906,17 @@ export default function Screen() {
                 : copy.audioListenFirstDisabledLabel}
             </Text>
           </Pressable>
+          <Text style={styles.subtitle}>
+            {copy.audioPlaybackRateSummary(activeAudioPlaybackRateLabel)}
+          </Text>
+          <View
+            aria-label={copy.audioPlaybackRateTitle}
+            accessibilityLabel={copy.audioPlaybackRateTitle}
+            accessibilityRole="radiogroup"
+            style={styles.row}
+          >
+            {AUDIO_PLAYBACK_RATES.map((rate) => renderAudioPlaybackRateButton(rate))}
+          </View>
         </View>
       </View>
 

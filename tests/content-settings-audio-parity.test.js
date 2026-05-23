@@ -87,6 +87,8 @@ test('audio setting stays in parity between storage and settings switch', () => 
 
   assert.equal(summary.settingsAudioLabelsValidated, 2);
   assert.equal(summary.settingsAudioParityValidated, true);
+  assert.equal(summary.settingsAudioRateOptionsValidated, 8);
+  assert.equal(summary.settingsAudioRateParityValidated, true);
   assert.match(settingsStore, /const audioEnabledKey = 'audioEnabled';/);
   assert.match(settingsStore, /const storedValue = readStorageBoolean\(audioEnabledKey\);/);
   assert.match(settingsStore, /return storedValue \?\? true;/);
@@ -111,6 +113,36 @@ test('audio setting stays in parity between storage and settings switch', () => 
   assert.match(settingsRoute, /Slå på ljud/);
   assert.match(settingsRoute, /Audio enabled/);
   assert.match(settingsRoute, /Audio disabled/);
+  assert.match(settingsRoute, /AUDIO_PLAYBACK_RATES/);
+  assert.match(
+    settingsRoute,
+    /const audioPlaybackRate = useAccessibilityStore\(\(state\) => state\.audioPlaybackRate\);/,
+  );
+  assert.match(
+    settingsRoute,
+    /const setAudioPlaybackRate = useAccessibilityStore\(\(state\) => state\.setAudioPlaybackRate\);/,
+  );
+  assert.match(
+    settingsRoute,
+    /audioPlaybackRateSummary: \(label\) => `Vald hastighet: \$\{label\}`/,
+  );
+  assert.match(settingsRoute, /audioPlaybackRateTitle: 'Uppläsningshastighet'/);
+  assert.match(
+    settingsRoute,
+    /audioPlaybackRateSummary: \(label\) => `Selected speed: \$\{label\}`/,
+  );
+  assert.match(settingsRoute, /audioPlaybackRateTitle: 'Playback speed'/);
+  assert.match(settingsRoute, /Ställ in uppläsningshastighet till \$\{label\}/);
+  assert.match(settingsRoute, /Set audio playback rate to \$\{label\}/);
+  assert.match(settingsRoute, /const audioPlaybackRateLabels/);
+  assert.match(settingsRoute, /'0\.75': '0,75x'/);
+  assert.match(settingsRoute, /'0\.75': '0\.75x'/);
+  assert.match(settingsRoute, /audioPlaybackRateLabels\[language\]\[String\(rate\)\]/);
+  assert.match(settingsRoute, /onPress=\{\(\) => setAudioPlaybackRate\(rate\)\}/);
+  assert.match(
+    settingsRoute,
+    /AUDIO_PLAYBACK_RATES\.map\(\(rate\) => renderAudioPlaybackRateButton\(rate\)\)/,
+  );
 });
 
 test('audio setting hydration falls back when MMKV getBoolean throws', () => {
@@ -148,6 +180,19 @@ test('audio setting parity rejects missing route labels', () => {
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /app\/settings\.tsx is missing audio label "Audio disabled"/,
+  );
+});
+
+test('audio setting parity rejects missing playback-rate route labels', () => {
+  const result = runValidationWithSettingsRoutePatch(
+    'Set audio playback rate to ${label}',
+    'Set playback speed to ${label}',
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /app\/settings\.tsx is missing audio playback-rate accessibility template "Set audio playback rate to \$\{label\}"/,
   );
 });
 

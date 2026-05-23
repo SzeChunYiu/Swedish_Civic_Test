@@ -1985,6 +1985,20 @@ const EXPECTED_DAILY_GOAL_MAX = 50;
 const EXPECTED_AUDIO_SETTING_KEY = 'audioEnabled';
 const EXPECTED_AUDIO_LABELS = ['Audio enabled', 'Audio disabled'];
 const EXPECTED_AUDIO_ACCESSIBILITY_LABELS = ['Disable audio', 'Enable audio'];
+const EXPECTED_AUDIO_PLAYBACK_RATE_LABELS = [
+  '0,5x',
+  '0,75x',
+  '1,0x',
+  '1,25x',
+  '0.5x',
+  '0.75x',
+  '1.0x',
+  '1.25x',
+];
+const EXPECTED_AUDIO_PLAYBACK_RATE_ACCESSIBILITY_TEMPLATES = [
+  'Ställ in uppläsningshastighet till ${label}',
+  'Set audio playback rate to ${label}',
+];
 const EXPECTED_SPEECH_RUNTIME_CASES = 10;
 const EXPECTED_SWEDISH_SPEECH_LANGUAGE = 'sv-SE';
 const EXPECTED_SETTINGS_STORE_FIELDS = [
@@ -10293,6 +10307,8 @@ let settingsDailyGoalOptionsValidated = 0;
 let settingsDailyGoalParityValidated = false;
 let settingsAudioLabelsValidated = 0;
 let settingsAudioParityValidated = false;
+let settingsAudioRateOptionsValidated = 0;
+let settingsAudioRateParityValidated = false;
 let persistenceWarningScopeCasesValidated = 0;
 let persistenceWarningScopeParityValidated = false;
 let localStudyCorruptJsonStoresValidated = 0;
@@ -11227,6 +11243,8 @@ if (process.argv.includes('--focus-settings-parity')) {
     settingsDailyGoalParityValidated,
     settingsAudioLabelsValidated,
     settingsAudioParityValidated,
+    settingsAudioRateOptionsValidated,
+    settingsAudioRateParityValidated,
   });
   process.exit(0);
 }
@@ -11941,6 +11959,8 @@ if (process.argv.includes('--focus-settings-store')) {
     settingsDailyGoalParityValidated,
     settingsAudioLabelsValidated,
     settingsAudioParityValidated,
+    settingsAudioRateOptionsValidated,
+    settingsAudioRateParityValidated,
   });
   process.exit(0);
 }
@@ -19550,8 +19570,61 @@ function validateSettingsAudioParity() {
     }
   });
 
-  if (valid && settingsAudioLabelsValidated === EXPECTED_AUDIO_LABELS.length) {
+  if (!settingsRoute.includes('AUDIO_PLAYBACK_RATES')) {
+    reject('app/settings.tsx must render playback-rate options from AUDIO_PLAYBACK_RATES');
+  }
+  if (!settingsRoute.includes('audioPlaybackRate = useAccessibilityStore')) {
+    reject('app/settings.tsx must read audioPlaybackRate from useAccessibilityStore');
+  }
+  if (!settingsRoute.includes('setAudioPlaybackRate = useAccessibilityStore')) {
+    reject('app/settings.tsx must read setAudioPlaybackRate from useAccessibilityStore');
+  }
+  if (!settingsRoute.includes('accessibilityRole="radiogroup"')) {
+    reject('app/settings.tsx audio playback-rate control must expose radiogroup role');
+  }
+  if (!settingsRoute.includes('setAudioPlaybackRate(rate)')) {
+    reject('app/settings.tsx playback-rate controls must persist via setAudioPlaybackRate(rate)');
+  }
+
+  const seenRateLabels = new Set();
+  EXPECTED_AUDIO_PLAYBACK_RATE_LABELS.forEach((label) => {
+    let labelIsValid = true;
+    if (!textIsTrimmedSingleSpaced(label)) {
+      labelIsValid = false;
+      reject(
+        `audio playback-rate label ${JSON.stringify(label)} must be trimmed and single-spaced`,
+      );
+    }
+    if (!settingsRoute.includes(label)) {
+      labelIsValid = false;
+      reject(`app/settings.tsx is missing audio playback-rate label ${JSON.stringify(label)}`);
+    }
+    const normalizedLabel = normalizeComparableText(label);
+    if (seenRateLabels.has(normalizedLabel)) {
+      labelIsValid = false;
+      reject(`audio playback-rate label ${JSON.stringify(label)} is duplicated`);
+    }
+    if (normalizedLabel) seenRateLabels.add(normalizedLabel);
+    if (labelIsValid) settingsAudioRateOptionsValidated += 1;
+  });
+
+  EXPECTED_AUDIO_PLAYBACK_RATE_ACCESSIBILITY_TEMPLATES.forEach((template) => {
+    if (!settingsRoute.includes(template)) {
+      reject(
+        `app/settings.tsx is missing audio playback-rate accessibility template ${JSON.stringify(
+          template,
+        )}`,
+      );
+    }
+  });
+
+  if (
+    valid &&
+    settingsAudioLabelsValidated === EXPECTED_AUDIO_LABELS.length &&
+    settingsAudioRateOptionsValidated === EXPECTED_AUDIO_PLAYBACK_RATE_LABELS.length
+  ) {
     settingsAudioParityValidated = true;
+    settingsAudioRateParityValidated = true;
   }
 }
 
@@ -27814,6 +27887,8 @@ console.log(
       settingsDailyGoalParityValidated,
       settingsAudioLabelsValidated,
       settingsAudioParityValidated,
+      settingsAudioRateOptionsValidated,
+      settingsAudioRateParityValidated,
       persistenceWarningScopeCasesValidated,
       persistenceWarningScopeParityValidated,
       localStudyCorruptJsonStoresValidated,

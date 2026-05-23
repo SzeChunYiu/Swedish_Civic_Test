@@ -133,7 +133,7 @@ test('settings dismisses accessibility persistence warning after write without s
   expect(browserErrors.get()).toEqual([]);
 });
 
-test('settings controls expose selected state and radio arrow keyboard navigation on web', async ({
+test('settings controls expose selected state, audio playback rate, and radio arrow keyboard navigation on web', async ({
   page,
 }) => {
   const consoleErrors: string[] = [];
@@ -146,6 +146,11 @@ test('settings controls expose selected state and radio arrow keyboard navigatio
   await page.goto('/settings', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
 
+  await expect(page.getByRole('radiogroup', { name: 'Uppläsningshastighet' })).toBeVisible();
+  await expect(page.getByLabel('Ställ in uppläsningshastighet till 1,0x')).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
   await expect(page.getByRole('radiogroup', { name: 'Välj studiekompis' })).toBeVisible();
   await expectStableCompanionPreview(
     page.getByTestId('companion-preview-kanelbulle'),
@@ -265,6 +270,21 @@ test('settings controls expose selected state and radio arrow keyboard navigatio
   const disabledAudio = page.getByRole('switch', { name: 'Enable audio' });
   await expect(disabledAudio).toHaveAttribute('aria-checked', 'false');
 
+  const standardPlaybackRate = page.getByLabel('Set audio playback rate to 1.0x');
+  const fastPlaybackRate = page.getByLabel('Set audio playback rate to 1.25x');
+  await fastPlaybackRate.click();
+  await expect(fastPlaybackRate).toHaveAttribute('aria-checked', 'true');
+  await expect(standardPlaybackRate).toHaveAttribute('aria-checked', 'false');
+  await fastPlaybackRate.focus();
+  await page.keyboard.press('ArrowLeft');
+  await expect(standardPlaybackRate).toHaveAttribute('aria-checked', 'true');
+  await standardPlaybackRate.focus();
+  await page.keyboard.press('ArrowLeft');
+  await expect(page.getByLabel('Set audio playback rate to 0.75x')).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
+
   await page.reload({ waitUntil: 'networkidle' });
 
   await expect(page.getByLabel('Set study language to English support')).toHaveAttribute(
@@ -278,6 +298,10 @@ test('settings controls expose selected state and radio arrow keyboard navigatio
   await expect(page.getByRole('switch', { name: 'Enable audio' })).toHaveAttribute(
     'aria-checked',
     'false',
+  );
+  await expect(page.getByLabel('Set audio playback rate to 0.75x')).toHaveAttribute(
+    'aria-checked',
+    'true',
   );
   await expect(page.getByLabel('Choose theme: Dark')).toHaveAttribute('aria-checked', 'true');
   await expect(page.getByRole('radiogroup', { name: 'Choose study companion' })).toBeVisible();

@@ -299,6 +299,8 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
       'settingsDailyGoalParityValidated',
       'settingsAudioLabelsValidated',
       'settingsAudioParityValidated',
+      'settingsAudioRateOptionsValidated',
+      'settingsAudioRateParityValidated',
     ],
   },
   {
