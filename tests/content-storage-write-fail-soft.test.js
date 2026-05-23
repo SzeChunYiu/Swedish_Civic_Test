@@ -342,8 +342,8 @@ test('local study corrupt JSON warnings report focused validator coverage', () =
   const summary = parseValidationSummary(result.stdout);
 
   assert.deepEqual(Object.keys(summary).sort(), [...LOCAL_STUDY_CORRUPT_JSON_SUMMARY_KEYS].sort());
-  assert.equal(summary.localStudyCorruptJsonStoresValidated, 4);
-  assert.equal(summary.localStudyCorruptJsonRecoverableReadWarningTestsValidated, 4);
+  assert.equal(summary.localStudyCorruptJsonStoresValidated, 5);
+  assert.equal(summary.localStudyCorruptJsonRecoverableReadWarningTestsValidated, 5);
   assert.equal(summary.localStudyCorruptJsonWarningParityValidated, true);
 });
 
@@ -384,6 +384,13 @@ test('local study corrupt JSON focused validator rejects dropped store warning p
       ],
       expectedFailure:
         /highlights store corrupt JSON warning path is missing persistenceWarning: parsed\.warning \?\? result\.warning/,
+    },
+    {
+      label: 'citizenship requirements',
+      file: 'lib/storage/citizenshipRequirementsStore.ts',
+      replacements: [{ from: 'parseJsonRecoverably(', to: 'parseJsonWithoutWarning(' }],
+      expectedFailure:
+        /citizenship requirements store corrupt JSON warning path is missing parseJsonRecoverably/,
     },
   ];
 
@@ -450,6 +457,18 @@ test('local study corrupt JSON focused validator rejects missing warning detail 
       ],
       expectedFailure:
         /review corrupt JSON warning test is missing persistenceWarning\.storageId, 'reviews'/,
+    },
+    {
+      label: 'citizenship requirements legacy key',
+      file: 'tests/content-citizenship-requirements-parity.test.js',
+      replacements: [
+        {
+          from: 'state.persistenceWarning?.key, legacyChecklistStateKey',
+          to: 'state.persistenceWarning?.key, checkedAreaIdsKey',
+        },
+      ],
+      expectedFailure:
+        /citizenship requirements corrupt JSON warning test is missing state\.persistenceWarning\?\.key, legacyChecklistStateKey/,
     },
   ];
 

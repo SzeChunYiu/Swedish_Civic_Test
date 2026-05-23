@@ -19102,8 +19102,10 @@ function validateLocalStudyCorruptJsonWarnings() {
     mistakeReview: 'lib/storage/mistakeReviewStore.ts',
     review: 'lib/storage/reviewStore.ts',
     highlights: 'lib/storage/highlightsStore.ts',
+    citizenshipRequirements: 'lib/storage/citizenshipRequirementsStore.ts',
     storageTests: 'tests/content-storage-write-fail-soft.test.js',
     reviewTests: 'tests/v1-1-review-store.test.js',
+    citizenshipRequirementsTests: 'tests/content-citizenship-requirements-parity.test.js',
   };
 
   for (const [key, relativePath] of Object.entries(sourceFiles)) {
@@ -19195,6 +19197,22 @@ function validateLocalStudyCorruptJsonWarnings() {
         'persistenceWarning: parsed.warning ?? result.warning',
       ],
     },
+    {
+      label: 'citizenship requirements',
+      sourceKey: 'citizenshipRequirements',
+      snippets: [
+        "const checkedAreaIdsKey = 'citizenshipRequirements.checkedAreaIds.v1';",
+        "const legacyChecklistStateKey = 'citizenshipRequirementsChecklistState';",
+        "const citizenshipRequirementsStorageId = 'citizenship-requirements';",
+        'readRecoverably(',
+        'citizenshipRequirementsStorageId',
+        'checkedAreaIdsKey',
+        'legacyChecklistStateKey',
+        'parseJsonRecoverably(',
+        'readLegacyCheckedAreaIds(parseResult.warning)',
+        'legacyParseResult.warning',
+      ],
+    },
   ];
 
   for (const storeCase of storeCases) {
@@ -19205,6 +19223,13 @@ function validateLocalStudyCorruptJsonWarnings() {
         `${storeCase.label} store corrupt JSON warning path is missing ${missingSnippets.join(
           ', ',
         )}`,
+      );
+    } else if (
+      storeCase.label === 'citizenship requirements' &&
+      (source.match(/parseJsonRecoverably\(/g) || []).length < 2
+    ) {
+      reject(
+        'citizenship requirements store corrupt JSON warning path is missing two parseJsonRecoverably calls',
       );
     } else {
       localStudyCorruptJsonStoresValidated += 1;
@@ -19269,6 +19294,20 @@ function validateLocalStudyCorruptJsonWarnings() {
         "persistenceWarning.storageId, 'reviews'",
         'persistenceWarning.key, REVIEW_STORE_KEY',
         'persistenceWarning.errorMessage',
+      ],
+    },
+    {
+      label: 'citizenship requirements',
+      sourceKey: 'citizenshipRequirementsTests',
+      title:
+        'citizenship requirements checklist corrupt legacy JSON falls back with a recoverable warning',
+      snippets: [
+        "[legacyChecklistStateKey]: '{not-json'",
+        'state.persistenceWarning?.recoverable',
+        "state.persistenceWarning?.operation, 'read'",
+        'state.persistenceWarning?.storageId, citizenshipRequirementsStorageId',
+        'state.persistenceWarning?.key, legacyChecklistStateKey',
+        'state.persistenceWarning?.errorMessage',
       ],
     },
   ];

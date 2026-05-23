@@ -400,6 +400,7 @@ test('citizenship requirements checklist recovers legacy state when primary JSON
   const state = store.getState();
 
   assert.deepEqual(state.checkedAreaIds, ['identity', 'selfSupport', 'swedishLanguage']);
+  assert.equal(state.persistenceWarning?.recoverable, true);
   assert.equal(state.persistenceWarning?.storageId, citizenshipRequirementsStorageId);
   assert.equal(state.persistenceWarning?.key, checkedAreaIdsKey);
   assert.equal(state.persistenceWarning?.operation, 'read');
@@ -429,9 +430,25 @@ test('citizenship requirements checklist keeps recovered legacy state if writeba
   const state = store.getState();
 
   assert.deepEqual(state.checkedAreaIds, ['identity', 'conduct']);
+  assert.equal(state.persistenceWarning?.recoverable, true);
   assert.equal(state.persistenceWarning?.storageId, citizenshipRequirementsStorageId);
   assert.equal(state.persistenceWarning?.key, checkedAreaIdsKey);
   assert.equal(state.persistenceWarning?.operation, 'read');
   assert.match(state.persistenceWarning?.errorMessage || '', /JSON|Unexpected|position/i);
   assert.equal(storage.getString(checkedAreaIdsKey), '{not-json');
+});
+
+test('citizenship requirements checklist corrupt legacy JSON falls back with a recoverable warning', () => {
+  const { store } = loadCitizenshipRequirementsStore({
+    [legacyChecklistStateKey]: '{not-json',
+  });
+
+  const state = store.getState();
+
+  assert.deepEqual(state.checkedAreaIds, []);
+  assert.equal(state.persistenceWarning?.recoverable, true);
+  assert.equal(state.persistenceWarning?.storageId, citizenshipRequirementsStorageId);
+  assert.equal(state.persistenceWarning?.key, legacyChecklistStateKey);
+  assert.equal(state.persistenceWarning?.operation, 'read');
+  assert.match(state.persistenceWarning?.errorMessage || '', /JSON|Unexpected|position/i);
 });
