@@ -60,11 +60,16 @@ function createRequestHandler({ siteRoot = root, listenPort = port } = {}) {
 
 function startServer({ siteRoot = root, listenPort = port } = {}) {
   assertStaticSiteReady(siteRoot);
-  return http
-    .createServer(createRequestHandler({ siteRoot, listenPort }))
-    .listen(listenPort, '127.0.0.1', () => {
-      console.log(`Serving static site on http://127.0.0.1:${listenPort}`);
-    });
+  const server = http.createServer(createRequestHandler({ siteRoot, listenPort }));
+
+  return server.listen(listenPort, '127.0.0.1', () => {
+    const address = server.address();
+    const resolvedPort =
+      address && typeof address === 'object' && typeof address.port === 'number'
+        ? address.port
+        : listenPort;
+    console.log(`Serving static site on http://127.0.0.1:${resolvedPort}`);
+  });
 }
 
 function closeServer(server, callback = () => {}) {

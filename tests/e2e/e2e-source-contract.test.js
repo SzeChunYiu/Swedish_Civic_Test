@@ -1,6 +1,7 @@
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
 const fs = require('node:fs');
+const http = require('node:http');
 const net = require('node:net');
 const os = require('node:os');
 const path = require('node:path');
@@ -86,6 +87,54 @@ function waitForServerReady(
     child.stdout.on('data', onData);
     child.stderr.on('data', onData);
     child.once('exit', onExit);
+  });
+}
+
+function waitForServerReadyMatch(child, { readyPattern, serverName }) {
+  return new Promise((resolve, reject) => {
+    let output = '';
+    const timeout = setTimeout(() => {
+      cleanup();
+      reject(new Error(`${serverName} did not become ready:\n${output}`));
+    }, 5000);
+
+    const cleanup = () => {
+      clearTimeout(timeout);
+      child.stdout.off('data', onData);
+      child.stderr.off('data', onData);
+      child.off('exit', onExit);
+    };
+    const onData = (data) => {
+      output += data.toString();
+      const match = output.match(readyPattern);
+      if (match) {
+        cleanup();
+        resolve({ match, output });
+      }
+    };
+    const onExit = (code, signal) => {
+      cleanup();
+      reject(new Error(`${serverName} exited before ready (${code ?? signal}):\n${output}`));
+    };
+
+    child.stdout.on('data', onData);
+    child.stderr.on('data', onData);
+    child.once('exit', onExit);
+  });
+}
+
+function requestUrl(url) {
+  return new Promise((resolve, reject) => {
+    const request = http.get(url, (response) => {
+      response.resume();
+      response.on('end', () => {
+        resolve(response.statusCode);
+      });
+    });
+    request.once('error', reject);
+    request.setTimeout(5000, () => {
+      request.destroy(new Error(`Timed out requesting ${url}`));
+    });
   });
 }
 
@@ -908,7 +957,7 @@ test('static site network specs share one external request trap helper', () => {
   );
   assert.deepEqual(
     callArgumentCounts(networkSource, 'trapExternalRequests'),
-    [3, 3, 3, 3],
+    [3, 3, 3, 3, 3],
     'font/network coverage should use the shared helper with an explicit capture array',
   );
   assert.match(
@@ -1075,6 +1124,47 @@ test('static site e2e server releases the default port on SIGTERM', async () => 
       'SIGTERM should be handled instead of surfacing as a signal exit',
     );
     await assertPortCanBind(port);
+  } finally {
+    if (child.exitCode === null && child.signalCode === null) {
+      child.kill('SIGKILL');
+    }
+  }
+});
+
+test('static site e2e server reports the actual ephemeral port', async () => {
+  const source = readRelative('serve-static-site.cjs');
+  assert.match(
+    source,
+    /server\.address\(\)[\s\S]*address\.port[\s\S]*Serving static site on http:\/\/127\.0\.0\.1:\$\{resolvedPort\}/,
+    'serve-static-site should log the actual bound port from server.address()',
+  );
+
+  const child = spawn(process.execPath, [path.join(e2eDir, 'serve-static-site.cjs')], {
+    cwd: repoRoot,
+    env: {
+      ...process.env,
+      PORT: '0',
+    },
+    stdio: ['ignore', 'pipe', 'pipe'],
+  });
+
+  try {
+    const { match } = await waitForServerReadyMatch(child, {
+      readyPattern: /Serving static site on (http:\/\/127\.0\.0\.1:(\d+))/,
+      serverName: 'static site ephemeral-port server',
+    });
+    const [, loggedUrl, loggedPort] = match;
+
+    assert.notEqual(loggedPort, '0', 'ephemeral static site server must not log port 0');
+    assert.match(loggedUrl, /^http:\/\/127\.0\.0\.1:\d+$/);
+    assert.equal(await requestUrl(loggedUrl), 200, 'logged ephemeral URL should serve the site');
+
+    const exited = waitForExit(child);
+    child.kill('SIGTERM');
+    const result = await exited;
+
+    assert.equal(result.code, 0, 'ephemeral-port SIGTERM shutdown should exit cleanly');
+    assert.equal(result.signal, null, 'ephemeral-port SIGTERM should be handled');
   } finally {
     if (child.exitCode === null && child.signalCode === null) {
       child.kill('SIGKILL');
