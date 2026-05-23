@@ -10770,8 +10770,7 @@ button.quiz__dot.is-nav:hover {
   background: var(--card-rail);
   opacity: 0.82;
 }
-.ebook__local-note::after {
-  content: 'browser note';
+.ebook__local-note-chip {
   display: inline-flex;
   width: fit-content;
   margin-top: 8px;
@@ -10793,7 +10792,7 @@ button.quiz__dot.is-nav:hover {
     rgba(255, 255, 255, 0.045);
   border-color: rgba(255, 255, 255, 0.08);
 }
-:root[data-theme='dark'] .ebook__local-note::after {
+:root[data-theme='dark'] .ebook__local-note-chip {
   background: rgba(45, 168, 255, 0.12);
   border-color: rgba(45, 168, 255, 0.22);
   color: var(--blue-soft);

@@ -19,6 +19,56 @@ const staticSiteLanguageValues = [
   'tr',
   'uk',
 ];
+const ebookLocalNoteCopyByLanguage = {
+  en: {
+    chip: 'Local browser',
+    note: 'Highlights and notes stay in this browser and work locally without sign-in.',
+  },
+  sv: {
+    chip: 'Lokal webbläsare',
+    note: 'Markeringar och anteckningar stannar i den här webbläsaren och fungerar lokalt utan inloggning.',
+  },
+  'zh-Hans': {
+    chip: '本地浏览器',
+    note: '标注和笔记会留在此浏览器中，无需登录也可在本地使用。',
+  },
+  'zh-Hant': {
+    chip: '本機瀏覽器',
+    note: '標註和筆記會留在此瀏覽器中，不需登入也可在本機使用。',
+  },
+  ar: {
+    chip: 'متصفح محلي',
+    note: 'تبقى التظليلات والملاحظات في هذا المتصفح وتعمل محلياً من دون تسجيل دخول.',
+  },
+  ckb: {
+    chip: 'وێبگەڕی ناوخۆیی',
+    note: 'نیشانەکردن و تێبینییەکان لەم وێبگەڕەدا دەمێننەوە و بەبێ چوونەژوورەوە بە شێوەی ناوخۆیی کار دەکەن.',
+  },
+  fa: {
+    chip: 'مرورگر محلی',
+    note: 'هایلایت‌ها و یادداشت‌ها در این مرورگر می‌مانند و بدون ورود به حساب به‌صورت محلی کار می‌کنند.',
+  },
+  pl: {
+    chip: 'Lokalna przeglądarka',
+    note: 'Zaznaczenia i notatki zostają w tej przeglądarce i działają lokalnie bez logowania.',
+  },
+  so: {
+    chip: 'Browser maxalli ah',
+    note: 'Calaamadaha iyo qoraalladu waxay ku sii jiraan browser-kan, waxayna si maxalli ah u shaqeeyaan adigoon soo galin.',
+  },
+  ti: {
+    chip: 'ናይ ከባቢ መቃኛ',
+    note: 'ምልክታትን ማስታወሻታትን ኣብዚ መቃኛ ይተርፋ እሞ ብዘይ መእተዊ ብከባቢ ይሰርሓ።',
+  },
+  tr: {
+    chip: 'Yerel tarayıcı',
+    note: 'İşaretlemeler ve notlar bu tarayıcıda kalır, oturum açmadan yerel olarak çalışır.',
+  },
+  uk: {
+    chip: 'Локальний браузер',
+    note: 'Виділення й нотатки залишаються в цьому браузері та працюють локально без входу.',
+  },
+};
 
 const sampleQuestion = {
   id: 'q-settings-language',
@@ -59,6 +109,10 @@ const chapterMeta = [
 
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+}
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 function extractQuotedArray(source, variableName) {
@@ -483,6 +537,43 @@ test('Static Settings exposes the shipped extra language choices', () => {
   loadScripts(context);
 
   assert.deepEqual(context.settingLanguageValues(), staticSiteLanguageValues);
+});
+
+test('static ebook local note copy is dictionary-backed for every static locale', () => {
+  const html = read('site/index.html');
+  const css = read('site/styles.css');
+  const app = read('site/app.js');
+  const extras = read('site/i18n-extras.js');
+  const browserTest = read('tests/e2e/static-ebook-provenance.spec.ts');
+
+  assert.match(
+    html,
+    /class="ebook__local-note"[\s\S]*data-i18n="ebook\.localNote"[\s\S]*ebook__local-note-chip[\s\S]*data-i18n="ebook\.localNoteChip"/,
+  );
+  assert.doesNotMatch(
+    html,
+    />\s*Highlights and notes stay in this browser and work locally without sign-in\.\s*<\/p>/,
+  );
+  assert.doesNotMatch(css, /content:\s*['"]browser note['"]/);
+  assert.match(css, /\.ebook__local-note-chip/);
+  assert.match(browserTest, /localNoteExtraLocaleCases/);
+
+  for (const language of staticSiteLanguageValues) {
+    const copy = ebookLocalNoteCopyByLanguage[language];
+    assert.ok(copy, `missing ebook local note fixture for ${language}`);
+
+    const source = language === 'en' || language === 'sv' ? app : extras;
+    assert.match(
+      source,
+      new RegExp(`'ebook\\.localNote':[\\s\\S]*?${escapeRegExp(copy.note)}`),
+      `missing ebook local note copy for ${language}`,
+    );
+    assert.match(
+      source,
+      new RegExp(`'ebook\\.localNoteChip':[\\s\\S]*?${escapeRegExp(copy.chip)}`),
+      `missing ebook local note chip copy for ${language}`,
+    );
+  }
 });
 
 test('static sign-in email field labels are localized for every static locale', () => {

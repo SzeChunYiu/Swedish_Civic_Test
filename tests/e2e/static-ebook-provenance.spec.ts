@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import {
   collectPageErrors,
+  expectNoHorizontalOverflow,
   openStaticEbook,
   setStaticSiteLanguage,
   startStaticSiteServer,
@@ -33,6 +34,61 @@ const extraLocaleSourceChromeCases = [
   footnotesHeading: string;
   language: StaticSiteLanguage;
   sourcePageLink: string;
+}[];
+const localNoteExtraLocaleCases = [
+  {
+    chip: 'متصفح محلي',
+    direction: 'rtl',
+    language: 'ar',
+    note: 'تبقى التظليلات والملاحظات في هذا المتصفح وتعمل محلياً من دون تسجيل دخول.',
+  },
+  {
+    chip: 'وێبگەڕی ناوخۆیی',
+    direction: 'rtl',
+    language: 'ckb',
+    note: 'نیشانەکردن و تێبینییەکان لەم وێبگەڕەدا دەمێننەوە و بەبێ چوونەژوورەوە بە شێوەی ناوخۆیی کار دەکەن.',
+  },
+  {
+    chip: 'مرورگر محلی',
+    direction: 'rtl',
+    language: 'fa',
+    note: 'هایلایت‌ها و یادداشت‌ها در این مرورگر می‌مانند و بدون ورود به حساب به‌صورت محلی کار می‌کنند.',
+  },
+  {
+    chip: 'Lokalna przeglądarka',
+    direction: 'ltr',
+    language: 'pl',
+    note: 'Zaznaczenia i notatki zostają w tej przeglądarce i działają lokalnie bez logowania.',
+  },
+  {
+    chip: 'Browser maxalli ah',
+    direction: 'ltr',
+    language: 'so',
+    note: 'Calaamadaha iyo qoraalladu waxay ku sii jiraan browser-kan, waxayna si maxalli ah u shaqeeyaan adigoon soo galin.',
+  },
+  {
+    chip: 'ናይ ከባቢ መቃኛ',
+    direction: 'ltr',
+    language: 'ti',
+    note: 'ምልክታትን ማስታወሻታትን ኣብዚ መቃኛ ይተርፋ እሞ ብዘይ መእተዊ ብከባቢ ይሰርሓ።',
+  },
+  {
+    chip: 'Yerel tarayıcı',
+    direction: 'ltr',
+    language: 'tr',
+    note: 'İşaretlemeler ve notlar bu tarayıcıda kalır, oturum açmadan yerel olarak çalışır.',
+  },
+  {
+    chip: 'Локальний браузер',
+    direction: 'ltr',
+    language: 'uk',
+    note: 'Виділення й нотатки залишаються в цьому браузері та працюють локально без входу.',
+  },
+] as const satisfies readonly {
+  chip: string;
+  direction: 'ltr' | 'rtl';
+  language: StaticSiteLanguage;
+  note: string;
 }[];
 const safeExternalSourceLinkCases = [
   {
@@ -262,6 +318,53 @@ for (const {
     expect(pageErrors).toEqual([]);
   });
 }
+
+test('static ebook local note handles RTL and extra locale switches without overflow', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const pageErrors = collectPageErrors(page);
+
+  await openStaticEbook(page, staticSite.baseUrl, 'en', '#/ebook?c=1');
+
+  const note = page.locator('.ebook__local-note');
+  const chip = note.locator('.ebook__local-note-chip');
+
+  for (const fixture of localNoteExtraLocaleCases) {
+    await renderEbookAfterLanguageSwitch(page, fixture.language);
+
+    await expect(page.locator('html')).toHaveAttribute('dir', fixture.direction);
+    await expect(note).toContainText(fixture.note);
+    await expect(chip).toHaveText(fixture.chip);
+    await expect(note).not.toContainText(
+      'Highlights and notes stay in this browser and work locally without sign-in.',
+    );
+    await expect(note).not.toContainText('Local browser');
+
+    const pseudoContent = await note.evaluate(
+      (element) => window.getComputedStyle(element, '::after').content,
+    );
+    expect(['none', 'normal', '""', '']).toContain(pseudoContent);
+
+    await expectNoHorizontalOverflow(page, `static ebook local note in ${fixture.language}`);
+    const metrics = await note.evaluate((element) => {
+      const rect = element.getBoundingClientRect();
+      return {
+        clientWidth: element.clientWidth,
+        left: rect.left,
+        right: rect.right,
+        scrollWidth: element.scrollWidth,
+        viewportWidth: document.documentElement.clientWidth,
+      };
+    });
+
+    expect(metrics.left).toBeGreaterThanOrEqual(0);
+    expect(metrics.right).toBeLessThanOrEqual(metrics.viewportWidth + 1);
+    expect(metrics.scrollWidth).toBeLessThanOrEqual(metrics.clientWidth + 1);
+  }
+
+  expect(pageErrors).toEqual([]);
+});
 
 test('static ebook ignores malformed footnote hash values without page errors', async ({
   page,
