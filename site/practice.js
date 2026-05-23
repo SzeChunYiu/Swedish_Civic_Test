@@ -820,7 +820,7 @@
         const on = selectedChapters.includes(c.id);
         const emoji = escapeHtml(c.emoji || '');
         const title = escapeHtml((c.title && (c.title[lang()] || c.title.en)) || '');
-        return `<button class="mock-chip ${on ? 'is-on' : ''}" data-chip="${c.id}">
+        return `<button class="mock-chip ${on ? 'is-on' : ''}" data-chip="${c.id}" type="button" aria-pressed="${on ? 'true' : 'false'}">
         <span class="mock-chip__emoji">${emoji}</span>
         <span class="mock-chip__num">CH ${String(c.id).padStart(2, '0')}</span>
         <span class="mock-chip__t">${title}</span>
@@ -955,6 +955,11 @@
       }
     }
 
+    function setMockChipSelected(chip, selected) {
+      chip.classList.toggle('is-on', selected);
+      chip.setAttribute('aria-pressed', selected ? 'true' : 'false');
+    }
+
     document.getElementById('cfg-count').addEventListener('input', (e) => {
       out1.textContent = e.target.value;
       const cur = loadMockCfg();
@@ -982,7 +987,7 @@
     });
     stage.querySelectorAll('.mock-chip').forEach((chip) => {
       chip.addEventListener('click', () => {
-        chip.classList.toggle('is-on');
+        setMockChipSelected(chip, !chip.classList.contains('is-on'));
         const ons = Array.from(stage.querySelectorAll('.mock-chip.is-on')).map((c) =>
           parseInt(c.dataset.chip, 10),
         );
@@ -993,14 +998,14 @@
       });
     });
     document.getElementById('cfg-all').addEventListener('click', () => {
-      stage.querySelectorAll('.mock-chip').forEach((c) => c.classList.add('is-on'));
+      stage.querySelectorAll('.mock-chip').forEach((c) => setMockChipSelected(c, true));
       const cur = loadMockCfg();
       cur.chapters = 'all';
       saveMockCfg(cur);
       refreshCounts();
     });
     document.getElementById('cfg-none').addEventListener('click', () => {
-      stage.querySelectorAll('.mock-chip').forEach((c) => c.classList.remove('is-on'));
+      stage.querySelectorAll('.mock-chip').forEach((c) => setMockChipSelected(c, false));
       const cur = loadMockCfg();
       cur.chapters = [];
       saveMockCfg(cur);
@@ -1074,8 +1079,9 @@
     const opts = displayOptions(q, `mock:${MOCK.startedAt || 'preview'}:${i}`)
       .map(({ option: o, originalIndex, displayIndex }) => {
         const cls = chosen === originalIndex ? 'is-chosen' : '';
+        const checked = chosen === originalIndex ? 'true' : 'false';
         return `
-        <button class="mock-opt ${cls}" data-pick="${originalIndex}">
+        <button class="mock-opt ${cls}" data-pick="${originalIndex}" type="button" role="radio" aria-checked="${checked}">
           <span class="key">${String.fromCharCode(65 + displayIndex)}</span>
           <span>${escapeHtml(o[lang()] || o.en)}</span>
         </button>
@@ -1106,7 +1112,7 @@
           <div class="quiz__crumb">${escapeHtml(chapterLabel(q))}</div>
           <h2 class="quiz__q">${escapeHtml(q.q[lang()] || q.q.en)}</h2>
           ${questionSourceRow(q)}
-          <div class="quiz__opts">${opts}</div>
+          <div class="quiz__opts" role="radiogroup" aria-label="${tr({ sv: 'Svarsalternativ', en: 'Answer choices' })}">${opts}</div>
         </div>
 
         <div class="mock-actions">

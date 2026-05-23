@@ -605,6 +605,32 @@ test('static Mock chapter-limited landing count excludes supplementary questions
 
   assert.match(element('mock-stage').innerHTML, /Max 1/);
   assert.doesNotMatch(element('mock-stage').innerHTML, /Max 2/);
+  assert.match(
+    element('mock-stage').innerHTML,
+    /class="mock-chip is-on" data-chip="1" type="button" aria-pressed="true"/,
+  );
+  assert.match(
+    element('mock-stage').innerHTML,
+    /class="mock-chip " data-chip="2" type="button" aria-pressed="false"/,
+  );
+});
+
+test('static Mock chapter chips keep aria-pressed synchronized with bulk toggles', () => {
+  const source = read('site/practice.js');
+
+  assert.match(
+    source,
+    /function setMockChipSelected\(chip, selected\) \{[\s\S]*chip\.setAttribute\('aria-pressed', selected \? 'true' : 'false'\);[\s\S]*\}/,
+  );
+  assert.match(source, /setMockChipSelected\(chip, !chip\.classList\.contains\('is-on'\)\)/);
+  assert.match(
+    source,
+    /stage\.querySelectorAll\('\.mock-chip'\)\.forEach\(\(c\) => setMockChipSelected\(c, true\)\)/,
+  );
+  assert.match(
+    source,
+    /stage\.querySelectorAll\('\.mock-chip'\)\.forEach\(\(c\) => setMockChipSelected\(c, false\)\)/,
+  );
 });
 
 test('static active and reviewed Mock questions never render supplementary rows', () => {
@@ -638,6 +664,15 @@ test('static active and reviewed Mock questions never render supplementary rows'
   vm.runInContext(source, sandbox, { timeout: 3000 });
 
   assert.match(sandbox.window.__activeMockHtml, /Question q-uhr-1/);
+  assert.match(sandbox.window.__activeMockHtml, /role="radiogroup" aria-label="Answer choices"/);
+  assert.match(
+    sandbox.window.__activeMockHtml,
+    /class="mock-opt is-chosen" data-pick="1" type="button" role="radio" aria-checked="true"/,
+  );
+  assert.match(
+    sandbox.window.__activeMockHtml,
+    /class="mock-opt " data-pick="0" type="button" role="radio" aria-checked="false"/,
+  );
   assert.doesNotMatch(sandbox.window.__activeMockHtml, /Question q-derived-tag/);
   assert.doesNotMatch(sandbox.window.__activeMockHtml, /Question q-derived-provenance/);
   assert.match(element('mock-stage').innerHTML, /Question q-uhr-1/);

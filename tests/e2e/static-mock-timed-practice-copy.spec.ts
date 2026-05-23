@@ -196,7 +196,14 @@ async function submitShortMockAttempt(page: Page, contract: MockCopyContract) {
   await expect(stage.getByRole('button', { name: contract.unansweredDotLabel })).toBeVisible();
   await expect(stage.getByRole('button', { name: /^Question 1$/ })).toHaveCount(0);
 
-  await page.locator('#mock-stage .mock-opt').first().click();
+  const firstAnswer = page.locator('#mock-stage .mock-opt').first();
+  await expect(firstAnswer).toHaveAttribute('role', 'radio');
+  await expect(firstAnswer).toHaveAttribute('aria-checked', 'false');
+  await firstAnswer.click();
+  await expect(page.locator('#mock-stage .mock-opt').first()).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
   await page.locator('#mock-next').click();
   await expect(stage.getByRole('button', { name: contract.answeredDotLabel })).toBeVisible();
   await expect(stage.getByRole('button', { name: contract.nextDotLabel })).toBeVisible();
@@ -235,6 +242,11 @@ for (const contract of copyContracts) {
     for (const requiredCopy of contract.landingRequired) {
       await expect(stage).toContainText(requiredCopy);
     }
+    await expect(stage.locator('.mock-chip').first()).toHaveAttribute('aria-pressed', 'true');
+    await page.locator('#cfg-none').click();
+    await expect(stage.locator('.mock-chip').first()).toHaveAttribute('aria-pressed', 'false');
+    await page.locator('#cfg-all').click();
+    await expect(stage.locator('.mock-chip').first()).toHaveAttribute('aria-pressed', 'true');
     await expect(stage).not.toContainText(contract.negative);
     await expectNoHorizontalOverflow(page, `${contract.language} mock landing`);
 
