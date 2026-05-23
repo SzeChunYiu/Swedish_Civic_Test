@@ -209,6 +209,8 @@ test('local study data import summary keeps Swedish copy learner-facing', () => 
   assert.match(swedishCopyMatch[0], /data om köp i appen importeras inte/);
   assert.match(swedishCopyMatch[0], /kunde inte sparas varaktigt/);
   assert.match(swedishCopyMatch[0], /bara i minnet tills appen stängs/);
+  assert.match(swedishCopyMatch[0], /section === 'accessibility'\) return 'tillgänglighetsval'/);
+  assert.match(swedishCopyMatch[0], /section === 'companion'\) return 'studiekompis'/);
   assert.doesNotMatch(swedishCopyMatch[0], /\bFSRS\b|frysstatus|\bIAP\b/);
   assert.match(englishCopyMatch[0], /one: 'FSRS review day'/);
   assert.match(englishCopyMatch[0], /other: 'FSRS review days'/);
@@ -236,6 +238,11 @@ test('local study data import summary keeps Swedish copy learner-facing', () => 
   assert.match(englishCopyMatch[0], /\bIAP data\b/);
   assert.match(englishCopyMatch[0], /durable storage failed/);
   assert.match(englishCopyMatch[0], /only in memory until the app closes/);
+  assert.match(
+    englishCopyMatch[0],
+    /section === 'accessibility'\) return 'accessibility preferences'/,
+  );
+  assert.match(englishCopyMatch[0], /section === 'companion'\) return 'study companion'/);
   assert.match(source, /getLocalStudyDataImportPayloadByteCount/);
   assert.match(importSource, /type LocalStudyDataImportApplyResult/);
   assert.match(importSource, /warnings: LocalStudyDataImportApplyWarning\[\]/);
@@ -256,8 +263,14 @@ test('settings import browser fixtures cover accessibility and companion preview
     'utf8',
   );
 
-  assert.match(source, /const accessibilityEasyReadFontKey = 'accessibility\\\\a11y\.easyReadFont\.v1';/);
-  assert.match(source, /const accessibilityFontSizeStepKey = 'accessibility\\\\a11y\.fontSizeStep\.v1';/);
+  assert.match(
+    source,
+    /const accessibilityEasyReadFontKey = 'accessibility\\\\a11y\.easyReadFont\.v1';/,
+  );
+  assert.match(
+    source,
+    /const accessibilityFontSizeStepKey = 'accessibility\\\\a11y\.fontSizeStep\.v1';/,
+  );
   assert.match(
     source,
     /const accessibilityAudioPlaybackRateKey = 'accessibility\\\\a11y\.audioPlaybackRate\.v1';/,
@@ -531,7 +544,9 @@ test('local study data import does not stop speech when audioEnabled is true abs
 
 test('local study data import apply result reports section write warnings', () => {
   const storageById = {
+    accessibility: createThrowingSetMMKV('accessibility disk full'),
     'citizenship-requirements': createThrowingSetMMKV('requirements disk full'),
+    companion: createThrowingSetMMKV('companion disk full'),
     progress: createThrowingSetMMKV('progress disk full'),
     'mistake-review': createThrowingSetMMKV('mistake disk full'),
     reviews: createThrowingSetMMKV('reviews disk full'),
@@ -586,6 +601,16 @@ test('local study data import apply result reports section write warnings', () =
       audioEnabled: false,
       dailyGoalAnswers: 20,
     },
+    accessibility: {
+      easyReadFont: true,
+      fontSizeStep: 3,
+      audioPlaybackRate: 1.25,
+      listenFirstAudioEnabled: true,
+      themeMode: 'dark',
+    },
+    companion: {
+      selectedId: 'dala-horse',
+    },
     citizenshipRequirements: {
       checkedAreaIds: ['identity'],
     },
@@ -603,7 +628,16 @@ test('local study data import apply result reports section write warnings', () =
   assert.deepEqual(applyResult.summary, previewResult.preview.summary);
   assert.deepEqual(
     applyResult.warnings.map((item) => item.section),
-    ['progress', 'mistakeReview', 'reviews', 'settings', 'citizenshipRequirements', 'highlights'],
+    [
+      'progress',
+      'mistakeReview',
+      'reviews',
+      'settings',
+      'accessibility',
+      'companion',
+      'citizenshipRequirements',
+      'highlights',
+    ],
   );
   for (const item of applyResult.warnings) {
     assert.equal(item.warning.type, 'recoverable-persistence-warning');
