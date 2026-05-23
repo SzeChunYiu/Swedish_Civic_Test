@@ -4,12 +4,14 @@ import { StyleSheet, Text, View } from 'react-native';
 import { adBannerCopy } from '../../lib/monetization/adCopy';
 import { isStrictEntitlementFlag } from '../../lib/monetization/premium';
 import {
-  REMOVE_ADS_PRICE_LABEL,
   buyRemoveAds,
   restoreRemoveAdsPurchase,
   type RemoveAdsPurchaseStatus,
 } from '../../lib/monetization/purchases';
-import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
+import {
+  useRemoveAdsEntitlements,
+  useRemoveAdsPriceLabel,
+} from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { space, typography, type ThemeColors } from '../../lib/theme';
 import { useThemeColors } from '../../lib/theme/ThemeProvider';
@@ -138,6 +140,7 @@ export function RemoveAdsPlacementCta({ placement }: { placement: AdPlacement })
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const { entitlements, entitlementsReady, purchaseRuntime, setEntitlements } =
     useRemoveAdsEntitlements();
+  const resolvedPriceLabel = useRemoveAdsPriceLabel(purchaseRuntime);
   const [activeAction, setActiveAction] = useState<ActivePurchaseAction | null>(null);
   const [status, setStatus] = useState<PlacementPurchaseStatus | null>(null);
   const purchaseActionInFlightRef = useRef(false);
@@ -194,9 +197,9 @@ export function RemoveAdsPlacementCta({ placement }: { placement: AdPlacement })
           </Text>
           <Text style={styles.body}>
             {nativePurchaseUnavailable
-              ? copy.nativeUnavailableBody(REMOVE_ADS_PRICE_LABEL)
+              ? copy.nativeUnavailableBody(resolvedPriceLabel)
               : webPurchaseUnavailable
-                ? copy.webUnavailableBody(REMOVE_ADS_PRICE_LABEL)
+                ? copy.webUnavailableBody(resolvedPriceLabel)
                 : copy.body}
           </Text>
         </View>
@@ -209,7 +212,7 @@ export function RemoveAdsPlacementCta({ placement }: { placement: AdPlacement })
                   ? copy.webUnavailableAccessibilityHint
                   : copy.buyAccessibilityHint
             }
-            accessibilityLabel={copy.buyAccessibilityLabel(REMOVE_ADS_PRICE_LABEL)}
+            accessibilityLabel={copy.buyAccessibilityLabel(resolvedPriceLabel)}
             accessibilityRole="button"
             accessibilityState={{ busy: activeAction === 'buy', disabled: actionsDisabled }}
             disabled={actionsDisabled}
@@ -222,7 +225,7 @@ export function RemoveAdsPlacementCta({ placement }: { placement: AdPlacement })
                 ? copy.buyNativeUnavailable
                 : webPurchaseUnavailable
                   ? copy.buyUnavailable
-                  : copy.buyIdle(REMOVE_ADS_PRICE_LABEL)}
+                  : copy.buyIdle(resolvedPriceLabel)}
           </Button>
           <Button
             accessibilityHint={

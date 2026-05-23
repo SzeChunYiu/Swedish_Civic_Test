@@ -2789,8 +2789,12 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
     placementCtaSource,
     /purchaseUnavailableReason === 'native_receipt_validator_unavailable'/,
   );
-  assert.match(placementCtaSource, /copy\.webUnavailableBody\(REMOVE_ADS_PRICE_LABEL\)/);
-  assert.match(placementCtaSource, /copy\.nativeUnavailableBody\(REMOVE_ADS_PRICE_LABEL\)/);
+  assert.match(placementCtaSource, /useRemoveAdsPriceLabel\(purchaseRuntime\)/);
+  assert.match(placementCtaSource, /resolvedPriceLabel/);
+  assert.match(placementCtaSource, /copy\.webUnavailableBody\(resolvedPriceLabel\)/);
+  assert.match(placementCtaSource, /copy\.nativeUnavailableBody\(resolvedPriceLabel\)/);
+  assert.match(placementCtaSource, /copy\.buyAccessibilityLabel\(resolvedPriceLabel\)/);
+  assert.match(placementCtaSource, /copy\.buyIdle\(resolvedPriceLabel\)/);
   assert.match(placementCtaSource, /copy\.webUnavailableAccessibilityHint/);
   assert.match(placementCtaSource, /copy\.nativeUnavailableAccessibilityHint/);
   assert.match(placementCtaSource, /Buy in mobile app/);
@@ -2848,6 +2852,8 @@ test('home remove-ads pricing copy uses store price label with canonical fallbac
   assert.match(pricingWedgeSource, /t\.pitch\(priceLabel\)/);
   assert.match(pricingWedgeSource, /tidsatta övningsprov är alltid annonsfria/);
   assert.match(placementCtaSource, /Tidsatta övningsprov är redan annonsfria/);
+  assert.match(placementCtaSource, /useRemoveAdsPriceLabel\(purchaseRuntime\)/);
+  assert.match(placementCtaSource, /copy\.buyIdle\(resolvedPriceLabel\)/);
   assert.match(paywallSource, /useRemoveAdsPriceLabel/);
   assert.match(paywallSource, /resolvedPriceLabel/);
   assert.match(paywallSource, /tidsatta övningsprov i appen redan är annonsfria/);

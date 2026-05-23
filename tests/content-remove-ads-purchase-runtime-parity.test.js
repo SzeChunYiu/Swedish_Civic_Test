@@ -122,8 +122,12 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
     placementCtaSource,
     /purchaseUnavailableReason === 'native_receipt_validator_unavailable'/,
   );
-  assert.match(placementCtaSource, /copy\.webUnavailableBody\(REMOVE_ADS_PRICE_LABEL\)/);
-  assert.match(placementCtaSource, /copy\.nativeUnavailableBody\(REMOVE_ADS_PRICE_LABEL\)/);
+  assert.match(placementCtaSource, /useRemoveAdsPriceLabel\(purchaseRuntime\)/);
+  assert.match(placementCtaSource, /resolvedPriceLabel/);
+  assert.match(placementCtaSource, /copy\.webUnavailableBody\(resolvedPriceLabel\)/);
+  assert.match(placementCtaSource, /copy\.nativeUnavailableBody\(resolvedPriceLabel\)/);
+  assert.match(placementCtaSource, /copy\.buyAccessibilityLabel\(resolvedPriceLabel\)/);
+  assert.match(placementCtaSource, /copy\.buyIdle\(resolvedPriceLabel\)/);
   assert.match(placementCtaSource, /copy\.webUnavailableAccessibilityHint/);
   assert.match(placementCtaSource, /copy\.nativeUnavailableAccessibilityHint/);
   assert.match(placementCtaSource, /Buy in mobile app/);

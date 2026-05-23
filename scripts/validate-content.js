@@ -20817,7 +20817,10 @@ function validateRemoveAdsPurchaseRuntimeParity() {
         normalizedPlacementCtaSource.includes(
           'const purchaseUnavailable = webPurchaseUnavailable || nativePurchaseUnavailable;',
         ) &&
-        normalizedPlacementCtaSource.includes('copy.webUnavailableBody(REMOVE_ADS_PRICE_LABEL)') &&
+        normalizedPlacementCtaSource.includes('useRemoveAdsPriceLabel(purchaseRuntime)') &&
+        normalizedPlacementCtaSource.includes('copy.webUnavailableBody(resolvedPriceLabel)') &&
+        normalizedPlacementCtaSource.includes('copy.buyAccessibilityLabel(resolvedPriceLabel)') &&
+        normalizedPlacementCtaSource.includes('copy.buyIdle(resolvedPriceLabel)') &&
         normalizedPlacementCtaSource.includes('copy.webUnavailableAccessibilityHint') &&
         normalizedPlacementCtaSource.includes('copy.buyUnavailable') &&
         normalizedPlacementCtaSource.includes('copy.restoreUnavailable') &&
@@ -20828,7 +20831,7 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       'RemoveAdsPlacementCta must render localized mobile-app-only copy when web purchases are unavailable',
     ],
     [
-      normalizedPlacementCtaSource.includes('copy.nativeUnavailableBody(REMOVE_ADS_PRICE_LABEL)') &&
+      normalizedPlacementCtaSource.includes('copy.nativeUnavailableBody(resolvedPriceLabel)') &&
         normalizedPlacementCtaSource.includes('copy.nativeUnavailableAccessibilityHint') &&
         normalizedPlacementCtaSource.includes('copy.buyNativeUnavailable') &&
         normalizedPlacementCtaSource.includes('copy.restoreNativeUnavailable') &&
