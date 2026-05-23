@@ -311,7 +311,7 @@ test('settings route remains scrollable on narrow mobile viewports', () => {
   );
   assert.match(
     source,
-    /<ScrollView style=\{styles\.container\} contentContainerStyle=\{styles\.content\}>/,
+    /<ScrollView[\s\S]*?style=\{styles\.container\}[\s\S]*?contentContainerStyle=\{styles\.content\}>/,
   );
   assert.match(source, /<\/ScrollView>/);
   assert.match(source, /content: \{\n\s+flexGrow: 1,/);
@@ -674,7 +674,13 @@ test('question card groups prompt and translation into an accessible summary', (
   assert.match(helperSource, /According to the UHR material/);
   assert.match(source, /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.question\}>/);
-  assert.match(source, /<Text style=\{styles\.sourceCitation\}>\{sourceCitation\}<\/Text>/);
+  assert.match(source, /<QuestionSourceCitation/);
+  assert.match(
+    source,
+    /accessibilityLabel=\{`\$\{copy\.sourceCitationLabel\}: \$\{sourceCitation\}`\}/,
+  );
+  assert.match(source, /label=\{copy\.sourceCitationLabel\}/);
+  assert.match(source, /style=\{styles\.sourceCitationSurface\}/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
@@ -1041,7 +1047,10 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   assert.match(source, /const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy>/);
   assert.match(source, /language = 'sv'/);
   assert.match(source, /const copy = premiumBannerCopy\[language\]/);
-  assert.match(source, /const statusMessage = getStatusMessage/);
+  assert.match(
+    source,
+    /const statusMessage =[\s\S]*nativePurchaseUnavailable[\s\S]*copy\.nativeUnavailableStatus[\s\S]*getStatusMessage\(visibleStatus, copy\)/,
+  );
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(source, /accessibilityLabel=\{copy\.statusAccessibilityLabel\(statusMessage\)\}/);
   assert.match(source, /accessibilityLabel=\{copy\.buyAccessibilityLabel\(resolvedPriceLabel\)\}/);

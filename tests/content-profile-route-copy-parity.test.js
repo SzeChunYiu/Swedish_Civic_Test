@@ -161,7 +161,7 @@ test('profile premium banner keeps current Remove Ads purchase and recovery cont
   assert.match(bannerSource, /purchased: 'Annonser är avstängda på den här enheten\.'/);
   assert.match(
     bannerSource,
-    /purchaseUnavailable[\s\S]*copy\.webUnavailableBody\(resolvedPriceLabel\)[\s\S]*copy\.body\(resolvedPriceLabel\)/,
+    /nativePurchaseUnavailable[\s\S]*copy\.nativeUnavailableBody\(resolvedPriceLabel\)[\s\S]*webPurchaseUnavailable[\s\S]*copy\.webUnavailableBody\(resolvedPriceLabel\)[\s\S]*copy\.body\(resolvedPriceLabel\)/,
   );
   assert.match(
     bannerSource,
@@ -174,7 +174,7 @@ test('profile premium banner keeps current Remove Ads purchase and recovery cont
   );
   assert.match(
     bannerSource,
-    /const visibleStatus =[\s\S]*status === 'finish_failed'[\s\S]*adsDisabled[\s\S]*\? 'purchased'[\s\S]*purchaseUnavailable[\s\S]*\? 'unavailable'[\s\S]*: status;[\s\S]*const statusMessage = getStatusMessage\(visibleStatus, copy\)/,
+    /const visibleStatus =[\s\S]*status === 'finish_failed'[\s\S]*adsDisabled[\s\S]*\? 'purchased'[\s\S]*purchaseUnavailable[\s\S]*\? 'unavailable'[\s\S]*: status;[\s\S]*const statusMessage =[\s\S]*nativePurchaseUnavailable[\s\S]*copy\.nativeUnavailableStatus[\s\S]*getStatusMessage\(visibleStatus, copy\)/,
   );
   assert.match(bannerSource, /aria-live="polite"/);
   assert.doesNotMatch(bannerSource, /bodyActive:/);
