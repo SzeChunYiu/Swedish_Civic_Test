@@ -5,10 +5,12 @@ import {
   collectConsoleAndPageErrors,
   dismissBlockingModals,
   markAboutTheTestSeen,
+  seedFreshSettingsLanguageAndAboutSeenWithStorage,
   seedSettingsLanguage,
 } from './browserLaunch';
 
 const checklistStorageKey = 'citizenship-requirements\\citizenshipRequirements.checkedAreaIds.v1';
+const legacyChecklistStorageKey = 'citizenship-requirements\\citizenshipRequirementsChecklistState';
 
 const areaSourceLayoutCases = [
   {
@@ -195,6 +197,83 @@ test('citizenship requirements checklist persists checked planning areas', async
   await expect(identity).toHaveAttribute('aria-checked', 'true');
   await expect(residenceStatus).toHaveAttribute('aria-checked', 'true');
   await expect(page.getByText('You have marked 2 of 7 planning items.')).toBeVisible();
+
+  expect(consoleErrors.get()).toEqual([]);
+});
+
+test('citizenship requirements legacy corrupt writeback warning recovery reload', async ({
+  page,
+}) => {
+  const consoleErrors = collectConsoleAndPageErrors(page);
+
+  await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, 'en', {
+    localStorageValues: {
+      [checklistStorageKey]: '{not-json',
+      [legacyChecklistStorageKey]: JSON.stringify({
+        checkedAreaIds: ['selfSupport', 'identity', 'prototype', 'swedishLanguage', 'identity'],
+      }),
+    },
+    reseedOnNavigation: false,
+  });
+  await page.goto('/citizenship-requirements', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  const identity = page.getByRole('checkbox', {
+    name: /I can prove my identity or have checked which exception route applies/i,
+  });
+  const selfSupport = page.getByRole('checkbox', {
+    name: /I have checked my own income, its duration, and income support against the new rules/i,
+  });
+  const swedishLanguage = page.getByRole('checkbox', {
+    name: /I have checked how I can prove Swedish skills or when language tests may become relevant/i,
+  });
+  const residenceStatus = page.getByRole('checkbox', {
+    name: /I have checked that my residence status fits the right category/i,
+  });
+  const recoveryWarning = page.getByRole('alert', {
+    name: /Local study data could not be loaded/i,
+  });
+
+  await expect(recoveryWarning).toHaveCount(1);
+  await expect(identity).toHaveAttribute('aria-checked', 'true');
+  await expect(selfSupport).toHaveAttribute('aria-checked', 'true');
+  await expect(swedishLanguage).toHaveAttribute('aria-checked', 'true');
+  await expect(residenceStatus).toHaveAttribute('aria-checked', 'false');
+  await expect(page.getByText('You have marked 3 of 7 planning items.')).toBeVisible();
+
+  await expect
+    .poll(() =>
+      page.evaluate(
+        ({ legacyKey, primaryKey }) => ({
+          legacy: window.localStorage.getItem(legacyKey),
+          primary: window.localStorage.getItem(primaryKey),
+        }),
+        {
+          legacyKey: legacyChecklistStorageKey,
+          primaryKey: checklistStorageKey,
+        },
+      ),
+    )
+    .toEqual({
+      legacy: JSON.stringify({ checkedAreaIds: ['identity', 'selfSupport', 'swedishLanguage'] }),
+      primary: JSON.stringify(['identity', 'selfSupport', 'swedishLanguage']),
+    });
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  await expect(recoveryWarning).toHaveCount(0);
+  await expect(identity).toHaveAttribute('aria-checked', 'true');
+  await expect(selfSupport).toHaveAttribute('aria-checked', 'true');
+  await expect(swedishLanguage).toHaveAttribute('aria-checked', 'true');
+  await expect(page.getByText('You have marked 3 of 7 planning items.')).toBeVisible();
+
+  await swedishLanguage.click();
+  await expect(swedishLanguage).toHaveAttribute('aria-checked', 'false');
+  await expect(page.getByText('You have marked 2 of 7 planning items.')).toBeVisible();
+  await expect
+    .poll(() => page.evaluate((key) => window.localStorage.getItem(key), checklistStorageKey))
+    .toBe(JSON.stringify(['identity', 'selfSupport']));
 
   expect(consoleErrors.get()).toEqual([]);
 });

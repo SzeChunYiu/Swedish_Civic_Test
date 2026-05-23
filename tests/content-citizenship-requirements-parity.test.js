@@ -7,6 +7,10 @@ const { createMemoryMMKV, loadTsWithStorage } = require('./helpers/storageStoreH
 
 const repoRoot = path.resolve(__dirname, '..');
 const themeModeUtilityE2ePath = path.join(repoRoot, 'tests/e2e/theme-mode-utility-routes.spec.ts');
+const citizenshipRequirementsChecklistE2ePath = path.join(
+  repoRoot,
+  'tests/e2e/citizenship-requirements-checklist.spec.ts',
+);
 const citizenshipRequirementsStorageId = 'citizenship-requirements';
 const checkedAreaIdsKey = 'citizenshipRequirements.checkedAreaIds.v1';
 const legacyChecklistStateKey = 'citizenshipRequirementsChecklistState';
@@ -57,6 +61,10 @@ function read(relativePath) {
 
 function readThemeModeUtilityE2eSource() {
   return fs.readFileSync(themeModeUtilityE2ePath, 'utf8');
+}
+
+function readCitizenshipRequirementsChecklistE2eSource() {
+  return fs.readFileSync(citizenshipRequirementsChecklistE2ePath, 'utf8');
 }
 
 function loadTs(relativePath) {
@@ -434,4 +442,31 @@ test('citizenship requirements checklist keeps recovered legacy state if writeba
   assert.equal(state.persistenceWarning?.operation, 'read');
   assert.match(state.persistenceWarning?.errorMessage || '', /JSON|Unexpected|position/i);
   assert.equal(storage.getString(checkedAreaIdsKey), '{not-json');
+});
+
+test('citizenship requirements e2e covers legacy writeback warning recovery', () => {
+  const source = readCitizenshipRequirementsChecklistE2eSource();
+
+  assert.match(source, /legacyChecklistStorageKey/);
+  assert.match(source, /seedFreshSettingsLanguageAndAboutSeenWithStorage/);
+  assert.match(source, /\[checklistStorageKey\]: '\{not-json'/);
+  assert.match(
+    source,
+    /checkedAreaIds: \['selfSupport', 'identity', 'prototype', 'swedishLanguage', 'identity'\]/,
+  );
+  assert.match(source, /Local study data could not be loaded/);
+  assert.match(source, /await expect\(recoveryWarning\)\.toHaveCount\(1\)/);
+  assert.match(source, /await page\.reload\(\{ waitUntil: 'networkidle' \}\)/);
+  assert.match(source, /await expect\(recoveryWarning\)\.toHaveCount\(0\)/);
+  assert.match(source, /window\.localStorage\.getItem\(primaryKey\)/);
+  assert.match(
+    source,
+    /primary: JSON\.stringify\(\['identity', 'selfSupport', 'swedishLanguage'\]\)/,
+  );
+  assert.match(
+    source,
+    /legacy: JSON\.stringify\(\{ checkedAreaIds: \['identity', 'selfSupport', 'swedishLanguage'\] \}\)/,
+  );
+  assert.match(source, /await swedishLanguage\.click\(\)/);
+  assert.match(source, /JSON\.stringify\(\['identity', 'selfSupport'\]\)/);
 });
