@@ -1,10 +1,14 @@
 import { defineConfig, devices } from '@playwright/test';
 
-import { getChromiumLaunchOptions } from './tests/e2e/browserLaunch';
+import {
+  assertChromiumBrowserAvailable,
+  getChromiumLaunchOptions,
+} from './tests/e2e/browserLaunch';
 
 const DEFAULT_E2E_PORT = 4173;
 const e2ePort = Number(process.env.E2E_PORT ?? DEFAULT_E2E_PORT);
 const e2eBaseURL = `http://127.0.0.1:${e2ePort}`;
+assertChromiumBrowserAvailable();
 const chromiumLaunchOptions = getChromiumLaunchOptions();
 const reuseExistingServer = process.env.E2E_REUSE_EXISTING_SERVER === '1' && !process.env.CI;
 

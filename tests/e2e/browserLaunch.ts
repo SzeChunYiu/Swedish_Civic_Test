@@ -1,6 +1,7 @@
 import { existsSync } from 'node:fs';
+import { release } from 'node:os';
 
-import { expect, type Locator, type Page } from '@playwright/test';
+import { chromium, expect, type Locator, type Page } from '@playwright/test';
 
 import type { AppLanguage } from '../../lib/storage/settingsStore';
 
@@ -58,6 +59,15 @@ export type ChromiumLaunchOptions = {
   executablePath?: string;
 };
 
+export type ChromiumBrowserAvailability = {
+  executablePath?: string;
+  installCommand: string;
+  message?: string;
+  ok: boolean;
+};
+
+export const playwrightChromiumInstallCommand = 'npx playwright install --with-deps chromium';
+
 export function findSystemChromiumExecutable(): string | undefined {
   return SYSTEM_CHROMIUM_EXECUTABLES.find((candidate) => existsSync(candidate));
 }
@@ -66,6 +76,59 @@ export function getChromiumLaunchOptions(): ChromiumLaunchOptions | undefined {
   const executablePath = findSystemChromiumExecutable();
 
   return executablePath ? { executablePath } : undefined;
+}
+
+export function getPlaywrightChromiumExecutablePath(): string | undefined {
+  try {
+    return chromium.executablePath();
+  } catch {
+    return undefined;
+  }
+}
+
+export function getChromiumBrowserAvailability(): ChromiumBrowserAvailability {
+  const systemExecutablePath = findSystemChromiumExecutable();
+  if (systemExecutablePath) {
+    return {
+      executablePath: systemExecutablePath,
+      installCommand: playwrightChromiumInstallCommand,
+      ok: true,
+    };
+  }
+
+  const playwrightExecutablePath = getPlaywrightChromiumExecutablePath();
+  if (playwrightExecutablePath && existsSync(playwrightExecutablePath)) {
+    return {
+      executablePath: playwrightExecutablePath,
+      installCommand: playwrightChromiumInstallCommand,
+      ok: true,
+    };
+  }
+
+  const expectedPath = playwrightExecutablePath
+    ? `Expected Playwright Chromium at: ${playwrightExecutablePath}`
+    : 'Playwright did not report a Chromium executable path.';
+  const host = `${process.platform}-${process.arch} ${release()}`;
+  return {
+    executablePath: playwrightExecutablePath,
+    installCommand: playwrightChromiumInstallCommand,
+    message: [
+      'Playwright Chromium is not available before the e2e specs start.',
+      expectedPath,
+      `Host: ${host}`,
+      'Set PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH or CHROME_BIN to an existing Chromium/Chrome binary,',
+      `or install the Playwright browser with: ${playwrightChromiumInstallCommand}`,
+      'CI must provide a working Chromium binary; local runs should fix the browser install before rerunning specs.',
+    ].join('\n'),
+    ok: false,
+  };
+}
+
+export function assertChromiumBrowserAvailable(): void {
+  const availability = getChromiumBrowserAvailability();
+  if (availability.ok) return;
+
+  throw new Error(availability.message);
 }
 
 async function activateBlockingModalControl(control: Locator): Promise<void> {

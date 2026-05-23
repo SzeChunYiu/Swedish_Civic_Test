@@ -235,6 +235,67 @@ test('browser specs do not assert obsolete dash-style answer feedback text', () 
   );
 });
 
+test('Playwright browser availability preflight runs before browser specs', () => {
+  const browserLaunchSource = readRelative('browserLaunch.ts');
+  const configSource = fs.readFileSync(path.join(repoRoot, 'playwright.config.ts'), 'utf8');
+
+  assert.match(
+    browserLaunchSource,
+    /export function getChromiumBrowserAvailability\(\): ChromiumBrowserAvailability/,
+    'browserLaunch should expose a shared Chromium availability probe',
+  );
+  assert.match(
+    browserLaunchSource,
+    /findSystemChromiumExecutable\(\)/,
+    'browser availability should preserve custom system Chromium detection',
+  );
+  assert.match(
+    browserLaunchSource,
+    /getPlaywrightChromiumExecutablePath\(\)/,
+    'browser availability should inspect Playwright managed Chromium before specs launch',
+  );
+  assert.match(
+    browserLaunchSource,
+    /PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH/,
+    'browser availability should preserve PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH support',
+  );
+  assert.match(
+    browserLaunchSource,
+    /CHROME_BIN/,
+    'browser availability should preserve CHROME_BIN support',
+  );
+  assert.match(
+    browserLaunchSource,
+    /Playwright Chromium is not available before the e2e specs start\./,
+    'missing browser failures should be actionable and pre-spec',
+  );
+  assert.match(
+    browserLaunchSource,
+    /npx playwright install --with-deps chromium/,
+    'missing browser failures should name the install command',
+  );
+  assert.match(
+    browserLaunchSource,
+    /CI must provide a working Chromium binary/,
+    'missing browser failures should not silently skip CI browser coverage',
+  );
+  assert.match(
+    configSource,
+    /import \{[\s\S]*assertChromiumBrowserAvailable,[\s\S]*getChromiumLaunchOptions,[\s\S]*\} from '\.\/tests\/e2e\/browserLaunch';/,
+    'Playwright config should import the shared browser preflight and launch options together',
+  );
+  assert.match(
+    configSource,
+    /assertChromiumBrowserAvailable\(\);\s+const chromiumLaunchOptions = getChromiumLaunchOptions\(\);/s,
+    'Playwright config should run the browser availability preflight before resolving launch options',
+  );
+  assert.match(
+    configSource,
+    /reuseExistingServer = process\.env\.E2E_REUSE_EXISTING_SERVER === '1' && !process\.env\.CI/,
+    'browser preflight must preserve the opt-in local server reuse contract',
+  );
+});
+
 test('about Swedish copy browser spec covers route, first-run guide, and English preservation', () => {
   const source = readRelative('about-test-sv-copy.spec.ts');
 

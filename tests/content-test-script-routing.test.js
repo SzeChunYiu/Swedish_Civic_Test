@@ -196,6 +196,41 @@ test('focused validation registry covers every validate-content focus flag', () 
   assert.deepEqual(missingFlags, []);
 });
 
+test('Playwright browser availability preflight keeps e2e routing actionable', () => {
+  const browserLaunchSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/e2e/browserLaunch.ts'),
+    'utf8',
+  );
+  const playwrightConfigSource = fs.readFileSync(
+    path.join(repoRoot, 'playwright.config.ts'),
+    'utf8',
+  );
+  const packageJson = readPackageJson();
+
+  assert.equal(packageJson.scripts['test:e2e'], 'playwright test');
+  assert.match(browserLaunchSource, /export function assertChromiumBrowserAvailable\(\): void/);
+  assert.match(
+    browserLaunchSource,
+    /Set PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH or CHROME_BIN to an existing Chromium\/Chrome binary/,
+    'missing-browser preflight should tell local panes how to point at a browser',
+  );
+  assert.match(
+    browserLaunchSource,
+    /CI must provide a working Chromium binary; local runs should fix the browser install before rerunning specs\./,
+    'missing-browser preflight should keep CI strict while staying actionable locally',
+  );
+  assert.match(
+    playwrightConfigSource,
+    /assertChromiumBrowserAvailable\(\);/,
+    'Playwright config should fail before running individual specs when Chromium is unavailable',
+  );
+  assert.match(
+    playwrightConfigSource,
+    /webServer:\s*\{[\s\S]*reuseExistingServer,[\s\S]*timeout: 10_000,/,
+    'browser preflight should preserve the existing webServer reuse/timeout routing contract',
+  );
+});
+
 test('newly registered focus modes expose advertised summary keys', () => {
   for (const id of registryCompletenessFocusIds) {
     const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get(id);
