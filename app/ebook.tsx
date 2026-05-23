@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import type { TextStyle } from 'react-native';
 
 import { Button } from '../components/Button';
 import { ArticleAudioButton } from '../components/learning/ArticleAudioButton';
@@ -22,9 +23,9 @@ import {
   type EbookArticle,
   type EbookSourceNote,
 } from '../lib/content/ebookContent';
-import { useAccessibilityStore } from '../lib/storage/accessibilityStore';
+import { fontScaleFor, useAccessibilityStore } from '../lib/storage/accessibilityStore';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
-import { radius, space, typography, type ThemeColors } from '../lib/theme';
+import { radius, scaleTextStyle, space, typography, type ThemeColors } from '../lib/theme';
 import { useThemeColors } from '../lib/theme/ThemeProvider';
 
 type EbookRouteCopy = {
@@ -103,6 +104,14 @@ function navigateToArticle(router: ReturnType<typeof useRouter>, article: EbookA
 }
 
 type EbookStyles = ReturnType<typeof createStyles>;
+type EbookTextPreferences = {
+  easyReadFont: boolean;
+  fontScale: number;
+};
+
+function accessibleTextStyle(style: TextStyle, textPreferences: EbookTextPreferences): TextStyle {
+  return scaleTextStyle(style, textPreferences.fontScale, textPreferences.easyReadFont);
+}
 
 function SourceNoteLine({
   ebookStyles,
@@ -146,10 +155,16 @@ export default function EbookScreen() {
   const router = useRouter();
   const language = useSettingsStore((state) => state.language);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
+  const easyReadFont = useAccessibilityStore((state) => state.easyReadFont);
   const audioPlaybackRate = useAccessibilityStore((state) => state.audioPlaybackRate);
+  const fontSizeStep = useAccessibilityStore((state) => state.fontSizeStep);
+  const fontScale = fontScaleFor(fontSizeStep);
   const themeColors = useThemeColors();
   const copy = ebookRouteCopy[language];
-  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
+  const styles = useMemo(
+    () => createStyles(themeColors, { easyReadFont, fontScale }),
+    [easyReadFont, fontScale, themeColors],
+  );
   const article = getEbookArticleByParam(c);
   const previousArticle = getAdjacentEbookArticle(article, 'previous');
   const nextArticle = getAdjacentEbookArticle(article, 'next');
@@ -215,7 +230,6 @@ export default function EbookScreen() {
                 {kicker}
               </Text>
               <Text
-                numberOfLines={2}
                 style={[styles.articleNavTitle, selected ? styles.articleNavTextSelected : null]}
               >
                 {title}
@@ -361,7 +375,7 @@ export default function EbookScreen() {
   );
 }
 
-function createStyles(themeColors: ThemeColors) {
+function createStyles(themeColors: ThemeColors, textPreferences: EbookTextPreferences) {
   return StyleSheet.create({
     backLink: {
       alignSelf: 'flex-start',
@@ -374,10 +388,8 @@ function createStyles(themeColors: ThemeColors) {
       backgroundColor: themeColors.focusSoft,
     },
     backLinkText: {
+      ...accessibleTextStyle(typography.navButton, textPreferences),
       color: themeColors.accent,
-      fontSize: typography.navButton.fontSize,
-      fontWeight: typography.navButton.fontWeight,
-      lineHeight: typography.bodyTight.lineHeight,
     },
     articleNav: {
       marginHorizontal: -space[3],
@@ -406,17 +418,19 @@ function createStyles(themeColors: ThemeColors) {
       borderColor: themeColors.focus,
     },
     articleNavKicker: {
+      ...accessibleTextStyle(typography.badge, textPreferences),
       color: themeColors.textMuted,
-      fontSize: typography.badge.fontSize,
-      fontWeight: typography.badge.fontWeight,
-      lineHeight: typography.badge.lineHeight,
       textTransform: 'uppercase',
     },
     articleNavTitle: {
+      ...accessibleTextStyle(
+        {
+          ...typography.caption,
+          fontWeight: typography.bodyBold.fontWeight,
+        },
+        textPreferences,
+      ),
       color: themeColors.text,
-      fontSize: typography.caption.fontSize,
-      fontWeight: typography.bodyBold.fontWeight,
-      lineHeight: typography.caption.lineHeight,
     },
     articleNavTextSelected: {
       color: themeColors.surface,
@@ -425,16 +439,12 @@ function createStyles(themeColors: ThemeColors) {
       gap: space[2],
     },
     articleTitle: {
+      ...accessibleTextStyle(typography.subHeading, textPreferences),
       color: themeColors.text,
-      fontSize: typography.subHeading.fontSize,
-      fontWeight: typography.subHeading.fontWeight,
-      letterSpacing: typography.subHeading.letterSpacing,
-      lineHeight: typography.subHeading.lineHeight,
     },
     lede: {
+      ...accessibleTextStyle(typography.bodyLarge, textPreferences),
       color: themeColors.textSecondary,
-      fontSize: typography.bodyLarge.fontSize,
-      lineHeight: typography.bodyLarge.lineHeight,
     },
     audioAction: {
       alignSelf: 'flex-start',
@@ -444,23 +454,19 @@ function createStyles(themeColors: ThemeColors) {
       gap: space[1],
     },
     provenanceText: {
+      ...accessibleTextStyle(typography.caption, textPreferences),
       color: themeColors.textSecondary,
-      fontSize: typography.caption.fontSize,
-      lineHeight: typography.caption.lineHeight,
     },
     sectionBlock: {
       gap: space[0.75],
     },
     sectionHeading: {
+      ...accessibleTextStyle(typography.sectionTitle, textPreferences),
       color: themeColors.text,
-      fontSize: typography.sectionTitle.fontSize,
-      fontWeight: typography.sectionTitle.fontWeight,
-      lineHeight: typography.sectionTitle.lineHeight,
     },
     sectionBody: {
+      ...accessibleTextStyle(typography.body, textPreferences),
       color: themeColors.textSecondary,
-      fontSize: typography.body.fontSize,
-      lineHeight: typography.body.lineHeight,
     },
     sectionSources: {
       backgroundColor: themeColors.surfaceWarm,
@@ -472,10 +478,14 @@ function createStyles(themeColors: ThemeColors) {
       paddingVertical: space[1],
     },
     sectionSourcesHeading: {
+      ...accessibleTextStyle(
+        {
+          ...typography.caption,
+          fontWeight: typography.bodyBold.fontWeight,
+        },
+        textPreferences,
+      ),
       color: themeColors.textSecondary,
-      fontSize: typography.caption.fontSize,
-      fontWeight: typography.bodyBold.fontWeight,
-      lineHeight: typography.caption.lineHeight,
     },
     sectionAudioAction: {
       alignSelf: 'flex-start',
@@ -485,10 +495,14 @@ function createStyles(themeColors: ThemeColors) {
       gap: space[1],
     },
     sourcesHeading: {
+      ...accessibleTextStyle(
+        {
+          ...typography.bodyLarge,
+          fontWeight: typography.bodyBold.fontWeight,
+        },
+        textPreferences,
+      ),
       color: themeColors.text,
-      fontSize: typography.bodyLarge.fontSize,
-      fontWeight: typography.bodyBold.fontWeight,
-      lineHeight: typography.bodyLarge.lineHeight,
     },
     sourceLine: {
       borderColor: themeColors.border,
@@ -501,15 +515,18 @@ function createStyles(themeColors: ThemeColors) {
       textDecorationLine: 'none',
     },
     sourceLabel: {
+      ...accessibleTextStyle(
+        {
+          ...typography.caption,
+          fontWeight: typography.bodyBold.fontWeight,
+        },
+        textPreferences,
+      ),
       color: themeColors.textSecondary,
-      fontSize: typography.caption.fontSize,
-      fontWeight: typography.bodyBold.fontWeight,
-      lineHeight: typography.caption.lineHeight,
     },
     sourceUrl: {
+      ...accessibleTextStyle(typography.caption, textPreferences),
       color: themeColors.textMuted,
-      fontSize: typography.caption.fontSize,
-      lineHeight: typography.caption.lineHeight,
     },
     actions: {
       flexDirection: 'row',

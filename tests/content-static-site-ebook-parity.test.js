@@ -1610,6 +1610,45 @@ test('native ebook study article audio narrates article prose with persisted rat
   assert.doesNotMatch(narrationSource, /getEbookSourceNotes|sourceNoteKeys|provenance/i);
 });
 
+test('native ebook study article typography uses accessibility font preferences', () => {
+  const routeSource = readSiteFile('app/ebook.tsx');
+  const typographySource = readSiteFile('lib/theme/typography.ts');
+  const textSource = readSiteFile('components/Text.tsx');
+
+  assert.match(typographySource, /easyReadFontFamily[\s\S]*Atkinson Hyperlegible/);
+  assert.match(typographySource, /export function scaleTextStyle\(/);
+  assert.match(textSource, /useAccessibilityStore\(\(state\) => state\.easyReadFont\)/);
+  assert.match(textSource, /useAccessibilityStore\(\(state\) => state\.fontSizeStep\)/);
+  assert.match(
+    textSource,
+    /accessibilityRole=\{accessibilityRole \?\? getDefaultRole\(variant\)\}/,
+  );
+  assert.match(
+    routeSource,
+    /const easyReadFont = useAccessibilityStore\(\(state\) => state\.easyReadFont\);/,
+  );
+  assert.match(
+    routeSource,
+    /const fontSizeStep = useAccessibilityStore\(\(state\) => state\.fontSizeStep\);/,
+  );
+  assert.match(routeSource, /const fontScale = fontScaleFor\(fontSizeStep\);/);
+  assert.match(routeSource, /articleNavKicker:\s*\{[\s\S]*accessibleTextStyle\(typography\.badge/);
+  assert.match(
+    routeSource,
+    /articleNavTitle:\s*\{[\s\S]*accessibleTextStyle\([\s\S]*typography\.caption/,
+  );
+  assert.match(routeSource, /articleTitle:\s*\{[\s\S]*accessibleTextStyle\(typography\.subHeading/);
+  assert.match(
+    routeSource,
+    /sectionHeading:\s*\{[\s\S]*accessibleTextStyle\(typography\.sectionTitle/,
+  );
+  assert.match(
+    routeSource,
+    /sourceLabel:\s*\{[\s\S]*accessibleTextStyle\([\s\S]*typography\.caption/,
+  );
+  assert.doesNotMatch(routeSource, /numberOfLines=\{2\}/);
+});
+
 test('native ebook sections carry and render explicit source provenance', () => {
   const routeSource = readSiteFile('app/ebook.tsx');
   const contentSource = readSiteFile('lib/content/ebookContent.ts');
