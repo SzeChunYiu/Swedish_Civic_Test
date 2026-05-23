@@ -1,21 +1,21 @@
 const WEB_ENTRY_BUNDLE_BUDGET = {
-  maxRawBytes: 2_555_000,
-  maxGzipBytes: 628_000,
-  maxBrotliBytes: 490_000,
+  maxRawBytes: 5_302_740,
+  maxGzipBytes: 1_169_609,
+  maxBrotliBytes: 848_489,
   baseline: {
-    measuredAt: '2026-05-20',
-    entryBundle: '_expo/static/js/web/entry-79142e674b1420e52972bc613d73511e.js',
+    measuredAt: '2026-05-23',
+    entryBundle: '_expo/static/js/web/entry-ae08d50efdaae692cb6c77772e36f561.js',
     bundleCount: 3,
-    measuredRawBytes: 2_431_194,
-    measuredGzipBytes: 597_930,
-    measuredBrotliBytes: 466_218,
+    measuredRawBytes: 5_002_584,
+    measuredGzipBytes: 1_103_404,
+    measuredBrotliBytes: 800_461,
     sizeDrivers: [
       'Expo Router and React Native Web single-entry shell',
-      'embedded canonical question bank with generated practice variants',
-      'question localization pilot data for the coming-soon picker locales',
+      'expanded embedded canonical question bank with generated practice variants',
+      'expanded question localization pilot data for the coming-soon picker locales',
     ],
     rationale:
-      'Measured re-baseline after the 2026 question-bank and localization expansion; ceilings keep about 5% headroom while the app is still a single Metro web entry.',
+      'Measured re-baseline after the expanded static question bank and localization pilot data became embedded in the native web entry; ceilings keep about 6% headroom while the app is still a single Metro web entry.',
   },
 };
 

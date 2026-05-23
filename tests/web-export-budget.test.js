@@ -125,10 +125,15 @@ test('web export bundle budget records the measured baseline and size drivers', 
   const { baseline } = WEB_ENTRY_BUNDLE_BUDGET;
   const maxBaselineHeadroom = 1.06;
 
-  assert.equal(baseline.measuredAt, '2026-05-20');
-  assert.equal(baseline.measuredRawBytes, 2_431_194);
-  assert.equal(baseline.measuredGzipBytes, 597_930);
-  assert.equal(baseline.measuredBrotliBytes, 466_218);
+  assert.equal(baseline.measuredAt, '2026-05-23');
+  assert.equal(
+    baseline.entryBundle,
+    '_expo/static/js/web/entry-ae08d50efdaae692cb6c77772e36f561.js',
+  );
+  assert.equal(baseline.bundleCount, 3);
+  assert.equal(baseline.measuredRawBytes, 5_002_584);
+  assert.equal(baseline.measuredGzipBytes, 1_103_404);
+  assert.equal(baseline.measuredBrotliBytes, 800_461);
   assert.ok(WEB_ENTRY_BUNDLE_BUDGET.maxRawBytes >= baseline.measuredRawBytes);
   assert.ok(WEB_ENTRY_BUNDLE_BUDGET.maxGzipBytes >= baseline.measuredGzipBytes);
   assert.ok(WEB_ENTRY_BUNDLE_BUDGET.maxBrotliBytes >= baseline.measuredBrotliBytes);
