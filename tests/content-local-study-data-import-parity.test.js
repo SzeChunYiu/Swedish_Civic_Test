@@ -256,8 +256,14 @@ test('settings import browser fixtures cover accessibility and companion preview
     'utf8',
   );
 
-  assert.match(source, /const accessibilityEasyReadFontKey = 'accessibility\\\\a11y\.easyReadFont\.v1';/);
-  assert.match(source, /const accessibilityFontSizeStepKey = 'accessibility\\\\a11y\.fontSizeStep\.v1';/);
+  assert.match(
+    source,
+    /const accessibilityEasyReadFontKey = 'accessibility\\\\a11y\.easyReadFont\.v1';/,
+  );
+  assert.match(
+    source,
+    /const accessibilityFontSizeStepKey = 'accessibility\\\\a11y\.fontSizeStep\.v1';/,
+  );
   assert.match(
     source,
     /const accessibilityAudioPlaybackRateKey = 'accessibility\\\\a11y\.audioPlaybackRate\.v1';/,
@@ -1017,12 +1023,78 @@ test('local study data import rejects nested purchase fields with useful detail'
   assertNoSnapshotWrites(storageById);
 });
 
+test('local study data import rejects normalized unicode purchase fields while preserving raw details', () => {
+  const storageById = createStorageById();
+  const { formatLocalStudyDataImportErrorDetail, previewLocalStudyDataImport } =
+    loadImportModule(storageById);
+
+  const fullwidthResult = previewLocalStudyDataImport(
+    JSON.stringify({
+      version: 1,
+      progress: {
+        history: [{ ｒｅｍｏｖｅＡｄｓReceipt: true }],
+      },
+    }),
+  );
+  const zeroWidthResult = previewLocalStudyDataImport(
+    JSON.stringify({
+      version: 1,
+      progress: {
+        history: [{ 'prod\u200buct/id': 'removeads' }],
+      },
+    }),
+  );
+  const dottedResult = previewLocalStudyDataImport(
+    JSON.stringify({
+      version: 1,
+      progress: {
+        history: [{ 'ads.disabled': true }],
+      },
+    }),
+  );
+
+  assert.deepEqual(fullwidthResult, {
+    ok: false,
+    code: 'purchase_fields_rejected',
+    detail: 'progress.history.0.ｒｅｍｏｖｅＡｄｓReceipt',
+  });
+  assert.deepEqual(zeroWidthResult, {
+    ok: false,
+    code: 'purchase_fields_rejected',
+    detail: 'progress.history.0["prod\u200buct/id"]',
+  });
+  assert.deepEqual(dottedResult, {
+    ok: false,
+    code: 'purchase_fields_rejected',
+    detail: 'progress.history.0["ads.disabled"]',
+  });
+  assert.equal(
+    formatLocalStudyDataImportErrorDetail(fullwidthResult.detail),
+    'progress.history.0.ｒｅｍｏｖｅＡｄｓReceipt',
+  );
+  assert.equal(
+    formatLocalStudyDataImportErrorDetail(zeroWidthResult.detail),
+    'progress.history.0["prod\u200buct/id"]',
+  );
+  assert.equal(
+    formatLocalStudyDataImportErrorDetail(dottedResult.detail),
+    'progress.history.0["ads.disabled"]',
+  );
+  assertNoSnapshotWrites(storageById);
+});
+
 test('local study data import formats rejected field details with bounded head and tail', () => {
   const storageById = createStorageById();
   const { formatLocalStudyDataImportErrorDetail } = loadImportModule(storageById);
   const longPath = [
     'source',
     ...Array.from({ length: 80 }, (_, index) => `level${index}`),
+    'removeAdsReceipt',
+  ].join('.');
+  const longQuotedPath = [
+    'source',
+    'level0["ads.disabled"]',
+    ...Array.from({ length: 12 }, (_, index) => `level${index + 1}`),
     'removeAdsReceipt',
   ].join('.');
   const longKey = `removeAdsReceipt${'x'.repeat(120)}transaction`;
@@ -1035,6 +1107,14 @@ test('local study data import formats rejected field details with bounded head a
   assert.equal(
     formatLocalStudyDataImportErrorDetail(`source.${longKey}`),
     `source.removeAdsReceiptxxxxxxxxxxxx...xtransaction`,
+  );
+  assert.equal(
+    formatLocalStudyDataImportErrorDetail('progress.history.0["ads.disabled"]'),
+    'progress.history.0["ads.disabled"]',
+  );
+  assert.equal(
+    formatLocalStudyDataImportErrorDetail(longQuotedPath),
+    'source.level0["ads.disabled"].level1.[...].level12.removeAdsReceipt',
   );
   assert.equal(formatLocalStudyDataImportErrorDetail(''), null);
   assert.equal(formatLocalStudyDataImportErrorDetail(), null);
@@ -1214,6 +1294,16 @@ test('local study data import ignores unsafe imported map keys with the shared g
           "questionId": "prototype",
           "isCorrect": true,
           "answeredAt": "2026-05-20T08:03:00.000Z"
+        },
+        {
+          "questionId": "ｐｒｏｔｏｔｙｐｅ",
+          "isCorrect": true,
+          "answeredAt": "2026-05-20T08:04:00.000Z"
+        },
+        {
+          "questionId": "constr\u200buctor",
+          "isCorrect": true,
+          "answeredAt": "2026-05-20T08:05:00.000Z"
         }
       ],
       "mockExamSessions": [
@@ -1227,7 +1317,9 @@ test('local study data import ignores unsafe imported map keys with the shared g
             { "questionId": "q001", "timeSpentSeconds": 12 },
             { "questionId": " __proto__ ", "timeSpentSeconds": 13 },
             { "questionId": "constructor", "timeSpentSeconds": 14 },
-            { "questionId": "prototype", "timeSpentSeconds": 15 }
+            { "questionId": "prototype", "timeSpentSeconds": 15 },
+            { "questionId": "ｐｒｏｔｏｔｙｐｅ", "timeSpentSeconds": 16 },
+            { "questionId": "constr\u200buctor", "timeSpentSeconds": 17 }
           ]
         }
       ],
@@ -1235,7 +1327,9 @@ test('local study data import ignores unsafe imported map keys with the shared g
         "q001": ${unsafeProgressEntry},
         "__proto__": ${unsafeProgressEntry},
         "constructor": ${unsafeProgressEntry},
-        "prototype": ${unsafeProgressEntry}
+        "prototype": ${unsafeProgressEntry},
+        "ｐｒｏｔｏｔｙｐｅ": ${unsafeProgressEntry},
+        "constr\u200buctor": ${unsafeProgressEntry}
       }
     },
     "mistakeReview": {
@@ -1243,7 +1337,9 @@ test('local study data import ignores unsafe imported map keys with the shared g
         "q001": ${unsafeMistakeReview},
         "__proto__": ${unsafeMistakeReview},
         "constructor": ${unsafeMistakeReview},
-        "prototype": ${unsafeMistakeReview}
+        "prototype": ${unsafeMistakeReview},
+        "ｐｒｏｔｏｔｙｐｅ": ${unsafeMistakeReview},
+        "constr\u200buctor": ${unsafeMistakeReview}
       }
     },
     "reviews": {
@@ -1251,13 +1347,17 @@ test('local study data import ignores unsafe imported map keys with the shared g
         "q001": ${unsafeReviewCard('q001')},
         "__proto__": ${unsafeReviewCard('__proto__')},
         "constructor": ${unsafeReviewCard('constructor')},
-        "prototype": ${unsafeReviewCard('prototype')}
+        "prototype": ${unsafeReviewCard('prototype')},
+        "ｐｒｏｔｏｔｙｐｅ": ${unsafeReviewCard('ｐｒｏｔｏｔｙｐｅ')},
+        "constr\u200buctor": ${unsafeReviewCard('constr\u200buctor')}
       },
       "gradedPerDay": {
         "2026-05-20": 2,
         "__proto__": 9,
         "constructor": 9,
-        "prototype": 9
+        "prototype": 9,
+        "ｐｒｏｔｏｔｙｐｅ": 9,
+        "constr\u200buctor": 9
       }
     }
   }`;
@@ -1302,11 +1402,15 @@ test('local study data import map-key safety is shared by all storage normalizer
     'utf8',
   );
   assert.match(helperSource, /export function isSafeImportedMapKey/);
+  assert.match(helperSource, /export function normalizeImportedMapKeyForSafety/);
+  assert.match(helperSource, /\.normalize\('NFKC'\)/);
+  assert.match(helperSource, /invisibleFormatCharacters/);
   assert.match(helperSource, /'__proto__'/);
   assert.match(helperSource, /'constructor'/);
   assert.match(helperSource, /'prototype'/);
 
   for (const relativePath of [
+    'lib/storage/localStudyDataImport.ts',
     'lib/storage/progressStore.ts',
     'lib/storage/mistakeReviewStore.ts',
     'lib/storage/reviewStore.ts',
@@ -1314,7 +1418,7 @@ test('local study data import map-key safety is shared by all storage normalizer
     'lib/storage/highlightsStore.ts',
   ]) {
     const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
-    assert.match(source, /isSafeImportedMapKey/);
+    assert.match(source, /isSafeImportedMapKey|normalizeImportedMapKeyForSafety/);
     assert.doesNotMatch(source, /new Set\(\[['"]__proto__['"]/);
   }
 });

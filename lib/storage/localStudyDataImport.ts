@@ -38,6 +38,7 @@ import {
   normalizeImportedCitizenshipRequirementsChecklist,
   type PersistedCitizenshipRequirementsChecklist,
 } from './citizenshipRequirementsStore';
+import { normalizeImportedMapKeyForSafety } from './importKeySafety';
 import type { RecoverablePersistenceWarning } from './persistenceWarning';
 
 export const LOCAL_STUDY_DATA_IMPORT_VERSION = 1;
@@ -159,11 +160,29 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function normalizeKey(value: string): string {
-  return value.replace(/[\s_-]/g, '').toLowerCase();
+  return normalizeImportedMapKeyForSafety(value)
+    .replace(/[\s_.\/-]/g, '')
+    .replace(/[\[\]]/g, '')
+    .toLowerCase();
+}
+
+function shouldQuoteImportPathSegment(segment: string): boolean {
+  return /[.\[\]\/\s]/.test(segment);
+}
+
+function quoteImportPathSegment(segment: string): string {
+  return `["${segment.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"]`;
 }
 
 function appendImportPathSegment(path: string, segment: string): string {
-  return path ? `${path}.${segment}` : segment;
+  const formattedSegment = shouldQuoteImportPathSegment(segment)
+    ? quoteImportPathSegment(segment)
+    : segment;
+  if (!path) return formattedSegment;
+
+  return formattedSegment.startsWith('[')
+    ? `${path}${formattedSegment}`
+    : `${path}.${formattedSegment}`;
 }
 
 function formatImportDetailSegment(segment: string): string {
@@ -173,8 +192,7 @@ function formatImportDetailSegment(segment: string): string {
 }
 
 export function formatLocalStudyDataImportErrorDetail(detail?: string): string | null {
-  const segments = String(detail ?? '')
-    .split('.')
+  const segments = parseImportDetailSegments(String(detail ?? ''))
     .filter(Boolean)
     .map(formatImportDetailSegment);
 
@@ -189,6 +207,50 @@ export function formatLocalStudyDataImportErrorDetail(detail?: string): string |
     '[...]',
     ...segments.slice(-localStudyDataImportDetailTailSegments),
   ].join('.');
+}
+
+function parseImportDetailSegments(detail: string): string[] {
+  const segments: string[] = [];
+  let segment = '';
+  let inBracketQuotedSegment = false;
+  let escaped = false;
+
+  for (const char of detail) {
+    if (escaped) {
+      segment += char;
+      escaped = false;
+      continue;
+    }
+
+    if (inBracketQuotedSegment && char === '\\') {
+      segment += char;
+      escaped = true;
+      continue;
+    }
+
+    if (char === '[') {
+      inBracketQuotedSegment = true;
+      segment += char;
+      continue;
+    }
+
+    if (inBracketQuotedSegment) {
+      segment += char;
+      if (char === ']') inBracketQuotedSegment = false;
+      continue;
+    }
+
+    if (char === '.') {
+      segments.push(segment);
+      segment = '';
+      continue;
+    }
+
+    segment += char;
+  }
+
+  segments.push(segment);
+  return segments;
 }
 
 function findForbiddenPurchaseField(value: unknown): string | null {
