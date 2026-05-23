@@ -514,6 +514,10 @@ test('asset manifest check fails fast when CSS import depth exceeds the limit', 
       manifestPath: tempManifestPath,
       siteDir: tempSiteDir,
     });
+    const expectedImportChain = Array.from(
+      { length: deepestStylesheetIndex + 1 },
+      (_, index) => `css/depth-${index}.css`,
+    ).join(' -> ');
 
     assert.throws(
       () =>
@@ -524,7 +528,8 @@ test('asset manifest check fails fast when CSS import depth exceeds the limit', 
       (error) =>
         error instanceof Error &&
         error.message.includes('CSS import depth exceeded while scanning') &&
-        error.message.includes(`css/depth-${deepestStylesheetIndex}.css`),
+        error.message.includes(`css/depth-${deepestStylesheetIndex}.css`) &&
+        error.message.includes(`import chain: ${expectedImportChain}`),
     );
   } finally {
     fs.rmSync(tempDir, { force: true, recursive: true });

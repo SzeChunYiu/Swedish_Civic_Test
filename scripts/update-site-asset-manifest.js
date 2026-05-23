@@ -167,9 +167,12 @@ function listStylesheetAssetReferences(siteDir, indexHtml) {
   const references = [];
   const visitedStylesheets = new Set();
 
-  function collectStylesheetReferences(stylesheetPath, depth = 0) {
+  function collectStylesheetReferences(stylesheetPath, depth = 0, importChain = []) {
+    const currentImportChain = [...importChain, stylesheetPath];
     if (depth > maxStylesheetImportDepth) {
-      throw new Error(`CSS import depth exceeded while scanning ${stylesheetPath}`);
+      throw new Error(
+        `CSS import depth exceeded while scanning ${stylesheetPath}; import chain: ${currentImportChain.join(' -> ')}`,
+      );
     }
 
     const absoluteStylesheetPath = path.resolve(siteDir, stylesheetPath);
@@ -195,7 +198,10 @@ function listStylesheetAssetReferences(siteDir, indexHtml) {
       stylesheetReferences.push(importedStylesheetPath);
       if (path.extname(importedStylesheetPath).toLowerCase() === '.css') {
         stylesheetReferences.push(
-          ...collectStylesheetReferences(importedStylesheetPath, depth + 1),
+          ...collectStylesheetReferences(importedStylesheetPath, depth + 1, [
+            ...importChain,
+            normalizedStylesheetPath,
+          ]),
         );
       }
     }
