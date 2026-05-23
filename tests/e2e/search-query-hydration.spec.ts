@@ -62,6 +62,24 @@ async function expectSearchUrlWithQParam(page: Page, expectedQuery: string) {
   await expect.poll(() => new URL(page.url()).searchParams.has('query')).toBe(false);
 }
 
+async function expectDirectQuizReturnSearchState({
+  backSearchLinkName,
+  inputName,
+  page,
+  sessionHeading,
+}: {
+  backSearchLinkName: RegExp;
+  inputName: string;
+  page: Page;
+  sessionHeading: string;
+}) {
+  await expect(page).toHaveURL(/\/search$/);
+  expectSearchUrlWithoutQueryParams(page);
+  await expect(page.getByRole('textbox', { name: inputName })).toBeVisible();
+  await expect(page.getByRole('heading', { name: sessionHeading })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: backSearchLinkName })).toHaveCount(0);
+}
+
 async function expectHydratedSearch(
   page: Page,
   url: string,
@@ -450,7 +468,9 @@ test('search question result links open the exact routed quiz question', async (
   expect(consoleErrors).toEqual([]);
 });
 
-test('direct quiz visits keep the search backlink query-free', async ({ page }) => {
+test('direct quiz visits keep the English search backlink query-free without retained shell', async ({
+  page,
+}) => {
   await seedSettingsLanguage(page, 'en');
   await markAboutTheTestSeen(page);
   await page.goto('/quiz/q001', { waitUntil: 'networkidle' });
@@ -463,8 +483,34 @@ test('direct quiz visits keep the search backlink query-free', async ({ page }) 
   await expect(backToSearchLink).toHaveAttribute('href', '/search');
 
   await backToSearchLink.click();
-  await expect(page).toHaveURL(/\/search$/);
-  expectSearchUrlWithoutQueryParams(page);
+  await expectDirectQuizReturnSearchState({
+    backSearchLinkName: /Search for practice questions/,
+    inputName: searchStateCopy.en.inputName,
+    page,
+    sessionHeading: 'Session q001',
+  });
+});
+
+test('direct quiz visits keep the Swedish search backlink query-free without retained shell', async ({
+  page,
+}) => {
+  await seedSettingsLanguage(page, 'sv');
+  await markAboutTheTestSeen(page);
+  await page.goto('/quiz/q001', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  const backSearchLinkName = /Sök efter övningsfrågor|Sök övningsfrågor/;
+  const backToSearchLink = page.getByRole('link', { name: backSearchLinkName }).first();
+  await expect(backToSearchLink).toBeVisible();
+  await expect(backToSearchLink).toHaveAttribute('href', '/search');
+
+  await backToSearchLink.click();
+  await expectDirectQuizReturnSearchState({
+    backSearchLinkName,
+    inputName: searchStateCopy.sv.inputName,
+    page,
+    sessionHeading: 'Frågepass q001',
+  });
 });
 
 test('direct quiz visits ignore malformed and overlong search backlink params', async ({
@@ -492,7 +538,11 @@ test('direct quiz visits ignore malformed and overlong search backlink params', 
     await expect(backToSearchLink).toHaveAttribute('href', '/search');
 
     await backToSearchLink.click();
-    await expect(page).toHaveURL(/\/search$/);
-    expectSearchUrlWithoutQueryParams(page);
+    await expectDirectQuizReturnSearchState({
+      backSearchLinkName: /Search for practice questions/,
+      inputName: searchStateCopy.en.inputName,
+      page,
+      sessionHeading: 'Session q001',
+    });
   }
 });
