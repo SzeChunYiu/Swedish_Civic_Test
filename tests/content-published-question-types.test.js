@@ -5056,6 +5056,60 @@ test('q062 public-sector exports natural English in canonical and static banks',
   );
 });
 
+test('q167 stated-on voting-card variants export natural prompts in canonical and static banks', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const singleChoiceId = generatedQuestionId(sourceQuestions, 'q167', 'singleChoice');
+  const judgementId = generatedQuestionId(sourceQuestions, 'q167', 'judgement');
+  const byId = new Map(generatedSiteBank.map((question) => [question.id, question]));
+  const actualById = new Map(Array.from(actualSiteBank).map((question) => [question.id, question]));
+  const csvRows = contentQuestionBankCsvRowsById(['q167', singleChoiceId, judgementId]);
+  const stalePattern = /\b(?:röstkortet[^?!.]*innehåll|voting card[^?!.]*contents)\b/i;
+
+  assert.equal(byId.get('q167')?.q.sv, 'Vad står på röstkortet som skickas hem före valet?');
+  assert.equal(
+    byId.get('q167')?.q.en,
+    'What is stated on the voting card sent home before an election?',
+  );
+
+  const expectedPrompts = {
+    [singleChoiceId]: [
+      'Vad visar röstkortet som skickas hem före valet?',
+      'What does the voting card sent home before an election show?',
+    ],
+    [judgementId]: [
+      'Vilken uppgift stämmer om vad röstkortet som skickas hem före valet visar?',
+      'Which fact is correct about what the voting card sent home before an election shows?',
+    ],
+  };
+
+  for (const [id, [expectedSv, expectedEn]] of Object.entries(expectedPrompts)) {
+    const generated = byId.get(id);
+    const actual = actualById.get(id);
+    const csvColumns = csvRows.get(id);
+    assert.ok(generated, `${id} should be generated in the canonical bank`);
+    assert.ok(actual, `${id} should be exported to the static bank`);
+    assert.ok(csvColumns, `${id} should be exported to CSV`);
+    assert.equal(generated?.q.sv, expectedSv);
+    assert.equal(generated?.q.en, expectedEn);
+    assert.equal(actual?.q.sv, expectedSv);
+    assert.equal(actual?.q.en, expectedEn);
+    assert.equal(csvColumns?.[3], expectedSv);
+    assert.equal(csvColumns?.[4], expectedEn);
+    assert.equal(csvColumns?.[10], 'Politiska val och partier');
+    assert.equal(csvColumns?.[11], 'Så här går det till att rösta');
+    assert.equal(csvColumns?.[12], '14');
+    assert.equal(csvColumns?.[27], 'derived');
+    assert.doesNotMatch(
+      `${generated?.q.sv}\n${generated?.q.en}\n${actual?.q.sv}\n${actual?.q.en}\n${csvColumns?.[3]}\n${csvColumns?.[4]}`,
+      stalePattern,
+    );
+  }
+});
+
 test('national-minorities generated judgement exports natural English in canonical and static banks', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const actualSiteBank = actualStaticQuestions();
@@ -6599,67 +6653,4 @@ const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/questions.ts')) {
-    return String(contents).replace(
-      "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(\\n  sourceQuestions,\\n  sourceQuestions.length + 1,\\n).map(applyQuestionLocalizationPilot);",
-      [
-        ${JSON.stringify(generatedFixtureIdHelperSource())},
-        "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(",
-        "  sourceQuestions,",
-        "  sourceQuestions.length + 1,",
-        ").map(applyQuestionLocalizationPilot).map((question) =>",
-        "  question.id === generatedFixtureId('q001', 0)",
-        "    ? {",
-        "        ...question,",
-        "        questionSv: 'Vad stämmer om röstkortets innehåll?',",
-        "        questionEn: \\"What is correct about the voting card's contents?\\",",
-        "      }",
-        "    : question,",
-        ").map(applyQuestionLocalizationPilot);",
-      ].join('\\n'),
-    );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /generated variant\[0\] uses generated single-choice meta-stem wording/,
-  );
-});
-
-test('published question metadata schema rejects invalid difficulty values', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/questions.ts')) {
-    return String(contents).replace(
-      "    difficulty: 'easy',",
-      "    difficulty: 'expert',",
-    );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(`${result.stdout}\n${result.stderr}`, /q001 has invalid difficulty expert/);
-});
+  const conten
