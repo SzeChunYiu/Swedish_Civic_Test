@@ -704,6 +704,28 @@ const QUESTION_LUCIA_ROLE_ENGLISH_NATURALNESS_PATTERNS = [/\b(?:the\s+)?person w
 const QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS = [
   /\bThe EU is political and economic cooperation between European countries\b/i,
 ];
+const GLOSSARY_NATURALNESS_PATTERNS = [
+  {
+    field: 'termEn',
+    pattern: /\blabou?r-market parties\b/i,
+    message: 'uses literal labour-market parties English wording',
+  },
+  {
+    field: 'explanationEn',
+    pattern: /\btake(?:s|n)? a direct position\b/i,
+    message: 'uses literal direct-position referendum English wording',
+  },
+  {
+    field: 'explanationEn',
+    pattern: /\bmake(?:s)? use of different experiences\b/i,
+    message: 'uses literal make-use-of-experiences English wording',
+  },
+  {
+    field: 'explanationSv',
+    pattern: /\bgöra användning av\b/i,
+    message: 'uses literal göra användning av Swedish wording',
+  },
+];
 const TARGETLESS_GENERATED_WHY_REASON_STEM_PATTERNS = [/^En anledning är\b/i, /^One reason is\b/i];
 const QUESTION_TRUE_FALSE_STEM_PREFIX_PATTERNS = [
   /^\s*Sant eller falskt\s*:/i,
@@ -6090,11 +6112,30 @@ function optionBilingualTextPairsAreValid(question) {
   return question.options.every(optionTextPairIsTranslatedOrInvariant);
 }
 
+function glossaryTextPairsAreValid(term) {
+  return (
+    optionTextPairIsTranslatedOrInvariant({ textSv: term?.termSv, textEn: term?.termEn }) &&
+    normalizeComparableText(term?.explanationSv) !== normalizeComparableText(term?.explanationEn)
+  );
+}
+
+function findGlossaryNaturalnessIssue(term) {
+  if (!term || typeof term !== 'object') return null;
+
+  const issue = GLOSSARY_NATURALNESS_PATTERNS.find(({ field, pattern }) =>
+    pattern.test(String(term[field] ?? '')),
+  );
+
+  return issue?.message ?? null;
+}
+
 function translationCompletenessParityIsValidated() {
   return (
     publishedQuestions > 0 &&
     questionBilingualTextPairsValidated === publishedQuestions &&
-    questionOptionBilingualTextPairsValidated === publishedQuestions
+    questionOptionBilingualTextPairsValidated === publishedQuestions &&
+    glossaryTerms.length > 0 &&
+    glossaryBilingualTextPairsValidated === glossaryTerms.length
   );
 }
 
@@ -6123,7 +6164,8 @@ function translationNaturalnessGuardParityIsValidated() {
     questionRuleOfLawEnglishNaturalnessValidated === publishedQuestions * 3 &&
     questionReligiousFreedomParallelismValidated === publishedQuestions * 2 &&
     somaliGeographyNaturalnessParityValidated === true &&
-    somaliHolidayFoodNaturalnessParityValidated === true
+    somaliHolidayFoodNaturalnessParityValidated === true &&
+    glossaryNaturalnessValidated === glossaryTerms.length
   );
 }
 
@@ -10267,6 +10309,8 @@ let examGeneratorTypeInterfacesValidated = 0;
 let examGeneratorTypeSchemaParityValidated = false;
 let glossaryTermsValidated = 0;
 let glossaryTermExactSchemaKeysValidated = 0;
+let glossaryBilingualTextPairsValidated = 0;
+let glossaryNaturalnessValidated = 0;
 let uxBenchmarksValidated = 0;
 let contentTypeUnionsValidated = 0;
 let contentTypeInterfacesValidated = 0;
@@ -11509,7 +11553,8 @@ function translateCompleteP0NaturalnessIsValidated(publishedQuestionCount) {
     questionRuleOfLawEnglishNaturalnessValidated === publishedQuestionCount * 3 &&
     questionReligiousFreedomParallelismValidated === publishedQuestionCount * 2 &&
     somaliGeographyNaturalnessParityValidated === true &&
-    somaliHolidayFoodNaturalnessParityValidated === true
+    somaliHolidayFoodNaturalnessParityValidated === true &&
+    glossaryNaturalnessValidated === glossaryTerms.length
   );
 }
 
@@ -11663,11 +11708,30 @@ function validateTranslateCompleteP0Focus() {
   validateSomaliGeographyNaturalnessParity();
   validateSomaliHolidayFoodNaturalnessParity();
 
+  glossaryTerms.forEach((term, index) => {
+    const label = term?.id || `glossary term[${index}]`;
+
+    if (glossaryTextPairsAreValid(term)) {
+      glossaryBilingualTextPairsValidated += 1;
+    } else {
+      fail(`${label} glossary term/explanation fields must have SV/EN translation parity`);
+    }
+
+    const glossaryNaturalnessIssue = findGlossaryNaturalnessIssue(term);
+    if (glossaryNaturalnessIssue) {
+      fail(`${label} ${glossaryNaturalnessIssue}`);
+    } else {
+      glossaryNaturalnessValidated += 1;
+    }
+  });
+
   const publishedQuestionCount = publishedQuestionRows.length;
   const translationCompletenessParityValidated =
     publishedQuestionCount > 0 &&
     questionBilingualTextPairsValidated === publishedQuestionCount &&
-    questionOptionBilingualTextPairsValidated === publishedQuestionCount;
+    questionOptionBilingualTextPairsValidated === publishedQuestionCount &&
+    glossaryTerms.length > 0 &&
+    glossaryBilingualTextPairsValidated === glossaryTerms.length;
   const translationNaturalnessGuardParityValidated =
     translateCompleteP0NaturalnessIsValidated(publishedQuestionCount);
 
@@ -11683,6 +11747,8 @@ function validateTranslateCompleteP0Focus() {
     publishedQuestions: publishedQuestionCount,
     questionBilingualTextPairsValidated,
     questionOptionBilingualTextPairsValidated,
+    glossaryTerms: glossaryTerms.length,
+    glossaryBilingualTextPairsValidated,
     translationCompletenessParityValidated,
     questionGeneratedTrueFalseNaturalnessValidated,
     questionLuciaRoleEnglishNaturalnessValidated,
@@ -11707,6 +11773,7 @@ function validateTranslateCompleteP0Focus() {
     questionReligiousFreedomParallelismValidated,
     somaliGeographyNaturalnessParityValidated,
     somaliHolidayFoodNaturalnessParityValidated,
+    glossaryNaturalnessValidated,
     translationNaturalnessGuardParityValidated,
   });
   process.exit(0);
@@ -22223,6 +22290,17 @@ function validateGlossaryTerms() {
       ) {
         reject(`${label} explanationSv and explanationEn must be distinct bilingual text`);
       }
+      if (glossaryTextPairsAreValid(term)) {
+        glossaryBilingualTextPairsValidated += 1;
+      } else {
+        reject(`${label} glossary term/explanation fields must have SV/EN translation parity`);
+      }
+      const naturalnessIssue = findGlossaryNaturalnessIssue(term);
+      if (naturalnessIssue) {
+        reject(`${label} ${naturalnessIssue}`);
+      } else {
+        glossaryNaturalnessValidated += 1;
+      }
 
       if (term.chapterId !== undefined) {
         if (!hasText(term.chapterId)) {
@@ -27832,6 +27910,8 @@ console.log(
       glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
       glossaryTermsValidated,
       glossaryTermExactSchemaKeysValidated,
+      glossaryBilingualTextPairsValidated,
+      glossaryNaturalnessValidated,
       uxBenchmarksValidated,
       supportedLanguagesValidated,
       localizationStrings:
