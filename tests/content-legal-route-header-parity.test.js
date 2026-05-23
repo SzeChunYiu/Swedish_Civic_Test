@@ -36,15 +36,40 @@ const expectedLegalRoutes = [
       'Konto är valfritt',
       'köpet gör att annonser inte visas på den här enheten',
       'köptoken eller transaktions-id',
+      'granskningar av fel svar',
+      'övningsprovhistorik',
+      'svarshistorik',
+      'dagliga utmaningar',
+      'svitskydd',
+      'repetitionskort och repetitionsdagar',
+      'tillgänglighetsval',
+      'vald studiekompis',
+      'checklista för medborgarskapskrav',
+      'e-boksmarkeringar och frivilliga e-boksanteckningar',
+      'tar inte med köp-, kvitto- eller annonsrättighetsfält',
+      'Lokal studiedata kan exporteras och importeras i Inställningar',
       'Privacy policy',
       'Account optional',
       'Supabase and Google sign-in',
       'turns off ads on this device',
       'purchase token or transaction ID',
+      'wrong-answer reviews',
+      'mock exam history',
+      'answer history',
+      'daily challenges',
+      'streak freezes',
+      'FSRS review cards and graded review days',
+      'accessibility preferences',
+      'selected study companion',
+      'citizenship requirements checklist state',
+      'ebook highlights with optional notes',
+      'do not include purchase, receipt, or ad-entitlement fields',
+      'Local study data can be exported and imported in Settings',
     ],
     sectionPatterns: [
       /<LegalSection\s+title=\{copy\.sections\.noAccountRequired\.title\}[\s\S]*?>/,
       /<LegalSection\s+title=\{copy\.sections\.localProgressStorage\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.gdprRights\.title\}[\s\S]*?>/,
       /<LegalSection\s+title=\{copy\.sections\.adsAndPurchases\.title\}[\s\S]*?>/,
       /<LegalSection\s+title=\{copy\.sections\.adConsent\.title\}[\s\S]*?>/,
       /<LegalSection\s+title=\{copy\.sections\.providerProcessing\.title\}[\s\S]*?>/,
@@ -54,6 +79,7 @@ const expectedLegalRoutes = [
     sections: [
       'Account optional',
       'Local progress storage',
+      'Your rights under GDPR',
       'Ads and purchases',
       'Ad consent',
       'Provider processing',
@@ -242,7 +268,7 @@ test('legal, source, and support routes stay on shared accessible header path', 
     'utf8',
   );
 
-  assert.equal(summary.legalRouteHeadersValidated, 23);
+  assert.equal(summary.legalRouteHeadersValidated, 24);
   assert.equal(summary.legalRouteHeaderParityValidated, true);
   assert.equal(summary.legalSectionRenderingTestsRoutedValidated, true);
   assert.equal(summary.legalSectionRenderingCasesValidated, 3);
@@ -314,7 +340,10 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/app/privacy.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('XP, studiesviter och ljudinställningar', 'XP, streaks och ljudinställningar');
+      .replace(
+        'dagliga utmaningar, studiesviter och svitskydd',
+        'dagliga utmaningar, streaks och svitskydd',
+      );
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -404,6 +433,51 @@ test('privacy Remove Ads rendered copy e2e covers both languages', () => {
   assert.match(specSource, /not\.toContainText\(scenario\.forbiddenVisibleCopy\)/);
 });
 
+test('privacy local study data rendered copy e2e covers both languages', () => {
+  const specSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/e2e/privacy-local-study-data-copy.spec.ts'),
+    'utf8',
+  );
+
+  for (const snippet of [
+    '/privacy',
+    'Lokal lagring av framsteg',
+    'besvarade och bokmärkta frågor',
+    'granskningar av fel svar',
+    'övningsprovhistorik',
+    'svarshistorik',
+    'dagliga utmaningar',
+    'studiesviter och svitskydd',
+    'repetitionskort och repetitionsdagar',
+    'tillgänglighetsval',
+    'vald studiekompis',
+    'checklista för medborgarskapskrav',
+    'e-boksmarkeringar och frivilliga e-boksanteckningar',
+    'tar inte med köp-, kvitto- eller annonsrättighetsfält',
+    'Local progress storage',
+    'answered and bookmarked questions',
+    'wrong-answer reviews',
+    'mock exam history',
+    'answer history',
+    'daily challenges',
+    'streaks and streak freezes',
+    'FSRS review cards and graded review days',
+    'accessibility preferences',
+    'selected study companion',
+    'citizenship requirements checklist state',
+    'ebook highlights with optional notes',
+    'do not include purchase, receipt, or ad-entitlement fields',
+    '/privacy renders local study data disclosure in sv',
+    '/privacy renders local study data disclosure in en',
+  ]) {
+    assert.match(specSource, new RegExp(escapeRegExp(snippet)));
+  }
+
+  assert.match(specSource, /language:\s*'sv'/);
+  assert.match(specSource, /language:\s*'en'/);
+  assert.match(specSource, /not\.toContainText\(scenario\.forbiddenVisibleCopy\)/);
+});
+
 test('legal route header parity rejects shared legal section header drift', () => {
   const result = spawnSync(
     process.execPath,
@@ -483,8 +557,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace(
-        'XP, studiesviter och ljudinställningar',
-        'XP, streaks, settings och ljudinställningar',
+        'dagliga utmaningar, studiesviter och svitskydd',
+        'dagliga utmaningar, streaks, settings och svitskydd',
       );
   }
   return originalReadFileSync.call(this, filePath, ...args);

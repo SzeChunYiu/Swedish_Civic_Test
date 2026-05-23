@@ -26,11 +26,11 @@ const privacyCopy: Record<AppLanguage, PrivacyRouteCopy> = {
         title: 'Konto är valfritt',
       },
       localProgressStorage: {
-        body: 'Studieframsteg, inställningar, bokmärken, misstag, XP, studiesviter och ljudinställningar sparas lokalt på enheten så att appen kan komma ihåg din övningsstatus.',
+        body: 'Appen kan spara lokal studiedata på enheten: besvarade och bokmärkta frågor, granskningar av fel svar, övningsprovhistorik, XP, svarshistorik, dagliga utmaningar, studiesviter och svitskydd, repetitionskort och repetitionsdagar, inställningar, tillgänglighetsval, vald studiekompis, checklista för medborgarskapskrav samt e-boksmarkeringar och frivilliga e-boksanteckningar. Lokal studiedataexport och import tar inte med köp-, kvitto- eller annonsrättighetsfält.',
         title: 'Lokal lagring av framsteg',
       },
       gdprRights: {
-        body: 'Du kan begära export eller radering av supportmeddelanden du har skickat via Support-skärmen. Lokalt lagrade framsteg, inställningar och köpstatus kan rensas genom att avinstallera appen eller rensa appdata på enheten.',
+        body: 'Du kan begära export eller radering av supportmeddelanden du har skickat via Support-skärmen. Lokal studiedata kan exporteras och importeras i Inställningar. Lokalt lagrade framsteg, inställningar, e-boksanteckningar, kravchecklistor och köpstatus kan rensas genom att avinstallera appen eller rensa appdata på enheten.',
         title: 'Dina rättigheter enligt GDPR',
       },
       adsAndPurchases: {
@@ -55,11 +55,11 @@ const privacyCopy: Record<AppLanguage, PrivacyRouteCopy> = {
         title: 'Account optional',
       },
       localProgressStorage: {
-        body: 'Study progress, settings, bookmarks, mistakes, XP, streaks, and audio preferences are stored locally on the device so the app can remember your practice state.',
+        body: 'The app can store local study data on the device: answered and bookmarked questions, wrong-answer reviews, mock exam history, XP, answer history, daily challenges, streaks and streak freezes, FSRS review cards and graded review days, settings, accessibility preferences, selected study companion, citizenship requirements checklist state, and ebook highlights with optional notes. Local study data export and import do not include purchase, receipt, or ad-entitlement fields.',
         title: 'Local progress storage',
       },
       gdprRights: {
-        body: 'You may request export or deletion of support messages you have sent via the Support screen. Locally stored progress, settings, and purchase status can be cleared by uninstalling the app or clearing app data on the device.',
+        body: 'You may request export or deletion of support messages you have sent via the Support screen. Local study data can be exported and imported in Settings. Locally stored progress, settings, ebook notes, requirements checklists, and purchase status can be cleared by uninstalling the app or clearing app data on the device.',
         title: 'Your rights under GDPR',
       },
       adsAndPurchases: {
