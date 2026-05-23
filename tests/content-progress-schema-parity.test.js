@@ -809,6 +809,55 @@ test('recordAnswer ignores non-boolean correctness before state or storage write
   assert.deepEqual(useProgressStore.getState().answerDates, []);
 });
 
+test('progress runtime writers reject unsafe or blank question ids before state or storage writes', () => {
+  const initialProgress = {
+    completedQuestionIds: [],
+    questionProgress: {},
+    totalXp: 0,
+    answerDates: [],
+    answerHistory: [],
+    dailyChallengeCompletions: {},
+    mockExamSessions: [],
+    streakFreezeState: {
+      available: 1,
+      lastEarnedAt: '2026-05-19',
+      lifetimeEarned: 1,
+      lifetimeSpent: 0,
+      rescuedDayKeys: [],
+    },
+  };
+  const { useProgressStore, readPersistedProgress } = loadProgressStoreFromStorage(initialProgress);
+  const invalidQuestionIds = ['', '   ', '__proto__', 'constructor', 'prototype'];
+
+  const stateBefore = progressSnapshot(useProgressStore.getState());
+  const persistedBefore = readPersistedProgress();
+
+  for (const questionId of invalidQuestionIds) {
+    useProgressStore.getState().markQuestionCompleted(questionId);
+    useProgressStore.getState().recordAnswer(questionId, true);
+    useProgressStore.getState().toggleBookmark(questionId);
+  }
+
+  assert.deepEqual(progressSnapshot(useProgressStore.getState()), stateBefore);
+  assert.deepEqual(readPersistedProgress(), persistedBefore);
+  assert.deepEqual(useProgressStore.getState().completedQuestionIds, []);
+  assert.deepEqual(useProgressStore.getState().questionProgress, {});
+  assert.deepEqual(useProgressStore.getState().answerHistory, []);
+  assert.equal(useProgressStore.getState().totalXp, 0);
+
+  useProgressStore.getState().recordAnswer('  q-runtime-safe  ', true);
+  const state = useProgressStore.getState();
+  assert.deepEqual(state.completedQuestionIds, ['q-runtime-safe']);
+  assert.deepEqual(Object.keys(state.questionProgress), ['q-runtime-safe']);
+  assert.equal(state.questionProgress['q-runtime-safe'].questionId, 'q-runtime-safe');
+  assert.equal(state.answerHistory[0].questionId, 'q-runtime-safe');
+
+  useProgressStore.getState().toggleBookmark('  q-runtime-safe  ');
+  assert.equal(useProgressStore.getState().questionProgress['q-runtime-safe'].bookmarked, true);
+  useProgressStore.getState().markQuestionCompleted('  q-runtime-safe  ');
+  assert.deepEqual(useProgressStore.getState().completedQuestionIds, ['q-runtime-safe']);
+});
+
 test('mock exam completion XP ignores malformed runtime counts', () => {
   const initialProgress = {
     completedQuestionIds: [],

@@ -484,10 +484,12 @@ export const useProgressStore = create<ProgressState>((set) => ({
   persistenceWarning: initialProgress.persistenceWarning,
   markQuestionCompleted: (questionId) =>
     set((state) => {
-      if (state.completedQuestionIds.includes(questionId)) return state;
+      const safeQuestionId = normalizeHydratedQuestionId(questionId);
+      if (!safeQuestionId) return state;
+      if (state.completedQuestionIds.includes(safeQuestionId)) return state;
 
       const nextProgress = {
-        completedQuestionIds: [...state.completedQuestionIds, questionId],
+        completedQuestionIds: [...state.completedQuestionIds, safeQuestionId],
         questionProgress: state.questionProgress,
         totalXp: state.totalXp,
         answerDates: state.answerDates,
@@ -501,6 +503,8 @@ export const useProgressStore = create<ProgressState>((set) => ({
     }),
   recordAnswer: (questionId, isCorrect, confidenceRating, options) =>
     set((state) => {
+      const safeQuestionId = normalizeHydratedQuestionId(questionId);
+      if (!safeQuestionId) return state;
       if (typeof isCorrect !== 'boolean') return state;
 
       const answeredAt = new Date().toISOString();
@@ -513,8 +517,8 @@ export const useProgressStore = create<ProgressState>((set) => ({
         normalizedConfidenceRating && !isCorrect
           ? lapsePenaltyForWrong(normalizedConfidenceRating)
           : 0;
-      const previous = state.questionProgress[questionId] ?? {
-        questionId,
+      const previous = state.questionProgress[safeQuestionId] ?? {
+        questionId: safeQuestionId,
         seenCount: 0,
         correctCount: 0,
         wrongCount: 0,
@@ -551,14 +555,14 @@ export const useProgressStore = create<ProgressState>((set) => ({
       } else {
         delete nextQuestionProgress.confidenceRating;
       }
-      const completedQuestionIds = state.completedQuestionIds.includes(questionId)
+      const completedQuestionIds = state.completedQuestionIds.includes(safeQuestionId)
         ? state.completedQuestionIds
-        : [...state.completedQuestionIds, questionId];
+        : [...state.completedQuestionIds, safeQuestionId];
       const answerDates = state.answerDates.includes(answerDate)
         ? state.answerDates
         : [...state.answerDates, answerDate];
       const nextAnswerHistoryEntry: AnswerHistoryEntry = {
-        questionId,
+        questionId: safeQuestionId,
         isCorrect,
         answeredAt,
       };
@@ -569,7 +573,7 @@ export const useProgressStore = create<ProgressState>((set) => ({
         completedQuestionIds,
         questionProgress: {
           ...state.questionProgress,
-          [questionId]: nextQuestionProgress,
+          [safeQuestionId]: nextQuestionProgress,
         },
         totalXp:
           state.totalXp +
@@ -681,8 +685,11 @@ export const useProgressStore = create<ProgressState>((set) => ({
     }),
   toggleBookmark: (questionId) =>
     set((state) => {
-      const previous = state.questionProgress[questionId] ?? {
-        questionId,
+      const safeQuestionId = normalizeHydratedQuestionId(questionId);
+      if (!safeQuestionId) return state;
+
+      const previous = state.questionProgress[safeQuestionId] ?? {
+        questionId: safeQuestionId,
         seenCount: 0,
         correctCount: 0,
         wrongCount: 0,
@@ -692,7 +699,7 @@ export const useProgressStore = create<ProgressState>((set) => ({
         completedQuestionIds: state.completedQuestionIds,
         questionProgress: {
           ...state.questionProgress,
-          [questionId]: { ...previous, bookmarked: !previous.bookmarked },
+          [safeQuestionId]: { ...previous, bookmarked: !previous.bookmarked },
         },
         totalXp: state.totalXp,
         answerDates: state.answerDates,
