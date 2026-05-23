@@ -1973,7 +1973,7 @@ test('native Remove Ads receipt-validator adapter normalizes backend receipt res
         platform: 'ios',
         productId: REMOVE_ADS_PRODUCT_ID,
         purchaseToken: 'tok-remove-ads',
-        raw: null,
+        receipt: null,
         transactionId: 'tx-remove-ads',
       },
       headers: {
@@ -1984,6 +1984,101 @@ test('native Remove Ads receipt-validator adapter normalizes backend receipt res
       url: 'https://validator.example/remove-ads',
     },
   ]);
+});
+
+test('native Remove Ads receipt-validator adapter minimizes raw purchase payloads', async () => {
+  const { createNativeRemoveAdsReceiptValidator } = loadTs(
+    'lib/monetization/removeAdsReceiptValidator.native.ts',
+  );
+  const { REMOVE_ADS_PRODUCT_ID } = loadTs('lib/monetization/purchases.ts');
+  const { PRO_LIFETIME_PRODUCT_ID } = loadTs('lib/monetization/proLifetimePurchase.ts');
+  const requests = [];
+  const validator = createNativeRemoveAdsReceiptValidator({
+    endpointUrl: 'https://validator.example/remove-ads',
+    fetchImpl: async (_url, init) => {
+      requests.push(JSON.parse(init.body));
+      return {
+        ok: true,
+        async json() {
+          return {
+            status: 'valid',
+            validatedAt: '2026-05-20T12:00:00.000Z',
+          };
+        },
+      };
+    },
+    platform: 'android',
+  });
+
+  assert.equal(typeof validator, 'function');
+
+  const removeAdsResult = await validator(
+    {
+      productId: REMOVE_ADS_PRODUCT_ID,
+      purchaseToken: 'tok-remove-ads',
+      raw: {
+        accountEmail: 'learner@example.test',
+        dataAndroid: '{"orderId":"GPA.1234"}',
+        debugPayload: { internal: true },
+        orderId: 'GPA.1234-5678-9012-34567',
+        purchaseToken: 'tok-raw-remove-ads',
+        receiptData: 'ios-receipt-data',
+        signatureAndroid: 'android-signature',
+        transactionId: 'tx-raw-remove-ads',
+        userId: 'user-123',
+      },
+      transactionId: 'tx-remove-ads',
+    },
+    REMOVE_ADS_PRODUCT_ID,
+  );
+  const proLifetimeResult = await validator(
+    {
+      productId: PRO_LIFETIME_PRODUCT_ID,
+      purchaseToken: 'tok-pro-lifetime',
+      raw: {
+        accountEmail: 'learner@example.test',
+        originalTransactionIdentifierIOS: 'original-pro-tx',
+        receipt: 'pro-ios-receipt',
+        transactionReceipt: 'pro-store-receipt',
+        userId: 'user-123',
+      },
+      transactionId: 'tx-pro-lifetime',
+    },
+    PRO_LIFETIME_PRODUCT_ID,
+  );
+
+  assert.equal(removeAdsResult.productId, REMOVE_ADS_PRODUCT_ID);
+  assert.equal(proLifetimeResult.productId, PRO_LIFETIME_PRODUCT_ID);
+  assert.deepEqual(requests, [
+    {
+      platform: 'android',
+      productId: REMOVE_ADS_PRODUCT_ID,
+      purchaseToken: 'tok-remove-ads',
+      receipt: {
+        dataAndroid: '{"orderId":"GPA.1234"}',
+        orderId: 'GPA.1234-5678-9012-34567',
+        purchaseToken: 'tok-raw-remove-ads',
+        receiptData: 'ios-receipt-data',
+        signatureAndroid: 'android-signature',
+        transactionId: 'tx-raw-remove-ads',
+      },
+      transactionId: 'tx-remove-ads',
+    },
+    {
+      platform: 'android',
+      productId: PRO_LIFETIME_PRODUCT_ID,
+      purchaseToken: 'tok-pro-lifetime',
+      receipt: {
+        originalTransactionIdentifierIOS: 'original-pro-tx',
+        receipt: 'pro-ios-receipt',
+        transactionReceipt: 'pro-store-receipt',
+      },
+      transactionId: 'tx-pro-lifetime',
+    },
+  ]);
+  const serializedBody = JSON.stringify(requests);
+  assert.doesNotMatch(serializedBody, /accountEmail|learner@example|debugPayload|userId/);
+  assert.equal(Object.hasOwn(requests[0], 'raw'), false);
 });
 
 test('native purchase provider matches requested product ids instead of Remove Ads only', async () => {

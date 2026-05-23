@@ -21,6 +21,8 @@ type ReceiptValidatorFetch = (
 
 type ReceiptValidatorEnv = Record<string, string | undefined>;
 
+type ReceiptValidatorReceiptPayload = Record<string, string>;
+
 interface NativeRemoveAdsReceiptValidatorOptions {
   endpointUrl?: string;
   env?: ReceiptValidatorEnv;
@@ -38,6 +40,48 @@ function configuredValidatorUrl(env: ReceiptValidatorEnv = process.env): string 
   } catch {
     return undefined;
   }
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
+function compactString(value: unknown): string | undefined {
+  if (typeof value !== 'string') return undefined;
+  const trimmed = value.trim();
+  return trimmed ? trimmed : undefined;
+}
+
+function copyReceiptString(
+  payload: ReceiptValidatorReceiptPayload,
+  source: Record<string, unknown>,
+  key: string,
+): void {
+  const value = compactString(source[key]);
+  if (value) payload[key] = value;
+}
+
+function createReceiptPayload(raw: unknown): ReceiptValidatorReceiptPayload | null {
+  if (!isRecord(raw)) return null;
+
+  const payload: ReceiptValidatorReceiptPayload = {};
+  for (const key of [
+    'dataAndroid',
+    'originalTransactionDateIOS',
+    'originalTransactionIdentifierIOS',
+    'orderId',
+    'packageNameAndroid',
+    'purchaseToken',
+    'receipt',
+    'receiptData',
+    'signatureAndroid',
+    'transactionId',
+    'transactionReceipt',
+  ]) {
+    copyReceiptString(payload, raw, key);
+  }
+
+  return Object.keys(payload).length > 0 ? payload : null;
 }
 
 export function hasNativeRemoveAdsReceiptValidatorConfig(
@@ -92,7 +136,7 @@ export function createNativeRemoveAdsReceiptValidator({
         platform,
         productId,
         purchaseToken: purchase.purchaseToken ?? null,
-        raw: purchase.raw ?? null,
+        receipt: createReceiptPayload(purchase.raw),
         transactionId: purchase.transactionId ?? null,
       }),
       headers: {
