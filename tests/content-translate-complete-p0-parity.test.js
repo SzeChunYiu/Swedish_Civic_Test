@@ -115,6 +115,10 @@ test('TRANSLATE-COMPLETE P0 has explicit SV/EN completeness and naturalness clos
   assert.equal(summary.translationNaturalnessGuardParityValidated, true);
   assert.equal(summary.questionBilingualTextPairsValidated, summary.publishedQuestions);
   assert.equal(summary.questionOptionBilingualTextPairsValidated, summary.publishedQuestions);
+  assert.ok(summary.glossaryTerms > 0, 'glossary terms should be included in P0 evidence');
+  assert.equal(summary.glossaryTermsValidated, summary.glossaryTerms);
+  assert.equal(summary.glossaryBilingualTextPairsValidated, summary.glossaryTerms);
+  assert.equal(summary.glossaryNaturalnessValidated, summary.glossaryTerms);
   assert.equal(summary.questionGeneratedTrueFalseNaturalnessValidated, summary.publishedQuestions);
   assert.equal(summary.questionLuciaRoleEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(
@@ -161,6 +165,69 @@ test('TRANSLATE-COMPLETE P0 has explicit SV/EN completeness and naturalness clos
   );
   assert.equal(summary.somaliGeographyNaturalnessParityValidated, true);
   assert.equal(summary.somaliHolidayFoodNaturalnessParityValidated, true);
+});
+
+test('TRANSLATE-COMPLETE rejects literal glossary English wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+process.argv.push('--focus-translate-complete-p0');
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/glossary.ts')) {
+    return String(contents).replace("termEn: 'Rule of law'", "termEn: 'Legal certainty'");
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /rattsakerhet uses literal legal certainty English for rättssäkerhet/,
+  );
+});
+
+test('TRANSLATE-COMPLETE rejects stilted glossary Swedish wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+process.argv.push('--focus-translate-complete-p0');
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/glossary.ts')) {
+    return String(contents).replace(
+      'Den lokala demokratiska nivån som ansvarar för många nära samhällstjänster.',
+      'Den lokala demokratiska nivån där det är vanligt att göra många nära samhällstjänster.',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /kommun uses literal common-to-do Swedish wording/,
+  );
 });
 
 test('TRANSLATE-COMPLETE rejects q080 suffrage explanation meta wording', () => {

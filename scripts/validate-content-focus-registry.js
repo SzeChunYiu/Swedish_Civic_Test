@@ -39,8 +39,12 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     flags: ['--focus-translate-complete-p0'],
     summaryKeys: [
       'publishedQuestions',
+      'glossaryTerms',
+      'glossaryTermsValidated',
       'questionBilingualTextPairsValidated',
       'questionOptionBilingualTextPairsValidated',
+      'glossaryBilingualTextPairsValidated',
+      'glossaryNaturalnessValidated',
       'translationCompletenessParityValidated',
       'questionGeneratedTrueFalseNaturalnessValidated',
       'questionLuciaRoleEnglishNaturalnessValidated',
