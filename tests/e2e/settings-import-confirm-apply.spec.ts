@@ -14,6 +14,8 @@ const settingsLanguageKey = 'settings\\language';
 const settingsAudioEnabledKey = 'settings\\audioEnabled';
 const settingsDailyGoalKey = 'settings\\dailyGoalAnswers';
 const settingsIncludeSupplementaryKey = 'settings\\includeSupplementaryQuestions';
+const settingsStudyPlanTestDateIsoKey = 'settings\\studyPlanTestDateIso';
+const settingsStudyPlanIntensityKey = 'settings\\studyPlanIntensity';
 const accessibilityEasyReadFontKey = 'accessibility\\a11y.easyReadFont.v1';
 const accessibilityFontSizeStepKey = 'accessibility\\a11y.fontSizeStep.v1';
 const accessibilityAudioPlaybackRateKey = 'accessibility\\a11y.audioPlaybackRate.v1';
@@ -42,6 +44,8 @@ type ImportExpectation = {
   };
   companionSelectedId: string | null;
   checkedAreaIds: string[];
+  studyPlanTestDateIso: string;
+  studyPlanIntensity: 'casual' | 'regular' | 'serious';
 };
 
 type ImportPayloadCase = {
@@ -112,6 +116,8 @@ const importPayloadCases: ImportPayloadCase[] = [
       },
       companionSelectedId: 'dala-horse',
       checkedAreaIds: [],
+      studyPlanTestDateIso: '2026-08-15T00:00:00.000Z',
+      studyPlanIntensity: 'serious',
     },
     summaryTexts: {
       sv: [
@@ -121,7 +127,7 @@ const importPayloadCases: ImportPayloadCase[] = [
         '1 genomfört övningsprov',
         '1 repetitionskort',
         '1 repetitionsdag',
-        '5 sparade inställningar',
+        '7 sparade inställningar',
         '1 tillgänglighetsval',
         '1 vald studiekompis',
         'Studiesvit och svitskydd ingår',
@@ -133,7 +139,7 @@ const importPayloadCases: ImportPayloadCase[] = [
         '1 completed mock exam',
         '1 FSRS review card',
         '1 FSRS review day',
-        '5 saved settings',
+        '7 saved settings',
         '1 accessibility preference',
         '1 selected study companion',
         'Study streak and freeze status included',
@@ -164,6 +170,8 @@ const importPayloadCases: ImportPayloadCase[] = [
       },
       companionSelectedId: 'dala-horse',
       checkedAreaIds: ['identity', 'residenceStatus', 'conduct'],
+      studyPlanTestDateIso: '2026-09-01T00:00:00.000Z',
+      studyPlanIntensity: 'casual',
     },
     summaryTexts: {
       sv: [
@@ -173,7 +181,7 @@ const importPayloadCases: ImportPayloadCase[] = [
         '2 genomförda övningsprov',
         '2 repetitionskort',
         '2 repetitionsdagar',
-        '5 sparade inställningar',
+        '7 sparade inställningar',
         '5 tillgänglighetsval',
         '1 vald studiekompis',
         '3 markerade kravområden',
@@ -186,7 +194,7 @@ const importPayloadCases: ImportPayloadCase[] = [
         '2 completed mock exams',
         '2 FSRS review cards',
         '2 FSRS review days',
-        '5 saved settings',
+        '7 saved settings',
         '5 accessibility preferences',
         '1 selected study companion',
         '3 marked requirements',
@@ -267,6 +275,8 @@ function buildSingularImportPayload(importedLanguage: AppLanguage): string {
       dailyGoalAnswers: 20,
       includeSupplementaryQuestions: true,
       hasSeenAboutTheTest: true,
+      studyPlanTestDateIso: '2026-08-15',
+      studyPlanIntensity: 'serious',
     },
     accessibility: {
       themeMode: 'dark',
@@ -376,6 +386,8 @@ function buildPluralImportPayload(importedLanguage: AppLanguage): string {
       dailyGoalAnswers: 20,
       includeSupplementaryQuestions: true,
       hasSeenAboutTheTest: true,
+      studyPlanTestDateIso: '2026-09-01',
+      studyPlanIntensity: 'casual',
     },
     accessibility: {
       easyReadFont: true,
@@ -405,6 +417,8 @@ async function readImportStorage(page: Page) {
       mistakeKey,
       progressKey,
       reviewKey,
+      studyPlanIntensityKey,
+      studyPlanTestDateIsoKey,
       accessibilityEasyReadFontKey,
       accessibilityFontSizeStepKey,
       accessibilityAudioPlaybackRateKey,
@@ -420,6 +434,8 @@ async function readImportStorage(page: Page) {
         audioEnabled: window.localStorage.getItem(audioKey),
         dailyGoalAnswers: window.localStorage.getItem(dailyGoalKey),
         includeSupplementaryQuestions: window.localStorage.getItem(includeSupplementaryKey),
+        studyPlanTestDateIso: window.localStorage.getItem(studyPlanTestDateIsoKey),
+        studyPlanIntensity: window.localStorage.getItem(studyPlanIntensityKey),
       },
       accessibilityPreferences: {
         easyReadFont: window.localStorage.getItem(accessibilityEasyReadFontKey),
@@ -444,6 +460,8 @@ async function readImportStorage(page: Page) {
       mistakeKey: mistakeReviewStateKey,
       progressKey: progressStateKey,
       reviewKey: reviewStateKey,
+      studyPlanIntensityKey: settingsStudyPlanIntensityKey,
+      studyPlanTestDateIsoKey: settingsStudyPlanTestDateIsoKey,
       accessibilityEasyReadFontKey,
       accessibilityFontSizeStepKey,
       accessibilityAudioPlaybackRateKey,
@@ -466,6 +484,8 @@ async function expectNoImportApplied(page: Page, language: AppLanguage) {
         audioEnabled: null,
         dailyGoalAnswers: null,
         includeSupplementaryQuestions: null,
+        studyPlanTestDateIso: null,
+        studyPlanIntensity: null,
       },
       accessibilityPreferences: {
         easyReadFont: null,
@@ -500,6 +520,8 @@ async function expectImportApplied(
   importedLanguage: AppLanguage,
   expected: ImportExpectation,
 ) {
+  const { studyPlanIntensity, studyPlanTestDateIso, ...expectedSections } = expected;
+
   await expect
     .poll(async () => {
       const storage = await readImportStorage(page);
@@ -539,13 +561,15 @@ async function expectImportApplied(
       };
     })
     .toEqual({
-      ...expected,
+      ...expectedSections,
       legacyCheckedAreaIds: expected.checkedAreaIds,
       settings: {
         language: importedLanguage,
         audioEnabled: 'false',
         dailyGoalAnswers: '20',
         includeSupplementaryQuestions: 'true',
+        studyPlanTestDateIso,
+        studyPlanIntensity,
       },
       accessibilityPreferences: expected.accessibilityPreferences,
       companionSelectedId: expected.companionSelectedId,
@@ -589,6 +613,8 @@ async function expectImportedSettingsControlsPersistAfterReload(
   }
 
   const storage = await readImportStorage(page);
+  expect(storage.settings.studyPlanTestDateIso).toBe(expected.studyPlanTestDateIso);
+  expect(storage.settings.studyPlanIntensity).toBe(expected.studyPlanIntensity);
   expect(storage.accessibilityPreferences).toEqual(expected.accessibilityPreferences);
   expect(storage.companionSelectedId).toBe(expected.companionSelectedId);
 }

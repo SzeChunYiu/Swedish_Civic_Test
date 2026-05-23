@@ -256,8 +256,19 @@ test('settings import browser fixtures cover accessibility and companion preview
     'utf8',
   );
 
-  assert.match(source, /const accessibilityEasyReadFontKey = 'accessibility\\\\a11y\.easyReadFont\.v1';/);
-  assert.match(source, /const accessibilityFontSizeStepKey = 'accessibility\\\\a11y\.fontSizeStep\.v1';/);
+  assert.match(
+    source,
+    /const accessibilityEasyReadFontKey = 'accessibility\\\\a11y\.easyReadFont\.v1';/,
+  );
+  assert.match(
+    source,
+    /const accessibilityFontSizeStepKey = 'accessibility\\\\a11y\.fontSizeStep\.v1';/,
+  );
+  assert.match(
+    source,
+    /const settingsStudyPlanTestDateIsoKey = 'settings\\\\studyPlanTestDateIso';/,
+  );
+  assert.match(source, /const settingsStudyPlanIntensityKey = 'settings\\\\studyPlanIntensity';/);
   assert.match(
     source,
     /const accessibilityAudioPlaybackRateKey = 'accessibility\\\\a11y\.audioPlaybackRate\.v1';/,
@@ -354,6 +365,8 @@ test('local study data import previews and applies all learner snapshot sections
       dailyGoalAnswers: 20,
       includeSupplementaryQuestions: true,
       hasSeenAboutTheTest: true,
+      studyPlanTestDateIso: '2026-08-15',
+      studyPlanIntensity: 'serious',
       ignoredSetting: 'skip',
     },
     accessibility: {
@@ -396,7 +409,7 @@ test('local study data import previews and applies all learner snapshot sections
     streakFreezeStateIncluded: true,
     fsrsReviewCardCount: 1,
     gradedReviewDayCount: 1,
-    settingCount: 5,
+    settingCount: 7,
     accessibilityPreferenceCount: 5,
     companionPreferenceCount: 1,
     citizenshipRequirementChecklistCount: 2,
@@ -431,6 +444,8 @@ test('local study data import previews and applies all learner snapshot sections
   assert.equal(storageById.settings.values.get('dailyGoalAnswers'), 20);
   assert.equal(storageById.settings.values.get('includeSupplementaryQuestions'), true);
   assert.equal(storageById.settings.values.get('hasSeenAboutTheTest'), true);
+  assert.equal(storageById.settings.values.get('studyPlanTestDateIso'), '2026-08-15T00:00:00.000Z');
+  assert.equal(storageById.settings.values.get('studyPlanIntensity'), 'serious');
   assert.equal(storageById.accessibility.values.get('a11y.easyReadFont.v1'), true);
   assert.equal(storageById.accessibility.values.get('a11y.fontSizeStep.v1'), 3);
   assert.equal(storageById.accessibility.values.get('a11y.audioPlaybackRate.v1'), 1.25);
@@ -702,6 +717,8 @@ test('local study data import summary reports plural bookmark wrong-answer mock 
       dailyGoalAnswers: 20,
       includeSupplementaryQuestions: true,
       hasSeenAboutTheTest: true,
+      studyPlanTestDateIso: '2026-09-01',
+      studyPlanIntensity: 'casual',
     },
     citizenshipRequirements: {
       checkedAreaIds: ['conduct', 'identity', 'residenceStatus', 'identity', 'unknown'],
@@ -738,7 +755,7 @@ test('local study data import summary reports plural bookmark wrong-answer mock 
     streakFreezeStateIncluded: true,
     fsrsReviewCardCount: 2,
     gradedReviewDayCount: 2,
-    settingCount: 5,
+    settingCount: 7,
     accessibilityPreferenceCount: 0,
     companionPreferenceCount: 0,
     citizenshipRequirementChecklistCount: 3,
@@ -773,6 +790,8 @@ test('local study data import summary reports plural bookmark wrong-answer mock 
   const reviews = JSON.parse(storageById.reviews.values.get('learning.reviews.cards.v1'));
   assert.deepEqual(Object.keys(reviews.byId), ['q001', 'q002']);
   assert.deepEqual(reviews.gradedPerDay, { '2026-05-20': 2, '2026-05-21': 1 });
+  assert.equal(storageById.settings.values.get('studyPlanTestDateIso'), '2026-09-01T00:00:00.000Z');
+  assert.equal(storageById.settings.values.get('studyPlanIntensity'), 'casual');
 
   const checkedAreaIds = JSON.parse(
     storageById['citizenship-requirements'].values.get('citizenshipRequirements.checkedAreaIds.v1'),
@@ -830,6 +849,8 @@ test('local study data export round-trips citizenship requirements without purch
   sourceStorageById.settings.set('language', 'en');
   sourceStorageById.settings.set('dailyGoalAnswers', 20);
   sourceStorageById.settings.set('mockExamRealisticMode', true);
+  sourceStorageById.settings.set('studyPlanTestDateIso', '2026-08-15');
+  sourceStorageById.settings.set('studyPlanIntensity', 'serious');
   sourceStorageById.accessibility.set('a11y.easyReadFont.v1', true);
   sourceStorageById.accessibility.set('a11y.fontSizeStep.v1', 2);
   sourceStorageById.accessibility.set('a11y.audioPlaybackRate.v1', 1.25);
@@ -854,6 +875,8 @@ test('local study data export round-trips citizenship requirements without purch
   assert.equal(snapshot.settings.language, 'en');
   assert.equal(snapshot.settings.dailyGoalAnswers, 20);
   assert.equal(snapshot.settings.mockExamRealisticMode, true);
+  assert.equal(snapshot.settings.studyPlanTestDateIso, '2026-08-15T00:00:00.000Z');
+  assert.equal(snapshot.settings.studyPlanIntensity, 'serious');
   assert.deepEqual(snapshot.accessibility, {
     easyReadFont: true,
     fontSizeStep: 2,
@@ -874,7 +897,7 @@ test('local study data export round-trips citizenship requirements without purch
   assert.equal(previewResult.ok, true);
   assert.equal(previewResult.preview.summary.citizenshipRequirementChecklistCount, 3);
   assert.equal(previewResult.preview.summary.highlightCount, 1);
-  assert.equal(previewResult.preview.summary.settingCount, 6);
+  assert.equal(previewResult.preview.summary.settingCount, 8);
   assert.equal(previewResult.preview.summary.accessibilityPreferenceCount, 5);
   assert.equal(previewResult.preview.summary.companionPreferenceCount, 1);
   applyLocalStudyDataImport(previewResult.preview);
@@ -902,11 +925,18 @@ test('local study data export round-trips citizenship requirements without purch
   assert.equal(targetStorageById.accessibility.values.get('a11y.listenFirstAudio.v1'), true);
   assert.equal(targetStorageById.accessibility.values.get('a11y.themeMode.v1'), 'dark');
   assert.equal(targetStorageById.companion.values.get('companion.selectedId.v1'), 'lucia');
+  assert.equal(
+    targetStorageById.settings.values.get('studyPlanTestDateIso'),
+    '2026-08-15T00:00:00.000Z',
+  );
+  assert.equal(targetStorageById.settings.values.get('studyPlanIntensity'), 'serious');
 });
 
 test('local study data import omits malformed daily-goal settings before applying', () => {
   const storageById = createStorageById();
   storageById.settings.set('dailyGoalAnswers', 20);
+  storageById.settings.set('studyPlanTestDateIso', '2026-08-15T00:00:00.000Z');
+  storageById.settings.set('studyPlanIntensity', 'serious');
   const { applyLocalStudyDataImport, previewLocalStudyDataImport } = loadImportModule(storageById);
   const rawPayload = JSON.stringify({
     version: 1,
@@ -914,6 +944,8 @@ test('local study data import omits malformed daily-goal settings before applyin
       language: 'en',
       dailyGoalAnswers: 19.6,
       audioEnabled: false,
+      studyPlanTestDateIso: '2026-02-31',
+      studyPlanIntensity: 'too-much',
     },
   });
 
@@ -930,6 +962,39 @@ test('local study data import omits malformed daily-goal settings before applyin
   assert.equal(storageById.settings.values.get('language'), 'en');
   assert.equal(storageById.settings.values.get('audioEnabled'), false);
   assert.equal(storageById.settings.values.get('dailyGoalAnswers'), 20);
+  assert.equal(storageById.settings.values.get('studyPlanTestDateIso'), '2026-08-15T00:00:00.000Z');
+  assert.equal(storageById.settings.values.get('studyPlanIntensity'), 'serious');
+});
+
+test('local study data import clears optional study-plan date from null or empty exports', () => {
+  for (const studyPlanTestDateIso of [null, '']) {
+    const storageById = createStorageById();
+    storageById.settings.set('studyPlanTestDateIso', '2026-08-15T00:00:00.000Z');
+    storageById.settings.set('studyPlanIntensity', 'serious');
+    const { applyLocalStudyDataImport, previewLocalStudyDataImport } =
+      loadImportModule(storageById);
+    const previewResult = previewLocalStudyDataImport(
+      JSON.stringify({
+        version: 1,
+        settings: {
+          studyPlanTestDateIso,
+          studyPlanIntensity: 'casual',
+        },
+      }),
+    );
+
+    assert.equal(previewResult.ok, true);
+    assert.deepEqual(previewResult.preview.settings, {
+      studyPlanTestDateIso: null,
+      studyPlanIntensity: 'casual',
+    });
+    assert.equal(previewResult.preview.summary.settingCount, 2);
+
+    applyLocalStudyDataImport(previewResult.preview);
+
+    assert.equal(storageById.settings.values.get('studyPlanTestDateIso'), '');
+    assert.equal(storageById.settings.values.get('studyPlanIntensity'), 'casual');
+  }
 });
 
 test('local study data import omits malformed accessibility and companion preferences before applying', () => {
