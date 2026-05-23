@@ -143,6 +143,10 @@ test('TRANSLATE-COMPLETE P0 has explicit SV/EN completeness and naturalness clos
     summary.publishedQuestions,
   );
   assert.equal(summary.questionLuciaDayDateEnglishNaturalnessValidated, summary.publishedQuestions);
+  assert.equal(
+    summary.questionHolidayDateAppositiveEnglishNaturalnessValidated,
+    summary.publishedQuestions,
+  );
   assert.equal(summary.questionRecordYearsEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(summary.questionSuffrage1921EnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(summary.questionLuciaExplanationRoleScaffoldValidated, summary.publishedQuestions);
@@ -194,4 +198,34 @@ require('./scripts/validate-content.js');
     `${result.stdout}\n${result.stderr}`,
     /q080 uses meta suffrage-election English wording/,
   );
+});
+
+test('TRANSLATE-COMPLETE rejects generic holiday-date appositive English wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+process.argv.push('--focus-translate-complete-p0');
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents).replace(
+      'On Walpurgis Night, 30 April',
+      'On Walpurgis Night on 30 April',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(`${result.stdout}\n${result.stderr}`, /redundant holiday-date English wording/);
 });
