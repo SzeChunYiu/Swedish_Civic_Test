@@ -568,6 +568,10 @@ test('settings accessibilityPersistenceWarning browser coverage keeps warningSco
 
 test('settings import rejected purchase-field alerts include bounded field detail', () => {
   const settingsSource = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+  const importSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/storage/localStudyDataImport.ts'),
+    'utf8',
+  );
   const e2eSource = fs.readFileSync(
     path.join(repoRoot, 'tests/e2e/settings-import-deep-nesting.spec.ts'),
     'utf8',
@@ -590,6 +594,16 @@ test('settings import rejected purchase-field alerts include bounded field detai
     settingsSource,
     'copy.importErrorMessage(result.code, result.detail)',
     'settings import preview must pass rejected field detail',
+  );
+  assertIncludes(
+    importSource,
+    'quoteImportPathSegment',
+    'import rejected field detail must quote literal unsafe key segments',
+  );
+  assertIncludes(
+    importSource,
+    'parseImportDetailSegments',
+    'import rejected field detail formatter must not split quoted literal key segments',
   );
   assertIncludes(
     e2eSource,

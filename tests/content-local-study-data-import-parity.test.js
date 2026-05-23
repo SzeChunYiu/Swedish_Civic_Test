@@ -256,8 +256,14 @@ test('settings import browser fixtures cover accessibility and companion preview
     'utf8',
   );
 
-  assert.match(source, /const accessibilityEasyReadFontKey = 'accessibility\\\\a11y\.easyReadFont\.v1';/);
-  assert.match(source, /const accessibilityFontSizeStepKey = 'accessibility\\\\a11y\.fontSizeStep\.v1';/);
+  assert.match(
+    source,
+    /const accessibilityEasyReadFontKey = 'accessibility\\\\a11y\.easyReadFont\.v1';/,
+  );
+  assert.match(
+    source,
+    /const accessibilityFontSizeStepKey = 'accessibility\\\\a11y\.fontSizeStep\.v1';/,
+  );
   assert.match(
     source,
     /const accessibilityAudioPlaybackRateKey = 'accessibility\\\\a11y\.audioPlaybackRate\.v1';/,
@@ -1017,12 +1023,78 @@ test('local study data import rejects nested purchase fields with useful detail'
   assertNoSnapshotWrites(storageById);
 });
 
+test('local study data import preserves literal punctuated rejected key segments', () => {
+  const storageById = createStorageById();
+  const { formatLocalStudyDataImportErrorDetail, previewLocalStudyDataImport } =
+    loadImportModule(storageById);
+
+  const dottedResult = previewLocalStudyDataImport(
+    JSON.stringify({
+      version: 1,
+      progress: {
+        history: [{ 'ads.disabled': true }],
+      },
+    }),
+  );
+  const slashResult = previewLocalStudyDataImport(
+    JSON.stringify({
+      version: 1,
+      progress: {
+        history: [{ 'product/id': 'removeads' }],
+      },
+    }),
+  );
+  const whitespaceResult = previewLocalStudyDataImport(
+    JSON.stringify({
+      version: 1,
+      progress: {
+        history: [{ 'remove Ads Receipt': true }],
+      },
+    }),
+  );
+
+  assert.deepEqual(dottedResult, {
+    ok: false,
+    code: 'purchase_fields_rejected',
+    detail: 'progress.history.0["ads.disabled"]',
+  });
+  assert.deepEqual(slashResult, {
+    ok: false,
+    code: 'purchase_fields_rejected',
+    detail: 'progress.history.0["product/id"]',
+  });
+  assert.deepEqual(whitespaceResult, {
+    ok: false,
+    code: 'purchase_fields_rejected',
+    detail: 'progress.history.0["remove Ads Receipt"]',
+  });
+  assert.equal(
+    formatLocalStudyDataImportErrorDetail(dottedResult.detail),
+    'progress.history.0["ads.disabled"]',
+  );
+  assert.equal(
+    formatLocalStudyDataImportErrorDetail(slashResult.detail),
+    'progress.history.0["product/id"]',
+  );
+  assert.equal(
+    formatLocalStudyDataImportErrorDetail(whitespaceResult.detail),
+    'progress.history.0["remove Ads Receipt"]',
+  );
+  assertNoSnapshotWrites(storageById);
+});
+
 test('local study data import formats rejected field details with bounded head and tail', () => {
   const storageById = createStorageById();
   const { formatLocalStudyDataImportErrorDetail } = loadImportModule(storageById);
   const longPath = [
     'source',
     ...Array.from({ length: 80 }, (_, index) => `level${index}`),
+    'removeAdsReceipt',
+  ].join('.');
+  const longQuotedPath = [
+    'source',
+    'level0["ads.disabled"]',
+    ...Array.from({ length: 12 }, (_, index) => `level${index + 1}`),
     'removeAdsReceipt',
   ].join('.');
   const longKey = `removeAdsReceipt${'x'.repeat(120)}transaction`;
@@ -1035,6 +1107,18 @@ test('local study data import formats rejected field details with bounded head a
   assert.equal(
     formatLocalStudyDataImportErrorDetail(`source.${longKey}`),
     `source.removeAdsReceiptxxxxxxxxxxxx...xtransaction`,
+  );
+  assert.equal(
+    formatLocalStudyDataImportErrorDetail('progress.history.0["ads.disabled"]'),
+    'progress.history.0["ads.disabled"]',
+  );
+  assert.equal(
+    formatLocalStudyDataImportErrorDetail('progress.history.0["product/id"]'),
+    'progress.history.0["product/id"]',
+  );
+  assert.equal(
+    formatLocalStudyDataImportErrorDetail(longQuotedPath),
+    'source.level0["ads.disabled"].level1.[...].level12.removeAdsReceipt',
   );
   assert.equal(formatLocalStudyDataImportErrorDetail(''), null);
   assert.equal(formatLocalStudyDataImportErrorDetail(), null);
