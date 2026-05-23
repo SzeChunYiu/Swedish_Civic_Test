@@ -147,7 +147,16 @@ function createRenderContext({
     },
     location: { hash },
     document: {
-      documentElement: { lang: language },
+      documentElement: {
+        lang: language,
+        dir: 'ltr',
+        getAttribute(name) {
+          return this[name] || null;
+        },
+        setAttribute(name, value) {
+          this[name] = String(value);
+        },
+      },
       getElementById: element,
       querySelector() {
         return null;
@@ -176,13 +185,98 @@ function createRenderContext({
   sandbox.window.addEventListener = (type, handler) => {
     listeners.window.push({ type, handler });
   };
+  sandbox.window.dispatchEvent = (event) => {
+    const type = event && event.type;
+    listeners.window
+      .filter((listener) => listener.type === type)
+      .forEach((listener) => listener.handler(event));
+    return true;
+  };
   sandbox.window.scrollTo = () => {};
   sandbox.window.SMT_QUESTIONS = questions;
   sandbox.window.SMT_CHAPTERS_META = chapterMeta;
   sandbox.window.smtPracticeFilterFor = () => questions;
 
   vm.createContext(sandbox);
-  return { sandbox, element };
+  return { sandbox, element, listeners };
+}
+
+function createClassList(initial = []) {
+  const classes = new Set(initial);
+  return {
+    add(...names) {
+      names.forEach((name) => classes.add(name));
+    },
+    remove(...names) {
+      names.forEach((name) => classes.delete(name));
+    },
+    contains(name) {
+      return classes.has(name);
+    },
+    toggle(name, force) {
+      const shouldAdd = force === undefined ? !classes.has(name) : Boolean(force);
+      if (shouldAdd) classes.add(name);
+      else classes.delete(name);
+      return shouldAdd;
+    },
+  };
+}
+
+function createQcardHarness() {
+  const status = { textContent: '' };
+  const explanation = {
+    textContent:
+      'Allemansrätten lets you walk, swim, ski, camp, and forage on most land in Sweden.',
+  };
+  const options = [
+    ['A Jantelagen — the law of staying humble', false],
+    ['B Allemansrätten — the right of public access', true],
+    ['C Lagom — the doctrine of just-enough', false],
+    ['D Fika — the constitutional coffee break', false],
+  ].map(([textContent, correct]) => {
+    const attributes = new Map([['aria-pressed', 'false']]);
+    const option = {
+      dataset: { correct: correct ? 'true' : 'false' },
+      disabled: false,
+      textContent,
+      classList: createClassList(['qopt']),
+      getAttribute(name) {
+        return attributes.has(name) ? attributes.get(name) : null;
+      },
+      setAttribute(name, value) {
+        attributes.set(name, String(value));
+      },
+      removeAttribute(name) {
+        attributes.delete(name);
+      },
+      closest(selector) {
+        if (selector === '.qopt') return option;
+        if (selector === '.qcard') return card;
+        if (selector === '#qreset') return null;
+        if (selector === '.nav a' || selector === '.topbar' || selector === '#nav-toggle')
+          return null;
+        return null;
+      },
+    };
+    return option;
+  });
+  const correctOption = options.find((option) => option.dataset.correct === 'true');
+  const card = {
+    classList: createClassList(['qcard']),
+    querySelector(selector) {
+      if (selector === '#qcard-status') return status;
+      if (selector === '#qcard-explanation') return explanation;
+      if (selector === '.qopt[aria-pressed="true"]') {
+        return options.find((option) => option.getAttribute('aria-pressed') === 'true') || null;
+      }
+      return null;
+    },
+    querySelectorAll(selector) {
+      return selector === '.qopt' ? options : [];
+    },
+  };
+
+  return { card, correctOption, options, status };
 }
 
 test('static Practice answer feedback renders citation and independent-study disclaimer', () => {
@@ -333,6 +427,40 @@ test('static Home demo qcard exposes accessible answer state', () => {
     assert.match(appSource, new RegExp(`'${key.replace('.', '\\.')}'`));
     assert.match(extraSource, new RegExp(`'${key.replace('.', '\\.')}'`));
   }
+});
+
+test('static Home demo qcard relocalizes selected correct answer after language change', () => {
+  const { sandbox, listeners } = createRenderContext({ language: 'en' });
+  const { card, correctOption, options, status } = createQcardHarness();
+  const originalGetElementById = sandbox.document.getElementById;
+  sandbox.document.getElementById = (id) => (id === 'qcard' ? card : originalGetElementById(id));
+
+  vm.runInContext(read('site/app.js'), sandbox, { timeout: 3000 });
+  listeners.document
+    .filter((listener) => listener.type === 'click')
+    .forEach((listener) => listener.handler({ target: correctOption }));
+
+  assert.equal(correctOption.getAttribute('aria-pressed'), 'true');
+  assert.match(correctOption.getAttribute('aria-label'), /Selected answer, correct/);
+  assert.match(status.textContent, /^Correct\./);
+  assert.equal(
+    options.every((option) => option.disabled),
+    true,
+  );
+  assert.equal(correctOption.classList.contains('is-correct'), true);
+
+  sandbox.smtSetLanguage('sv');
+
+  assert.equal(sandbox.document.documentElement.lang, 'sv');
+  assert.equal(correctOption.getAttribute('aria-pressed'), 'true');
+  assert.match(correctOption.getAttribute('aria-label'), /Valt svar, rätt/);
+  assert.doesNotMatch(correctOption.getAttribute('aria-label'), /Selected answer, correct/);
+  assert.match(status.textContent, /^Rätt\./);
+  assert.equal(
+    options.every((option) => option.disabled),
+    true,
+  );
+  assert.equal(correctOption.classList.contains('is-correct'), true);
 });
 
 test('static Mock review renders citation and disclaimer for every reviewed question', () => {
