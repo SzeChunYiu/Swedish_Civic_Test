@@ -24,6 +24,8 @@ test('onboarding route title stays accessible as a header', () => {
   assert.equal(summary.onboardingRouteHeaderParityValidated, true);
   assert.equal(summary.onboardingRouteCopyLabelsValidated, 17);
   assert.equal(summary.onboardingRouteCopyParityValidated, true);
+  assert.equal(summary.onboardingDailyGoalPresetValuesValidated, 6);
+  assert.equal(summary.onboardingDailyGoalPresetFilterParityValidated, true);
   assert.match(source, /type OnboardingCopy =/);
   assert.match(source, /import \{ formatExamDate, type StudyIntensity \}/);
   assert.match(source, /normalizeStudyPlanTestDateIso/);
@@ -610,5 +612,65 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /onboarding daily goal preset values must derive from supported settings options|onboarding daily goal preset values must not be an inline numeric tuple/,
+  );
+});
+
+test('onboarding route copy parity rejects filters that drop a supported preset', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/app/onboarding.tsx')) {
+    return String(contents).replace('return goal !== 5;', 'return goal !== 5 && goal !== 20;');
+  }
+  return contents;
+};
+process.argv.push('--focus-onboarding-route-copy');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /onboarding daily goal preset filter must exclude only the 5-answer Settings option/,
+  );
+});
+
+test('onboarding route copy parity rejects filters that include the Settings-only preset', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/app/onboarding.tsx')) {
+    return String(contents).replace('return goal !== 5;', 'return goal !== 20;');
+  }
+  return contents;
+};
+process.argv.push('--focus-onboarding-route-copy');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /onboarding daily goal preset filter must exclude only the 5-answer Settings option/,
   );
 });

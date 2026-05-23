@@ -10208,6 +10208,8 @@ let onboardingRouteHeadersValidated = 0;
 let onboardingRouteHeaderParityValidated = false;
 let onboardingRouteCopyLabelsValidated = 0;
 let onboardingRouteCopyParityValidated = false;
+let onboardingDailyGoalPresetValuesValidated = 0;
+let onboardingDailyGoalPresetFilterParityValidated = false;
 let aboutTheTestSeenEffectRulesValidated = 0;
 let aboutTheTestSeenEffectParityValidated = false;
 let firstRunAboutModalSuppressedRoutesValidated = 0;
@@ -16972,6 +16974,13 @@ function validateOnboardingRouteCopyParity() {
   const supportedGoalOptions =
     extractNumericArrayConstantFromTs(settingsStore, 'supportedDailyGoalAnswerOptions') || [];
   const supportedGoalOptionSet = new Set(supportedGoalOptions);
+  const expectedOnboardingPresetGoals = supportedGoalOptions.filter((goal) => goal !== 5);
+  if (!onboardingRoute.includes('return goal !== 5;')) {
+    reject('onboarding daily goal preset filter must exclude only the 5-answer Settings option');
+  }
+  if (!onboardingRoute.includes('onboardingDailyGoalPresetValues.map((goal) =>')) {
+    reject('onboarding route must render daily goal presets from the derived preset values');
+  }
   const onboardingPresetGroups = extractNumericObjectKeysForPropertyFromTs(
     onboardingRoute,
     'dailyGoalPresets',
@@ -16980,6 +16989,13 @@ function validateOnboardingRouteCopyParity() {
     reject('onboarding copy must declare daily goal presets');
   }
   onboardingPresetGroups.forEach((presetGoals) => {
+    if (!arrayEquals(presetGoals, expectedOnboardingPresetGoals)) {
+      reject(
+        `onboarding daily goal presets must match supported settings order without 5; got ${JSON.stringify(
+          presetGoals,
+        )}, expected ${JSON.stringify(expectedOnboardingPresetGoals)}`,
+      );
+    }
     presetGoals.forEach((goal) => {
       if (!supportedGoalOptionSet.has(goal)) {
         reject(`onboarding daily goal preset ${goal} must be supported by settingsStore`);
@@ -16988,7 +17004,18 @@ function validateOnboardingRouteCopyParity() {
         reject('onboarding daily goal presets must keep the 5-answer option in Settings only');
       }
     });
+    if (arrayEquals(presetGoals, expectedOnboardingPresetGoals)) {
+      onboardingDailyGoalPresetValuesValidated += presetGoals.length;
+    }
   });
+  if (
+    valid &&
+    onboardingPresetGroups.length > 0 &&
+    onboardingDailyGoalPresetValuesValidated ===
+      expectedOnboardingPresetGoals.length * onboardingPresetGroups.length
+  ) {
+    onboardingDailyGoalPresetFilterParityValidated = true;
+  }
   if (
     /aria-selected=\{selected\}/.test(onboardingRoute) ||
     /accessibilityState=\{\{\s*selected\s*\}\}/.test(onboardingRoute) ||
@@ -27690,6 +27717,8 @@ console.log(
       onboardingRouteHeaderParityValidated,
       onboardingRouteCopyLabelsValidated,
       onboardingRouteCopyParityValidated,
+      onboardingDailyGoalPresetValuesValidated,
+      onboardingDailyGoalPresetFilterParityValidated,
       aboutTheTestSeenEffectRulesValidated,
       aboutTheTestSeenEffectParityValidated,
       firstRunAboutModalSuppressedRoutesValidated,

@@ -579,6 +579,8 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
       'onboardingRouteHeaderParityValidated',
       'onboardingRouteCopyLabelsValidated',
       'onboardingRouteCopyParityValidated',
+      'onboardingDailyGoalPresetValuesValidated',
+      'onboardingDailyGoalPresetFilterParityValidated',
       'firstRunAboutModalSuppressedRoutesValidated',
       'firstRunAboutModalSuppressionParityValidated',
     ],
