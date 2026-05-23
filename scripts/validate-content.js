@@ -1983,8 +1983,26 @@ const EXPECTED_DAILY_GOAL_DEFAULT = 10;
 const EXPECTED_DAILY_GOAL_MIN = 1;
 const EXPECTED_DAILY_GOAL_MAX = 50;
 const EXPECTED_AUDIO_SETTING_KEY = 'audioEnabled';
-const EXPECTED_AUDIO_LABELS = ['Audio enabled', 'Audio disabled'];
-const EXPECTED_AUDIO_ACCESSIBILITY_LABELS = ['Disable audio', 'Enable audio'];
+const EXPECTED_AUDIO_LABELS = [
+  'Audio enabled',
+  'Audio disabled',
+  'Listen first enabled',
+  'Listen first disabled',
+  'Ljud på',
+  'Ljud avstängt',
+  'Lyssna först på',
+  'Lyssna först av',
+];
+const EXPECTED_AUDIO_ACCESSIBILITY_LABELS = [
+  'Disable audio',
+  'Enable audio',
+  'Disable automatic playback for new questions',
+  'Enable automatic playback for new questions',
+  'Stäng av ljud',
+  'Slå på ljud',
+  'Stäng av automatisk uppläsning av nya frågor',
+  'Slå på automatisk uppläsning av nya frågor',
+];
 const EXPECTED_SPEECH_RUNTIME_CASES = 10;
 const EXPECTED_SWEDISH_SPEECH_LANGUAGE = 'sv-SE';
 const EXPECTED_SETTINGS_STORE_FIELDS = [
@@ -3033,6 +3051,9 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
   sv: [
     'Ljud avstängt',
     'Ljud på',
+    'Lyssna först av',
+    'Lyssna först på',
+    'Lyssna först',
     'Ljud',
     '← Tillbaka till profil',
     'Tillbaka till profil',
@@ -3042,7 +3063,9 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     '${answerCount} svar per dag',
     'Dagligt mål',
     'Stäng av ljud',
+    'Stäng av automatisk uppläsning av nya frågor',
     'Slå på ljud',
+    'Slå på automatisk uppläsning av nya frågor',
     'Bekräfta import',
     'Bekräfta lokal studiedataimport',
     'Importen är ${byteCountLabel} byte. Gränsen är ${maxLabel}; klistra in en mindre export innan du förhandsgranskar.',
@@ -3098,6 +3121,9 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
   en: [
     'Audio disabled',
     'Audio enabled',
+    'Listen first disabled',
+    'Listen first enabled',
+    'Listen first',
     'Audio',
     '← Back to Profile',
     'Back to profile',
@@ -3107,7 +3133,9 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     '${answerCount} answers per day',
     'Daily goal',
     'Disable audio',
+    'Disable automatic playback for new questions',
     'Enable audio',
+    'Enable automatic playback for new questions',
     'Confirm import',
     'Confirm local study data import',
     'The import is ${byteCountLabel} bytes. The limit is ${maxLabel}; paste a smaller export before previewing.',

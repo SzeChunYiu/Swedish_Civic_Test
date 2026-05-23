@@ -60,7 +60,7 @@ test('settings route shell copy follows the persisted settings language', () => 
     'utf8',
   );
 
-  assert.equal(summary.settingsRouteCopyLabelsValidated, 127);
+  assert.equal(summary.settingsRouteCopyLabelsValidated, 137);
   assert.equal(summary.settingsRouteCopyParityValidated, true);
   assert.match(source, /import \{ useLocalSearchParams \} from 'expo-router';/);
   assert.match(source, /const \{ focus \} = useLocalSearchParams<\{ focus\?: string \}>\(\);/);
@@ -68,6 +68,28 @@ test('settings route shell copy follows the persisted settings language', () => 
   assert.match(source, /const companionFocusActive = focus === 'companion';/);
   assert.match(source, /studyControlsTitle: 'Dagligt mål, språk och ljud'/);
   assert.match(source, /studyControlsTitle: 'Daily goal, language, and audio'/);
+  assert.match(source, /audioListenFirstTitle: 'Lyssna först'/);
+  assert.match(source, /audioListenFirstTitle: 'Listen first'/);
+  assert.match(source, /audioListenFirstEnabledLabel: 'Lyssna först på'/);
+  assert.match(source, /audioListenFirstEnabledLabel: 'Listen first enabled'/);
+  assert.match(source, /audioListenFirstDisabledLabel: 'Lyssna först av'/);
+  assert.match(source, /audioListenFirstDisabledLabel: 'Listen first disabled'/);
+  assert.match(
+    source,
+    /disableListenFirstAudioAccessibilityLabel: 'Stäng av automatisk uppläsning av nya frågor'/,
+  );
+  assert.match(
+    source,
+    /disableListenFirstAudioAccessibilityLabel: 'Disable automatic playback for new questions'/,
+  );
+  assert.match(
+    source,
+    /enableListenFirstAudioAccessibilityLabel: 'Slå på automatisk uppläsning av nya frågor'/,
+  );
+  assert.match(
+    source,
+    /enableListenFirstAudioAccessibilityLabel: 'Enable automatic playback for new questions'/,
+  );
   assert.match(
     source,
     /studyControlsFocusLabel: 'Studieinställningarna från profilen är markerade här\.'/,
@@ -92,6 +114,19 @@ test('settings route shell copy follows the persisted settings language', () => 
   assert.match(source, /companionFocusActive \? styles\.companionControlsGroupFocused : null/);
   assert.match(source, /\{studyFocusActive \? \(/);
   assert.match(source, /\{copy\.studyControlsFocusLabel\}/);
+  assert.match(source, /accessibilityState=\{\{ checked: listenFirstAudioEnabled \}\}/);
+  assert.match(
+    source,
+    /onPress=\{\(\) => setListenFirstAudioEnabled\(!listenFirstAudioEnabled\)\}/,
+  );
+  assert.match(
+    source,
+    /listenFirstAudioEnabled[\s\S]*\? copy\.disableListenFirstAudioAccessibilityLabel[\s\S]*: copy\.enableListenFirstAudioAccessibilityLabel/,
+  );
+  assert.match(
+    source,
+    /listenFirstAudioEnabled[\s\S]*\? copy\.audioListenFirstEnabledLabel[\s\S]*: copy\.audioListenFirstDisabledLabel/,
+  );
   assert.match(source, /\{companionFocusActive \? \(/);
   assert.match(source, /\{copy\.companionFocusLabel\}/);
   assert.match(source, /type SettingsCopy =/);
