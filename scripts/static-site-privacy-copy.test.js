@@ -90,6 +90,8 @@ test('static site privacy copy rejects stale monetization claims', () => {
     /samlar inga anv[aä]ndardata och delar inga anv[aä]ndardata/i,
     /No third-party trackers/i,
     /Inga tredjepartssp[aå]rare/i,
+    /share your study data/i,
+    /delar aldrig dina studiedata/i,
   ].forEach((pattern) => assert.doesNotMatch(surface, pattern));
 });
 
