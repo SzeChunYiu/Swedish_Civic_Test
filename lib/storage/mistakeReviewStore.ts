@@ -146,14 +146,26 @@ export const useMistakeReviewStore = create<MistakeReviewState>((set) => ({
   },
   recordWrongAnswerReview: ({ questionId, selectedOptionTextEn, selectedOptionTextSv }) =>
     set((state) => {
+      const safeQuestionId = normalizeQuestionId(questionId);
+      const safeSelectedOptionTextEn = normalizeSelectedAnswerText(selectedOptionTextEn);
+      const safeSelectedOptionTextSv = normalizeSelectedAnswerText(selectedOptionTextSv);
+      if (
+        !safeQuestionId ||
+        !isSafeImportedMapKey(safeQuestionId) ||
+        !safeSelectedOptionTextEn ||
+        !safeSelectedOptionTextSv
+      ) {
+        return state;
+      }
+
       const nextReview = {
         wrongAnswerReviews: {
           ...state.wrongAnswerReviews,
-          [questionId]: {
+          [safeQuestionId]: {
             answeredAt: new Date().toISOString(),
-            questionId,
-            selectedOptionTextEn,
-            selectedOptionTextSv,
+            questionId: safeQuestionId,
+            selectedOptionTextEn: safeSelectedOptionTextEn,
+            selectedOptionTextSv: safeSelectedOptionTextSv,
           },
         },
       };

@@ -340,3 +340,63 @@ test('mistake review store drops corrupt persisted selected-answer reviews', () 
     },
   });
 });
+
+test('mistake review store normalizes runtime wrong-answer review writes', () => {
+  const persistedWrites = [];
+  const storage = createMemoryMMKV({});
+  const originalSet = storage.set;
+  storage.set = (key, value) => {
+    persistedWrites.push(JSON.parse(String(value)));
+    return originalSet(key, value);
+  };
+  const { useMistakeReviewStore } = loadTsWithStorage(
+    repoRoot,
+    'lib/storage/mistakeReviewStore.ts',
+    {
+      'mistake-review': storage,
+    },
+  );
+  const store = useMistakeReviewStore.getState();
+  const longAnswer = 'x'.repeat(501);
+
+  [
+    { questionId: '', selectedOptionTextEn: 'Wrong answer', selectedOptionTextSv: 'Fel svar' },
+    { questionId: '   ', selectedOptionTextEn: 'Wrong answer', selectedOptionTextSv: 'Fel svar' },
+    {
+      questionId: '__proto__',
+      selectedOptionTextEn: 'Wrong answer',
+      selectedOptionTextSv: 'Fel svar',
+    },
+    {
+      questionId: 'constructor',
+      selectedOptionTextEn: 'Wrong answer',
+      selectedOptionTextSv: 'Fel svar',
+    },
+    {
+      questionId: 'prototype',
+      selectedOptionTextEn: 'Wrong answer',
+      selectedOptionTextSv: 'Fel svar',
+    },
+    { questionId: 'qBlankEn', selectedOptionTextEn: '   ', selectedOptionTextSv: 'Fel svar' },
+    { questionId: 'qBlankSv', selectedOptionTextEn: 'Wrong answer', selectedOptionTextSv: '   ' },
+    { questionId: 'qTooLong', selectedOptionTextEn: longAnswer, selectedOptionTextSv: 'Fel svar' },
+  ].forEach((review) => store.recordWrongAnswerReview(review));
+
+  assert.deepEqual(useMistakeReviewStore.getState().wrongAnswerReviews, {});
+  assert.deepEqual(persistedWrites, []);
+
+  store.recordWrongAnswerReview({
+    questionId: '  q001  ',
+    selectedOptionTextEn: '  Wrong answer  ',
+    selectedOptionTextSv: '  Fel svar  ',
+  });
+
+  const reviews = useMistakeReviewStore.getState().wrongAnswerReviews;
+  assert.deepEqual(Object.keys(reviews), ['q001']);
+  assert.equal(reviews.q001.questionId, 'q001');
+  assert.equal(reviews.q001.selectedOptionTextEn, 'Wrong answer');
+  assert.equal(reviews.q001.selectedOptionTextSv, 'Fel svar');
+  assert.equal(new Date(reviews.q001.answeredAt).toISOString(), reviews.q001.answeredAt);
+  assert.equal(persistedWrites.length, 1);
+  assert.deepEqual(Object.keys(persistedWrites[0].wrongAnswerReviews), ['q001']);
+});
