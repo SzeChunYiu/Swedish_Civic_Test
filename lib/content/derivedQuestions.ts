@@ -2685,6 +2685,11 @@ function generatedSingleChoicePromptFromSourceSv(
   if (source.id === 'q062' && variant === 'judgement') {
     return 'Vilken uppgift om offentlig sektor i Sverige stämmer?';
   }
+  if (source.id === 'q167') {
+    return variant === 'judgement'
+      ? 'Vilken uppgift stämmer om röstkortet som skickas hem före valet?'
+      : 'Vad visar röstkortet som skickas hem före valet?';
+  }
 
   let match = q.match(/^Vilket år hölls (.+)$/i);
   if (match) {
@@ -2846,6 +2851,11 @@ function generatedSingleChoicePromptFromSourceEn(
   const q = stripFinalPunctuation(source.questionEn);
   if (source.id === 'q062' && variant === 'judgement') {
     return "Which statement about Sweden's public sector is correct?";
+  }
+  if (source.id === 'q167') {
+    return variant === 'judgement'
+      ? 'Which fact is correct about the voting card sent home before an election?'
+      : 'What does the voting card sent home before an election show?';
   }
 
   let match = q.match(/^In which year was (.+?) held in which (.+)$/i);

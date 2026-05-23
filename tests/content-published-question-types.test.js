@@ -73,6 +73,8 @@ const sourceRecallPromptPattern =
 const sourceCriticismStiltedEnglishPattern = /\bsource-critical\b/i;
 const publicSectorStiltedEnglishPattern =
   /\b(?:What is meant by the public sector in Sweden|Activities for which the state, regions, and municipalities are responsible|The public sector(?: in Sweden)? means (?:activities|all privately owned companies))\b/i;
+const votingCardContentsStiltedPattern =
+  /\b(?:röstkortet som skickas hem före valets innehåll|voting card sent home before an election's contents)\b/i;
 const generatedSingleChoiceAnswerLogicOptionPattern =
   /\b(?:Båda påståendena är korrekta|Both statements are correct|Inget av påståendena är korrekt|Neither statement is correct)\b/i;
 const generatedIdLiteralPatterns = [
@@ -5053,6 +5055,59 @@ test('q062 public-sector exports natural English in canonical and static banks',
   assert.deepEqual(
     csvRows.filter((line) => stalePattern.test(line)),
     [],
+  );
+});
+
+test('q167 voting-card generated single-choice prompts describe what the card shows', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const singleChoiceId = generatedQuestionId(sourceQuestions, 'q167', 'singleChoice');
+  const judgementId = generatedQuestionId(sourceQuestions, 'q167', 'judgement');
+  const byId = new Map(generatedSiteBank.map((question) => [question.id, question]));
+  const actualById = new Map(Array.from(actualSiteBank).map((question) => [question.id, question]));
+
+  assert.equal(
+    byId.get('q167')?.q.en,
+    'What is stated on the voting card sent home before an election?',
+  );
+  assert.equal(byId.get(singleChoiceId)?.q.sv, 'Vad visar röstkortet som skickas hem före valet?');
+  assert.equal(
+    byId.get(singleChoiceId)?.q.en,
+    'What does the voting card sent home before an election show?',
+  );
+  assert.equal(
+    byId.get(judgementId)?.q.sv,
+    'Vilken uppgift stämmer om röstkortet som skickas hem före valet?',
+  );
+  assert.equal(
+    byId.get(judgementId)?.q.en,
+    'Which fact is correct about the voting card sent home before an election?',
+  );
+  assert.equal(actualById.get(singleChoiceId)?.q.en, byId.get(singleChoiceId)?.q.en);
+  assert.equal(actualById.get(judgementId)?.q.en, byId.get(judgementId)?.q.en);
+
+  const csvRows = contentQuestionBankCsvRowsById(['q167', singleChoiceId, judgementId]);
+  assert.equal(csvRows.get(singleChoiceId)?.[3], byId.get(singleChoiceId)?.q.sv);
+  assert.equal(csvRows.get(singleChoiceId)?.[4], byId.get(singleChoiceId)?.q.en);
+  assert.equal(csvRows.get(judgementId)?.[3], byId.get(judgementId)?.q.sv);
+  assert.equal(csvRows.get(judgementId)?.[4], byId.get(judgementId)?.q.en);
+  assert.doesNotMatch(
+    [
+      byId.get(singleChoiceId)?.q.sv,
+      byId.get(singleChoiceId)?.q.en,
+      byId.get(judgementId)?.q.sv,
+      byId.get(judgementId)?.q.en,
+      actualById.get(singleChoiceId)?.q.sv,
+      actualById.get(singleChoiceId)?.q.en,
+      actualById.get(judgementId)?.q.sv,
+      actualById.get(judgementId)?.q.en,
+      csvRows.get(singleChoiceId)?.join(' '),
+      csvRows.get(judgementId)?.join(' '),
+    ].join('\n'),
+    votingCardContentsStiltedPattern,
   );
 });
 

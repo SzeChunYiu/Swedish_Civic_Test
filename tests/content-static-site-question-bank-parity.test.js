@@ -38,6 +38,8 @@ const CHAPTER_LOCALIZATION_ENGLISH_WELFARE_GLOSS_PATTERN = /\(welfare\)/i;
 const PUBLIC_SERVICE_LOANWORD_PATTERN = /\bpublic service\b|\(welfare\)/i;
 const PUBLIC_SECTOR_STALE_STATIC_PATTERN =
   /\bWhat is meant by the public sector in Sweden\b|\bActivities for which the state, regions, and municipalities are responsible\b|\bThe public sector(?: in Sweden)? means\b/i;
+const VOTING_CARD_CONTENTS_STALE_STATIC_PATTERN =
+  /\bröstkortet som skickas hem före valets innehåll\b|\bvoting card sent home before an election's contents\b/i;
 const GENERATED_SINGLE_CHOICE_ANSWER_LOGIC_STATIC_PATTERN =
   /\b(?:Båda påståendena är korrekta|Both statements are correct|Inget av påståendena är korrekt|Neither statement is correct)\b/i;
 const SUFFRAGE_1921_STALE_STATIC_PATTERN =
@@ -367,6 +369,48 @@ test('static site question bank keeps q062 public-sector i18n and generated vari
       );
     }
   }
+});
+
+test('static site question bank keeps q167 voting-card single-choice prompts natural', () => {
+  const expectedBank = buildSiteQuestionBank();
+  const sourceQuestions = expectedBank.questions.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const singleChoiceId = generatedQuestionId(sourceQuestions, 'q167', 'singleChoice');
+  const judgementId = generatedQuestionId(sourceQuestions, 'q167', 'judgement');
+  const context = { window: {} };
+  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
+  const questionsById = new Map(
+    context.window.SMT_QUESTIONS.map((question) => [question.id, question]),
+  );
+
+  assert.equal(
+    questionsById.get('q167')?.q.en,
+    'What is stated on the voting card sent home before an election?',
+  );
+  assert.equal(
+    questionsById.get(singleChoiceId)?.q.sv,
+    'Vad visar röstkortet som skickas hem före valet?',
+  );
+  assert.equal(
+    questionsById.get(singleChoiceId)?.q.en,
+    'What does the voting card sent home before an election show?',
+  );
+  assert.equal(
+    questionsById.get(judgementId)?.q.sv,
+    'Vilken uppgift stämmer om röstkortet som skickas hem före valet?',
+  );
+  assert.equal(
+    questionsById.get(judgementId)?.q.en,
+    'Which fact is correct about the voting card sent home before an election?',
+  );
+  assert.doesNotMatch(
+    [
+      staticQuestionVisibleText(questionsById.get(singleChoiceId)),
+      staticQuestionVisibleText(questionsById.get(judgementId)),
+    ].join('\n'),
+    VOTING_CARD_CONTENTS_STALE_STATIC_PATTERN,
+  );
 });
 
 test('static site question bank keeps q166/q169 kommun-region i18n target-language first', () => {

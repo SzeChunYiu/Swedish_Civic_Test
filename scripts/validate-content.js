@@ -740,6 +740,8 @@ const GENERATED_SINGLE_CHOICE_META_STEM_PATTERNS = [
   /^\s*Vilket påstående stämmer bäst/i,
   /^\s*Which statement is correct/i,
   /^\s*Which statement best matches/i,
+  /\bröstkortet som skickas hem före valets innehåll\b/i,
+  /\bvoting card sent home before an election's contents\b/i,
 ];
 const GENERATED_SINGLE_CHOICE_ABSENT_TRUE_FALSE_EXPLANATION_PATTERNS = [
   /\bPåståendet är sant\b/i,

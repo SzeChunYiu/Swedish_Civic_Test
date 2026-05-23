@@ -1256,6 +1256,37 @@ test('derivePublishedQuestions renders q062 public-sector true/false as direct p
   );
 });
 
+test('derivePublishedQuestions renders q167 voting-card single-choice prompts naturally', () => {
+  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
+  const { additionalQuestions } = loadTs('data/additionalQuestions.ts');
+  const source = additionalQuestions.find((question) => question.id === 'q167');
+  assert.ok(source, 'q167 should exist in additional questions');
+
+  const derived = derivePublishedQuestions([source], 844);
+  const sectionPractice = derived[0];
+  const judgement = derived[3];
+
+  assert.equal(sectionPractice.id, 'q844');
+  assert.equal(judgement.id, 'q847');
+  assert.equal(sectionPractice.questionSv, 'Vad visar röstkortet som skickas hem före valet?');
+  assert.equal(
+    sectionPractice.questionEn,
+    'What does the voting card sent home before an election show?',
+  );
+  assert.equal(
+    judgement.questionSv,
+    'Vilken uppgift stämmer om röstkortet som skickas hem före valet?',
+  );
+  assert.equal(
+    judgement.questionEn,
+    'Which fact is correct about the voting card sent home before an election?',
+  );
+  assert.doesNotMatch(
+    `${sectionPractice.questionSv}\n${sectionPractice.questionEn}\n${judgement.questionSv}\n${judgement.questionEn}`,
+    /röstkortet som skickas hem före valets innehåll|voting card sent home before an election's contents/i,
+  );
+});
+
 test('derivePublishedQuestions writes direct source true/false propositions', () => {
   const { questions, sourceQuestions } = loadTs('data/questions.ts');
   const byId = new Map(questions.map((question) => [question.id, question]));

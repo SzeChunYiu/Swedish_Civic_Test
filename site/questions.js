@@ -60890,8 +60890,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "What is correct about the voting card sent home before an election's contents?",
-      "sv": "Vad stämmer om röstkortet som skickas hem före valets innehåll?"
+      "en": "What does the voting card sent home before an election show?",
+      "sv": "Vad visar röstkortet som skickas hem före valet?"
     },
     "opts": [
       {
@@ -61058,8 +61058,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct about the voting card sent home before an election's contents?",
-      "sv": "Vilken uppgift stämmer om röstkortet som skickas hem före valets innehåll?"
+      "en": "Which fact is correct about the voting card sent home before an election?",
+      "sv": "Vilken uppgift stämmer om röstkortet som skickas hem före valet?"
     },
     "opts": [
       {
