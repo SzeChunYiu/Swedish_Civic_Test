@@ -5179,6 +5179,42 @@ test('q167 stated-on export fixture rejects canonical q844/q847 contents mutatio
   }
 });
 
+test('q167 stated-on export fixture rejects CSV q844/q847 contents mutations', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const { ids, generatedIds } = q167StatedOnVotingCardFixture(sourceQuestions);
+  const csvRows = contentQuestionBankCsvRowsById(ids);
+  const stalePromptsById = {
+    [generatedIds[0]]: ['Vad är röstkortets innehåll?', 'What are the voting card contents?'],
+    [generatedIds[1]]: [
+      'Vilken uppgift stämmer om röstkortets innehåll?',
+      'Which fact is correct about the voting card contents?',
+    ],
+  };
+
+  for (const [id, [questionSv, questionEn]] of Object.entries(stalePromptsById)) {
+    const mutatedCsvRows = new Map(csvRows);
+    const columns = [...csvRows.get(id)];
+    columns[3] = questionSv;
+    columns[4] = questionEn;
+    mutatedCsvRows.set(id, columns);
+
+    assert.throws(
+      () =>
+        assertQ167StatedOnVotingCardExports({
+          generatedSiteBank,
+          actualSiteBank,
+          sourceQuestions,
+          csvRows: mutatedCsvRows,
+        }),
+      new RegExp(`${id} CSV sv prompt should stay natural`),
+    );
+  }
+});
+
 test('national-minorities generated judgement exports natural English in canonical and static banks', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const actualSiteBank = actualStaticQuestions();
