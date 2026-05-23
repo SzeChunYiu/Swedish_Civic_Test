@@ -690,7 +690,7 @@ test('QuestionSourceCitation accessibility parity uses focused content validatio
     'questionSourceCitationAccessibilityParityValidated',
   ]);
 
-  assert.equal(summary.questionSourceCitationAccessibilityRulesValidated, 15);
+  assert.equal(summary.questionSourceCitationAccessibilityRulesValidated, 23);
   assert.equal(summary.questionSourceCitationAccessibilityParityValidated, true);
 });
 
