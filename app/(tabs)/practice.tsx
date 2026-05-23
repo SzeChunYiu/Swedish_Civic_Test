@@ -63,6 +63,18 @@ import type { ConfidenceRating, QuizAnswer, UserProgress } from '../../types/pro
 
 type PracticeHeaderControl = 'bookmark' | 'supplementary' | 'sources';
 
+type KeyboardEventLike = {
+  key?: string;
+  nativeEvent?: { key?: string };
+  preventDefault?: () => void;
+};
+
+type WebKeyboardActivationProps = {
+  onKeyDown?: (event: KeyboardEventLike) => void;
+  onKeyPress?: (event: KeyboardEventLike) => void;
+  onKeyUp?: (event: KeyboardEventLike) => void;
+};
+
 type PracticeScope =
   | { type: 'all' }
   | { type: 'quick'; limit: number }
@@ -84,6 +96,40 @@ type PracticeAdaptiveSummary = {
   stale: number;
   mastered: number;
 };
+
+const keyboardActivationKeys = new Set(['Enter', ' ', 'Space', 'Spacebar']);
+
+function getKeyboardActivationKey(event: KeyboardEventLike): string {
+  return event.nativeEvent?.key ?? event.key ?? '';
+}
+
+function isKeyboardActivationKey(key: string): boolean {
+  return keyboardActivationKeys.has(key);
+}
+
+function getWebKeyboardActivationProps(onActivate: () => void): WebKeyboardActivationProps {
+  if (Platform.OS !== 'web') return {};
+
+  return {
+    onKeyDown: (event) => {
+      const key = getKeyboardActivationKey(event);
+      if (!isKeyboardActivationKey(key)) return;
+      event.preventDefault?.();
+    },
+    onKeyPress: (event) => {
+      const key = getKeyboardActivationKey(event);
+      if (key !== 'Enter') return;
+      event.preventDefault?.();
+      if (key === 'Enter') onActivate();
+    },
+    onKeyUp: (event) => {
+      const key = getKeyboardActivationKey(event);
+      if (!isKeyboardActivationKey(key)) return;
+      event.preventDefault?.();
+      if (key !== 'Enter') onActivate();
+    },
+  };
+}
 
 type PracticeCopy = {
   adaptiveSummary: (counts: PracticeAdaptiveSummary) => string;
@@ -600,6 +646,8 @@ export default function Screen() {
     setAboutSourcesOpen(false);
     setSelectedConfidenceRating(null);
   };
+  const supplementaryKeyboardActivationProps =
+    getWebKeyboardActivationProps(handleSupplementaryToggle);
   const handleStartChapter = (chapterId: string) => {
     const chapterQuestions = filteredQuestions.filter(
       (question) => question.chapterId === chapterId,
@@ -810,6 +858,7 @@ export default function Screen() {
             </Text>
           </Pressable>
           <Pressable
+            {...supplementaryKeyboardActivationProps}
             android_ripple={{ color: colors.focusSoft }}
             aria-checked={includeSupplementary}
             accessibilityRole="switch"
