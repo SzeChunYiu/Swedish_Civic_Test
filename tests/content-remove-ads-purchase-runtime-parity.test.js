@@ -35,6 +35,10 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
     path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
     'utf8',
   );
+  const nativeReceiptValidatorSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/removeAdsReceiptValidator.native.ts'),
+    'utf8',
+  );
   const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
   const nativeReceiptValidationBlock =
     purchaseSource.match(
@@ -45,7 +49,7 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
       /async function revalidateStoredRemoveAdsEntitlementRecordWithConnectedProvider\(\{[\s\S]*?\nfunction createResult/,
     )?.[0] ?? '';
 
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 39);
+  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 40);
   assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
   assert.match(purchaseSource, /REMOVE_ADS_RECORD_SCHEMA_VERSION = 1/);
   assert.match(purchaseSource, /interface RemoveAdsProductMetadata/);
@@ -77,6 +81,10 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.match(purchaseSource, /validateRemoveAdsReceipt\?\(/);
   assert.match(purchaseSource, /export type NativeRemoveAdsReceiptValidator =/);
   assert.match(purchaseSource, /receiptValidator\?: NativeRemoveAdsReceiptValidator/);
+  assert.match(nativeReceiptValidatorSource, /function createReceiptPayload\(raw/);
+  assert.match(nativeReceiptValidatorSource, /receipt: createReceiptPayload\(purchase\.raw\)/);
+  assert.doesNotMatch(nativeReceiptValidatorSource, /raw: purchase\.raw/);
+  assert.doesNotMatch(nativeReceiptValidatorSource, /accountEmail|debugPayload|userId/);
   assert.match(purchaseSource, /native_receipt_validator_unavailable/);
   assert.match(purchaseSource, /\| 'unavailable'/);
   assert.match(purchaseSource, /createResult\(\s*'unavailable'/);

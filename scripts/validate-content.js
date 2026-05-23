@@ -2178,7 +2178,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 15;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 39;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 40;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_RUNTIME_CASES = 9;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
@@ -20565,6 +20565,7 @@ function validateRemoveAdsPurchaseRuntimeParity() {
   let paywallSource = '';
   let placementCtaSource = '';
   let pricingWedgeSource = '';
+  let nativeReceiptValidatorSource = '';
   let purchaseSource = '';
 
   function reject(message) {
@@ -20587,6 +20588,10 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       path.join(repoRoot, 'components/monetization/PricingWedge.tsx'),
       'utf8',
     );
+    nativeReceiptValidatorSource = fs.readFileSync(
+      path.join(repoRoot, 'lib/monetization/removeAdsReceiptValidator.native.ts'),
+      'utf8',
+    );
   } catch (error) {
     reject(`Remove Ads purchase runtime sources could not be read: ${error.message}`);
     return;
@@ -20597,6 +20602,7 @@ function validateRemoveAdsPurchaseRuntimeParity() {
   const normalizedPaywallSource = paywallSource.replace(/\s+/g, ' ');
   const normalizedPlacementCtaSource = placementCtaSource.replace(/\s+/g, ' ');
   const normalizedPricingWedgeSource = pricingWedgeSource.replace(/\s+/g, ' ');
+  const normalizedNativeReceiptValidatorSource = nativeReceiptValidatorSource.replace(/\s+/g, ' ');
   const paywallDisabledPropCount =
     paywallSource.match(/disabled=\{actionsDisabled\}/g)?.length ?? 0;
   const paywallDisabledStateCount =
@@ -20741,6 +20747,17 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       normalizedPurchaseSource.includes('validateRemoveAdsReceipt?(') &&
         normalizedPurchaseSource.includes('Promise<RemoveAdsReceiptValidationResult>'),
       'Remove Ads purchase provider must expose a receipt validation hook',
+    ],
+    [
+      normalizedNativeReceiptValidatorSource.includes('function createReceiptPayload(raw') &&
+        normalizedNativeReceiptValidatorSource.includes(
+          'receipt: createReceiptPayload(purchase.raw)',
+        ) &&
+        !normalizedNativeReceiptValidatorSource.includes('raw: purchase.raw') &&
+        !normalizedNativeReceiptValidatorSource.includes('accountEmail') &&
+        !normalizedNativeReceiptValidatorSource.includes('debugPayload') &&
+        !normalizedNativeReceiptValidatorSource.includes('userId'),
+      'native receipt-validator requests must minimize purchase payloads and never post arbitrary raw purchase fields',
     ],
     [
       /if\s*\(\s*!receiptValidator\s*\)\s*\{\s*return\s*\{[\s\S]*productId,[\s\S]*purchaseToken:\s*purchase\.purchaseToken\s*\?\?\s*null,[\s\S]*status:\s*'pending',[\s\S]*transactionId:\s*purchase\.transactionId\s*\?\?\s*null,[\s\S]*\};\s*\}/.test(
