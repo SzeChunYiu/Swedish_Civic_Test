@@ -154,19 +154,34 @@ function staticQuestionVisibleText(question) {
 
 function q167StatedOnVotingCardFixture(sourceQuestions) {
   const singleChoiceId = generatedQuestionId(sourceQuestions, 'q167', 'singleChoice');
+  const trueStatementId = generatedQuestionId(sourceQuestions, 'q167', 'trueStatement');
+  const falseStatementId = generatedQuestionId(sourceQuestions, 'q167', 'falseStatement');
   const judgementId = generatedQuestionId(sourceQuestions, 'q167', 'judgement');
 
   return {
     generatedIds: [singleChoiceId, judgementId],
+    trueFalseIds: [trueStatementId, falseStatementId],
     expectedPrompts: {
       [singleChoiceId]: [
         'Vad visar röstkortet som skickas hem före valet?',
         'What does the voting card sent home before an election show?',
       ],
+      [trueStatementId]: [
+        'Röstkortet visar vilken vallokal väljaren ska gå till.',
+        'The voting card shows which polling station the voter should go to.',
+      ],
+      [falseStatementId]: [
+        'Röstkortet visar vilket parti väljaren måste rösta på.',
+        'The voting card shows which party the voter must vote for.',
+      ],
       [judgementId]: [
         'Vilken uppgift stämmer om vad röstkortet som skickas hem före valet visar?',
         'Which fact is correct about what the voting card sent home before an election shows?',
       ],
+    },
+    expectedAnswers: {
+      [trueStatementId]: 0,
+      [falseStatementId]: 1,
     },
     stalePattern: /\b(?:röstkortet[^?!.]*innehåll|voting card[^?!.]*contents)\b/i,
   };
@@ -182,6 +197,26 @@ function assertStaticQ167StatedOnVotingCardPrompts(questionsById, sourceQuestion
     assert.ok(question, `${id} should be present in static question bank`);
     assert.equal(question.q?.sv, expectedSv, `${id} static sv prompt should stay natural`);
     assert.equal(question.q?.en, expectedEn, `${id} static en prompt should stay natural`);
+    assert.equal(question.questionProvenance, 'derived');
+    assert.doesNotMatch(
+      staticQuestionVisibleText(question),
+      stalePattern,
+      `${id} should not use contents/innehåll wording`,
+    );
+  }
+}
+
+function assertStaticQ167StatedOnVotingCardTrueFalsePrompts(questionsById, sourceQuestions) {
+  const { expectedPrompts, expectedAnswers, trueFalseIds, stalePattern } =
+    q167StatedOnVotingCardFixture(sourceQuestions);
+
+  for (const id of trueFalseIds) {
+    const [expectedSv, expectedEn] = expectedPrompts[id];
+    const question = questionsById.get(id);
+    assert.ok(question, `${id} should be present in static question bank`);
+    assert.equal(question.q?.sv, expectedSv);
+    assert.equal(question.q?.en, expectedEn);
+    assert.equal(question.answer, expectedAnswers[id]);
     assert.equal(question.questionProvenance, 'derived');
     assert.doesNotMatch(
       staticQuestionVisibleText(question),
@@ -460,6 +495,20 @@ test('static site q167 stated-on fixture rejects q844/q847 contents mutations', 
   }
 });
 
+test('static site question bank keeps q167 stated-on true/false prompts natural', () => {
+  const expectedBank = buildSiteQuestionBank();
+  const sourceQuestions = expectedBank.questions.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const context = { window: {} };
+  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
+  const questionsById = new Map(
+    context.window.SMT_QUESTIONS.map((question) => [question.id, question]),
+  );
+
+  assertStaticQ167StatedOnVotingCardTrueFalsePrompts(questionsById, sourceQuestions);
+});
+
 test('static site question bank keeps q166/q169 kommun-region i18n target-language first', () => {
   const expectedBank = buildSiteQuestionBank();
   const sourceQuestions = expectedBank.questions.filter(
@@ -704,4 +753,43 @@ test('static site question bank source fixture limits one-question localization 
   assert.equal(drift.hasSemanticDrift, true);
   assert.equal(drift.formatOnly, false);
   assert.equal(drift.questionIds[0], 'q020');
-  assert.deepEqual(drift
+  assert.deepEqual(drift.questionIds.slice(1), q020GeneratedVariantIds);
+  assert.deepEqual(drift.chapterIds, []);
+});
+
+test('static question-bank drift fixture derives generated ids from source ids', () => {
+  const canonical = loadCanonicalExportInputs();
+  const source = fs.readFileSync(__filename, 'utf8');
+  const findings = generatedQuestionIdLiteralFindingsForSource(
+    'tests/content-static-site-question-bank-parity.test.js',
+    source,
+    canonical.sourceQuestions.length + 1,
+  );
+
+  assert.deepEqual(findings, []);
+  assert.match(source, /generatedQuestionId\(canonical\.sourceQuestions, 'q020', variantOffset\)/);
+  assert.match(source, /assert\.equal\(drift\.questionIds\[0\], 'q020'\)/);
+});
+
+test('static generated-id fixture guard rejects literal generated ids but allows source ids', () => {
+  const firstGeneratedNumber = 900;
+  const generatedLiteral = `q${String(firstGeneratedNumber).padStart(3, '0')}`;
+  const nextGeneratedLiteral = `q${String(firstGeneratedNumber + 1).padStart(3, '0')}`;
+  const findings = generatedQuestionIdLiteralFindingsForSource(
+    'tests/content-static-site-question-bank-parity.test.js',
+    [
+      "assert.equal(drift.questionIds[0], 'q020');",
+      `assert.deepEqual(drift.questionIds.slice(1), ['${generatedLiteral}']);`,
+      'const expected = {',
+      `  ${nextGeneratedLiteral}: { questionSv: 'stale generated fixture' },`,
+      '};',
+      "const derived = generatedQuestionId(canonical.sourceQuestions, 'q020', variantOffset);",
+    ].join('\n'),
+    firstGeneratedNumber,
+  );
+
+  assert.deepEqual(findings, [
+    `tests/content-static-site-question-bank-parity.test.js:2 hardcodes generated question id literal ${generatedLiteral}`,
+    `tests/content-static-site-question-bank-parity.test.js:4 hardcodes generated question id object key ${nextGeneratedLiteral}`,
+  ]);
+});
