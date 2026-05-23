@@ -323,6 +323,12 @@ const staleCitizenshipConductClaimPatterns = [
   /مەرجی نیشتەجێبوونی ستاندارد:\s*5 ساڵ/i,
   /ስሩዕ ረቛሒ መንበሪ፦\s*5 ዓመት/i,
 ];
+const staleKnowledgeRequirementClaimPatterns = [
+  /Pass the medborgarskapsprov\s*[—-]\s*the citizenship test on civic knowledge and Swedish/i,
+  /citizenship test on civic knowledge and Swedish/i,
+  /medborgarskapsprov[^.?!<]{0,80}(?:civic knowledge|samhällskunskap)[^.?!<]{0,80}(?:Swedish|svenska)/i,
+  /must pass a combined civic(?:-|\s)knowledge(?:-|\s)and(?:-|\s)Swedish/i,
+];
 
 const homeHeroFooterFallbackKeys = [
   'hero.eyebrow',
@@ -949,6 +955,32 @@ test('static ebook citizenship conduct copy is backed by current Migrationsverke
   assert.match(ebookSource, /Migrationsverket avgör det enskilda ärendet/i);
   assert.match(ebookSource, /Adult main residence rule: 8 years/i);
   assert.match(ebookSource, /Huvudregel för vuxnas hemvist: 8 år/i);
+  assert.match(
+    ebookSource,
+    /https:\/\/www\.migrationsverket\.se\/nyheter\/nyhetsarkiv\/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026\.html/,
+  );
+});
+
+test('static ebook knowledge-requirement copy is backed by current Migrationsverket source metadata', () => {
+  const ebookSource = read('site/ebook.js');
+
+  staleKnowledgeRequirementClaimPatterns.forEach((pattern) =>
+    assert.doesNotMatch(ebookSource, pattern),
+  );
+  assert.match(
+    ebookSource,
+    /From 6 June 2026, applicants aged 16-66 must meet a knowledge requirement/i,
+  );
+  assert.match(ebookSource, /The first test part is civic knowledge/i);
+  assert.match(
+    ebookSource,
+    /accepted certificates such as school, adult education, folk high school, or SFI course D/i,
+  );
+  assert.match(ebookSource, /Swedish-language tests are introduced later/i);
+  assert.match(ebookSource, /Knowledge requirement ages 16-66; Swedish-language tests come later/i);
+  assert.match(ebookSource, /Från 6 juni 2026 gäller kunskapskravet för 16-66 år/i);
+  assert.match(ebookSource, /Den första provdelen gäller samhällskunskap/i);
+  assert.match(ebookSource, /proven i svenska införs senare/i);
   assert.match(
     ebookSource,
     /https:\/\/www\.migrationsverket\.se\/nyheter\/nyhetsarkiv\/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026\.html/,

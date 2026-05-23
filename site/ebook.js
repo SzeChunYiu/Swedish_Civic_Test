@@ -3325,11 +3325,11 @@
             <li>Have a permanent residence permit, right of residence, or right of permanent residence.</li>
             <li${ebookSourceKeyDataAttr(['migrationsverketCitizenshipRules'])}>Have lived in Sweden for a qualifying period. From 6 June 2026, the adult main rule is eight years, with shorter periods for some groups.</li>
             <li${ebookSourceKeyDataAttr(['migrationsverketCitizenshipRules'])}>Meet the stricter conduct requirement. Offences can mean a longer waiting period before citizenship can be granted, and Migrationsverket decides individual cases.</li>
-            <li>(From 2026) Pass the medborgarskapsprov — the citizenship test on civic knowledge and Swedish — and meet a Swedish-language requirement.</li>
+            <li${ebookSourceKeyDataAttr(['migrationsverketCitizenshipRules'])}>From 6 June 2026, applicants aged 16-66 must meet a knowledge requirement. The first test part is civic knowledge; knowledge may also be shown through accepted certificates such as school, adult education, folk high school, or SFI course D where applicable, and Swedish-language tests are introduced later.</li>
           </ul>
           <h2>Dual citizenship</h2>
           <p>Sweden has accepted dual citizenship since 2001. You do not lose your original citizenship by becoming Swedish (subject to your origin country's rules).</p>
-          ${ebookFactBox('en', 'Current citizenship notes', 'New citizenship rules apply from 6 June 2026. The first civic-knowledge sitting is 15 August 2026 in Stockholm. Children need a separate citizenship application from 6 June 2026 · Adult main residence rule: 8 years · Stricter conduct requirement with longer waiting periods after offences · Decision authority: Migrationsverket.', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
+          ${ebookFactBox('en', 'Current citizenship notes', 'New citizenship rules apply from 6 June 2026. The first civic-knowledge sitting is 15 August 2026 in Stockholm. Children need a separate citizenship application from 6 June 2026 · Adult main residence rule: 8 years · Knowledge requirement ages 16-66; Swedish-language tests come later · Stricter conduct requirement with longer waiting periods after offences · Decision authority: Migrationsverket.', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
         `,
         sv: svStudyBrief(
           [
@@ -3344,9 +3344,13 @@
               text: 'Från 6 juni 2026 skärps skötsamhetskravet, och brott kan innebära längre karenstid innan medborgarskap kan beviljas. Migrationsverket avgör det enskilda ärendet.',
               sourceKeys: ['migrationsverketCitizenshipRules'],
             },
+            {
+              text: 'Från 6 juni 2026 gäller kunskapskravet för 16-66 år. Den första provdelen gäller samhällskunskap; kunskaper kan också visas med godtagna intyg som skola, komvux, folkhögskola eller SFI kurs D där det är aktuellt, och proven i svenska införs senare.',
+              sourceKeys: ['migrationsverketCitizenshipRules'],
+            },
             'Dubbelt medborgarskap är tillåtet enligt svensk rätt, men andra länders regler kan påverka.',
           ],
-          'Migrationsverket · Skatteverket · Huvudregel för vuxnas hemvist: 8 år · Skärpt skötsamhetskrav med längre karenstider efter brott · Dubbelt medborgarskap tillåts sedan 2001.',
+          'Migrationsverket · Skatteverket · Huvudregel för vuxnas hemvist: 8 år · Kunskapskrav 16-66 år; proven i svenska införs senare · Skärpt skötsamhetskrav med längre karenstider efter brott · Dubbelt medborgarskap tillåts sedan 2001.',
           ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'],
           'Kontrollera alltid aktuella krav hos Migrationsverket och UHR. Regler kan ändras, och den här boken är bara ett studiehjälpmedel.',
           ebookSourceNote('sv', ['migrationsverketCitizenshipRules']),

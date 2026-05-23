@@ -121,6 +121,12 @@ const staleCitizenshipConductClaimPatterns = [
   /ስሩዕ ረቛሒ መንበሪ፦\s*5 ዓመት/i,
   /መዝገብ.{0,20}ገበን|ዘይ.{0,20}ገበን/i,
 ];
+const staleKnowledgeRequirementClaimPatterns = [
+  /Pass the medborgarskapsprov\s*[—-]\s*the citizenship test on civic knowledge and Swedish/i,
+  /citizenship test on civic knowledge and Swedish/i,
+  /medborgarskapsprov[^.?!<]{0,80}(?:civic knowledge|samhällskunskap)[^.?!<]{0,80}(?:Swedish|svenska)/i,
+  /must pass a combined civic(?:-|\s)knowledge(?:-|\s)and(?:-|\s)Swedish/i,
+];
 const staticEbookChapter11ConductCurrentnessByLocale = {
   'zh-Hans': {
     date: /2026 年 6 月 6 日/,
@@ -513,6 +519,12 @@ function assertNoStaleChildApplicationClaim(value) {
 
 function assertNoStaleCitizenshipConductClaim(value) {
   for (const pattern of staleCitizenshipConductClaimPatterns) {
+    assert.doesNotMatch(value, pattern);
+  }
+}
+
+function assertNoStaleKnowledgeRequirementClaim(value) {
+  for (const pattern of staleKnowledgeRequirementClaimPatterns) {
     assert.doesNotMatch(value, pattern);
   }
 }
@@ -1563,6 +1575,40 @@ test('static ebook chapter 11 keeps conduct requirement current and decision-saf
 
   assert.match(englishHtml, /data-source-keys="migrationsverketCitizenshipRules"/);
   assert.match(swedishHtml, /migrationsverketCitizenshipRules/);
+});
+
+test('static ebook chapter 11 keeps knowledge requirement current and stepwise', () => {
+  const source = readSiteFile('site/ebook.js');
+  const harness = createEbookHarness();
+  const englishHtml = renderChapter(harness, 'en', '11');
+  const swedishHtml = renderChapter(harness, 'sv', '11');
+
+  assertNoStaleKnowledgeRequirementClaim(source);
+  assertNoStaleKnowledgeRequirementClaim(englishHtml);
+  assertNoStaleKnowledgeRequirementClaim(swedishHtml);
+
+  assert.match(
+    englishHtml,
+    /From 6 June 2026, applicants aged 16-66 must meet a knowledge requirement/,
+  );
+  assert.match(englishHtml, /The first test part is civic knowledge/);
+  assert.match(
+    englishHtml,
+    /accepted certificates such as school, adult education, folk high school, or SFI course D/,
+  );
+  assert.match(englishHtml, /Swedish-language tests are introduced later/);
+  assert.match(englishHtml, /Knowledge requirement ages 16-66; Swedish-language tests come later/);
+
+  assert.match(swedishHtml, /Från 6 juni 2026 gäller kunskapskravet för 16-66 år/);
+  assert.match(swedishHtml, /Den första provdelen gäller samhällskunskap/);
+  assert.match(swedishHtml, /skola, komvux, folkhögskola eller SFI kurs D/);
+  assert.match(swedishHtml, /proven i svenska införs senare/);
+  assert.match(swedishHtml, /Kunskapskrav 16-66 år; proven i svenska införs senare/);
+
+  assert.match(englishHtml, /data-source-keys="migrationsverketCitizenshipRules"/);
+  assert.match(swedishHtml, /migrationsverketCitizenshipRules/);
+  assert.match(source, /Migrationsverket citizenship rule changes from 6 June 2026/);
+  assert.match(source, /retrievedDate: '2026-05-20'/);
 });
 
 test('static ebook chapter 11 extra locales keep citizenship conduct rules current', () => {
