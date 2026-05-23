@@ -42,6 +42,7 @@ type DashboardLocaleFixture = {
   mockHistoryTrendSummary: string;
   profilePath: string;
   chapterOrderSortLabel: string;
+  chapterOrderSortStatus: string;
   summaryLine: string;
   chapterProgressSortGroup: string;
   title: string;
@@ -50,6 +51,7 @@ type DashboardLocaleFixture = {
   streakXpTitle: string;
   weakestChapterLink: string;
   weakestFirstSortLabel: string;
+  weakestFirstSortStatus: string;
 };
 
 type DashboardProgressSeed = {
@@ -93,6 +95,7 @@ const dashboardLocales: DashboardLocaleFixture[] = [
       'Resultattrend för 2 senaste bedömda prov: senast 84%, 12 procentenheter högre än äldsta som visas.',
     profilePath: '/profile',
     chapterOrderSortLabel: 'Sortera kapitel: Kapitelordning',
+    chapterOrderSortStatus: 'Sortering: Kapitelordning. Först visas Landet Sverige.',
     chapterProgressSortGroup: 'Sortera kapitelframsteg',
     strongerChapterLink: 'Öppna Landet Sverige',
     streakXpTitle: 'Svit och XP',
@@ -100,6 +103,7 @@ const dashboardLocales: DashboardLocaleFixture[] = [
     title: 'Framstegsöversikt',
     weakestChapterLink: 'Öppna Sveriges demokratiska system',
     weakestFirstSortLabel: 'Sortera kapitel: Svagast först',
+    weakestFirstSortStatus: 'Sortering: Svagast först. Först visas Sveriges demokratiska system.',
   },
   {
     activityTitle: 'Active days',
@@ -134,6 +138,7 @@ const dashboardLocales: DashboardLocaleFixture[] = [
       'Score trend across 2 recent scored exams: latest 84%, 12 points higher than the oldest shown.',
     profilePath: '/profile',
     chapterOrderSortLabel: 'Sort chapters: Chapter order',
+    chapterOrderSortStatus: 'Sort: Chapter order. First visible chapter: The country of Sweden.',
     chapterProgressSortGroup: 'Sort chapter progress',
     strongerChapterLink: 'Open The country of Sweden',
     streakXpTitle: 'Streak and XP',
@@ -141,6 +146,8 @@ const dashboardLocales: DashboardLocaleFixture[] = [
     title: 'Progress dashboard',
     weakestChapterLink: "Open Sweden's democratic system",
     weakestFirstSortLabel: 'Sort chapters: Weakest first',
+    weakestFirstSortStatus:
+      "Sort: Weakest first. First visible chapter: Sweden's democratic system.",
   },
 ];
 
@@ -565,12 +572,18 @@ for (const fixture of dashboardLocales) {
     await expect(weakestFirst).toHaveAttribute('aria-checked', 'false');
     await expect(chapterOrder).not.toHaveAttribute('aria-selected', /.+/);
     await expect(weakestFirst).not.toHaveAttribute('aria-selected', /.+/);
+    await expect(
+      page.locator('[aria-live="polite"]').filter({ hasText: fixture.chapterOrderSortStatus }),
+    ).toHaveText(fixture.chapterOrderSortStatus);
     await expectLinkBefore(page, fixture.strongerChapterLink, fixture.weakestChapterLink);
 
     await weakestFirst.click();
 
     await expect(weakestFirst).toHaveAttribute('aria-checked', 'true');
     await expect(chapterOrder).toHaveAttribute('aria-checked', 'false');
+    await expect(
+      page.locator('[aria-live="polite"]').filter({ hasText: fixture.weakestFirstSortStatus }),
+    ).toHaveText(fixture.weakestFirstSortStatus);
     await expectLinkBefore(page, fixture.weakestChapterLink, fixture.strongerChapterLink);
     await expectNoHorizontalOverflow(page);
 

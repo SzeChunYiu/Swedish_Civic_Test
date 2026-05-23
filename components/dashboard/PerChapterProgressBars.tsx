@@ -20,6 +20,7 @@ export type PerChapterProgressBarsCopy = {
   linkLabel: (chapterName: string) => string;
   sortAccessibilityLabel: (mode: string) => string;
   sortGroupAccessibilityLabel: string;
+  sortStatusLabel: (mode: string, firstChapterName: string) => string;
   subtitle: string;
   title: string;
   weakestFirst: string;
@@ -64,6 +65,16 @@ export function PerChapterProgressBars({
     if (sortMode === 'chapter') return bars;
     return [...bars].sort((a, b) => chapterWeaknessScore(b) - chapterWeaknessScore(a));
   }, [bars, sortMode]);
+  const firstVisibleChapter = chapterById.get(visibleBars[0]?.chapterId ?? '');
+  const firstVisibleChapterName =
+    language === 'en'
+      ? (firstVisibleChapter?.nameEn ?? visibleBars[0]?.chapterId ?? '')
+      : (firstVisibleChapter?.nameSv ?? visibleBars[0]?.chapterId ?? '');
+  const selectedSortLabel = sortMode === 'chapter' ? copy.chapterOrder : copy.weakestFirst;
+  const sortStatusLabel =
+    firstVisibleChapterName.length > 0
+      ? copy.sortStatusLabel(selectedSortLabel, firstVisibleChapterName)
+      : '';
   const answeredChapters = bars.filter((bar) => bar.answers > 0).length;
   const accessibilityLabel = `${copy.title}: ${answeredChapters} / ${chapters.length}`;
 
@@ -116,6 +127,15 @@ export function PerChapterProgressBars({
             );
           })}
         </View>
+        {sortStatusLabel ? (
+          <Text
+            accessibilityLiveRegion="polite"
+            aria-live="polite"
+            style={styles.accessibilitySummary}
+          >
+            {sortStatusLabel}
+          </Text>
+        ) : null}
         {answeredChapters === 0 ? (
           <Text style={styles.emptyState}>{copy.emptyState}</Text>
         ) : (

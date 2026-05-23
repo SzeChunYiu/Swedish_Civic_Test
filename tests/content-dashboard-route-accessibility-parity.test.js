@@ -174,6 +174,16 @@ function assertDashboardAccessibilitySeparation(sources) {
     /<Pressable[\s\S]*?aria-checked=\{selected\}[\s\S]*?accessibilityLabel=\{copy\.sortAccessibilityLabel\(label\)\}[\s\S]*?accessibilityRole="radio"[\s\S]*?accessibilityState=\{\{ checked: selected \}\}/,
     'PerChapterProgressBars sort options must expose radio checked semantics',
   );
+  assert.match(
+    sources.chapters,
+    /const sortStatusLabel =[\s\S]*?copy\.sortStatusLabel\(selectedSortLabel, firstVisibleChapterName\)/,
+    'PerChapterProgressBars must compute a localized sort status from the active mode and first visible chapter',
+  );
+  assert.match(
+    sources.chapters,
+    /<Text[\s\S]*?accessibilityLiveRegion="polite"[\s\S]*?aria-live="polite"[\s\S]*?style=\{styles\.accessibilitySummary\}[\s\S]*?>\s*\{sortStatusLabel\}\s*<\/Text>/,
+    'PerChapterProgressBars sort changes must expose a hidden polite live status',
+  );
   assert.doesNotMatch(
     sources.chapters,
     /accessibilityRole="button"[\s\S]{0,240}accessibilityState=\{\{\s*selected\s*\}\}/,
@@ -427,8 +437,18 @@ function assertDashboardAccessibilitySeparation(sources) {
   );
   assert.match(
     sources.dashboard,
+    /sortStatusLabel: \(mode, firstChapterName\) =>\s*`Sortering: \$\{mode\}\. Först visas \$\{firstChapterName\}\.`/,
+    'Swedish chapter-progress sort live status copy is required',
+  );
+  assert.match(
+    sources.dashboard,
     /sortGroupAccessibilityLabel: 'Sort chapter progress'/,
     'English chapter-progress sort group label is required',
+  );
+  assert.match(
+    sources.dashboard,
+    /sortStatusLabel: \(mode, firstChapterName\) =>\s*`Sort: \$\{mode\}\. First visible chapter: \$\{firstChapterName\}\.`/,
+    'English chapter-progress sort live status copy is required',
   );
 
   assert.match(sources.dashboard, /accessibilitySummary:\s*\{[\s\S]*?position: 'absolute'/);
@@ -506,6 +526,21 @@ test('dashboard accessibility parity rejects selected-button chapter sort contro
           ),
       }),
     /PerChapterProgressBars sort options must expose radio checked semantics|PerChapterProgressBars sort options must not remain selected buttons|PerChapterProgressBars sort options must not leak selected state/,
+  );
+});
+
+test('dashboard accessibility parity rejects a missing chapter sort live status', () => {
+  const sources = loadSources();
+
+  assert.throws(
+    () =>
+      assertDashboardAccessibilitySeparation({
+        ...sources,
+        chapters: sources.chapters
+          .replace(/  const sortStatusLabel =[\s\S]*?      : '';\n/, '')
+          .replace(/\s+\{sortStatusLabel \? \([\s\S]*?\n\s+\) : null\}\n/, '\n'),
+      }),
+    /PerChapterProgressBars must compute a localized sort status|PerChapterProgressBars sort changes must expose a hidden polite live status/,
   );
 });
 

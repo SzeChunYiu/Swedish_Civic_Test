@@ -58,6 +58,7 @@ type DashboardCopy = {
     linkLabel: (chapterName: string) => string;
     sortAccessibilityLabel: (mode: string) => string;
     sortGroupAccessibilityLabel: string;
+    sortStatusLabel: (mode: string, firstChapterName: string) => string;
     subtitle: string;
     title: string;
     weakestFirst: string;
@@ -143,6 +144,8 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
       linkLabel: (chapterName) => `Öppna ${chapterName}`,
       sortAccessibilityLabel: (mode) => `Sortera kapitel: ${mode}`,
       sortGroupAccessibilityLabel: 'Sortera kapitelframsteg',
+      sortStatusLabel: (mode, firstChapterName) =>
+        `Sortering: ${mode}. Först visas ${firstChapterName}.`,
       subtitle: 'Rätt och täckning visas sida vid sida per kapitel.',
       title: 'Kapitelframsteg',
       weakestFirst: 'Svagast först',
@@ -240,6 +243,8 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
       linkLabel: (chapterName) => `Open ${chapterName}`,
       sortAccessibilityLabel: (mode) => `Sort chapters: ${mode}`,
       sortGroupAccessibilityLabel: 'Sort chapter progress',
+      sortStatusLabel: (mode, firstChapterName) =>
+        `Sort: ${mode}. First visible chapter: ${firstChapterName}.`,
       subtitle: 'Accuracy and coverage sit side by side for each chapter.',
       title: 'Chapter progress',
       weakestFirst: 'Weakest first',
