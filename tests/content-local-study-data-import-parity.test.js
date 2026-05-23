@@ -256,8 +256,14 @@ test('settings import browser fixtures cover accessibility and companion preview
     'utf8',
   );
 
-  assert.match(source, /const accessibilityEasyReadFontKey = 'accessibility\\\\a11y\.easyReadFont\.v1';/);
-  assert.match(source, /const accessibilityFontSizeStepKey = 'accessibility\\\\a11y\.fontSizeStep\.v1';/);
+  assert.match(
+    source,
+    /const accessibilityEasyReadFontKey = 'accessibility\\\\a11y\.easyReadFont\.v1';/,
+  );
+  assert.match(
+    source,
+    /const accessibilityFontSizeStepKey = 'accessibility\\\\a11y\.fontSizeStep\.v1';/,
+  );
   assert.match(
     source,
     /const accessibilityAudioPlaybackRateKey = 'accessibility\\\\a11y\.audioPlaybackRate\.v1';/,
@@ -1015,6 +1021,42 @@ test('local study data import rejects nested purchase fields with useful detail'
     detail: 'progress.history.0.removeAdsReceipt',
   });
   assertNoSnapshotWrites(storageById);
+});
+
+test('local study data import rejects punctuated purchase field aliases', () => {
+  const forbiddenKeys = [
+    'ads.disabled',
+    'ad.free',
+    'product.id',
+    'remove.ads',
+    'i.a.p',
+    'product/id',
+  ];
+
+  for (const forbiddenKey of forbiddenKeys) {
+    const storageById = createStorageById();
+    const { previewLocalStudyDataImport } = loadImportModule(storageById);
+    const result = previewLocalStudyDataImport(
+      JSON.stringify({
+        version: 1,
+        progress: {
+          completedQuestionIds: ['q001'],
+          history: [{ [forbiddenKey]: true }],
+        },
+      }),
+    );
+
+    assert.deepEqual(
+      result,
+      {
+        ok: false,
+        code: 'purchase_fields_rejected',
+        detail: `progress.history.0.${forbiddenKey}`,
+      },
+      `expected ${forbiddenKey} to be rejected as a purchase field`,
+    );
+    assertNoSnapshotWrites(storageById);
+  }
 });
 
 test('local study data import formats rejected field details with bounded head and tail', () => {
