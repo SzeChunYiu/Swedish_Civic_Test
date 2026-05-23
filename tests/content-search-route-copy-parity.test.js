@@ -165,8 +165,23 @@ function assertSearchRouteQuestionResults(source) {
     [/getQuestionSearchChapterName,/, 'localized question chapter helper import'],
     [/const questionSearchResults = useMemo\(\(\) => \{/, 'question results memo'],
     [/return searchQuestionsWithTotal\(\{/, 'searchQuestionsWithTotal call'],
+    [/const QUESTION_RESULT_PAGE_SIZE = 8;/, 'question result page size constant'],
+    [
+      /const \[visibleQuestionLimit, setVisibleQuestionLimit\] = useState\(QUESTION_RESULT_PAGE_SIZE\);/,
+      'stateful visible question limit',
+    ],
+    [/limit: visibleQuestionLimit,/, 'visible question limit passed to search'],
     [/const questionResults = questionSearchResults\.results;/, 'capped visible question results'],
     [/const totalQuestionMatches = questionSearchResults\.totalCount;/, 'total question matches'],
+    [
+      /const hiddenQuestionMatches = Math\.max\(0, totalQuestionMatches - questionResults\.length\);/,
+      'hidden question match count',
+    ],
+    [/const canShowMoreQuestionResults = hiddenQuestionMatches > 0;/, 'show more visibility guard'],
+    [
+      /const handleShowMoreQuestions = \(\) => \{[\s\S]*setVisibleQuestionLimit\(\(currentLimit\) =>[\s\S]*Math\.min\(currentLimit \+ QUESTION_RESULT_PAGE_SIZE, totalQuestionMatches\),/,
+      'show more increments visible question limit',
+    ],
     [/query: trimmedQuery,/, 'trimmed query passed to question search'],
     [/questions,/, 'question bank passed to question search'],
     [
@@ -177,6 +192,11 @@ function assertSearchRouteQuestionResults(source) {
       /copy\.questionSectionSubtitle\(questionResults\.length, totalQuestionMatches\)/,
       'question section subtitle compares visible and total question counts',
     ],
+    [
+      /copy\.showMoreQuestionsAccessibilityLabel\(\{[\s\S]*hiddenCount: hiddenQuestionMatches,[\s\S]*nextVisibleCount: nextVisibleQuestionCount,[\s\S]*totalCount: totalQuestionMatches,[\s\S]*visibleCount: questionResults\.length,/,
+      'show more accessibility label includes visible and total counts',
+    ],
+    [/onPress=\{handleShowMoreQuestions\}/, 'show more button uses local expansion handler'],
     [
       /`\$\{visibleCount\} av \$\{totalCount\} källbaserade övningsfrågor visas`/,
       'Swedish visible of total question subtitle copy',
@@ -218,6 +238,8 @@ function assertSearchRouteQuestionResults(source) {
     ],
     [/questionSectionTitle: 'Övningsfrågor'/, 'Swedish question section copy'],
     [/questionSectionTitle: 'Practice questions'/, 'English question section copy'],
+    [/showMoreQuestions: 'Visa fler övningsfrågor'/, 'Swedish show more question copy'],
+    [/showMoreQuestions: 'Show more practice questions'/, 'English show more question copy'],
     [
       /openQuestionAccessibilityLabel: \(title\) => `Öppna övningsfrågan: \$\{title\}`/,
       'Swedish question link label',
@@ -393,7 +415,9 @@ function assertSearchRouteQueryHydration(source) {
       /return getFirstSearchParamValue\(params\.q\) \|\| getFirstSearchParamValue\(params\.query\);/,
       'q then query fallback order',
     ],
-    [/onChangeText=\{setQuery\}/, 'manual typing remains controlled'],
+    [/const handleChangeSearchText = \(value: string\) => \{/, 'manual typing handler'],
+    [/setQuery\(value\);/, 'manual typing remains controlled'],
+    [/onChangeText=\{handleChangeSearchText\}/, 'search input uses manual typing handler'],
     [/const handleClearSearch = \(\) => \{/, 'clear search handler'],
     [/setQuery\(''\);/, 'clear search state reset'],
     [/router\.replace\('\/search'\);/, 'clear search URL replacement'],
@@ -633,6 +657,27 @@ test('Search route e2e covers manual Enter submit URL state', () => {
   assert.match(
     source,
     /await hydratedInput\.fill\('   '\)[\s\S]*?await hydratedInput\.press\('Enter'\)[\s\S]*?expectSearchUrlWithoutQueryParams\(page\)/,
+  );
+});
+
+test('Search route e2e covers loading more question results without URL churn', () => {
+  const source = readSearchQueryHydrationE2eSource();
+
+  assert.match(source, /search route shows more capped question results without rewriting q URL/);
+  assert.match(
+    source,
+    /const showMoreButton = page\.getByRole\('button', \{[\s\S]*name: searchStateCopy\.sv\.showMoreButtonName,[\s\S]*\}\);/,
+  );
+  assert.match(source, /await expect\(questionLinks\)\.toHaveCount\(8\)/);
+  assert.match(source, /await showMoreButton\.click\(\)/);
+  assert.match(
+    source,
+    /await expect\.poll\(\(\) => questionLinks\.count\(\)\)\.toBeGreaterThan\(8\)/,
+  );
+  assert.match(source, /await expectSearchUrlWithQParam\(page, 'riksdag'\)/);
+  assert.match(
+    source,
+    /await input\.fill\('demokrati'\)[\s\S]*?await expect\(questionLinks\)\.toHaveCount\(8\)/,
   );
 });
 

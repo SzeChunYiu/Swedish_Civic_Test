@@ -1098,8 +1098,14 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
   },
   {
     file: 'app/search.tsx',
-    pattern: /onChangeText=\{setQuery\}/,
-    message: 'search route must preserve manual controlled typing',
+    pattern:
+      /const handleChangeSearchText = \(value: string\) => \{[\s\S]*?setVisibleQuestionLimit\(QUESTION_RESULT_PAGE_SIZE\);[\s\S]*?setQuery\(value\);[\s\S]*?\};/,
+    message: 'search route must preserve manual controlled typing and reset visible results',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /onChangeText=\{handleChangeSearchText\}/,
+    message: 'search route input must use the controlled typing handler',
   },
   {
     file: 'app/search.tsx',
@@ -1204,6 +1210,22 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
   },
   {
     file: 'app/search.tsx',
+    pattern: /const QUESTION_RESULT_PAGE_SIZE = 8;/,
+    message: 'search route must centralize the question result page size',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern:
+      /const \[visibleQuestionLimit, setVisibleQuestionLimit\] = useState\(QUESTION_RESULT_PAGE_SIZE\);/,
+    message: 'search route must keep question result expansion in local state',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /limit: visibleQuestionLimit,/,
+    message: 'search route must pass the current visible question limit to ranked search',
+  },
+  {
+    file: 'app/search.tsx',
     pattern: /const questionResults = questionSearchResults\.results;/,
     message: 'search route must render only the capped visible question results',
   },
@@ -1211,6 +1233,23 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
     file: 'app/search.tsx',
     pattern: /const totalQuestionMatches = questionSearchResults\.totalCount;/,
     message: 'search route must keep full question match totals separate from visible cards',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern:
+      /const hiddenQuestionMatches = Math\.max\(0, totalQuestionMatches - questionResults\.length\);/,
+    message: 'search route must compute hidden question matches for load-more visibility',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /const canShowMoreQuestionResults = hiddenQuestionMatches > 0;/,
+    message: 'search route must hide load-more when all question matches are visible',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern:
+      /const handleShowMoreQuestions = \(\) => \{[\s\S]*setVisibleQuestionLimit\(\(currentLimit\) =>[\s\S]*Math\.min\(currentLimit \+ QUESTION_RESULT_PAGE_SIZE, totalQuestionMatches\),/,
+    message: 'search route must expand visible question results in page-size steps',
   },
   {
     file: 'app/search.tsx',
@@ -1227,6 +1266,17 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
     file: 'app/search.tsx',
     pattern: /copy\.questionSectionSubtitle\(questionResults\.length, totalQuestionMatches\)/,
     message: 'search route question section subtitle must compare visible and total matches',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern:
+      /copy\.showMoreQuestionsAccessibilityLabel\(\{[\s\S]*hiddenCount: hiddenQuestionMatches,[\s\S]*nextVisibleCount: nextVisibleQuestionCount,[\s\S]*totalCount: totalQuestionMatches,[\s\S]*visibleCount: questionResults\.length,/,
+    message: 'search route load-more control must expose visible and total counts accessibly',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /onPress=\{handleShowMoreQuestions\}/,
+    message: 'search route load-more control must expand locally without URL navigation',
   },
   {
     file: 'app/search.tsx',
@@ -1284,6 +1334,16 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
     file: 'app/search.tsx',
     pattern: /questionSectionTitle: 'Practice questions'/,
     message: 'search route must include English question section copy',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /showMoreQuestions: 'Visa fler övningsfrågor'/,
+    message: 'search route must include Swedish load-more question copy',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /showMoreQuestions: 'Show more practice questions'/,
+    message: 'search route must include English load-more question copy',
   },
   {
     file: 'app/search.tsx',
@@ -1533,6 +1593,29 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
     pattern:
       /await hydratedInput\.fill\('   '\)[\s\S]*?await hydratedInput\.press\('Enter'\)[\s\S]*?expectSearchUrlWithoutQueryParams\(page\)/,
     message: 'search query e2e must clear stale q params on empty submit',
+  },
+  {
+    file: 'tests/e2e/search-query-hydration.spec.ts',
+    pattern: /search route shows more capped question results without rewriting q URL/,
+    message: 'search query e2e must cover load-more question expansion',
+  },
+  {
+    file: 'tests/e2e/search-query-hydration.spec.ts',
+    pattern:
+      /const showMoreButton = page\.getByRole\('button', \{[\s\S]*name: searchStateCopy\.sv\.showMoreButtonName,[\s\S]*\}\);/,
+    message: 'search query e2e must find the localized load-more button',
+  },
+  {
+    file: 'tests/e2e/search-query-hydration.spec.ts',
+    pattern:
+      /await expect\(questionLinks\)\.toHaveCount\(8\)[\s\S]*?await showMoreButton\.click\(\)[\s\S]*?await expect\.poll\(\(\) => questionLinks\.count\(\)\)\.toBeGreaterThan\(8\)/,
+    message: 'search query e2e must prove load-more reveals additional question cards',
+  },
+  {
+    file: 'tests/e2e/search-query-hydration.spec.ts',
+    pattern:
+      /await showMoreButton\.click\(\)[\s\S]*?await expectSearchUrlWithQParam\(page, 'riksdag'\)/,
+    message: 'search query e2e must prove load-more preserves q URL state',
   },
 ]);
 const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {

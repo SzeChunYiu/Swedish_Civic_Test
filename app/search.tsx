@@ -33,6 +33,8 @@ type SearchRouteParams = {
   query?: string | string[];
 };
 
+const QUESTION_RESULT_PAGE_SIZE = 8;
+
 function getQuestionResultHref(questionId: string, query: string): Href {
   const trimmedQuery = query.trim();
   if (!trimmedQuery) return `/quiz/${questionId}` as Href;
@@ -45,6 +47,7 @@ export default function SearchScreen() {
   const searchParams = useLocalSearchParams<SearchRouteParams>();
   const routeQuery = getRouteSearchQuery(searchParams);
   const [query, setQuery] = useState(() => routeQuery);
+  const [visibleQuestionLimit, setVisibleQuestionLimit] = useState(QUESTION_RESULT_PAGE_SIZE);
   const previousRouteQueryRef = useRef(routeQuery);
   const systemColorScheme = useColorScheme();
   const language = useSettingsStore((state) => state.language);
@@ -57,9 +60,15 @@ export default function SearchScreen() {
 
     previousRouteQueryRef.current = routeQuery;
     setQuery(routeQuery);
+    setVisibleQuestionLimit(QUESTION_RESULT_PAGE_SIZE);
   }, [routeQuery]);
+  const handleChangeSearchText = (value: string) => {
+    setVisibleQuestionLimit(QUESTION_RESULT_PAGE_SIZE);
+    setQuery(value);
+  };
   const handleClearSearch = () => {
     setQuery('');
+    setVisibleQuestionLimit(QUESTION_RESULT_PAGE_SIZE);
     previousRouteQueryRef.current = '';
 
     if (routeQuery.length > 0) {
@@ -75,8 +84,14 @@ export default function SearchScreen() {
     }
 
     setQuery(submittedQuery);
+    setVisibleQuestionLimit(QUESTION_RESULT_PAGE_SIZE);
     previousRouteQueryRef.current = submittedQuery;
     router.replace(`/search?q=${encodeURIComponent(submittedQuery)}`);
+  };
+  const handleShowMoreQuestions = () => {
+    setVisibleQuestionLimit((currentLimit) =>
+      Math.min(currentLimit + QUESTION_RESULT_PAGE_SIZE, totalQuestionMatches),
+    );
   };
   const trimmedQuery = query.trim();
   const filteredTerms = useMemo(
@@ -92,13 +107,19 @@ export default function SearchScreen() {
 
     return searchQuestionsWithTotal({
       chapters,
-      limit: 8,
+      limit: visibleQuestionLimit,
       query: trimmedQuery,
       questions,
     });
-  }, [trimmedQuery]);
+  }, [trimmedQuery, visibleQuestionLimit]);
   const questionResults = questionSearchResults.results;
   const totalQuestionMatches = questionSearchResults.totalCount;
+  const hiddenQuestionMatches = Math.max(0, totalQuestionMatches - questionResults.length);
+  const nextVisibleQuestionCount = Math.min(
+    totalQuestionMatches,
+    questionResults.length + QUESTION_RESULT_PAGE_SIZE,
+  );
+  const canShowMoreQuestionResults = hiddenQuestionMatches > 0;
   const resultSummary =
     trimmedQuery.length > 0
       ? copy.filteredSummary(filteredTerms.length, glossaryTerms.length, totalQuestionMatches)
@@ -136,7 +157,7 @@ export default function SearchScreen() {
           autoCapitalize="none"
           autoCorrect={false}
           clearButtonMode="while-editing"
-          onChangeText={setQuery}
+          onChangeText={handleChangeSearchText}
           onSubmitEditing={handleSubmitSearch}
           placeholder={copy.searchPlaceholder}
           placeholderTextColor={themeColors.textPlaceholder}
@@ -321,6 +342,23 @@ export default function SearchScreen() {
               </Card>
             )}
           </View>
+
+          {canShowMoreQuestionResults ? (
+            <Button
+              accessibilityLabel={copy.showMoreQuestionsAccessibilityLabel({
+                hiddenCount: hiddenQuestionMatches,
+                nextVisibleCount: nextVisibleQuestionCount,
+                totalCount: totalQuestionMatches,
+                visibleCount: questionResults.length,
+              })}
+              accessibilityRole="button"
+              onPress={handleShowMoreQuestions}
+              themeColors={themeColors}
+              variant="secondary"
+            >
+              {copy.showMoreQuestions}
+            </Button>
+          ) : null}
         </View>
       ) : null}
 
@@ -378,6 +416,18 @@ type SearchRouteCopy = {
   searchPlaceholder: string;
   sectionSubtitle: string;
   sectionTitle: string;
+  showMoreQuestions: string;
+  showMoreQuestionsAccessibilityLabel: ({
+    hiddenCount,
+    nextVisibleCount,
+    totalCount,
+    visibleCount,
+  }: {
+    hiddenCount: number;
+    nextVisibleCount: number;
+    totalCount: number;
+    visibleCount: number;
+  }) => string;
   sourceLabel: string;
   submitSearch: string;
   submitSearchAccessibilityLabel: string;
@@ -445,6 +495,14 @@ const searchRouteCopy: Record<AppLanguage, SearchRouteCopy> = {
     sectionSubtitle:
       'Slå upp centrala ord och öppna kapitlet eller övningsfrågan där begreppet används.',
     sectionTitle: 'Begrepp och frågor',
+    showMoreQuestions: 'Visa fler övningsfrågor',
+    showMoreQuestionsAccessibilityLabel: ({
+      hiddenCount,
+      nextVisibleCount,
+      totalCount,
+      visibleCount,
+    }) =>
+      `Visa fler övningsfrågor. ${visibleCount} av ${totalCount} visas nu, ${hiddenCount} återstår. Nästa steg visar ${nextVisibleCount} av ${totalCount}.`,
     sourceLabel: 'Källa',
     submitSearch: 'Sök',
     submitSearchAccessibilityLabel: 'Sök med den inskrivna texten',
@@ -506,6 +564,14 @@ const searchRouteCopy: Record<AppLanguage, SearchRouteCopy> = {
     sectionSubtitle:
       'Look up central words and open the chapter or practice question where the term appears.',
     sectionTitle: 'Civic terms and questions',
+    showMoreQuestions: 'Show more practice questions',
+    showMoreQuestionsAccessibilityLabel: ({
+      hiddenCount,
+      nextVisibleCount,
+      totalCount,
+      visibleCount,
+    }) =>
+      `Show more practice questions. ${visibleCount} of ${totalCount} are shown now, ${hiddenCount} remain. Next step shows ${nextVisibleCount} of ${totalCount}.`,
     sourceLabel: 'Source',
     submitSearch: 'Search',
     submitSearchAccessibilityLabel: 'Submit the typed search',

@@ -9,6 +9,7 @@ type SearchStateCopy = {
   inputName: string;
   questionLinkName: RegExp;
   questionShownPattern: RegExp;
+  showMoreButtonName: string;
   submitButtonName: string;
 };
 
@@ -20,6 +21,7 @@ const searchStateCopy: Record<'sv' | 'en', SearchStateCopy> = {
     inputName: 'Sök samhällsbegrepp och övningsfrågor',
     questionLinkName: /Öppna övningsfrågan:/,
     questionShownPattern: /8 av \d+ källbaserade övningsfrågor visas/,
+    showMoreButtonName: 'Visa fler övningsfrågor',
     submitButtonName: 'Sök med den inskrivna texten',
   },
   en: {
@@ -29,6 +31,7 @@ const searchStateCopy: Record<'sv' | 'en', SearchStateCopy> = {
     inputName: 'Search civic terms and practice questions',
     questionLinkName: /Open practice question:/,
     questionShownPattern: /8 of \d+ source-backed practice questions shown/,
+    showMoreButtonName: 'Show more practice questions',
     submitButtonName: 'Submit the typed search',
   },
 };
@@ -210,6 +213,44 @@ test('search route hydrates q and query URL parameters before typing', async ({ 
   await kommunInput.fill('demokrati');
   await expect(kommunInput).toHaveValue('demokrati');
   expectSearchUrlWithoutQueryParams(page);
+
+  expect(consoleErrors).toEqual([]);
+});
+
+test('search route shows more capped question results without rewriting q URL', async ({
+  page,
+}) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await markAboutTheTestSeen(page);
+
+  const input = await expectHydratedSearch(page, '/search?q=riksdag', 'riksdag');
+  const questionLinks = page.getByRole('link', { name: searchStateCopy.sv.questionLinkName });
+  await expect(questionLinks).toHaveCount(8);
+  await expect(page.getByText(searchStateCopy.sv.questionShownPattern)).toBeVisible();
+
+  const showMoreButton = page.getByRole('button', {
+    name: searchStateCopy.sv.showMoreButtonName,
+  });
+  await expect(showMoreButton).toBeVisible();
+  expect(
+    await showMoreButton.evaluate((element) => element.getBoundingClientRect().height),
+  ).toBeGreaterThanOrEqual(44);
+
+  await showMoreButton.click();
+  await expect.poll(() => questionLinks.count()).toBeGreaterThan(8);
+  await expect(input).toHaveValue('riksdag');
+  await expectSearchUrlWithQParam(page, 'riksdag');
+
+  await input.fill('demokrati');
+  await expect(questionLinks).toHaveCount(8);
+  await expect(page.getByText(searchStateCopy.sv.questionShownPattern)).toBeVisible();
+  await expectSearchUrlWithQParam(page, 'riksdag');
 
   expect(consoleErrors).toEqual([]);
 });

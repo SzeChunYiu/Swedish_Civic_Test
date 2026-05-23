@@ -19,6 +19,7 @@ const copy = {
     sourceNote: /^Källanteckning:/,
     termName: 'Kommun',
     browseChapters: 'Gå till alla kapitel',
+    showMoreButtonName: 'Visa fler övningsfrågor',
   },
   en: {
     clear: 'Clear the search field',
@@ -33,6 +34,7 @@ const copy = {
     sourceNote: /^Source note:/,
     termName: 'Riksdag',
     browseChapters: 'Go to all chapters',
+    showMoreButtonName: 'Show more practice questions',
   },
 } as const;
 
@@ -132,6 +134,16 @@ for (const language of ['sv', 'en'] as const satisfies readonly Language[]) {
     ).toBeVisible();
     await expect(page.getByRole('link', { name: t.questionLink }).first()).toBeVisible();
     await expect(page.getByRole('button', { name: t.provenanceBadge }).first()).toBeVisible();
+
+    const questionLinks = page.getByRole('link', { name: t.questionLink });
+    await expect(questionLinks).toHaveCount(8);
+    const showMoreButton = page.getByRole('button', { name: t.showMoreButtonName });
+    await expect(showMoreButton).toBeVisible();
+    expect(
+      await showMoreButton.evaluate((element) => element.getBoundingClientRect().height),
+    ).toBeGreaterThanOrEqual(44);
+    await showMoreButton.click();
+    await expect.poll(() => questionLinks.count()).toBeGreaterThan(8);
 
     await page.getByRole('button', { name: t.clear }).click();
     await expect(liveSummary).toHaveText(t.initialSummary);
