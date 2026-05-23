@@ -110,11 +110,13 @@ function validateContentSummary() {
 
 test('TRANSLATE-COMPLETE P0 has explicit SV/EN completeness and naturalness closure evidence', () => {
   const summary = validateContentSummary();
+  const glossaryTerms = loadTs('data/glossary.ts', 'glossaryTerms');
 
   assert.equal(summary.translationCompletenessParityValidated, true);
   assert.equal(summary.translationNaturalnessGuardParityValidated, true);
   assert.equal(summary.questionBilingualTextPairsValidated, summary.publishedQuestions);
   assert.equal(summary.questionOptionBilingualTextPairsValidated, summary.publishedQuestions);
+  assert.equal(summary.glossaryTermsValidated, glossaryTerms.length);
   assert.equal(summary.questionGeneratedTrueFalseNaturalnessValidated, summary.publishedQuestions);
   assert.equal(summary.questionLuciaRoleEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(

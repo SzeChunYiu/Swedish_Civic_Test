@@ -6094,7 +6094,9 @@ function translationCompletenessParityIsValidated() {
   return (
     publishedQuestions > 0 &&
     questionBilingualTextPairsValidated === publishedQuestions &&
-    questionOptionBilingualTextPairsValidated === publishedQuestions
+    questionOptionBilingualTextPairsValidated === publishedQuestions &&
+    glossaryTerms.length > 0 &&
+    glossaryTermsValidated === glossaryTerms.length
   );
 }
 
@@ -11498,6 +11500,7 @@ function validateTranslateCompleteP0Focus() {
   const publishedQuestionRows = Array.isArray(questions)
     ? questions.filter((question) => question.reviewStatus === 'published')
     : [];
+  validateGlossaryTerms();
 
   publishedQuestionRows.forEach((question, index) => {
     const label = question.id || `question[${index}]`;
@@ -11648,7 +11651,9 @@ function validateTranslateCompleteP0Focus() {
   const translationCompletenessParityValidated =
     publishedQuestionCount > 0 &&
     questionBilingualTextPairsValidated === publishedQuestionCount &&
-    questionOptionBilingualTextPairsValidated === publishedQuestionCount;
+    questionOptionBilingualTextPairsValidated === publishedQuestionCount &&
+    glossaryTerms.length > 0 &&
+    glossaryTermsValidated === glossaryTerms.length;
   const translationNaturalnessGuardParityValidated =
     translateCompleteP0NaturalnessIsValidated(publishedQuestionCount);
 
@@ -11664,6 +11669,7 @@ function validateTranslateCompleteP0Focus() {
     publishedQuestions: publishedQuestionCount,
     questionBilingualTextPairsValidated,
     questionOptionBilingualTextPairsValidated,
+    glossaryTermsValidated,
     translationCompletenessParityValidated,
     questionGeneratedTrueFalseNaturalnessValidated,
     questionLuciaRoleEnglishNaturalnessValidated,
