@@ -731,13 +731,22 @@ test('Static Settings text size falls back for corrupt stored and clicked values
 test('Static document table-of-contents hashes preserve legal routes and focus headings', () => {
   const html = read('site/index.html');
   assert.match(html, /href="#\/privacy#p3" data-i18n="privacy\.s3\.t"/);
-  assert.match(html, /href="#\/support#s3" data-i18n="support\.s3\.t"/);
+  for (const sectionId of ['s1', 's2', 's3', 's4', 's5']) {
+    assert.match(
+      html,
+      new RegExp(`href="#/support#${sectionId}" data-i18n="support\\.${sectionId}\\.t"`),
+    );
+  }
   assert.match(html, /href="#\/terms#t3" data-i18n="terms\.s3\.t"/);
   assert.match(html, /href="#\/sources#src2" data-i18n="sources\.s2\.t"/);
 
   for (const [hash, headingId] of [
     ['#/privacy#p3', 'p3'],
+    ['#/support#s1', 's1'],
+    ['#/support#s2', 's2'],
     ['#/support#s3', 's3'],
+    ['#/support#s4', 's4'],
+    ['#/support#s5', 's5'],
     ['#/terms#t3', 't3'],
     ['#/sources#src2', 'src2'],
   ]) {

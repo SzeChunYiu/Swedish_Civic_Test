@@ -11,9 +11,33 @@ const docNavCases = [
   },
   {
     route: '/support',
+    href: '#/support#s1',
+    heading: 'What we can help with',
+    headingId: 's1',
+  },
+  {
+    route: '/support',
+    href: '#/support#s2',
+    heading: 'What to include',
+    headingId: 's2',
+  },
+  {
+    route: '/support',
     href: '#/support#s3',
     heading: "Please don't include sensitive info",
     headingId: 's3',
+  },
+  {
+    route: '/support',
+    href: '#/support#s4',
+    heading: "What we can't do",
+    headingId: 's4',
+  },
+  {
+    route: '/support',
+    href: '#/support#s5',
+    heading: 'Contact',
+    headingId: 's5',
   },
   {
     route: '/terms',
@@ -32,7 +56,7 @@ const docNavCases = [
 let staticSite: StaticSite;
 
 test.beforeAll(async () => {
-  staticSite = await startStaticSiteServer();
+  staticSite = await startStaticSiteServer({ stripGoogleFonts: true });
 });
 
 test.afterAll(async () => {
@@ -67,5 +91,9 @@ test('Privacy, Support, Terms, and Sources table of contents keep their hash rou
     await expect(page.locator(`#${item.headingId}`)).toBeFocused();
   }
 
-  expect(pageErrors).toEqual([]);
+  expect(
+    pageErrors.filter(
+      (message) => !/Failed to load resource: net::ERR_BLOCKED_BY_CLIENT/.test(message),
+    ),
+  ).toEqual([]);
 });
