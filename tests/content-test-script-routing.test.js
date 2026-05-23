@@ -115,6 +115,30 @@ function assertFocusedValidationSummary(flag, expectedSummaryKeys) {
   return summary;
 }
 
+function countQuestionSourceCitationAccessibilityRules(validatorSource) {
+  const functionStart = validatorSource.indexOf(
+    'function validateQuestionSourceCitationAccessibilityParity()',
+  );
+  assert.notEqual(functionStart, -1, 'QuestionSourceCitation accessibility validator should exist');
+
+  const expectedRulesStart = validatorSource.indexOf('const expectedRules = [', functionStart);
+  assert.notEqual(
+    expectedRulesStart,
+    -1,
+    'QuestionSourceCitation accessibility validator should own an expectedRules list',
+  );
+
+  const expectedRulesEnd = validatorSource.indexOf('];', expectedRulesStart);
+  assert.notEqual(
+    expectedRulesEnd,
+    -1,
+    'QuestionSourceCitation accessibility expectedRules list should be closed',
+  );
+
+  const expectedRulesBlock = validatorSource.slice(expectedRulesStart, expectedRulesEnd);
+  return expectedRulesBlock.match(/(?:^|[,{])\s*label:/gm)?.length ?? 0;
+}
+
 const staticEbookProvenanceUmbrellaConstituents = [
   'staticEbookOutcomeClaimParityValidated',
   'staticEbookPracticalTestCurrentnessValidated',
@@ -690,7 +714,9 @@ test('QuestionSourceCitation accessibility parity uses focused content validatio
     'questionSourceCitationAccessibilityParityValidated',
   ]);
 
-  assert.equal(summary.questionSourceCitationAccessibilityRulesValidated, 15);
+  const expectedRuleCount = countQuestionSourceCitationAccessibilityRules(validatorSource);
+  assert.equal(expectedRuleCount, 23);
+  assert.equal(summary.questionSourceCitationAccessibilityRulesValidated, expectedRuleCount);
   assert.equal(summary.questionSourceCitationAccessibilityParityValidated, true);
 });
 
