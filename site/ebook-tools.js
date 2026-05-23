@@ -238,6 +238,7 @@
   /* ---------- floating popover on selection ---------- */
 
   let popEl = null;
+  let selectionPopoverTimer = 0;
   function ensurePop() {
     if (popEl) return popEl;
     popEl = document.createElement('div');
@@ -297,6 +298,15 @@
     );
     p.style.top = top + 'px';
     p.style.left = left + 'px';
+  }
+
+  function schedulePopForSelection() {
+    if (!isOnEbook()) return;
+    if (selectionPopoverTimer) clearTimeout(selectionPopoverTimer);
+    selectionPopoverTimer = setTimeout(() => {
+      selectionPopoverTimer = 0;
+      showPopForSelection();
+    }, 30);
   }
 
   /* ---------- create / edit ---------- */
@@ -463,13 +473,20 @@
   document.addEventListener('mouseup', (e) => {
     if (!isOnEbook()) return;
     if (e.target.closest('.eb-pop, .eb-note')) return;
-    setTimeout(showPopForSelection, 10);
+    schedulePopForSelection();
   });
   document.addEventListener('selectionchange', () => {
     const sel = window.getSelection();
     if (!sel || sel.isCollapsed) {
       hidePop();
+      return;
     }
+    schedulePopForSelection();
+  });
+  document.addEventListener('keyup', (e) => {
+    if (!isOnEbook()) return;
+    if (e.target?.closest?.('.eb-pop, .eb-note')) return;
+    schedulePopForSelection();
   });
 
   document.addEventListener('click', (e) => {
