@@ -296,6 +296,41 @@ test('Playwright browser availability preflight runs before browser specs', () =
   );
 });
 
+test('mock exam realistic mode e2e covers focus-break browser behavior', () => {
+  const source = readRelative('exam-submit-review.spec.ts');
+
+  assert.match(
+    source,
+    /mock exam realistic mode counts focus breaks after a tab switch/,
+    'exam submit/review spec should include a dedicated Realistic mode focus-break scenario',
+  );
+  assert.match(
+    source,
+    /getByRole\('switch', \{ name: 'Realistic exam mode' \}\)/,
+    'Realistic mode coverage should exercise the learner-facing switch',
+  );
+  assert.match(
+    source,
+    /setDocumentHiddenForTest\(page, true\)[\s\S]*setDocumentHiddenForTest\(page, false\)/,
+    'Realistic mode coverage should simulate a tab/background transition',
+  );
+  assert.match(
+    source,
+    /Paused while the app is in the background[\s\S]*toHaveCount\(0\)/,
+    'Realistic mode coverage should prove the standard pause notice does not appear',
+  );
+  assert.match(
+    source,
+    /1 tab switch during this mock exam\.[\s\S]*Focus breaks[\s\S]*1 tab switch/s,
+    'Realistic mode coverage should assert both the live focus-break status and result metric',
+  );
+  assert.doesNotMatch(
+    source,
+    /mock exam realistic mode counts focus breaks after a tab switch[\s\S]*test\.skip/s,
+    'Realistic mode coverage must not silently skip inside the spec',
+  );
+});
+
 test('about Swedish copy browser spec covers route, first-run guide, and English preservation', () => {
   const source = readRelative('about-test-sv-copy.spec.ts');
 

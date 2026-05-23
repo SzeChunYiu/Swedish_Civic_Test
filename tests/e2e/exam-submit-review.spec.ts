@@ -271,6 +271,67 @@ test('mock exam pauses timer while the browser document is hidden', async ({ pag
   expect(consoleErrors).toEqual([]);
 });
 
+test('mock exam realistic mode counts focus breaks after a tab switch', async ({ page }) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await openExamWithLanguage(page, 'en');
+
+  const realisticMode = page.getByRole('switch', { name: 'Realistic exam mode' });
+  await expect(realisticMode).toBeVisible();
+  await expect(realisticMode).toHaveAttribute('aria-checked', 'false');
+  await expect(page.getByText('Standard mode', { exact: true })).toBeVisible();
+
+  await realisticMode.click();
+  await expect(realisticMode).toHaveAttribute('aria-checked', 'true');
+  await expect(page.getByText('Realistic mode', { exact: true })).toBeVisible();
+
+  const start = page.getByLabel('Start mock exam');
+  await expect(start).toBeEnabled();
+  await start.click();
+
+  await expect(page.getByText(`0/${totalQuestions} answered`)).toBeVisible();
+  const timerLine = page.getByText(/^Time left/);
+  await expect(timerLine).toBeVisible();
+  const initialTimerText = await timerLine.textContent();
+
+  await setDocumentHiddenForTest(page, true);
+  await expect(
+    page.getByText(
+      'Paused while the app is in the background. The timer and question timing resume when you return.',
+    ),
+  ).toHaveCount(0);
+  await page.waitForTimeout(1250);
+  await expect(timerLine).not.toHaveText(initialTimerText ?? '');
+
+  await setDocumentHiddenForTest(page, false);
+  await expect(page.getByText('1 tab switch during this mock exam.')).toBeVisible();
+
+  for (let questionNumber = 1; questionNumber <= totalQuestions; questionNumber += 1) {
+    await page
+      .getByLabel(new RegExp(`^Select answer .+ for question ${questionNumber}$`))
+      .first()
+      .click();
+  }
+
+  await expect(page.getByText(`${totalQuestions}/${totalQuestions} answered`)).toBeVisible();
+  const submit = page.getByRole('button', { name: 'Submit mock exam' });
+  await expect(submit).toBeEnabled();
+  await submit.click();
+
+  await expect(page.getByText('Mock exam result', { exact: true })).toBeVisible();
+  await expect(page.getByText('Focus breaks', { exact: true })).toBeVisible();
+  await expect(page.getByText('1 tab switch', { exact: true })).toBeVisible();
+  await expect(page.getByText('Question review')).toBeVisible();
+  await expectNoPassVerdictCopy(page);
+
+  expect(consoleErrors).toEqual([]);
+});
+
 test('mock exam provenance review follows English support mode', async ({ page }) => {
   const consoleErrors: string[] = [];
 
