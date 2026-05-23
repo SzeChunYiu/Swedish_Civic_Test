@@ -1,5 +1,5 @@
 import { Link } from 'expo-router';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { StyleSheet, Text } from 'react-native';
 
 import { ActivityHeatmap } from '../components/dashboard/ActivityHeatmap';
@@ -326,6 +326,7 @@ export default function DashboardScreen() {
   const mockExamSessions = useProgressStore((state) => state.mockExamSessions);
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const streakFreezeState = useProgressStore((state) => state.streakFreezeState);
+  const setStreakFreezeState = useProgressStore((state) => state.setStreakFreezeState);
   const totalXp = useProgressStore((state) => state.totalXp);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const language = useSettingsStore((state) => state.language);
@@ -380,6 +381,11 @@ export default function DashboardScreen() {
       }),
     [answerDates, streakFreezeState],
   );
+
+  useEffect(() => {
+    setStreakFreezeState(streakWithFreeze.freezeState);
+  }, [setStreakFreezeState, streakWithFreeze.freezeState]);
+
   const summaryAccessibilityLabel = copy.summaryAccessibilityLabel(
     summary.questionsAnsweredThisWeek,
     summary.chaptersWithAnyAnswer,

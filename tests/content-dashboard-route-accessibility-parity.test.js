@@ -108,6 +108,16 @@ function assertDashboardAccessibilitySeparation(sources) {
   );
   assert.match(
     sources.dashboard,
+    /const setStreakFreezeState = useProgressStore\(\(state\) => state\.setStreakFreezeState\);/,
+    'Dashboard must read the streak-freeze persistence setter',
+  );
+  assert.match(
+    sources.dashboard,
+    /useEffect\(\(\) => \{\s*setStreakFreezeState\(streakWithFreeze\.freezeState\);\s*\}, \[setStreakFreezeState, streakWithFreeze\.freezeState\]\);/,
+    'Dashboard must persist the freeze state returned by calculateStreakWithFreeze',
+  );
+  assert.match(
+    sources.dashboard,
     /href="\/study-plan"/,
     'Dashboard study-plan card must link to the detail route',
   );
