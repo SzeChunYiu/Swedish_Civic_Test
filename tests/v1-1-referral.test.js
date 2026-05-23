@@ -164,6 +164,54 @@ test('redeemReferral fails closed for malformed codes and unknown RPC statuses',
   assert.equal(result.successfulReferrals, null);
 });
 
+test('pending referral storage accepts only normalized valid invite codes', async () => {
+  const { PENDING_REFERRAL_CODE_STORAGE_KEY, getPendingReferralCode, storePendingReferralCode } =
+    loadTs('lib/referral/pendingReferralStore.ts');
+  const writes = [];
+  const values = new Map();
+  const storage = {
+    async getItemAsync(key) {
+      return values.get(key) ?? null;
+    },
+    async setItemAsync(key, value) {
+      writes.push({ key, value });
+      values.set(key, value);
+    },
+  };
+
+  assert.equal(await storePendingReferralCode('', storage), null);
+  assert.equal(await storePendingReferralCode('abc', storage), null);
+  assert.equal(await storePendingReferralCode('__proto__', storage), null);
+  assert.equal(await storePendingReferralCode('!!!!', storage), null);
+  assert.deepEqual(writes, []);
+
+  assert.equal(await storePendingReferralCode(' abcd-12ef ', storage), 'ABCD12EF');
+  assert.deepEqual(writes, [
+    {
+      key: PENDING_REFERRAL_CODE_STORAGE_KEY,
+      value: 'ABCD12EF',
+    },
+  ]);
+  assert.equal(await getPendingReferralCode(storage), 'ABCD12EF');
+
+  values.set(PENDING_REFERRAL_CODE_STORAGE_KEY, '__proto__');
+  assert.equal(await getPendingReferralCode(storage), null);
+});
+
+test('referral deep-link route stores valid invites but withholds sign-in continuation for invalid links', () => {
+  const route = read('app/r/[code].tsx');
+
+  assert.match(route, /useLocalSearchParams/);
+  assert.match(route, /storePendingReferralCode\(normalizedCode\)/);
+  assert.match(route, /isReferralCode\(normalizedCode\)/);
+  assert.match(route, /href="\/\(auth\)\/sign-in"/);
+  assert.match(route, /href="\/home"/);
+  assert.match(route, /isValidCode \? copy\.title : copy\.invalidTitle/);
+  assert.match(route, /isValidCode \? \(/);
+  assert.match(route, /No invite code was saved/);
+  assert.match(route, /Ingen inbjudningskod sparades/);
+});
+
 test('fetchReferralGrantSnapshot reads only the signed-in profile grant expiry', async () => {
   const { fetchReferralGrantSnapshot } = loadTs('lib/referral/redeemReferral.ts');
   const calls = [];

@@ -89,3 +89,34 @@ test('account route never requires sign-in for anonymous learners', async ({ pag
 
   expect(errors.get().filter((message) => !message.includes('[auth]'))).toEqual([]);
 });
+
+test('invalid referral deep links do not persist pending codes or offer sign-in continuation', async ({
+  page,
+}) => {
+  const errors = collectConsoleAndPageErrors(page);
+  const invalidPaths = ['/r/', '/r/abc', '/r/!!!!', '/r/__proto__'];
+
+  await seedFreshSettingsLanguageAndAboutSeen(page, 'en');
+
+  for (const invalidPath of invalidPaths) {
+    await page.goto(invalidPath, { waitUntil: 'networkidle' });
+    await dismissBlockingModals(page);
+
+    await expect(page.getByRole('heading', { name: 'Invite link unavailable' })).toBeVisible();
+    await expect(page.getByText('No invite code was saved')).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Continue to sign-in' })).toHaveCount(0);
+    await expect(
+      page.getByRole('link', { name: 'Continue studying without an account' }),
+    ).toBeVisible();
+    await expect
+      .poll(() => page.evaluate(() => localStorage.getItem('referral.pendingCode.v1')))
+      .toBeNull();
+    await expectNoHorizontalOverflow(page);
+  }
+
+  await page.getByRole('link', { name: 'Continue studying without an account' }).click();
+  await expect(page).toHaveURL(/\/home$/);
+  await expect(page.getByRole('heading', { name: /Prepare calmly|Studera lugnt/i })).toBeVisible();
+
+  expect(errors.get().filter((message) => !message.includes('[auth]'))).toEqual([]);
+});
