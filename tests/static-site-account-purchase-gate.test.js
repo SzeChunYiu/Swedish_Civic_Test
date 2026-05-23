@@ -156,6 +156,112 @@ function createStaticFxHarness() {
   return { elementsById, sandbox, timeouts };
 }
 
+function createPurchaseHarness({ accountId = '', signedIn = false } = {}) {
+  const listeners = new Map();
+  const storageValues = new Map([
+    ['smt_lang', 'en'],
+    ['smt_signed_in', signedIn ? '1' : ''],
+    ['smt_account_id', accountId],
+    ['smt_account_email', accountId ? `${accountId}@example.test` : ''],
+  ]);
+  const status = { id: 'purchase-status', textContent: '' };
+  const purchaseButton = {
+    dataset: { purchaseKind: 'remove_ads' },
+    disabled: false,
+    textContent: '',
+    closest(selector) {
+      return selector === '[data-purchase-kind]' ? purchaseButton : null;
+    },
+    removeAttribute(name) {
+      delete this[name];
+    },
+  };
+  const fetchCalls = [];
+  const supabaseClientCalls = [];
+  const openedSignin = [];
+  const toasts = [];
+  const location = {
+    _href: 'https://almostswedish.se/#/',
+    get href() {
+      return this._href;
+    },
+    set href(value) {
+      this._href = String(value);
+    },
+  };
+  const localStorage = {
+    getItem(key) {
+      return storageValues.has(key) ? storageValues.get(key) : null;
+    },
+    setItem(key, value) {
+      storageValues.set(key, String(value));
+    },
+  };
+  const sandbox = {
+    console,
+    document: {
+      addEventListener(type, listener) {
+        listeners.set(type, listener);
+      },
+      getElementById(id) {
+        return id === 'purchase-status' ? status : null;
+      },
+      querySelectorAll(selector) {
+        return selector === '[data-purchase-kind]' ? [purchaseButton] : [];
+      },
+    },
+    fetch(...args) {
+      fetchCalls.push(args);
+      throw new Error('fetch should not be called');
+    },
+    localStorage,
+    window: {
+      SMT_SUPABASE_ANON_KEY: 'anon-key',
+      SMT_SUPABASE_URL: 'https://supabase.example.test',
+      addEventListener(type, listener) {
+        listeners.set(type, listener);
+      },
+      i18n: {
+        en: {
+          'purchase.status.needSignIn': 'Sign in to buy on the web.',
+          'purchase.status.realSignin': 'Use a real sign-in before buying on the web.',
+          'purchase.removeAds.locked': 'Sign in to remove ads',
+          'purchase.premium.locked': 'Sign in for Premium',
+        },
+      },
+      location,
+      localStorage,
+      smtFx: {
+        toast(message) {
+          toasts.push(message);
+        },
+      },
+      smtGetSupabaseClient() {
+        supabaseClientCalls.push('called');
+        throw new Error('Supabase client should not be requested');
+      },
+      smtOpenSignin() {
+        openedSignin.push('called');
+      },
+    },
+  };
+  sandbox.globalThis = sandbox;
+  sandbox.window.window = sandbox.window;
+
+  vm.runInNewContext(read('site/purchase.js'), sandbox, { filename: 'site/purchase.js' });
+
+  return {
+    fetchCalls,
+    listeners,
+    location,
+    openedSignin,
+    purchaseButton,
+    status,
+    supabaseClientCalls,
+    toasts,
+  };
+}
+
 test('static toast helper renders public messages as text by default', () => {
   const fxSource = read('site/fx.js');
   const { elementsById, sandbox, timeouts } = createStaticFxHarness();
@@ -203,6 +309,29 @@ test('purchase handoff binds the selected plan to the signed-in Supabase account
   assert.match(purchase, /body:\s*JSON\.stringify\(\{\s*plan\s*\}\)/);
   assert.match(purchase, /Stripe Checkout Session/);
   assert.match(purchase, /client\.from\('entitlements'\)\.select\('plan'\)\.eq\('active', true\)/);
+});
+
+test('local-demo account cannot start static purchase checkout at runtime', async () => {
+  const harness = createPurchaseHarness({ accountId: 'local-demo', signedIn: true });
+  const click = harness.listeners.get('click');
+
+  assert.equal(typeof click, 'function');
+  await harness.listeners.get('DOMContentLoaded')?.();
+  await click({
+    preventDefault() {
+      throw new Error('local-demo purchase should not need default prevention');
+    },
+    target: harness.purchaseButton,
+  });
+
+  assert.equal(harness.status.textContent, 'Use a real sign-in before buying on the web.');
+  assert.deepEqual(harness.toasts, ['Use a real sign-in before buying on the web.']);
+  assert.equal(harness.purchaseButton.disabled, false);
+  assert.equal(harness.purchaseButton.dataset.purchaseOwned, 'false');
+  assert.deepEqual(harness.supabaseClientCalls, []);
+  assert.deepEqual(harness.fetchCalls, []);
+  assert.deepEqual(harness.openedSignin, []);
+  assert.equal(harness.location.href, 'https://almostswedish.se/#/');
 });
 
 test('sign-in session persistence exposes stable account identity for purchases', () => {
