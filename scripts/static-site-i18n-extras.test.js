@@ -122,6 +122,19 @@ const forbiddenArabicFragments = [
 ];
 
 const extraLocales = ['zh-Hans', 'zh-Hant', 'ar', 'ckb', 'fa', 'pl', 'so', 'ti', 'tr', 'uk'];
+const qcardBlockedEnglishCommonNouns = [
+  'berries',
+  'berry',
+  'herring',
+  'strawberries',
+  'strawberry',
+  'schnapps',
+  'easter',
+  'midsummer',
+  'coffee',
+  'answer',
+  'question',
+];
 const chapterOneFolkhemmetSnippets = {
   'zh-Hans': /人民之家/,
   'zh-Hant': /人民之家/,
@@ -541,10 +554,10 @@ test('Chinese static-site labels use script-native sentence punctuation', () => 
   assert.ok(checkedValues > 0, 'Chinese punctuation guard must inspect learner-facing text');
 });
 
-test('Chinese Home qcard strings reject stray English common nouns', () => {
+test('extra-locale Home qcard strings reject stray English common nouns', () => {
   const extra = loadExtraI18n();
 
-  for (const locale of chineseScriptLocales) {
+  for (const locale of extraLocales) {
     const dictionary = extra?.[locale];
     assert.equal(typeof dictionary, 'object', `${locale} dictionary must exist`);
 
@@ -553,16 +566,28 @@ test('Chinese Home qcard strings reject stray English common nouns', () => {
 
       assert.equal(typeof value, 'string', `${locale}.${key} must be a string`);
       const learnerText = value.replace(chineseQcardAllowedLatinPattern, ' ');
-      const latinTokens = learnerText.match(/\b[A-Za-z][A-Za-z-]*\b/g) ?? [];
-      const unexpectedTokens = latinTokens.filter(
-        (token) => !chineseQcardAllowedLatinTokens.has(token),
+      const unexpectedTokens = qcardBlockedEnglishCommonNouns.filter((noun) =>
+        new RegExp(`\\b${noun}\\b`, 'i').test(learnerText),
       );
 
       assert.deepEqual(
         unexpectedTokens,
         [],
-        `${locale}.${key} contains non-allowlisted Latin tokens`,
+        `${locale}.${key} contains blocked English common noun(s)`,
       );
+
+      if (chineseScriptLocales.includes(locale)) {
+        const latinTokens = learnerText.match(/\b[A-Za-z][A-Za-z-]*\b/g) ?? [];
+        const unexpectedLatinTokens = latinTokens.filter(
+          (token) => !chineseQcardAllowedLatinTokens.has(token),
+        );
+
+        assert.deepEqual(
+          unexpectedLatinTokens,
+          [],
+          `${locale}.${key} contains non-allowlisted Latin tokens`,
+        );
+      }
     }
   }
 

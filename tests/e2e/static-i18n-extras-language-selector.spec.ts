@@ -40,6 +40,19 @@ const extraLocales = [
 ] as const;
 
 type ExtraLocale = (typeof extraLocales)[number];
+const qcardBlockedEnglishCommonNouns = [
+  'berries',
+  'berry',
+  'herring',
+  'strawberries',
+  'strawberry',
+  'schnapps',
+  'easter',
+  'midsummer',
+  'coffee',
+  'answer',
+  'question',
+] as const;
 const purchaseSurfaceLocales = [
   'ckb',
   'fa',
@@ -1041,6 +1054,11 @@ test('static Home demo question keeps q039 source and UHR provenance in extra la
     await expectDictionaryText(page, locale, 'qcard.src', '#qcard [data-i18n="qcard.src"]');
 
     const questionText = await page.locator('#qcard [data-i18n="qcard.q"]').innerText();
+    for (const blockedNoun of qcardBlockedEnglishCommonNouns) {
+      await expect(page.locator('#qcard')).not.toContainText(
+        new RegExp(`\\b${blockedNoun}\\b`, 'i'),
+      );
+    }
     if (locale === 'zh-Hans') {
       expect(questionText).toContain('采摘莓果');
       expect(questionText).not.toMatch(/\bberries\b/i);
