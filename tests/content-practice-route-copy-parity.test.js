@@ -38,6 +38,14 @@ function parseFocusedNativeMockExamCopySummary() {
   return JSON.parse(match[0]);
 }
 
+function extractPracticeRouteLaunchNormalizerSource(practiceSource) {
+  const match = practiceSource.match(
+    /function normalizePracticeRouteLaunchMode\([\s\S]*?\n\}/,
+  );
+  assert.ok(match, 'Practice route must define normalizePracticeRouteLaunchMode');
+  return match[0];
+}
+
 function assertPracticeRouteLaunchParity(practiceSource, homeSource) {
   const requiredPracticeRules = [
     [/import \{ useEffect, useMemo, useRef, useState \} from 'react';/, 'route launch ref import'],
@@ -86,6 +94,42 @@ function assertPracticeRouteLaunchParity(practiceSource, homeSource) {
     'Home daily challenge CTA should deep-link into the challenge practice mode',
   );
 }
+
+test('practice route launch normalizer accepts quick and challenge but rejects invalid mode aliases', () => {
+  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
+  const normalizerSource = extractPracticeRouteLaunchNormalizerSource(practiceSource);
+
+  assert.match(
+    practiceSource,
+    /type PracticeRouteLaunchMode = 'challenge' \| 'quick';/,
+    'Practice route launch mode type should only include supported route modes',
+  );
+  assert.match(
+    normalizerSource,
+    /value: string \| string\[\] \| undefined/,
+    'Practice route normalizer should cover Expo string, array, and empty route values',
+  );
+  assert.match(
+    normalizerSource,
+    /const rawValue = Array\.isArray\(value\) \? value\[0\] : value;/,
+    'Practice route normalizer should use the first array query param value',
+  );
+  assert.match(
+    normalizerSource,
+    /return rawValue === 'challenge' \|\| rawValue === 'quick' \? rawValue : null;/,
+    'Practice route normalizer should only accept challenge and quick',
+  );
+  assert.doesNotMatch(
+    normalizerSource,
+    /\breview\b/,
+    'Practice route normalizer must reject stale review aliases',
+  );
+  assert.doesNotMatch(
+    normalizerSource,
+    /includes\(|\.some\(|value\[(?!0\])/,
+    'Practice route normalizer must not accept broader mode lists or stale array fallbacks',
+  );
+});
 
 test('native Swedish övningsprov copy guard preserves English mock exam copy', () => {
   const summary = parseFocusedNativeMockExamCopySummary();
@@ -211,7 +255,7 @@ test('practice route source wires selected companion copy to answer feedback sta
   );
   assert.match(companionCard, /settingsAccessibilityLabel: 'Change study companion in Settings'/);
   assert.match(companionCard, /settingsAccessibilityLabel: 'Byt studiekompis i Inställningar'/);
-  assert.match(companionCard, /href="\/settings"/);
+  assert.match(companionCard, /href="\/settings\?focus=companion"/);
   assert.match(companionCard, /<MascotArtwork[\s\S]*mascotId=\{mascot\.id\}/);
   assert.doesNotMatch(companionCard, /label\.slice\(0,\s*1\)\.toUpperCase\(\)/);
   assert.match(mascotArtwork, /SvgUri/);
