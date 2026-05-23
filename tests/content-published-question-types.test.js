@@ -120,20 +120,35 @@ function contentQuestionBankCsvRowsById(ids) {
 
 function q167StatedOnVotingCardFixture(sourceQuestions) {
   const singleChoiceId = generatedQuestionId(sourceQuestions, 'q167', 'singleChoice');
+  const trueStatementId = generatedQuestionId(sourceQuestions, 'q167', 'trueStatement');
+  const falseStatementId = generatedQuestionId(sourceQuestions, 'q167', 'falseStatement');
   const judgementId = generatedQuestionId(sourceQuestions, 'q167', 'judgement');
 
   return {
-    ids: ['q167', singleChoiceId, judgementId],
+    ids: ['q167', singleChoiceId, trueStatementId, falseStatementId, judgementId],
     generatedIds: [singleChoiceId, judgementId],
+    trueFalseIds: [trueStatementId, falseStatementId],
     expectedPrompts: {
       [singleChoiceId]: [
         'Vad visar röstkortet som skickas hem före valet?',
         'What does the voting card sent home before an election show?',
       ],
+      [trueStatementId]: [
+        'Röstkortet visar vilken vallokal väljaren ska gå till.',
+        'The voting card shows which polling station the voter should go to.',
+      ],
+      [falseStatementId]: [
+        'Röstkortet visar vilket parti väljaren måste rösta på.',
+        'The voting card shows which party the voter must vote for.',
+      ],
       [judgementId]: [
         'Vilken uppgift stämmer om vad röstkortet som skickas hem före valet visar?',
         'Which fact is correct about what the voting card sent home before an election shows?',
       ],
+    },
+    expectedAnswers: {
+      [trueStatementId]: 0,
+      [falseStatementId]: 1,
     },
     stalePattern: /\b(?:röstkortet[^?!.]*innehåll|voting card[^?!.]*contents)\b/i,
   };
@@ -181,6 +196,46 @@ function assertQ167StatedOnVotingCardExports({
       assert.equal(csvColumns?.[12], '14');
       assert.equal(csvColumns?.[27], 'derived');
     }
+    assert.doesNotMatch(
+      `${generated?.q.sv}\n${generated?.q.en}\n${actual?.q.sv}\n${actual?.q.en}\n${csvColumns?.[3]}\n${csvColumns?.[4]}`,
+      stalePattern,
+      `${id} should not use contents/innehåll wording`,
+    );
+  }
+}
+
+function assertQ167StatedOnVotingCardTrueFalseExports({
+  generatedSiteBank,
+  actualSiteBank,
+  sourceQuestions,
+  csvRows,
+}) {
+  const { expectedPrompts, expectedAnswers, trueFalseIds, stalePattern } =
+    q167StatedOnVotingCardFixture(sourceQuestions);
+  const byId = new Map(generatedSiteBank.map((question) => [question.id, question]));
+  const actualById = new Map(Array.from(actualSiteBank).map((question) => [question.id, question]));
+
+  for (const id of trueFalseIds) {
+    const [expectedSv, expectedEn] = expectedPrompts[id];
+    const generated = byId.get(id);
+    const actual = actualById.get(id);
+    const csvColumns = csvRows.get(id);
+    assert.ok(generated, `${id} should be generated in the canonical bank`);
+    assert.ok(actual, `${id} should be exported to the static bank`);
+    assert.ok(csvColumns, `${id} should be exported to CSV`);
+    assert.equal(generated?.q.sv, expectedSv);
+    assert.equal(generated?.q.en, expectedEn);
+    assert.equal(actual?.q.sv, expectedSv);
+    assert.equal(actual?.q.en, expectedEn);
+    assert.equal(csvColumns?.[3], expectedSv);
+    assert.equal(csvColumns?.[4], expectedEn);
+    assert.equal(generated?.answer, expectedAnswers[id]);
+    assert.equal(actual?.answer, expectedAnswers[id]);
+    assert.equal(csvColumns?.[7], expectedAnswers[id] === 0 ? 'true' : 'false');
+    assert.equal(csvColumns?.[10], 'Politiska val och partier');
+    assert.equal(csvColumns?.[11], 'Så här går det till att rösta');
+    assert.equal(csvColumns?.[12], '14');
+    assert.equal(csvColumns?.[27], 'derived');
     assert.doesNotMatch(
       `${generated?.q.sv}\n${generated?.q.en}\n${actual?.q.sv}\n${actual?.q.en}\n${csvColumns?.[3]}\n${csvColumns?.[4]}`,
       stalePattern,
@@ -5215,6 +5270,23 @@ test('q167 stated-on export fixture rejects CSV q844/q847 contents mutations', (
   }
 });
 
+test('q167 stated-on true/false variants export natural propositions in canonical, CSV, and static banks', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const { ids } = q167StatedOnVotingCardFixture(sourceQuestions);
+  const csvRows = contentQuestionBankCsvRowsById(ids);
+
+  assertQ167StatedOnVotingCardTrueFalseExports({
+    generatedSiteBank,
+    actualSiteBank,
+    sourceQuestions,
+    csvRows,
+  });
+});
+
 test('national-minorities generated judgement exports natural English in canonical and static banks', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const actualSiteBank = actualStaticQuestions();
@@ -6702,4 +6774,123 @@ const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, fil
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents).replace(
+      "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(\\n  sourceQuestions,\\n  sourceQuestions.length + 1,\\n).map(applyQuestionLocalizationPilot);",
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(",
+        "  sourceQuestions,",
+        "  sourceQuestions.length + 1,",
+        ").map(applyQuestionLocalizationPilot).map((question) =>",
+        "  question.id === generatedFixtureId('q001', 0)",
+        "    ? {",
+        "        ...question,",
+        "        questionSv: 'Vad stämmer om Sveriges läge?',",
+        "        questionEn: 'Which meaning is correct for Sweden is in the Nordic region?',",
+        "      }",
+        "    : question.id === generatedFixtureId('q001', 3)",
+        "      ? {",
+        "          ...question,",
+        "          questionSv: 'Vilken uppgift stämmer när det gäller var Sverige ligger?',",
+        "          questionEn: 'Which fact is correct regarding where Sweden is located?',",
+        "        }",
+        "    : question,",
+        ").map(applyQuestionLocalizationPilot);",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /generated variant\[0\] uses generated single-choice meta-stem wording|generated variant\[0\] question(?:Sv|En) does not match generated prompt template/,
+  );
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /generated variant\[3\] uses generated single-choice meta-stem wording|generated variant\[3\] question(?:Sv|En) does not match generated prompt template/,
+  );
+});
+
+test('published question schema rejects generated single-choice stated-on contents prompts', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents).replace(
+      "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(\\n  sourceQuestions,\\n  sourceQuestions.length + 1,\\n).map(applyQuestionLocalizationPilot);",
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(",
+        "  sourceQuestions,",
+        "  sourceQuestions.length + 1,",
+        ").map(applyQuestionLocalizationPilot).map((question) =>",
+        "  question.id === generatedFixtureId('q001', 0)",
+        "    ? {",
+        "        ...question,",
+        "        questionSv: 'Vad stämmer om röstkortets innehåll?',",
+        "        questionEn: \\"What is correct about the voting card's contents?\\",",
+        "      }",
+        "    : question,",
+        ").map(applyQuestionLocalizationPilot);",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /generated variant\[0\] uses generated single-choice meta-stem wording/,
+  );
+});
+
+test('published question metadata schema rejects invalid difficulty values', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents).replace(
+      "    difficulty: 'easy',",
+      "    difficulty: 'expert',",
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(`${result.stdout}\n${result.stderr}`, /q001 has invalid difficulty expert/);
+});
