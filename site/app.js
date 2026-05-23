@@ -22,6 +22,16 @@ function smtStaticRoutePath() {
   return pathRaw.startsWith('/') ? pathRaw : '/';
 }
 
+function smtDecodeStaticInnerAnchor(value) {
+  if (!value) return '';
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return '';
+  }
+}
+window.smtDecodeStaticInnerAnchor = smtDecodeStaticInnerAnchor;
+
 function smtQuestionBankIsReady() {
   return Array.isArray(window.SMT_QUESTIONS) && Array.isArray(window.SMT_CHAPTERS_META);
 }
@@ -298,7 +308,7 @@ function route() {
   const routeEnd = routeEndIndexes.length ? Math.min(...routeEndIndexes) : hash.length;
   const pathRaw = hash.slice(0, routeEnd) || '/';
   const innerAnchorMatch = hash.slice(routeEnd).match(/^#([^?]+)/);
-  const innerAnchor = innerAnchorMatch ? decodeURIComponent(innerAnchorMatch[1]) : '';
+  const innerAnchor = innerAnchorMatch ? smtDecodeStaticInnerAnchor(innerAnchorMatch[1]) : '';
   let path = pathRaw.startsWith('/') ? pathRaw : '/';
   // map unknown paths to /
   const known = [

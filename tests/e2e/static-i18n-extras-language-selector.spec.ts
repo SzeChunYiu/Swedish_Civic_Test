@@ -691,6 +691,28 @@ test.afterAll(async () => {
   await staticSite.close();
 });
 
+test('static router ignores malformed inner anchors on sources without page errors', async ({
+  page,
+}) => {
+  const pageErrors = collectPageErrors(page);
+  await openStaticHome(page, staticSite.baseUrl);
+
+  await page.evaluate(() => {
+    window.location.hash = '#/sources#%E0%A4%A';
+  });
+
+  await expect(page.locator('[data-page="/sources"]')).toHaveClass(/is-active/);
+  await expect(page.locator(i18nSelector('sources.lede'))).toBeVisible();
+  expect(pageErrors).toEqual([]);
+
+  await page.evaluate(() => {
+    window.location.hash = '#/sources#src2';
+  });
+
+  await expect(page.locator('#src2')).toBeFocused();
+  expect(pageErrors).toEqual([]);
+});
+
 test('static Settings selects extra languages with localized legal and Support metadata without overflow or outcome slogans', async ({
   page,
 }) => {
