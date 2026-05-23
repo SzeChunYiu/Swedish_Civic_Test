@@ -2071,6 +2071,9 @@ function embeddedQuestionTopicSv(question: string): string {
   match = q.match(/^Hur firar många (.+?) i Sverige (.+)$/i);
   if (match) return `firandet av ${match[1]} i Sverige`;
 
+  match = q.match(/^Vad är vanligt i många hem under (.+)$/i);
+  if (match) return `${lowerFirst(match[1])}straditioner i många hem`;
+
   match = q.match(/^Genom vilka två organ sker (.+?) främst$/i);
   if (match) return `organen för ${match[1]}`;
 
@@ -2165,7 +2168,13 @@ function embeddedQuestionTopicEn(question: string): string {
   if (match) return `the name of ${match[1]}`;
 
   match = q.match(/^How is (.+?) commonly (celebrated|observed) in Sweden$/i);
-  if (match) return `${match[1]} traditions in Sweden`;
+  if (match) {
+    if (/^New Year(?:’|')s Eve on 31 December$/i.test(match[1])) {
+      const occasion = match[1].replace(' on 31 December', ', 31 December,');
+      return `traditions on ${occasion} in Sweden`;
+    }
+    return `${match[1]} traditions in Sweden`;
+  }
 
   match = q.match(/^What do many people do with (.+?) at (.+?) in Sweden$/i);
   if (match) return `${match[1]} at ${match[2]} in Sweden`;
@@ -2221,8 +2230,8 @@ function embeddedQuestionTopicEn(question: string): string {
   match = q.match(/^What is typical of (.+)$/i);
   if (match) return lowerEnglishNounPhrase(match[1]);
 
-  match = q.match(/^What is common (?:during|on) (.+)$/i);
-  if (match) return `common traditions ${match[1]}`;
+  match = q.match(/^What is common (during|on) (.+)$/i);
+  if (match) return `traditions ${match[1].toLowerCase()} ${match[2]}`;
 
   match = q.match(/^What applies to (.+)$/i);
   if (match) return lowerEnglishNounPhrase(match[1]);
@@ -2824,6 +2833,13 @@ function generatedSingleChoicePromptFromSourceSv(
       : `Vilken regel gäller för ${match[1]}?`;
   }
 
+  match = q.match(/^Vad är vanligt i många hem under (.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Vilken uppgift stämmer om ${match[1]} i många hem?`
+      : `Vad finns i många hem under ${match[1]}?`;
+  }
+
   match = q.match(/^Vilka är (.+)$/i);
   if (match && variant === 'judgement') {
     return `Vilken uppgift stämmer om ${match[1]}?`;
@@ -2983,6 +2999,13 @@ function generatedSingleChoicePromptFromSourceEn(
     return variant === 'judgement'
       ? `What is correct for ${match[1]}?`
       : `Which rule applies to ${match[1]}?`;
+  }
+
+  match = q.match(/^What is common in many homes during (.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Which fact is correct about ${match[1]} in many homes?`
+      : `What do many homes have during ${match[1]}?`;
   }
 
   match = q.match(/^What are (.+)$/i);

@@ -903,11 +903,11 @@ test('tradition prompts avoid literal common-to-do English', () => {
   assert.equal(q104.q.en, 'How is All Saints’ Day commonly observed in Sweden?');
   assert.equal(
     q097SingleChoice?.q.en,
-    'What is correct about New Year’s Eve on 31 December traditions in Sweden?',
+    'What is correct about traditions on New Year’s Eve, 31 December, in Sweden?',
   );
   assert.equal(
     q097Judgement?.q.en,
-    'Which fact is correct about New Year’s Eve on 31 December traditions in Sweden?',
+    'Which fact is correct about traditions on New Year’s Eve, 31 December, in Sweden?',
   );
   assert.equal(
     q104SingleChoice?.q.en,
@@ -3803,7 +3803,8 @@ test('generated single-choice banks omit true-false and filler option shells', (
   const actualSiteBank = actualStaticQuestions();
   const fillerOptionPattern =
     /^(?:Inget av alternativen stämmer|None of the options is correct|Endast ibland|Only sometimes)$/i;
-  const metaStemPattern = /^(?:Vilket svar är korrekt\?|Which answer is correct\?)/i;
+  const metaStemPattern =
+    /^(?:Vilket svar är korrekt\?|Which answer is correct\?)|\b(?:Vad stämmer om|Vilken uppgift stämmer om) vanligt i många hem under advent\?|\b(?:What is correct about|Which fact is correct about) (?:common in many homes during Advent|common traditions (?:Midsummer celebrations|Easter Saturday) in Sweden|New Year(?:’|')s Eve on 31 December traditions in Sweden)\?/i;
   const absentTrueFalseExplanationPattern =
     /\b(?:Påståendet är sant|alternativet\s+Sant|medan\s+Falskt|That makes True correct|True is correct|while False)\b/i;
 

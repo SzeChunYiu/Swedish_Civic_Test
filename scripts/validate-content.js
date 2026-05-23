@@ -740,6 +740,14 @@ const GENERATED_SINGLE_CHOICE_META_STEM_PATTERNS = [
   /^\s*Vilket påstående stämmer bäst/i,
   /^\s*Which statement is correct/i,
   /^\s*Which statement best matches/i,
+  /\bVad stämmer om vanligt i många hem under advent\?/i,
+  /\bVilken uppgift stämmer om vanligt i många hem under advent\?/i,
+  /\bWhat is correct about common in many homes during Advent\?/i,
+  /\bWhich fact is correct about common in many homes during Advent\?/i,
+  /\bWhat is correct about common traditions (?:Midsummer celebrations|Easter Saturday) in Sweden\?/i,
+  /\bWhich fact is correct about common traditions (?:Midsummer celebrations|Easter Saturday) in Sweden\?/i,
+  /\bWhat is correct about New Year(?:’|')s Eve on 31 December traditions in Sweden\?/i,
+  /\bWhich fact is correct about New Year(?:’|')s Eve on 31 December traditions in Sweden\?/i,
 ];
 const GENERATED_SINGLE_CHOICE_ABSENT_TRUE_FALSE_EXPLANATION_PATTERNS = [
   /\bPåståendet är sant\b/i,

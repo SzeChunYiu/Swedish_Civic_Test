@@ -1966,6 +1966,14 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'På nyårsafton den 31 december är det vanligt med stora brasor och vårsånger.',
       'On New Year’s Eve, 31 December, large bonfires and spring songs are common.',
     ],
+    [generatedQuestionId(sourceQuestions, 'q097', 'singleChoice')]: [
+      'Vad stämmer om vanliga traditioner på nyårsafton den 31 december i Sverige?',
+      'What is correct about traditions on New Year’s Eve, 31 December, in Sweden?',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q097', 'judgement')]: [
+      'Vilken uppgift stämmer om vanliga traditioner på nyårsafton den 31 december i Sverige?',
+      'Which fact is correct about traditions on New Year’s Eve, 31 December, in Sweden?',
+    ],
     [generatedQuestionId(sourceQuestions, 'q098', 'falseStatement')]: [
       'På Sveriges nationaldag den 6 juni brukar arbetarrörelsen arrangera demonstrationer.',
       'On Sweden’s National Day, 6 June, the labour movement arranges demonstrations.',
@@ -2045,6 +2053,22 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
     [generatedQuestionId(sourceQuestions, 'q131', 'falseStatement')]: [
       'På påskafton är det vanligt att tända adventsljus och öppna adventskalendrar.',
       'On Easter Saturday, it is common to light Advent candles and open Advent calendars.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q125', 'singleChoice')]: [
+      'Vad stämmer om midsommarfirande i Sverige?',
+      'What is correct about traditions during Midsummer celebrations in Sweden?',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q125', 'judgement')]: [
+      'Vilken uppgift stämmer om midsommarfirande i Sverige?',
+      'Which fact is correct about traditions during Midsummer celebrations in Sweden?',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q131', 'singleChoice')]: [
+      'Vad stämmer om vanliga traditioner på påskafton i Sverige?',
+      'What is correct about traditions on Easter Saturday in Sweden?',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q131', 'judgement')]: [
+      'Vilken uppgift stämmer om vanliga traditioner på påskafton i Sverige?',
+      'Which fact is correct about traditions on Easter Saturday in Sweden?',
     ],
     [generatedQuestionId(sourceQuestions, 'q132', 'trueStatement')]: [
       'Barn med en adventskalender hemma öppnar en lucka varje dag fram till julafton.',

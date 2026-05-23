@@ -42738,7 +42738,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "What is correct about New Year’s Eve on 31 December traditions in Sweden?",
+      "en": "What is correct about traditions on New Year’s Eve, 31 December, in Sweden?",
       "sv": "Vad stämmer om vanliga traditioner på nyårsafton den 31 december i Sverige?"
     },
     "opts": [
@@ -42906,7 +42906,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct about New Year’s Eve on 31 December traditions in Sweden?",
+      "en": "Which fact is correct about traditions on New Year’s Eve, 31 December, in Sweden?",
       "sv": "Vilken uppgift stämmer om vanliga traditioner på nyårsafton den 31 december i Sverige?"
     },
     "opts": [
@@ -50030,7 +50030,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "What is correct about common traditions Midsummer celebrations in Sweden?",
+      "en": "What is correct about traditions during Midsummer celebrations in Sweden?",
       "sv": "Vad stämmer om midsommarfirande i Sverige?"
     },
     "opts": [
@@ -50204,7 +50204,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct about common traditions Midsummer celebrations in Sweden?",
+      "en": "Which fact is correct about traditions during Midsummer celebrations in Sweden?",
       "sv": "Vilken uppgift stämmer om midsommarfirande i Sverige?"
     },
     "opts": [
@@ -51594,7 +51594,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "What is correct about common traditions Easter Saturday in Sweden?",
+      "en": "What is correct about traditions on Easter Saturday in Sweden?",
       "sv": "Vad stämmer om vanliga traditioner på påskafton i Sverige?"
     },
     "opts": [
@@ -51768,7 +51768,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct about common traditions Easter Saturday in Sweden?",
+      "en": "Which fact is correct about traditions on Easter Saturday in Sweden?",
       "sv": "Vilken uppgift stämmer om vanliga traditioner på påskafton i Sverige?"
     },
     "opts": [
@@ -52642,8 +52642,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "What is correct about common in many homes during Advent?",
-      "sv": "Vad stämmer om vanligt i många hem under advent?"
+      "en": "What do many homes have during Advent?",
+      "sv": "Vad finns i många hem under advent?"
     },
     "opts": [
       {
@@ -52813,8 +52813,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct about common in many homes during Advent?",
-      "sv": "Vilken uppgift stämmer om vanligt i många hem under advent?"
+      "en": "Which fact is correct about Advent in many homes?",
+      "sv": "Vilken uppgift stämmer om advent i många hem?"
     },
     "opts": [
       {
