@@ -275,6 +275,13 @@ test('npm test keeps selector routing in the project dispatcher', () => {
     'node scripts/test-dispatch.js content-focused',
   );
   assert.equal(
+    pkg.scripts['test:review-store-due-limit'],
+    [
+      'node --test --test-name-pattern "review-store due limit|dueCards|focus-review-store-due-limit|dispatcher|selector|negative|NaN|Infinity|fraction" tests/content-test-script-routing.test.js tests/content-spaced-repetition-schema.test.js tests/v1-1-review-store.test.js',
+      'node scripts/validate-content.js --focus-review-store-due-limit',
+    ].join(' && '),
+  );
+  assert.equal(
     pkg.scripts['test:correct-display-position'],
     [
       'npm run test:answer-shuffle',
@@ -655,7 +662,7 @@ test('QuestionSourceCitation accessibility parity uses focused content validatio
     'questionSourceCitationAccessibilityParityValidated',
   ]);
 
-  assert.equal(summary.questionSourceCitationAccessibilityRulesValidated, 15);
+  assert.equal(summary.questionSourceCitationAccessibilityRulesValidated, 23);
   assert.equal(summary.questionSourceCitationAccessibilityParityValidated, true);
 });
 
@@ -2334,6 +2341,34 @@ test('xp selector runs only the focused XP rules parity script', () => {
   }
 });
 
+test('review-store due limit selector runs only the focused review-store suite', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-review-store-routing-'));
+  const npmLog = path.join(tmpDir, 'npm.log');
+  const env = {
+    ...process.env,
+    TEST_DISPATCH_CAPTURE: '1',
+    TEST_DISPATCH_LOG: npmLog,
+    TEST_DISPATCH_NPM: createFakeNpm(tmpDir),
+  };
+
+  try {
+    const selectedResult = runDispatcher(['--', 'review-store-due-limit'], env);
+    assert.equal(selectedResult.status, 0, selectedResult.stderr || selectedResult.stdout);
+    assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:review-store-due-limit\n');
+
+    const pkg = readPackageJson();
+    const script = pkg.scripts['test:review-store-due-limit'];
+    assert.match(script, /--focus-review-store-due-limit/);
+    assert.match(script, /tests\/content-test-script-routing\.test\.js/);
+    assert.match(script, /tests\/content-spaced-repetition-schema\.test\.js/);
+    assert.match(script, /tests\/v1-1-review-store\.test\.js/);
+    assert.match(script, /review-store due limit\|dueCards\|focus-review-store-due-limit/);
+    assert.doesNotMatch(script, /npm run test:content|npm run test:all|npm test/);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
 test('mobile ads consent selector runs only the focused runtime and schema parity bundle', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-mobile-ads-routing-'));
   const npmLog = path.join(tmpDir, 'npm.log');
@@ -2389,6 +2424,11 @@ test('package npm test selector enters the dispatcher before running suites', ()
     const mobileAdsResult = runPackageTest(['mobile-ads-consent'], env);
     assert.equal(mobileAdsResult.status, 0, mobileAdsResult.stderr || mobileAdsResult.stdout);
     assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:mobile-ads-consent\n');
+
+    fs.writeFileSync(npmLog, '');
+    const reviewStoreResult = runPackageTest(['review-store-due-limit'], env);
+    assert.equal(reviewStoreResult.status, 0, reviewStoreResult.stderr || reviewStoreResult.stdout);
+    assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:review-store-due-limit\n');
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
   }
@@ -2539,6 +2579,7 @@ test('unsupported npm test selectors fail before running any suite', () => {
     assert.match(result.stderr, /mobile-ads-consent -> npm run test:mobile-ads-consent/);
     assert.match(result.stderr, /monetization -> npm run test:monetization/);
     assert.match(result.stderr, /mobile-ads-consent -> npm run test:mobile-ads-consent/);
+    assert.match(result.stderr, /review-store-due-limit -> npm run test:review-store-due-limit/);
     assert.match(result.stderr, /xp -> npm run test:xp-rules/);
     assert.equal(fs.existsSync(npmLog), false);
   } finally {
