@@ -1894,7 +1894,7 @@ function embeddedQuestionTopicSv(question: string): string {
   if (match) return match[1];
 
   match = q.match(/^Vad står på (.+)$/i);
-  if (match) return `${swedishPossessive(match[1])} innehåll`;
+  if (match) return `vad ${match[1]} visar`;
 
   match = q.match(/^Vad uppmärksammas på (.+)$/i);
   if (match) return `${match[1]} i Sverige`;
@@ -2303,7 +2303,7 @@ function embeddedQuestionTopicEn(question: string): string {
   if (match) return lowerEnglishNounPhrase(match[1]);
 
   match = q.match(/^What is stated on (.+)$/i);
-  if (match) return `${englishPossessive(match[1])} contents`;
+  if (match) return `what ${lowerLeadingEnglishArticle(match[1])} shows`;
 
   match = q.match(/^What is marked on (.+)$/i);
   if (match) return `${match[1]} in Sweden`;
@@ -2824,6 +2824,13 @@ function generatedSingleChoicePromptFromSourceSv(
       : `Vilken regel gäller för ${match[1]}?`;
   }
 
+  match = q.match(/^Vad står på (.+)$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Vilken uppgift stämmer om vad ${match[1]} visar?`
+      : `Vad visar ${match[1]}?`;
+  }
+
   match = q.match(/^Vilka är (.+)$/i);
   if (match && variant === 'judgement') {
     return `Vilken uppgift stämmer om ${match[1]}?`;
@@ -2983,6 +2990,14 @@ function generatedSingleChoicePromptFromSourceEn(
     return variant === 'judgement'
       ? `What is correct for ${match[1]}?`
       : `Which rule applies to ${match[1]}?`;
+  }
+
+  match = q.match(/^What is stated on (.+)$/i);
+  if (match) {
+    const surface = lowerLeadingEnglishArticle(match[1]);
+    return variant === 'judgement'
+      ? `Which fact is correct about what ${surface} shows?`
+      : `What does ${surface} show?`;
   }
 
   match = q.match(/^What are (.+)$/i);
