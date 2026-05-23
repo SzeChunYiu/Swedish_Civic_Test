@@ -145,6 +145,17 @@ require('./scripts/validate-content.js');
   );
 }
 
+function runPersistenceWarningScopeValidation() {
+  return spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-persistence-warning-scope'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+}
+
 function expectPersistenceWarningScopeMutationFailure(testName, mutations, expectedMessage) {
   test(testName, () => {
     const result = runPersistenceWarningScopeMutation(mutations);
@@ -616,6 +627,10 @@ test('routes render localized storage warning notices with dismiss hooks', () =>
   const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
   const settingsSource = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
   const mistakesSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/mistakes.tsx'), 'utf8');
+  const citizenshipRequirementsSource = fs.readFileSync(
+    path.join(repoRoot, 'app/citizenship-requirements.tsx'),
+    'utf8',
+  );
 
   assert.match(componentSource, /const persistenceWarningNoticeCopy: Record</);
   assert.match(componentSource, /RecoverablePersistenceWarning\['operation'\]/);
@@ -658,10 +673,26 @@ test('routes render localized storage warning notices with dismiss hooks', () =>
   assert.match(settingsSource, /warning=\{accessibilityPersistenceWarning\}/);
   assert.match(settingsSource, /warningScope="accessibilityPreferences"/);
   assert.match(settingsSource, /onDismiss=\{clearAccessibilityPersistenceWarning\}/);
+  assert.match(settingsSource, /warning=\{companionPersistenceWarning\}/);
   assert.match(mistakesSource, /progressPersistenceWarning/);
   assert.match(mistakesSource, /mistakeReviewPersistenceWarning/);
+  assert.match(citizenshipRequirementsSource, /warning=\{persistenceWarning\}/);
+  assert.match(citizenshipRequirementsSource, /onDismiss=\{clearPersistenceWarning\}/);
   assert.doesNotMatch(practiceSource, /warningScope="accessibilityPreferences"/);
   assert.doesNotMatch(mistakesSource, /warningScope="accessibilityPreferences"/);
+  assert.doesNotMatch(citizenshipRequirementsSource, /warningScope=/);
+});
+
+test('persistence warning scope validator enumerates every current call site', () => {
+  const result = runPersistenceWarningScopeValidation();
+  const output = `${result.stdout}\n${result.stderr}`;
+
+  assert.equal(result.status, 0, output);
+  const summary = parseValidationSummary(result.stdout);
+
+  assert.equal(summary.persistenceWarningScopeCasesValidated, 12);
+  assert.equal(summary.persistenceWarningScopeCallSitesValidated, 9);
+  assert.equal(summary.persistenceWarningScopeParityValidated, true);
 });
 
 expectPersistenceWarningScopeMutationFailure(
@@ -726,4 +757,36 @@ expectPersistenceWarningScopeMutationFailure(
     },
   ],
   /Mistakes persistence warnings must keep the default studyData scope/,
+);
+
+expectPersistenceWarningScopeMutationFailure(
+  'persistence warning scope validator rejects explicit scope on Citizenship Requirements warnings',
+  [
+    {
+      file: '/app/citizenship-requirements.tsx',
+      replacements: [
+        {
+          from: 'warning={persistenceWarning}',
+          to: 'warning={persistenceWarning}\n        warningScope="settingsPreferences"',
+        },
+      ],
+    },
+  ],
+  /Citizenship Requirements persistence warnings must keep the default studyData scope/,
+);
+
+expectPersistenceWarningScopeMutationFailure(
+  'persistence warning scope validator rejects settings scope on companion warnings',
+  [
+    {
+      file: '/app/settings.tsx',
+      replacements: [
+        {
+          from: 'warning={companionPersistenceWarning}',
+          to: 'warning={companionPersistenceWarning}\n          warningScope="settingsPreferences"',
+        },
+      ],
+    },
+  ],
+  /Settings companion persistence warnings must keep the default studyData scope/,
 );

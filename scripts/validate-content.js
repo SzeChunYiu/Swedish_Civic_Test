@@ -10294,6 +10294,7 @@ let settingsDailyGoalParityValidated = false;
 let settingsAudioLabelsValidated = 0;
 let settingsAudioParityValidated = false;
 let persistenceWarningScopeCasesValidated = 0;
+let persistenceWarningScopeCallSitesValidated = 0;
 let persistenceWarningScopeParityValidated = false;
 let localStudyCorruptJsonStoresValidated = 0;
 let localStudyCorruptJsonRecoverableReadWarningTestsValidated = 0;
@@ -11236,6 +11237,7 @@ if (process.argv.includes('--focus-persistence-warning-scope')) {
   exitWithValidationFailures();
   printValidationSummary({
     persistenceWarningScopeCasesValidated,
+    persistenceWarningScopeCallSitesValidated,
     persistenceWarningScopeParityValidated,
   });
   process.exit(0);
@@ -18902,9 +18904,6 @@ function validateSettingsStoreSchemaParity() {
 function validatePersistenceWarningScopeParity() {
   let valid = true;
   let componentSource = '';
-  let settingsSource = '';
-  let practiceSource = '';
-  let mistakesSource = '';
 
   function reject(message) {
     valid = false;
@@ -18916,9 +18915,6 @@ function validatePersistenceWarningScopeParity() {
       path.join(repoRoot, 'components/storage/PersistenceWarningNotice.tsx'),
       'utf8',
     );
-    settingsSource = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
-    practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
-    mistakesSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/mistakes.tsx'), 'utf8');
   } catch (error) {
     reject(`persistence warning scope source could not be read: ${error.message}`);
     return;
@@ -19060,29 +19056,147 @@ function validatePersistenceWarningScopeParity() {
     }
   }
 
-  if (
-    !/warning=\{accessibilityPersistenceWarning\}[\s\S]*?warningScope="accessibilityPreferences"/.test(
-      settingsSource,
-    )
-  ) {
-    reject('Settings must pass warningScope="accessibilityPreferences" for accessibility warnings');
+  const expectedCallSitePolicies = [
+    {
+      file: 'app/settings.tsx',
+      label: 'Settings',
+      warning: 'persistenceWarning',
+      expectedScope: 'settingsPreferences',
+      expectedCount: 1,
+      message: 'Settings must pass warningScope="settingsPreferences" for settings warnings',
+    },
+    {
+      file: 'app/settings.tsx',
+      label: 'Settings accessibility',
+      warning: 'accessibilityPersistenceWarning',
+      expectedScope: 'accessibilityPreferences',
+      expectedCount: 2,
+      message:
+        'Settings must pass warningScope="accessibilityPreferences" for accessibility warnings',
+    },
+    {
+      file: 'app/settings.tsx',
+      label: 'Settings companion',
+      warning: 'companionPersistenceWarning',
+      expectedScope: 'studyData',
+      expectedCount: 1,
+      requireDefaultScope: true,
+      message: 'Settings companion persistence warnings must keep the default studyData scope',
+    },
+    {
+      file: 'app/(tabs)/practice.tsx',
+      label: 'Practice progress',
+      warning: 'progressPersistenceWarning',
+      expectedScope: 'studyData',
+      expectedCount: 1,
+      requireDefaultScope: true,
+      message: 'Practice persistence warnings must keep the default studyData scope',
+    },
+    {
+      file: 'app/(tabs)/practice.tsx',
+      label: 'Practice mistake review',
+      warning: 'mistakeReviewPersistenceWarning',
+      expectedScope: 'studyData',
+      expectedCount: 1,
+      requireDefaultScope: true,
+      message: 'Practice persistence warnings must keep the default studyData scope',
+    },
+    {
+      file: 'app/(tabs)/mistakes.tsx',
+      label: 'Mistakes progress',
+      warning: 'progressPersistenceWarning',
+      expectedScope: 'studyData',
+      expectedCount: 1,
+      requireDefaultScope: true,
+      message: 'Mistakes persistence warnings must keep the default studyData scope',
+    },
+    {
+      file: 'app/(tabs)/mistakes.tsx',
+      label: 'Mistakes review',
+      warning: 'mistakeReviewPersistenceWarning',
+      expectedScope: 'studyData',
+      expectedCount: 1,
+      requireDefaultScope: true,
+      message: 'Mistakes persistence warnings must keep the default studyData scope',
+    },
+    {
+      file: 'app/citizenship-requirements.tsx',
+      label: 'Citizenship Requirements',
+      warning: 'persistenceWarning',
+      expectedScope: 'studyData',
+      expectedCount: 1,
+      requireDefaultScope: true,
+      message:
+        'Citizenship Requirements persistence warnings must keep the default studyData scope',
+    },
+  ];
+
+  const persistenceWarningCallSites = [];
+  for (const absolutePath of [...listSourceFiles('app'), ...listSourceFiles('components')]) {
+    const source = fs.readFileSync(absolutePath, 'utf8');
+    if (!source.includes('<PersistenceWarningNotice')) continue;
+
+    const relPath = path.relative(repoRoot, absolutePath).replace(/\\/g, '/');
+    for (const match of source.matchAll(/<PersistenceWarningNotice\b([\s\S]*?)(?:\/>|>)/g)) {
+      const propsSource = match[1];
+      const warningMatch = propsSource.match(/\bwarning=\{([^}]+)\}/);
+      const warningScopeMatch = propsSource.match(/\bwarningScope="([^"]+)"/);
+
+      persistenceWarningCallSites.push({
+        file: relPath,
+        warning: warningMatch?.[1]?.trim(),
+        explicitScope: warningScopeMatch?.[1],
+      });
+    }
   }
+
+  for (const callSite of persistenceWarningCallSites) {
+    const policy = expectedCallSitePolicies.find(
+      (candidate) => candidate.file === callSite.file && candidate.warning === callSite.warning,
+    );
+    if (!policy) {
+      reject(
+        `PersistenceWarningNotice call site ${callSite.file} warning={${
+          callSite.warning ?? 'unknown'
+        }} must be classified by warning scope policy`,
+      );
+      continue;
+    }
+
+    const actualScope = callSite.explicitScope ?? 'studyData';
+    if (policy.requireDefaultScope && callSite.explicitScope) {
+      reject(policy.message);
+      continue;
+    }
+    if (actualScope !== policy.expectedScope) {
+      reject(policy.message);
+      continue;
+    }
+
+    persistenceWarningScopeCallSitesValidated += 1;
+  }
+
+  for (const policy of expectedCallSitePolicies) {
+    const matchingCallSites = persistenceWarningCallSites.filter(
+      (callSite) => callSite.file === policy.file && callSite.warning === policy.warning,
+    );
+    if (matchingCallSites.length !== policy.expectedCount) {
+      reject(
+        `${policy.label} persistence warning policy expected ${policy.expectedCount} call site(s), found ${matchingCallSites.length}`,
+      );
+    }
+  }
+
+  const expectedCallSiteCount = expectedCallSitePolicies.reduce(
+    (total, policy) => total + policy.expectedCount,
+    0,
+  );
 
   if (
-    !/warning=\{persistenceWarning\}[\s\S]*?warningScope="settingsPreferences"/.test(settingsSource)
+    valid &&
+    persistenceWarningScopeCasesValidated === expectedCopyCases.length &&
+    persistenceWarningScopeCallSitesValidated === expectedCallSiteCount
   ) {
-    reject('Settings must pass warningScope="settingsPreferences" for settings warnings');
-  }
-
-  if (/warningScope="accessibilityPreferences"/.test(practiceSource)) {
-    reject('Practice persistence warnings must keep the default studyData scope');
-  }
-
-  if (/warningScope="accessibilityPreferences"/.test(mistakesSource)) {
-    reject('Mistakes persistence warnings must keep the default studyData scope');
-  }
-
-  if (valid && persistenceWarningScopeCasesValidated === expectedCopyCases.length) {
     persistenceWarningScopeParityValidated = true;
   }
 }
@@ -27815,6 +27929,7 @@ console.log(
       settingsAudioLabelsValidated,
       settingsAudioParityValidated,
       persistenceWarningScopeCasesValidated,
+      persistenceWarningScopeCallSitesValidated,
       persistenceWarningScopeParityValidated,
       localStudyCorruptJsonStoresValidated,
       localStudyCorruptJsonRecoverableReadWarningTestsValidated,
