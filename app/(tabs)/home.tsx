@@ -1,4 +1,3 @@
-import { Link } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -701,15 +700,14 @@ export default function Screen() {
         {readiness.isSparse ? (
           <Text style={styles.readinessSparseNote}>{copy.readinessSparseNote}</Text>
         ) : null}
-        <Link
-          aria-label={copy.readinessCtaAccessibilityLabel}
+        <RouteLink
           accessibilityLabel={copy.readinessCtaAccessibilityLabel}
-          accessibilityRole="link"
           href="/exam"
           style={styles.readinessLink}
+          variant="secondary"
         >
           {copy.readinessCta}
-        </Link>
+        </RouteLink>
       </Card>
       <SocialProofRow language={language} />
       {showRewardedExamOffer ? (
@@ -731,14 +729,14 @@ export default function Screen() {
             </Text>
           ) : null}
           {rewardedExamUnlocked ? (
-            <Link
+            <RouteLink
               accessibilityLabel={copy.rewardedExamUnlockedCtaAccessibilityLabel}
-              accessibilityRole="link"
               href="/exam"
               style={styles.rewardedExamLink}
+              variant="primary"
             >
               {copy.rewardedExamUnlockedCta}
-            </Link>
+            </RouteLink>
           ) : (
             <View style={styles.rewardedExamActions}>
               <Button
@@ -776,18 +774,18 @@ export default function Screen() {
           {dailyChallenge.questionIds.length}{' '}
           {language === 'sv' ? 'frågor valda för idag' : 'questions selected for today'}
         </Text>
-        <Link
+        <RouteLink
           accessibilityLabel={copy.dailyChallengeAccessibilityLabel(
             dailyChallengeCopy.title,
             dailyChallengeCopy.subtitle,
             dailyChallengeCompleted,
           )}
-          accessibilityRole="link"
           href="/practice?mode=challenge"
           style={styles.dailyChallengeLink}
+          variant="primary"
         >
           {copy.dailyChallengeCta(dailyChallengeCompleted)}
-        </Link>
+        </RouteLink>
       </Card>
       {showRemoveAdsOffer ? (
         <PricingWedge
@@ -874,14 +872,14 @@ export default function Screen() {
           {copy.feedbackTitle}
         </Text>
         <Text style={styles.feedbackText}>{copy.feedbackText}</Text>
-        <Link
+        <RouteLink
           accessibilityLabel={copy.feedbackLinkAccessibilityLabel}
-          accessibilityRole="link"
           href="/mistakes"
           style={styles.feedbackLink}
+          variant="secondary"
         >
           {copy.feedbackLink}
-        </Link>
+        </RouteLink>
       </Card>
 
       <SectionHeader title={copy.studyLoopTitle} subtitle={copy.studyLoopSubtitle} />
@@ -1001,19 +999,8 @@ function createStyles(themeColors: ThemeColors) {
       lineHeight: typography.micro.lineHeight,
     },
     readinessLink: {
-      alignItems: 'center',
       alignSelf: 'flex-start',
-      backgroundColor: themeColors.surfaceMuted,
-      borderRadius: radius.micro,
-      color: themeColors.text,
-      fontSize: typography.navButton.fontSize,
-      fontWeight: typography.navButton.fontWeight,
-      justifyContent: 'center',
       marginTop: space[0.5],
-      minHeight: space[6],
-      paddingHorizontal: space[2],
-      paddingVertical: space[1],
-      textDecorationLine: 'none',
     },
     goalCard: {
       backgroundColor: themeColors.surfaceWarm,
@@ -1070,19 +1057,8 @@ function createStyles(themeColors: ThemeColors) {
       maxWidth: '100%',
     },
     rewardedExamLink: {
-      alignItems: 'center',
       alignSelf: 'flex-start',
-      backgroundColor: themeColors.accent,
-      borderRadius: radius.micro,
-      color: themeColors.surface,
-      fontSize: typography.navButton.fontSize,
-      fontWeight: typography.navButton.fontWeight,
-      justifyContent: 'center',
       marginTop: space[0.5],
-      minHeight: space[6],
-      paddingHorizontal: space[2],
-      paddingVertical: space[1],
-      textDecorationLine: 'none',
     },
     dailyChallengeCard: {
       gap: space[1],
@@ -1099,15 +1075,7 @@ function createStyles(themeColors: ThemeColors) {
     },
     dailyChallengeLink: {
       alignSelf: 'flex-start',
-      backgroundColor: themeColors.accent,
-      borderRadius: radius.micro,
-      color: themeColors.surface,
-      fontSize: typography.navButton.fontSize,
-      fontWeight: typography.navButton.fontWeight,
       marginTop: space[0.5],
-      paddingHorizontal: space[2],
-      paddingVertical: space[1],
-      textDecorationLine: 'none',
     },
     quickActions: {
       flexDirection: 'row',
@@ -1146,19 +1114,8 @@ function createStyles(themeColors: ThemeColors) {
       lineHeight: typography.caption.lineHeight,
     },
     feedbackLink: {
-      alignItems: 'center',
       alignSelf: 'flex-start',
-      backgroundColor: themeColors.surfaceMuted,
-      borderRadius: radius.micro,
-      color: themeColors.text,
-      fontSize: typography.navButton.fontSize,
-      fontWeight: typography.navButton.fontWeight,
-      justifyContent: 'center',
       marginTop: space[0.5],
-      minHeight: space[6],
-      paddingHorizontal: space[2],
-      paddingVertical: space[1],
-      textDecorationLine: 'none',
     },
     loopGrid: {
       gap: space[1.5],

@@ -49,6 +49,43 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.match(source, /type HomeCopy =/);
   assert.match(source, /const homeCopy: Record<AppLanguage, HomeCopy>/);
   assert.match(source, /const copy = homeCopy\[language\]/);
+  assert.match(source, /import \{ RouteLink \} from '\.\.\/\.\.\/components\/ui\/RouteLink';/);
+  assert.doesNotMatch(source, /import \{ Link \} from 'expo-router';/);
+  assert.equal(
+    (source.match(/<RouteLink\b/g) ?? []).length,
+    10,
+    'Home should route all internal CTA links through the shared RouteLink primitive',
+  );
+  assert.match(
+    source,
+    /<RouteLink[\s\S]*accessibilityLabel=\{copy\.readinessCtaAccessibilityLabel\}[\s\S]*href="\/exam"[\s\S]*style=\{styles\.readinessLink\}[\s\S]*variant="secondary"/,
+  );
+  assert.match(
+    source,
+    /<RouteLink[\s\S]*accessibilityLabel=\{copy\.rewardedExamUnlockedCtaAccessibilityLabel\}[\s\S]*href="\/exam"[\s\S]*style=\{styles\.rewardedExamLink\}[\s\S]*variant="primary"/,
+  );
+  assert.match(
+    source,
+    /<RouteLink[\s\S]*accessibilityLabel=\{copy\.dailyChallengeAccessibilityLabel\([\s\S]*href="\/practice\?mode=challenge"[\s\S]*style=\{styles\.dailyChallengeLink\}[\s\S]*variant="primary"/,
+  );
+  assert.match(
+    source,
+    /<RouteLink[\s\S]*accessibilityLabel=\{copy\.feedbackLinkAccessibilityLabel\}[\s\S]*href="\/mistakes"[\s\S]*style=\{styles\.feedbackLink\}[\s\S]*variant="secondary"/,
+  );
+  for (const styleName of [
+    'readinessLink',
+    'rewardedExamLink',
+    'dailyChallengeLink',
+    'feedbackLink',
+  ]) {
+    const styleMatch = source.match(new RegExp(`${styleName}: \\{([\\s\\S]*?)\\n    \\},`));
+    assert.ok(styleMatch, `Home should keep ${styleName} as a RouteLink layout override`);
+    assert.doesNotMatch(
+      styleMatch[1],
+      /backgroundColor|borderRadius|color:|fontSize|fontWeight|minHeight|paddingHorizontal|paddingVertical|textDecorationLine/,
+      `${styleName} should inherit shared RouteLink variant styling instead of duplicating button styles`,
+    );
+  }
   assert.match(source, /computeReadinessFromQuestionProgress/);
   assert.match(
     source,
