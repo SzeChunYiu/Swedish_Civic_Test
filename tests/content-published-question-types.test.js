@@ -223,15 +223,23 @@ function assertQ167StatedOnVotingCardTrueFalseExports({
     assert.ok(generated, `${id} should be generated in the canonical bank`);
     assert.ok(actual, `${id} should be exported to the static bank`);
     assert.ok(csvColumns, `${id} should be exported to CSV`);
-    assert.equal(generated?.q.sv, expectedSv);
-    assert.equal(generated?.q.en, expectedEn);
-    assert.equal(actual?.q.sv, expectedSv);
-    assert.equal(actual?.q.en, expectedEn);
-    assert.equal(csvColumns?.[3], expectedSv);
-    assert.equal(csvColumns?.[4], expectedEn);
-    assert.equal(generated?.answer, expectedAnswers[id]);
-    assert.equal(actual?.answer, expectedAnswers[id]);
-    assert.equal(csvColumns?.[7], expectedAnswers[id] === 0 ? 'true' : 'false');
+    assert.equal(generated?.q.sv, expectedSv, `${id} canonical sv prompt should stay natural`);
+    assert.equal(generated?.q.en, expectedEn, `${id} canonical en prompt should stay natural`);
+    assert.equal(actual?.q.sv, expectedSv, `${id} static sv prompt should stay natural`);
+    assert.equal(actual?.q.en, expectedEn, `${id} static en prompt should stay natural`);
+    assert.equal(csvColumns?.[3], expectedSv, `${id} CSV sv prompt should stay natural`);
+    assert.equal(csvColumns?.[4], expectedEn, `${id} CSV en prompt should stay natural`);
+    assert.equal(
+      generated?.answer,
+      expectedAnswers[id],
+      `${id} canonical answer should stay correct`,
+    );
+    assert.equal(actual?.answer, expectedAnswers[id], `${id} static answer should stay correct`);
+    assert.equal(
+      csvColumns?.[7],
+      expectedAnswers[id] === 0 ? 'true' : 'false',
+      `${id} CSV answer should stay correct`,
+    );
     assert.equal(csvColumns?.[10], 'Politiska val och partier');
     assert.equal(csvColumns?.[11], 'Så här går det till att rösta');
     assert.equal(csvColumns?.[12], '14');
@@ -5285,6 +5293,115 @@ test('q167 stated-on true/false variants export natural propositions in canonica
     sourceQuestions,
     csvRows,
   });
+});
+
+test('q167 stated-on true/false fixture rejects canonical q845/q846 contents and answer mutations', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const { ids, trueFalseIds } = q167StatedOnVotingCardFixture(sourceQuestions);
+  const csvRows = contentQuestionBankCsvRowsById(ids);
+  const stalePromptsById = {
+    [trueFalseIds[0]]: {
+      sv: 'Röstkortets innehåll är vilken vallokal väljaren ska gå till.',
+      en: 'The voting card contents are which polling station the voter should go to.',
+    },
+    [trueFalseIds[1]]: {
+      sv: 'Röstkortets innehåll är vilket parti väljaren måste rösta på.',
+      en: 'The voting card contents are which party the voter must vote for.',
+    },
+  };
+
+  for (const [id, q] of Object.entries(stalePromptsById)) {
+    const mutatedSiteBank = generatedSiteBank.map((question) =>
+      question.id === id ? { ...question, q: { ...question.q, ...q } } : question,
+    );
+    assert.throws(
+      () =>
+        assertQ167StatedOnVotingCardTrueFalseExports({
+          generatedSiteBank: mutatedSiteBank,
+          actualSiteBank,
+          sourceQuestions,
+          csvRows,
+        }),
+      new RegExp(`${id} canonical sv prompt should stay natural`),
+    );
+  }
+
+  for (const id of trueFalseIds) {
+    const mutatedSiteBank = generatedSiteBank.map((question) =>
+      question.id === id ? { ...question, answer: question.answer === 0 ? 1 : 0 } : question,
+    );
+    assert.throws(
+      () =>
+        assertQ167StatedOnVotingCardTrueFalseExports({
+          generatedSiteBank: mutatedSiteBank,
+          actualSiteBank,
+          sourceQuestions,
+          csvRows,
+        }),
+      new RegExp(`${id} canonical answer should stay correct`),
+    );
+  }
+});
+
+test('q167 stated-on true/false fixture rejects CSV q845/q846 contents and answer mutations', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const { ids, trueFalseIds } = q167StatedOnVotingCardFixture(sourceQuestions);
+  const csvRows = contentQuestionBankCsvRowsById(ids);
+  const stalePromptsById = {
+    [trueFalseIds[0]]: [
+      'Röstkortets innehåll är vilken vallokal väljaren ska gå till.',
+      'The voting card contents are which polling station the voter should go to.',
+    ],
+    [trueFalseIds[1]]: [
+      'Röstkortets innehåll är vilket parti väljaren måste rösta på.',
+      'The voting card contents are which party the voter must vote for.',
+    ],
+  };
+
+  for (const [id, [questionSv, questionEn]] of Object.entries(stalePromptsById)) {
+    const mutatedCsvRows = new Map(csvRows);
+    const columns = [...csvRows.get(id)];
+    columns[3] = questionSv;
+    columns[4] = questionEn;
+    mutatedCsvRows.set(id, columns);
+
+    assert.throws(
+      () =>
+        assertQ167StatedOnVotingCardTrueFalseExports({
+          generatedSiteBank,
+          actualSiteBank,
+          sourceQuestions,
+          csvRows: mutatedCsvRows,
+        }),
+      new RegExp(`${id} CSV sv prompt should stay natural`),
+    );
+  }
+
+  for (const id of trueFalseIds) {
+    const mutatedCsvRows = new Map(csvRows);
+    const columns = [...csvRows.get(id)];
+    columns[7] = columns[7] === 'true' ? 'false' : 'true';
+    mutatedCsvRows.set(id, columns);
+
+    assert.throws(
+      () =>
+        assertQ167StatedOnVotingCardTrueFalseExports({
+          generatedSiteBank,
+          actualSiteBank,
+          sourceQuestions,
+          csvRows: mutatedCsvRows,
+        }),
+      new RegExp(`${id} CSV answer should stay correct`),
+    );
+  }
 });
 
 test('national-minorities generated judgement exports natural English in canonical and static banks', () => {
