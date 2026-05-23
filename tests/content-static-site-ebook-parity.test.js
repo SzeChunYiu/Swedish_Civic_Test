@@ -195,18 +195,26 @@ const staticEbookChapter11ConductCurrentnessByLocale = {
 };
 const migrationsverketCitizenshipRulesUrl =
   'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html';
-const officialPracticalTestSourceUrls = [
-  'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
-  'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
-  'https://www.uhr.se/medborgarskapsprovet/anmalan/',
-  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
+const officialPracticalTestSources = [
+  {
+    key: 'uhrOfficialTestAbout',
+    url: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
+  },
+  {
+    key: 'uhrOfficialTestFaq',
+    url: 'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
+  },
+  {
+    key: 'uhrOfficialTestSignup',
+    url: 'https://www.uhr.se/medborgarskapsprovet/anmalan/',
+  },
+  {
+    key: 'uhrOfficialTestStudyMaterial',
+    url: 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
+  },
 ];
-const officialPracticalTestSourceKeys = [
-  'uhrOfficialTestAbout',
-  'uhrOfficialTestFaq',
-  'uhrOfficialTestSignup',
-  'uhrOfficialTestStudyMaterial',
-];
+const officialPracticalTestSourceUrls = officialPracticalTestSources.map((source) => source.url);
+const officialPracticalTestSourceKeys = officialPracticalTestSources.map((source) => source.key);
 const officialPracticalTestSignupSourceKeys = ['uhrOfficialTestAbout', 'uhrOfficialTestSignup'];
 const officialPracticalTestLanguageSourceKeys = ['uhrOfficialTestFaq'];
 const officialPracticalTestSeatsSourceKeys = ['uhrOfficialTestAbout', 'uhrOfficialTestFaq'];
@@ -556,6 +564,13 @@ function renderedExternalSourceAnchors(html) {
   return Array.from(html.matchAll(/<a\b(?=[^>]*\bhref="https?:\/\/)[^>]*>/g), (match) => match[0]);
 }
 
+function renderedExternalSourceHrefs(html) {
+  return Array.from(
+    html.matchAll(/<a\b(?=[^>]*\bhref="(https?:\/\/[^"]+)")[^>]*>/g),
+    (match) => match[1],
+  );
+}
+
 function assertSafeOfficialTestSourceLinks(block, label) {
   officialPracticalTestSourceUrls.forEach((url) => {
     assert.match(
@@ -577,6 +592,15 @@ function assertSafeOfficialTestSourceLinks(block, label) {
     block,
     /<a\b(?=[^>]*\bhref="#\/sources")(?=[^>]*\btarget="_blank")/,
     `${label} editorial commentary links must stay same-page`,
+  );
+}
+
+function assertOfficialTestSourceUrlPairing(block, label) {
+  assert.deepEqual(dataSourceKeys(block), officialPracticalTestSourceKeys, `${label} source keys`);
+  assert.deepEqual(
+    renderedExternalSourceHrefs(block),
+    officialPracticalTestSourceUrls,
+    `${label} source URLs must match source-key order`,
   );
 }
 
@@ -636,6 +660,24 @@ function sourceBlockContaining(blocks, pattern, label) {
   const block = blocks.find((candidate) => pattern.test(candidate));
   assert.ok(block, `missing source block for ${label}`);
   return block;
+}
+
+function officialTestCurrentSourceBlock(html, label) {
+  const matches = annotatedSourceClaimBlocks(html).filter((block) => {
+    try {
+      return (
+        JSON.stringify(dataSourceKeys(block)) === JSON.stringify(officialPracticalTestSourceKeys)
+      );
+    } catch {
+      return false;
+    }
+  });
+  assert.equal(
+    matches.length,
+    1,
+    `${label} should render exactly one official-test current source block`,
+  );
+  return matches[0];
 }
 
 function findFunctionCallArguments(source, functionName) {
@@ -767,8 +809,22 @@ test('static ebook raw factbox prose renders with non-default provenance', () =>
     assert.match(englishCurrentSourceBlock, new RegExp(url));
     assert.match(swedishCurrentSourceBlock, new RegExp(url));
   });
+  assertOfficialTestSourceUrlPairing(englishCurrentSourceBlock, 'English current source note');
+  assertOfficialTestSourceUrlPairing(swedishCurrentSourceBlock, 'Swedish current source note');
   assertSafeOfficialTestSourceLinks(englishCurrentSourceBlock, 'English current source note');
   assertSafeOfficialTestSourceLinks(swedishCurrentSourceBlock, 'Swedish current source note');
+});
+
+test('static ebook chapter 12 extra locales pair official-test source keys with exact URLs', () => {
+  const harness = createEbookHarness();
+
+  staticEbookExtraLanguages.forEach((language) => {
+    const html = renderChapter(harness, language, '12');
+    const block = officialTestCurrentSourceBlock(html, `${language} chapter 12`);
+
+    assertOfficialTestSourceUrlPairing(block, `${language} current source note`);
+    assertSafeOfficialTestSourceLinks(block, `${language} current source note`);
+  });
 });
 
 test('static ebook chapter 12 official-test prose uses exact source-key footnotes', () => {
