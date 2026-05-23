@@ -8,6 +8,8 @@ import {
 
 const removeAdsStorageKey = 'monetization.removeAds.adsDisabled.v1';
 const removeAdsProductId = 'com.billyyiu.almostswedish.removeads';
+const mockedRestoreTransactionId = 'restore-com-billyyiu-almostswedish-removeads';
+const mockedRestorePurchaseToken = `mock-token-${mockedRestoreTransactionId}`;
 const entitlementHydrationDelayMs = 4000;
 
 type StoredRemoveAdsRecord = {
@@ -37,12 +39,12 @@ async function seedDelayedPurchasedProfile(page: Page, language: AppLanguage) {
   const storedRecord: StoredRemoveAdsRecord = {
     grantedAt: now,
     productId: removeAdsProductId,
-    purchaseToken: 'e2e-profile-pending-token',
+    purchaseToken: mockedRestorePurchaseToken,
     receiptValidatedAt: now,
     receiptValidationStatus: 'valid',
     schemaVersion: 1,
     source: 'purchase',
-    transactionId: 'e2e-profile-pending-transaction',
+    transactionId: mockedRestoreTransactionId,
   };
 
   await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, language, {

@@ -1560,6 +1560,8 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Inga märken ännu',
     'Öppna inställningar för dagligt mål, språk och ljud',
     'Ändra mål, språk och ljud',
+    'Området Ta bort annonser är markerat. Köp- och återställningsknapparna finns här.',
+    'Område för Ta bort annonser med köp- och återställningsknappar.',
   ],
   en: [
     'Local profile',
@@ -1585,6 +1587,8 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'No badges yet',
     'Open settings for daily goal, language, and audio',
     'Adjust goal, language, and audio',
+    'Remove Ads region is highlighted. Buy and Restore controls are here.',
+    'Remove Ads region with Buy and Restore controls.',
   ],
 };
 const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
@@ -1662,6 +1666,15 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
   ['href="/recap"', 'profile weekly recap link must route to the weekly recap screen'],
   ['label={copy.weeklyRecapCta}', 'profile weekly recap link must render localized copy'],
   ['language={language}', 'profile premium banner must receive the settings language'],
+  [
+    'accessibilityLabel={removeAdsPaywallAccessibilityLabel}',
+    'profile Remove Ads region must expose localized accessibility copy',
+  ],
+  [
+    'aria-describedby={removeAdsFocused ? removeAdsFocusCueId : undefined}',
+    'profile focused Remove Ads region must be described by the focus cue',
+  ],
+  ['nativeID={removeAdsFocusCueId}', 'profile Remove Ads focus cue must have a stable native id'],
 ];
 const EXPECTED_HOME_ROUTE_COPY_LABELS = {
   sv: [

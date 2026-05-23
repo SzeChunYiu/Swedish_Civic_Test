@@ -342,6 +342,16 @@ test('profile Remove Ads and Pro surfaces use dark theme tokens', async ({ page 
   const focusedPaywall = page.getByTestId('remove-ads-paywall');
   await focusedPaywall.scrollIntoViewIfNeeded();
   await expect(focusedPaywall).toBeVisible();
+  await expect(focusedPaywall).toHaveAttribute('role', 'region');
+  await expect(focusedPaywall).toHaveAttribute(
+    'aria-label',
+    'Remove Ads region is highlighted. Buy and Restore controls are here.',
+  );
+  await expect(focusedPaywall).toHaveAttribute('aria-describedby', 'profile-remove-ads-focus-cue');
+  const focusedPaywallCue = page.locator('#profile-remove-ads-focus-cue');
+  await expect(focusedPaywallCue).toHaveText(
+    'Remove Ads is highlighted. Buy and Restore controls are here.',
+  );
   await expectComputedColor(
     focusedPaywall,
     'borderColor',
@@ -349,9 +359,7 @@ test('profile Remove Ads and Pro surfaces use dark theme tokens', async ({ page 
     'Focused Remove Ads wrapper should use the dark focus token',
   );
   await expectComputedColor(
-    page.getByText('Remove Ads is highlighted. Buy and Restore controls are here.', {
-      exact: true,
-    }),
+    focusedPaywallCue,
     'color',
     darkColors.accent,
     'Focused Remove Ads cue should use the dark accent token',

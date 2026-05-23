@@ -59,6 +59,8 @@ type ProfileCopy = {
   noBadges: string;
   questionsHelper: string;
   removeAdsFocusCue: string;
+  removeAdsFocusedPaywallAccessibilityLabel: string;
+  removeAdsPaywallAccessibilityLabel: string;
   streakFreezeBadge: string;
   studySetupCta: string;
   studySetupSubtitle: string;
@@ -94,6 +96,10 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     openSettingsAccessibilityLabel: 'Öppna inställningar för dagligt mål, språk och ljud',
     questionsHelper: 'frågor',
     removeAdsFocusCue: 'Ta bort annonser är markerat. Köp- och återställningsknapparna finns här.',
+    removeAdsFocusedPaywallAccessibilityLabel:
+      'Området Ta bort annonser är markerat. Köp- och återställningsknapparna finns här.',
+    removeAdsPaywallAccessibilityLabel:
+      'Område för Ta bort annonser med köp- och återställningsknappar.',
     streakFreezeBadge: 'Svitskydd',
     studySetupCta: 'Ändra mål, språk och ljud',
     studySetupSubtitle: 'Små dagliga mål är lättare att hålla än långa maratonpass.',
@@ -132,6 +138,9 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     openSettingsAccessibilityLabel: 'Open settings for daily goal, language, and audio',
     questionsHelper: 'questions',
     removeAdsFocusCue: 'Remove Ads is highlighted. Buy and Restore controls are here.',
+    removeAdsFocusedPaywallAccessibilityLabel:
+      'Remove Ads region is highlighted. Buy and Restore controls are here.',
+    removeAdsPaywallAccessibilityLabel: 'Remove Ads region with Buy and Restore controls.',
     streakFreezeBadge: 'Streak freeze',
     studySetupCta: 'Adjust goal, language, and audio',
     studySetupSubtitle: 'Small daily goals are easier to keep than long cram sessions.',
@@ -197,6 +206,10 @@ export default function Screen() {
   };
   const allBadges = getAllBadges();
   const unlockedBadgeIds = new Set(deriveBadges(badgeInput).map((badge) => badge.id));
+  const removeAdsFocusCueId = 'profile-remove-ads-focus-cue';
+  const removeAdsPaywallAccessibilityLabel = removeAdsFocused
+    ? copy.removeAdsFocusedPaywallAccessibilityLabel
+    : copy.removeAdsPaywallAccessibilityLabel;
 
   useEffect(() => {
     setStreakFreezeState(streakWithFreeze.freezeState);
@@ -204,12 +217,19 @@ export default function Screen() {
 
   const removeAdsPaywall = entitlementsReady ? (
     <View
+      accessible
+      accessibilityLabel={removeAdsPaywallAccessibilityLabel}
+      accessibilityRole="summary"
+      aria-describedby={removeAdsFocused ? removeAdsFocusCueId : undefined}
+      aria-label={removeAdsPaywallAccessibilityLabel}
       nativeID="remove-ads-paywall"
       testID="remove-ads-paywall"
       style={[styles.removeAdsPaywall, removeAdsFocused ? styles.removeAdsPaywallFocused : null]}
     >
       {removeAdsFocused ? (
-        <Text style={styles.removeAdsFocusCue}>{copy.removeAdsFocusCue}</Text>
+        <Text nativeID={removeAdsFocusCueId} style={styles.removeAdsFocusCue}>
+          {copy.removeAdsFocusCue}
+        </Text>
       ) : null}
       <PremiumBanner
         entitlements={monetizationEntitlements}

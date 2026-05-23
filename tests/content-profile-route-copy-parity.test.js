@@ -25,7 +25,7 @@ test('profile route shell copy stays keyed by the settings language', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
 
-  assert.equal(summary.profileRouteCopyLabelsValidated, 46);
+  assert.equal(summary.profileRouteCopyLabelsValidated, 50);
   assert.equal(summary.profileRouteCopyParityValidated, true);
   assert.equal(summary.badgesValidated, 4);
   assert.equal(summary.badgeMilestoneParityValidated, true);
@@ -86,9 +86,13 @@ test('profile route shell copy stays keyed by the settings language', () => {
   assert.match(source, /weeklyRecapTitle: 'Veckans översikt'/);
   assert.match(source, /weeklyRecapTitle: 'Weekly recap'/);
   assert.match(source, /copy\.removeAdsFocusCue/);
+  assert.match(source, /copy\.removeAdsFocusedPaywallAccessibilityLabel/);
+  assert.match(source, /copy\.removeAdsPaywallAccessibilityLabel/);
   assert.doesNotMatch(source, new RegExp(['Misstags', 'repetition'].join('')));
   assert.match(source, /Ta bort annonser är markerat/);
   assert.match(source, /Remove Ads is highlighted/);
+  assert.match(source, /Området Ta bort annonser är markerat/);
+  assert.match(source, /Remove Ads region is highlighted/);
 });
 
 test('profile route keeps Pro comparison separate from the Remove Ads purchase flow', () => {
@@ -150,7 +154,23 @@ test('profile premium banner keeps current Remove Ads purchase and recovery cont
 
   assert.match(profileSource, /const removeAdsPaywall = entitlementsReady \? \(/);
   assert.match(profileSource, /entitlements=\{monetizationEntitlements\}/);
+  assert.match(profileSource, /const removeAdsFocusCueId = 'profile-remove-ads-focus-cue';/);
+  assert.match(
+    profileSource,
+    /const removeAdsPaywallAccessibilityLabel = removeAdsFocused[\s\S]*\? copy\.removeAdsFocusedPaywallAccessibilityLabel[\s\S]*: copy\.removeAdsPaywallAccessibilityLabel;/,
+  );
+  assert.match(
+    profileSource,
+    /accessible[\s\S]*accessibilityLabel=\{removeAdsPaywallAccessibilityLabel\}/,
+  );
+  assert.match(profileSource, /accessibilityRole="summary"/);
+  assert.match(
+    profileSource,
+    /aria-describedby=\{removeAdsFocused \? removeAdsFocusCueId : undefined\}/,
+  );
+  assert.match(profileSource, /aria-label=\{removeAdsPaywallAccessibilityLabel\}/);
   assert.match(profileSource, /nativeID="remove-ads-paywall"/);
+  assert.match(profileSource, /nativeID=\{removeAdsFocusCueId\}/);
   assert.match(bannerSource, /body: \(price: string\) => string/);
   assert.match(bannerSource, /body: \(price\) =>/);
   assert.match(bannerSource, /titleActive: string/);
@@ -174,7 +194,7 @@ test('profile premium banner keeps current Remove Ads purchase and recovery cont
   );
   assert.match(
     bannerSource,
-    /const visibleStatus =[\s\S]*status === 'finish_failed'[\s\S]*adsDisabled[\s\S]*\? 'purchased'[\s\S]*purchaseUnavailable[\s\S]*\? 'unavailable'[\s\S]*: status;[\s\S]*const statusMessage = getStatusMessage\(visibleStatus, copy\)/,
+    /const visibleStatus =[\s\S]*status === 'finish_failed'[\s\S]*adsDisabled[\s\S]*\? 'purchased'[\s\S]*purchaseUnavailable[\s\S]*\? 'unavailable'[\s\S]*: status;[\s\S]*const statusMessage =[\s\S]*nativePurchaseUnavailable && visibleStatus === 'unavailable'[\s\S]*\? copy\.nativeUnavailableStatus[\s\S]*: getStatusMessage\(visibleStatus, copy\)/,
   );
   assert.match(bannerSource, /aria-live="polite"/);
   assert.doesNotMatch(bannerSource, /bodyActive:/);
@@ -372,6 +392,37 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /profile premium banner must fail closed while entitlements load/,
+  );
+});
+
+test('profile route copy parity rejects unassociated Remove Ads focus cue', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/profile.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('      aria-describedby={removeAdsFocused ? removeAdsFocusCueId : undefined}\\n', '');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('${PROFILE_ROUTE_FOCUS_FLAG}');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /profile focused Remove Ads region must be described by the focus cue/,
   );
 });
 
