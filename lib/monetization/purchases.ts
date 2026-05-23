@@ -140,6 +140,20 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
 }
 
+function purchaseErrorCode(value: unknown): string | undefined {
+  if (typeof value === 'string') return value;
+  if (!isRecord(value)) return undefined;
+
+  return optionalString(value.code) ?? optionalString(value.errorCode) ?? undefined;
+}
+
+function isRestorableRemoveAdsPurchaseError(error: unknown): boolean {
+  return (
+    purchaseErrorCode(error) === 'duplicate-purchase' ||
+    purchaseErrorCode(error) === 'already-owned'
+  );
+}
+
 function optionalString(value: unknown): string | null | undefined {
   return typeof value === 'string' ? value : undefined;
 }
@@ -986,6 +1000,44 @@ async function validateRemoveAdsReceipt(
   return isValidatedRemoveAdsReceipt(receiptValidation) ? receiptValidation : null;
 }
 
+async function restoreRemoveAdsPurchaseWithConnectedProvider({
+  provider,
+  storage,
+}: {
+  provider: RemoveAdsPurchaseProvider;
+  storage: PurchaseStorage;
+}): Promise<RemoveAdsPurchaseResult> {
+  const purchases = await provider.restorePurchases([REMOVE_ADS_PRODUCT_ID]);
+  const purchase = purchases.find(isRemoveAdsPurchase);
+  if (!purchase) {
+    return createResult(
+      'not_found',
+      await getFailClosedPurchaseEntitlements({ provider, storage }),
+    );
+  }
+
+  const receiptValidation = await validateRemoveAdsReceipt(provider, purchase);
+  if (!receiptValidation) {
+    return createResult(
+      'not_found',
+      await getFailClosedPurchaseEntitlements({ provider, storage }),
+      purchase,
+    );
+  }
+
+  const persistenceResult = await persistValidatedRemoveAdsEntitlement({
+    purchase,
+    receiptValidation,
+    source: 'restore',
+    storage,
+  });
+  return createResult(
+    persistenceResult.persisted ? 'restored' : 'persistence_failed',
+    persistenceResult.entitlements,
+    purchase,
+  );
+}
+
 export async function buyRemoveAds(
   runtimeOptions: PurchaseRuntimeOptions = {},
 ): Promise<RemoveAdsPurchaseResult> {
@@ -1003,7 +1055,16 @@ export async function buyRemoveAds(
   await provider.connect();
 
   try {
-    const purchase = await provider.requestRemoveAdsPurchase(REMOVE_ADS_PRODUCT_ID);
+    let purchase: RemoveAdsPurchaseRecord | null;
+    try {
+      purchase = await provider.requestRemoveAdsPurchase(REMOVE_ADS_PRODUCT_ID);
+    } catch (error) {
+      if (isRestorableRemoveAdsPurchaseError(error)) {
+        return await restoreRemoveAdsPurchaseWithConnectedProvider({ provider, storage });
+      }
+      throw error;
+    }
+
     if (!purchase || !isRemoveAdsPurchase(purchase)) {
       return createResult(
         'pending',
@@ -1059,35 +1120,7 @@ export async function restoreRemoveAdsPurchase(
   await provider.connect();
 
   try {
-    const purchases = await provider.restorePurchases([REMOVE_ADS_PRODUCT_ID]);
-    const purchase = purchases.find(isRemoveAdsPurchase);
-    if (!purchase) {
-      return createResult(
-        'not_found',
-        await getFailClosedPurchaseEntitlements({ provider, storage }),
-      );
-    }
-
-    const receiptValidation = await validateRemoveAdsReceipt(provider, purchase);
-    if (!receiptValidation) {
-      return createResult(
-        'not_found',
-        await getFailClosedPurchaseEntitlements({ provider, storage }),
-        purchase,
-      );
-    }
-
-    const persistenceResult = await persistValidatedRemoveAdsEntitlement({
-      purchase,
-      receiptValidation,
-      source: 'restore',
-      storage,
-    });
-    return createResult(
-      persistenceResult.persisted ? 'restored' : 'persistence_failed',
-      persistenceResult.entitlements,
-      purchase,
-    );
+    return await restoreRemoveAdsPurchaseWithConnectedProvider({ provider, storage });
   } finally {
     await provider.disconnect?.();
   }

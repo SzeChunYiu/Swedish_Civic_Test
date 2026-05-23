@@ -45,7 +45,7 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
       /async function revalidateStoredRemoveAdsEntitlementRecordWithConnectedProvider\(\{[\s\S]*?\nfunction createResult/,
     )?.[0] ?? '';
 
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 39);
+  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 41);
   assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
   assert.match(purchaseSource, /REMOVE_ADS_RECORD_SCHEMA_VERSION = 1/);
   assert.match(purchaseSource, /interface RemoveAdsProductMetadata/);
@@ -387,8 +387,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace(
-        'const purchase = await provider.requestRemoveAdsPurchase(REMOVE_ADS_PRODUCT_ID);',
-        'const purchase = await provider.requestRemoveAdsPurchase("debug.removeads");',
+        'purchase = await provider.requestRemoveAdsPurchase(REMOVE_ADS_PRODUCT_ID);',
+        'purchase = await provider.requestRemoveAdsPurchase("debug.removeads");',
       );
   }
   return originalReadFileSync.call(this, filePath, ...args);
@@ -603,6 +603,37 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /RemoveAdsPlacementCta must wire restoreRemoveAdsPurchase through the shared purchase runtime/,
+  );
+});
+
+test('Remove Ads purchase runtime parity rejects duplicate purchase generic-error drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/monetization/purchases.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('return await restoreRemoveAdsPurchaseWithConnectedProvider({ provider, storage });', 'throw error;');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-remove-ads-purchase-runtime-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /Remove Ads buy flow must fall back to restore only for duplicate\/already-owned purchase errors/,
   );
 });
 

@@ -2178,7 +2178,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 15;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 39;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 41;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_RUNTIME_CASES = 9;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
@@ -20671,8 +20671,8 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       'Remove Ads runtime must fetch store product metadata with platform product id and expose display price',
     ],
     [
-      normalizedPurchaseSource.includes(
-        'const purchase = await provider.requestRemoveAdsPurchase(REMOVE_ADS_PRODUCT_ID);',
+      /(?:const|let)?\s*purchase\s*=\s*await provider\.requestRemoveAdsPurchase\(REMOVE_ADS_PRODUCT_ID\);/.test(
+        purchaseSource,
       ),
       'buyRemoveAds must request canonical Remove Ads product id',
     ],
@@ -20786,6 +20786,27 @@ function validateRemoveAdsPurchaseRuntimeParity() {
           fs.readFileSync(path.join(repoRoot, 'scripts/monetization.test.js'), 'utf8'),
         ),
       'Remove Ads stored entitlement revalidation must require a matching restored purchase and cover the valid failed-action recovery path',
+    ],
+    [
+      /function isRestorableRemoveAdsPurchaseError\(error/.test(purchaseSource) &&
+        normalizedPurchaseSource.includes("purchaseErrorCode(error) === 'duplicate-purchase'") &&
+        normalizedPurchaseSource.includes("purchaseErrorCode(error) === 'already-owned'") &&
+        normalizedPurchaseSource.includes(
+          'return await restoreRemoveAdsPurchaseWithConnectedProvider({ provider, storage });',
+        ) &&
+        /catch\s*\(error\)\s*\{\s*if\s*\(isRestorableRemoveAdsPurchaseError\(error\)\)\s*\{\s*return await restoreRemoveAdsPurchaseWithConnectedProvider\(\{\s*provider,\s*storage\s*\}\);\s*\}\s*throw error;\s*\}/.test(
+          purchaseSource,
+        ),
+      'Remove Ads buy flow must fall back to restore only for duplicate/already-owned purchase errors',
+    ],
+    [
+      /duplicate remove-ads purchase errors fall back to validated restore/.test(
+        fs.readFileSync(path.join(repoRoot, 'scripts/monetization.test.js'), 'utf8'),
+      ) &&
+        /non-restorable remove-ads purchase failures do not grant adsDisabled/.test(
+          fs.readFileSync(path.join(repoRoot, 'scripts/monetization.test.js'), 'utf8'),
+        ),
+      'Remove Ads tests must cover duplicate/already-owned restore recovery and non-restorable non-granting failures',
     ],
     [
       normalizedPurchaseSource.includes('receiptValidationStatus =') &&

@@ -1786,6 +1786,79 @@ test('remove-ads buy persists before native finish and leaves failed persistence
   assert.equal(failingEvents.includes('finish'), false);
 });
 
+test('duplicate remove-ads purchase errors fall back to validated restore', async () => {
+  const {
+    REMOVE_ADS_PRODUCT_ID,
+    REMOVE_ADS_STORAGE_KEY,
+    buyRemoveAds,
+    createMemoryPurchaseStorage,
+  } = loadTs('lib/monetization/purchases.ts');
+  const purchase = {
+    productId: REMOVE_ADS_PRODUCT_ID,
+    purchaseToken: 'mock-token-owned-remove-ads',
+    transactionId: 'owned-remove-ads',
+  };
+
+  function createDuplicateProvider(errorCode) {
+    const events = [];
+
+    return {
+      events,
+      provider: {
+        async connect() {
+          events.push('connect');
+        },
+        async disconnect() {
+          events.push('disconnect');
+        },
+        async finishPurchase() {
+          events.push('finish');
+        },
+        async requestRemoveAdsPurchase() {
+          events.push(`request:${errorCode}`);
+          throw { code: errorCode };
+        },
+        async restorePurchases(productIds) {
+          events.push('restore');
+          return productIds.includes(REMOVE_ADS_PRODUCT_ID) ? [purchase] : [];
+        },
+        async validateRemoveAdsReceipt(restoredPurchase, productId) {
+          events.push(`validate:${restoredPurchase.transactionId}`);
+          return {
+            productId,
+            purchaseToken: restoredPurchase.purchaseToken ?? null,
+            status: 'valid',
+            transactionId: restoredPurchase.transactionId ?? null,
+            validatedAt: '2026-05-20T12:00:00.000Z',
+          };
+        },
+      },
+    };
+  }
+
+  for (const errorCode of ['duplicate-purchase', 'already-owned']) {
+    const storage = createMemoryPurchaseStorage();
+    const duplicateProvider = createDuplicateProvider(errorCode);
+    const result = await buyRemoveAds({
+      provider: duplicateProvider.provider,
+      storage,
+    });
+
+    assert.equal(result.status, 'restored', errorCode);
+    assert.equal(result.entitlements.adsDisabled, true, errorCode);
+    assert.equal(
+      JSON.parse(await storage.getItemAsync(REMOVE_ADS_STORAGE_KEY)).transactionId,
+      'owned-remove-ads',
+      errorCode,
+    );
+    assert.deepEqual(
+      duplicateProvider.events,
+      ['connect', `request:${errorCode}`, 'restore', 'validate:owned-remove-ads', 'disconnect'],
+      errorCode,
+    );
+  }
+});
+
 test('native Remove Ads purchases require an injected receipt verifier', async () => {
   const {
     REMOVE_ADS_PRODUCT_ID,
@@ -2573,6 +2646,93 @@ test('failed remove-ads receipt validation does not grant adsDisabled', async ()
 
   assert.equal(directGrant.adsDisabled, false);
   assert.equal(await directGrantStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
+});
+
+test('non-restorable remove-ads purchase failures do not grant adsDisabled', async () => {
+  const {
+    REMOVE_ADS_PRODUCT_ID,
+    REMOVE_ADS_STORAGE_KEY,
+    buyRemoveAds,
+    createMemoryPurchaseStorage,
+  } = loadTs('lib/monetization/purchases.ts');
+
+  function createThrowingProvider(errorCode, restorePurchase = null, receiptStatus = 'valid') {
+    const events = [];
+
+    return {
+      events,
+      provider: {
+        async connect() {
+          events.push('connect');
+        },
+        async disconnect() {
+          events.push('disconnect');
+        },
+        async requestRemoveAdsPurchase() {
+          events.push(`request:${errorCode}`);
+          throw { code: errorCode };
+        },
+        async restorePurchases() {
+          events.push('restore');
+          return restorePurchase ? [restorePurchase] : [];
+        },
+        async validateRemoveAdsReceipt(purchase, productId) {
+          events.push(`validate:${purchase.transactionId}`);
+          return receiptStatus === 'valid'
+            ? {
+                productId,
+                purchaseToken: purchase.purchaseToken ?? null,
+                status: 'valid',
+                transactionId: purchase.transactionId ?? null,
+                validatedAt: '2026-05-20T12:00:00.000Z',
+              }
+            : { status: receiptStatus };
+        },
+      },
+    };
+  }
+
+  for (const errorCode of ['user-cancelled', 'item-not-owned']) {
+    const storage = createMemoryPurchaseStorage();
+    const throwingProvider = createThrowingProvider(errorCode);
+    await assert.rejects(
+      () => buyRemoveAds({ provider: throwingProvider.provider, storage }),
+      (error) => error?.code === errorCode,
+      errorCode,
+    );
+    assert.equal(await storage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null, errorCode);
+    assert.deepEqual(
+      throwingProvider.events,
+      ['connect', `request:${errorCode}`, 'disconnect'],
+      errorCode,
+    );
+  }
+
+  const duplicateInvalidStorage = createMemoryPurchaseStorage();
+  const duplicateInvalidProvider = createThrowingProvider(
+    'duplicate-purchase',
+    {
+      productId: REMOVE_ADS_PRODUCT_ID,
+      purchaseToken: 'mock-token-invalid-restore',
+      transactionId: 'invalid-restore',
+    },
+    'invalid',
+  );
+  const duplicateInvalidResult = await buyRemoveAds({
+    provider: duplicateInvalidProvider.provider,
+    storage: duplicateInvalidStorage,
+  });
+
+  assert.equal(duplicateInvalidResult.status, 'not_found');
+  assert.equal(duplicateInvalidResult.entitlements.adsDisabled, false);
+  assert.equal(await duplicateInvalidStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
+  assert.deepEqual(duplicateInvalidProvider.events, [
+    'connect',
+    'request:duplicate-purchase',
+    'restore',
+    'validate:invalid-restore',
+    'disconnect',
+  ]);
 });
 
 test('failed remove-ads actions preserve a valid stored entitlement only after matching revalidation', async () => {
