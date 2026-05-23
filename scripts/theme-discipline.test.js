@@ -39,6 +39,10 @@ const MOCK_EXAM_RESULT_THEME_SURFACES = [
   'components/ResultSummary.tsx',
   'components/MockExamTimeHeatmap.tsx',
 ];
+const MOCK_EXAM_PRE_SUBMIT_THEME_SURFACES = [
+  'components/MockExamConfigPanel.tsx',
+  'components/MockExamStatusBar.tsx',
+];
 const NATIVE_LEARNING_THEME_SURFACES = [
   'components/learning/BadgeRow.tsx',
   'components/learning/ChapterCard.tsx',
@@ -612,6 +616,72 @@ test('mock exam result analysis surfaces resolve semantic colors from the active
     examRouteSource,
     /<MockExamTimeHeatmap[\s\S]*answers=\{submittedExamSession\.answers\}/,
   );
+});
+
+test('mock exam pre-submit controls resolve semantic colors from the active theme', () => {
+  for (const componentPath of MOCK_EXAM_PRE_SUBMIT_THEME_SURFACES) {
+    const source = read(componentPath);
+
+    assert.match(
+      source,
+      /useThemeColors\(\)/,
+      `${componentPath} should read the active theme color context`,
+    );
+    assert.match(
+      source,
+      /const styles = useMemo\(\(\) => createStyles\(themeColors\), \[themeColors\]\)/,
+      `${componentPath} should memoize styles from active ThemeColors`,
+    );
+    assert.match(
+      source,
+      /function createStyles\(themeColors: ThemeColors\)/,
+      `${componentPath} should derive styles from ThemeColors`,
+    );
+    assert.match(
+      source,
+      /themeColors\./,
+      `${componentPath} should use semantic ThemeColors in styles`,
+    );
+    assert.doesNotMatch(
+      source,
+      /import \{[^}]*\bcolors\b[^}]*\} from ['"]\.\.\/lib\/theme['"]/,
+      `${componentPath} must not import the static light colors singleton`,
+    );
+    assert.doesNotMatch(
+      source,
+      /\bcolors\./,
+      `${componentPath} must not read static colors.* values`,
+    );
+  }
+
+  const configPanelSource = read('components/MockExamConfigPanel.tsx');
+  const statusBarSource = read('components/MockExamStatusBar.tsx');
+
+  for (const tokenName of ['surfaceWarm', 'surface', 'border', 'focusSoft', 'accent', 'text']) {
+    assert.match(
+      configPanelSource,
+      new RegExp(`themeColors\\.${tokenName}\\b`),
+      `MockExamConfigPanel should style controls with active ${tokenName}`,
+    );
+  }
+
+  for (const tokenName of [
+    'surface',
+    'border',
+    'success',
+    'badgeBlueBg',
+    'badgeBlueText',
+    'dangerSoft',
+    'danger',
+    'text',
+    'textSecondary',
+  ]) {
+    assert.match(
+      statusBarSource,
+      new RegExp(`themeColors\\.${tokenName}\\b`),
+      `MockExamStatusBar should style timer states with active ${tokenName}`,
+    );
+  }
 });
 
 test('native learning child components resolve semantic colors from the active theme', () => {

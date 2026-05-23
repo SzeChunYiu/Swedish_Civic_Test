@@ -1,9 +1,11 @@
+import { useMemo } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import type { AccessibilityActionEvent, StyleProp, ViewStyle } from 'react-native';
 
 import { useReducedMotion } from '../lib/motion/useReducedMotion';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
-import { colors, motion, radius, shadows, space } from '../lib/theme';
+import { motion, radius, shadows, space, type ThemeColors } from '../lib/theme';
+import { useThemeColors } from '../lib/theme/ThemeProvider';
 import { Button } from './Button';
 import { PillBadge } from './PillBadge';
 import { Surface } from './Surface';
@@ -209,6 +211,8 @@ function Stepper({
   value,
   valueLabel,
 }: StepperProps) {
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const reduceMotion = useReducedMotion();
   const canDecrement = value > min && !disabled && Boolean(onChange);
   const canIncrement = value < max && !disabled && Boolean(onChange);
@@ -339,6 +343,8 @@ export function MockExamConfigPanel({
   tone = 'surface',
   ...surfaceProps
 }: MockExamConfigPanelProps) {
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const reduceMotion = useReducedMotion();
   const settingsLanguage = useSettingsStore((state) => state.language);
   const language = languageOverride ?? settingsLanguage;
@@ -614,137 +620,139 @@ export function MockExamConfigPanel({
   );
 }
 
-const styles = StyleSheet.create({
-  panel: {
-    gap: space[2],
-    padding: space[2.25],
-  },
-  header: {
-    alignItems: 'flex-start',
-    flexDirection: 'row',
-    gap: space[1.5],
-    justifyContent: 'space-between',
-  },
-  headerCopy: {
-    flex: 1,
-    gap: space[0.75],
-  },
-  controlsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1.5],
-  },
-  controlCard: {
-    backgroundColor: colors.surfaceWarm,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: space.hairline,
-    flexBasis: space[15],
-    flexGrow: 1,
-    gap: space[1],
-    padding: space[1.5],
-  },
-  stepper: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: space[1.5],
-    justifyContent: 'space-between',
-  },
-  stepperCopy: {
-    flex: 1,
-    gap: space[0.5],
-  },
-  stepperValue: {
-    color: colors.text,
-  },
-  stepperControls: {
-    flexDirection: 'row',
-    gap: space[0.75],
-  },
-  stepperButton: {
-    alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.small,
-    borderWidth: space.hairline,
-    height: space[6],
-    justifyContent: 'center',
-    width: space[6],
-  },
-  stepperSymbol: {
-    color: colors.accent,
-  },
-  pressed: {
-    transform: [{ scale: motion.pressedScale }],
-  },
-  disabledControl: {
-    opacity: motion.pressedScale,
-  },
-  chapterSection: {
-    gap: space[1.25],
-  },
-  sectionHeader: {
-    alignItems: 'flex-start',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-    justifyContent: 'space-between',
-  },
-  selectActions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[0.75],
-  },
-  chips: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-  },
-  chapterChip: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: space.hairline,
-    flexBasis: space[12],
-    flexGrow: 1,
-    padding: space[1.25],
-    ...shadows.card,
-  },
-  chapterChipSelected: {
-    backgroundColor: colors.focusSoft,
-    borderColor: colors.accent,
-  },
-  chapterChipCopy: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: space[1],
-  },
-  chapterEmoji: {
-    minWidth: space[3],
-    textAlign: 'center',
-  },
-  chapterText: {
-    flex: 1,
-    gap: space[0.5],
-  },
-  chapterTitleSelected: {
-    color: colors.accent,
-  },
-  metaRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[0.75],
-  },
-  actions: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-  },
-  primaryAction: {
-    flexGrow: 1,
-  },
-  secondaryAction: {
-    flexGrow: 1,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    panel: {
+      gap: space[2],
+      padding: space[2.25],
+    },
+    header: {
+      alignItems: 'flex-start',
+      flexDirection: 'row',
+      gap: space[1.5],
+      justifyContent: 'space-between',
+    },
+    headerCopy: {
+      flex: 1,
+      gap: space[0.75],
+    },
+    controlsGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1.5],
+    },
+    controlCard: {
+      backgroundColor: themeColors.surfaceWarm,
+      borderColor: themeColors.border,
+      borderRadius: radius.card,
+      borderWidth: space.hairline,
+      flexBasis: space[15],
+      flexGrow: 1,
+      gap: space[1],
+      padding: space[1.5],
+    },
+    stepper: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      gap: space[1.5],
+      justifyContent: 'space-between',
+    },
+    stepperCopy: {
+      flex: 1,
+      gap: space[0.5],
+    },
+    stepperValue: {
+      color: themeColors.text,
+    },
+    stepperControls: {
+      flexDirection: 'row',
+      gap: space[0.75],
+    },
+    stepperButton: {
+      alignItems: 'center',
+      backgroundColor: themeColors.surface,
+      borderColor: themeColors.border,
+      borderRadius: radius.small,
+      borderWidth: space.hairline,
+      height: space[6],
+      justifyContent: 'center',
+      width: space[6],
+    },
+    stepperSymbol: {
+      color: themeColors.accent,
+    },
+    pressed: {
+      transform: [{ scale: motion.pressedScale }],
+    },
+    disabledControl: {
+      opacity: motion.pressedScale,
+    },
+    chapterSection: {
+      gap: space[1.25],
+    },
+    sectionHeader: {
+      alignItems: 'flex-start',
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1],
+      justifyContent: 'space-between',
+    },
+    selectActions: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[0.75],
+    },
+    chips: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1],
+    },
+    chapterChip: {
+      backgroundColor: themeColors.surface,
+      borderColor: themeColors.border,
+      borderRadius: radius.card,
+      borderWidth: space.hairline,
+      flexBasis: space[12],
+      flexGrow: 1,
+      padding: space[1.25],
+      ...shadows.card,
+    },
+    chapterChipSelected: {
+      backgroundColor: themeColors.focusSoft,
+      borderColor: themeColors.accent,
+    },
+    chapterChipCopy: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      gap: space[1],
+    },
+    chapterEmoji: {
+      minWidth: space[3],
+      textAlign: 'center',
+    },
+    chapterText: {
+      flex: 1,
+      gap: space[0.5],
+    },
+    chapterTitleSelected: {
+      color: themeColors.accent,
+    },
+    metaRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[0.75],
+    },
+    actions: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1],
+    },
+    primaryAction: {
+      flexGrow: 1,
+    },
+    secondaryAction: {
+      flexGrow: 1,
+    },
+  });
+}

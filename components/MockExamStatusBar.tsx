@@ -1,10 +1,11 @@
-import type { ComponentProps } from 'react';
+import { useMemo, type ComponentProps } from 'react';
 import { StyleSheet, View } from 'react-native';
 import type { StyleProp, ViewStyle } from 'react-native';
 
 import type { MockExamTimerUrgency } from '../lib/quiz/examGenerator';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
-import { colors, radius, space } from '../lib/theme';
+import { radius, space, type ThemeColors } from '../lib/theme';
+import { useThemeColors } from '../lib/theme/ThemeProvider';
 import { Button } from './Button';
 import type { PillBadgeVariant } from './PillBadge';
 import { PillBadge } from './PillBadge';
@@ -102,6 +103,8 @@ export function MockExamStatusBar({
   timeValue,
   ...viewProps
 }: MockExamStatusBarProps) {
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const settingsLanguage = useSettingsStore((state) => state.language);
   const language = languageOverride ?? settingsLanguage;
   const copy = mockExamStatusBarCopy[language];
@@ -168,46 +171,48 @@ export function MockExamStatusBar({
   );
 }
 
-const styles = StyleSheet.create({
-  bar: {
-    alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: space.hairline,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-    padding: space[1.5],
-  },
-  steadyTimeBar: {
-    borderColor: colors.success,
-  },
-  warningTimeBar: {
-    backgroundColor: colors.badgeBlueBg,
-    borderColor: colors.badgeBlueText,
-  },
-  dangerTimeBar: {
-    backgroundColor: colors.dangerSoft,
-    borderColor: colors.danger,
-  },
-  titleGroup: {
-    flexGrow: 1,
-    flexShrink: 1,
-    gap: space[0.5],
-    minWidth: space[12],
-  },
-  counter: {
-    color: colors.text,
-  },
-  timerGroup: {
-    alignItems: 'flex-end',
-    gap: space[0.5],
-  },
-  timerUrgencyLabel: {
-    color: colors.textSecondary,
-  },
-  submit: {
-    flexGrow: 0,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    bar: {
+      alignItems: 'center',
+      backgroundColor: themeColors.surface,
+      borderColor: themeColors.border,
+      borderRadius: radius.card,
+      borderWidth: space.hairline,
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1],
+      padding: space[1.5],
+    },
+    steadyTimeBar: {
+      borderColor: themeColors.success,
+    },
+    warningTimeBar: {
+      backgroundColor: themeColors.badgeBlueBg,
+      borderColor: themeColors.badgeBlueText,
+    },
+    dangerTimeBar: {
+      backgroundColor: themeColors.dangerSoft,
+      borderColor: themeColors.danger,
+    },
+    titleGroup: {
+      flexGrow: 1,
+      flexShrink: 1,
+      gap: space[0.5],
+      minWidth: space[12],
+    },
+    counter: {
+      color: themeColors.text,
+    },
+    timerGroup: {
+      alignItems: 'flex-end',
+      gap: space[0.5],
+    },
+    timerUrgencyLabel: {
+      color: themeColors.textSecondary,
+    },
+    submit: {
+      flexGrow: 0,
+    },
+  });
+}

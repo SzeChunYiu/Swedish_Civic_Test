@@ -14663,11 +14663,11 @@ function validateMockExamTimerParity(config) {
       'status bar must expose urgency through tokenized styles',
     ],
     [
-      'backgroundColor: colors.dangerSoft',
+      'backgroundColor: themeColors.dangerSoft',
       'status bar danger timer state must use the semantic danger surface token',
     ],
     [
-      'borderColor: colors.danger',
+      'borderColor: themeColors.danger',
       'status bar danger timer state must use the semantic danger border token',
     ],
     [
