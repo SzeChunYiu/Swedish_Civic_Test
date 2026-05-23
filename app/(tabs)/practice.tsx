@@ -259,6 +259,12 @@ function normalizePracticeRouteLaunchMode(
   return rawValue === 'challenge' || rawValue === 'quick' ? rawValue : null;
 }
 
+function normalizePracticeRouteLaunchToken(value: string | string[] | undefined): string | null {
+  const rawValue = Array.isArray(value) ? value[0] : value;
+  const launchToken = typeof rawValue === 'string' ? rawValue.trim() : '';
+  return launchToken.length > 0 ? launchToken : null;
+}
+
 function normalizePracticeChapterRouteScope(
   value: string | string[] | undefined,
   questionBank: PracticeQuestion[],
@@ -363,8 +369,9 @@ function buildAdaptivePracticeProgress(
 }
 
 export default function Screen() {
-  const { chapterId, mode } = useLocalSearchParams<{
+  const { chapterId, launch, mode } = useLocalSearchParams<{
     chapterId?: string | string[];
+    launch?: string | string[];
     mode?: string | string[];
   }>();
   const consumedRouteLaunchKeyRef = useRef<string | null>(null);
@@ -433,6 +440,7 @@ export default function Screen() {
     [filteredQuestions],
   );
   const routeLaunchMode = normalizePracticeRouteLaunchMode(mode);
+  const routeLaunchToken = normalizePracticeRouteLaunchToken(launch);
   const routeChapterScope = useMemo(
     () => normalizePracticeChapterRouteScope(chapterId, filteredQuestions),
     [chapterId, filteredQuestions],
@@ -448,13 +456,13 @@ export default function Screen() {
     if (!routeLaunchMode) return null;
 
     return {
-      key: `mode:${routeLaunchMode}`,
+      key: `mode:${routeLaunchMode}:${routeLaunchToken ?? 'default'}`,
       scope:
         routeLaunchMode === 'challenge'
           ? { type: 'challenge', questionIds: dailyChallenge.questionIds }
           : { type: 'quick', limit: 10 },
     };
-  }, [dailyChallenge.questionIds, routeChapterScope, routeLaunchMode]);
+  }, [dailyChallenge.questionIds, routeChapterScope, routeLaunchMode, routeLaunchToken]);
   const practiceQuestionBank = useMemo(
     () => getQuestionsForPracticeScope(filteredQuestions, practiceScope),
     [filteredQuestions, practiceScope],
