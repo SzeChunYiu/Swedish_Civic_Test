@@ -122,6 +122,7 @@ test('proLifetime: product id + price label + storage key exported', () => {
 test('proLifetime: v1.1 setup docs and identity stay in Pro lane', () => {
   const m = loadTs('lib/monetization/proLifetimePurchase.ts');
   const appStoreIdentitySource = read('lib/monetization/appStoreIdentity.ts');
+  const purchaseSource = read('lib/monetization/purchases.ts');
   const proLifetimeSource = read('lib/monetization/proLifetimePurchase.ts');
   const publishingGateSource = read('scripts/publishing.test.js');
 
@@ -136,6 +137,11 @@ test('proLifetime: v1.1 setup docs and identity stay in Pro lane', () => {
     proLifetimeSource,
     /import\s*\{[^}]*\bisCanonicalUtcIsoTimestamp\b[^}]*\}\s*from\s*['"]\.\/purchases['"]/,
   );
+  assert.match(
+    purchaseSource,
+    /import\s*\{\s*isCanonicalUtcIsoTimestamp\s*\}\s*from\s*['"]\.\.\/time\/canonicalTimestamp['"]/,
+  );
+  assert.doesNotMatch(purchaseSource, /\bexport\s+function\s+isCanonicalUtcIsoTimestamp\b/);
   assert.doesNotMatch(appStoreIdentitySource, staleNativeIdentifierPattern());
   assert.doesNotMatch(proLifetimeSource, staleNativeIdentifierPattern());
   assert.doesNotMatch(publishingGateSource, /proLifetime|Pro Lifetime|PRO_LIFETIME/);

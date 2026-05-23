@@ -2301,6 +2301,19 @@ test('Pro Lifetime uses the shared canonical timestamp helper', () => {
     path.join(repoRoot, 'lib/monetization/proLifetimePurchase.ts'),
     'utf8',
   );
+  const purchaseSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/purchases.ts'),
+    'utf8',
+  );
+  const monetizationConsumersImportThroughPurchases = fs
+    .readdirSync(path.join(repoRoot, 'lib/monetization'))
+    .filter((fileName) => /\.(?:ts|tsx)$/.test(fileName) && fileName !== 'purchases.ts')
+    .filter((fileName) => {
+      const source = fs.readFileSync(path.join(repoRoot, 'lib/monetization', fileName), 'utf8');
+      return /import\s*\{[^}]*\bisCanonicalUtcIsoTimestamp\b[^}]*\}\s*from\s*['"]\.\/purchases['"]/s.test(
+        source,
+      );
+    });
 
   assert.match(
     proLifetimeSource,
@@ -2310,6 +2323,12 @@ test('Pro Lifetime uses the shared canonical timestamp helper', () => {
     proLifetimeSource,
     /import\s*\{[^}]*\bisCanonicalUtcIsoTimestamp\b[^}]*\}\s*from\s*['"]\.\/purchases['"]/,
   );
+  assert.match(
+    purchaseSource,
+    /import\s*\{\s*isCanonicalUtcIsoTimestamp\s*\}\s*from\s*['"]\.\.\/time\/canonicalTimestamp['"]/,
+  );
+  assert.doesNotMatch(purchaseSource, /\bexport\s+function\s+isCanonicalUtcIsoTimestamp\b/);
+  assert.deepEqual(monetizationConsumersImportThroughPurchases, []);
 });
 
 test('remove-ads entitlement storage rejects stale boolean and malformed records', async () => {
