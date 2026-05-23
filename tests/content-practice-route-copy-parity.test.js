@@ -70,8 +70,16 @@ function assertPracticeRouteLaunchParity(practiceSource, homeSource) {
     ],
     [/consumedRouteLaunchModeRef\.current = routeLaunchMode;/, 'route launch consumed marker'],
     [
-      /startSession\(nextQuestionBank\[0\]\?\.id \?\? null\);/,
-      'route launch starts first scoped question',
+      /const nextQuestion = getPracticeQuestionForSession\(\s*nextQuestionBank,\s*completedQuestionIds,\s*null,\s*\);/,
+      'route launch uses first-unanswered selector',
+    ],
+    [
+      /startSession\(nextQuestion\?\.id \?\? null\);/,
+      'route launch starts first unanswered scoped question',
+    ],
+    [
+      /\[completedQuestionIds, filteredQuestions, routeLaunchRequest, startSession\]/,
+      'route launch progress dependency',
     ],
     [/setPracticeScope\(nextScope\);/, 'route launch enters practice mode'],
   ];
@@ -211,7 +219,7 @@ test('practice route source wires selected companion copy to answer feedback sta
   );
   assert.match(companionCard, /settingsAccessibilityLabel: 'Change study companion in Settings'/);
   assert.match(companionCard, /settingsAccessibilityLabel: 'Byt studiekompis i Inställningar'/);
-  assert.match(companionCard, /href="\/settings"/);
+  assert.match(companionCard, /href="\/settings\?focus=companion"/);
   assert.match(companionCard, /<MascotArtwork[\s\S]*mascotId=\{mascot\.id\}/);
   assert.doesNotMatch(companionCard, /label\.slice\(0,\s*1\)\.toUpperCase\(\)/);
   assert.match(mascotArtwork, /SvgUri/);

@@ -562,12 +562,18 @@ export default function Screen() {
     );
     if (nextQuestionBank.length === 0) return;
 
+    const nextQuestion = getPracticeQuestionForSession(
+      nextQuestionBank,
+      completedQuestionIds,
+      null,
+    );
+
     consumedRouteLaunchKeyRef.current = routeLaunchRequest.key;
-    startSession(nextQuestionBank[0]?.id ?? null);
+    startSession(nextQuestion?.id ?? null);
     setAboutSourcesOpen(false);
     setSelectedConfidenceRating(null);
     setPracticeScope(routeLaunchRequest.scope);
-  }, [filteredQuestions, routeLaunchRequest, startSession]);
+  }, [completedQuestionIds, filteredQuestions, routeLaunchRequest, startSession]);
 
   const startPracticeScope = (nextScope: PracticeScope) => {
     const nextQuestionBank = getQuestionsForPracticeScope(filteredQuestions, nextScope);
