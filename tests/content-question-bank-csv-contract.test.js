@@ -64,10 +64,12 @@ test('question-bank CSV keeps its public row contract', () => {
 
   const summary = JSON.parse(match[0]);
   assert.equal(summary.questionBankCsvRowsValidated, summary.publishedQuestions);
-  assert.equal(summary.questionBankCsvHeaderColumnsValidated, 28);
+  assert.equal(summary.questionBankCsvHeaderColumnsValidated, 30);
   assert.equal(summary.questionBankCsvUniqueHeaderNamesValidated, true);
   assert.equal(summary.questionBankCsvUhrCitationRowsValidated, summary.publishedQuestions);
   assert.equal(summary.questionBankCsvUhrCitationParityValidated, true);
+  assert.equal(summary.questionBankCsvSourceCitationRowsValidated, summary.publishedQuestions);
+  assert.equal(summary.questionBankCsvSourceCitationParityValidated, true);
   assert.equal(summary.questionBankCsvUhrSourcePublisherRowsValidated, summary.publishedQuestions);
   assert.equal(summary.questionBankCsvUhrSourcePublisherParityValidated, true);
   assert.equal(summary.questionBankCsvSupplementalSourceRowsValidated, 15);
@@ -359,7 +361,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /content\/question-bank\.csv row 2 has 29 columns, expected 28/,
+    /content\/question-bank\.csv row 2 has 31 columns, expected 30/,
   );
 });
 
@@ -543,6 +545,38 @@ test('question-bank CSV exposes localized user-visible UHR citation strings', ()
     'Source: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, p. 5',
   );
   assert.ok(rows.every((row) => row[citationSvIndex] && row[citationEnIndex]));
+});
+
+test('question-bank CSV exposes localized full source citations with supplemental sources', () => {
+  const output = runQuestionBankCsvValidation();
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'validation should print JSON summary');
+
+  const summary = JSON.parse(match[0]);
+  assert.equal(summary.questionBankCsvSourceCitationRowsValidated, summary.publishedQuestions);
+  assert.equal(summary.questionBankCsvSourceCitationParityValidated, true);
+
+  const rowsById = loadQuestionBankRowsById();
+  const q001 = rowsById.get('q001');
+  const q019 = rowsById.get('q019');
+  assert.ok(q001, 'q001 should be exported');
+  assert.ok(q019, 'q019 should be exported');
+  assert.equal(q001.sourceCitationSv, q001.uhrCitationSv);
+  assert.equal(q001.sourceCitationEn, q001.uhrCitationEn);
+  assert.equal(
+    q019.sourceCitationSv,
+    'Källa: Sverige i fokus, Politiska val och partier, Val och röstning, s. 14; Kompletterande källa: Rösträtten i svenska val, Valmyndigheten, publicerad 2025-11-21, hämtad 2026-05-22, https://www.val.se/det-svenska-valsystemet/sa-funkar-rostning-i-svenska-val/rostratten-i-svenska-val',
+  );
+  assert.equal(
+    q019.sourceCitationEn,
+    'Source: Sverige i fokus, Politiska val och partier, Val och röstning, p. 14; Additional source: Rösträtten i svenska val, Valmyndigheten, published 2025-11-21, retrieved 2026-05-22, https://www.val.se/det-svenska-valsystemet/sa-funkar-rostning-i-svenska-val/rostratten-i-svenska-val',
+  );
+  assert.equal(
+    q019.uhrCitationEn,
+    'Source: Sverige i fokus, Politiska val och partier, Val och röstning, p. 14',
+  );
+  assert.match(q019.sourceCitationSv, /Kompletterande källa: .*Valmyndigheten/);
+  assert.match(q019.sourceCitationEn, /Additional source: .*Valmyndigheten/);
 });
 
 test('question-bank CSV contract rejects localized UHR citation drift', () => {

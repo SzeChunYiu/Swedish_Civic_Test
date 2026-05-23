@@ -238,6 +238,8 @@ const QUESTION_BANK_CSV_HEADER = [
   'uhrPageApprox',
   'uhrCitationSv',
   'uhrCitationEn',
+  'sourceCitationSv',
+  'sourceCitationEn',
   'uhrSourceTitle',
   'uhrSourcePublisher',
   'uhrSourceUrl',
@@ -10487,6 +10489,8 @@ let questionBankCsvHeaderColumnsValidated = 0;
 let questionBankCsvUniqueHeaderNamesValidated = false;
 let questionBankCsvUhrCitationRowsValidated = 0;
 let questionBankCsvUhrCitationParityValidated = false;
+let questionBankCsvSourceCitationRowsValidated = 0;
+let questionBankCsvSourceCitationParityValidated = false;
 let questionBankCsvUhrSourcePublisherRowsValidated = 0;
 let questionBankCsvUhrSourcePublisherParityValidated = false;
 let questionBankCsvSupplementalSourceRowsValidated = 0;
@@ -25529,6 +25533,8 @@ function validateQuestionBankCsvContract() {
       String(question.uhrReference?.pageApprox),
       expectedUhrCitation(question, 'sv'),
       expectedUhrCitation(question, 'en'),
+      expectedSourceCitation(question, 'sv'),
+      expectedSourceCitation(question, 'en'),
       uhrSectionMap?.source?.title,
       uhrSectionMap?.source?.publisher,
       uhrSectionMap?.source?.url,
@@ -25575,6 +25581,19 @@ function validateQuestionBankCsvContract() {
       hasText(row[uhrCitationEnIndex])
     ) {
       questionBankCsvUhrCitationRowsValidated += 1;
+    }
+
+    const sourceCitationSvIndex = QUESTION_BANK_CSV_HEADER.indexOf('sourceCitationSv');
+    const sourceCitationEnIndex = QUESTION_BANK_CSV_HEADER.indexOf('sourceCitationEn');
+    if (
+      sourceCitationSvIndex >= 0 &&
+      sourceCitationEnIndex >= 0 &&
+      row[sourceCitationSvIndex] === expectedSourceCitation(question, 'sv') &&
+      row[sourceCitationEnIndex] === expectedSourceCitation(question, 'en') &&
+      hasText(row[sourceCitationSvIndex]) &&
+      hasText(row[sourceCitationEnIndex])
+    ) {
+      questionBankCsvSourceCitationRowsValidated += 1;
     }
 
     const publisherIndex = QUESTION_BANK_CSV_HEADER.indexOf('uhrSourcePublisher');
@@ -25640,6 +25659,8 @@ function validateQuestionBankCsvContract() {
 
   questionBankCsvUhrCitationParityValidated =
     questionBankCsvUhrCitationRowsValidated === questions.length;
+  questionBankCsvSourceCitationParityValidated =
+    questionBankCsvSourceCitationRowsValidated === questions.length;
   questionBankCsvUhrSourcePublisherParityValidated =
     questionBankCsvUhrSourcePublisherRowsValidated === questions.length;
   questionBankCsvVotingRightsSupplementalSourceParityValidated =
@@ -25649,6 +25670,11 @@ function validateQuestionBankCsvContract() {
 function expectedUhrCitation(question, language) {
   if (typeof getQuestionSourceCitation !== 'function') return '';
   return getQuestionSourceCitation({ ...question, supplementalSources: [] }, language);
+}
+
+function expectedSourceCitation(question, language) {
+  if (typeof getQuestionSourceCitation !== 'function') return '';
+  return getQuestionSourceCitation(question, language);
 }
 
 function validateQuestionProvenanceRuntime() {
@@ -26942,6 +26968,8 @@ if (process.argv.includes('--focus-question-bank-csv')) {
         questionBankCsvUniqueHeaderNamesValidated,
         questionBankCsvUhrCitationRowsValidated,
         questionBankCsvUhrCitationParityValidated,
+        questionBankCsvSourceCitationRowsValidated,
+        questionBankCsvSourceCitationParityValidated,
         questionBankCsvUhrSourcePublisherRowsValidated,
         questionBankCsvUhrSourcePublisherParityValidated,
         questionBankCsvSupplementalSourceRowsValidated,
@@ -27981,6 +28009,8 @@ console.log(
       questionBankCsvUniqueHeaderNamesValidated,
       questionBankCsvUhrCitationRowsValidated,
       questionBankCsvUhrCitationParityValidated,
+      questionBankCsvSourceCitationRowsValidated,
+      questionBankCsvSourceCitationParityValidated,
       questionBankCsvUhrSourcePublisherRowsValidated,
       questionBankCsvUhrSourcePublisherParityValidated,
       questionBankCsvSupplementalSourceRowsValidated,

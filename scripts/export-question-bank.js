@@ -82,6 +82,10 @@ function uhrCitation(question, language) {
   return getQuestionSourceCitation({ ...question, supplementalSources: [] }, language);
 }
 
+function sourceCitation(question, language) {
+  return getQuestionSourceCitation(question, language);
+}
+
 const rows = [
   [
     'id',
@@ -99,6 +103,8 @@ const rows = [
     'uhrPageApprox',
     'uhrCitationSv',
     'uhrCitationEn',
+    'sourceCitationSv',
+    'sourceCitationEn',
     'uhrSourceTitle',
     'uhrSourcePublisher',
     'uhrSourceUrl',
@@ -129,6 +135,8 @@ const rows = [
     question.uhrReference.pageApprox,
     uhrCitation(question, 'sv'),
     uhrCitation(question, 'en'),
+    sourceCitation(question, 'sv'),
+    sourceCitation(question, 'en'),
     uhrSource.title,
     uhrSource.publisher,
     uhrSource.url,
