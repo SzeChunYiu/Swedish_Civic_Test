@@ -495,6 +495,59 @@ test('getProLifetimeEntitlement: provider revalidates, refreshes, and clears sto
   assert.equal(await invalidStorage.getItemAsync(PRO_LIFETIME_STORAGE_KEY), null);
 });
 
+test('Pro Lifetime default native runtime wires receipt validator and unavailable state', () => {
+  const hookSource = read('lib/monetization/useProLifetimeEntitlements.ts');
+  const purchaseSource = read('lib/monetization/proLifetimePurchase.ts');
+  const paywallSource = read('components/monetization/ProPaywall.tsx');
+
+  assert.match(hookSource, /createNativeRemoveAdsReceiptValidator/);
+  assert.match(hookSource, /const receiptValidator = createNativeRemoveAdsReceiptValidator/);
+  assert.match(hookSource, /receiptValidator,\s*\n\s*\}\)/);
+  assert.match(hookSource, /native_receipt_validator_unavailable/);
+  assert.match(hookSource, /purchaseUnavailableReason: 'web_store_unavailable'/);
+  assert.match(purchaseSource, /\| 'unavailable'/);
+  assert.match(purchaseSource, /purchaseUnavailableReason\?:/);
+  assert.match(purchaseSource, /return createResult\('unavailable'/);
+  assert.match(paywallSource, /Pro purchases are temporarily unavailable/);
+  assert.match(paywallSource, /Pro can be bought or restored in the mobile app/);
+  assert.match(paywallSource, /kvittovalidering inte är konfigurerad/);
+  assert.match(paywallSource, /Pro kan köpas eller återställas i mobilappen/);
+  assert.match(paywallSource, /purchaseRuntime\.purchaseUnavailableReason/);
+  assert.match(paywallSource, /setStatus\('unavailable'\);/);
+});
+
+test('buyProLifetime and restoreProLifetime fail closed when purchases are unavailable', async () => {
+  const { buyProLifetime, restoreProLifetime } = loadTs('lib/monetization/proLifetimePurchase.ts');
+  const events = [];
+  const provider = {
+    async connect() {
+      events.push('connect');
+    },
+    async requestRemoveAdsPurchase() {
+      events.push('buy');
+      return null;
+    },
+    async restorePurchases() {
+      events.push('restore');
+      return [];
+    },
+  };
+  const runtimeOptions = {
+    provider,
+    purchaseUnavailableReason: 'native_receipt_validator_unavailable',
+    storage: makeMemoryStorage(),
+  };
+
+  const buyResult = await buyProLifetime(runtimeOptions);
+  const restoreResult = await restoreProLifetime(runtimeOptions);
+
+  assert.equal(buyResult.status, 'unavailable');
+  assert.equal(restoreResult.status, 'unavailable');
+  assert.equal(buyResult.entitlements.spacedRepetition, false);
+  assert.equal(restoreResult.entitlements.spacedRepetition, false);
+  assert.deepEqual(events, []);
+});
+
 test('mergeWithRemoveAds: Pro purchase preserves shipped flags even if Remove-Ads is also active', () => {
   const { mergeWithRemoveAds } = loadTs('lib/monetization/proLifetimePurchase.ts');
   const removeAds = { adsDisabled: true, unlimitedMockExams: false, fullMistakeReview: false };

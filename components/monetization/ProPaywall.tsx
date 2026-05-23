@@ -36,6 +36,10 @@ type ProPaywallCopy = {
   included: string;
   includedAccessibilityLabel: string;
   priceAccessibilityLabel: (column: TierColumn) => string;
+  purchaseUnavailableMessages: Record<
+    NonNullable<ProLifetimeRuntimeOptions['purchaseUnavailableReason']>,
+    string
+  >;
   primaryAccessibilityHint: string;
   restoring: string;
   restoreAccessibilityHint: string;
@@ -58,6 +62,11 @@ const proPaywallCopy: Record<AppLanguage, ProPaywallCopy> = {
     included: 'Ingår',
     includedAccessibilityLabel: 'Ingår i nivån',
     priceAccessibilityLabel: (column) => `${column.labelSv}: ${column.priceSv}`,
+    purchaseUnavailableMessages: {
+      native_receipt_validator_unavailable:
+        'Pro-köp är tillfälligt inte tillgängligt eftersom kvittovalidering inte är konfigurerad.',
+      web_store_unavailable: 'Pro kan köpas eller återställas i mobilappen.',
+    },
     primaryAccessibilityHint:
       'Köper Pro Lifetime med annonsfri studie och avancerade studiefunktioner.',
     restoring: 'Återställer...',
@@ -85,6 +94,7 @@ const proPaywallCopy: Record<AppLanguage, ProPaywallCopy> = {
         'Pro-köpet bekräftades men kunde inte sparas lokalt. Försök återställa köpet.',
       purchased: 'Pro är aktiverat på den här enheten.',
       restored: 'Pro är återställt på den här enheten.',
+      unavailable: 'Pro-köp är tillfälligt inte tillgängligt.',
     },
     title: 'Jämför Gratis, Annonsfri och Pro',
     titleEyebrow: 'Pro Lifetime',
@@ -97,6 +107,11 @@ const proPaywallCopy: Record<AppLanguage, ProPaywallCopy> = {
     included: 'Included',
     includedAccessibilityLabel: 'Included in this tier',
     priceAccessibilityLabel: (column) => `${column.labelEn}: ${column.priceEn}`,
+    purchaseUnavailableMessages: {
+      native_receipt_validator_unavailable:
+        'Pro purchases are temporarily unavailable because receipt validation is not configured.',
+      web_store_unavailable: 'Pro can be bought or restored in the mobile app.',
+    },
     primaryAccessibilityHint: 'Buys Pro Lifetime with ad-free study and advanced study features.',
     restoring: 'Restoring...',
     restoreAccessibilityHint: 'Checks whether Pro was already bought with the same store account.',
@@ -123,6 +138,7 @@ const proPaywallCopy: Record<AppLanguage, ProPaywallCopy> = {
         'Pro was confirmed but could not be saved locally. Try restoring the purchase.',
       purchased: 'Pro is active on this device.',
       restored: 'Pro has been restored on this device.',
+      unavailable: 'Pro purchases are temporarily unavailable.',
     },
     title: 'Compare Free, Ad-Free, and Pro',
     titleEyebrow: 'Pro Lifetime',
@@ -162,11 +178,22 @@ export function ProPaywall({
     () => runtimeOptions ?? createDefaultProLifetimeRuntimeOptions(),
     [runtimeOptions],
   );
+  const purchaseUnavailable =
+    purchaseRuntime.purchaseUnavailableReason === 'native_receipt_validator_unavailable' ||
+    purchaseRuntime.purchaseUnavailableReason === 'web_store_unavailable';
   const primaryLabel = language === 'sv' ? ctaLabels.primarySv : ctaLabels.primaryEn;
   const secondaryLabel = language === 'sv' ? ctaLabels.secondarySv : ctaLabels.secondaryEn;
-  const statusMessage = copy.statusMessages[status];
+  const visibleStatus = purchaseUnavailable && status === 'idle' ? 'unavailable' : status;
+  const statusMessage =
+    visibleStatus === 'unavailable' && purchaseRuntime.purchaseUnavailableReason
+      ? copy.purchaseUnavailableMessages[purchaseRuntime.purchaseUnavailableReason]
+      : copy.statusMessages[visibleStatus];
   const runProAction = useCallback(
     async (action: ProAction) => {
+      if (purchaseUnavailable) {
+        setStatus('unavailable');
+        return;
+      }
       if (purchaseActionInFlightRef.current) return;
 
       purchaseActionInFlightRef.current = true;
@@ -187,7 +214,7 @@ export function ProPaywall({
         setActiveAction(null);
       }
     },
-    [onEntitlementsChange, purchaseRuntime],
+    [onEntitlementsChange, purchaseRuntime, purchaseUnavailable],
   );
 
   return (
@@ -258,8 +285,11 @@ export function ProPaywall({
           accessibilityHint={copy.primaryAccessibilityHint}
           accessibilityLabel={primaryLabel}
           accessibilityRole="button"
-          accessibilityState={{ busy: activeAction === 'buy', disabled: activeAction !== null }}
-          disabled={activeAction !== null}
+          accessibilityState={{
+            busy: activeAction === 'buy',
+            disabled: activeAction !== null || purchaseUnavailable,
+          }}
+          disabled={activeAction !== null || purchaseUnavailable}
           onPress={() => void runProAction('buy')}
           style={styles.actionButton}
         >
@@ -271,9 +301,9 @@ export function ProPaywall({
           accessibilityRole="button"
           accessibilityState={{
             busy: activeAction === 'restore',
-            disabled: activeAction !== null,
+            disabled: activeAction !== null || purchaseUnavailable,
           }}
-          disabled={activeAction !== null}
+          disabled={activeAction !== null || purchaseUnavailable}
           onPress={() => void runProAction('restore')}
           style={styles.actionButton}
           variant="secondary"

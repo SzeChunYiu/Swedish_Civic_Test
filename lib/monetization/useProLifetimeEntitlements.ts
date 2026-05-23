@@ -9,6 +9,7 @@ import {
 } from './purchases';
 import { createInstrumentedE2EPurchaseRuntimeOptions } from './e2ePurchaseRuntime';
 import { getProLifetimeEntitlement, type ProLifetimeRuntimeOptions } from './proLifetimePurchase';
+import { createNativeRemoveAdsReceiptValidator } from './removeAdsReceiptValidator.native';
 
 const FREE_PRO_ENTITLEMENTS: ProTierEntitlements = {
   adsDisabled: false,
@@ -34,8 +35,17 @@ function getNativePurchasePlatform() {
 
 export function createDefaultProLifetimeRuntimeOptions(): ProLifetimeRuntimeOptions {
   if (Platform.OS !== 'web') {
+    const nativePlatform = getNativePurchasePlatform();
+    const receiptValidator = createNativeRemoveAdsReceiptValidator({ platform: nativePlatform });
+
     return {
-      provider: createNativePurchaseProvider({ platform: getNativePurchasePlatform() }),
+      provider: createNativePurchaseProvider({
+        platform: nativePlatform,
+        receiptValidator,
+      }),
+      purchaseUnavailableReason: receiptValidator
+        ? undefined
+        : 'native_receipt_validator_unavailable',
       storage: createSecureStorePurchaseStorage(),
     };
   }
@@ -49,6 +59,7 @@ export function createDefaultProLifetimeRuntimeOptions(): ProLifetimeRuntimeOpti
   if (instrumentedRuntimeOptions) return instrumentedRuntimeOptions;
 
   return {
+    purchaseUnavailableReason: 'web_store_unavailable',
     storage: createWebPurchaseStorage(),
   };
 }

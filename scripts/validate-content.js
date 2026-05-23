@@ -21195,14 +21195,33 @@ function validateProLifetimeRelaunchParity() {
     normalizedProHookSource.includes(
       "import { createNativePurchaseProvider, createSecureStorePurchaseStorage, createWebPurchaseStorage, } from './purchases';",
     ) &&
+    normalizedProHookSource.includes(
+      "import { createNativeRemoveAdsReceiptValidator } from './removeAdsReceiptValidator.native';",
+    ) &&
     normalizedProHookSource.includes("if (Platform.OS !== 'web') {") &&
     normalizedProHookSource.includes(
-      'provider: createNativePurchaseProvider({ platform: getNativePurchasePlatform() }),',
+      'const receiptValidator = createNativeRemoveAdsReceiptValidator({ platform: nativePlatform });',
+    ) &&
+    normalizedProHookSource.includes(
+      'provider: createNativePurchaseProvider({ platform: nativePlatform, receiptValidator, }),',
+    ) &&
+    normalizedProHookSource.includes(
+      "purchaseUnavailableReason: receiptValidator ? undefined : 'native_receipt_validator_unavailable',",
     ) &&
     normalizedProHookSource.includes('storage: createSecureStorePurchaseStorage(),') &&
     normalizedProHookSource.includes('storage: createWebPurchaseStorage(),') &&
-    normalizedProHookSource.includes('return { storage: createWebPurchaseStorage(), };') &&
+    normalizedProHookSource.includes(
+      "return { purchaseUnavailableReason: 'web_store_unavailable', storage: createWebPurchaseStorage(), };",
+    ) &&
     normalizedProHookSource.includes('void getProLifetimeEntitlement(proRuntime)') &&
+    normalizedProLifetimeSource.includes("return createResult('unavailable'") &&
+    normalizedProLifetimeSource.includes('purchaseUnavailableReason?:') &&
+    normalizedProIapTestSource.includes(
+      "test('buyProLifetime and restoreProLifetime fail closed when purchases are unavailable'",
+    ) &&
+    normalizedProIapTestSource.includes(
+      "test('Pro Lifetime default native runtime wires receipt validator and unavailable state'",
+    ) &&
     (normalizedProHookSource.match(/\bprovider:/g) ?? []).length === 1;
 
   for (const [caseIsValid, message, markValidated] of [
