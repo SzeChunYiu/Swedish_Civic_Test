@@ -12,6 +12,33 @@ const {
 
 const repoRoot = path.resolve(__dirname, '..');
 
+function runSettingsImportSummaryFocusedMutation(mutateSource) {
+  return spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const path = require('node:path');
+const repoRoot = ${JSON.stringify(repoRoot)};
+const summaryPath = path.join(repoRoot, 'lib/storage/localStudyDataImportSummary.ts');
+const originalReadFileSync = fs.readFileSync;
+const mutateSource = ${mutateSource.toString()};
+fs.readFileSync = function readFileSyncPatched(filePath, ...args) {
+  const resolvedPath = path.resolve(String(filePath));
+  if (resolvedPath === summaryPath) {
+    return mutateSource(originalReadFileSync.call(this, filePath, ...args));
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-settings-import-summary-nonzero');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+}
+
 function createStorageById() {
   return {
     accessibility: createMemoryMMKV(),
@@ -256,8 +283,14 @@ test('settings import browser fixtures cover accessibility and companion preview
     'utf8',
   );
 
-  assert.match(source, /const accessibilityEasyReadFontKey = 'accessibility\\\\a11y\.easyReadFont\.v1';/);
-  assert.match(source, /const accessibilityFontSizeStepKey = 'accessibility\\\\a11y\.fontSizeStep\.v1';/);
+  assert.match(
+    source,
+    /const accessibilityEasyReadFontKey = 'accessibility\\\\a11y\.easyReadFont\.v1';/,
+  );
+  assert.match(
+    source,
+    /const accessibilityFontSizeStepKey = 'accessibility\\\\a11y\.fontSizeStep\.v1';/,
+  );
   assert.match(
     source,
     /const accessibilityAudioPlaybackRateKey = 'accessibility\\\\a11y\.audioPlaybackRate\.v1';/,
@@ -809,6 +842,20 @@ test('local study data import summary nonzero focus validates localized preview 
   assert.equal(summary.settingsImportSummaryHiddenZeroRowsValidated, 4);
   assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
   assert.match(output, /settingsImportSummaryNonzeroValidated/);
+});
+
+test('local study data import summary nonzero focus rejects unconditional streak mutation', () => {
+  const result = runSettingsImportSummaryFocusedMutation((source) =>
+    source.replace(
+      'if (summary.streakFreezeStateIncluded) lines.push(copy.importSummaryStreakFreeze);',
+      'lines.push(copy.importSummaryStreakFreeze);',
+    ),
+  );
+  const output = `${result.stdout}\n${result.stderr}`;
+
+  assert.notEqual(result.status, 0, output);
+  assert.match(output, /settings import summary sv fixture must hide the streak row when absent/);
+  assert.match(output, /settings import summary/);
 });
 
 test('local study data export round-trips citizenship requirements without purchase fields', () => {

@@ -48,6 +48,33 @@ function parseSettingsImportSummaryNonzeroValidationSummary() {
   return JSON.parse(match[0]);
 }
 
+function runSettingsImportSummaryFocusedMutation(mutateSource) {
+  return spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const path = require('node:path');
+const repoRoot = ${JSON.stringify(repoRoot)};
+const summaryPath = path.join(repoRoot, 'lib/storage/localStudyDataImportSummary.ts');
+const originalReadFileSync = fs.readFileSync;
+const mutateSource = ${mutateSource.toString()};
+fs.readFileSync = function readFileSyncPatched(filePath, ...args) {
+  const resolvedPath = path.resolve(String(filePath));
+  if (resolvedPath === summaryPath) {
+    return mutateSource(originalReadFileSync.call(this, filePath, ...args));
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-settings-import-summary-nonzero');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+}
+
 function assertIncludes(source, text, context) {
   assert.ok(source.includes(text), `${context} must include ${text}`);
 }
@@ -457,6 +484,23 @@ test('settings import summary copy keeps singular and plural labels for bookmark
   );
   assertIncludes(e2eSource, 'absentSummaryTexts', 'settings import E2E zero-row cases');
   assertIncludes(e2eSource, "name: 'plural'", 'settings import E2E payload cases');
+});
+
+test('settings import summary nonzero focus rejects zero-count row mutation', () => {
+  const result = runSettingsImportSummaryFocusedMutation((source) =>
+    source.replace(
+      'if (count > 0) lines.push(formatLine(count));',
+      'if (count >= 0) lines.push(formatLine(count));',
+    ),
+  );
+  const output = `${result.stdout}\n${result.stderr}`;
+
+  assert.notEqual(result.status, 0, output);
+  assert.match(
+    output,
+    /settings import summary sv fixture must hide zero row "0 markeringar i e-boken"/,
+  );
+  assert.match(output, /settings import summary/);
 });
 
 test('settings companion picker previews are decorative while labels stay on the option', () => {
