@@ -2312,7 +2312,7 @@ function embeddedQuestionTopicEn(question: string): string {
   if (match) return `${englishPossessive(match[1])} goal`;
 
   match = q.match(/^What was (.+?) important for$/i);
-  if (match) return `${englishPossessive(match[1])} importance`;
+  if (match) return `what ${match[1]} was important for`;
 
   match = q.match(/^What was (.+)$/i);
   if (match) return lowerEnglishNounPhrase(match[1]);
@@ -2824,6 +2824,13 @@ function generatedSingleChoicePromptFromSourceSv(
       : `Vilken regel gäller för ${match[1]}?`;
   }
 
+  match = q.match(/^Vad blev (.+?) viktigt för$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Vilken uppgift stämmer om vad ${match[1]} blev viktigt för?`
+      : `Vilket område blev ${match[1]} viktigt för?`;
+  }
+
   match = q.match(/^Vilka är (.+)$/i);
   if (match && variant === 'judgement') {
     return `Vilken uppgift stämmer om ${match[1]}?`;
@@ -2983,6 +2990,13 @@ function generatedSingleChoicePromptFromSourceEn(
     return variant === 'judgement'
       ? `What is correct for ${match[1]}?`
       : `Which rule applies to ${match[1]}?`;
+  }
+
+  match = q.match(/^What was (.+?) important for$/i);
+  if (match) {
+    return variant === 'judgement'
+      ? `Which fact is correct about what ${match[1]} was important for?`
+      : `Which area was ${match[1]} important for?`;
   }
 
   match = q.match(/^What are (.+)$/i);

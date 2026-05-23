@@ -634,6 +634,7 @@ const QUESTION_COUNCIL_OF_EUROPE_WORK_FOR_ENGLISH_NATURALNESS_PATTERNS = [
 ];
 const QUESTION_SALTSJOBADEN_ENGLISH_NATURALNESS_PATTERNS = [
   /\bWhat did the 1938 Saltsj(?:ö|o)baden Agreement become important for\??/i,
+  /\b(?:What is correct about|Which fact is correct about) the 1938 Saltsj(?:ö|o)baden Agreement(?:'|’)s importance\b/i,
   /\bbecame important for\b/i,
 ];
 const QUESTION_RELIGIOUS_FREEDOM_1951_ENGLISH_NATURALNESS_PATTERNS = [/\bcompletely freely\b/i];

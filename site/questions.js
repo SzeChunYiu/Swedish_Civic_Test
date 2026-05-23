@@ -38802,8 +38802,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "What is correct about the 1938 Saltsjöbaden Agreement's importance?",
-      "sv": "Vad stämmer om Saltsjöbadsavtalet från 1938s betydelse?"
+      "en": "Which area was the 1938 Saltsjöbaden Agreement important for?",
+      "sv": "Vilket område blev Saltsjöbadsavtalet från 1938 viktigt för?"
     },
     "opts": [
       {
@@ -38970,8 +38970,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which fact is correct about the 1938 Saltsjöbaden Agreement's importance?",
-      "sv": "Vilken uppgift stämmer om Saltsjöbadsavtalet från 1938s betydelse?"
+      "en": "Which fact is correct about what the 1938 Saltsjöbaden Agreement was important for?",
+      "sv": "Vilken uppgift stämmer om vad Saltsjöbadsavtalet från 1938 blev viktigt för?"
     },
     "opts": [
       {

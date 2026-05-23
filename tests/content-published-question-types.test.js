@@ -1674,6 +1674,12 @@ test('Saltsjöbaden Agreement source and exports use natural English', () => {
   const q081True = generatedSiteBank.find(
     (question) => question.id === generatedQuestionId(sourceQuestions, 'q081', 'trueStatement'),
   );
+  const q081SectionPractice = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q081', 'singleChoice'),
+  );
+  const q081Judgement = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q081', 'judgement'),
+  );
 
   assert.deepEqual(generatedOffenders, []);
   assert.deepEqual(actualOffenders, []);
@@ -1689,6 +1695,26 @@ test('Saltsjöbaden Agreement source and exports use natural English', () => {
     q081True.q.en,
     'The 1938 Saltsjöbaden Agreement was important for cooperation between trade unions and employers.',
   );
+  assert.ok(q081SectionPractice, 'q081 section-practice generated variant should be published');
+  assert.equal(
+    q081SectionPractice.q.sv,
+    'Vilket område blev Saltsjöbadsavtalet från 1938 viktigt för?',
+  );
+  assert.equal(
+    q081SectionPractice.q.en,
+    'Which area was the 1938 Saltsjöbaden Agreement important for?',
+  );
+  assert.ok(q081Judgement, 'q081 judgement generated variant should be published');
+  assert.equal(
+    q081Judgement.q.sv,
+    'Vilken uppgift stämmer om vad Saltsjöbadsavtalet från 1938 blev viktigt för?',
+  );
+  assert.equal(
+    q081Judgement.q.en,
+    'Which fact is correct about what the 1938 Saltsjöbaden Agreement was important for?',
+  );
+  assert.doesNotMatch(q081SectionPractice.q.sv, /1938s/);
+  assert.doesNotMatch(q081Judgement.q.sv, /1938s/);
 });
 
 test('Saltsjöbaden Agreement English naturalness guard rejects the old phrasing', () => {
@@ -5119,6 +5145,10 @@ test('generated judgement prompts do not nest source which-questions', () => {
     [generatedQuestionId(sourceQuestions, 'q080', 'judgement')]: [
       'Vilket år stämmer för det första riksdagsvalet där både kvinnor och män fick rösta och kvinnor kunde bli riksdagsledamöter?',
       'Which year is correct for the first Riksdag election in which both women and men could vote and women could become members of the Riksdag?',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q081', 'judgement')]: [
+      'Vilken uppgift stämmer om vad Saltsjöbadsavtalet från 1938 blev viktigt för?',
+      'Which fact is correct about what the 1938 Saltsjöbaden Agreement was important for?',
     ],
     [generatedQuestionId(sourceQuestions, 'q093', 'judgement')]: [
       'Vilken uppgift stämmer om lagen för religionsfrihetens slutliga genombrott 1951?',
