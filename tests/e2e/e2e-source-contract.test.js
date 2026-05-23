@@ -824,6 +824,51 @@ test('static q050 source-criticism rendered e2e keeps a focused grep target', ()
   );
 });
 
+test('static q014 q041 rule-of-law rendered e2e keeps a focused grep target', () => {
+  const source = readRelative('static-i18n-extras-language-selector.spec.ts');
+
+  assert.match(
+    source,
+    /static q014 and q041 rule of law extra languages render natural terms without legal-certainty calques/,
+    'static q014/q041 e2e should have a focused grep title',
+  );
+  assert.match(
+    source,
+    /ruleOfLawRenderedLocales = \['zh-Hans', 'ar', 'tr', 'uk'\]/,
+    'static q014/q041 e2e should switch through representative extra locales',
+  );
+  assert.match(
+    source,
+    /window\.SMT_QUESTIONS/,
+    'static q014/q041 e2e should drive the static question bank rather than hardcoded demo copy',
+  );
+  assert.match(
+    source,
+    /#quiz-stage \.quiz__q/,
+    'static q014/q041 e2e should inspect the rendered practice question element',
+  );
+  assert.match(
+    source,
+    /#quiz-stage \.quiz__opts/,
+    'static q014/q041 e2e should inspect rendered answer options',
+  );
+  assert.match(
+    source,
+    /#quiz-stage \.quiz__feedback/,
+    'static q014/q041 e2e should inspect the rendered answer explanation element',
+  );
+  assert.match(
+    source,
+    /localizedRuleOfLawTerms/,
+    'static q014/q041 e2e should assert natural localized rule-of-law terms',
+  );
+  assert.match(
+    source,
+    /forbiddenRuleOfLawCalqueTerms/,
+    'static q014/q041 e2e should reject literal legal-certainty/legal-security calques',
+  );
+});
+
 test('sources route authority-boundary e2e keeps a focused grep target', () => {
   const source = readRelative('legal-external-links.spec.ts');
 
@@ -908,7 +953,7 @@ test('static site network specs share one external request trap helper', () => {
   );
   assert.deepEqual(
     callArgumentCounts(networkSource, 'trapExternalRequests'),
-    [3, 3, 3, 3],
+    [3, 3, 3, 3, 3],
     'font/network coverage should use the shared helper with an explicit capture array',
   );
   assert.match(

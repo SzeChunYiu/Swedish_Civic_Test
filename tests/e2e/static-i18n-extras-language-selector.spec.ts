@@ -6,6 +6,7 @@ import path from 'node:path';
 declare global {
   interface Window {
     i18n?: Record<string, Record<string, string>>;
+    smtEnsureQuestionBank?: () => Promise<unknown>;
     smtOpenSignin?: () => void;
     smtSetLanguage?: (lang: string) => void;
     SMT_QUESTIONS?: Array<{
@@ -198,6 +199,8 @@ const localizedHomeChapterElevenCitizenshipSnippets: Record<ExtraLocale, RegExp>
 };
 const q050RenderedSourceCriticismLocales = ['zh-Hans', 'ar', 'pl', 'so', 'tr', 'uk'] as const;
 type Q050RenderedSourceCriticismLocale = (typeof q050RenderedSourceCriticismLocales)[number];
+const ruleOfLawRenderedLocales = ['zh-Hans', 'ar', 'tr', 'uk'] as const;
+type RuleOfLawRenderedLocale = (typeof ruleOfLawRenderedLocales)[number];
 const localizedQ050SourceCriticismTerms: Record<Q050RenderedSourceCriticismLocale, RegExp> = {
   'zh-Hans': /来源批判/,
   ar: /نقد المصادر/,
@@ -206,8 +209,16 @@ const localizedQ050SourceCriticismTerms: Record<Q050RenderedSourceCriticismLocal
   tr: /kaynak eleştirisi/i,
   uk: /критика джерел/i,
 };
+const localizedRuleOfLawTerms: Record<RuleOfLawRenderedLocale, RegExp> = {
+  'zh-Hans': /法治/,
+  ar: /سيادة القانون/,
+  tr: /hukukun üstünlüğü/i,
+  uk: /верховенство права/i,
+};
 const forbiddenQ050SourceCriticismStaleTerms =
   /具有(?:來|来)源批判意識|أن تكون ناقدًا للمصادر|krytyczne podejście do źródeł|si naqdineed loo eego ilaha|kaynaklara eleştirel yaklaşmak|критично ставитися до джерел/i;
+const forbiddenRuleOfLawCalqueTerms =
+  /法律确定性|法律確定性|الأمن القانوني|Hukuki güvenlik|hukuki güvenlik|Правова визначеність|правова визначеність/i;
 const englishPrivacyPurchaseActionLabel = /\bRemove Ads\b/i;
 
 type StaticQ050RenderedCopy = {
@@ -221,6 +232,10 @@ type StaticQ050RenderedCopy = {
     section?: string;
     page?: number;
   };
+};
+
+type StaticRenderedQuestionCopy = StaticQ050RenderedCopy & {
+  optionTexts: string[];
 };
 
 const copiedTurkishPurchaseText =
@@ -382,10 +397,20 @@ async function switchStaticSiteLanguage(page: Page, locale: ExtraLocale) {
   await expectRootLocale(page, locale);
 }
 
+async function ensureStaticQuestionBank(page: Page) {
+  await page.evaluate(async () => {
+    if (typeof window.smtEnsureQuestionBank !== 'function') {
+      throw new Error('window.smtEnsureQuestionBank is not available');
+    }
+    await window.smtEnsureQuestionBank();
+  });
+}
+
 async function staticQ050RenderedCopy(
   page: Page,
   locale: Q050RenderedSourceCriticismLocale,
 ): Promise<StaticQ050RenderedCopy> {
+  await ensureStaticQuestionBank(page);
   return page.evaluate((nextLocale) => {
     const questions = window.SMT_QUESTIONS ?? [];
     const chapterQuestions = questions.filter((question) => question.chapterId === 6);
@@ -407,6 +432,53 @@ async function staticQ050RenderedCopy(
       source: question.source ?? {},
     };
   }, locale);
+}
+
+async function staticRenderedQuestionCopy(
+  page: Page,
+  {
+    chapterId,
+    questionId,
+    locale,
+  }: { chapterId: number; questionId: 'q014' | 'q041'; locale: RuleOfLawRenderedLocale },
+): Promise<StaticRenderedQuestionCopy> {
+  await ensureStaticQuestionBank(page);
+  return page.evaluate(
+    ({ chapterId: nextChapterId, locale: nextLocale, questionId: nextQuestionId }) => {
+      const questions = window.SMT_QUESTIONS ?? [];
+      const chapterQuestions = questions.filter((question) => question.chapterId === nextChapterId);
+      const chapterIndex = chapterQuestions.findIndex((question) => question.id === nextQuestionId);
+      const question = chapterQuestions[chapterIndex];
+
+      if (!question) {
+        throw new Error(`${nextQuestionId} is missing from static chapter practice questions`);
+      }
+
+      const renderedQuestion = question.q?.[nextLocale];
+      const explanation = question.why?.[nextLocale];
+      const optionTexts = (question.opts ?? []).map((option) => option[nextLocale] ?? '');
+      if (
+        !renderedQuestion ||
+        !explanation ||
+        optionTexts.some((optionText) => !optionText) ||
+        typeof question.answer !== 'number'
+      ) {
+        throw new Error(
+          `${nextQuestionId} is missing rendered ${nextLocale} question, options, explanation, or answer`,
+        );
+      }
+
+      return {
+        question: renderedQuestion,
+        explanation,
+        answer: question.answer,
+        chapterIndex,
+        optionTexts,
+        source: question.source ?? {},
+      };
+    },
+    { chapterId, locale, questionId },
+  );
 }
 
 async function expectNoHorizontalOverflow(page: Page) {
@@ -679,6 +751,31 @@ async function openRenderedQ050Practice(page: Page, locale: Q050RenderedSourceCr
 
   await expect(page.locator('#quiz-stage .quiz__q')).toHaveText(q050.question);
   return q050;
+}
+
+async function openRenderedRuleOfLawPractice(
+  page: Page,
+  {
+    chapterId,
+    locale,
+    questionId,
+  }: { chapterId: 2 | 5; locale: RuleOfLawRenderedLocale; questionId: 'q014' | 'q041' },
+) {
+  await switchToHomeRoute(page);
+  await switchStaticSiteLanguage(page, locale);
+  const question = await staticRenderedQuestionCopy(page, { chapterId, locale, questionId });
+
+  await switchToPracticeChapter(page, 'mix');
+  await switchToPracticeChapter(page, chapterId);
+  await switchStaticSiteLanguage(page, locale);
+
+  for (let skipped = 0; skipped < question.chapterIndex; skipped += 1) {
+    await page.locator('#quiz-skip').dispatchEvent('click');
+    await switchStaticSiteLanguage(page, locale);
+  }
+
+  await expect(page.locator('#quiz-stage .quiz__q')).toHaveText(question.question);
+  return question;
 }
 
 let staticSite: StaticSite;
@@ -1235,6 +1332,72 @@ test('static q050 source criticism extra languages render noun-based question an
     expect(explanationText).toMatch(localizedQ050SourceCriticismTerms[locale]);
     expect(explanationText).not.toMatch(forbiddenQ050SourceCriticismStaleTerms);
     await expect(page.locator('#quiz-stage .quiz__feedback-source')).toContainText('Källkritik');
+  }
+
+  expect(pageErrors).toEqual([]);
+});
+
+test('static q014 and q041 rule of law extra languages render natural terms without legal-certainty calques', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const pageErrors = collectPageErrors(page);
+  await openStaticHome(page, staticSite.baseUrl);
+  await page.locator('#consent-min').click();
+  await expect(page.locator('#consent')).toBeHidden();
+
+  const cases = [
+    {
+      chapterId: 2,
+      questionId: 'q014',
+      source: {
+        title: 'Sverige i fokus',
+        chapter: 'Sveriges demokratiska system',
+        section: 'Demokrati betyder folkstyre',
+        page: 10,
+      },
+    },
+    {
+      chapterId: 5,
+      questionId: 'q041',
+      source: {
+        title: 'Sverige i fokus',
+        chapter: 'Lag och rätt',
+        section: 'Rättssäkerhet',
+        page: 17,
+      },
+    },
+  ] as const;
+
+  for (const locale of ruleOfLawRenderedLocales) {
+    for (const fixture of cases) {
+      const question = await openRenderedRuleOfLawPractice(page, { ...fixture, locale });
+      expect(question.source).toMatchObject(fixture.source);
+
+      const questionText = await page.locator('#quiz-stage .quiz__q').innerText();
+      const optionsText = await page.locator('#quiz-stage .quiz__opts').innerText();
+      expect(`${questionText}\n${optionsText}`).toMatch(localizedRuleOfLawTerms[locale]);
+      expect(`${questionText}\n${optionsText}`).not.toMatch(forbiddenRuleOfLawCalqueTerms);
+      expect(question.optionTexts.join('\n')).not.toMatch(forbiddenRuleOfLawCalqueTerms);
+
+      const sourceText = await page.locator('#quiz-stage .quiz__source').innerText();
+      expect(sourceText).toContain('Sverige i fokus');
+      expect(sourceText).toContain(fixture.source.chapter);
+      expect(sourceText).toContain(fixture.source.section);
+      expect(sourceText).toContain(String(fixture.source.page));
+
+      await page
+        .locator(`#quiz-stage .quiz__opt[data-i="${question.answer}"]`)
+        .dispatchEvent('click');
+      await switchStaticSiteLanguage(page, locale);
+      const feedback = page.locator('#quiz-stage .quiz__feedback');
+      await expect(feedback).toBeVisible();
+      await expect(feedback).toContainText(question.explanation);
+
+      const feedbackText = await feedback.innerText();
+      expect(feedbackText).toMatch(localizedRuleOfLawTerms[locale]);
+      expect(feedbackText).not.toMatch(forbiddenRuleOfLawCalqueTerms);
+    }
   }
 
   expect(pageErrors).toEqual([]);
