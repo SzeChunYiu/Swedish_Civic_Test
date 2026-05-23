@@ -1,6 +1,6 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
-import { dismissBlockingModals } from './browserLaunch';
+import { currentSettingsSeenAboutStorageKey, dismissBlockingModals } from './browserLaunch';
 
 test.use({ viewport: { width: 390, height: 844 } });
 
@@ -86,6 +86,24 @@ async function seedStableSwedishSettings(page: Page) {
   });
 }
 
+async function seedUnseenSwedishSettingsWithAdsDisabled(page: Page) {
+  await page.addInitScript(() => {
+    const runtime = window as typeof window & {
+      __SMT_E2E__?: boolean;
+      __SMT_REMOVE_ADS_MOCK_OWNED__?: boolean;
+    };
+
+    window.localStorage.clear();
+    window.sessionStorage.clear();
+    window.localStorage.setItem('language', 'sv');
+    window.localStorage.setItem('settings\\language', 'sv');
+    window.localStorage.removeItem('hasSeenAboutTheTest');
+    window.localStorage.removeItem('settings\\hasSeenAboutTheTest');
+    runtime.__SMT_E2E__ = true;
+    runtime.__SMT_REMOVE_ADS_MOCK_OWNED__ = true;
+  });
+}
+
 async function expectNoHorizontalOverflow(page: Page, label: string) {
   await expect
     .poll(
@@ -157,6 +175,41 @@ for (const routeCase of complianceRouteCases) {
     await expectAllVisibleLinksAndButtonsMeetTargetSize(page, routeCase.path);
     await expectNoHorizontalOverflow(page, routeCase.path);
 
+    expect(consoleErrors).toEqual([]);
+  });
+}
+
+const firstRunSuppressedUnseenRouteCases = [
+  '/privacy',
+  '/terms',
+  '/disclaimer',
+  '/sources',
+  '/support',
+] as const;
+
+for (const routePath of firstRunSuppressedUnseenRouteCases) {
+  test(`${routePath} suppresses the first-run guide without marking it seen`, async ({ page }) => {
+    const consoleErrors = collectConsoleErrors(page);
+
+    await seedUnseenSwedishSettingsWithAdsDisabled(page);
+    await page.goto(routePath, { waitUntil: 'networkidle' });
+
+    await expect(page.getByRole('dialog', { name: 'Vad är medborgarskapsprovet?' })).toBeHidden();
+    await expect
+      .poll(() =>
+        page.evaluate(
+          ({ currentKey }) => ({
+            current: window.localStorage.getItem(currentKey),
+            legacy: window.localStorage.getItem('hasSeenAboutTheTest'),
+          }),
+          { currentKey: currentSettingsSeenAboutStorageKey },
+        ),
+      )
+      .toEqual({ current: null, legacy: null });
+
+    await page.goto('/learn', { waitUntil: 'networkidle' });
+
+    await expect(page.getByRole('dialog', { name: 'Vad är medborgarskapsprovet?' })).toBeVisible();
     expect(consoleErrors).toEqual([]);
   });
 }

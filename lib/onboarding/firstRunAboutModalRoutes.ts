@@ -4,6 +4,11 @@ export const FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PATH_PREFIXES = [
   '/(auth)',
   '/about-the-test',
   '/onboarding',
+  '/privacy',
+  '/terms',
+  '/disclaimer',
+  '/sources',
+  '/support',
 ] as const;
 
 function normalizePathname(pathname: string | null | undefined): string {
