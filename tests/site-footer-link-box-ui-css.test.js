@@ -23,6 +23,12 @@ test('static footer links use tactile hoverable boxes', () => {
   );
   assert.match(
     css,
-    /@media \(max-width: 720px\)\s*{[\s\S]*\.footer__cols a\s*{[\s\S]*min-height: 36px;[\s\S]*width: 100%;/,
+    /@media \(max-width: 720px\)\s*{[\s\S]*\.footer__cols a\s*{[\s\S]*min-height: 44px;[\s\S]*width: 100%;/,
   );
+
+  const mobileLinkRule = css.match(
+    /@media \(max-width: 720px\)\s*{[\s\S]*?\.footer__cols a\s*{(?<rule>[\s\S]*?)}/,
+  )?.groups?.rule;
+  assert.ok(mobileLinkRule);
+  assert.doesNotMatch(mobileLinkRule, /min-height: 3[0-9]px;/);
 });
