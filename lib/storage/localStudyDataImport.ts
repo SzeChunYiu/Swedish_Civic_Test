@@ -153,13 +153,18 @@ const forbiddenPurchaseKeyFragments = [
 const localStudyDataImportDetailHeadSegments = 3;
 const localStudyDataImportDetailTailSegments = 2;
 const localStudyDataImportDetailMaxSegmentChars = 48;
+const invisibleImportKeyCharacters = /[\u180e\u200b-\u200f\u202a-\u202e\u2060-\u206f\ufeff]/g;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return !!value && typeof value === 'object' && !Array.isArray(value);
 }
 
 function normalizeKey(value: string): string {
-  return value.replace(/[\s_-]/g, '').toLowerCase();
+  return value
+    .normalize('NFKC')
+    .replace(invisibleImportKeyCharacters, '')
+    .replace(/[\s_-]/g, '')
+    .toLowerCase();
 }
 
 function appendImportPathSegment(path: string, segment: string): string {

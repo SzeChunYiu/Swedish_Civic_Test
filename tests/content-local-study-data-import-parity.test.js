@@ -256,8 +256,14 @@ test('settings import browser fixtures cover accessibility and companion preview
     'utf8',
   );
 
-  assert.match(source, /const accessibilityEasyReadFontKey = 'accessibility\\\\a11y\.easyReadFont\.v1';/);
-  assert.match(source, /const accessibilityFontSizeStepKey = 'accessibility\\\\a11y\.fontSizeStep\.v1';/);
+  assert.match(
+    source,
+    /const accessibilityEasyReadFontKey = 'accessibility\\\\a11y\.easyReadFont\.v1';/,
+  );
+  assert.match(
+    source,
+    /const accessibilityFontSizeStepKey = 'accessibility\\\\a11y\.fontSizeStep\.v1';/,
+  );
   assert.match(
     source,
     /const accessibilityAudioPlaybackRateKey = 'accessibility\\\\a11y\.audioPlaybackRate\.v1';/,
@@ -1014,6 +1020,78 @@ test('local study data import rejects nested purchase fields with useful detail'
     code: 'purchase_fields_rejected',
     detail: 'progress.history.0.removeAdsReceipt',
   });
+  assertNoSnapshotWrites(storageById);
+});
+
+test('local study data import rejects Unicode-obfuscated purchase field names', () => {
+  const { previewLocalStudyDataImport } = loadImportModule(createStorageById());
+  const rejectedKeys = [
+    ['\\uff50\\uff55\\uff52\\uff43\\uff48\\uff41\\uff53\\uff45', 'purchase'],
+    ['pur\\u200bchase', 'purchase'],
+    [
+      '\\uff41\\uff44\\uff53\\uff24\\uff49\\uff53\\uff41\\uff42\\uff4c\\uff45\\uff44',
+      'adsDisabled',
+    ],
+    ['product\\uff29d', 'productId'],
+    ['remove\\u2060Ads', 'removeAds'],
+    ['rece\\u200dipt', 'receipt'],
+    ['trans\\u200caction', 'transaction'],
+    ['entitle\\ufeffment', 'entitlement'],
+    ['\\uff29\\uff21\\uff30', 'IAP'],
+  ];
+
+  for (const [encodedKey, label] of rejectedKeys) {
+    const key = JSON.parse(`"${encodedKey}"`);
+    const result = previewLocalStudyDataImport(
+      JSON.stringify({
+        version: 1,
+        progress: {
+          questionProgress: {
+            q001: {
+              seenCount: 1,
+              correctCount: 1,
+              [key]: true,
+            },
+          },
+        },
+      }),
+    );
+
+    assert.deepEqual(
+      result,
+      {
+        ok: false,
+        code: 'purchase_fields_rejected',
+        detail: `progress.questionProgress.q001.${key}`,
+      },
+      `${label} should be rejected after Unicode key normalization`,
+    );
+  }
+});
+
+test('local study data import keeps valid non-purchase Unicode text importable', () => {
+  const storageById = createStorageById();
+  const { previewLocalStudyDataImport } = loadImportModule(storageById);
+  const unicodeNote = 'Studera Åland och källkritik 🙂';
+  const result = previewLocalStudyDataImport(
+    JSON.stringify({
+      version: 1,
+      highlights: {
+        byChapter: {
+          ch01: [
+            validHighlight({
+              note: unicodeNote,
+              text: 'Åland och källkritik',
+            }),
+          ],
+        },
+      },
+    }),
+  );
+
+  assert.equal(result.ok, true);
+  assert.equal(result.preview.summary.highlightCount, 1);
+  assert.equal(result.preview.highlights.byChapter.ch01[0].note, unicodeNote);
   assertNoSnapshotWrites(storageById);
 });
 
