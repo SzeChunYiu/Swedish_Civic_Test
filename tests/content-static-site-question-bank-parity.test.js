@@ -206,6 +206,32 @@ function assertStaticQ167StatedOnVotingCardPrompts(questionsById, sourceQuestion
   }
 }
 
+function assertStaticQ167StatedOnVotingCardSource(questionsById) {
+  const question = questionsById.get('q167');
+  const stalePattern = /\b(?:röstkortet[^?!.]*innehåll|voting card[^?!.]*contents)\b/i;
+
+  assert.ok(question, 'q167 should be present in static question bank');
+  assert.equal(
+    question.q?.sv,
+    'Vad står på röstkortet som skickas hem före valet?',
+    'q167 static Swedish source prompt should stay exact',
+  );
+  assert.equal(
+    question.q?.en,
+    'What is stated on the voting card sent home before an election?',
+    'q167 static English source prompt should stay exact',
+  );
+  assert.equal(question.questionProvenance, 'uhr');
+  assert.equal(question.source?.chapter, 'Politiska val och partier');
+  assert.equal(question.source?.section, 'Så här går det till att rösta');
+  assert.equal(question.source?.page, 14);
+  assert.doesNotMatch(
+    staticQuestionVisibleText(question),
+    stalePattern,
+    'q167 source row should not use contents/innehåll wording',
+  );
+}
+
 function assertStaticQ167StatedOnVotingCardTrueFalsePrompts(questionsById, sourceQuestions) {
   const { expectedPrompts, expectedAnswers, trueFalseIds, stalePattern } =
     q167StatedOnVotingCardFixture(sourceQuestions);
@@ -455,6 +481,16 @@ test('static site question bank keeps q167 stated-on voting-card prompts natural
   );
 
   assertStaticQ167StatedOnVotingCardPrompts(questionsById, sourceQuestions);
+});
+
+test('static site question bank keeps q167 stated-on source row exact', () => {
+  const context = { window: {} };
+  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
+  const questionsById = new Map(
+    context.window.SMT_QUESTIONS.map((question) => [question.id, question]),
+  );
+
+  assertStaticQ167StatedOnVotingCardSource(questionsById);
 });
 
 test('static site q167 stated-on fixture rejects q844/q847 contents mutations', () => {
