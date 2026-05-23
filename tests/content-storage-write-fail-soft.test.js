@@ -655,9 +655,21 @@ test('routes render localized storage warning notices with dismiss hooks', () =>
   );
   assert.match(settingsSource, /accessibilityPersistenceWarning = useAccessibilityStore/);
   assert.match(settingsSource, /clearAccessibilityPersistenceWarning = useAccessibilityStore/);
-  assert.match(settingsSource, /warning=\{accessibilityPersistenceWarning\}/);
-  assert.match(settingsSource, /warningScope="accessibilityPreferences"/);
-  assert.match(settingsSource, /onDismiss=\{clearAccessibilityPersistenceWarning\}/);
+  assert.equal(
+    (settingsSource.match(/warning=\{accessibilityPersistenceWarning\}/g) || []).length,
+    1,
+    'Settings must render one accessibility persistence warning notice',
+  );
+  assert.equal(
+    (settingsSource.match(/warningScope="accessibilityPreferences"/g) || []).length,
+    1,
+    'Settings must render one accessibilityPreferences warning scope',
+  );
+  assert.equal(
+    (settingsSource.match(/onDismiss=\{clearAccessibilityPersistenceWarning\}/g) || []).length,
+    1,
+    'Settings must wire one accessibility persistence warning dismiss handler',
+  );
   assert.match(mistakesSource, /progressPersistenceWarning/);
   assert.match(mistakesSource, /mistakeReviewPersistenceWarning/);
   assert.doesNotMatch(practiceSource, /warningScope="accessibilityPreferences"/);

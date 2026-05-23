@@ -86,7 +86,8 @@ test('settings renders separate accessibility persistence warning and settings p
   });
 
   await expect(settingsReadWarning).toBeVisible();
-  await expect.poll(() => accessibilityReadWarnings.count()).toBeGreaterThan(0);
+  await expect(accessibilityReadWarnings).toHaveCount(1);
+  await expect(accessibilityReadWarnings.first()).toBeVisible();
 
   await accessibilityReadWarnings.first().getByRole('button', { name: 'Jag förstår' }).click();
   await expect(accessibilityReadWarnings).toHaveCount(0);
@@ -120,7 +121,8 @@ test('settings dismisses accessibility persistence warning after write without s
     name: 'Accessibility preferences could not be saved. The change is available temporarily in this session.',
   });
 
-  await expect.poll(() => accessibilityWriteWarnings.count()).toBeGreaterThan(0);
+  await expect(accessibilityWriteWarnings).toHaveCount(1);
+  await expect(accessibilityWriteWarnings.first()).toBeVisible();
   await expect(
     page.getByRole('alert', {
       name: /Settings could not be loaded|The setting could not be saved/,

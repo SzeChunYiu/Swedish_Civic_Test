@@ -534,6 +534,21 @@ test('settings accessibilityPersistenceWarning browser coverage keeps warningSco
     'warningScope="accessibilityPreferences"',
     'Settings must render accessibility warning copy with the accessibility scope',
   );
+  assert.equal(
+    (settingsSource.match(/warning=\{accessibilityPersistenceWarning\}/g) || []).length,
+    1,
+    'Settings must mount the accessibility persistence warning once',
+  );
+  assert.equal(
+    (settingsSource.match(/warningScope="accessibilityPreferences"/g) || []).length,
+    1,
+    'Settings must keep a single accessibilityPreferences warning scope',
+  );
+  assert.equal(
+    (settingsSource.match(/onDismiss=\{clearAccessibilityPersistenceWarning\}/g) || []).length,
+    1,
+    'Settings must dismiss the accessibility persistence warning from one notice',
+  );
   assertIncludes(
     e2eSource,
     'installMMKVPersistenceFailureHarness',

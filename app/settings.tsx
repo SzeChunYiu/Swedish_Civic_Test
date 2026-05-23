@@ -673,12 +673,6 @@ export default function Screen() {
         warning={persistenceWarning}
         warningScope="settingsPreferences"
       />
-      <PersistenceWarningNotice
-        language={language}
-        onDismiss={clearAccessibilityPersistenceWarning}
-        warning={accessibilityPersistenceWarning}
-        warningScope="accessibilityPreferences"
-      />
 
       <View
         accessibilityLabel={copy.studyControlsTitle}
