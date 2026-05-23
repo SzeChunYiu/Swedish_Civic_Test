@@ -10267,6 +10267,7 @@ let examGeneratorTypeInterfacesValidated = 0;
 let examGeneratorTypeSchemaParityValidated = false;
 let glossaryTermsValidated = 0;
 let glossaryTermExactSchemaKeysValidated = 0;
+let glossaryTermNaturalnessValidated = 0;
 let uxBenchmarksValidated = 0;
 let contentTypeUnionsValidated = 0;
 let contentTypeInterfacesValidated = 0;
@@ -11484,9 +11485,10 @@ if (
 
 const TRANSLATE_COMPLETE_P0_FOCUS_FLAG = '--focus-translate-complete-p0';
 
-function translateCompleteP0NaturalnessIsValidated(publishedQuestionCount) {
+function translateCompleteP0NaturalnessIsValidated(publishedQuestionCount, glossaryTermCount) {
   return (
     publishedQuestionCount > 0 &&
+    glossaryTermCount > 0 &&
     questionGeneratedTrueFalseNaturalnessValidated === publishedQuestionCount &&
     questionLuciaRoleEnglishNaturalnessValidated === publishedQuestionCount &&
     questionEuCooperationEnglishNaturalnessValidated === publishedQuestionCount &&
@@ -11508,6 +11510,7 @@ function translateCompleteP0NaturalnessIsValidated(publishedQuestionCount) {
     questionSourceCriticismEnglishNaturalnessValidated === publishedQuestionCount &&
     questionRuleOfLawEnglishNaturalnessValidated === publishedQuestionCount * 3 &&
     questionReligiousFreedomParallelismValidated === publishedQuestionCount * 2 &&
+    glossaryTermNaturalnessValidated === glossaryTermCount &&
     somaliGeographyNaturalnessParityValidated === true &&
     somaliHolidayFoodNaturalnessParityValidated === true
   );
@@ -11662,14 +11665,18 @@ function validateTranslateCompleteP0Focus() {
   validateQuestionReligiousFreedomParallelism();
   validateSomaliGeographyNaturalnessParity();
   validateSomaliHolidayFoodNaturalnessParity();
+  validateGlossaryTerms();
 
   const publishedQuestionCount = publishedQuestionRows.length;
+  const glossaryTermCount = Array.isArray(glossaryTerms) ? glossaryTerms.length : 0;
   const translationCompletenessParityValidated =
     publishedQuestionCount > 0 &&
     questionBilingualTextPairsValidated === publishedQuestionCount &&
     questionOptionBilingualTextPairsValidated === publishedQuestionCount;
-  const translationNaturalnessGuardParityValidated =
-    translateCompleteP0NaturalnessIsValidated(publishedQuestionCount);
+  const translationNaturalnessGuardParityValidated = translateCompleteP0NaturalnessIsValidated(
+    publishedQuestionCount,
+    glossaryTermCount,
+  );
 
   if (!translationCompletenessParityValidated) {
     fail('TRANSLATE-COMPLETE P0 SV/EN completeness parity is not fully validated');
@@ -11707,6 +11714,9 @@ function validateTranslateCompleteP0Focus() {
     questionReligiousFreedomParallelismValidated,
     somaliGeographyNaturalnessParityValidated,
     somaliHolidayFoodNaturalnessParityValidated,
+    glossaryTerms: glossaryTermCount,
+    glossaryTermsValidated,
+    glossaryTermNaturalnessValidated,
     translationNaturalnessGuardParityValidated,
   });
   process.exit(0);
@@ -22237,6 +22247,13 @@ function validateGlossaryTerms() {
       for (const failure of glossaryTermExactSchemaKeyFailures(term, label)) {
         reject(failure);
       }
+
+      const naturalnessIssue = findGlossaryTermNaturalnessIssue(term);
+      if (naturalnessIssue) {
+        reject(`${label} ${naturalnessIssue}`);
+      } else {
+        glossaryTermNaturalnessValidated += 1;
+      }
     }
 
     if (valid) {
@@ -22244,6 +22261,28 @@ function validateGlossaryTerms() {
       glossaryTermExactSchemaKeysValidated += 1;
     }
   });
+}
+
+function findGlossaryTermNaturalnessIssue(term) {
+  const fields = {
+    termEn: String(term?.termEn ?? ''),
+    explanationEn: String(term?.explanationEn ?? ''),
+  };
+
+  if (/\blabou?r-market parties\b/i.test(fields.termEn)) {
+    return 'uses stilted labour-market parties English wording';
+  }
+  if (/\btake a direct position on\b/i.test(fields.explanationEn)) {
+    return 'uses literal direct-position English wording';
+  }
+  if (/\b(?:the local )?democratic level\b/i.test(fields.explanationEn)) {
+    return 'uses literal democratic-level English wording';
+  }
+  if (/\bnegotiate conditions in the labour market\b/i.test(fields.explanationEn)) {
+    return 'uses literal labour-market conditions English wording';
+  }
+
+  return null;
 }
 
 function validateBadgeCatalog() {
@@ -27832,6 +27871,7 @@ console.log(
       glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
       glossaryTermsValidated,
       glossaryTermExactSchemaKeysValidated,
+      glossaryTermNaturalnessValidated,
       uxBenchmarksValidated,
       supportedLanguagesValidated,
       localizationStrings:

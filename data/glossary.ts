@@ -14,10 +14,11 @@ export const glossaryTerms: GlossaryTerm[] = [
   {
     id: 'arbetsmarknadens-parter',
     termSv: 'Arbetsmarknadens parter',
-    termEn: 'Labour-market parties',
+    termEn: 'Labour market partners',
     explanationSv:
       'Arbetsgivare och fackliga organisationer som förhandlar om villkor på arbetsmarknaden.',
-    explanationEn: 'Employers and trade unions that negotiate conditions in the labour market.',
+    explanationEn:
+      'Employers and trade unions that negotiate terms and conditions in the labour market.',
     chapterId: 'ch08',
   },
   {
@@ -111,7 +112,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     termSv: 'Folkomröstning',
     termEn: 'Referendum',
     explanationSv: 'En omröstning där väljare tar ställning direkt i en sakfråga.',
-    explanationEn: 'A vote where voters take a direct position on a specific issue.',
+    explanationEn: 'A vote where voters have their say directly on a specific issue.',
     chapterId: 'ch04',
   },
   {
@@ -165,7 +166,8 @@ export const glossaryTerms: GlossaryTerm[] = [
     termSv: 'Kommun',
     termEn: 'Municipality',
     explanationSv: 'Den lokala demokratiska nivån som ansvarar för många nära samhällstjänster.',
-    explanationEn: 'The local democratic level responsible for many everyday public services.',
+    explanationEn:
+      'The local level of democratic government responsible for many everyday public services.',
     chapterId: 'ch03',
   },
   {
@@ -258,7 +260,8 @@ export const glossaryTerms: GlossaryTerm[] = [
     termEn: 'Region',
     explanationSv:
       'Den demokratiska nivån som bland annat har stort ansvar för hälso- och sjukvård.',
-    explanationEn: 'The democratic level with major responsibility for areas including healthcare.',
+    explanationEn:
+      'A level of democratic government with major responsibility for areas including healthcare.',
     chapterId: 'ch03',
   },
   {
