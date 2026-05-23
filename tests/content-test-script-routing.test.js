@@ -402,6 +402,10 @@ test('TopBarActions accessibility parity uses focused content validation routing
     /\['scripts\/validate-content\.js'\]/,
     'TopBarActions accessibility tests must not route through full content validation',
   );
+  assert.match(topBarActionsTestSource, /runFocusedValidatorMutation/);
+  assert.match(topBarActionsTestSource, /missing web focus feedback/);
+  assert.match(topBarActionsTestSource, /missing keyboard pressed-state reset/);
+  assert.match(topBarActionsTestSource, /Expo Link asChild bypass/);
 
   const summary = assertFocusedValidationSummary('--focus-topbar-actions-accessibility', [
     'topBarActionsAccessibilityRulesValidated',
