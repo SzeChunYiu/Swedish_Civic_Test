@@ -97,6 +97,31 @@ test('committed static site asset manifest includes every local index reference'
   assert.deepEqual(missingReferences, []);
 });
 
+test('static PWA status affordance is driven by service-worker lifecycle messages', () => {
+  const indexHtml = readSiteIndex();
+  const appSource = fs.readFileSync(path.join(siteRoot, 'app.js'), 'utf8');
+  const serviceWorkerSource = fs.readFileSync(path.join(siteRoot, 'sw.js'), 'utf8');
+  const stylesSource = fs.readFileSync(path.join(siteRoot, 'styles.css'), 'utf8');
+
+  assert.match(indexHtml, /id=["']pwa-status["'][\s\S]*role=["']status["']/);
+  assert.match(indexHtml, /smtInitStaticPwaStatusRegistration\(registration\)/);
+  assert.match(appSource, /SMT_STATIC_PWA_STATUS_MESSAGE\s*=\s*['"]SMT_STATIC_PWA_STATUS['"]/);
+  assert.match(appSource, /navigator\.serviceWorker\.addEventListener\(['"]message['"]/);
+  assert.match(appSource, /function\s+smtRenderStaticPwaStatus\s*\(/);
+  assert.match(appSource, /status !== 'update-available'/);
+  assert.match(appSource, /wrap\.dataset\.state !== 'update-available'/);
+  assert.match(serviceWorkerSource, /clients\.matchAll\(\{\s*includeUncontrolled:\s*true/);
+  assert.match(serviceWorkerSource, /client\.postMessage\(\{\s*type:\s*STATIC_PWA_STATUS_MESSAGE/);
+  assert.match(
+    serviceWorkerSource,
+    /staleCacheNames\.length > 0 \? 'update-available' : 'offline-ready'/,
+  );
+  assert.match(stylesSource, /\.pwa-status\b/);
+
+  const serviceWorkerApi = loadServiceWorkerTestApi();
+  assert.equal(serviceWorkerApi.STATIC_PWA_STATUS_MESSAGE, 'SMT_STATIC_PWA_STATUS');
+});
+
 test('lazy static question bank remains manifest-backed without eager index loading', () => {
   const indexHtml = readSiteIndex();
   const appSource = fs.readFileSync(path.join(siteRoot, 'app.js'), 'utf8');

@@ -358,6 +358,107 @@ function smtTr(map) {
   }
   return (map && (map[l] || map.en)) || '';
 }
+
+/* ============================ STATIC PWA STATUS */
+
+const SMT_STATIC_PWA_STATUS_MESSAGE = 'SMT_STATIC_PWA_STATUS';
+
+function smtStaticPwaStatusCopy(status) {
+  if (status === 'update-available') {
+    return {
+      body: smtTr({
+        sv: 'En ny offlineversion är klar. Uppdatera när du vill.',
+        en: 'A fresh offline version is ready. Reload when you are ready.',
+      }),
+      action: smtTr({
+        sv: 'Uppdatera',
+        en: 'Reload',
+      }),
+      label: smtTr({
+        sv: 'Uppdatera till den nya offlineversionen',
+        en: 'Reload to use the new offline version',
+      }),
+    };
+  }
+
+  return {
+    body: smtTr({
+      sv: 'Klar offline. Du kan fortsätta plugga utan uppkoppling.',
+      en: 'Offline ready. You can keep studying without a connection.',
+    }),
+    action: '',
+    label: '',
+  };
+}
+
+function smtStaticPwaCanRenderStatus() {
+  return (
+    typeof navigator !== 'undefined' &&
+    'serviceWorker' in navigator &&
+    typeof window !== 'undefined' &&
+    window.isSecureContext &&
+    window.location.protocol !== 'file:'
+  );
+}
+
+function smtRenderStaticPwaStatus(status, detail) {
+  if (!smtStaticPwaCanRenderStatus()) return;
+  if (status !== 'offline-ready' && status !== 'update-available') return;
+
+  const wrap = document.getElementById('pwa-status');
+  const text = document.getElementById('pwa-status-text');
+  const reload = document.getElementById('pwa-status-reload');
+  if (!wrap || !text || !reload) return;
+
+  const copy = smtStaticPwaStatusCopy(status);
+  wrap.hidden = false;
+  wrap.dataset.state = status;
+  if (detail?.cacheName) wrap.dataset.cacheName = detail.cacheName;
+  text.textContent = copy.body;
+  reload.hidden = status !== 'update-available';
+  reload.textContent = copy.action;
+  if (copy.label) reload.setAttribute('aria-label', copy.label);
+}
+window.smtRenderStaticPwaStatus = smtRenderStaticPwaStatus;
+
+function smtHandleStaticPwaStatusMessage(message) {
+  const data = message && message.data ? message.data : message;
+  if (!data || data.type !== SMT_STATIC_PWA_STATUS_MESSAGE) return;
+  smtRenderStaticPwaStatus(data.status, data);
+}
+window.smtHandleStaticPwaStatusMessage = smtHandleStaticPwaStatusMessage;
+
+function smtInitStaticPwaStatusRegistration(registration) {
+  if (!smtStaticPwaCanRenderStatus() || !registration) return;
+
+  window.setTimeout(() => {
+    const wrap = document.getElementById('pwa-status');
+    if (!wrap || !wrap.hidden) return;
+    if (navigator.serviceWorker.controller && registration.active) {
+      smtRenderStaticPwaStatus('offline-ready', { cacheName: registration.active.scriptURL });
+    }
+  }, 500);
+}
+window.smtInitStaticPwaStatusRegistration = smtInitStaticPwaStatusRegistration;
+
+if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
+  navigator.serviceWorker.addEventListener('message', smtHandleStaticPwaStatusMessage);
+}
+
+document.addEventListener('click', (event) => {
+  const reload = event.target.closest('#pwa-status-reload');
+  if (!reload) return;
+  const wrap = document.getElementById('pwa-status');
+  if (!wrap || wrap.dataset.state !== 'update-available') return;
+  window.location.reload();
+});
+
+window.addEventListener('smt:languagechange', () => {
+  const wrap = document.getElementById('pwa-status');
+  if (!wrap || wrap.hidden || !wrap.dataset.state) return;
+  smtRenderStaticPwaStatus(wrap.dataset.state, { cacheName: wrap.dataset.cacheName });
+});
+
 function smtMobileNavLabel(open) {
   if (open)
     return smtTr({

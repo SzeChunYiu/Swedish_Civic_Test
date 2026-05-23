@@ -1518,6 +1518,19 @@
       ></div>
     </div>
 
+    <div
+      class="pwa-status"
+      id="pwa-status"
+      hidden
+      role="status"
+      aria-live="polite"
+      data-state="idle"
+    >
+      <span class="pwa-status__dot" aria-hidden="true"></span>
+      <span class="pwa-status__text" id="pwa-status-text"></span>
+      <button class="pwa-status__reload" id="pwa-status-reload" type="button" hidden>Reload</button>
+    </div>
+
     <!-- ============================================================ SCRIPTS -->
     <!--
       ============================================================
@@ -1594,6 +1607,11 @@
         window.addEventListener('load', function () {
           navigator.serviceWorker
             .register('./sw.js', { scope: './', updateViaCache: 'none' })
+            .then(function (registration) {
+              if (typeof window.smtInitStaticPwaStatusRegistration === 'function') {
+                window.smtInitStaticPwaStatusRegistration(registration);
+              }
+            })
             .catch(function () {});
         });
       })();

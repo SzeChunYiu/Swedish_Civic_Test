@@ -114,6 +114,42 @@ test('static PWA shell installs and reloads core study routes offline', async ({
   }
 });
 
+test('static PWA shows offline ready, update available, and reload service worker status controls', async ({
+  page,
+}) => {
+  await seedStaticPwaRun(page);
+  await trapExternalRequests(page, new URL(staticSite.baseUrl).origin, []);
+
+  await page.goto(staticSite.baseUrl, { waitUntil: 'load' });
+  await waitForServiceWorkerControl(page);
+
+  const status = page.locator('#pwa-status');
+  const statusText = page.locator('#pwa-status-text');
+  const reload = page.locator('#pwa-status-reload');
+
+  await expect(status).toBeVisible();
+  await expect(status).toHaveAttribute('data-state', 'offline-ready');
+  await expect(statusText).toContainText('Offline ready');
+  await expect(reload).toBeHidden();
+
+  await page.evaluate(() => {
+    (window as any).smtHandleStaticPwaStatusMessage({
+      type: 'SMT_STATIC_PWA_STATUS',
+      status: 'update-available',
+      cacheName: 'almost-swedish-static-testhash',
+    });
+  });
+
+  await expect(status).toHaveAttribute('data-state', 'update-available');
+  await expect(statusText).toContainText('fresh offline version');
+  await expect(reload).toBeVisible();
+  await expect(reload).toHaveAccessibleName('Reload to use the new offline version');
+
+  await page.evaluate(() => (window as any).smtSetLanguage('sv'));
+  await expect(statusText).toContainText('ny offlineversion');
+  await expect(reload).toHaveText('Uppdatera');
+});
+
 test('static PWA caches lazy ebook route bundles only after route demand', async ({
   context,
   page,

@@ -2,6 +2,7 @@ const CACHE_PREFIX = 'almost-swedish-static';
 const ASSET_MANIFEST_PATH = 'asset-manifest.json';
 const CORE_ASSETS = ['.', 'index.html', ASSET_MANIFEST_PATH];
 const ROUTE_LAZY_ASSETS = new Set(['ebook-tools.js', 'ebook.js']);
+const STATIC_PWA_STATUS_MESSAGE = 'SMT_STATIC_PWA_STATUS';
 
 let activeCacheName = null;
 
@@ -83,12 +84,26 @@ async function precacheAppShell() {
 async function deleteStaleCaches() {
   const currentCacheName = activeCacheName || (await readAssetManifest()).cacheName;
   const cacheNames = await caches.keys();
+  const staleCacheNames = cacheNames.filter(
+    (cacheName) => cacheName.startsWith(`${CACHE_PREFIX}-`) && cacheName !== currentCacheName,
+  );
+  await Promise.all(staleCacheNames.map((cacheName) => caches.delete(cacheName)));
+  return staleCacheNames;
+}
+
+async function broadcastStaticPwaStatus(status, cacheName) {
+  const clientList = await self.clients.matchAll({
+    includeUncontrolled: true,
+    type: 'window',
+  });
   await Promise.all(
-    cacheNames
-      .filter(
-        (cacheName) => cacheName.startsWith(`${CACHE_PREFIX}-`) && cacheName !== currentCacheName,
-      )
-      .map((cacheName) => caches.delete(cacheName)),
+    clientList.map((client) =>
+      client.postMessage({
+        type: STATIC_PWA_STATUS_MESSAGE,
+        status,
+        cacheName,
+      }),
+    ),
   );
 }
 
@@ -144,7 +159,16 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
-  event.waitUntil(deleteStaleCaches().then(() => self.clients.claim()));
+  event.waitUntil(
+    (async () => {
+      const staleCacheNames = await deleteStaleCaches();
+      await self.clients.claim();
+      await broadcastStaticPwaStatus(
+        staleCacheNames.length > 0 ? 'update-available' : 'offline-ready',
+        activeCacheName,
+      );
+    })(),
+  );
 });
 
 self.addEventListener('fetch', (event) => {
@@ -156,4 +180,5 @@ self.__SMT_PWA_TEST__ = {
   cacheNameForManifestText,
   isInstallPrecacheAssetPath,
   resolvePrecacheUrls,
+  STATIC_PWA_STATUS_MESSAGE,
 };
