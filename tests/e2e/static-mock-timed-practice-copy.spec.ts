@@ -155,6 +155,21 @@ async function expectNoHorizontalOverflow(page: Page, label: string) {
     .toBe(true);
 }
 
+async function expectMockDotTargets(page: Page, label: string) {
+  const dotBoxes = await page.locator('#mock-stage .mock-dot').evaluateAll((nodes) =>
+    nodes.map((node) => {
+      const rect = node.getBoundingClientRect();
+      return { height: rect.height, width: rect.width };
+    }),
+  );
+
+  expect(dotBoxes.length, `${label} should render mock question dots`).toBeGreaterThan(0);
+  for (const box of dotBoxes) {
+    expect(box.height, `${label} mock dot height`).toBeGreaterThanOrEqual(44);
+    expect(box.width, `${label} mock dot width`).toBeGreaterThanOrEqual(44);
+  }
+}
+
 async function openStaticMock(page: Page, baseUrl: string, language: Language) {
   const allowedOrigin = new URL(baseUrl).origin;
 
@@ -221,6 +236,27 @@ test.beforeAll(async () => {
 
 test.afterAll(async () => {
   await staticSite.close();
+});
+
+test('static mock question navigation dots keep 44px targets on desktop and mobile', async ({
+  page,
+}) => {
+  const contract = copyContracts.find(({ language }) => language === 'en');
+  if (!contract) throw new Error('Missing English mock copy contract');
+
+  const pageErrors = collectPageErrors(page);
+
+  await page.setViewportSize({ width: 1024, height: 768 });
+  await openStaticMock(page, staticSite.baseUrl, contract.language);
+  await page.locator('#cfg-start').click();
+  await expect(page).toHaveURL(/#\/mock\?run=1$/);
+  await expectMockDotTargets(page, 'desktop');
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expectMockDotTargets(page, 'mobile');
+  await expectNoHorizontalOverflow(page, 'mobile mock question navigation');
+
+  expect(pageErrors).toEqual([]);
 });
 
 for (const contract of copyContracts) {

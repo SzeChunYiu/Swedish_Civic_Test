@@ -1731,14 +1731,15 @@ button.quiz__dot:focus-visible {
 
 .mock-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
   gap: 6px;
   margin-bottom: 18px;
 }
 .mock-dot {
-  height: 36px;
   display: grid;
   place-items: center;
+  min-height: 44px;
+  min-width: 44px;
   padding: 0;
   background: var(--paper-warm);
   border: 1px solid var(--line);
@@ -2291,8 +2292,9 @@ button.quiz__dot:focus-visible {
     gap: 4px;
   }
   .mock-dot {
-    height: 30px;
     font-size: 11px;
+    min-height: 44px;
+    min-width: 44px;
   }
   .mock-actions {
     flex-wrap: wrap;
@@ -9450,7 +9452,8 @@ html[dir='rtl'] .lang-menu {
   border-radius: 12px;
   box-shadow: 0 8px 20px -18px rgba(11, 31, 51, 0.72);
   color: var(--ink);
-  min-height: 38px;
+  min-height: 44px;
+  min-width: 44px;
   position: relative;
 }
 
@@ -9509,12 +9512,13 @@ html[dir='rtl'] .lang-menu {
 @media (max-width: 640px) {
   .mock-grid {
     gap: 7px;
-    grid-template-columns: repeat(auto-fill, minmax(34px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
     padding: 9px;
   }
   .mock-dot {
     border-radius: 10px;
-    min-height: 36px;
+    min-height: 44px;
+    min-width: 44px;
   }
 }
 
