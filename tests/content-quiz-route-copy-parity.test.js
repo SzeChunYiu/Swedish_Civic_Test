@@ -50,16 +50,23 @@ test('routed quiz shell copy follows the persisted settings language', () => {
   assert.match(source, /We could not find a practice question for this link\./);
   assert.match(source, /q\?: string \| string\[\];/);
   assert.match(source, /query\?: string \| string\[\];/);
-  assert.match(source, /const maxSearchReturnQueryLength = 120;/);
-  assert.match(source, /return rawValue && rawValue\.trim\(\)\.length > 0 \? rawValue : null;/);
   assert.match(
     source,
-    /if \(!normalizedValue \|\| normalizedValue\.length > maxSearchReturnQueryLength\) return null;/,
+    /import \{ normalizeSearchQueryParamPair \} from '\.\.\/\.\.\/lib\/search\/textNormalization';/,
+  );
+  const searchNormalizationSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/search/textNormalization.ts'),
+    'utf8',
+  );
+  assert.match(searchNormalizationSource, /export const SEARCH_QUERY_MAX_LENGTH = 120;/);
+  assert.match(
+    searchNormalizationSource,
+    /if \(!normalizedValue \|\| normalizedValue\.length > SEARCH_QUERY_MAX_LENGTH\) return null;/,
   );
   assert.match(source, /const backToSearchHref = getBackToSearchHref\(returnSearchQuery\);/);
   assert.match(
     source,
-    /const returnSearchQuery = normalizeSearchQueryParam\(q\) \?\? normalizeSearchQueryParam\(query\);/,
+    /const returnSearchQuery = normalizeSearchQueryParamPair\(\{ q, query \}\);/,
   );
   assert.match(source, /if \(!searchQuery\) return '\/search';/);
   assert.match(source, /href=\{backToSearchHref\}/);
@@ -340,11 +347,11 @@ const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/quiz/[sessionId].tsx')) {
+  if (normalizedPath.endsWith('/lib/search/textNormalization.ts')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace(
-        'if (!normalizedValue || normalizedValue.length > maxSearchReturnQueryLength) return null;',
+        'if (!normalizedValue || normalizedValue.length > SEARCH_QUERY_MAX_LENGTH) return null;',
         'if (!normalizedValue) return null;',
       );
   }
@@ -374,12 +381,12 @@ const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/quiz/[sessionId].tsx')) {
+  if (normalizedPath.endsWith('/lib/search/textNormalization.ts')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace(
-        'return rawValue && rawValue.trim().length > 0 ? rawValue : null;',
-        'return rawValue ?? null;',
+        'if (!normalizedValue || normalizedValue.length > SEARCH_QUERY_MAX_LENGTH) return null;',
+        'if (normalizedValue.length > SEARCH_QUERY_MAX_LENGTH) return null;',
       );
   }
   return originalReadFileSync.call(this, filePath, ...args);

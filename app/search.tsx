@@ -23,6 +23,11 @@ import {
   getQuestionSearchTitle,
   searchQuestionsWithTotal,
 } from '../lib/search/questionSearch';
+import {
+  SEARCH_QUERY_MAX_LENGTH,
+  normalizeSearchQueryInput,
+  normalizeSearchQueryParamPair,
+} from '../lib/search/textNormalization';
 import { useAccessibilityStore } from '../lib/storage/accessibilityStore';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colorsForThemeMode, radius, space, typography } from '../lib/theme';
@@ -34,7 +39,7 @@ type SearchRouteParams = {
 };
 
 function getQuestionResultHref(questionId: string, query: string): Href {
-  const trimmedQuery = query.trim();
+  const trimmedQuery = normalizeSearchQueryInput(query.trim());
   if (!trimmedQuery) return `/quiz/${questionId}` as Href;
 
   return `/quiz/${questionId}?q=${encodeURIComponent(trimmedQuery)}` as Href;
@@ -67,7 +72,7 @@ export default function SearchScreen() {
     }
   };
   const handleSubmitSearch = () => {
-    const submittedQuery = query.trim();
+    const submittedQuery = normalizeSearchQueryInput(query.trim());
 
     if (submittedQuery.length === 0) {
       handleClearSearch();
@@ -78,7 +83,7 @@ export default function SearchScreen() {
     previousRouteQueryRef.current = submittedQuery;
     router.replace(`/search?q=${encodeURIComponent(submittedQuery)}`);
   };
-  const trimmedQuery = query.trim();
+  const trimmedQuery = normalizeSearchQueryInput(query.trim());
   const filteredTerms = useMemo(
     () =>
       searchGlossary(trimmedQuery, language, glossaryTerms.length).map((term) => ({
@@ -136,7 +141,8 @@ export default function SearchScreen() {
           autoCapitalize="none"
           autoCorrect={false}
           clearButtonMode="while-editing"
-          onChangeText={setQuery}
+          maxLength={SEARCH_QUERY_MAX_LENGTH}
+          onChangeText={(value) => setQuery(normalizeSearchQueryInput(value))}
           onSubmitEditing={handleSubmitSearch}
           placeholder={copy.searchPlaceholder}
           placeholderTextColor={themeColors.textPlaceholder}
@@ -518,14 +524,8 @@ const searchRouteCopy: Record<AppLanguage, SearchRouteCopy> = {
   },
 };
 
-function getFirstSearchParamValue(value: string | string[] | undefined) {
-  const firstValue = Array.isArray(value) ? value[0] : value;
-
-  return typeof firstValue === 'string' ? firstValue : '';
-}
-
 function getRouteSearchQuery(params: SearchRouteParams) {
-  return getFirstSearchParamValue(params.q) || getFirstSearchParamValue(params.query);
+  return normalizeSearchQueryParamPair(params) ?? '';
 }
 
 function createStyles(themeColors: ThemeColors) {

@@ -365,6 +365,7 @@ function assertQuestionSearchPunctuationNormalizer(source) {
 }
 
 function assertSearchRouteQueryHydration(source) {
+  const normalizationSource = readSearchTextNormalizationSource();
   const requiredRules = [
     [
       /import \{ useLocalSearchParams, useRouter \} from 'expo-router';/,
@@ -386,20 +387,23 @@ function assertSearchRouteQueryHydration(source) {
     [/previousRouteQueryRef\.current = routeQuery;/, 'route query sync ref update'],
     [/setQuery\(routeQuery\);/, 'route query state resync'],
     [/\}, \[routeQuery\]\);/, 'route query sync dependency'],
-    [/function getFirstSearchParamValue/, 'single-value route param helper'],
-    [/Array\.isArray\(value\) \? value\[0\] : value/, 'array route param support'],
+    [/normalizeSearchQueryParamPair\(params\) \?\? ''/, 'single-value route param helper'],
     [/function getRouteSearchQuery\(params: SearchRouteParams\)/, 'route query helper'],
+    [/return normalizeSearchQueryParamPair\(params\) \?\? '';/, 'q then query fallback order'],
+    [/maxLength=\{SEARCH_QUERY_MAX_LENGTH\}/, 'typed query max length'],
     [
-      /return getFirstSearchParamValue\(params\.q\) \|\| getFirstSearchParamValue\(params\.query\);/,
-      'q then query fallback order',
+      /onChangeText=\{\(value\) => setQuery\(normalizeSearchQueryInput\(value\)\)\}/,
+      'manual typing remains controlled',
     ],
-    [/onChangeText=\{setQuery\}/, 'manual typing remains controlled'],
     [/const handleClearSearch = \(\) => \{/, 'clear search handler'],
     [/setQuery\(''\);/, 'clear search state reset'],
     [/router\.replace\('\/search'\);/, 'clear search URL replacement'],
     [/onPress=\{handleClearSearch\}/, 'clear search uses URL-aware handler'],
     [/const handleSubmitSearch = \(\) => \{/, 'submit search handler'],
-    [/const submittedQuery = query\.trim\(\);/, 'submit trims typed query'],
+    [
+      /const submittedQuery = normalizeSearchQueryInput\(query\.trim\(\)\);/,
+      'submit trims typed query',
+    ],
     [
       /if \(submittedQuery\.length === 0\) \{[\s\S]*handleClearSearch\(\);/,
       'empty submit clears URL state',
@@ -427,12 +431,25 @@ function assertSearchRouteQueryHydration(source) {
       'visible submit button uses normalized submit path with disabled state',
     ],
     [/value=\{query\}/, 'hydrated query reaches visible input'],
-    [/const trimmedQuery = query\.trim\(\);/, 'hydrated query feeds filtering'],
+    [
+      /const trimmedQuery = normalizeSearchQueryInput\(query\.trim\(\)\);/,
+      'hydrated query feeds filtering',
+    ],
   ];
 
   for (const [pattern, label] of requiredRules) {
     assert.match(source, pattern, `Search route missing ${label}`);
   }
+  assert.match(normalizationSource, /export const SEARCH_QUERY_MAX_LENGTH = 120;/);
+  assert.match(normalizationSource, /Array\.isArray\(value\) \? value\[0\] : value/);
+  assert.match(
+    normalizationSource,
+    /if \(!normalizedValue \|\| normalizedValue\.length > SEARCH_QUERY_MAX_LENGTH\) return null;/,
+  );
+  assert.match(
+    normalizationSource,
+    /if \(getFirstSearchParamValue\(q\)\.length > 0\) return normalizeSearchQueryParam\(q\);/,
+  );
 
   assert.doesNotMatch(
     source,
@@ -533,6 +550,18 @@ test('Search route e2e covers mounted query-param navigation without reload', ()
   assert.match(source, /await expectSearchState\(page, 'kommun'\)/);
   assert.match(source, /await expect\(page\)\.toHaveURL\(\/\\\/search\$\/\)/);
   assert.match(source, /await input\.fill\('lokal text'\)/);
+});
+
+test('Search route e2e covers overlong query length boundaries', () => {
+  const source = readSearchQueryHydrationE2eSource();
+
+  assert.match(source, /search route clears overlong deep links and caps typed query length/);
+  assert.match(source, /const overlongQuery = 'r'\.repeat\(121\)/);
+  assert.match(source, /`\/search\?q=\$\{overlongQuery\}`/);
+  assert.match(source, /`\/search\?query=\$\{overlongQuery\}`/);
+  assert.match(source, /`\/search\?q=\$\{overlongQuery\}&query=municipality`/);
+  assert.match(source, /await expect\(input\)\.toHaveValue\(''\)/);
+  assert.match(source, /toBe\(120\)/);
 });
 
 test('Search route e2e covers q-before-query both-param precedence', () => {
@@ -703,8 +732,8 @@ test('focused Search route query hydration validator rejects mutation fixtures',
       expectedFailure: /search route must prefer q then query fallback order/,
       mutateSource: (source) =>
         source.replace(
-          'return getFirstSearchParamValue(params.q) || getFirstSearchParamValue(params.query);',
-          'return getFirstSearchParamValue(params.query) || getFirstSearchParamValue(params.q);',
+          "return normalizeSearchQueryParamPair(params) ?? '';",
+          "return normalizeSearchQueryParamPair({ q: params.query, query: params.q }) ?? '';",
         ),
     },
     {
@@ -767,8 +796,8 @@ test('Search route hydration rejects leaving clear search local-only', () => {
 test('Search route hydration rejects missing explicit submit URL state', () => {
   const mutatedSource = readSearchRouteSource()
     .replace(
-      /  const handleSubmitSearch = \(\) => \{[\s\S]*?  \};\n  const trimmedQuery = query\.trim\(\);\n/,
-      '  const trimmedQuery = query.trim();\n',
+      /  const handleSubmitSearch = \(\) => \{[\s\S]*?  \};\n  const trimmedQuery = normalizeSearchQueryInput\(query\.trim\(\)\);\n/,
+      '  const trimmedQuery = normalizeSearchQueryInput(query.trim());\n',
     )
     .replace('          onSubmitEditing={handleSubmitSearch}\n', '');
 
@@ -789,20 +818,26 @@ test('Search route hydration rejects local-only submitted query drift', () => {
 
 test('Search route hydration rejects dropping the query fallback param', () => {
   const mutatedSource = readSearchRouteSource().replace(
-    'return getFirstSearchParamValue(params.q) || getFirstSearchParamValue(params.query);',
-    'return getFirstSearchParamValue(params.q);',
+    "return normalizeSearchQueryParamPair(params) ?? '';",
+    "return '';",
   );
 
-  assert.throws(() => assertSearchRouteQueryHydration(mutatedSource), /q then query fallback/);
+  assert.throws(
+    () => assertSearchRouteQueryHydration(mutatedSource),
+    /single-value route param helper|q then query fallback/,
+  );
 });
 
 test('Search route hydration rejects query-before-q fallback drift', () => {
   const mutatedSource = readSearchRouteSource().replace(
-    'return getFirstSearchParamValue(params.q) || getFirstSearchParamValue(params.query);',
-    'return getFirstSearchParamValue(params.query) || getFirstSearchParamValue(params.q);',
+    "return normalizeSearchQueryParamPair(params) ?? '';",
+    "return normalizeSearchQueryParamPair({ q: params.query, query: params.q }) ?? '';",
   );
 
-  assert.throws(() => assertSearchRouteQueryHydration(mutatedSource), /q then query fallback/);
+  assert.throws(
+    () => assertSearchRouteQueryHydration(mutatedSource),
+    /single-value route param helper|q then query fallback/,
+  );
 });
 
 test('Search route glossary results reject route-local punctuation normalization drift', () => {

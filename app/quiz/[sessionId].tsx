@@ -33,6 +33,7 @@ import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShu
 import { getChapterContextForQuizSession } from '../../lib/quiz/practiceFlow';
 import { getQuestionOptionText } from '../../lib/quiz/questionText';
 import { scoreAnswers } from '../../lib/quiz/scoring';
+import { normalizeSearchQueryParamPair } from '../../lib/search/textNormalization';
 import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useAccessibilityStore } from '../../lib/storage/accessibilityStore';
@@ -104,7 +105,6 @@ const quizSessionCopy: Record<AppLanguage, QuizSessionCopy> = {
   },
 };
 
-const maxSearchReturnQueryLength = 120;
 let routedQuizShuffleAttemptSequence = 0;
 
 function normalizeSessionId(sessionId: string | string[] | undefined): string {
@@ -115,13 +115,6 @@ function normalizeSessionId(sessionId: string | string[] | undefined): string {
 function normalizeOptionalRouteParam(value: string | string[] | undefined): string | null {
   const rawValue = Array.isArray(value) ? value[0] : value;
   return rawValue && rawValue.trim().length > 0 ? rawValue : null;
-}
-
-function normalizeSearchQueryParam(value: string | string[] | undefined): string | null {
-  const normalizedValue = normalizeOptionalRouteParam(value);
-  if (!normalizedValue || normalizedValue.length > maxSearchReturnQueryLength) return null;
-
-  return normalizedValue;
 }
 
 function getBackToSearchHref(searchQuery: string | null): Href {
@@ -170,7 +163,7 @@ export default function QuizSessionScreen() {
   const normalizedSessionId = normalizeSessionId(sessionId);
   const routedQuizShuffleSessionId = useRoutedQuizShuffleSessionId(normalizedSessionId);
   const normalizedChapterId = normalizeOptionalRouteParam(chapterId);
-  const returnSearchQuery = normalizeSearchQueryParam(q) ?? normalizeSearchQueryParam(query);
+  const returnSearchQuery = normalizeSearchQueryParamPair({ q, query });
   const backToSearchHref = getBackToSearchHref(returnSearchQuery);
   const pickedQuestion = useMemo(
     () => pickSessionQuestion(normalizedSessionId),

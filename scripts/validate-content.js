@@ -1046,6 +1046,29 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
   },
   {
     file: 'app/search.tsx',
+    pattern:
+      /import \{[\s\S]*?SEARCH_QUERY_MAX_LENGTH,[\s\S]*?normalizeSearchQueryInput,[\s\S]*?normalizeSearchQueryParamPair,[\s\S]*?\} from '\.\.\/lib\/search\/textNormalization';/,
+    message: 'search route must use the shared bounded query normalizer',
+  },
+  {
+    file: 'lib/search/textNormalization.ts',
+    pattern: /export const SEARCH_QUERY_MAX_LENGTH = 120;/,
+    message: 'shared search query normalizer must define the 120-character limit',
+  },
+  {
+    file: 'lib/search/textNormalization.ts',
+    pattern:
+      /export function normalizeSearchQueryParam\(value: string \| string\[\] \| undefined\): string \| null \{[\s\S]*?if \(!normalizedValue \|\| normalizedValue\.length > SEARCH_QUERY_MAX_LENGTH\) return null;/,
+    message: 'shared search query normalizer must reject blank and overlong route params',
+  },
+  {
+    file: 'lib/search/textNormalization.ts',
+    pattern:
+      /export function normalizeSearchQueryParamPair\([\s\S]*?if \(getFirstSearchParamValue\(q\)\.length > 0\) return normalizeSearchQueryParam\(q\);[\s\S]*?return normalizeSearchQueryParam\(query\);/,
+    message: 'shared search query normalizer must preserve q before query precedence',
+  },
+  {
+    file: 'app/search.tsx',
     pattern: /const \[query, setQuery\] = useState\(\(\) => routeQuery\);/,
     message: 'search route must hydrate initial input from route query',
   },
@@ -1077,11 +1100,11 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
   },
   {
     file: 'app/search.tsx',
-    pattern: /function getFirstSearchParamValue/,
+    pattern: /normalizeSearchQueryParamPair\(params\) \?\? ''/,
     message: 'search route must centralize first route-param value extraction',
   },
   {
-    file: 'app/search.tsx',
+    file: 'lib/search/textNormalization.ts',
     pattern: /Array\.isArray\(value\) \? value\[0\] : value/,
     message: 'search route must support array route params',
   },
@@ -1092,14 +1115,18 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
   },
   {
     file: 'app/search.tsx',
-    pattern:
-      /return getFirstSearchParamValue\(params\.q\) \|\| getFirstSearchParamValue\(params\.query\);/,
+    pattern: /return normalizeSearchQueryParamPair\(params\) \?\? '';/,
     message: 'search route must prefer q then query fallback order',
   },
   {
     file: 'app/search.tsx',
-    pattern: /onChangeText=\{setQuery\}/,
+    pattern: /onChangeText=\{\(value\) => setQuery\(normalizeSearchQueryInput\(value\)\)\}/,
     message: 'search route must preserve manual controlled typing',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /maxLength=\{SEARCH_QUERY_MAX_LENGTH\}/,
+    message: 'search route input must cap typed query length',
   },
   {
     file: 'app/search.tsx',
@@ -1115,7 +1142,7 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
   {
     file: 'app/search.tsx',
     pattern:
-      /const handleSubmitSearch = \(\) => \{[\s\S]*?const submittedQuery = query\.trim\(\);[\s\S]*?if \(submittedQuery\.length === 0\) \{[\s\S]*?handleClearSearch\(\);[\s\S]*?setQuery\(submittedQuery\);[\s\S]*?previousRouteQueryRef\.current = submittedQuery;[\s\S]*?router\.replace\(`\/search\?q=\$\{encodeURIComponent\(submittedQuery\)\}`\);[\s\S]*?\};/,
+      /const handleSubmitSearch = \(\) => \{[\s\S]*?const submittedQuery = normalizeSearchQueryInput\(query\.trim\(\)\);[\s\S]*?if \(submittedQuery\.length === 0\) \{[\s\S]*?handleClearSearch\(\);[\s\S]*?setQuery\(submittedQuery\);[\s\S]*?previousRouteQueryRef\.current = submittedQuery;[\s\S]*?router\.replace\(`\/search\?q=\$\{encodeURIComponent\(submittedQuery\)\}`\);[\s\S]*?\};/,
     message: 'search route submit action must normalize state and URL',
   },
   {
@@ -1167,7 +1194,7 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
   },
   {
     file: 'app/search.tsx',
-    pattern: /const trimmedQuery = query\.trim\(\);/,
+    pattern: /const trimmedQuery = normalizeSearchQueryInput\(query\.trim\(\)\);/,
     message: 'search route results must derive from the controlled query',
   },
   {
@@ -1274,6 +1301,11 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
     pattern: /href=\{getQuestionResultHref\(result\.question\.id, trimmedQuery\)\}/,
     message:
       'search route question results must link to the quiz question route with query context',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /const trimmedQuery = normalizeSearchQueryInput\(query\.trim\(\)\);/,
+    message: 'search route question result links must cap routed quiz query context',
   },
   {
     file: 'app/search.tsx',
@@ -2632,19 +2664,11 @@ const EXPECTED_QUIZ_ROUTE_COPY_SNIPPETS = [
   ],
   ['{copy.backToPractice}', 'quiz back-to-practice link must render localized copy'],
   [
-    'const maxSearchReturnQueryLength = 120;',
-    'quiz route search backlink must define a bounded return query length',
+    "import { normalizeSearchQueryParamPair } from '../../lib/search/textNormalization';",
+    'quiz route search backlink must use the shared bounded query normalizer',
   ],
   [
-    'return rawValue && rawValue.trim().length > 0 ? rawValue : null;',
-    'quiz route must trim blank search return params',
-  ],
-  [
-    'if (!normalizedValue || normalizedValue.length > maxSearchReturnQueryLength) return null;',
-    'quiz route search backlink must cap return query length',
-  ],
-  [
-    'const returnSearchQuery = normalizeSearchQueryParam(q) ?? normalizeSearchQueryParam(query);',
+    'const returnSearchQuery = normalizeSearchQueryParamPair({ q, query });',
     'quiz route must sanitize q/query search return params before building backlinks',
   ],
   [
@@ -15093,6 +15117,7 @@ function validateQuizRouteCopyParity() {
   let valid = true;
   let quizRoute = '';
   let searchRoute = '';
+  let searchNormalization = '';
 
   function reject(message) {
     valid = false;
@@ -15111,10 +15136,32 @@ function validateQuizRouteCopyParity() {
     reject(`search route source could not be read for quiz route parity: ${error.message}`);
     return;
   }
+  try {
+    searchNormalization = fs.readFileSync(
+      path.join(repoRoot, 'lib/search/textNormalization.ts'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(
+      `search query normalization source could not be read for quiz route parity: ${error.message}`,
+    );
+    return;
+  }
 
   EXPECTED_QUIZ_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!quizRoute.includes(snippet)) reject(message);
   });
+  if (!searchNormalization.includes('export const SEARCH_QUERY_MAX_LENGTH = 120;')) {
+    reject('quiz route search backlink must define a bounded return query length');
+  }
+  if (
+    !searchNormalization.includes(
+      'if (!normalizedValue || normalizedValue.length > SEARCH_QUERY_MAX_LENGTH) return null;',
+    )
+  ) {
+    reject('quiz route must trim blank search return params');
+    reject('quiz route search backlink must cap return query length');
+  }
   if (!searchRoute.includes('function getQuestionResultHref(questionId: string, query: string)')) {
     reject('search route must centralize question result quiz href generation');
   }

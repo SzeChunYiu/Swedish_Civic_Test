@@ -413,6 +413,36 @@ test('search route resyncs when URL query params change after mount', async ({ p
   expect(consoleErrors).toEqual([]);
 });
 
+test('search route clears overlong deep links and caps typed query length', async ({ page }) => {
+  await seedSettingsLanguage(page, 'en');
+  await markAboutTheTestSeen(page);
+
+  const overlongQuery = 'r'.repeat(121);
+  for (const searchUrl of [
+    `/search?q=${overlongQuery}`,
+    `/search?query=${overlongQuery}`,
+    `/search?q=${overlongQuery}&query=municipality`,
+  ]) {
+    await page.goto(searchUrl, { waitUntil: 'networkidle' });
+    await dismissBlockingModals(page);
+
+    const input = page.getByRole('textbox', { name: searchStateCopy.en.inputName });
+    await expect(input).toBeVisible();
+    await expect(input).toHaveValue('');
+    await expect(page.getByText(searchStateCopy.en.allTermsSummaryPattern)).toBeVisible();
+  }
+
+  const input = page.getByRole('textbox', { name: searchStateCopy.en.inputName });
+  const submitButton = page.getByRole('button', { name: searchStateCopy.en.submitButtonName });
+  const longTypedQuery = 'riksdag '.repeat(20).trim();
+
+  await input.fill(longTypedQuery);
+  await expect.poll(async () => (await input.inputValue()).length).toBe(120);
+
+  await submitButton.click();
+  await expect.poll(() => new URL(page.url()).searchParams.get('q')?.length).toBe(120);
+});
+
 test('search question result links open the exact routed quiz question', async ({ page }) => {
   const consoleErrors: string[] = [];
 
@@ -479,6 +509,7 @@ test('direct quiz visits ignore malformed and overlong search backlink params', 
     `/quiz/q001?q=${encodeURIComponent('   ')}`,
     `/quiz/q001?q=${overlongQuery}`,
     `/quiz/q001?query=${overlongQuery}`,
+    `/quiz/q001?q=${overlongQuery}&query=democracy`,
   ];
 
   for (const quizUrl of malformedQuizUrls) {
