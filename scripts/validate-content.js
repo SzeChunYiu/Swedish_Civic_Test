@@ -3372,6 +3372,23 @@ const EXPECTED_ONBOARDING_ROUTE_COPY_SNIPPETS = [
     'onboarding daily goal presets must mirror checked state natively',
   ],
   [
+    'function getRadioArrowDirection(event: KeyboardEventLike): -1 | 1 | null',
+    'onboarding daily goal presets must support arrow-key radio navigation',
+  ],
+  [
+    'const selectedOnboardingGoal = isOnboardingDailyGoalPresetValue(dailyGoalAnswers)',
+    'onboarding daily goal roving tab stop must fall back to a supported preset',
+  ],
+  ['onKeyDown: handleDailyGoalKeyDown', 'onboarding daily goal presets must handle web arrow keys'],
+  [
+    'tabIndex: selectedOnboardingGoal === goal ? 0 : -1',
+    'onboarding daily goal presets must expose one roving web tab stop',
+  ],
+  [
+    'goalOptionRefs.current[String(goal)] = node as FocusableElement | null;',
+    'onboarding daily goal presets must keep focusable refs for arrow navigation',
+  ],
+  [
     'accessibilityLabel={copy.startStudyingAccessibilityLabel}',
     'onboarding start link must expose localized accessibility copy',
   ],
@@ -16997,6 +17014,22 @@ function validateOnboardingRouteCopyParity() {
     )
   ) {
     reject('onboarding daily goal presets must use radiogroup/radio checked semantics');
+  }
+  if (
+    !/ArrowRight[\s\S]{0,80}ArrowDown[\s\S]{0,120}ArrowLeft[\s\S]{0,80}ArrowUp/.test(
+      onboardingRoute,
+    )
+  ) {
+    reject('onboarding daily goal presets must map arrow keys to radio navigation direction');
+  }
+  if (!/event\.preventDefault\?\.\(\);/.test(onboardingRoute)) {
+    reject('onboarding daily goal arrow navigation must prevent page scrolling');
+  }
+  if (
+    !/handleDailyGoalPress\(nextGoal\);/.test(onboardingRoute) ||
+    !/goalOptionRefs\.current\[String\(nextGoal\)\]\?\.focus\?\.\(\);/.test(onboardingRoute)
+  ) {
+    reject('onboarding daily goal presets must select and focus the next radio with arrow keys');
   }
 
   FORBIDDEN_ONBOARDING_SV_MISTAKE_REVIEW_COPY.forEach((pattern) => {

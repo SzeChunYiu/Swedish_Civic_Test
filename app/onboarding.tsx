@@ -1,5 +1,14 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  Alert,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 
 import { AuthProviderButton } from '../components/auth/AuthProviderButton';
 import { GoogleLogo } from '../components/auth/GoogleLogo';
@@ -19,9 +28,7 @@ import { useThemeColors } from '../lib/theme/ThemeProvider';
 
 type DailyGoalPresetValue = Exclude<(typeof supportedDailyGoalAnswerOptions)[number], 5>;
 
-function isOnboardingDailyGoalPresetValue(
-  goal: (typeof supportedDailyGoalAnswerOptions)[number],
-): goal is DailyGoalPresetValue {
+function isOnboardingDailyGoalPresetValue(goal: number): goal is DailyGoalPresetValue {
   return goal !== 5;
 }
 
@@ -65,6 +72,24 @@ type OnboardingCopy = {
   testDateTitle: string;
   title: string;
 };
+
+type FocusableElement = { focus?: () => void };
+type KeyboardEventLike = {
+  key?: string;
+  nativeEvent?: { key?: string };
+  preventDefault?: () => void;
+};
+type WebRadioKeyboardProps = {
+  onKeyDown?: (event: KeyboardEventLike) => void;
+  tabIndex?: 0 | -1;
+};
+
+function getRadioArrowDirection(event: KeyboardEventLike): -1 | 1 | null {
+  const key = event.nativeEvent?.key ?? event.key;
+  if (key === 'ArrowRight' || key === 'ArrowDown') return 1;
+  if (key === 'ArrowLeft' || key === 'ArrowUp') return -1;
+  return null;
+}
 
 const onboardingCopy: Record<AppLanguage, OnboardingCopy> = {
   sv: {
@@ -206,7 +231,12 @@ export default function Screen() {
     studyPlanTestDateIso ? 'saved' : 'idle',
   );
   const [busyProvider, setBusyProvider] = useState<AuthProviderId | null>(null);
+  const [focusedGoalPreset, setFocusedGoalPreset] = useState<DailyGoalPresetValue | null>(null);
+  const goalOptionRefs = useRef<Record<string, FocusableElement | null>>({});
   const copy = onboardingCopy[language];
+  const selectedOnboardingGoal = isOnboardingDailyGoalPresetValue(dailyGoalAnswers)
+    ? dailyGoalAnswers
+    : onboardingDailyGoalPresetValues[0];
   const testDateFeedbackText =
     testDateFeedback === 'invalid'
       ? copy.testDateInvalid
@@ -225,6 +255,35 @@ export default function Screen() {
     setDailyGoalAnswers(goal);
     setStudyPlanIntensity(studyIntensityForDailyGoal(goal));
   };
+
+  const handleDailyGoalKeyDown = (event: KeyboardEventLike) => {
+    const direction = getRadioArrowDirection(event);
+    if (!direction || onboardingDailyGoalPresetValues.length === 0) return;
+
+    event.preventDefault?.();
+    const currentIndex = onboardingDailyGoalPresetValues.findIndex(
+      (goal) => goal === selectedOnboardingGoal,
+    );
+    const nextIndex =
+      currentIndex >= 0
+        ? (currentIndex + direction + onboardingDailyGoalPresetValues.length) %
+          onboardingDailyGoalPresetValues.length
+        : direction > 0
+          ? 0
+          : onboardingDailyGoalPresetValues.length - 1;
+    const nextGoal = onboardingDailyGoalPresetValues[nextIndex];
+
+    handleDailyGoalPress(nextGoal);
+    goalOptionRefs.current[String(nextGoal)]?.focus?.();
+  };
+
+  const getDailyGoalWebRadioProps = (goal: DailyGoalPresetValue): WebRadioKeyboardProps =>
+    Platform.OS === 'web'
+      ? {
+          onKeyDown: handleDailyGoalKeyDown,
+          tabIndex: selectedOnboardingGoal === goal ? 0 : -1,
+        }
+      : {};
 
   const handleTestDateChange = (value: string) => {
     const nextValue = value.replace(/[^\d-]/g, '').slice(0, 10);
@@ -340,12 +399,19 @@ export default function Screen() {
                 accessibilityRole="radio"
                 accessibilityState={{ checked: selected }}
                 hitSlop={space[1]}
+                onBlur={() => setFocusedGoalPreset(null)}
+                onFocus={() => setFocusedGoalPreset(goal)}
                 onPress={() => handleDailyGoalPress(goal)}
+                ref={(node) => {
+                  goalOptionRefs.current[String(goal)] = node as FocusableElement | null;
+                }}
                 style={({ pressed }) => [
                   styles.goalPreset,
                   selected ? styles.goalPresetActive : null,
+                  focusedGoalPreset === goal ? styles.goalPresetFocused : null,
                   pressed ? styles.goalPresetPressed : null,
                 ]}
+                {...getDailyGoalWebRadioProps(goal)}
               >
                 <Text
                   style={[styles.goalPresetLabel, selected ? styles.goalPresetTextActive : null]}
@@ -546,6 +612,9 @@ function createStyles(themeColors: ThemeColors) {
       borderColor: themeColors.badgeBlueText,
     },
     goalPresetPressed: {
+      borderColor: themeColors.focus,
+    },
+    goalPresetFocused: {
       borderColor: themeColors.focus,
     },
     goalPresetLabel: {

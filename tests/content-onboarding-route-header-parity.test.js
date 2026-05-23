@@ -60,11 +60,41 @@ test('onboarding route title stays accessible as a header', () => {
     /const studyPlanTestDateIso = useSettingsStore\(\(state\) => state\.studyPlanTestDateIso\);/,
   );
   assert.match(source, /const copy = onboardingCopy\[language\];/);
+  assert.match(source, /type FocusableElement = \{ focus\?: \(\) => void \};/);
+  assert.match(source, /type KeyboardEventLike = \{/);
+  assert.match(source, /type WebRadioKeyboardProps = \{/);
+  assert.match(
+    source,
+    /function getRadioArrowDirection\(event: KeyboardEventLike\): -1 \| 1 \| null/,
+  );
+  assert.match(source, /ArrowRight/);
+  assert.match(source, /ArrowDown/);
+  assert.match(source, /ArrowLeft/);
+  assert.match(source, /ArrowUp/);
   assert.match(source, /function studyIntensityForDailyGoal\(goal: DailyGoalPresetValue\)/);
   assert.match(source, /if \(goal === 10\) return 'casual';/);
   assert.match(source, /if \(goal === 40\) return 'serious';/);
+  assert.match(
+    source,
+    /const goalOptionRefs = useRef<Record<string, FocusableElement \| null>>\(\{\}\);/,
+  );
+  assert.match(
+    source,
+    /const selectedOnboardingGoal = isOnboardingDailyGoalPresetValue\(dailyGoalAnswers\)/,
+  );
   assert.match(source, /const handleDailyGoalPress = \(goal: DailyGoalPresetValue\) => \{/);
   assert.match(source, /setStudyPlanIntensity\(studyIntensityForDailyGoal\(goal\)\);/);
+  assert.match(source, /const handleDailyGoalKeyDown = \(event: KeyboardEventLike\) => \{/);
+  assert.match(source, /event\.preventDefault\?\.\(\);/);
+  assert.match(source, /handleDailyGoalPress\(nextGoal\);/);
+  assert.match(source, /goalOptionRefs\.current\[String\(nextGoal\)\]\?\.focus\?\.\(\);/);
+  assert.match(
+    source,
+    /const getDailyGoalWebRadioProps = \(goal: DailyGoalPresetValue\): WebRadioKeyboardProps/,
+  );
+  assert.match(source, /Platform\.OS === 'web'/);
+  assert.match(source, /onKeyDown: handleDailyGoalKeyDown/);
+  assert.match(source, /tabIndex: selectedOnboardingGoal === goal \? 0 : -1/);
   assert.match(source, /const handleTestDateChange = \(value: string\) => \{/);
   assert.match(source, /const normalizedDate = normalizeStudyPlanTestDateIso\(nextValue\);/);
   assert.match(source, /setStudyPlanTestDateIso\(normalizedDate\);/);
@@ -96,6 +126,13 @@ test('onboarding route title stays accessible as a header', () => {
   assert.doesNotMatch(source, /aria-selected=\{selected\}/);
   assert.doesNotMatch(source, /accessibilityState=\{\{ selected \}\}/);
   assert.match(source, /onPress=\{\(\) => handleDailyGoalPress\(goal\)\}/);
+  assert.match(source, /onFocus=\{\(\) => setFocusedGoalPreset\(goal\)\}/);
+  assert.match(source, /onBlur=\{\(\) => setFocusedGoalPreset\(null\)\}/);
+  assert.match(
+    source,
+    /goalOptionRefs\.current\[String\(goal\)\] = node as FocusableElement \| null;/,
+  );
+  assert.match(source, /\{\.\.\.getDailyGoalWebRadioProps\(goal\)\}/);
   assert.match(source, /<TextInput/);
   assert.match(source, /accessibilityLabel=\{copy\.testDateInputAccessibilityLabel\}/);
   assert.match(source, /placeholder=\{copy\.testDateInputPlaceholder\}/);

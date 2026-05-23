@@ -204,11 +204,29 @@ test('Onboarding actions keep mobile-safe targets and daily goal selection', asy
     exact: true,
     name: 'Välj regelbundet dagligt mål med 20 svar',
   });
+  const casualGoal = page.getByRole('radio', {
+    exact: true,
+    name: 'Välj lugnt dagligt mål med 10 svar',
+  });
+  const seriousGoal = page.getByRole('radio', {
+    exact: true,
+    name: 'Välj seriöst dagligt mål med 40 svar',
+  });
   await expectMinimumTargetSize(regularGoal, 'Regular daily goal');
   await expect(regularGoal).toHaveAttribute('aria-checked', 'false');
   await expect(regularGoal).not.toHaveAttribute('aria-selected', /.+/);
   await regularGoal.click();
   await expect(regularGoal).toHaveAttribute('aria-checked', 'true');
+  await regularGoal.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(seriousGoal).toHaveAttribute('aria-checked', 'true');
+  await expect(seriousGoal).toBeFocused();
+  await page.keyboard.press('ArrowRight');
+  await expect(casualGoal).toHaveAttribute('aria-checked', 'true');
+  await expect(casualGoal).toBeFocused();
+  await page.keyboard.press('ArrowUp');
+  await expect(seriousGoal).toHaveAttribute('aria-checked', 'true');
+  await expect(seriousGoal).toBeFocused();
 
   const testDateInput = page.getByRole('textbox', { name: 'Ange provdatum som ÅÅÅÅ-MM-DD' });
   await expectMinimumTargetSize(testDateInput, 'Test date input');
