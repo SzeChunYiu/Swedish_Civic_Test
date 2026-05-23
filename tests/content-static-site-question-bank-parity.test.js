@@ -214,9 +214,9 @@ function assertStaticQ167StatedOnVotingCardTrueFalsePrompts(questionsById, sourc
     const [expectedSv, expectedEn] = expectedPrompts[id];
     const question = questionsById.get(id);
     assert.ok(question, `${id} should be present in static question bank`);
-    assert.equal(question.q?.sv, expectedSv);
-    assert.equal(question.q?.en, expectedEn);
-    assert.equal(question.answer, expectedAnswers[id]);
+    assert.equal(question.q?.sv, expectedSv, `${id} static sv prompt should stay natural`);
+    assert.equal(question.q?.en, expectedEn, `${id} static en prompt should stay natural`);
+    assert.equal(question.answer, expectedAnswers[id], `${id} static answer should stay correct`);
     assert.equal(question.questionProvenance, 'derived');
     assert.doesNotMatch(
       staticQuestionVisibleText(question),
@@ -507,6 +507,59 @@ test('static site question bank keeps q167 stated-on true/false prompts natural'
   );
 
   assertStaticQ167StatedOnVotingCardTrueFalsePrompts(questionsById, sourceQuestions);
+});
+
+test('static site q167 stated-on true/false fixture rejects q845/q846 contents and answer mutations', () => {
+  const expectedBank = buildSiteQuestionBank();
+  const sourceQuestions = expectedBank.questions.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const context = { window: {} };
+  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
+  const questionsById = new Map(
+    context.window.SMT_QUESTIONS.map((question) => [question.id, question]),
+  );
+  const { trueFalseIds } = q167StatedOnVotingCardFixture(sourceQuestions);
+  const stalePromptsById = {
+    [trueFalseIds[0]]: {
+      sv: 'Röstkortets innehåll är vilken vallokal väljaren ska gå till.',
+      en: 'The voting card contents are which polling station the voter should go to.',
+    },
+    [trueFalseIds[1]]: {
+      sv: 'Röstkortets innehåll är vilket parti väljaren måste rösta på.',
+      en: 'The voting card contents are which party the voter must vote for.',
+    },
+  };
+
+  for (const [id, q] of Object.entries(stalePromptsById)) {
+    const mutatedQuestionsById = new Map(questionsById);
+    mutatedQuestionsById.set(id, {
+      ...questionsById.get(id),
+      q: {
+        ...questionsById.get(id)?.q,
+        ...q,
+      },
+    });
+    assert.throws(
+      () =>
+        assertStaticQ167StatedOnVotingCardTrueFalsePrompts(mutatedQuestionsById, sourceQuestions),
+      new RegExp(`${id} static sv prompt should stay natural`),
+    );
+  }
+
+  for (const id of trueFalseIds) {
+    const question = questionsById.get(id);
+    const mutatedQuestionsById = new Map(questionsById);
+    mutatedQuestionsById.set(id, {
+      ...question,
+      answer: question.answer === 0 ? 1 : 0,
+    });
+    assert.throws(
+      () =>
+        assertStaticQ167StatedOnVotingCardTrueFalsePrompts(mutatedQuestionsById, sourceQuestions),
+      new RegExp(`${id} static answer should stay correct`),
+    );
+  }
 });
 
 test('static site question bank keeps q166/q169 kommun-region i18n target-language first', () => {
