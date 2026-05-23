@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
+const { runFocusedValidatorMutation } = require('./helpers/focusedValidatorMutation.cjs');
 const { getMockExamSourceCitationSections } = require('../scripts/mock-exam-source-sections');
 
 const repoRoot = path.resolve(__dirname, '..');
@@ -101,6 +102,21 @@ function assertFocusedMockExamCopyPatchFails(patches, expectedPattern) {
   const result = runFocusedMockExamCopyWithSourcePatch(patches);
   assert.notEqual(result.status, 0, result.stdout);
   assert.match(`${result.stdout}\n${result.stderr}`, expectedPattern);
+}
+
+function runFocusedMockExamRuntimeWithExamRoutePatch(mutateSource) {
+  return runFocusedValidatorMutation({
+    focusFlag: '--focus-mock-exam-runtime-parity',
+    targetFile: 'app/(tabs)/exam.tsx',
+    mutateSource,
+  });
+}
+
+function assertFocusedMockExamRuntimePatchFails(mutateSource, expectedPattern) {
+  const result = runFocusedMockExamRuntimeWithExamRoutePatch(mutateSource);
+  assert.notEqual(result.status, 0, result.stdout);
+  assert.match(`${result.stdout}\n${result.stderr}`, expectedPattern);
+  return result;
 }
 
 test('default mock exam config generates a full UHR-based exam from bundled questions', () => {
@@ -270,6 +286,71 @@ test('active mock exam keeps full UHR reference cards out of pre-submit question
   assert.match(activeQuestionSection, /accessibilityState=\{\{ checked: isFlagged \}\}/);
   assert.doesNotMatch(activeQuestionSection, /<UHRReferenceCard/);
   assert.doesNotMatch(activeQuestionSection, /<ExplanationPanel/);
+});
+
+test('mock exam source-section locator tolerates JSX callback whitespace variants', () => {
+  const examRouteSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+  const spacedCallbackSource = examRouteSource
+    .replace(
+      '{filteredReviewItems.map((item) => {',
+      '{filteredReviewItems.map(\n          (item) =>\n        {',
+    )
+    .replace(
+      '{examQuestions.map((question, index) => {',
+      '{examQuestions.map(\n          (question, index) =>\n        {',
+    );
+  const { activeQuestionSection, reviewSection } =
+    getMockExamSourceCitationSections(spacedCallbackSource);
+
+  assert.match(reviewSection, /<QuestionSourceCitation[\s\S]*question=\{item\}/);
+  assert.match(activeQuestionSection, /<QuestionSourceCitation[\s\S]*question=\{question\}/);
+});
+
+test('mock exam source-section locator rejects missing and reordered sections', () => {
+  assertFocusedMockExamRuntimePatchFails(
+    (source) =>
+      source.replace(
+        'filteredReviewItems.map((item) => {',
+        'filteredReviewItems.map((reviewItem) => {',
+      ),
+    /submitted review section should be present/,
+  );
+
+  assertFocusedMockExamRuntimePatchFails(
+    (source) =>
+      source.replace(
+        'examQuestions.map((question, index) => {',
+        'examQuestions.map((examQuestion, index) => {',
+      ),
+    /active question section should be present/,
+  );
+
+  assertFocusedMockExamRuntimePatchFails(
+    (source) =>
+      `${source.replace('filteredReviewItems.map((item) => {', 'filteredReviewItemsDisabled.map((item) => {')}
+      {filteredReviewItems.map((item) => {
+        return null;
+      })}`,
+    /submitted review section should stay separate from active questions/,
+  );
+});
+
+test('mock exam source-section locator mutation reports focused validator failure shape', () => {
+  const result = assertFocusedMockExamRuntimePatchFails(
+    (source) =>
+      source.replace(
+        'filteredReviewItems.map((item) => {',
+        'filteredReviewItems.map((reviewItem) => {',
+      ),
+    /exam route must keep distinct submitted-review and active-question sections: submitted review section should be present/,
+  );
+  const output = `${result.stdout}\n${result.stderr}`;
+
+  assert.doesNotMatch(output, /submitted exam review must render localized UHR reference cards/);
+  assert.doesNotMatch(
+    output,
+    /active unsubmitted exam questions must keep compact source citations/,
+  );
 });
 
 test('mock exam timer and auto-submit runtime guards reject malformed state', () => {

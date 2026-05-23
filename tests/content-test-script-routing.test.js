@@ -267,6 +267,27 @@ test('Home route focused mutation fixtures use the shared helper', () => {
   assert.match(helperSource, /require\(path\.join\(repoRoot, 'scripts\/validate-content\.js'\)\)/);
 });
 
+test('mock exam source-section locator mutations use focused mock exam runtime routing', () => {
+  const mockExamRuntimeTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-mock-exam-runtime-parity.test.js'),
+    'utf8',
+  );
+
+  assert.match(mockExamRuntimeTestSource, /runFocusedValidatorMutation/);
+  assert.match(mockExamRuntimeTestSource, /--focus-mock-exam-runtime-parity/);
+  assert.match(mockExamRuntimeTestSource, /targetFile: 'app\/\(tabs\)\/exam\.tsx'/);
+  assert.match(mockExamRuntimeTestSource, /submitted review section should be present/);
+  assert.match(mockExamRuntimeTestSource, /active question section should be present/);
+  assert.match(
+    mockExamRuntimeTestSource,
+    /submitted review section should stay separate from active questions/,
+  );
+  assert.match(
+    mockExamRuntimeTestSource,
+    /exam route must keep distinct submitted-review and active-question sections/,
+  );
+});
+
 test('npm test keeps selector routing in the project dispatcher', () => {
   const pkg = readPackageJson();
   const testContentScript = pkg.scripts['test:content'];
