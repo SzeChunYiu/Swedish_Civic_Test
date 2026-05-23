@@ -14,6 +14,7 @@ function read(relativePath) {
 function createRenderContext({ hash = '#/practice?c=1', language = 'en' } = {}) {
   const elements = new Map();
   const listeners = { document: [], window: [] };
+  const scrollCalls = [];
   const storage = new Map([['smt_lang', language]]);
 
   function element(id) {
@@ -78,11 +79,13 @@ function createRenderContext({ hash = '#/practice?c=1', language = 'en' } = {}) 
   sandbox.window.addEventListener = (type, handler) => {
     listeners.window.push({ type, handler });
   };
-  sandbox.window.scrollTo = () => {};
+  sandbox.window.scrollTo = (options) => {
+    scrollCalls.push(options);
+  };
   sandbox.window.SMT_CHAPTERS_META = [];
 
   vm.createContext(sandbox);
-  return { sandbox, element, listeners };
+  return { sandbox, element, listeners, scrollCalls };
 }
 
 function loadSiteQuestions() {
@@ -248,7 +251,7 @@ test('static Practice renders shuffled labels while scoring the original correct
 });
 
 test('static Practice quiz-again starts a fresh attempt seed for the same scope', () => {
-  const { sandbox, element, listeners } = createRenderContext({
+  const { sandbox, element, listeners, scrollCalls } = createRenderContext({
     hash: '#/practice?c=1',
     language: 'en',
   });
@@ -288,6 +291,7 @@ test('static Practice quiz-again starts a fresh attempt seed for the same scope'
     });
   }
   assert.match(element('quiz-stage').innerHTML, /id="quiz-again"/);
+  const scrollCallsBeforeRetry = scrollCalls.length;
 
   for (const listener of clickListeners) {
     listener.handler({
@@ -303,6 +307,10 @@ test('static Practice quiz-again starts a fresh attempt seed for the same scope'
   assert.notDeepEqual(firstOrder, secondOrder);
   assert.equal(vm.runInContext('SMT_QUIZ.attempt', sandbox, { timeout: 3000 }), 2);
   assert.equal(vm.runInContext('SMT_QUIZ.score', sandbox, { timeout: 3000 }), 0);
+  const retryScrollCalls = scrollCalls.slice(scrollCallsBeforeRetry);
+  assert.equal(retryScrollCalls.length, 1);
+  assert.equal(retryScrollCalls[0].top, 0);
+  assert.equal(retryScrollCalls[0].behavior, 'smooth');
 });
 
 test('static Practice route re-entry starts a fresh attempt seed for the same scope', () => {

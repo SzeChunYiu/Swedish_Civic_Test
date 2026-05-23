@@ -187,6 +187,60 @@ async function openStaticMock(page: Page, baseUrl: string, language: Language) {
   await expect(page.locator('#mock-stage')).toBeVisible();
 }
 
+async function openStaticPracticeResult(page: Page, baseUrl: string) {
+  await page.addInitScript(() => {
+    const scrollCalls: unknown[][] = [];
+    const originalScrollTo = window.scrollTo.bind(window);
+    Object.defineProperty(window, '__smtScrollToCalls', {
+      configurable: true,
+      value: scrollCalls,
+      writable: true,
+    });
+    window.scrollTo = ((optionsOrX?: ScrollToOptions | number, y?: number) => {
+      const args = y === undefined ? [optionsOrX] : [optionsOrX, y];
+      scrollCalls.push(args);
+      if (typeof optionsOrX === 'number') {
+        originalScrollTo(optionsOrX, y ?? 0);
+        return;
+      }
+      originalScrollTo(optionsOrX);
+    }) as typeof window.scrollTo;
+  });
+
+  await page.goto(`${baseUrl}/#/practice?c=mix`, { waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(
+    () =>
+      typeof (window as typeof window & { smtQuizRender?: unknown }).smtQuizRender === 'function',
+  );
+  await page.waitForFunction(() => {
+    const staticWindow = window as typeof window & {
+      SMT_QUESTIONS?: unknown[];
+      smtQuestionBankIsReady?: () => boolean;
+    };
+
+    return (
+      (typeof staticWindow.smtQuestionBankIsReady === 'function' &&
+        staticWindow.smtQuestionBankIsReady()) ||
+      (Array.isArray(staticWindow.SMT_QUESTIONS) && staticWindow.SMT_QUESTIONS.length > 0)
+    );
+  });
+  await page.evaluate(() => {
+    window.eval(`
+      const questions = smtQuizQuestionSet();
+      SMT_QUIZ.scope = smtQuizScopeKey();
+      SMT_QUIZ.i = questions.length;
+      SMT_QUIZ.score = Math.max(1, Math.ceil(questions.length * 0.7));
+      SMT_QUIZ.answers = questions.map((question, index) =>
+        index < SMT_QUIZ.score ? question.answer : -1
+      );
+      smtQuizRender();
+    `);
+    const staticWindow = window as typeof window & { __smtScrollToCalls?: unknown[] };
+    if (Array.isArray(staticWindow.__smtScrollToCalls)) staticWindow.__smtScrollToCalls.length = 0;
+  });
+  await expect(page.locator('#quiz-stage .quiz__result')).toBeVisible();
+}
+
 async function submitShortMockAttempt(page: Page, contract: MockCopyContract) {
   const stage = page.locator('#mock-stage');
 
@@ -221,6 +275,25 @@ test.beforeAll(async () => {
 
 test.afterAll(async () => {
   await staticSite.close();
+});
+
+test('static Practice quiz-again scrolls back to the fresh first question', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const pageErrors = collectPageErrors(page);
+
+  await openStaticPracticeResult(page, staticSite.baseUrl);
+  await page.locator('#quiz-again').click();
+
+  await expect(page.locator('#quiz-stage .quiz__card')).toBeVisible();
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          (window as typeof window & { __smtScrollToCalls?: unknown[][] }).__smtScrollToCalls ?? [],
+      ),
+    )
+    .toContainEqual([{ top: 0, behavior: 'smooth' }]);
+  expect(pageErrors).toEqual([]);
 });
 
 for (const contract of copyContracts) {

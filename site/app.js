@@ -2836,6 +2836,7 @@ document.addEventListener('click', (e) => {
   }
   if (e.target.closest('#quiz-again')) {
     smtQuizReset();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     return;
   }
 });
