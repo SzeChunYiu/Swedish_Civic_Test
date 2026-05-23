@@ -174,6 +174,26 @@ function assertDashboardAccessibilitySeparation(sources) {
     /<Pressable[\s\S]*?aria-checked=\{selected\}[\s\S]*?accessibilityLabel=\{copy\.sortAccessibilityLabel\(label\)\}[\s\S]*?accessibilityRole="radio"[\s\S]*?accessibilityState=\{\{ checked: selected \}\}/,
     'PerChapterProgressBars sort options must expose radio checked semantics',
   );
+  assert.match(
+    sources.chapters,
+    /function getSortKeyboardTarget\([\s\S]*?ArrowRight[\s\S]*?ArrowDown[\s\S]*?ArrowLeft[\s\S]*?ArrowUp[\s\S]*?Home[\s\S]*?End/,
+    'PerChapterProgressBars sort radios must map arrow/Home/End keys',
+  );
+  assert.match(
+    sources.chapters,
+    /const sortOptionRefs = useRef<Record<ChapterSortMode, FocusableElement \| null>>/,
+    'PerChapterProgressBars sort radios must keep focus refs',
+  );
+  assert.match(
+    sources.chapters,
+    /sortOptionRefs\.current\[nextMode\]\?\.focus\?\.\(\)/,
+    'PerChapterProgressBars sort keyboard selection must move focus to the checked radio',
+  );
+  assert.match(
+    sources.chapters,
+    /onKeyDown: handleSortKeyDown[\s\S]*?tabIndex: selected \? 0 : -1/,
+    'PerChapterProgressBars sort radios must expose web arrow-key handling and roving tabIndex',
+  );
   assert.doesNotMatch(
     sources.chapters,
     /accessibilityRole="button"[\s\S]{0,240}accessibilityState=\{\{\s*selected\s*\}\}/,
@@ -506,6 +526,22 @@ test('dashboard accessibility parity rejects selected-button chapter sort contro
           ),
       }),
     /PerChapterProgressBars sort options must expose radio checked semantics|PerChapterProgressBars sort options must not remain selected buttons|PerChapterProgressBars sort options must not leak selected state/,
+  );
+});
+
+test('dashboard accessibility parity rejects chapter sort radios without keyboard navigation', () => {
+  const sources = loadSources();
+
+  assert.throws(
+    () =>
+      assertDashboardAccessibilitySeparation({
+        ...sources,
+        chapters: sources.chapters
+          .replace('onKeyDown: handleSortKeyDown', 'onPressIn: undefined')
+          .replace('tabIndex: selected ? 0 : -1', 'tabIndex: 0')
+          .replace('sortOptionRefs.current[nextMode]?.focus?.();', ''),
+      }),
+    /PerChapterProgressBars sort keyboard selection must move focus to the checked radio|PerChapterProgressBars sort radios must expose web arrow-key handling and roving tabIndex/,
   );
 });
 

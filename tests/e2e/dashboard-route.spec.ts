@@ -572,6 +572,27 @@ for (const fixture of dashboardLocales) {
     await expect(weakestFirst).toHaveAttribute('aria-checked', 'true');
     await expect(chapterOrder).toHaveAttribute('aria-checked', 'false');
     await expectLinkBefore(page, fixture.weakestChapterLink, fixture.strongerChapterLink);
+
+    await weakestFirst.focus();
+    await expect(weakestFirst).toBeFocused();
+    await page.keyboard.press('ArrowRight');
+    await expect(chapterOrder).toHaveAttribute('aria-checked', 'true');
+    await expect(weakestFirst).toHaveAttribute('aria-checked', 'false');
+    await expect(chapterOrder).toBeFocused();
+    await expectLinkBefore(page, fixture.strongerChapterLink, fixture.weakestChapterLink);
+
+    await page.keyboard.press('ArrowLeft');
+    await expect(weakestFirst).toHaveAttribute('aria-checked', 'true');
+    await expect(chapterOrder).toHaveAttribute('aria-checked', 'false');
+    await expect(weakestFirst).toBeFocused();
+    await expectLinkBefore(page, fixture.weakestChapterLink, fixture.strongerChapterLink);
+
+    await page.keyboard.press('Home');
+    await expect(chapterOrder).toHaveAttribute('aria-checked', 'true');
+    await expect(chapterOrder).toBeFocused();
+    await page.keyboard.press('End');
+    await expect(weakestFirst).toHaveAttribute('aria-checked', 'true');
+    await expect(weakestFirst).toBeFocused();
     await expectNoHorizontalOverflow(page);
 
     expect(consoleErrors).toEqual([]);
