@@ -242,6 +242,39 @@ test('newly registered focus modes expose advertised summary keys', () => {
   }
 });
 
+test('TRANSLATE-COMPLETE P0 focus registry exposes advertised summary output', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const translateParityTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-translate-complete-p0-parity.test.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('translateCompleteP0');
+
+  assert.ok(registryEntry, 'TRANSLATE-COMPLETE P0 focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-translate-complete-p0']);
+  assert.match(validatorSource, /--focus-translate-complete-p0/);
+  assert.match(translateParityTestSource, /--focus-translate-complete-p0/);
+
+  const summary = assertFocusedValidationSummary(
+    '--focus-translate-complete-p0',
+    registryEntry.summaryKeys,
+  );
+
+  assert.equal(summary.translationCompletenessParityValidated, true);
+  assert.equal(summary.translationNaturalnessGuardParityValidated, true);
+  assert.equal(summary.questionBilingualTextPairsValidated, summary.publishedQuestions);
+  assert.equal(summary.questionOptionBilingualTextPairsValidated, summary.publishedQuestions);
+  assert.equal(summary.questionGeneratedTrueFalseNaturalnessValidated, summary.publishedQuestions);
+  assert.equal(summary.questionPublicSectorEnglishNaturalnessValidated, summary.publishedQuestions);
+  assert.equal(
+    summary.questionRuleOfLawEnglishNaturalnessValidated,
+    summary.publishedQuestions * 3,
+  );
+});
+
 test('Home route focused mutation fixtures use the shared helper', () => {
   const homeRouteTestSource = fs.readFileSync(
     path.join(repoRoot, 'tests/content-home-route-header-parity.test.js'),
@@ -690,7 +723,7 @@ test('QuestionSourceCitation accessibility parity uses focused content validatio
     'questionSourceCitationAccessibilityParityValidated',
   ]);
 
-  assert.equal(summary.questionSourceCitationAccessibilityRulesValidated, 15);
+  assert.equal(summary.questionSourceCitationAccessibilityRulesValidated, 23);
   assert.equal(summary.questionSourceCitationAccessibilityParityValidated, true);
 });
 
