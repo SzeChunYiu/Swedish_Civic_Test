@@ -185,6 +185,172 @@ function createRenderContext({
   return { sandbox, element };
 }
 
+function createHomeQcardVmContext({ language = 'en' } = {}) {
+  const documentListeners = [];
+  const windowListeners = [];
+  const storage = new Map([['smt_lang', language]]);
+
+  function createClassList() {
+    const values = new Set();
+    return {
+      add(...classes) {
+        classes.forEach((className) => values.add(className));
+      },
+      remove(...classes) {
+        classes.forEach((className) => values.delete(className));
+      },
+      contains(className) {
+        return values.has(className);
+      },
+      toggle(className, force) {
+        const shouldAdd = force === undefined ? !values.has(className) : Boolean(force);
+        if (shouldAdd) values.add(className);
+        else values.delete(className);
+      },
+    };
+  }
+
+  function createOption({ text, correct }) {
+    const attributes = new Map([['aria-pressed', 'false']]);
+    const option = {
+      classList: createClassList(),
+      dataset: { correct: correct ? 'true' : 'false' },
+      disabled: false,
+      textContent: text,
+      setAttribute(name, value) {
+        attributes.set(name, String(value));
+      },
+      getAttribute(name) {
+        return attributes.has(name) ? attributes.get(name) : null;
+      },
+      removeAttribute(name) {
+        attributes.delete(name);
+      },
+      closest(selector) {
+        if (selector === '.qopt') return option;
+        if (selector === '.qcard') return qcard;
+        return null;
+      },
+    };
+    return option;
+  }
+
+  const explanation = {
+    textContent:
+      'Allemansrätten lets you walk, swim, ski, camp, and forage on most land in Sweden.',
+  };
+  const status = { textContent: '' };
+  const options = [
+    createOption({ text: 'A Jantelagen', correct: false }),
+    createOption({ text: 'B Allemansrätten', correct: true }),
+    createOption({ text: 'C Lagom', correct: false }),
+    createOption({ text: 'D Fika', correct: false }),
+  ];
+  const qcard = {
+    classList: createClassList(),
+    querySelector(selector) {
+      if (selector === ".qopt[data-correct='true']")
+        return options.find((option) => option.dataset.correct === 'true');
+      if (selector === '.qopt[aria-pressed="true"]')
+        return options.find((option) => option.getAttribute('aria-pressed') === 'true');
+      if (selector === '#qcard-explanation') return explanation;
+      if (selector === '#qcard-status') return status;
+      return null;
+    },
+    querySelectorAll(selector) {
+      return selector === '.qopt' ? options : [];
+    },
+  };
+
+  const sandbox = {
+    console,
+    localStorage: {
+      getItem(key) {
+        return storage.has(key) ? storage.get(key) : null;
+      },
+      setItem(key, value) {
+        storage.set(key, String(value));
+      },
+    },
+    location: { hash: '#/' },
+    document: {
+      documentElement: {
+        getAttribute(name) {
+          return name === 'lang' ? language : null;
+        },
+        setAttribute(name, value) {
+          if (name === 'lang') language = String(value);
+        },
+      },
+      title: '',
+      body: { classList: createClassList(), dataset: {} },
+      readyState: 'loading',
+      createElement() {
+        return { dataset: {}, setAttribute() {}, appendChild() {} };
+      },
+      getElementById(id) {
+        return id === 'qcard' ? qcard : null;
+      },
+      querySelector() {
+        return null;
+      },
+      querySelectorAll() {
+        return [];
+      },
+      addEventListener(type, handler) {
+        documentListeners.push({ type, handler });
+      },
+    },
+    window: {},
+    Event: function Event(type) {
+      this.type = type;
+    },
+    CustomEvent: function CustomEvent(type, init = {}) {
+      this.type = type;
+      this.detail = init.detail;
+    },
+    setInterval: () => 1,
+    clearInterval() {},
+    setTimeout(handler) {
+      if (typeof handler === 'function') handler();
+      return 1;
+    },
+    requestAnimationFrame(handler) {
+      if (typeof handler === 'function') handler();
+      return 1;
+    },
+  };
+
+  sandbox.window = sandbox;
+  sandbox.window.addEventListener = (type, handler) => {
+    windowListeners.push({ type, handler });
+  };
+  sandbox.window.dispatchEvent = (event) => {
+    windowListeners
+      .filter((listener) => listener.type === event.type)
+      .forEach((listener) => listener.handler(event));
+  };
+  sandbox.window.matchMedia = () => ({ matches: false });
+  sandbox.window.scrollTo = () => {};
+  sandbox.window.SMT_QUESTIONS = [sampleQuestion];
+  sandbox.window.SMT_CHAPTERS_META = chapterMeta;
+
+  vm.createContext(sandbox);
+  return {
+    correctOption: options[1],
+    documentListeners,
+    options,
+    sandbox,
+    status,
+  };
+}
+
+function dispatchDocumentClick(context, target) {
+  context.documentListeners
+    .filter((listener) => listener.type === 'click')
+    .forEach((listener) => listener.handler({ target }));
+}
+
 test('static Practice answer feedback renders citation and independent-study disclaimer', () => {
   const { sandbox, element } = createRenderContext({ hash: '#/practice?c=1', language: 'en' });
   vm.runInContext(read('site/app.js'), sandbox, { timeout: 3000 });
@@ -333,6 +499,30 @@ test('static Home demo qcard exposes accessible answer state', () => {
     assert.match(appSource, new RegExp(`'${key.replace('.', '\\.')}'`));
     assert.match(extraSource, new RegExp(`'${key.replace('.', '\\.')}'`));
   }
+});
+
+test('static Home demo qcard relocalizes selected-correct answer state after languagechange', () => {
+  const context = createHomeQcardVmContext({ language: 'en' });
+  const { correctOption, options, sandbox, status } = context;
+  vm.runInContext(read('site/app.js'), sandbox, { timeout: 3000 });
+
+  dispatchDocumentClick(context, correctOption);
+
+  assert.equal(correctOption.getAttribute('aria-pressed'), 'true');
+  assert.equal(correctOption.disabled, true);
+  assert.equal(correctOption.classList.contains('is-correct'), true);
+  assert.match(correctOption.getAttribute('aria-label'), /Selected answer, correct/);
+  assert.match(status.textContent, /^Correct\./);
+
+  vm.runInContext("smtSetLanguage('sv');", sandbox, { timeout: 3000 });
+
+  assert.equal(correctOption.getAttribute('aria-pressed'), 'true');
+  assert.equal(correctOption.disabled, true);
+  assert.equal(correctOption.classList.contains('is-correct'), true);
+  assert.match(correctOption.getAttribute('aria-label'), /Valt svar, rätt/);
+  assert.doesNotMatch(correctOption.getAttribute('aria-label'), /Selected answer, correct/);
+  assert.match(status.textContent, /^Rätt\./);
+  assert.equal(options.filter((option) => option.disabled).length, 4);
 });
 
 test('static Mock review renders citation and disclaimer for every reviewed question', () => {
