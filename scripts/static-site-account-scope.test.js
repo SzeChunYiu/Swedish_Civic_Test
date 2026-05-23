@@ -189,6 +189,11 @@ test('static site optional account surface keeps ebook highlights account-free',
   assert.match(staticSurface, /Continue with Google|Forts[aä]tt med Google/i);
   assert.match(staticSurface, /Continue with Apple|Forts[aä]tt med Apple/i);
   assert.match(staticSurface, /Email me a magic link|Mejla mig en magisk l[aä]nk/i);
+  assert.match(staticSurface, /the core\s+study flow works without sign-in/i);
+  assert.doesNotMatch(
+    staticSurface,
+    /everything works without an account|allt fungerar utan konto/i,
+  );
   assert.match(app, /Core study works without sign-in, and your progress lives on your device/);
   assert.match(app, /Signing in is optional, but it unlocks more/);
   assert.match(app, /Your study progress, answers, mistakes, and settings stay local/);

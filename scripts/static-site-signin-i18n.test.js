@@ -50,6 +50,42 @@ const signedInMeaningPatterns = {
   uk: [/увійшли/i, /Виділення/i, /нотатки/i, /панель/i, /синхронізуються/i, /пристроями/i],
 };
 
+const ledeCoreStudyPatterns = {
+  en: [/highlights/i, /notes/i, /progress/i, /core study flow/i, /without sign-in/i],
+  sv: [/markeringar/i, /anteckningar/i, /framsteg/i, /studieflödet/i, /utan inloggning/i],
+  'zh-Hans': [/标注/, /笔记/, /学习进度/, /核心学习流程/, /无需登录/],
+  'zh-Hant': [/標註/, /筆記/, /學習進度/, /核心學習流程/, /無需登入/],
+  ar: [/تظليلاتك/, /ملاحظاتك/, /تقدّمك/, /مسار الدراسة الأساسي/, /بدون تسجيل الدخول/],
+  ckb: [/هایلایت/, /تێبینی/, /پێشکەوتن/, /ڕەوتی سەرەکی خوێندن/, /بێ چوونەژوورەوە/],
+  fa: [/هایلایت/, /یادداشت/, /پیشرفت/, /مسیر اصلی مطالعه/, /بدون ورود/],
+  pl: [/zaznaczenia/i, /notatki/i, /postępy/i, /podstawowa nauka/i, /bez logowania/i],
+  so: [
+    /calaamadahaaga/i,
+    /qoraalladaada/i,
+    /horumarkaaga/i,
+    /waxbarashada aasaasiga ah/i,
+    /adigoon soo gelin/i,
+  ],
+  ti: [/ምልክታትካ/, /መዘኻኸር/, /ምዕባለኻ/, /መሰረታዊ መጽናዕቲ/, /ብዘይ ምእታው/],
+  tr: [/Vurgularını/i, /notlarını/i, /ilerlemeni/i, /temel çalışma akışı/i, /giriş yapmadan/i],
+  uk: [/виділення/i, /нотатки/i, /прогрес/i, /основний навчальний сценарій/i, /без входу/i],
+};
+
+const oldLedeAbsoluteAccountPatterns = [
+  /everything works without an account/i,
+  /all features work without/i,
+  /allt fungerar utan konto/i,
+  /全部功能/,
+  /كل شيء يعمل بدون حساب/,
+  /هەموو شتێک بێ هەژمار کار دەکات/,
+  /همه‌چیز بدون حساب کار می‌کند/,
+  /wszystko działa bez konta/i,
+  /wax walba way shaqeeyaan/i,
+  /ኩሉ ነገር ብዘይ ሕሳብ ይሰርሕ/,
+  /her şey hesapsız çalışır/i,
+  /усе працює без облікового запису/i,
+];
+
 function injectCopyExport(source) {
   return source.replace(
     '\n\n  // ----------------------------------------------------------------',
@@ -252,6 +288,38 @@ test('signin.signedin renders from the active locale for signed-in accounts', ()
         copy['signin.signedin'].en,
         `${locale} rendered signed-in copy should not fall back to English`,
       );
+    }
+  }
+});
+
+test('signin.lede limits anonymous promises to the core study flow', () => {
+  const copy = loadSigninCopy();
+  const ledeCopy = copy['signin.lede'];
+  const index = read('site/index.html');
+  const signin = read('site/signin.js');
+  const surface = `${index}\n${signin}`;
+
+  assert.deepEqual(Object.keys(ledeCopy).sort(), [...signInLocales].sort());
+  assert.match(
+    index,
+    /Save your highlights, notes, and progress across devices\. Totally optional — the core\s+study flow works without sign-in\./,
+  );
+  oldLedeAbsoluteAccountPatterns.forEach((pattern) => assert.doesNotMatch(surface, pattern));
+
+  for (const locale of signInLocales) {
+    const value = ledeCopy[locale];
+
+    assert.equal(typeof value, 'string', `${locale} lede copy should be a string`);
+    assert.ok(value.trim().length > 0, `${locale} lede copy should not be empty`);
+    assert.doesNotMatch(value, /everything works without an account/i);
+    assert.doesNotMatch(value, /all features work without/i);
+
+    if (locale !== 'en') {
+      assert.notEqual(value, ledeCopy.en, `${locale} lede should not fall back to English`);
+    }
+
+    for (const pattern of ledeCoreStudyPatterns[locale]) {
+      assert.match(value, pattern, `${locale} lede should preserve optional core-study meaning`);
     }
   }
 });
