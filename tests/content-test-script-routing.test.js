@@ -181,6 +181,7 @@ const registryCompletenessFocusIds = [
   'appConfigSchema',
   'generatedLocalizationTemplateParity',
   'generatedSwedenScopeParity',
+  'onboardingRouteCopy',
   'progressBarAccessibility',
   'proLifetimeRelaunchParity',
   'settingsImportSummaryNonzero',

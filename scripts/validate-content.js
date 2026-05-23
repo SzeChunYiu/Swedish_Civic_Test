@@ -10208,6 +10208,8 @@ let onboardingRouteHeadersValidated = 0;
 let onboardingRouteHeaderParityValidated = false;
 let onboardingRouteCopyLabelsValidated = 0;
 let onboardingRouteCopyParityValidated = false;
+let onboardingDailyGoalPresetValuesValidated = 0;
+let onboardingDailyGoalPresetFilterParityValidated = false;
 let aboutTheTestSeenEffectRulesValidated = 0;
 let aboutTheTestSeenEffectParityValidated = false;
 let firstRunAboutModalSuppressedRoutesValidated = 0;
@@ -11178,6 +11180,23 @@ if (process.argv.includes('--focus-settings-import-summary-nonzero')) {
     settingsImportSummaryNonzeroValidated,
     settingsImportSummaryLocalesValidated,
     settingsImportSummaryHiddenZeroRowsValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-onboarding-route-copy')) {
+  validateOnboardingRouteHeaderParity();
+  validateOnboardingRouteCopyParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    onboardingRouteHeadersValidated,
+    onboardingRouteHeaderParityValidated,
+    onboardingRouteCopyLabelsValidated,
+    onboardingRouteCopyParityValidated,
+    onboardingDailyGoalPresetValuesValidated,
+    onboardingDailyGoalPresetFilterParityValidated,
+    firstRunAboutModalSuppressedRoutesValidated,
+    firstRunAboutModalSuppressionParityValidated,
   });
   process.exit(0);
 }
@@ -16972,6 +16991,7 @@ function validateOnboardingRouteCopyParity() {
   const supportedGoalOptions =
     extractNumericArrayConstantFromTs(settingsStore, 'supportedDailyGoalAnswerOptions') || [];
   const supportedGoalOptionSet = new Set(supportedGoalOptions);
+  const expectedOnboardingPresetGoals = supportedGoalOptions.filter((goal) => goal !== 5);
   const onboardingPresetGroups = extractNumericObjectKeysForPropertyFromTs(
     onboardingRoute,
     'dailyGoalPresets',
@@ -16989,6 +17009,18 @@ function validateOnboardingRouteCopyParity() {
       }
     });
   });
+  const uniqueOnboardingPresetGoals = new Set(onboardingPresetGroups.flat());
+  onboardingDailyGoalPresetValuesValidated = uniqueOnboardingPresetGoals.size;
+  if (
+    expectedOnboardingPresetGoals.length > 0 &&
+    expectedOnboardingPresetGoals.every((goal) => uniqueOnboardingPresetGoals.has(goal)) &&
+    !uniqueOnboardingPresetGoals.has(5) &&
+    /supportedDailyGoalAnswerOptions\.filter\(isOnboardingDailyGoalPresetValue\)/.test(
+      onboardingRoute,
+    )
+  ) {
+    onboardingDailyGoalPresetFilterParityValidated = true;
+  }
   if (
     /aria-selected=\{selected\}/.test(onboardingRoute) ||
     /accessibilityState=\{\{\s*selected\s*\}\}/.test(onboardingRoute) ||
@@ -27690,6 +27722,8 @@ console.log(
       onboardingRouteHeaderParityValidated,
       onboardingRouteCopyLabelsValidated,
       onboardingRouteCopyParityValidated,
+      onboardingDailyGoalPresetValuesValidated,
+      onboardingDailyGoalPresetFilterParityValidated,
       aboutTheTestSeenEffectRulesValidated,
       aboutTheTestSeenEffectParityValidated,
       firstRunAboutModalSuppressedRoutesValidated,
