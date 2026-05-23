@@ -13,6 +13,29 @@ const {
 
 const repoRoot = path.resolve(__dirname, '..');
 const loadTs = createTsLoader(repoRoot);
+const canonicalTimestampHelperExportPattern =
+  /\bexport\s+(?:async\s+)?(?:function|const|let|var|class|type|interface)\s+isCanonicalUtcIsoTimestamp\b|\bexport\s*\{[^}]*\bisCanonicalUtcIsoTimestamp\b[^}]*\}/;
+const purchasesCanonicalTimestampImportPattern =
+  /import\s+(?:type\s+)?\{[^}]*\bisCanonicalUtcIsoTimestamp\b[^}]*\}\s+from\s+['"]\.\/purchases['"]/;
+
+function listFiles(dir, matcher) {
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const filePath = path.join(dir, entry.name);
+    if (entry.isDirectory()) return listFiles(filePath, matcher);
+    return matcher(filePath) ? [filePath] : [];
+  });
+}
+
+function monetizationCanonicalTimestampImportOffenders() {
+  return listFiles(path.join(repoRoot, 'lib/monetization'), (filePath) =>
+    /\.(ts|tsx)$/.test(filePath),
+  )
+    .filter((filePath) => !filePath.endsWith(`${path.sep}purchases.ts`))
+    .filter((filePath) =>
+      purchasesCanonicalTimestampImportPattern.test(fs.readFileSync(filePath, 'utf8')),
+    )
+    .map((filePath) => path.relative(repoRoot, filePath));
+}
 
 function withEnv(overrides, fn) {
   const previous = new Map();
@@ -2297,6 +2320,10 @@ test('Pro Lifetime entitlement storage and receipts require canonical UTC timest
 });
 
 test('Pro Lifetime uses the shared canonical timestamp helper', () => {
+  const purchaseSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/purchases.ts'),
+    'utf8',
+  );
   const proLifetimeSource = fs.readFileSync(
     path.join(repoRoot, 'lib/monetization/proLifetimePurchase.ts'),
     'utf8',
@@ -2310,6 +2337,12 @@ test('Pro Lifetime uses the shared canonical timestamp helper', () => {
     proLifetimeSource,
     /import\s*\{[^}]*\bisCanonicalUtcIsoTimestamp\b[^}]*\}\s*from\s*['"]\.\/purchases['"]/,
   );
+  assert.match(
+    purchaseSource,
+    /import\s*\{\s*isCanonicalUtcIsoTimestamp\s*\}\s*from\s*['"]\.\.\/time\/canonicalTimestamp['"]/,
+  );
+  assert.doesNotMatch(purchaseSource, canonicalTimestampHelperExportPattern);
+  assert.deepEqual(monetizationCanonicalTimestampImportOffenders(), []);
 });
 
 test('remove-ads entitlement storage rejects stale boolean and malformed records', async () => {

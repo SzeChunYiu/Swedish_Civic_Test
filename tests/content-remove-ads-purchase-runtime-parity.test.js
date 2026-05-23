@@ -6,6 +6,37 @@ const test = require('node:test');
 const { assertPurchaseActionInFlightGuard } = require('../scripts/purchase-inflight-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
+const canonicalTimestampHelperExportPattern =
+  /\bexport\s+(?:async\s+)?(?:function|const|let|var|class|type|interface)\s+isCanonicalUtcIsoTimestamp\b|\bexport\s*\{[^}]*\bisCanonicalUtcIsoTimestamp\b[^}]*\}/;
+const purchasesCanonicalTimestampImportPattern =
+  /import\s+(?:type\s+)?\{[^}]*\bisCanonicalUtcIsoTimestamp\b[^}]*\}\s+from\s+['"]\.\/purchases['"]/;
+
+function listFiles(dir, matcher) {
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const filePath = path.join(dir, entry.name);
+    if (entry.isDirectory()) return listFiles(filePath, matcher);
+    return matcher(filePath) ? [filePath] : [];
+  });
+}
+
+function assertCanonicalTimestampHelperBoundary({ purchaseSource }) {
+  assert.match(
+    purchaseSource,
+    /import\s*\{\s*isCanonicalUtcIsoTimestamp\s*\}\s*from\s*['"]\.\.\/time\/canonicalTimestamp['"]/,
+  );
+  assert.doesNotMatch(purchaseSource, canonicalTimestampHelperExportPattern);
+
+  const offenderPaths = listFiles(path.join(repoRoot, 'lib/monetization'), (filePath) =>
+    /\.(ts|tsx)$/.test(filePath),
+  )
+    .filter((filePath) => !filePath.endsWith(`${path.sep}purchases.ts`))
+    .filter((filePath) =>
+      purchasesCanonicalTimestampImportPattern.test(fs.readFileSync(filePath, 'utf8')),
+    )
+    .map((filePath) => path.relative(repoRoot, filePath));
+
+  assert.deepEqual(offenderPaths, []);
+}
 
 function parseValidationSummary() {
   const output = execFileSync(
@@ -45,7 +76,7 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
       /async function revalidateStoredRemoveAdsEntitlementRecordWithConnectedProvider\(\{[\s\S]*?\nfunction createResult/,
     )?.[0] ?? '';
 
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 39);
+  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 40);
   assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
   assert.match(purchaseSource, /REMOVE_ADS_RECORD_SCHEMA_VERSION = 1/);
   assert.match(purchaseSource, /interface RemoveAdsProductMetadata/);
@@ -57,8 +88,7 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.match(purchaseSource, /interface StoredRemoveAdsEntitlementRecord/);
   assert.match(purchaseSource, /receiptValidationStatus: 'valid'/);
   assert.match(purchaseSource, /receiptValidatedAt: string/);
-  assert.match(purchaseSource, /function isCanonicalUtcIsoTimestamp/);
-  assert.match(purchaseSource, /parsed\.toISOString\(\) === value/);
+  assertCanonicalTimestampHelperBoundary({ purchaseSource });
   assert.doesNotMatch(purchaseSource, /function isValidIsoDate/);
   assert.match(purchaseSource, /parseStoredRemoveAdsEntitlementRecord\(storedValue\)/);
   assert.doesNotMatch(purchaseSource, /storedValue === STORED_TRUE/);

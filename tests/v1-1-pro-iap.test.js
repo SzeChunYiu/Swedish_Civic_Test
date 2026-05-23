@@ -36,6 +36,30 @@ function staleNativeIdentifierPattern() {
   return new RegExp(['com', 'billyyiu', 'swedishcivictest'].join('\\.'), 'i');
 }
 
+const canonicalTimestampHelperExportPattern =
+  /\bexport\s+(?:async\s+)?(?:function|const|let|var|class|type|interface)\s+isCanonicalUtcIsoTimestamp\b|\bexport\s*\{[^}]*\bisCanonicalUtcIsoTimestamp\b[^}]*\}/;
+const purchasesCanonicalTimestampImportPattern =
+  /import\s+(?:type\s+)?\{[^}]*\bisCanonicalUtcIsoTimestamp\b[^}]*\}\s+from\s+['"]\.\/purchases['"]/;
+
+function listFiles(dir, matcher) {
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const filePath = path.join(dir, entry.name);
+    if (entry.isDirectory()) return listFiles(filePath, matcher);
+    return matcher(filePath) ? [filePath] : [];
+  });
+}
+
+function monetizationCanonicalTimestampImportOffenders() {
+  return listFiles(path.join(repoRoot, 'lib/monetization'), (filePath) =>
+    /\.(ts|tsx)$/.test(filePath),
+  )
+    .filter((filePath) => !filePath.endsWith(`${path.sep}purchases.ts`))
+    .filter((filePath) =>
+      purchasesCanonicalTimestampImportPattern.test(fs.readFileSync(filePath, 'utf8')),
+    )
+    .map((filePath) => path.relative(repoRoot, filePath));
+}
+
 // Test fixtures: a minimal in-memory provider + storage.
 
 function makeMockProvider({
@@ -123,6 +147,7 @@ test('proLifetime: v1.1 setup docs and identity stay in Pro lane', () => {
   const m = loadTs('lib/monetization/proLifetimePurchase.ts');
   const appStoreIdentitySource = read('lib/monetization/appStoreIdentity.ts');
   const proLifetimeSource = read('lib/monetization/proLifetimePurchase.ts');
+  const purchaseSource = read('lib/monetization/purchases.ts');
   const publishingGateSource = read('scripts/publishing.test.js');
 
   assert.match(appStoreIdentitySource, /APP_NATIVE_IDENTIFIER = 'com\.billyyiu\.almostswedish'/);
@@ -136,6 +161,12 @@ test('proLifetime: v1.1 setup docs and identity stay in Pro lane', () => {
     proLifetimeSource,
     /import\s*\{[^}]*\bisCanonicalUtcIsoTimestamp\b[^}]*\}\s*from\s*['"]\.\/purchases['"]/,
   );
+  assert.match(
+    purchaseSource,
+    /import\s*\{\s*isCanonicalUtcIsoTimestamp\s*\}\s*from\s*['"]\.\.\/time\/canonicalTimestamp['"]/,
+  );
+  assert.doesNotMatch(purchaseSource, canonicalTimestampHelperExportPattern);
+  assert.deepEqual(monetizationCanonicalTimestampImportOffenders(), []);
   assert.doesNotMatch(appStoreIdentitySource, staleNativeIdentifierPattern());
   assert.doesNotMatch(proLifetimeSource, staleNativeIdentifierPattern());
   assert.doesNotMatch(publishingGateSource, /proLifetime|Pro Lifetime|PRO_LIFETIME/);

@@ -2178,7 +2178,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 15;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 39;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 40;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_RUNTIME_CASES = 9;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
@@ -20609,6 +20609,16 @@ function validateRemoveAdsPurchaseRuntimeParity() {
     purchaseSource.match(
       /async function revalidateStoredRemoveAdsEntitlementRecordWithConnectedProvider\(\{[\s\S]*?\nfunction createResult/,
     )?.[0] ?? '';
+  const canonicalTimestampHelperExportPattern =
+    /\bexport\s+(?:async\s+)?(?:function|const|let|var|class|type|interface)\s+isCanonicalUtcIsoTimestamp\b|\bexport\s*\{[^}]*\bisCanonicalUtcIsoTimestamp\b[^}]*\}/;
+  const purchasesCanonicalTimestampImportPattern =
+    /import\s+(?:type\s+)?\{[^}]*\bisCanonicalUtcIsoTimestamp\b[^}]*\}\s+from\s+['"]\.\/purchases['"]/;
+  const monetizationCanonicalTimestampImportOffenders = listSourceFiles('lib/monetization')
+    .filter((filePath) => !filePath.endsWith(`${path.sep}purchases.ts`))
+    .filter((filePath) =>
+      purchasesCanonicalTimestampImportPattern.test(fs.readFileSync(filePath, 'utf8')),
+    )
+    .map((filePath) => path.relative(repoRoot, filePath).replace(/\\/g, '/'));
 
   function assertInFlightCase(source, options) {
     try {
@@ -20736,6 +20746,18 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       normalizedPurchaseSource.includes('receiptValidationStatus:') &&
         normalizedPurchaseSource.includes('receiptValidatedAt:'),
       'Remove Ads entitlement records must persist receipt validation status and timestamp',
+    ],
+    [
+      /import\s*\{\s*isCanonicalUtcIsoTimestamp\s*\}\s*from\s*['"]\.\.\/time\/canonicalTimestamp['"]/.test(
+        purchaseSource,
+      ) &&
+        !canonicalTimestampHelperExportPattern.test(purchaseSource) &&
+        monetizationCanonicalTimestampImportOffenders.length === 0,
+      `canonical timestamp helper must live only in lib/time/canonicalTimestamp.ts; purchases.ts must not export it and monetization consumers must not import it through ./purchases${
+        monetizationCanonicalTimestampImportOffenders.length
+          ? ` (${monetizationCanonicalTimestampImportOffenders.join(', ')})`
+          : ''
+      }`,
     ],
     [
       normalizedPurchaseSource.includes('validateRemoveAdsReceipt?(') &&
