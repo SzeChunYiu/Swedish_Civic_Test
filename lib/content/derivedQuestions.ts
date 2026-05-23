@@ -2303,7 +2303,7 @@ function embeddedQuestionTopicEn(question: string): string {
   if (match) return lowerEnglishNounPhrase(match[1]);
 
   match = q.match(/^What is stated on (.+)$/i);
-  if (match) return `${englishPossessive(match[1])} contents`;
+  if (match) return `what ${statedOnTargetEn(match[1])} shows`;
 
   match = q.match(/^What is marked on (.+)$/i);
   if (match) return `${match[1]} in Sweden`;
@@ -2597,6 +2597,10 @@ function generatedSingleChoiceGenericPromptEn(
     : `What is correct about ${topic}?`;
 }
 
+function statedOnTargetEn(target: string): string {
+  return lowerFirst(stripFinalPunctuation(target));
+}
+
 function meaningClauseTopicEn(clause: string): string {
   const normalized = clause.trim();
   if (/^referendums in Sweden are advisory$/i.test(normalized)) {
@@ -2883,6 +2887,14 @@ function generatedSingleChoicePromptFromSourceEn(
     return variant === 'judgement'
       ? `Which fact is correct about ${match[1]}?`
       : `What is correct for ${match[1]}?`;
+  }
+
+  match = q.match(/^What is stated on (.+)$/i);
+  if (match) {
+    const target = statedOnTargetEn(match[1]);
+    return variant === 'judgement'
+      ? `Which fact about what ${target} shows is correct?`
+      : `What does ${target} show?`;
   }
 
   match =
