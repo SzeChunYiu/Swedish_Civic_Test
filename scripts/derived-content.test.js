@@ -203,6 +203,57 @@ test('derivePublishedQuestions keeps generated single-choice variants at four op
   );
 });
 
+test('derivePublishedQuestions renders stated-on prompts without contents wording', () => {
+  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
+  const source = {
+    id: 'qsynthetic-stated-on',
+    chapterId: 'ch02',
+    type: 'single_choice',
+    questionSv: 'Vad står på röstkortet som skickas hem före ett val?',
+    questionEn: 'What is stated on the voting card sent home before an election?',
+    options: [
+      {
+        id: 'a',
+        textSv: 'Var och när man kan rösta',
+        textEn: 'Where and when a person can vote',
+      },
+      { id: 'b', textSv: 'Vilket parti man ska rösta på', textEn: 'Which party to vote for' },
+      { id: 'c', textSv: 'Hur regeringen ska bildas', textEn: 'How the government will be formed' },
+      { id: 'd', textSv: 'Vilka domare som väljs', textEn: 'Which judges are elected' },
+    ],
+    correctOptionId: 'a',
+    explanationSv: 'Röstkortet visar praktisk information om röstningen.',
+    explanationEn: 'The voting card shows practical information about voting.',
+    uhrReference: { chapter: 'Demokrati', section: 'Val', pageApprox: 12 },
+    difficulty: 'easy',
+    reviewStatus: 'reviewed',
+    tags: ['democracy'],
+  };
+
+  const [sectionPracticeVariant, , , judgementVariant] = derivePublishedQuestions([source], 901);
+
+  assert.equal(
+    sectionPracticeVariant.questionSv,
+    'Vad visar röstkortet som skickas hem före ett val?',
+  );
+  assert.equal(
+    sectionPracticeVariant.questionEn,
+    'What does the voting card sent home before an election show?',
+  );
+  assert.equal(
+    judgementVariant.questionSv,
+    'Vilken uppgift stämmer om vad röstkortet som skickas hem före ett val visar?',
+  );
+  assert.equal(
+    judgementVariant.questionEn,
+    'Which fact is correct about what the voting card sent home before an election shows?',
+  );
+  assert.doesNotMatch(
+    `${sectionPracticeVariant.questionSv}\n${sectionPracticeVariant.questionEn}\n${judgementVariant.questionSv}\n${judgementVariant.questionEn}`,
+    /\b(?:document|card|voting card)'?s contents\b|\bcontents of (?:the|a|an)\b|innehåll\b/i,
+  );
+});
+
 test('derivePublishedQuestions writes natural generated true/false civic statements', () => {
   const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
   const sources = [

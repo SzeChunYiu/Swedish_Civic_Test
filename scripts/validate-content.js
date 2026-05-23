@@ -740,6 +740,9 @@ const GENERATED_SINGLE_CHOICE_META_STEM_PATTERNS = [
   /^\s*Vilket påstående stämmer bäst/i,
   /^\s*Which statement is correct/i,
   /^\s*Which statement best matches/i,
+  /^\s*(?:Vad stämmer om|Vilken uppgift stämmer om)\b.+\binnehåll\?/i,
+  /\b[A-ZÅÄÖa-zåäö0-9][A-ZÅÄÖa-zåäö0-9 -]*'?s contents\b/i,
+  /\bcontents of (?:the|a|an)\b/i,
 ];
 const GENERATED_SINGLE_CHOICE_ABSENT_TRUE_FALSE_EXPLANATION_PATTERNS = [
   /\bPåståendet är sant\b/i,
