@@ -147,7 +147,17 @@ function createRenderContext({
     },
     location: { hash },
     document: {
-      documentElement: { lang: language },
+      documentElement: {
+        lang: language,
+        getAttribute(name) {
+          if (name === 'lang') return this.lang;
+          return this[name] ?? null;
+        },
+        setAttribute(name, value) {
+          this[name] = String(value);
+          if (name === 'lang') this.lang = String(value);
+        },
+      },
       getElementById: element,
       querySelector() {
         return null;
@@ -176,13 +186,100 @@ function createRenderContext({
   sandbox.window.addEventListener = (type, handler) => {
     listeners.window.push({ type, handler });
   };
+  sandbox.window.dispatchEvent = (event) => {
+    const type = typeof event === 'string' ? event : event?.type;
+    for (const listener of listeners.window) {
+      if (listener.type === type) listener.handler(event);
+    }
+  };
   sandbox.window.scrollTo = () => {};
   sandbox.window.SMT_QUESTIONS = questions;
   sandbox.window.SMT_CHAPTERS_META = chapterMeta;
   sandbox.window.smtPracticeFilterFor = () => questions;
 
   vm.createContext(sandbox);
-  return { sandbox, element };
+  return { sandbox, element, listeners, storage };
+}
+
+function createClassList(initial = []) {
+  const classes = new Set(initial);
+  return {
+    add(...names) {
+      names.forEach((name) => classes.add(name));
+    },
+    remove(...names) {
+      names.forEach((name) => classes.delete(name));
+    },
+    contains(name) {
+      return classes.has(name);
+    },
+    toggle(name, force) {
+      const shouldAdd = force === undefined ? !classes.has(name) : Boolean(force);
+      if (shouldAdd) classes.add(name);
+      else classes.delete(name);
+      return shouldAdd;
+    },
+  };
+}
+
+function createQcardHarness() {
+  const status = { textContent: '' };
+  const explanation = {
+    textContent: 'Allemansrätten lets people walk, swim, and pick berries in most natural areas.',
+  };
+  const options = [];
+  const card = {
+    classList: createClassList(['qcard']),
+    querySelectorAll(selector) {
+      return selector === '.qopt' ? options : [];
+    },
+    querySelector(selector) {
+      if (selector === '#qcard-status') return status;
+      if (selector === '#qcard-explanation') return explanation;
+      if (selector === ".qopt[data-correct='true']") {
+        return options.find((option) => option.dataset.correct === 'true') || null;
+      }
+      if (selector === '.qopt[aria-pressed="true"]') {
+        return options.find((option) => option.attributes['aria-pressed'] === 'true') || null;
+      }
+      return null;
+    },
+  };
+
+  function option(textContent, correct = false) {
+    const attributes = { 'aria-pressed': 'false' };
+    const node = {
+      textContent,
+      dataset: { correct: correct ? 'true' : 'false' },
+      disabled: false,
+      attributes,
+      classList: createClassList(['qopt']),
+      setAttribute(name, value) {
+        attributes[name] = String(value);
+      },
+      getAttribute(name) {
+        return attributes[name] ?? null;
+      },
+      removeAttribute(name) {
+        delete attributes[name];
+      },
+      closest(selector) {
+        if (selector === '.qopt') return node;
+        if (selector === '.qcard') return card;
+        if (selector === '#qreset') return null;
+        return null;
+      },
+    };
+    options.push(node);
+    return node;
+  }
+
+  const wrong = option('Jantelagen - the law of staying humble');
+  const correct = option('Allemansratten - the right of public access', true);
+  option('Lagom - the doctrine of just-enough');
+  option('Fika - the constitutional coffee break');
+
+  return { card, correct, explanation, options, status, wrong };
 }
 
 test('static Practice answer feedback renders citation and independent-study disclaimer', () => {
@@ -333,6 +430,61 @@ test('static Home demo qcard exposes accessible answer state', () => {
     assert.match(appSource, new RegExp(`'${key.replace('.', '\\.')}'`));
     assert.match(extraSource, new RegExp(`'${key.replace('.', '\\.')}'`));
   }
+});
+
+test('static Home demo qcard relocalizes selected correct answer after languagechange', () => {
+  const qcard = createQcardHarness();
+  const { sandbox, listeners, storage } = createRenderContext({ language: 'en' });
+  const baseGetElementById = sandbox.document.getElementById;
+  sandbox.document.getElementById = (id) => {
+    if (id === 'qcard') return qcard.card;
+    return baseGetElementById(id);
+  };
+  sandbox.document.querySelectorAll = (selector) => {
+    if (selector === '.lang button[data-lang]') return [];
+    return [];
+  };
+
+  vm.runInContext(read('site/app.js'), sandbox, { timeout: 3000 });
+  const clickHandler = listeners.document.find(
+    (listener) => listener.type === 'click' && listener.handler.toString().includes('.qopt'),
+  )?.handler;
+  assert.equal(typeof clickHandler, 'function');
+
+  clickHandler({
+    target: qcard.correct,
+  });
+
+  assert.equal(qcard.card.classList.contains('is-answered'), true);
+  assert.equal(qcard.correct.disabled, true);
+  assert.equal(qcard.correct.getAttribute('aria-pressed'), 'true');
+  assert.match(qcard.correct.getAttribute('aria-label'), /Selected answer, correct/);
+  assert.match(qcard.status.textContent, /^Correct\./);
+  assert.match(qcard.status.textContent, /walk, swim, and pick berries/);
+
+  vm.runInContext("smtSetLanguage('sv')", sandbox, { timeout: 3000 });
+
+  assert.equal(storage.get('smt_lang'), 'sv');
+  assert.equal(qcard.correct.disabled, true);
+  assert.equal(qcard.correct.getAttribute('aria-pressed'), 'true');
+  assert.match(qcard.correct.getAttribute('aria-label'), /Valt svar, rätt/);
+  assert.doesNotMatch(qcard.correct.getAttribute('aria-label'), /Selected answer, correct/);
+  assert.match(qcard.status.textContent, /^Rätt\./);
+  assert.doesNotMatch(qcard.status.textContent, /^Correct\./);
+
+  clickHandler({
+    target: {
+      closest(selector) {
+        return selector === '#qreset' ? {} : null;
+      },
+    },
+  });
+
+  assert.equal(qcard.card.classList.contains('is-answered'), false);
+  assert.equal(qcard.correct.disabled, false);
+  assert.equal(qcard.correct.getAttribute('aria-pressed'), 'false');
+  assert.equal(qcard.correct.getAttribute('aria-label'), null);
+  assert.equal(qcard.status.textContent, '');
 });
 
 test('static Mock review renders citation and disclaimer for every reviewed question', () => {
