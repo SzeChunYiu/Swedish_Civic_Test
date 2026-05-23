@@ -1,3 +1,5 @@
+import { expoRouterNativeIntentStaticRoutes } from '../lib/scaffold/routerShellManifest';
+
 type RedirectSystemPathEvent = {
   initial: boolean;
   path: string;
@@ -7,28 +9,7 @@ const APP_SCHEME = 'almost-swedish:';
 const APP_LINK_BASE = 'almost-swedish://app';
 const protocolPattern = /^([A-Za-z][A-Za-z0-9+.-]*):/;
 
-const staticRoutes = new Set([
-  '/',
-  '/about-the-test',
-  '/citizenship-requirements',
-  '/dashboard',
-  '/disclaimer',
-  '/ebook',
-  '/exam',
-  '/home',
-  '/learn',
-  '/mistakes',
-  '/onboarding',
-  '/practice',
-  '/privacy',
-  '/profile',
-  '/recap',
-  '/search',
-  '/settings',
-  '/sources',
-  '/support',
-  '/terms',
-]);
+const staticRoutes = new Set<string>(expoRouterNativeIntentStaticRoutes);
 
 const chapterRoutePattern = /^\/chapter\/ch\d{2}$/;
 const quizRoutePattern = /^\/quiz\/[A-Za-z0-9_-]+$/;

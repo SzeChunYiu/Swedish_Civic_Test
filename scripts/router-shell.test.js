@@ -43,9 +43,38 @@ function extractStackScreenNames(rootLayoutSource) {
   );
 }
 
-function loadTsRuntime(relativePath, globals = {}) {
-  const source = read(relativePath);
+function loadTsRuntime(relativePath, globals = {}, cache = new Map()) {
+  const absolutePath = path.join(repoRoot, relativePath);
+  const cachedModule = cache.get(absolutePath);
+  if (cachedModule) {
+    return cachedModule.exports;
+  }
+
+  const source = fs.readFileSync(absolutePath, 'utf8');
   const module = { exports: {} };
+  cache.set(absolutePath, module);
+
+  function localRequire(request) {
+    if (!request.startsWith('.')) {
+      return require(request);
+    }
+
+    const requestBase = path.resolve(path.dirname(absolutePath), request);
+    const resolvedPath = ['', '.ts', '.tsx', '.js', '.cjs']
+      .map((extension) => `${requestBase}${extension}`)
+      .find((candidate) => fs.existsSync(candidate));
+
+    assert.notEqual(resolvedPath, undefined, `${request} should resolve from ${relativePath}`);
+
+    const resolvedRelativePath = path.relative(repoRoot, resolvedPath);
+
+    if (resolvedPath.endsWith('.js') || resolvedPath.endsWith('.cjs')) {
+      return require(resolvedPath);
+    }
+
+    return loadTsRuntime(resolvedRelativePath, globals, cache);
+  }
+
   const transpiled = ts.transpileModule(source, {
     compilerOptions: {
       module: ts.ModuleKind.CommonJS,
@@ -58,6 +87,7 @@ function loadTsRuntime(relativePath, globals = {}) {
     {
       module,
       exports: module.exports,
+      require: localRequire,
       ...globals,
     },
     { filename: relativePath },
@@ -266,6 +296,9 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
   assert.deepEqual(manifest.rootStackScreenNames, [
     'index',
     '(tabs)',
+    '(auth)',
+    'account',
+    'auth/callback',
     'search',
     'dashboard',
     'citizenship-requirements',
@@ -274,6 +307,9 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
   assert.deepEqual(manifest.rootStackScreenFiles, [
     'app/index.tsx',
     'app/(tabs)/_layout.tsx',
+    'app/(auth)/_layout.tsx',
+    'app/account.tsx',
+    'app/auth/callback.tsx',
     'app/search.tsx',
     'app/dashboard.tsx',
     'app/citizenship-requirements.tsx',
@@ -405,6 +441,21 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
   assertContains(htmlShell, `content={${manifest.themeColorTokens[0]}} name="theme-color"`);
   assertContains(nativeIntent, `const APP_SCHEME = '${appScheme}:';`);
   assertContains(nativeIntent, `const APP_LINK_BASE = '${appScheme}://app';`);
+  assertContains(
+    nativeIntent,
+    "import { expoRouterNativeIntentStaticRoutes } from '../lib/scaffold/routerShellManifest';",
+    'native intent runtime should consume the manifest static-route source of truth',
+  );
+  assertMatches(
+    nativeIntent,
+    /const\s+staticRoutes\s*=\s*new Set<string>\(expoRouterNativeIntentStaticRoutes\);/,
+    'native intent static route allowlist should be derived from the manifest export',
+  );
+  assert.doesNotMatch(
+    nativeIntent,
+    /const\s+staticRoutes\s*=\s*new Set(?:<string>)?\(\s*\[/,
+    'native intent should not keep a duplicated literal static-route allowlist',
+  );
   assert.equal(
     manifest.nativeIntentRuntimeSampleInputs.some((input) => input.startsWith(`${appScheme}://`)),
     true,
