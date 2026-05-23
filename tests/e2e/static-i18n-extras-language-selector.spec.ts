@@ -424,6 +424,25 @@ async function expectNoOutcomeSlogans(page: Page) {
   }
 }
 
+async function expectStaticFooterBrandMobileTarget(page: Page) {
+  const brand = page.locator('.footer__brand').first();
+  await brand.scrollIntoViewIfNeeded();
+  await expect(brand).toBeVisible();
+
+  const box = await brand.boundingBox();
+  expect(box?.height ?? 0).toBeGreaterThanOrEqual(44);
+  expect(box?.width ?? 0).toBeGreaterThanOrEqual(44);
+
+  const minHeight = await brand.evaluate((element) => window.getComputedStyle(element).minHeight);
+  expect(minHeight).toBe('44px');
+
+  await switchToSourcesRoute(page);
+  await brand.scrollIntoViewIfNeeded();
+  await brand.click();
+  await expect(page.locator('[data-page="/"]')).toHaveClass(/is-active/);
+  await expectNoHorizontalOverflow(page);
+}
+
 async function openStaticHome(page: Page, baseUrl: string) {
   await page.addInitScript(() => {
     Math.random = () => 0.9;
@@ -840,7 +859,7 @@ test('static typography keeps nonnegative tracking across primary routes', async
   }
 });
 
-test('static footer extra languages render footer.app links without Roadmap dictionary-only coverage', async ({
+test('static footer brand mobile target stays 44px while extra languages render footer.app links', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
@@ -851,6 +870,7 @@ test('static footer extra languages render footer.app links without Roadmap dict
     await switchStaticSiteLanguage(page, locale);
     await expectRootLocale(page, locale);
     await expectStaticFooterAppLinkCoverage(page, locale);
+    await expectStaticFooterBrandMobileTarget(page);
     await expectNoHorizontalOverflow(page);
   }
 
