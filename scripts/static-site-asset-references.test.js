@@ -13,6 +13,7 @@ const {
   findAssetReferencesMissingFromManifest,
   listIndexAssetReferences,
   maxStylesheetImportDepth,
+  runtimeCacheOnlyAssets,
   writeAssetManifest,
 } = require('./update-site-asset-manifest');
 
@@ -79,7 +80,38 @@ test('static ebook route scripts are lazy-loaded and manifest-backed assets', ()
   for (const assetPath of ['ebook-tools.js', 'ebook.js']) {
     assert.equal(fs.existsSync(path.join(siteRoot, assetPath)), true);
     assert.ok(manifest.assets?.[assetPath], `${assetPath} missing from asset-manifest.json`);
+    assert.deepEqual(manifest.assets[assetPath].cachePolicy, {
+      installPrecache: false,
+      runtimeCache: true,
+    });
   }
+});
+
+test('service worker install precache reads route-lazy cache policy from asset manifest', () => {
+  const serviceWorker = fs.readFileSync(path.join(siteRoot, 'sw.js'), 'utf8');
+  const manifest = JSON.parse(fs.readFileSync(path.join(siteRoot, 'asset-manifest.json'), 'utf8'));
+  const api = loadServiceWorkerTestApi();
+
+  assert.doesNotMatch(serviceWorker, /ROUTE_LAZY_ASSETS/);
+  assert.doesNotMatch(serviceWorker, /ebook-tools\.js|ebook\.js/);
+
+  for (const assetPath of runtimeCacheOnlyAssets) {
+    assert.deepEqual(manifest.assets?.[assetPath]?.cachePolicy, {
+      installPrecache: false,
+      runtimeCache: true,
+    });
+    assert.equal(api.shouldInstallPrecacheAsset(assetPath, manifest.assets[assetPath]), false);
+  }
+
+  assert.equal(api.shouldInstallPrecacheAsset('app.js', manifest.assets['app.js']), true);
+
+  const precacheUrls = api
+    .resolvePrecacheUrls(manifest)
+    .map((assetUrl) => new URL(assetUrl).pathname);
+  assert.ok(precacheUrls.includes('/index.html'));
+  assert.ok(precacheUrls.includes('/app.js'));
+  assert.ok(!precacheUrls.includes('/ebook-tools.js'));
+  assert.ok(!precacheUrls.includes('/ebook.js'));
 });
 
 test('committed static site asset manifest matches shipped assets', () => {

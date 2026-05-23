@@ -1,7 +1,6 @@
 const CACHE_PREFIX = 'almost-swedish-static';
 const ASSET_MANIFEST_PATH = 'asset-manifest.json';
 const CORE_ASSETS = ['.', 'index.html', ASSET_MANIFEST_PATH];
-const ROUTE_LAZY_ASSETS = new Set(['ebook-tools.js', 'ebook.js']);
 
 let activeCacheName = null;
 
@@ -33,12 +32,14 @@ async function cacheNameForManifestText(manifestText) {
   return `${CACHE_PREFIX}-${digest.slice(0, 16)}`;
 }
 
-function isInstallPrecacheAssetPath(assetPath) {
-  return isLocalPath(assetPath) && !ROUTE_LAZY_ASSETS.has(assetPath.replace(/^\.\//, ''));
+function shouldInstallPrecacheAsset(assetPath, assetRecord) {
+  return isLocalPath(assetPath) && assetRecord?.cachePolicy?.installPrecache !== false;
 }
 
 function resolvePrecacheUrls(assetManifest) {
-  const assetPaths = Object.keys(assetManifest?.assets || {}).filter(isInstallPrecacheAssetPath);
+  const assetPaths = Object.entries(assetManifest?.assets || {})
+    .filter(([assetPath, assetRecord]) => shouldInstallPrecacheAsset(assetPath, assetRecord))
+    .map(([assetPath]) => assetPath);
   const urls = [...CORE_ASSETS, ...assetPaths].map((assetPath) =>
     sameOriginUrl(assetPath).toString(),
   );
@@ -154,6 +155,6 @@ self.addEventListener('fetch', (event) => {
 
 self.__SMT_PWA_TEST__ = {
   cacheNameForManifestText,
-  isInstallPrecacheAssetPath,
   resolvePrecacheUrls,
+  shouldInstallPrecacheAsset,
 };
