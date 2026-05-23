@@ -3882,9 +3882,13 @@ const EXPECTED_BADGE_ACCESSIBILITY_RULES = [
     pattern: /const badgeAccessibilityLabel =/,
   },
   {
-    label: 'explicit label override before child fallback',
+    label: 'explicit label override before primitive child fallback',
+    pattern: /accessibilityLabel \?\? getPrimitiveBadgeAccessibilityLabel\(children\)/,
+  },
+  {
+    label: 'primitive child array fallback helper',
     pattern:
-      /accessibilityLabel \?\?\s*\(\s*typeof children === 'string' \|\| typeof children === 'number' \? String\(children\) : undefined\s*\)/,
+      /function getPrimitiveBadgeAccessibilityLabel\(children: ReactNode\): string \| undefined/,
   },
   {
     label: 'web aria label',
@@ -3911,6 +3915,7 @@ const EXPECTED_BADGE_ACCESSIBILITY_RULES = [
     pattern: /textTransform:\s*'uppercase'/,
   },
 ];
+const BADGE_CALL_SITE_SCAN_DIRS = ['app', 'components'];
 const EXPECTED_CHAPTER_CARD_ACCESSIBILITY_RULES = [
   {
     label: 'settings language type import',
@@ -17408,6 +17413,89 @@ function validateMetricCardAccessibilityParity() {
   }
 }
 
+function getJsxTagNameText(tagName) {
+  if (!tagName) return '';
+  if (ts.isIdentifier(tagName)) return tagName.text;
+  if (ts.isPropertyAccessExpression(tagName)) {
+    return `${getJsxTagNameText(tagName.expression)}.${tagName.name.text}`;
+  }
+  if (ts.isJsxNamespacedName(tagName)) {
+    return `${tagName.namespace.text}:${tagName.name.text}`;
+  }
+  return '';
+}
+
+function hasJsxAttribute(attributes, attributeName) {
+  return attributes.properties.some(
+    (property) => ts.isJsxAttribute(property) && property.name.text === attributeName,
+  );
+}
+
+function expressionContainsComposedJsx(expression) {
+  let hasComposedJsx = false;
+
+  function visit(node) {
+    if (ts.isJsxElement(node) || ts.isJsxSelfClosingElement(node) || ts.isJsxFragment(node)) {
+      hasComposedJsx = true;
+      return;
+    }
+    ts.forEachChild(node, visit);
+  }
+
+  if (expression) visit(expression);
+  return hasComposedJsx;
+}
+
+function badgeChildrenContainComposedJsx(children) {
+  return children.some((child) => {
+    if (ts.isJsxElement(child) || ts.isJsxSelfClosingElement(child) || ts.isJsxFragment(child)) {
+      return true;
+    }
+    if (ts.isJsxExpression(child)) return expressionContainsComposedJsx(child.expression);
+    return false;
+  });
+}
+
+function findBadgeComposedChildCallSiteOffenders() {
+  const offenders = [];
+
+  for (const sourceDir of BADGE_CALL_SITE_SCAN_DIRS) {
+    const absoluteDir = path.join(repoRoot, sourceDir);
+    if (!fs.existsSync(absoluteDir)) continue;
+
+    for (const absolutePath of listSourceFiles(sourceDir)) {
+      if (!/\.tsx$/.test(absolutePath)) continue;
+
+      const relativePath = path.relative(repoRoot, absolutePath).replace(/\\/g, '/');
+      const source = fs.readFileSync(absolutePath, 'utf8');
+      const sourceFile = ts.createSourceFile(
+        absolutePath,
+        source,
+        ts.ScriptTarget.Latest,
+        true,
+        ts.ScriptKind.TSX,
+      );
+
+      function visit(node) {
+        if (
+          ts.isJsxElement(node) &&
+          getJsxTagNameText(node.openingElement.tagName) === 'Badge' &&
+          badgeChildrenContainComposedJsx(node.children) &&
+          !hasJsxAttribute(node.openingElement.attributes, 'accessibilityLabel')
+        ) {
+          const { line, character } = sourceFile.getLineAndCharacterOfPosition(node.getStart());
+          offenders.push(`${relativePath}:${line + 1}:${character + 1}`);
+        }
+        ts.forEachChild(node, visit);
+      }
+
+      visit(sourceFile);
+    }
+  }
+
+  return offenders;
+}
+
 function validateBadgeAccessibilityParity() {
   let valid = true;
   let badgeSource = '';
@@ -17432,7 +17520,18 @@ function validateBadgeAccessibilityParity() {
     badgeAccessibilityRulesValidated += 1;
   });
 
-  if (valid && badgeAccessibilityRulesValidated === EXPECTED_BADGE_ACCESSIBILITY_RULES.length) {
+  const composedChildOffenders = findBadgeComposedChildCallSiteOffenders();
+  if (composedChildOffenders.length > 0) {
+    reject(
+      `Badge composed child call sites require explicit accessibilityLabel: ${composedChildOffenders.join(
+        ', ',
+      )}`,
+    );
+  } else {
+    badgeAccessibilityRulesValidated += 1;
+  }
+
+  if (valid && badgeAccessibilityRulesValidated === EXPECTED_BADGE_ACCESSIBILITY_RULES.length + 1) {
     badgeAccessibilityParityValidated = true;
   }
 }

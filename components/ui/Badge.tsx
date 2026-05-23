@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { StyleSheet, Text } from 'react-native';
 import type { StyleProp, TextStyle } from 'react-native';
-import type { PropsWithChildren } from 'react';
+import type { PropsWithChildren, ReactNode } from 'react';
 import { radius, space, typography } from '../../lib/theme';
 import type { ThemeColors } from '../../lib/theme';
 import { useResolvedThemeColors } from '../useResolvedThemeColors';
@@ -24,8 +24,7 @@ export function Badge({
   const resolvedThemeColors = useResolvedThemeColors(themeColors);
   const styles = useMemo(() => createStyles(resolvedThemeColors), [resolvedThemeColors]);
   const badgeAccessibilityLabel =
-    accessibilityLabel ??
-    (typeof children === 'string' || typeof children === 'number' ? String(children) : undefined);
+    accessibilityLabel ?? getPrimitiveBadgeAccessibilityLabel(children);
 
   return (
     <Text
@@ -36,6 +35,31 @@ export function Badge({
       {children}
     </Text>
   );
+}
+
+function getPrimitiveBadgeAccessibilityLabel(children: ReactNode): string | undefined {
+  const parts: string[] = [];
+  const stack = Array.isArray(children) ? [...children] : [children];
+
+  while (stack.length > 0) {
+    const child = stack.shift();
+
+    if (Array.isArray(child)) {
+      stack.unshift(...child);
+      continue;
+    }
+
+    if (child === null || child === undefined || typeof child === 'boolean') continue;
+
+    if (typeof child === 'string' || typeof child === 'number') {
+      parts.push(String(child));
+      continue;
+    }
+
+    return undefined;
+  }
+
+  return parts.join('').replace(/\s+/g, ' ').trim() || undefined;
 }
 
 function createStyles(themeColors: ThemeColors) {
