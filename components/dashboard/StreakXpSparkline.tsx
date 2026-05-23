@@ -9,7 +9,7 @@ import { Card } from '../ui/Card';
 export type StreakXpSparklineCopy = {
   emptyState: string;
   levelLabel: string;
-  streakLabel: string;
+  streakLabel: (currentStreak: number) => string;
   subtitle: string;
   summary: (totalXp: number, activeDays: number, currentStreak: number, level: number) => string;
   title: string;
@@ -41,7 +41,7 @@ export function StreakXpSparkline({ copy, currentStreak, level, points }: Streak
       <View style={styles.metricRow}>
         <View style={styles.metricPill}>
           <Text style={styles.metricValue}>{currentStreak}</Text>
-          <Text style={styles.metricLabel}>{copy.streakLabel}</Text>
+          <Text style={styles.metricLabel}>{copy.streakLabel(currentStreak)}</Text>
         </View>
         <View style={styles.metricPill}>
           <Text style={styles.metricValue}>{level}</Text>

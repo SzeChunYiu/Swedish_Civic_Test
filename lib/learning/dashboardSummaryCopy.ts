@@ -10,6 +10,30 @@ function englishNoun(count: number, singular: string, plural: string) {
   return count === 1 ? singular : plural;
 }
 
+export function formatDashboardAnswerCount(language: DashboardSummaryLanguage, count: number) {
+  return language === 'sv'
+    ? `${count} svar`
+    : `${count} ${englishNoun(count, 'answer', 'answers')}`;
+}
+
+export function formatDashboardActiveDayCount(language: DashboardSummaryLanguage, count: number) {
+  return language === 'sv'
+    ? `${count} ${count === 1 ? 'aktiv dag' : 'aktiva dagar'}`
+    : `${count} active ${englishNoun(count, 'day', 'days')}`;
+}
+
+export function formatDashboardMockExamCount(language: DashboardSummaryLanguage, count: number) {
+  return language === 'sv'
+    ? `${count} övningsprov`
+    : `${count} mock ${englishNoun(count, 'exam', 'exams')}`;
+}
+
+export function formatDashboardStreakCount(language: DashboardSummaryLanguage, count: number) {
+  return language === 'sv'
+    ? `${count} ${count === 1 ? 'dags svit' : 'dagars svit'}`
+    : `${count}-day streak`;
+}
+
 function formatSwedishSummarySegments({ chapters, questions, unresolved }: DashboardSummaryCounts) {
   return {
     chapters: `${chapters} kapitel ${chapters === 1 ? 'provat' : 'provade'}`,
