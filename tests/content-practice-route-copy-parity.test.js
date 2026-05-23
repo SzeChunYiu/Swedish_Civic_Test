@@ -155,6 +155,15 @@ test('practice route shell copy follows the persisted settings language', () => 
     source,
     /const nextQuestion = getPracticeQuestionForSession\(\s*nextQuestionBank,\s*completedQuestionIds,\s*null,\s*\);/,
   );
+  assert.match(
+    source,
+    /const nextQuestionBank = getQuestionsForPracticeScope\(\s*filteredQuestions,\s*routeLaunchRequest\.scope,\s*\);[\s\S]*?const nextQuestion = getPracticeQuestionForSession\(\s*nextQuestionBank,\s*completedQuestionIds,\s*null,\s*\);[\s\S]*?consumedRouteLaunchKeyRef\.current = routeLaunchRequest\.key;[\s\S]*?startSession\(nextQuestion\?\.id \?\? null\);/,
+  );
+  assert.match(
+    source,
+    /\}, \[completedQuestionIds, filteredQuestions, routeLaunchRequest, startSession\]\);/,
+  );
+  assert.doesNotMatch(source, /startSession\(nextQuestionBank\[0\]\?\.id \?\? null\);/);
   assert.match(source, /startSession\(nextQuestion\?\.id \?\? null\);/);
   assert.match(source, /onPress=\{handleSupplementaryToggle\}/);
   assert.doesNotMatch(
@@ -211,7 +220,7 @@ test('practice route source wires selected companion copy to answer feedback sta
   );
   assert.match(companionCard, /settingsAccessibilityLabel: 'Change study companion in Settings'/);
   assert.match(companionCard, /settingsAccessibilityLabel: 'Byt studiekompis i Inställningar'/);
-  assert.match(companionCard, /href="\/settings"/);
+  assert.match(companionCard, /href="\/settings\?focus=companion"/);
   assert.match(companionCard, /<MascotArtwork[\s\S]*mascotId=\{mascot\.id\}/);
   assert.doesNotMatch(companionCard, /label\.slice\(0,\s*1\)\.toUpperCase\(\)/);
   assert.match(mascotArtwork, /SvgUri/);
