@@ -106,7 +106,7 @@ test('visual smoke uses the shared route filename contract and blocking modal ov
   assert.match(browserLaunchSource, /\[role="dialog"\]\[aria-modal="true"\]/);
   assert.match(browserLaunchSource, /\[role="menu"\]\[aria-modal="true"\]/);
   assert.match(browserLaunchSource, /function activateBlockingModalControl/);
-  assert.match(browserLaunchSource, /dispatchEvent\('click'\)/);
+  assert.match(browserLaunchSource, /dispatchEvent\('click', undefined, \{ timeout: 2_000 \}\)/);
   assert.match(
     visualSmokeSource,
     /import \{[\s\S]*visualSmokeRouteManifestEntries[\s\S]*\} from '\.\/visualSmokeRoutes';/,
@@ -232,6 +232,24 @@ test('visual smoke includes a focused proof for first-run and language picker di
   assert.match(visualSmokeSource, /languagePickerDismissal\.languagePickerDismissed/);
   assert.match(visualSmokeSource, /Nuvarande språk SV\\\. Öppna språkväljaren\\\./);
   assert.match(visualSmokeSource, /locator\(blockingModalOverlayLocator\)\)\.toHaveCount\(0\)/);
+});
+
+test('visual smoke includes a focused proof for Remove Ads launch overlay suppression', () => {
+  const visualSmokeSource = readRepoFile('tests/e2e/visual-smoke.spec.ts');
+
+  assert.match(
+    visualSmokeSource,
+    /launch sponsor overlay stays suppressed when Remove Ads is active before Home renders/,
+  );
+  assert.match(visualSmokeSource, /monetization\.removeAds\.adsDisabled\.v1/);
+  assert.match(visualSmokeSource, /__SMT_E2E__/);
+  assert.match(visualSmokeSource, /__SMT_REMOVE_ADS_MOCK_OWNED__/);
+  assert.match(visualSmokeSource, /mock-token-\$\{removeAdsRestoreTransactionId\}/);
+  assert.match(
+    visualSmokeSource,
+    /getByRole\('dialog', \{ name: \/Launch sponsor ad\|Startannons\/ \}\)\)\.toHaveCount\(0\)/,
+  );
+  assert.match(visualSmokeSource, /getByRole\('heading', \{ name: 'Preparation signal' \}\)/);
 });
 
 test('visual smoke duplicate helper requires exact groups and nonempty reasons', () => {

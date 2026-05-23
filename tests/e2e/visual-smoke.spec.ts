@@ -32,6 +32,21 @@ type RouteCapture = VisualSmokeRoute & {
   launchOverlayVisibleAfterDismissal: boolean;
 };
 
+const removeAdsStorageKey = 'monetization.removeAds.adsDisabled.v1';
+const removeAdsProductId = 'com.billyyiu.almostswedish.removeads';
+const removeAdsRestoreTransactionId = 'restore-com-billyyiu-almostswedish-removeads';
+
+type StoredRemoveAdsRestoreRecord = {
+  grantedAt: string;
+  productId: typeof removeAdsProductId;
+  purchaseToken: string;
+  receiptValidatedAt: string;
+  receiptValidationStatus: 'valid';
+  schemaVersion: 1;
+  source: 'restore';
+  transactionId: typeof removeAdsRestoreTransactionId;
+};
+
 const requiredRouteContextKeys = [
   './_layout.tsx',
   './(tabs)/home.tsx',
@@ -67,6 +82,44 @@ function expectExportBundleToContainRouteContext() {
 
 function sha256File(filePath: string): string {
   return crypto.createHash('sha256').update(fs.readFileSync(filePath)).digest('hex');
+}
+
+async function seedStoredRemoveAdsEntitlement(
+  page: Parameters<typeof seedFreshFirstRunSettingsLanguage>[0],
+) {
+  const validatedAt = '2026-05-23T00:00:00.000Z';
+  const storedRecord: StoredRemoveAdsRestoreRecord = {
+    grantedAt: validatedAt,
+    productId: removeAdsProductId,
+    purchaseToken: `mock-token-${removeAdsRestoreTransactionId}`,
+    receiptValidatedAt: validatedAt,
+    receiptValidationStatus: 'valid',
+    schemaVersion: 1,
+    source: 'restore',
+    transactionId: removeAdsRestoreTransactionId,
+  };
+
+  await page.addInitScript(
+    ({ storageKey, storageValue }: { storageKey: string; storageValue: string }) => {
+      window.localStorage.setItem(storageKey, storageValue);
+      (
+        window as typeof window & {
+          __SMT_E2E__?: boolean;
+          __SMT_REMOVE_ADS_MOCK_OWNED__?: boolean;
+        }
+      ).__SMT_E2E__ = true;
+      (
+        window as typeof window & {
+          __SMT_E2E__?: boolean;
+          __SMT_REMOVE_ADS_MOCK_OWNED__?: boolean;
+        }
+      ).__SMT_REMOVE_ADS_MOCK_OWNED__ = true;
+    },
+    {
+      storageKey: removeAdsStorageKey,
+      storageValue: JSON.stringify(storedRecord),
+    },
+  );
 }
 
 test('primary routes render and capture UI/UX screenshots', async ({ page }) => {
@@ -191,5 +244,27 @@ test('shared modal dismissal helper closes forced first-run guide and language p
   await expect(page.locator(blockingModalOverlayLocator)).toHaveCount(0);
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(page.getByRole('menu', { name: /Språkväljare|Language picker/ })).toHaveCount(0);
+  expect(consoleErrors).toEqual([]);
+});
+
+test('launch sponsor overlay stays suppressed when Remove Ads is active before Home renders', async ({
+  page,
+}) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await seedFreshFirstRunSettingsLanguage(page, 'en');
+  await seedStoredRemoveAdsEntitlement(page);
+  await page.goto('/home', { waitUntil: 'networkidle' });
+
+  await expect(page.getByRole('dialog', { name: /Launch sponsor ad|Startannons/ })).toHaveCount(0);
+  await expect(page.locator(blockingModalOverlayLocator)).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Preparation signal' })).toBeVisible();
+  await expect(page.getByText('Study dashboard', { exact: true })).toBeVisible();
+
   expect(consoleErrors).toEqual([]);
 });
