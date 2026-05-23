@@ -1393,7 +1393,7 @@ test('persistence warning scope parity uses focused content validation routing',
   assert.match(validatorSource, /--focus-persistence-warning-scope/);
   assert.match(
     validatorSource,
-    /validatePersistenceWarningScopeParity\(\);[\s\S]*persistenceWarningScopeCasesValidated[\s\S]*persistenceWarningScopeParityValidated/,
+    /validatePersistenceWarningScopeParity\(\);[\s\S]*persistenceWarningScopeCasesValidated[\s\S]*persistenceWarningSettingsAccessibilityNoticeCountValidated[\s\S]*persistenceWarningScopeParityValidated/,
   );
   assert.match(storageWarningTestSource, /getPersistenceWarningNoticeCopy/);
 });

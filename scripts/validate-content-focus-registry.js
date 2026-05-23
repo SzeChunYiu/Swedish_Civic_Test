@@ -306,6 +306,7 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     flags: ['--focus-persistence-warning-scope'],
     summaryKeys: [
       'persistenceWarningScopeCasesValidated',
+      'persistenceWarningSettingsAccessibilityNoticeCountValidated',
       'persistenceWarningScopeParityValidated',
     ],
   },
