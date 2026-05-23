@@ -221,10 +221,14 @@ function assertStaticQ167StatedOnVotingCardSource(questionsById) {
     'What is stated on the voting card sent home before an election?',
     'q167 static English source prompt should stay exact',
   );
-  assert.equal(question.questionProvenance, 'uhr');
+  assert.equal(question.questionProvenance, 'uhr', 'q167 static provenance should stay UHR');
   assert.equal(question.source?.chapter, 'Politiska val och partier');
-  assert.equal(question.source?.section, 'Så här går det till att rösta');
-  assert.equal(question.source?.page, 14);
+  assert.equal(
+    question.source?.section,
+    'Så här går det till att rösta',
+    'q167 static UHR section should stay exact',
+  );
+  assert.equal(question.source?.page, 14, 'q167 static UHR page should stay exact');
   assert.doesNotMatch(
     staticQuestionVisibleText(question),
     stalePattern,
@@ -491,6 +495,47 @@ test('static site question bank keeps q167 stated-on source row exact', () => {
   );
 
   assertStaticQ167StatedOnVotingCardSource(questionsById);
+});
+
+test('static site q167 stated-on source fixture rejects wording, metadata, and provenance mutations', () => {
+  const context = { window: {} };
+  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
+  const questionsById = new Map(
+    context.window.SMT_QUESTIONS.map((question) => [question.id, question]),
+  );
+  const mutations = [
+    [
+      (question) => ({
+        ...question,
+        q: {
+          ...question.q,
+          sv: 'Vad är röstkortets innehåll?',
+          en: 'What are the voting card contents?',
+        },
+      }),
+      /q167 static Swedish source prompt should stay exact/,
+    ],
+    [
+      (question) => ({
+        ...question,
+        source: { ...question.source, section: 'Fel avsnitt' },
+      }),
+      /q167 static UHR section should stay exact/,
+    ],
+    [
+      (question) => ({ ...question, questionProvenance: 'derived' }),
+      /q167 static provenance should stay UHR/,
+    ],
+  ];
+
+  for (const [mutateQuestion, expectedFailure] of mutations) {
+    const mutatedQuestionsById = new Map(questionsById);
+    mutatedQuestionsById.set('q167', mutateQuestion(questionsById.get('q167')));
+    assert.throws(
+      () => assertStaticQ167StatedOnVotingCardSource(mutatedQuestionsById),
+      expectedFailure,
+    );
+  }
 });
 
 test('static site q167 stated-on fixture rejects q844/q847 contents mutations', () => {

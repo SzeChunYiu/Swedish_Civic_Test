@@ -229,12 +229,23 @@ function assertQ167StatedOnVotingCardSourceExports({ generatedSiteBank, actualSi
   assert.equal(actual?.q.en, canonical?.q.en, 'q167 static English prompt should match canonical');
   assert.equal(csvColumns?.[3], canonical?.q.sv, 'q167 CSV Swedish prompt should match canonical');
   assert.equal(csvColumns?.[4], canonical?.q.en, 'q167 CSV English prompt should match canonical');
-  assert.equal(canonical?.questionProvenance, 'uhr');
-  assert.equal(actual?.questionProvenance, 'uhr');
+  assert.equal(canonical?.questionProvenance, 'uhr', 'q167 canonical provenance should stay UHR');
+  assert.equal(actual?.questionProvenance, 'uhr', 'q167 static provenance should stay UHR');
+  assert.equal(canonical?.source?.chapter, 'Politiska val och partier');
+  assert.equal(
+    canonical?.source?.section,
+    'Så här går det till att rösta',
+    'q167 canonical UHR section should stay exact',
+  );
+  assert.equal(canonical?.source?.page, 14, 'q167 canonical UHR page should stay exact');
   assert.equal(csvColumns?.[10], 'Politiska val och partier');
-  assert.equal(csvColumns?.[11], 'Så här går det till att rösta');
-  assert.equal(csvColumns?.[12], '14');
-  assert.equal(csvColumns?.[27], 'uhr');
+  assert.equal(
+    csvColumns?.[11],
+    'Så här går det till att rösta',
+    'q167 CSV UHR section should stay exact',
+  );
+  assert.equal(csvColumns?.[12], '14', 'q167 CSV UHR page should stay exact');
+  assert.equal(csvColumns?.[27], 'uhr', 'q167 CSV provenance should stay UHR');
   assert.doesNotMatch(
     `${canonical?.q.sv}\n${canonical?.q.en}\n${actual?.q.sv}\n${actual?.q.en}\n${csvColumns?.[3]}\n${csvColumns?.[4]}`,
     stalePattern,
@@ -5256,6 +5267,94 @@ test('q167 stated-on source row exports exact wording and UHR metadata', () => {
     actualSiteBank,
     csvRows,
   });
+});
+
+test('q167 stated-on source row fixture rejects canonical wording, metadata, and provenance mutations', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const csvRows = contentQuestionBankCsvRowsById(['q167']);
+  const mutations = [
+    [
+      (question) => ({
+        ...question,
+        q: {
+          ...question.q,
+          sv: 'Vad är röstkortets innehåll?',
+          en: 'What are the voting card contents?',
+        },
+      }),
+      /q167 canonical Swedish source prompt should stay exact/,
+    ],
+    [
+      (question) => ({
+        ...question,
+        source: { ...question.source, section: 'Fel avsnitt' },
+      }),
+      /q167 canonical UHR section should stay exact/,
+    ],
+    [
+      (question) => ({ ...question, questionProvenance: 'derived' }),
+      /q167 canonical provenance should stay UHR/,
+    ],
+  ];
+
+  for (const [mutateQuestion, expectedFailure] of mutations) {
+    const mutatedSiteBank = generatedSiteBank.map((question) =>
+      question.id === 'q167' ? mutateQuestion(question) : question,
+    );
+    assert.throws(
+      () =>
+        assertQ167StatedOnVotingCardSourceExports({
+          generatedSiteBank: mutatedSiteBank,
+          actualSiteBank,
+          csvRows,
+        }),
+      expectedFailure,
+    );
+  }
+});
+
+test('q167 stated-on source row fixture rejects CSV wording, metadata, and provenance mutations', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const csvRows = contentQuestionBankCsvRowsById(['q167']);
+  const mutations = [
+    [
+      (columns) => {
+        columns[3] = 'Vad är röstkortets innehåll?';
+        columns[4] = 'What are the voting card contents?';
+      },
+      /q167 CSV Swedish prompt should match canonical/,
+    ],
+    [
+      (columns) => {
+        columns[11] = 'Fel avsnitt';
+      },
+      /q167 CSV UHR section should stay exact/,
+    ],
+    [
+      (columns) => {
+        columns[27] = 'derived';
+      },
+      /q167 CSV provenance should stay UHR/,
+    ],
+  ];
+
+  for (const [mutateColumns, expectedFailure] of mutations) {
+    const mutatedCsvRows = new Map(csvRows);
+    const columns = [...csvRows.get('q167')];
+    mutateColumns(columns);
+    mutatedCsvRows.set('q167', columns);
+    assert.throws(
+      () =>
+        assertQ167StatedOnVotingCardSourceExports({
+          generatedSiteBank,
+          actualSiteBank,
+          csvRows: mutatedCsvRows,
+        }),
+      expectedFailure,
+    );
+  }
 });
 
 test('q167 stated-on export fixture rejects canonical q844/q847 contents mutations', () => {
