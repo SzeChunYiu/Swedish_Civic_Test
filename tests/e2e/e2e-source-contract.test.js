@@ -104,6 +104,32 @@ function collectMatches({ pattern, source, filePath }) {
   }));
 }
 
+const forbiddenLocalSpeechMockPatterns = [
+  /\b__SMT_SPEECH_EVENTS__\b/g,
+  /\bSpeechSynthesisUtterance\b/g,
+  /\bspeechSynthesis\s*[:=]/g,
+  /\bObject\.defineProperty\(window,\s*['"]speechSynthesis['"]/g,
+];
+
+function browserSpecSources(filePaths = browserSpecPaths) {
+  return filePaths.map((filePath) => ({
+    filePath,
+    source: fs.readFileSync(filePath, 'utf8'),
+  }));
+}
+
+function findLocalBrowserSpeechMockViolations(specSources = browserSpecSources()) {
+  const violations = [];
+
+  for (const { filePath, source } of specSources) {
+    for (const pattern of forbiddenLocalSpeechMockPatterns) {
+      violations.push(...collectMatches({ pattern, source, filePath }));
+    }
+  }
+
+  return violations;
+}
+
 function escapeRegExp(literal) {
   return literal.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
@@ -626,12 +652,6 @@ test('countdown browser date coverage uses the shared clock helper', () => {
 test('browser speech synthesis audio mock coverage uses the shared helper contract', () => {
   const browserLaunchSource = readRelative('browserLaunch.ts');
   const practiceFeedbackSource = readRelative('practice-feedback.spec.ts');
-  const forbiddenLocalSpeechMockPatterns = [
-    /\b__SMT_SPEECH_EVENTS__\b/g,
-    /\bSpeechSynthesisUtterance\b/g,
-    /\bspeechSynthesis\s*[:=]/g,
-    /\bObject\.defineProperty\(window,\s*['"]speechSynthesis['"]/g,
-  ];
 
   assert.match(
     browserLaunchSource,
@@ -675,18 +695,41 @@ test('browser speech synthesis audio mock coverage uses the shared helper contra
     'cross-route audio coverage should preserve the one-time settings seed semantics',
   );
 
-  const violations = [];
-  for (const filePath of browserSpecPaths) {
-    const source = fs.readFileSync(filePath, 'utf8');
-    for (const pattern of forbiddenLocalSpeechMockPatterns) {
-      violations.push(...collectMatches({ pattern, source, filePath }));
-    }
-  }
-
   assert.deepEqual(
-    violations,
+    findLocalBrowserSpeechMockViolations(),
     [],
     'browser specs should use installSpeechSynthesisMock, speechEvents, clearSpeechEvents, and speakEvents from tests/e2e/browserLaunch.ts instead of route-local speech mocks',
+  );
+});
+
+test('browser speech synthesis source contract reports local mock mutations', () => {
+  const fixturePath = path.join(e2eDir, 'synthetic-local-speech-mock.spec.ts');
+  const fixtureSource = `
+    test('bad local speech mock', async ({ page }) => {
+      await page.addInitScript(() => {
+        window.__SMT_SPEECH_EVENTS__ = [];
+        class SpeechSynthesisUtterance {}
+        window.speechSynthesis = { speak() {} };
+      });
+    });
+  `;
+
+  assert.deepEqual(
+    findLocalBrowserSpeechMockViolations([{ filePath: fixturePath, source: fixtureSource }]),
+    [
+      {
+        file: path.relative(process.cwd(), fixturePath),
+        literal: '__SMT_SPEECH_EVENTS__',
+      },
+      {
+        file: path.relative(process.cwd(), fixturePath),
+        literal: 'SpeechSynthesisUtterance',
+      },
+      {
+        file: path.relative(process.cwd(), fixturePath),
+        literal: 'speechSynthesis =',
+      },
+    ],
   );
 });
 
