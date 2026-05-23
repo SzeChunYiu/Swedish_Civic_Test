@@ -159,6 +159,10 @@ test('TRANSLATE-COMPLETE P0 has explicit SV/EN completeness and naturalness clos
     summary.questionRuleOfLawEnglishNaturalnessValidated,
     summary.publishedQuestions * 3,
   );
+  assert.ok(summary.glossaryTerms > 0);
+  assert.equal(summary.glossaryTermsValidated, summary.glossaryTerms);
+  assert.equal(summary.glossaryNaturalnessValidated, summary.glossaryTerms);
+  assert.equal(summary.glossaryNaturalnessParityValidated, true);
   assert.equal(summary.somaliGeographyNaturalnessParityValidated, true);
   assert.equal(summary.somaliHolidayFoodNaturalnessParityValidated, true);
 });
@@ -193,5 +197,75 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q080 uses meta suffrage-election English wording/,
+  );
+});
+
+test('TRANSLATE-COMPLETE rejects literal glossary rule-of-law wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+process.argv.push('--focus-translate-complete-p0');
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/glossary.ts')) {
+    return String(contents).replace(
+      "termEn: 'Rule of law'",
+      "termEn: 'Legal certainty'",
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /rattsakerhet termEn uses literal legal-certainty English for rättssäkerhet/,
+  );
+});
+
+test('TRANSLATE-COMPLETE rejects stilted glossary labour-market wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+process.argv.push('--focus-translate-complete-p0');
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/glossary.ts')) {
+    return String(contents)
+      .replace("termEn: 'Labour market partners'", "termEn: 'Labour-market parties'")
+      .replace(
+        "explanationEn: 'Employers and trade unions that negotiate pay and working conditions.'",
+        "explanationEn: 'Employers and trade unions that negotiate conditions in the labour market.'",
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.match(output, /arbetsmarknadens-parter termEn uses literal labour-market-parties English/);
+  assert.match(
+    output,
+    /arbetsmarknadens-parter explanationEn uses stilted labour-market condition English/,
   );
 });
