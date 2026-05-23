@@ -297,7 +297,9 @@ test('citizenship requirements cards surface precise source titles and currentne
   const sourceHrefCount = (routeSource.match(/href=\{source\.url\}/g) || []).length;
   const sourceRefRowStyle = extractNamedStyle(routeSource, 'sourceRefRow');
   const sourceRefRowFocusedStyle = extractNamedStyle(routeSource, 'sourceRefRowFocused');
+  const sourceRefRowPressedStyle = extractNamedStyle(routeSource, 'sourceRefRowPressed');
   const sourceRowFocusedStyle = extractNamedStyle(routeSource, 'sourceRowFocused');
+  const sourceRowPressedStyle = extractNamedStyle(routeSource, 'sourceRowPressed');
 
   assert.match(routeSource, /areaSourceAccessibilityPrefix/);
   assert.match(routeSource, /areaSourceAccessibilityPrefix: 'Källa för'/);
@@ -309,15 +311,29 @@ test('citizenship requirements cards surface precise source titles and currentne
   assert.match(routeSource, /source\.url/);
   assert.match(routeSource, /styles\.sourceRefRow/);
   assert.match(routeSource, /const \[focusedSourceRow, setFocusedSourceRow\] = useState/);
+  assert.match(routeSource, /const \[hoveredSourceRow, setHoveredSourceRow\] = useState/);
+  assert.match(routeSource, /const \[pressedSourceRow, setPressedSourceRow\] = useState/);
   assert.match(routeSource, /onFocus=\{\(\) => setFocusedSourceRow\(sourceFocusKey\)\}/);
   assert.match(routeSource, /onBlur=\{\(\) => setFocusedSourceRow\(null\)\}/);
+  assert.match(routeSource, /onMouseEnter=\{\(\) => setHoveredSourceRow\(sourceFocusKey\)\}/);
+  assert.match(routeSource, /onMouseDown=\{\(\) => setPressedSourceRow\(sourceFocusKey\)\}/);
+  assert.match(routeSource, /onPressIn=\{\(\) => setPressedSourceRow\(sourceFocusKey\)\}/);
+  assert.match(routeSource, /onTouchStart=\{\(\) => setPressedSourceRow\(sourceFocusKey\)\}/);
   assert.match(
     routeSource,
-    /focusedSourceRow === sourceFocusKey \? styles\.sourceRefRowFocused : null/,
+    /focusedSourceRow === sourceFocusKey \|\|[\s\S]*hoveredSourceRow === sourceFocusKey[\s\S]*\? styles\.sourceRefRowFocused[\s\S]*: null/,
   );
   assert.match(
     routeSource,
-    /focusedSourceRow === sourceFocusKey \? styles\.sourceRowFocused : null/,
+    /focusedSourceRow === sourceFocusKey \|\| hoveredSourceRow === sourceFocusKey[\s\S]*\? styles\.sourceRowFocused[\s\S]*: null/,
+  );
+  assert.match(
+    routeSource,
+    /pressedSourceRow === sourceFocusKey \? styles\.sourceRefRowPressed : null/,
+  );
+  assert.match(
+    routeSource,
+    /pressedSourceRow === sourceFocusKey \? styles\.sourceRowPressed : null/,
   );
   assert.match(routeSource, /accessibilityRole="link"/);
   assert.match(routeSource, /rel="noreferrer"/);
@@ -325,8 +341,10 @@ test('citizenship requirements cards surface precise source titles and currentne
   assert.match(sourceRefRowStyle, /minHeight: space\[6\]/);
   assert.match(sourceRefRowFocusedStyle, /backgroundColor: themeColors\.focusSoft/);
   assert.match(sourceRefRowFocusedStyle, /borderColor: themeColors\.focus/);
+  assert.match(sourceRefRowPressedStyle, /backgroundColor: themeColors\.surfaceMuted/);
   assert.match(sourceRowFocusedStyle, /backgroundColor: themeColors\.focusSoft/);
   assert.match(sourceRowFocusedStyle, /borderColor: themeColors\.focus/);
+  assert.match(sourceRowPressedStyle, /backgroundColor: themeColors\.surfaceMuted/);
   assert.equal(
     sourceHrefCount >= 2,
     true,

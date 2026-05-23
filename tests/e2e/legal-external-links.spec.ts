@@ -786,6 +786,16 @@ for (const fixture of citizenshipRequirementsOfficialSourceFixtures) {
         name: `${fixture.openPrefix}: ${fixture.sourceTitles[0]}`,
       })
       .first();
+    await focusLinkWithKeyboard(
+      page,
+      firstOfficialLink,
+      `/citizenship-requirements ${fixture.language} official source link`,
+    );
+    await expectKeyboardFocusVisible(
+      firstOfficialLink,
+      `/citizenship-requirements ${fixture.language} official source link`,
+    );
+
     const popupPromise = page.waitForEvent('popup');
     await firstOfficialLink.click();
     const popup = await popupPromise;
