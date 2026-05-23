@@ -1117,6 +1117,16 @@
         ? dtr({
             sv: 'Dashboard-data kunde inte laddas. Uppdatera sidan och försök igen.',
             en: 'Dashboard data could not be loaded. Refresh the page and try again.',
+            'zh-Hans': '仪表板数据无法加载。请刷新页面后重试。',
+            'zh-Hant': '儀表板資料無法載入。請重新整理頁面後再試。',
+            ar: 'تعذر تحميل بيانات لوحة المعلومات. حدّث الصفحة وحاول مرة أخرى.',
+            ckb: 'داتای داشبۆرد بار نەبوو. پەڕەکە نوێ بکەرەوە و دووبارە هەوڵ بدە.',
+            fa: 'داده‌های داشبورد بارگیری نشدند. صفحه را تازه‌سازی و دوباره تلاش کنید.',
+            pl: 'Nie udało się załadować danych panelu. Odśwież stronę i spróbuj ponownie.',
+            so: 'Xogta dashboard-ka lama rarin. Cusbooneysii bogga oo mar kale isku day.',
+            ti: 'ዳታ ዳሽቦርድ ክጽዓን ኣይከኣለን። ገጹ ኣሐድስ እሞ እንደገና ፈትን።',
+            tr: 'Dashboard verileri yüklenemedi. Sayfayı yenileyip tekrar dene.',
+            uk: 'Не вдалося завантажити дані панелі. Оновіть сторінку й спробуйте ще раз.',
           })
         : dtr({ sv: 'Laddar dashboard...', en: 'Loading dashboard...' });
     el.innerHTML = `<div class="v11-card"><p>${esc(message)}</p></div>`;

@@ -115,6 +115,22 @@ test('lazy static question bank remains manifest-backed without eager index load
   assert.ok(manifest.assets?.['questions.js']);
 });
 
+test('lazy static question-bank failure copy has extra-locale coverage', () => {
+  const appSource = fs.readFileSync(path.join(siteRoot, 'app.js'), 'utf8');
+  const practiceSource = fs.readFileSync(path.join(siteRoot, 'practice.js'), 'utf8');
+  const v11Source = fs.readFileSync(path.join(siteRoot, 'v11.js'), 'utf8');
+
+  for (const source of [appSource, practiceSource]) {
+    assert.match(source, /تعذر تحميل الأسئلة\. حدّث الصفحة وحاول مرة أخرى\./);
+    assert.match(source, /题库无法加载。请刷新页面后重试。/);
+    assert.match(source, /Questions could not be loaded\. Refresh the page and try again\./);
+  }
+
+  assert.match(v11Source, /تعذر تحميل بيانات لوحة المعلومات\. حدّث الصفحة وحاول مرة أخرى\./);
+  assert.match(v11Source, /仪表板数据无法加载。请刷新页面后重试。/);
+  assert.match(v11Source, /Dashboard data could not be loaded\. Refresh the page and try again\./);
+});
+
 test('asset manifest check rejects referenced assets omitted by manifest scope', () => {
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'site-asset-reference-'));
   const tempSiteDir = path.join(tempDir, 'site');

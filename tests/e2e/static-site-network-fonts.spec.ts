@@ -8,12 +8,13 @@ import { trapExternalRequests } from './staticSiteNetworkGuards';
 
 test.use({ serviceWorkers: 'block' });
 
-async function seedStaticNetworkRun(page: Page) {
-  await page.addInitScript(() => {
+async function seedStaticNetworkRun(page: Page, language = 'en') {
+  await page.addInitScript((nextLanguage) => {
     localStorage.removeItem('smt_consent');
     localStorage.setItem('smt_buddy_hidden', '1');
+    localStorage.setItem('smt_lang', nextLanguage);
     sessionStorage.setItem('smt_buddy_greeted', '1');
-  });
+  }, language);
 }
 
 let staticSite: StaticSite;
@@ -136,6 +137,92 @@ test('static question-data routes fail closed when the lazy question bank is una
 
         await page.goto(`${failedStaticSite.baseUrl}/${hash}`, { waitUntil: 'domcontentloaded' });
         await expect(page.getByText(message, { exact: true })).toBeVisible();
+        expect(questionBankRequests.length, `${hash} should request questions.js`).toBeGreaterThan(
+          0,
+        );
+        expect(pageErrors, `${hash} should not emit page errors`).toEqual([]);
+        await expect
+          .poll(() =>
+            page.evaluate(() =>
+              Array.isArray((window as unknown as { SMT_QUESTIONS?: unknown }).SMT_QUESTIONS),
+            ),
+          )
+          .toBe(false);
+
+        if (missingSelector) {
+          await expect(page.locator(missingSelector)).toHaveCount(0);
+        }
+        if (missingText) {
+          await expect(page.getByText(missingText, { exact: true })).toHaveCount(0);
+        }
+      } finally {
+        await page.close();
+      }
+    }
+  } finally {
+    await failedStaticSite.close();
+  }
+});
+
+test('static question-bank failure shells stay localized in an extra locale', async ({
+  browser,
+}) => {
+  const failedStaticSite = await startStaticSiteServer({
+    failAssetPaths: ['/questions.js'],
+    stripExternalScripts: false,
+  });
+  const routeCases = [
+    {
+      hash: '#/practice?c=mix',
+      localizedMessage: 'تعذر تحميل الأسئلة. حدّث الصفحة وحاول مرة أخرى.',
+      missingSelector: '#quiz-stage .qopt',
+    },
+    {
+      hash: '#/mock',
+      localizedMessage: 'تعذر تحميل الأسئلة. حدّث الصفحة وحاول مرة أخرى.',
+      missingText: 'Start timed practice',
+    },
+    {
+      hash: '#/sources',
+      localizedMessage: 'تعذر تحميل الأسئلة. حدّث الصفحة وحاول مرة أخرى.',
+      missingSelector: '[data-source-claims="current-question-bank"]:visible',
+    },
+    {
+      hash: '#/dashboard',
+      localizedMessage: 'تعذر تحميل بيانات لوحة المعلومات. حدّث الصفحة وحاول مرة أخرى.',
+      missingText: 'Answer more questions for a steadier local signal',
+    },
+  ];
+
+  try {
+    for (const { hash, localizedMessage, missingSelector, missingText } of routeCases) {
+      const page = await browser.newPage();
+      const pageErrors: string[] = [];
+      const questionBankRequests: string[] = [];
+
+      try {
+        page.on('pageerror', (error) => pageErrors.push(error.message));
+        await seedStaticNetworkRun(page, 'ar');
+        await trapExternalRequests(page, new URL(failedStaticSite.baseUrl).origin, []);
+        page.on('request', (request) => {
+          if (new URL(request.url()).pathname.endsWith('/questions.js')) {
+            questionBankRequests.push(request.url());
+          }
+        });
+
+        await page.goto(`${failedStaticSite.baseUrl}/${hash}`, { waitUntil: 'domcontentloaded' });
+        await expect(page.locator('html')).toHaveAttribute('lang', 'ar');
+        await expect(page.getByText(localizedMessage, { exact: true })).toBeVisible();
+        await expect(
+          page.getByText('Questions could not be loaded. Refresh the page and try again.', {
+            exact: true,
+          }),
+        ).toHaveCount(0);
+        await expect(
+          page.getByText('Dashboard data could not be loaded. Refresh the page and try again.', {
+            exact: true,
+          }),
+        ).toHaveCount(0);
         expect(questionBankRequests.length, `${hash} should request questions.js`).toBeGreaterThan(
           0,
         );
