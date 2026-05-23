@@ -20,6 +20,10 @@ function loadTs(rel) {
   return require(path.join(repoRoot, rel));
 }
 
+function read(rel) {
+  return fs.readFileSync(path.join(repoRoot, rel), 'utf8');
+}
+
 test('monetization TypeScript schema stays in parity with validator expectations', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
     cwd: repoRoot,
@@ -160,6 +164,26 @@ test('temporary Pro expiry parsing stays on the shared canonical timestamp helpe
   assert.doesNotMatch(effectiveSource, /function parseCanonicalUtcIsoTimestamp/);
   assert.doesNotMatch(effectiveSource, /new Date\(iso\)/);
   assert.doesNotMatch(effectiveSource, /Date\.parse\(/);
+});
+
+test('referral onboarding eligibility schema parity keeps protected RPC and client wrapper aligned', () => {
+  const migration = read('supabase/migrations/0004_referral_onboarding_eligibility.sql');
+  const wrapper = read('lib/referral/referralEligibility.ts');
+
+  assert.match(
+    migration,
+    /mark_referral_onboarding_complete\(opened_chapter_ids text\[\]\)/,
+  );
+  assert.match(migration, /returns table \([\s\S]*status text/);
+  assert.match(migration, /known_chapter_count < 3/);
+  assert.match(migration, /'insufficient_chapters'::text/);
+  assert.match(migration, /referral_onboarding_completed_at = now\(\)/);
+  assert.match(wrapper, /REFERRAL_ONBOARDING_REQUIRED_DISTINCT_CHAPTERS = 3/);
+  assert.match(wrapper, /KNOWN_REFERRAL_ONBOARDING_CHAPTER_IDS = chapters\.map/);
+  assert.match(wrapper, /client\.rpc\('mark_referral_onboarding_complete'/);
+  assert.match(wrapper, /opened_chapter_ids: normalizedChapterIds/);
+  assert.doesNotMatch(wrapper, /\.update\(/);
+  assert.doesNotMatch(wrapper, /from\('profiles'\)/);
 });
 
 test('monetization schema parity rejects entitlement optionality drift', () => {

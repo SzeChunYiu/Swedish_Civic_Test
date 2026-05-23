@@ -118,6 +118,40 @@ test('referral migration prevents direct client writes to grant columns', () => 
     migration,
     /grant update \([^)]*successful_referrals[^)]*\) on public\.profiles to authenticated/,
   );
+  assert.doesNotMatch(
+    migration,
+    /grant update \([^)]*referral_onboarding_completed_at[^)]*\) on public\.profiles to authenticated/,
+  );
+});
+
+test('referral onboarding eligibility migration protects the three chapters signal', () => {
+  const migration = read('supabase/migrations/0004_referral_onboarding_eligibility.sql');
+
+  assert.match(
+    migration,
+    /create or replace function public\.mark_referral_onboarding_complete\(opened_chapter_ids text\[\]\)/,
+  );
+  assert.match(migration, /security definer/);
+  assert.match(migration, /auth\.uid\(\)/);
+  assert.match(migration, /count\(distinct opened\.chapter_id\)::integer/);
+  assert.match(migration, /opened_chapter_ids/);
+  assert.match(migration, /'ch01'/);
+  assert.match(migration, /'ch02'/);
+  assert.match(migration, /'ch03'/);
+  assert.match(migration, /known_chapter_count < 3/);
+  assert.match(migration, /'insufficient_chapters'::text/);
+  assert.match(migration, /'profile_missing'::text/);
+  assert.match(migration, /'already_completed'::text/);
+  assert.match(migration, /'completed'::text/);
+  assert.match(migration, /update public\.profiles[\s\S]*referral_onboarding_completed_at = now\(\)/);
+  assert.match(
+    migration,
+    /grant execute on function public\.mark_referral_onboarding_complete\(text\[\]\) to authenticated/,
+  );
+  assert.doesNotMatch(
+    migration,
+    /grant update \([^)]*referral_onboarding_completed_at[^)]*\) on public\.profiles to authenticated/,
+  );
 });
 
 test('redeemReferral calls only the bounded redeem_referral RPC and maps grant expiry', async () => {
@@ -164,6 +198,118 @@ test('redeemReferral fails closed for malformed codes and unknown RPC statuses',
   assert.equal(result.successfulReferrals, null);
 });
 
+test('redeemReferral surfaces onboarding_incomplete until eligibility signal exists', async () => {
+  const { redeemReferral } = loadTs('lib/referral/redeemReferral.ts');
+  const { calls, client } = makeRpcClient([
+    {
+      pro_grant_expires_at: null,
+      status: 'onboarding_incomplete',
+      successful_referrals: 0,
+    },
+  ]);
+
+  const result = await redeemReferral(client, 'ABCD12EF');
+
+  assert.deepEqual(calls, [
+    {
+      functionName: 'redeem_referral',
+      params: { code: 'ABCD12EF' },
+    },
+  ]);
+  assert.equal(result.status, 'onboarding_incomplete');
+  assert.equal(result.proGrantExpiresAtIso, null);
+  assert.equal(result.successfulReferrals, 0);
+});
+
+test('referral onboarding eligibility wrapper sends only distinct known chapter ids', async () => {
+  const {
+    REFERRAL_ONBOARDING_REQUIRED_DISTINCT_CHAPTERS,
+    markReferralOnboardingComplete,
+    referralOnboardingChapterIds,
+  } = loadTs('lib/referral/referralEligibility.ts');
+  const { calls, client } = makeRpcClient([
+    {
+      distinct_chapters: 3,
+      referral_onboarding_completed_at: '2026-05-29T12:00:00+00:00',
+      status: 'completed',
+    },
+  ]);
+
+  assert.equal(REFERRAL_ONBOARDING_REQUIRED_DISTINCT_CHAPTERS, 3);
+  assert.deepEqual(
+    referralOnboardingChapterIds([
+      ' ch01 ',
+      'ch01',
+      'CH02',
+      '__proto__',
+      'constructor',
+      'ch99',
+      'ch03',
+      17,
+    ]),
+    ['ch01', 'ch02', 'ch03'],
+  );
+
+  const result = await markReferralOnboardingComplete(client, [
+    ' ch01 ',
+    'ch01',
+    'CH02',
+    '__proto__',
+    'constructor',
+    'ch99',
+    'ch03',
+    17,
+  ]);
+
+  assert.deepEqual(calls, [
+    {
+      functionName: 'mark_referral_onboarding_complete',
+      params: { opened_chapter_ids: ['ch01', 'ch02', 'ch03'] },
+    },
+  ]);
+  assert.deepEqual(result, {
+    distinctChapters: 3,
+    openedChapterIds: ['ch01', 'ch02', 'ch03'],
+    referralOnboardingCompletedAtIso: '2026-05-29T12:00:00.000Z',
+    status: 'completed',
+  });
+});
+
+test('referral onboarding eligibility wrapper bounds RPC statuses and counts', async () => {
+  const { markReferralOnboardingComplete } = loadTs('lib/referral/referralEligibility.ts');
+  const unknown = makeRpcClient([
+    {
+      distinct_chapters: 99,
+      referral_onboarding_completed_at: 'not-a-date',
+      status: 'grant_everything',
+    },
+  ]);
+  const errored = makeRpcClient(null);
+  errored.client.rpc = async function rpc(functionName, params) {
+    errored.calls.push({ functionName, params });
+    return { data: null, error: { message: 'network down' } };
+  };
+
+  assert.deepEqual(await markReferralOnboardingComplete(unknown.client, ['ch01']), {
+    distinctChapters: 0,
+    openedChapterIds: ['ch01'],
+    referralOnboardingCompletedAtIso: null,
+    status: 'error',
+  });
+  assert.deepEqual(await markReferralOnboardingComplete(errored.client, ['ch01', 'ch02']), {
+    distinctChapters: 2,
+    openedChapterIds: ['ch01', 'ch02'],
+    referralOnboardingCompletedAtIso: null,
+    status: 'error',
+  });
+  assert.deepEqual(errored.calls, [
+    {
+      functionName: 'mark_referral_onboarding_complete',
+      params: { opened_chapter_ids: ['ch01', 'ch02'] },
+    },
+  ]);
+});
+
 test('fetchReferralGrantSnapshot reads only the signed-in profile grant expiry', async () => {
   const { fetchReferralGrantSnapshot } = loadTs('lib/referral/redeemReferral.ts');
   const calls = [];
@@ -205,13 +351,19 @@ test('fetchReferralGrantSnapshot reads only the signed-in profile grant expiry',
 });
 
 test('referral client wrapper source does not write profile grant state directly', () => {
-  const source = read('lib/referral/redeemReferral.ts');
+  const redeemSource = read('lib/referral/redeemReferral.ts');
+  const eligibilitySource = read('lib/referral/referralEligibility.ts');
 
-  assert.match(source, /client\.rpc\('redeem_referral'/);
-  assert.match(source, /from\('profiles'\)/);
-  assert.match(source, /select\('pro_grant_expires_at'\)/);
-  assert.doesNotMatch(source, /\.insert\(/);
-  assert.doesNotMatch(source, /\.upsert\(/);
-  assert.doesNotMatch(source, /\.update\(/);
-  assert.doesNotMatch(source, /pro_grant_expires_at:\s*expires/);
+  assert.match(redeemSource, /client\.rpc\('redeem_referral'/);
+  assert.match(redeemSource, /from\('profiles'\)/);
+  assert.match(redeemSource, /select\('pro_grant_expires_at'\)/);
+  assert.match(eligibilitySource, /client\.rpc\('mark_referral_onboarding_complete'/);
+  assert.match(eligibilitySource, /opened_chapter_ids: normalizedChapterIds/);
+  for (const source of [redeemSource, eligibilitySource]) {
+    assert.doesNotMatch(source, /\.insert\(/);
+    assert.doesNotMatch(source, /\.upsert\(/);
+    assert.doesNotMatch(source, /\.update\(/);
+    assert.doesNotMatch(source, /pro_grant_expires_at:\s*expires/);
+    assert.doesNotMatch(source, /referral_onboarding_completed_at:\s*completed/);
+  }
 });
