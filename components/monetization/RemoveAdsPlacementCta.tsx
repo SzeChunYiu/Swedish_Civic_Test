@@ -4,9 +4,11 @@ import { StyleSheet, Text, View } from 'react-native';
 import { adBannerCopy } from '../../lib/monetization/adCopy';
 import { isStrictEntitlementFlag } from '../../lib/monetization/premium';
 import {
+  PURCHASE_UNAVAILABLE_REASONS,
   REMOVE_ADS_PRICE_LABEL,
   buyRemoveAds,
   restoreRemoveAdsPurchase,
+  type PurchaseUnavailableReason,
   type RemoveAdsPurchaseStatus,
 } from '../../lib/monetization/purchases';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
@@ -44,6 +46,14 @@ type RemoveAdsPlacementCtaCopy = {
 
 type ActivePurchaseAction = 'buy' | 'restore';
 type PlacementPurchaseStatus = RemoveAdsPurchaseStatus | 'error' | 'unavailable';
+type PlacementUnavailableCopy = {
+  body: string;
+  buyAccessibilityHint: string;
+  buyLabel: string;
+  restoreAccessibilityHint: string;
+  restoreLabel: string;
+  statusMessage: string;
+};
 
 const removeAdsPlacementCtaCopy: Record<AppLanguage, RemoveAdsPlacementCtaCopy> = {
   sv: {
@@ -130,6 +140,40 @@ const removeAdsPlacementCtaCopy: Record<AppLanguage, RemoveAdsPlacementCtaCopy> 
   },
 };
 
+function assertNeverPurchaseUnavailableReason(reason: never): never {
+  throw new Error(`Unhandled Remove Ads unavailable reason: ${String(reason)}`);
+}
+
+function getPlacementUnavailableCopy(
+  reason: PurchaseUnavailableReason | undefined,
+  copy: RemoveAdsPlacementCtaCopy,
+): PlacementUnavailableCopy | undefined {
+  switch (reason) {
+    case undefined:
+      return undefined;
+    case PURCHASE_UNAVAILABLE_REASONS.webStoreUnavailable:
+      return {
+        body: copy.webUnavailableBody(REMOVE_ADS_PRICE_LABEL),
+        buyAccessibilityHint: copy.webUnavailableAccessibilityHint,
+        buyLabel: copy.buyUnavailable,
+        restoreAccessibilityHint: copy.webUnavailableAccessibilityHint,
+        restoreLabel: copy.restoreUnavailable,
+        statusMessage: copy.statusMessages.unavailable,
+      };
+    case PURCHASE_UNAVAILABLE_REASONS.nativeReceiptValidatorUnavailable:
+      return {
+        body: copy.nativeUnavailableBody(REMOVE_ADS_PRICE_LABEL),
+        buyAccessibilityHint: copy.nativeUnavailableAccessibilityHint,
+        buyLabel: copy.buyNativeUnavailable,
+        restoreAccessibilityHint: copy.nativeUnavailableAccessibilityHint,
+        restoreLabel: copy.restoreNativeUnavailable,
+        statusMessage: copy.nativeUnavailableStatus,
+      };
+    default:
+      return assertNeverPurchaseUnavailableReason(reason);
+  }
+}
+
 export function RemoveAdsPlacementCta({ placement }: { placement: AdPlacement }) {
   const language = useSettingsStore((state) => state.language);
   const copy = removeAdsPlacementCtaCopy[language];
@@ -143,11 +187,11 @@ export function RemoveAdsPlacementCta({ placement }: { placement: AdPlacement })
   const purchaseActionInFlightRef = useRef(false);
 
   if (!entitlementsReady || isStrictEntitlementFlag(entitlements.adsDisabled)) return null;
-  const webPurchaseUnavailable =
-    purchaseRuntime?.purchaseUnavailableReason === 'web_store_unavailable';
-  const nativePurchaseUnavailable =
-    purchaseRuntime?.purchaseUnavailableReason === 'native_receipt_validator_unavailable';
-  const purchaseUnavailable = webPurchaseUnavailable || nativePurchaseUnavailable;
+  const unavailableCopy = getPlacementUnavailableCopy(
+    purchaseRuntime?.purchaseUnavailableReason,
+    copy,
+  );
+  const purchaseUnavailable = unavailableCopy !== undefined;
 
   async function runPurchaseAction(
     action: ActivePurchaseAction,
@@ -176,10 +220,8 @@ export function RemoveAdsPlacementCta({ placement }: { placement: AdPlacement })
   }
 
   const actionsDisabled = activeAction !== null || purchaseUnavailable;
-  const statusMessage = purchaseUnavailable
-    ? nativePurchaseUnavailable
-      ? copy.nativeUnavailableStatus
-      : copy.statusMessages.unavailable
+  const statusMessage = unavailableCopy
+    ? unavailableCopy.statusMessage
     : status
       ? copy.statusMessages[status]
       : undefined;
@@ -192,23 +234,11 @@ export function RemoveAdsPlacementCta({ placement }: { placement: AdPlacement })
           <Text accessibilityRole="header" style={styles.title}>
             {copy.title(placementLabel)}
           </Text>
-          <Text style={styles.body}>
-            {nativePurchaseUnavailable
-              ? copy.nativeUnavailableBody(REMOVE_ADS_PRICE_LABEL)
-              : webPurchaseUnavailable
-                ? copy.webUnavailableBody(REMOVE_ADS_PRICE_LABEL)
-                : copy.body}
-          </Text>
+          <Text style={styles.body}>{unavailableCopy?.body ?? copy.body}</Text>
         </View>
         <View style={styles.actions}>
           <Button
-            accessibilityHint={
-              nativePurchaseUnavailable
-                ? copy.nativeUnavailableAccessibilityHint
-                : webPurchaseUnavailable
-                  ? copy.webUnavailableAccessibilityHint
-                  : copy.buyAccessibilityHint
-            }
+            accessibilityHint={unavailableCopy?.buyAccessibilityHint ?? copy.buyAccessibilityHint}
             accessibilityLabel={copy.buyAccessibilityLabel(REMOVE_ADS_PRICE_LABEL)}
             accessibilityRole="button"
             accessibilityState={{ busy: activeAction === 'buy', disabled: actionsDisabled }}
@@ -218,19 +248,11 @@ export function RemoveAdsPlacementCta({ placement }: { placement: AdPlacement })
           >
             {activeAction === 'buy'
               ? copy.buying
-              : nativePurchaseUnavailable
-                ? copy.buyNativeUnavailable
-                : webPurchaseUnavailable
-                  ? copy.buyUnavailable
-                  : copy.buyIdle(REMOVE_ADS_PRICE_LABEL)}
+              : (unavailableCopy?.buyLabel ?? copy.buyIdle(REMOVE_ADS_PRICE_LABEL))}
           </Button>
           <Button
             accessibilityHint={
-              nativePurchaseUnavailable
-                ? copy.nativeUnavailableAccessibilityHint
-                : webPurchaseUnavailable
-                  ? copy.webUnavailableAccessibilityHint
-                  : copy.restoreAccessibilityHint
+              unavailableCopy?.restoreAccessibilityHint ?? copy.restoreAccessibilityHint
             }
             accessibilityLabel={copy.restoreAccessibilityLabel}
             accessibilityRole="button"
@@ -242,11 +264,7 @@ export function RemoveAdsPlacementCta({ placement }: { placement: AdPlacement })
           >
             {activeAction === 'restore'
               ? copy.restoring
-              : nativePurchaseUnavailable
-                ? copy.restoreNativeUnavailable
-                : webPurchaseUnavailable
-                  ? copy.restoreUnavailable
-                  : copy.restoreIdle}
+              : (unavailableCopy?.restoreLabel ?? copy.restoreIdle)}
           </Button>
         </View>
       </View>

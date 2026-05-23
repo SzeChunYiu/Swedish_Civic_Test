@@ -45,7 +45,7 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
       /async function revalidateStoredRemoveAdsEntitlementRecordWithConnectedProvider\(\{[\s\S]*?\nfunction createResult/,
     )?.[0] ?? '';
 
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 39);
+  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 40);
   assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
   assert.match(purchaseSource, /REMOVE_ADS_RECORD_SCHEMA_VERSION = 1/);
   assert.match(purchaseSource, /interface RemoveAdsProductMetadata/);
@@ -115,13 +115,19 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   );
   assert.match(purchaseSource, /isConsumable: false/);
   assert.match(purchaseSource, /type: 'in-app'/);
+  assert.match(purchaseSource, /export const PURCHASE_UNAVAILABLE_REASONS = \{/);
+  assert.match(purchaseSource, /export type PurchaseUnavailableReason =/);
+  assert.match(purchaseSource, /purchaseUnavailableReason\?: PurchaseUnavailableReason/);
   assert.match(placementCtaSource, /restoreRemoveAdsPurchase/);
   assert.match(placementCtaSource, /runPurchaseAction\('restore', restoreRemoveAdsPurchase\)/);
-  assert.match(placementCtaSource, /purchaseUnavailableReason === 'web_store_unavailable'/);
+  assert.match(placementCtaSource, /function getPlacementUnavailableCopy/);
+  assert.match(placementCtaSource, /PURCHASE_UNAVAILABLE_REASONS\.webStoreUnavailable/);
   assert.match(
     placementCtaSource,
-    /purchaseUnavailableReason === 'native_receipt_validator_unavailable'/,
+    /PURCHASE_UNAVAILABLE_REASONS\.nativeReceiptValidatorUnavailable/,
   );
+  assert.match(placementCtaSource, /assertNeverPurchaseUnavailableReason\(reason\)/);
+  assert.doesNotMatch(placementCtaSource, /purchaseUnavailableReason === ['"]/);
   assert.match(placementCtaSource, /copy\.webUnavailableBody\(REMOVE_ADS_PRICE_LABEL\)/);
   assert.match(placementCtaSource, /copy\.nativeUnavailableBody\(REMOVE_ADS_PRICE_LABEL\)/);
   assert.match(placementCtaSource, /copy\.webUnavailableAccessibilityHint/);
@@ -160,8 +166,13 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.match(paywallSource, /Butiken kunde inte markera köpet som slutfört/);
   assert.match(paywallSource, /useRemoveAdsPriceLabel\(purchaseRuntime, priceLabel\)/);
   assert.match(paywallSource, /resolvedPriceLabel/);
-  assert.match(paywallSource, /copy\.webUnavailableBody\(resolvedPriceLabel\)/);
-  assert.match(paywallSource, /copy\.nativeUnavailableBody\(resolvedPriceLabel\)/);
+  assert.match(paywallSource, /function getPremiumUnavailableCopy/);
+  assert.match(paywallSource, /PURCHASE_UNAVAILABLE_REASONS\.webStoreUnavailable/);
+  assert.match(paywallSource, /PURCHASE_UNAVAILABLE_REASONS\.nativeReceiptValidatorUnavailable/);
+  assert.match(paywallSource, /assertNeverPurchaseUnavailableReason\(reason\)/);
+  assert.doesNotMatch(paywallSource, /purchaseUnavailableReason === ['"]/);
+  assert.match(paywallSource, /copy\.webUnavailableBody\(priceLabel\)/);
+  assert.match(paywallSource, /copy\.nativeUnavailableBody\(priceLabel\)/);
   assert.match(paywallSource, /copy\.body\(resolvedPriceLabel\)/);
   assert.match(paywallSource, /copy\.buyAccessibilityLabel\(resolvedPriceLabel\)/);
   assert.match(paywallSource, /copy\.buyIdle\(resolvedPriceLabel\)/);
@@ -250,7 +261,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/components/monetization/RemoveAdsPlacementCta.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace("purchaseRuntime?.purchaseUnavailableReason === 'web_store_unavailable'", 'false');
+      .replace('case PURCHASE_UNAVAILABLE_REASONS.webStoreUnavailable:', 'case undefined:');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -264,7 +275,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /RemoveAdsPlacementCta must render localized mobile-app-only copy when web purchases are unavailable|RemoveAdsPlacementCta must disable buy and restore actions for unavailable web purchase runtime/,
+    /RemoveAdsPlacementCta must route unavailable reason copy through an exhaustive typed helper|RemoveAdsPlacementCta must render localized mobile-app-only copy when web purchases are unavailable|RemoveAdsPlacementCta must disable buy and restore actions for unavailable web purchase runtime/,
   );
 });
 

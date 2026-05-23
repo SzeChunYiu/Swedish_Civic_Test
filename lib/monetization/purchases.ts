@@ -93,8 +93,16 @@ export interface RemoveAdsPurchaseResult {
   transactionId?: string | null;
 }
 
+export const PURCHASE_UNAVAILABLE_REASONS = {
+  nativeReceiptValidatorUnavailable: 'native_receipt_validator_unavailable',
+  webStoreUnavailable: 'web_store_unavailable',
+} as const;
+
+export type PurchaseUnavailableReason =
+  (typeof PURCHASE_UNAVAILABLE_REASONS)[keyof typeof PURCHASE_UNAVAILABLE_REASONS];
+
 export interface PurchaseRuntimeOptions {
-  purchaseUnavailableReason?: 'web_store_unavailable' | 'native_receipt_validator_unavailable';
+  purchaseUnavailableReason?: PurchaseUnavailableReason;
   provider?: RemoveAdsPurchaseProvider;
   storage?: PurchaseStorage;
 }

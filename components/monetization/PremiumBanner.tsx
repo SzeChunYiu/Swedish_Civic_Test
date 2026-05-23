@@ -1,13 +1,18 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { buyRemoveAds, restoreRemoveAdsPurchase } from '../../lib/monetization/purchases';
+import {
+  PURCHASE_UNAVAILABLE_REASONS,
+  buyRemoveAds,
+  restoreRemoveAdsPurchase,
+} from '../../lib/monetization/purchases';
 import {
   createDefaultPurchaseRuntimeOptions,
   useRemoveAdsPriceLabel,
 } from '../../lib/monetization/useRemoveAdsEntitlements';
 import type {
   PurchaseRuntimeOptions,
+  PurchaseUnavailableReason,
   RemoveAdsPurchaseStatus,
 } from '../../lib/monetization/purchases';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
@@ -19,6 +24,14 @@ import { Button } from '../Button';
 
 type PurchaseAction = 'buy' | 'restore';
 type PurchaseUiStatus = RemoveAdsPurchaseStatus | 'idle' | 'error' | 'unavailable';
+type PremiumUnavailableCopy = {
+  body: string;
+  buyAccessibilityHint: string;
+  buyLabel: string;
+  restoreAccessibilityHint: string;
+  restoreLabel: string;
+  statusMessage: string;
+};
 type PremiumBannerCopy = {
   body: (price: string) => string;
   buyAccessibilityHint: string;
@@ -141,6 +154,41 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
   },
 };
 
+function assertNeverPurchaseUnavailableReason(reason: never): never {
+  throw new Error(`Unhandled Remove Ads unavailable reason: ${String(reason)}`);
+}
+
+function getPremiumUnavailableCopy(
+  reason: PurchaseUnavailableReason | undefined,
+  copy: PremiumBannerCopy,
+  priceLabel: string,
+): PremiumUnavailableCopy | undefined {
+  switch (reason) {
+    case undefined:
+      return undefined;
+    case PURCHASE_UNAVAILABLE_REASONS.webStoreUnavailable:
+      return {
+        body: copy.webUnavailableBody(priceLabel),
+        buyAccessibilityHint: copy.webUnavailableAccessibilityHint,
+        buyLabel: copy.buyUnavailable,
+        restoreAccessibilityHint: copy.webUnavailableAccessibilityHint,
+        restoreLabel: copy.restoreUnavailable,
+        statusMessage: copy.statusMessages.unavailable,
+      };
+    case PURCHASE_UNAVAILABLE_REASONS.nativeReceiptValidatorUnavailable:
+      return {
+        body: copy.nativeUnavailableBody(priceLabel),
+        buyAccessibilityHint: copy.nativeUnavailableAccessibilityHint,
+        buyLabel: copy.buyNativeUnavailable,
+        restoreAccessibilityHint: copy.nativeUnavailableAccessibilityHint,
+        restoreLabel: copy.restoreNativeUnavailable,
+        statusMessage: copy.nativeUnavailableStatus,
+      };
+    default:
+      return assertNeverPurchaseUnavailableReason(reason);
+  }
+}
+
 function getStatusMessage(status: PurchaseUiStatus, copy: PremiumBannerCopy): string {
   return copy.statusMessages[status];
 }
@@ -171,11 +219,12 @@ export function PremiumBanner({
   const [status, setStatus] = useState<PurchaseUiStatus>('idle');
   const purchaseActionInFlightRef = useRef(false);
   const adsDisabled = currentEntitlements.adsDisabled === true;
-  const webPurchaseUnavailable =
-    purchaseRuntime?.purchaseUnavailableReason === 'web_store_unavailable';
-  const nativePurchaseUnavailable =
-    purchaseRuntime?.purchaseUnavailableReason === 'native_receipt_validator_unavailable';
-  const purchaseUnavailable = webPurchaseUnavailable || nativePurchaseUnavailable;
+  const unavailableCopy = getPremiumUnavailableCopy(
+    purchaseRuntime?.purchaseUnavailableReason,
+    copy,
+    resolvedPriceLabel,
+  );
+  const purchaseUnavailable = unavailableCopy !== undefined;
   const updateEntitlements = useCallback(
     (nextEntitlements: PremiumEntitlements) => {
       setCurrentEntitlements(nextEntitlements);
@@ -197,8 +246,8 @@ export function PremiumBanner({
           ? 'unavailable'
           : status;
   const statusMessage =
-    nativePurchaseUnavailable && visibleStatus === 'unavailable'
-      ? copy.nativeUnavailableStatus
+    unavailableCopy && visibleStatus === 'unavailable'
+      ? unavailableCopy.statusMessage
       : getStatusMessage(visibleStatus, copy);
   const actionsDisabled = activeAction !== null || adsDisabled || purchaseUnavailable;
 
@@ -234,22 +283,10 @@ export function PremiumBanner({
       <Text accessibilityRole="header" style={styles.title}>
         {adsDisabled ? copy.titleActive : copy.titleIdle}
       </Text>
-      <Text style={styles.meta}>
-        {nativePurchaseUnavailable
-          ? copy.nativeUnavailableBody(resolvedPriceLabel)
-          : webPurchaseUnavailable
-            ? copy.webUnavailableBody(resolvedPriceLabel)
-            : copy.body(resolvedPriceLabel)}
-      </Text>
+      <Text style={styles.meta}>{unavailableCopy?.body ?? copy.body(resolvedPriceLabel)}</Text>
       <View style={styles.actions}>
         <Button
-          accessibilityHint={
-            nativePurchaseUnavailable
-              ? copy.nativeUnavailableAccessibilityHint
-              : webPurchaseUnavailable
-                ? copy.webUnavailableAccessibilityHint
-                : copy.buyAccessibilityHint
-          }
+          accessibilityHint={unavailableCopy?.buyAccessibilityHint ?? copy.buyAccessibilityHint}
           accessibilityLabel={copy.buyAccessibilityLabel(resolvedPriceLabel)}
           accessibilityRole="button"
           accessibilityState={{
@@ -262,19 +299,11 @@ export function PremiumBanner({
         >
           {activeAction === 'buy'
             ? copy.buying
-            : nativePurchaseUnavailable
-              ? copy.buyNativeUnavailable
-              : webPurchaseUnavailable
-                ? copy.buyUnavailable
-                : copy.buyIdle(resolvedPriceLabel)}
+            : (unavailableCopy?.buyLabel ?? copy.buyIdle(resolvedPriceLabel))}
         </Button>
         <Button
           accessibilityHint={
-            nativePurchaseUnavailable
-              ? copy.nativeUnavailableAccessibilityHint
-              : webPurchaseUnavailable
-                ? copy.webUnavailableAccessibilityHint
-                : copy.restoreAccessibilityHint
+            unavailableCopy?.restoreAccessibilityHint ?? copy.restoreAccessibilityHint
           }
           accessibilityLabel={copy.restoreAccessibilityLabel}
           accessibilityRole="button"
@@ -286,11 +315,7 @@ export function PremiumBanner({
         >
           {activeAction === 'restore'
             ? copy.restoring
-            : nativePurchaseUnavailable
-              ? copy.restoreNativeUnavailable
-              : webPurchaseUnavailable
-                ? copy.restoreUnavailable
-                : copy.restoreIdle}
+            : (unavailableCopy?.restoreLabel ?? copy.restoreIdle)}
         </Button>
       </View>
       <Text

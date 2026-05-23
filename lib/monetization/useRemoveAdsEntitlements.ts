@@ -4,6 +4,7 @@ import { Platform } from 'react-native';
 import type { PremiumEntitlements } from '../../types/monetization';
 import { FREE_ENTITLEMENTS } from './premium';
 import {
+  PURCHASE_UNAVAILABLE_REASONS,
   REMOVE_ADS_PRICE_LABEL,
   createNativePurchaseProvider,
   createMockPurchaseProvider,
@@ -123,7 +124,7 @@ export function createDefaultPurchaseRuntimeOptions(
 
     defaultWebPurchaseRuntimeOptions ??= {
       provider: createUnavailableWebPurchaseProvider(),
-      purchaseUnavailableReason: 'web_store_unavailable',
+      purchaseUnavailableReason: PURCHASE_UNAVAILABLE_REASONS.webStoreUnavailable,
       storage: createWebPurchaseStorage(false),
     };
 
@@ -139,7 +140,7 @@ export function createDefaultPurchaseRuntimeOptions(
     }),
     purchaseUnavailableReason: receiptValidator
       ? undefined
-      : 'native_receipt_validator_unavailable',
+      : PURCHASE_UNAVAILABLE_REASONS.nativeReceiptValidatorUnavailable,
     storage: createSecureStorePurchaseStorage(),
   };
 
