@@ -736,6 +736,8 @@ const GENERATED_SINGLE_CHOICE_META_STEM_PATTERNS = [
   /^\s*Which answer best matches\?/i,
   /^\s*Choose the correct option:/i,
   /^\s*Which meaning is correct for\b/i,
+  /^\s*What is correct about .+?'s contents\?/i,
+  /^\s*Which fact is correct about .+?'s contents\?/i,
   /^\s*Vilket påstående är korrekt/i,
   /^\s*Vilket påstående stämmer bäst/i,
   /^\s*Which statement is correct/i,

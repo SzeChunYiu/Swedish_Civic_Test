@@ -114,6 +114,62 @@ test('derivePublishedQuestions creates four published UHR-referenced variants pe
   );
 });
 
+test('derivePublishedQuestions renders What is stated on prompts without possessive contents wording', () => {
+  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
+  const syntheticSource = {
+    id: 'q-synthetic-stated-on-card',
+    chapterId: 'ch04',
+    type: 'single_choice',
+    questionSv: 'Vad står på samhällskortet?',
+    questionEn: 'What is stated on the civic information card?',
+    options: [
+      {
+        id: 'a',
+        textSv: 'Vilken lokal personen ska gå till',
+        textEn: 'Which office the person should go to',
+      },
+      {
+        id: 'b',
+        textSv: 'Vilket parti personen måste välja',
+        textEn: 'Which party the person must choose',
+      },
+      { id: 'c', textSv: 'Hur grannarna har röstat', textEn: 'How the neighbours voted' },
+      { id: 'd', textSv: 'Att hjälp alltid är förbjuden', textEn: 'That help is always forbidden' },
+    ],
+    correctOptionId: 'a',
+    explanationSv: 'Kortet visar vilken lokal personen ska gå till.',
+    explanationEn: 'The card shows which office the person should go to.',
+    uhrReference: { chapter: 'Politiska val och partier', section: 'Rösta', pageApprox: 14 },
+    difficulty: 'easy',
+    reviewStatus: 'reviewed',
+    tags: ['synthetic-stated-on'],
+  };
+
+  const derived = derivePublishedQuestions([syntheticSource], 301);
+  assert.equal(derived[0].questionEn, 'What does the civic information card show?');
+  assert.equal(
+    derived[3].questionEn,
+    'Which fact about what the civic information card shows is correct?',
+  );
+  assert.doesNotMatch(
+    derived.map((question) => question.questionEn).join('\n'),
+    /\b(?:document|card|form|letter|information card)'s contents\b|\bcontents\?/i,
+  );
+
+  const { sourceQuestions } = loadTs('data/questions.ts');
+  const votingCardSource = sourceQuestions.find((question) => question.id === 'q167');
+  assert.ok(votingCardSource, 'q167 voting-card source question must exist');
+  const votingCardDerived = derivePublishedQuestions([votingCardSource], 844);
+  assert.equal(
+    votingCardDerived[0].questionEn,
+    'What does the voting card sent home before an election show?',
+  );
+  assert.equal(
+    votingCardDerived[3].questionEn,
+    'Which fact about what the voting card sent home before an election shows is correct?',
+  );
+});
+
 test('derivePublishedQuestions keeps generated single-choice variants at four options', () => {
   const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
   const source = {
