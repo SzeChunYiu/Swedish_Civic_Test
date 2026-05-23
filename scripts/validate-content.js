@@ -3382,6 +3382,56 @@ const EXPECTED_ONBOARDING_ROUTE_COPY_SNIPPETS = [
   ],
   ['{copy.adjustSettings}', 'onboarding settings link must render localized copy'],
 ];
+const EXPECTED_ONBOARDING_TEST_DATE_FEEDBACK_RULES = [
+  {
+    label: 'test-date input hint',
+    pattern: /accessibilityHint=\{copy\.testDateSubtitle\}/,
+  },
+  {
+    label: 'test-date feedback described-by',
+    pattern: /aria-describedby=\{testDateFeedbackMeta \? testDateFeedbackId : undefined\}/,
+  },
+  {
+    label: 'test-date invalid state',
+    pattern: /aria-invalid=\{testDateFeedback === 'invalid' \? true : undefined\}/,
+  },
+  {
+    label: 'test-date polite native live region',
+    pattern: /accessibilityLiveRegion="polite"/,
+  },
+  {
+    label: 'test-date polite web live region',
+    pattern: /aria-live="polite"/,
+  },
+  {
+    label: 'test-date invalid visible label',
+    pattern: /testDateInvalidStatusLabel: 'Check date:'/,
+  },
+  {
+    label: 'test-date saved visible label',
+    pattern: /testDateSavedStatusLabel: 'Saved:'/,
+  },
+  {
+    label: 'test-date invalid token styles',
+    pattern:
+      /testDateInputInvalid:\s*\{[\s\S]*backgroundColor: themeColors\.dangerSoft,[\s\S]*borderColor: themeColors\.danger,/,
+  },
+  {
+    label: 'test-date saved token styles',
+    pattern:
+      /testDateInputSaved:\s*\{[\s\S]*backgroundColor: themeColors\.successSoft,[\s\S]*borderColor: themeColors\.success,/,
+  },
+  {
+    label: 'test-date invalid feedback tone',
+    pattern:
+      /testDateFeedbackInvalid:\s*\{[\s\S]*backgroundColor: themeColors\.dangerSoft,[\s\S]*borderColor: themeColors\.danger,[\s\S]*color: themeColors\.danger,/,
+  },
+  {
+    label: 'test-date saved feedback tone',
+    pattern:
+      /testDateFeedbackSaved:\s*\{[\s\S]*backgroundColor: themeColors\.successSoft,[\s\S]*borderColor: themeColors\.success,[\s\S]*color: themeColors\.success,/,
+  },
+];
 const EXPECTED_SCREEN_SHELL_LAYOUT_RULES = [
   {
     label: 'ScrollView import',
@@ -16965,6 +17015,11 @@ function validateOnboardingRouteCopyParity() {
 
   EXPECTED_ONBOARDING_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!onboardingRoute.includes(snippet)) reject(message);
+  });
+  EXPECTED_ONBOARDING_TEST_DATE_FEEDBACK_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(onboardingRoute)) {
+      reject(`onboarding route missing ${expectedRule.label}`);
+    }
   });
   if (/const\s+onboardingDailyGoalPresetValues[\s\S]{0,120}=\s*\[/.test(onboardingRoute)) {
     reject('onboarding daily goal preset values must not be an inline numeric tuple');

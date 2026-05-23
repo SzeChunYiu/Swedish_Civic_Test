@@ -58,7 +58,9 @@ type OnboardingCopy = {
   testDateInputAccessibilityLabel: string;
   testDateInputPlaceholder: string;
   testDateInvalid: string;
+  testDateInvalidStatusLabel: string;
   testDateSaved: (formattedDate: string) => string;
+  testDateSavedStatusLabel: string;
   testDateSkip: string;
   testDateSkipAccessibilityLabel: string;
   testDateSubtitle: string;
@@ -117,7 +119,9 @@ const onboardingCopy: Record<AppLanguage, OnboardingCopy> = {
     testDateInputAccessibilityLabel: 'Ange provdatum som ÅÅÅÅ-MM-DD',
     testDateInputPlaceholder: '2026-08-15',
     testDateInvalid: 'Använd formatet ÅÅÅÅ-MM-DD eller hoppa över tills du har bokat.',
+    testDateInvalidStatusLabel: 'Kontrollera datumet:',
     testDateSaved: (formattedDate) => `Sparat provdatum: ${formattedDate}.`,
+    testDateSavedStatusLabel: 'Sparat:',
     testDateSkip: 'Jag har inte bokat än',
     testDateSkipAccessibilityLabel: 'Fortsätt utan bokat provdatum',
     testDateSubtitle:
@@ -173,7 +177,9 @@ const onboardingCopy: Record<AppLanguage, OnboardingCopy> = {
     testDateInputAccessibilityLabel: 'Enter test date as YYYY-MM-DD',
     testDateInputPlaceholder: '2026-08-15',
     testDateInvalid: "Use YYYY-MM-DD, or skip until you've booked.",
+    testDateInvalidStatusLabel: 'Check date:',
     testDateSaved: (formattedDate) => `Test date saved: ${formattedDate}.`,
+    testDateSavedStatusLabel: 'Saved:',
     testDateSkip: "I haven't booked it yet",
     testDateSkipAccessibilityLabel: 'Continue without a booked test date',
     testDateSubtitle:
@@ -207,11 +213,20 @@ export default function Screen() {
   );
   const [busyProvider, setBusyProvider] = useState<AuthProviderId | null>(null);
   const copy = onboardingCopy[language];
-  const testDateFeedbackText =
+  const testDateFeedbackId = 'onboarding-test-date-feedback';
+  const testDateFeedbackMeta =
     testDateFeedback === 'invalid'
-      ? copy.testDateInvalid
+      ? {
+          label: copy.testDateInvalidStatusLabel,
+          text: copy.testDateInvalid,
+          tone: 'invalid' as const,
+        }
       : testDateFeedback === 'saved' && studyPlanTestDateIso
-        ? copy.testDateSaved(formatExamDate(new Date(studyPlanTestDateIso), language))
+        ? {
+            label: copy.testDateSavedStatusLabel,
+            text: copy.testDateSaved(formatExamDate(new Date(studyPlanTestDateIso), language)),
+            tone: 'saved' as const,
+          }
         : null;
 
   useEffect(() => {
@@ -382,6 +397,9 @@ export default function Screen() {
         </Text>
         <Text style={styles.goalSubtitle}>{copy.testDateSubtitle}</Text>
         <TextInput
+          aria-describedby={testDateFeedbackMeta ? testDateFeedbackId : undefined}
+          aria-invalid={testDateFeedback === 'invalid' ? true : undefined}
+          accessibilityHint={copy.testDateSubtitle}
           accessibilityLabel={copy.testDateInputAccessibilityLabel}
           inputMode="numeric"
           keyboardType="numbers-and-punctuation"
@@ -389,11 +407,37 @@ export default function Screen() {
           onChangeText={handleTestDateChange}
           placeholder={copy.testDateInputPlaceholder}
           placeholderTextColor={themeColors.textMuted}
-          style={styles.testDateInput}
+          style={[
+            styles.testDateInput,
+            testDateFeedback === 'invalid' ? styles.testDateInputInvalid : null,
+            testDateFeedback === 'saved' ? styles.testDateInputSaved : null,
+          ]}
           value={testDateInput}
         />
-        {testDateFeedbackText ? (
-          <Text style={styles.goalSubtitle}>{testDateFeedbackText}</Text>
+        {testDateFeedbackMeta ? (
+          <Text
+            nativeID={testDateFeedbackId}
+            accessibilityLiveRegion="polite"
+            aria-live="polite"
+            style={[
+              styles.testDateFeedback,
+              testDateFeedbackMeta.tone === 'invalid'
+                ? styles.testDateFeedbackInvalid
+                : styles.testDateFeedbackSaved,
+            ]}
+          >
+            <Text
+              style={[
+                styles.testDateFeedbackLabel,
+                testDateFeedbackMeta.tone === 'invalid'
+                  ? styles.testDateFeedbackLabelInvalid
+                  : styles.testDateFeedbackLabelSaved,
+              ]}
+            >
+              {testDateFeedbackMeta.label}{' '}
+            </Text>
+            {testDateFeedbackMeta.text}
+          </Text>
         ) : null}
         <Pressable
           accessibilityLabel={copy.testDateSkipAccessibilityLabel}
@@ -586,6 +630,43 @@ function createStyles(themeColors: ThemeColors) {
       minHeight: space[6],
       paddingHorizontal: space[1.5],
       paddingVertical: space[1],
+    },
+    testDateInputInvalid: {
+      backgroundColor: themeColors.dangerSoft,
+      borderColor: themeColors.danger,
+      borderWidth: space.divider,
+    },
+    testDateInputSaved: {
+      backgroundColor: themeColors.successSoft,
+      borderColor: themeColors.success,
+      borderWidth: space.divider,
+    },
+    testDateFeedback: {
+      borderRadius: radius.micro,
+      borderWidth: space.hairline,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+      paddingHorizontal: space[1.25],
+      paddingVertical: space[1],
+    },
+    testDateFeedbackInvalid: {
+      backgroundColor: themeColors.dangerSoft,
+      borderColor: themeColors.danger,
+      color: themeColors.danger,
+    },
+    testDateFeedbackSaved: {
+      backgroundColor: themeColors.successSoft,
+      borderColor: themeColors.success,
+      color: themeColors.success,
+    },
+    testDateFeedbackLabel: {
+      fontWeight: typography.bodyBold.fontWeight,
+    },
+    testDateFeedbackLabelInvalid: {
+      color: themeColors.danger,
+    },
+    testDateFeedbackLabelSaved: {
+      color: themeColors.success,
     },
     testDateSkipButton: {
       alignItems: 'center',

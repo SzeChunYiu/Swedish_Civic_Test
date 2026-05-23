@@ -80,6 +80,10 @@ test('onboarding route title stays accessible as a header', () => {
   assert.match(source, /When is your test\?/);
   assert.match(source, /Ange provdatum som ÅÅÅÅ-MM-DD/);
   assert.match(source, /Enter test date as YYYY-MM-DD/);
+  assert.match(source, /testDateInvalidStatusLabel: 'Kontrollera datumet:'/);
+  assert.match(source, /testDateInvalidStatusLabel: 'Check date:'/);
+  assert.match(source, /testDateSavedStatusLabel: 'Sparat:'/);
+  assert.match(source, /testDateSavedStatusLabel: 'Saved:'/);
   assert.match(source, /Jag har inte bokat än/);
   assert.match(source, /I haven't booked it yet/);
   assert.doesNotMatch(source, /Get a daily plan|questions\/day|mocks this week|59 kr/);
@@ -99,8 +103,18 @@ test('onboarding route title stays accessible as a header', () => {
   assert.match(source, /<TextInput/);
   assert.match(source, /accessibilityLabel=\{copy\.testDateInputAccessibilityLabel\}/);
   assert.match(source, /placeholder=\{copy\.testDateInputPlaceholder\}/);
+  assert.match(source, /accessibilityHint=\{copy\.testDateSubtitle\}/);
+  assert.match(source, /aria-describedby=\{testDateFeedbackMeta \? testDateFeedbackId : undefined\}/);
+  assert.match(source, /aria-invalid=\{testDateFeedback === 'invalid' \? true : undefined\}/);
   assert.match(source, /keyboardType="numbers-and-punctuation"/);
   assert.match(source, /maxLength=\{10\}/);
+  assert.match(source, /nativeID=\{testDateFeedbackId\}/);
+  assert.match(source, /accessibilityLiveRegion="polite"/);
+  assert.match(source, /aria-live="polite"/);
+  assert.match(source, /styles\.testDateInputInvalid/);
+  assert.match(source, /styles\.testDateInputSaved/);
+  assert.match(source, /styles\.testDateFeedbackInvalid/);
+  assert.match(source, /styles\.testDateFeedbackSaved/);
   assert.match(source, /accessibilityLabel=\{copy\.testDateSkipAccessibilityLabel\}/);
   assert.match(source, /accessibilityLabel=\{copy\.decideLaterAccessibilityLabel\}/);
   assert.match(
