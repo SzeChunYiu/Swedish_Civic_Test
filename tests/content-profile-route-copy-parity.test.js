@@ -117,6 +117,9 @@ test('profile route keeps Pro comparison separate from the Remove Ads purchase f
   assert.match(proPaywallSource, /buyProLifetime/);
   assert.match(proPaywallSource, /restoreProLifetime/);
   assert.doesNotMatch(proPaywallSource, /buyRemoveAds|restoreRemoveAdsPurchase/);
+  assert.match(proPaywallSource, /priceRowLabel: 'Price'/);
+  assert.match(proPaywallSource, /priceRowLabel: 'Pris'/);
+  assert.match(proPaywallSource, /copy\.priceRowLabel/);
   assert.match(proPaywallSource, /PRO_LIFETIME_PRICE_LABEL/);
   assert.match(proPaywallSource, /Pro is a separate one-time purchase with ad-free study/);
   assert.match(
@@ -139,6 +142,30 @@ test('profile route keeps Pro comparison separate from the Remove Ads purchase f
   assert.doesNotMatch(proPaywallSource, /Compare Pro features|Jämför Pro-funktioner/);
   assert.doesNotMatch(proPaywallSource, /accessibilityState=\{\{ expanded:/);
   assert.doesNotMatch(proPaywallSource, /\{comparisonVisible \? \(/);
+});
+
+test('profile Pro comparison browser coverage is separate from Remove Ads hydration coverage', () => {
+  const proSpec = fs.readFileSync(
+    path.join(repoRoot, 'tests/e2e/pro-paywall-comparison.spec.ts'),
+    'utf8',
+  );
+  const removeAdsSpec = fs.readFileSync(
+    path.join(repoRoot, 'tests/e2e/profile-remove-ads-pending.spec.ts'),
+    'utf8',
+  );
+
+  assert.match(proSpec, /__SMT_E2E__:\s*true/);
+  assert.match(proSpec, /__SMT_ENABLE_PRO_RUNTIME_SCOPE__:\s*true/);
+  assert.match(proSpec, /Compare Free, Ad-Free, and Pro/);
+  assert.match(
+    proSpec,
+    /Price\. Free: Free forever\. Ad-Free: 29 SEK · one-time\. Pro: 59 SEK · one-time/,
+  );
+  assert.match(proSpec, /best value/i);
+  assert.match(proSpec, /limited\[- \]time/i);
+  assert.match(proSpec, /Buy Remove Ads for 29 SEK/);
+  assert.match(removeAdsSpec, /Remove Ads hydration hides Profile paywall/);
+  assert.doesNotMatch(removeAdsSpec, /Compare Free, Ad-Free, and Pro/);
 });
 
 test('profile premium banner keeps current Remove Ads purchase and recovery contract', () => {
@@ -174,7 +201,7 @@ test('profile premium banner keeps current Remove Ads purchase and recovery cont
   );
   assert.match(
     bannerSource,
-    /const visibleStatus =[\s\S]*status === 'finish_failed'[\s\S]*adsDisabled[\s\S]*\? 'purchased'[\s\S]*purchaseUnavailable[\s\S]*\? 'unavailable'[\s\S]*: status;[\s\S]*const statusMessage = getStatusMessage\(visibleStatus, copy\)/,
+    /const visibleStatus =[\s\S]*status === 'finish_failed'[\s\S]*adsDisabled[\s\S]*\? 'purchased'[\s\S]*purchaseUnavailable[\s\S]*\? 'unavailable'[\s\S]*: status;[\s\S]*const statusMessage =[\s\S]*nativePurchaseUnavailable && visibleStatus === 'unavailable'[\s\S]*\? copy\.nativeUnavailableStatus[\s\S]*: getStatusMessage\(visibleStatus, copy\)/,
   );
   assert.match(bannerSource, /aria-live="polite"/);
   assert.doesNotMatch(bannerSource, /bodyActive:/);

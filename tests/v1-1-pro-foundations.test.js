@@ -862,6 +862,9 @@ test('ProPaywall: renders the canonical tier model with separate Pro and Remove 
   assert.match(source, /TIER_COLUMNS/);
   assert.match(source, /TIER_ROWS/);
   assert.match(source, /paywallCtaLabels/);
+  assert.match(source, /priceRowLabel: 'Price'/);
+  assert.match(source, /priceRowLabel: 'Pris'/);
+  assert.match(source, /copy\.priceRowLabel/);
   assert.match(source, /buyProLifetime/);
   assert.match(source, /restoreProLifetime/);
   assert.match(source, /alreadyAdFree/);

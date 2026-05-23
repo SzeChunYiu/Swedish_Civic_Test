@@ -35,6 +35,7 @@ type ProPaywallCopy = {
   excluded: string;
   included: string;
   includedAccessibilityLabel: string;
+  priceRowLabel: string;
   priceAccessibilityLabel: (column: TierColumn) => string;
   primaryAccessibilityHint: string;
   restoring: string;
@@ -57,6 +58,7 @@ const proPaywallCopy: Record<AppLanguage, ProPaywallCopy> = {
     excluded: 'Ingår inte',
     included: 'Ingår',
     includedAccessibilityLabel: 'Ingår i nivån',
+    priceRowLabel: 'Pris',
     priceAccessibilityLabel: (column) => `${column.labelSv}: ${column.priceSv}`,
     primaryAccessibilityHint:
       'Köper Pro Lifetime med annonsfri studie och avancerade studiefunktioner.',
@@ -96,6 +98,7 @@ const proPaywallCopy: Record<AppLanguage, ProPaywallCopy> = {
     excluded: 'Not included',
     included: 'Included',
     includedAccessibilityLabel: 'Included in this tier',
+    priceRowLabel: 'Price',
     priceAccessibilityLabel: (column) => `${column.labelEn}: ${column.priceEn}`,
     primaryAccessibilityHint: 'Buys Pro Lifetime with ad-free study and advanced study features.',
     restoring: 'Restoring...',
@@ -217,6 +220,30 @@ export function ProPaywall({
                 {language === 'sv' ? column.priceSv : column.priceEn}
               </Text>
             </View>
+          ))}
+        </View>
+
+        <View
+          accessible
+          accessibilityLabel={`${copy.priceRowLabel}. ${TIER_COLUMNS.map(
+            (column) =>
+              `${language === 'sv' ? column.labelSv : column.labelEn}: ${
+                language === 'sv' ? column.priceSv : column.priceEn
+              }`,
+          ).join('. ')}`}
+          accessibilityRole="summary"
+          style={styles.row}
+        >
+          <Text style={styles.featureCell}>{copy.priceRowLabel}</Text>
+          {TIER_COLUMNS.map((column) => (
+            <Text
+              accessibilityLabel={copy.priceAccessibilityLabel(column)}
+              accessibilityRole="text"
+              key={column.id}
+              style={styles.tierCell}
+            >
+              {language === 'sv' ? column.priceSv : column.priceEn}
+            </Text>
           ))}
         </View>
 

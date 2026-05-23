@@ -8,6 +8,7 @@ import {
 
 const removeAdsStorageKey = 'monetization.removeAds.adsDisabled.v1';
 const removeAdsProductId = 'com.billyyiu.almostswedish.removeads';
+const restoredRemoveAdsTransactionId = 'restore-com-billyyiu-almostswedish-removeads';
 const entitlementHydrationDelayMs = 4000;
 
 type StoredRemoveAdsRecord = {
@@ -37,12 +38,12 @@ async function seedDelayedPurchasedProfile(page: Page, language: AppLanguage) {
   const storedRecord: StoredRemoveAdsRecord = {
     grantedAt: now,
     productId: removeAdsProductId,
-    purchaseToken: 'e2e-profile-pending-token',
+    purchaseToken: `mock-token-${restoredRemoveAdsTransactionId}`,
     receiptValidatedAt: now,
     receiptValidationStatus: 'valid',
     schemaVersion: 1,
     source: 'purchase',
-    transactionId: 'e2e-profile-pending-transaction',
+    transactionId: restoredRemoveAdsTransactionId,
   };
 
   await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, language, {
@@ -59,7 +60,7 @@ async function seedDelayedPurchasedProfile(page: Page, language: AppLanguage) {
 
 test.use({ viewport: { width: 390, height: 844 } });
 
-test('profile hides Remove Ads paywall while stored entitlement hydration is pending', async ({
+test('Remove Ads hydration hides Profile paywall while stored entitlement is pending', async ({
   page,
 }) => {
   const consoleErrors = collectConsoleErrors(page);
