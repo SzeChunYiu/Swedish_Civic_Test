@@ -13,6 +13,10 @@ const {
   MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES,
   MALFORMED_ADAPTIVE_PRACTICE_SIZE_CASES,
 } = require('./helpers/adaptivePracticeRuntimeFixtures.cjs');
+const {
+  expectedRuleCountForValidator,
+  expectedRuleLabelsForValidator,
+} = require('./helpers/focusedValidatorRuleCount.cjs');
 const { runFocusedValidatorMutation } = require('./helpers/focusedValidatorMutation.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
@@ -667,6 +671,10 @@ test('QuestionSourceCitation accessibility parity uses focused content validatio
   const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get(
     'questionSourceCitationAccessibility',
   );
+  const expectedRuleCount = expectedRuleCountForValidator(
+    validatorSource,
+    'validateQuestionSourceCitationAccessibilityParity',
+  );
 
   assert.ok(registryEntry, 'QuestionSourceCitation accessibility focus mode must be registered');
   assert.deepEqual(registryEntry.flags, ['--focus-question-source-citation-accessibility']);
@@ -691,8 +699,35 @@ test('QuestionSourceCitation accessibility parity uses focused content validatio
     'questionSourceCitationAccessibilityParityValidated',
   ]);
 
-  assert.equal(summary.questionSourceCitationAccessibilityRulesValidated, 15);
+  assert.equal(expectedRuleCount, 23);
+  assert.equal(summary.questionSourceCitationAccessibilityRulesValidated, expectedRuleCount);
   assert.equal(summary.questionSourceCitationAccessibilityParityValidated, true);
+});
+
+test('focused validator rule count helper derives QuestionSourceCitation expected rules', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const labels = expectedRuleLabelsForValidator(
+    validatorSource,
+    'validateQuestionSourceCitationAccessibilityParity',
+  );
+
+  assert.equal(labels.length, 23);
+  assert.deepEqual(labels.slice(0, 3), [
+    'expo link import',
+    'source citation helper imports',
+    'SourceCitation wrapper import',
+  ]);
+  assert.equal(labels.at(-1), 'disclaimer typography color');
+  assert.equal(
+    expectedRuleCountForValidator(
+      validatorSource,
+      'validateQuestionSourceCitationAccessibilityParity',
+    ),
+    labels.length,
+  );
 });
 
 test('theme token schema uses focused content validation routing', () => {
