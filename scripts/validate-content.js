@@ -5879,6 +5879,171 @@ function fail(message) {
   failures.push(message);
 }
 
+function validateAuthFoundationParity() {
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  let packageJson;
+  let supabaseSource = '';
+  let authContextSource = '';
+  let rootLayoutSource = '';
+  let signInSource = '';
+  let onboardingSource = '';
+  let suppressedRoutesSource = '';
+  let accountSource = '';
+
+  try {
+    packageJson = loadJson('package.json');
+    supabaseSource = loadText('lib/supabase.ts');
+    authContextSource = loadText('lib/auth/AuthContext.tsx');
+    rootLayoutSource = loadText('app/_layout.tsx');
+    signInSource = loadText('app/(auth)/sign-in.tsx');
+    onboardingSource = loadText('app/onboarding.tsx');
+    suppressedRoutesSource = loadText('lib/onboarding/firstRunAboutModalRoutes.ts');
+    accountSource = loadText('app/account.tsx');
+  } catch (error) {
+    reject(`auth foundation sources could not be read: ${error.message}`);
+    return;
+  }
+
+  const dependencies = packageJson.dependencies ?? {};
+  const requiredDependencies = [
+    '@supabase/supabase-js',
+    'expo-apple-authentication',
+    'expo-auth-session',
+    'expo-web-browser',
+    'react-native-url-polyfill',
+  ];
+  const requiredRoutesAndFiles = [
+    'app/(auth)/_layout.tsx',
+    'app/(auth)/sign-in.tsx',
+    'app/account.tsx',
+    'app/auth/callback.tsx',
+    'components/auth/AuthProviderButton.tsx',
+    'components/auth/Avatar.tsx',
+    'components/auth/GoogleLogo.tsx',
+    'lib/auth/AuthContext.tsx',
+    'lib/auth/displayName.ts',
+    'lib/supabase.ts',
+  ];
+  const failClosedRules = [
+    [supabaseSource, /EXPO_PUBLIC_SUPABASE_URL/, 'Supabase URL env read'],
+    [supabaseSource, /EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY/, 'Supabase key env read'],
+    [supabaseSource, /isSupabaseConfigured/, 'Supabase configured flag'],
+    [supabaseSource, /optional-auth-not-configured/, 'optional auth placeholder URL'],
+    [supabaseSource, /persistSession:\s*isSupabaseConfigured/, 'persistSession fail-closed'],
+    [
+      supabaseSource,
+      /detectSessionInUrl:\s*isSupabaseConfigured/,
+      'detectSessionInUrl fail-closed',
+    ],
+    [
+      authContextSource,
+      /if \(!isSupabaseConfigured\) throw authUnavailableError\(\)/,
+      'auth actions reject when Supabase is unconfigured',
+    ],
+    [authContextSource, /setStatus\('anonymous'\)/, 'anonymous fallback status'],
+  ];
+  const anonymousChoiceRules = [
+    [
+      rootLayoutSource,
+      /import \{ AuthProvider \} from '\.\.\/lib\/auth\/AuthContext'/,
+      'root auth provider import',
+    ],
+    [rootLayoutSource, /<AuthProvider>\s*<RootLayoutContent \/>/, 'root auth provider wrapper'],
+    [
+      rootLayoutSource,
+      /<Stack\.Screen name="\((?:auth)\)" options=\{\{ headerShown: false \}\}/,
+      'auth route stack',
+    ],
+    [
+      rootLayoutSource,
+      /<Stack\.Screen name="\((?:tabs)\)" options=\{\{ headerShown: false \}\}/,
+      'anonymous tabs route stack',
+    ],
+    [signInSource, /Continue without an account|Fortsätt utan konto/, 'sign-in anonymous choice'],
+    [
+      onboardingSource,
+      /Continue without an account|Fortsätt utan konto/,
+      'onboarding anonymous choice',
+    ],
+    [onboardingSource, /onboarding-account-section/, 'onboarding account section'],
+    [suppressedRoutesSource, /'\/\(auth\)'/, 'auth route first-run suppression'],
+  ];
+  const accountSeparationRules = [
+    [accountSource, /Local study data stays local/, 'local progress copy'],
+    [accountSource, /does not upload study progress/, 'no progress upload copy'],
+    [accountSource, /Purchases stay separate/, 'purchase separation copy'],
+    [
+      accountSource,
+      /useRemoveAdsEntitlements\(\{ skipPurchaseRuntime: true \}\)/,
+      'account uses purchase runtime skip',
+    ],
+    [
+      accountSource,
+      /from\('progress|from\("progress|upsert\(\{[\s\S]*progress|adsDisabled\s*=|proLifetime\s*=/,
+      'forbidden progress or purchase persistence coupling',
+      true,
+    ],
+  ];
+
+  for (const dependency of requiredDependencies) {
+    if (typeof dependencies[dependency] === 'string') {
+      authFoundationDependenciesValidated += 1;
+    } else {
+      reject(`auth foundation dependency missing ${dependency}`);
+    }
+  }
+
+  for (const relativePath of requiredRoutesAndFiles) {
+    if (fs.existsSync(path.join(repoRoot, relativePath))) {
+      authFoundationRoutesValidated += 1;
+    } else {
+      reject(`auth foundation route or file missing ${relativePath}`);
+    }
+  }
+
+  for (const [source, pattern, label] of failClosedRules) {
+    if (pattern.test(source)) {
+      authFoundationFailClosedRulesValidated += 1;
+    } else {
+      reject(`auth foundation fail-closed rule missing: ${label}`);
+    }
+  }
+
+  for (const [source, pattern, label] of anonymousChoiceRules) {
+    if (pattern.test(source)) {
+      authFoundationAnonymousChoiceRulesValidated += 1;
+    } else {
+      reject(`auth foundation anonymous-study rule missing: ${label}`);
+    }
+  }
+
+  for (const [source, pattern, label, shouldReject] of accountSeparationRules) {
+    const matched = pattern.test(source);
+    if (shouldReject ? !matched : matched) {
+      authFoundationAccountSeparationRulesValidated += 1;
+    } else {
+      reject(`auth foundation account-separation rule failed: ${label}`);
+    }
+  }
+
+  if (
+    valid &&
+    authFoundationDependenciesValidated === requiredDependencies.length &&
+    authFoundationRoutesValidated === requiredRoutesAndFiles.length &&
+    authFoundationFailClosedRulesValidated === failClosedRules.length &&
+    authFoundationAnonymousChoiceRulesValidated === anonymousChoiceRules.length &&
+    authFoundationAccountSeparationRulesValidated === accountSeparationRules.length
+  ) {
+    authFoundationParityValidated = true;
+  }
+}
+
 function validateValidationScriptSyntax() {
   for (const relativePath of EXPECTED_VALIDATION_SCRIPT_SYNTAX_FILES) {
     const filePath = path.join(repoRoot, relativePath);
@@ -10317,6 +10482,12 @@ let dashboardProgressSnapshotCasesValidated = 0;
 let dashboardProgressSnapshotParityValidated = false;
 let weeklyRecapRuntimeCasesValidated = 0;
 let weeklyRecapRuntimeParityValidated = false;
+let authFoundationDependenciesValidated = 0;
+let authFoundationRoutesValidated = 0;
+let authFoundationFailClosedRulesValidated = 0;
+let authFoundationAnonymousChoiceRulesValidated = 0;
+let authFoundationAccountSeparationRulesValidated = 0;
+let authFoundationParityValidated = false;
 let monetizationTypeUnionsValidated = 0;
 let monetizationTypeInterfacesValidated = 0;
 let monetizationTypeSchemaParityValidated = false;
@@ -11875,6 +12046,20 @@ if (process.argv.includes('--focus-monetization-schema-parity')) {
     monetizationTypeSchemaParityValidated,
     effectiveEntitlementExpiryCasesValidated,
     effectiveEntitlementExpiryParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-auth-foundation')) {
+  validateAuthFoundationParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    authFoundationDependenciesValidated,
+    authFoundationRoutesValidated,
+    authFoundationFailClosedRulesValidated,
+    authFoundationAnonymousChoiceRulesValidated,
+    authFoundationAccountSeparationRulesValidated,
+    authFoundationParityValidated,
   });
   process.exit(0);
 }
@@ -27580,6 +27765,7 @@ validateProgressStoreSchemaParity();
 validateStreakFreezeNormalizerParity();
 validateDashboardProgressSnapshotParity();
 validateWeeklyRecapRuntimeGuard();
+validateAuthFoundationParity();
 validateBadgeCatalog();
 validatePracticeScoringRules();
 validatePracticeFlowParity();
@@ -27898,6 +28084,12 @@ console.log(
       dashboardProgressSnapshotParityValidated,
       weeklyRecapRuntimeCasesValidated,
       weeklyRecapRuntimeParityValidated,
+      authFoundationDependenciesValidated,
+      authFoundationRoutesValidated,
+      authFoundationFailClosedRulesValidated,
+      authFoundationAnonymousChoiceRulesValidated,
+      authFoundationAccountSeparationRulesValidated,
+      authFoundationParityValidated,
       badgesValidated,
       badgeMilestoneParityValidated,
       badgeRuntimeInputCasesValidated,

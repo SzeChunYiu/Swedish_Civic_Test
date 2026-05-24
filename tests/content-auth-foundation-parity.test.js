@@ -1,9 +1,12 @@
 const assert = require('node:assert/strict');
+const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
+const { runFocusedValidatorMutation } = require('./helpers/focusedValidatorMutation.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
+const authFoundationFocusFlag = '--focus-auth-foundation';
 
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
@@ -11,6 +14,33 @@ function read(relativePath) {
 
 function readJson(relativePath) {
   return JSON.parse(read(relativePath));
+}
+
+function parseJsonSummary(output, label) {
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, `${label} should print a JSON summary`);
+  return JSON.parse(match[0]);
+}
+
+function runFocusedAuthValidation() {
+  return spawnSync(process.execPath, ['scripts/validate-content.js', authFoundationFocusFlag], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+  });
+}
+
+function assertAuthFoundationMutationFails({ label, targetFile, mutateSource, expectedMessage }) {
+  const result = runFocusedValidatorMutation({
+    focusFlag: authFoundationFocusFlag,
+    targetFile,
+    mutateSource,
+  });
+  const output = `${result.stdout}\n${result.stderr}`;
+
+  assert.equal(result.status, 1, `${label} should fail focused validation\n${output}`);
+  assert.match(output, /Content validation failed:/);
+  assert.match(output, expectedMessage);
+  assert.doesNotMatch(output, /questionSchemasValidated/);
 }
 
 test('optional auth foundation dependencies and routes are present', () => {
@@ -103,4 +133,70 @@ test('account surface keeps local progress and purchase entitlements separate fr
   assert.match(accountSource, /useRemoveAdsEntitlements\(\{ skipPurchaseRuntime: true \}\)/);
   assert.doesNotMatch(accountSource, /from\('progress|from\("progress|upsert\(\{[\s\S]*progress/);
   assert.doesNotMatch(accountSource, /adsDisabled\s*=|proLifetime\s*=/);
+});
+
+test('auth foundation focused validator exposes only auth summary keys', () => {
+  const result = runFocusedAuthValidation();
+  const output = `${result.stdout}\n${result.stderr}`;
+
+  assert.equal(result.status, 0, output);
+  const summary = parseJsonSummary(result.stdout, 'auth foundation focused validation');
+
+  assert.deepEqual(summary, {
+    authFoundationDependenciesValidated: 5,
+    authFoundationRoutesValidated: 10,
+    authFoundationFailClosedRulesValidated: 8,
+    authFoundationAnonymousChoiceRulesValidated: 8,
+    authFoundationAccountSeparationRulesValidated: 5,
+    authFoundationParityValidated: true,
+  });
+  assert.equal(Object.hasOwn(summary, 'questionSchemasValidated'), false);
+});
+
+test('auth foundation focused validator rejects targeted source mutations', () => {
+  assertAuthFoundationMutationFails({
+    label: 'missing Supabase dependency',
+    targetFile: 'package.json',
+    expectedMessage: /auth foundation dependency missing @supabase\/supabase-js/,
+    mutateSource: (source) => {
+      const mutated = source.replace(/\n\s*"@supabase\/supabase-js": "[^"]+",/, '');
+      if (mutated === source) throw new Error('Supabase dependency mutation did not apply');
+      return mutated;
+    },
+  });
+
+  assertAuthFoundationMutationFails({
+    label: 'missing fail-closed Supabase config',
+    targetFile: 'lib/supabase.ts',
+    expectedMessage: /auth foundation fail-closed rule missing: Supabase configured flag/,
+    mutateSource: (source) => {
+      const mutated = source.replaceAll('isSupabaseConfigured', 'supabaseAuthEnabled');
+      if (mutated === source) throw new Error('Supabase configured mutation did not apply');
+      return mutated;
+    },
+  });
+
+  assertAuthFoundationMutationFails({
+    label: 'missing anonymous sign-in choice',
+    targetFile: 'app/(auth)/sign-in.tsx',
+    expectedMessage: /auth foundation anonymous-study rule missing: sign-in anonymous choice/,
+    mutateSource: (source) => {
+      const mutated = source
+        .replace('Continue without an account', 'Continue as guest')
+        .replace('Fortsätt utan konto', 'Fortsätt som gäst');
+      if (mutated === source) throw new Error('anonymous choice mutation did not apply');
+      return mutated;
+    },
+  });
+
+  assertAuthFoundationMutationFails({
+    label: 'missing local progress separation copy',
+    targetFile: 'app/account.tsx',
+    expectedMessage: /auth foundation account-separation rule failed: no progress upload copy/,
+    mutateSource: (source) => {
+      const mutated = source.replace('does not upload study progress', 'can sync study progress');
+      if (mutated === source) throw new Error('progress separation mutation did not apply');
+      return mutated;
+    },
+  });
 });

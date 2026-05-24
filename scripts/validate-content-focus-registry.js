@@ -12,6 +12,18 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'authFoundation',
+    flags: ['--focus-auth-foundation'],
+    summaryKeys: [
+      'authFoundationDependenciesValidated',
+      'authFoundationRoutesValidated',
+      'authFoundationFailClosedRulesValidated',
+      'authFoundationAnonymousChoiceRulesValidated',
+      'authFoundationAccountSeparationRulesValidated',
+      'authFoundationParityValidated',
+    ],
+  },
+  {
     id: 'generatedWhyReasonStems',
     flags: ['--focus-generated-why-reason-stems'],
     summaryKeys: [

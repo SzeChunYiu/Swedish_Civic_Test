@@ -179,6 +179,7 @@ function validateContentFocusFlags() {
 
 const registryCompletenessFocusIds = [
   'appConfigSchema',
+  'authFoundation',
   'generatedLocalizationTemplateParity',
   'generatedSwedenScopeParity',
   'onboardingRouteCopy',
@@ -266,6 +267,22 @@ test('Home route focused mutation fixtures use the shared helper', () => {
   assert.match(helperSource, /process\.argv\.push\(\$\{JSON\.stringify\(focusFlag\)\}\)/);
   assert.match(helperSource, /targetFile/);
   assert.match(helperSource, /require\(path\.join\(repoRoot, 'scripts\/validate-content\.js'\)\)/);
+});
+
+test('Auth foundation focused mutation fixtures use the shared helper', () => {
+  const authFoundationTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-auth-foundation-parity.test.js'),
+    'utf8',
+  );
+  const authMutationCalls = authFoundationTestSource.match(/runFocusedValidatorMutation\(/g) ?? [];
+
+  assert.equal(authMutationCalls.length, 1);
+  assert.match(authFoundationTestSource, /authFoundationFocusFlag = '--focus-auth-foundation'/);
+  assert.match(authFoundationTestSource, /assertAuthFoundationMutationFails/);
+  assert.match(authFoundationTestSource, /targetFile: 'package\.json'/);
+  assert.match(authFoundationTestSource, /targetFile: 'lib\/supabase\.ts'/);
+  assert.match(authFoundationTestSource, /targetFile: 'app\/\(auth\)\/sign-in\.tsx'/);
+  assert.match(authFoundationTestSource, /targetFile: 'app\/account\.tsx'/);
 });
 
 test('npm test keeps selector routing in the project dispatcher', () => {
