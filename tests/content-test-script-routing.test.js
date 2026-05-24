@@ -2554,6 +2554,74 @@ test('content-focused npm script forwards test-name pattern before file list', (
   }
 });
 
+test('direct npm test equals-form forwards focused node test pattern before file list', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-equals-focused-'));
+  const nodeLog = path.join(tmpDir, 'node.log');
+  const env = {
+    ...process.env,
+    npm_config_loglevel: 'silent',
+    TEST_DISPATCH_CAPTURE: '1',
+    TEST_DISPATCH_LOG: nodeLog,
+    TEST_DISPATCH_NODE: createFakeNode(tmpDir),
+  };
+
+  try {
+    const result = runPackageTest(
+      [
+        '--test-name-pattern=mock exam source-section locator',
+        'tests/content-mock-exam-runtime-parity.test.js',
+      ],
+      env,
+    );
+
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+    assert.deepEqual(fs.readFileSync(nodeLog, 'utf8').trim().split('\n'), [
+      '--test',
+      '--test-name-pattern',
+      'mock exam source-section locator',
+      'tests/content-mock-exam-runtime-parity.test.js',
+    ]);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('direct npm test focused node routing rejects duplicate or blank pattern forms', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-equals-invalid-'));
+  const nodeLog = path.join(tmpDir, 'node.log');
+  const env = {
+    ...process.env,
+    npm_config_loglevel: 'silent',
+    TEST_DISPATCH_CAPTURE: '1',
+    TEST_DISPATCH_LOG: nodeLog,
+    TEST_DISPATCH_NODE: createFakeNode(tmpDir),
+  };
+
+  try {
+    const duplicateResult = runPackageTest(
+      [
+        '--test-name-pattern=mock exam source-section locator',
+        '--test-name-pattern',
+        'other pattern',
+        'tests/content-mock-exam-runtime-parity.test.js',
+      ],
+      env,
+    );
+    assert.notEqual(duplicateResult.status, 0);
+    assert.match(duplicateResult.stderr, /duplicate --test-name-pattern/);
+
+    const blankEqualsResult = runPackageTest(
+      ['--test-name-pattern=', 'tests/content-mock-exam-runtime-parity.test.js'],
+      env,
+    );
+    assert.notEqual(blankEqualsResult.status, 0);
+    assert.match(blankEqualsResult.stderr, /missing pattern value/);
+    assert.equal(fs.existsSync(nodeLog), false);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
 test('unsupported npm test selectors fail before running any suite', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-unsupported-'));
   const npmLog = path.join(tmpDir, 'npm.log');
