@@ -572,6 +572,14 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'citizenshipRequirementsActions',
+    flags: ['--focus-citizenship-requirements-actions'],
+    summaryKeys: [
+      'citizenshipRequirementsActionRouteLinkRulesValidated',
+      'citizenshipRequirementsActionRouteLinkParityValidated',
+    ],
+  },
+  {
     id: 'onboardingRouteCopy',
     flags: ['--focus-onboarding-route-copy'],
     summaryKeys: [
