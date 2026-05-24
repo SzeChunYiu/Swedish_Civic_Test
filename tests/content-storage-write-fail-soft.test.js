@@ -342,8 +342,8 @@ test('local study corrupt JSON warnings report focused validator coverage', () =
   const summary = parseValidationSummary(result.stdout);
 
   assert.deepEqual(Object.keys(summary).sort(), [...LOCAL_STUDY_CORRUPT_JSON_SUMMARY_KEYS].sort());
-  assert.equal(summary.localStudyCorruptJsonStoresValidated, 4);
-  assert.equal(summary.localStudyCorruptJsonRecoverableReadWarningTestsValidated, 4);
+  assert.equal(summary.localStudyCorruptJsonStoresValidated, 5);
+  assert.equal(summary.localStudyCorruptJsonRecoverableReadWarningTestsValidated, 5);
   assert.equal(summary.localStudyCorruptJsonWarningParityValidated, true);
 });
 
@@ -384,6 +384,30 @@ test('local study corrupt JSON focused validator rejects dropped store warning p
       ],
       expectedFailure:
         /highlights store corrupt JSON warning path is missing persistenceWarning: parsed\.warning \?\? result\.warning/,
+    },
+    {
+      label: 'citizenship requirements primary',
+      file: 'lib/storage/citizenshipRequirementsStore.ts',
+      replacements: [
+        {
+          from: 'const parseResult = parseJsonRecoverably(',
+          to: 'const parseResult = parseJsonWithoutWarning(',
+        },
+      ],
+      expectedFailure:
+        /citizenship requirements primary store corrupt JSON warning path is missing parseJsonRecoverably for citizenshipRequirements\.checkedAreaIds\.v1/,
+    },
+    {
+      label: 'citizenship requirements legacy',
+      file: 'lib/storage/citizenshipRequirementsStore.ts',
+      replacements: [
+        {
+          from: 'const legacyParseResult = parseJsonRecoverably(',
+          to: 'const legacyParseResult = parseJsonWithoutWarning(',
+        },
+      ],
+      expectedFailure:
+        /citizenship requirements legacy store corrupt JSON warning path is missing parseJsonRecoverably for citizenshipRequirementsChecklistState/,
     },
   ];
 
