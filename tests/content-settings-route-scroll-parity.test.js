@@ -32,7 +32,7 @@ test('settings route keeps mobile content inside a scrollable root', () => {
   );
   assert.match(
     source,
-    /<ScrollView style=\{styles\.container\} contentContainerStyle=\{styles\.content\}>/,
+    /<ScrollView[\s\S]*\bstyle=\{styles\.container\}[\s\S]*\bcontentContainerStyle=\{styles\.content\}[\s\S]*>/,
   );
   assert.match(source, /content: \{\n\s+flexGrow: 1,/);
   assert.match(source, /paddingBottom: space\[10\]/);
@@ -53,7 +53,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace(
-        '<ScrollView style={styles.container} contentContainerStyle={styles.content}>',
+        '<ScrollView ref={scrollViewRef} style={styles.container} contentContainerStyle={styles.content}>',
         '<View style={styles.container}>'
       )
       .replace('</ScrollView>', '</View>');
