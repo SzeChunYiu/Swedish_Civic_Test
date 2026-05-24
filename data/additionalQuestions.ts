@@ -1,4 +1,8 @@
-import { VALMYNDIGHETEN_VOTING_RIGHTS_SOURCE } from './sourceReferences';
+import {
+  BROTTSBALKEN_CRIMINAL_RESPONSIBILITY_SOURCE,
+  PROP_2025_26_246_YOUNG_OFFENDERS_SOURCE,
+  VALMYNDIGHETEN_VOTING_RIGHTS_SOURCE,
+} from './sourceReferences';
 import type {
   Difficulty,
   OfficialSourceReference,
@@ -558,6 +562,8 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     'Frågan gäller huvudregeln i 1 kap. 6 § brottsbalken: en person är straffmyndig och kan bli åtalad från 15 års ålder. Proposition 2025/26:246, lämnad till riksdagen den 16 april 2026, föreslår en tidsbegränsad sänkning till 13 år för vissa allvarliga brott som föreslås börja gälla den 2 augusti 2026 och behöver kontrolleras på nytt efter det datumet.',
     'The question asks about the main rule in Chapter 1, Section 6 of the Swedish Penal Code: a person is criminally responsible and can be prosecuted from age 15. Proposition 2025/26:246, submitted to the Riksdag on 16 April 2026, proposes a time-limited lowering to age 13 for certain serious crimes from 2 August 2026 and should be rechecked after that date.',
     ['criminal-responsibility', 'age-15', 'criminal-record'],
+    'medium',
+    [BROTTSBALKEN_CRIMINAL_RESPONSIBILITY_SOURCE, PROP_2025_26_246_YOUNG_OFFENDERS_SOURCE],
   ),
   single(
     'q045',

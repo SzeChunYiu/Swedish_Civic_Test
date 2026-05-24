@@ -70,7 +70,7 @@ test('question-bank CSV keeps its public row contract', () => {
   assert.equal(summary.questionBankCsvUhrCitationParityValidated, true);
   assert.equal(summary.questionBankCsvUhrSourcePublisherRowsValidated, summary.publishedQuestions);
   assert.equal(summary.questionBankCsvUhrSourcePublisherParityValidated, true);
-  assert.equal(summary.questionBankCsvSupplementalSourceRowsValidated, 15);
+  assert.equal(summary.questionBankCsvSupplementalSourceRowsValidated, 20);
   assert.equal(summary.questionBankCsvVotingRightsSupplementalSourceParityValidated, true);
 });
 
@@ -578,13 +578,13 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('question-bank CSV exposes Valmyndigheten supplemental source metadata for voting-rights rows', () => {
+test('question-bank CSV exposes supplemental source metadata for voting-rights and criminal-responsibility rows', () => {
   const output = runQuestionBankCsvValidation();
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
 
   const summary = JSON.parse(match[0]);
-  assert.equal(summary.questionBankCsvSupplementalSourceRowsValidated, 15);
+  assert.equal(summary.questionBankCsvSupplementalSourceRowsValidated, 20);
   assert.equal(summary.questionBankCsvVotingRightsSupplementalSourceParityValidated, true);
 
   const csv = fs.readFileSync(path.join(repoRoot, 'content', 'question-bank.csv'), 'utf8');
@@ -592,7 +592,7 @@ test('question-bank CSV exposes Valmyndigheten supplemental source metadata for 
   const header = parseExportedCsvLine(lines[0]);
   const rows = lines.slice(1).map(parseExportedCsvLine);
   const idIndex = header.indexOf('id');
-  const expectedRows = new Set([
+  const expectedVotingRightsRows = new Set([
     'q019',
     'q030',
     'q166',
@@ -609,7 +609,12 @@ test('question-bank CSV exposes Valmyndigheten supplemental source metadata for 
     'q842',
     'q843',
   ]);
-  const expectedSource = {
+  const expectedCriminalResponsibilityRows = new Set(['q044', 'q352', 'q353', 'q354', 'q355']);
+  const expectedRows = new Set([
+    ...expectedVotingRightsRows,
+    ...expectedCriminalResponsibilityRows,
+  ]);
+  const expectedVotingRightsSource = {
     supplementalSourceTitle: 'Rösträtten i svenska val',
     supplementalSourcePublisher: 'Valmyndigheten',
     supplementalSourceUrl:
@@ -617,13 +622,25 @@ test('question-bank CSV exposes Valmyndigheten supplemental source metadata for 
     supplementalSourcePublishedDate: '2025-11-21',
     supplementalSourceRetrievedDate: '2026-05-22',
   };
+  const expectedCriminalResponsibilitySource = {
+    supplementalSourceTitle:
+      'Brottsbalk (1962:700), 1 kap. 6 §|Prop. 2025/26:246 Skärpta regler för unga lagöverträdare',
+    supplementalSourcePublisher: 'Sveriges riksdag|Regeringskansliet',
+    supplementalSourceUrl:
+      'https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/brottsbalk-1962700_sfs-1962-700/|https://www.regeringen.se/rattsliga-dokument/proposition/2026/04/prop.-202526246',
+    supplementalSourcePublishedDate: '|2026-04-16',
+    supplementalSourceRetrievedDate: '2026-05-24|2026-05-24',
+  };
 
   const rowsWithSupplementalSource = rows.filter((row) =>
-    Object.keys(expectedSource).some((field) => row[header.indexOf(field)]),
+    Object.keys(expectedVotingRightsSource).some((field) => row[header.indexOf(field)]),
   );
   assert.deepEqual(new Set(rowsWithSupplementalSource.map((row) => row[idIndex])), expectedRows);
 
   rowsWithSupplementalSource.forEach((row) => {
+    const expectedSource = expectedVotingRightsRows.has(row[idIndex])
+      ? expectedVotingRightsSource
+      : expectedCriminalResponsibilitySource;
     for (const [field, expected] of Object.entries(expectedSource)) {
       const fieldIndex = header.indexOf(field);
       assert.notEqual(fieldIndex, -1, `${field} column should exist`);

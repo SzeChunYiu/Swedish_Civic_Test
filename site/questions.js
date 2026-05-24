@@ -4544,7 +4544,22 @@
       "title": "Sverige i fokus",
       "chapter": "Lag och rätt",
       "section": "Straffmyndighet och belastningsregister",
-      "page": 19
+      "page": 19,
+      "supplementalSources": [
+        {
+          "title": "Brottsbalk (1962:700), 1 kap. 6 §",
+          "publisher": "Sveriges riksdag",
+          "url": "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/brottsbalk-1962700_sfs-1962-700/",
+          "retrievedDate": "2026-05-24"
+        },
+        {
+          "title": "Prop. 2025/26:246 Skärpta regler för unga lagöverträdare",
+          "publisher": "Regeringskansliet",
+          "url": "https://www.regeringen.se/rattsliga-dokument/proposition/2026/04/prop.-202526246",
+          "publishedDate": "2026-04-16",
+          "retrievedDate": "2026-05-24"
+        }
+      ]
     },
     "questionProvenance": "uhr",
     "difficulty": "medium",
@@ -29620,7 +29635,22 @@
       "title": "Sverige i fokus",
       "chapter": "Lag och rätt",
       "section": "Straffmyndighet och belastningsregister",
-      "page": 19
+      "page": 19,
+      "supplementalSources": [
+        {
+          "title": "Brottsbalk (1962:700), 1 kap. 6 §",
+          "publisher": "Sveriges riksdag",
+          "url": "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/brottsbalk-1962700_sfs-1962-700/",
+          "retrievedDate": "2026-05-24"
+        },
+        {
+          "title": "Prop. 2025/26:246 Skärpta regler för unga lagöverträdare",
+          "publisher": "Regeringskansliet",
+          "url": "https://www.regeringen.se/rattsliga-dokument/proposition/2026/04/prop.-202526246",
+          "publishedDate": "2026-04-16",
+          "retrievedDate": "2026-05-24"
+        }
+      ]
     },
     "questionProvenance": "derived",
     "difficulty": "medium",
@@ -29660,7 +29690,22 @@
       "title": "Sverige i fokus",
       "chapter": "Lag och rätt",
       "section": "Straffmyndighet och belastningsregister",
-      "page": 19
+      "page": 19,
+      "supplementalSources": [
+        {
+          "title": "Brottsbalk (1962:700), 1 kap. 6 §",
+          "publisher": "Sveriges riksdag",
+          "url": "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/brottsbalk-1962700_sfs-1962-700/",
+          "retrievedDate": "2026-05-24"
+        },
+        {
+          "title": "Prop. 2025/26:246 Skärpta regler för unga lagöverträdare",
+          "publisher": "Regeringskansliet",
+          "url": "https://www.regeringen.se/rattsliga-dokument/proposition/2026/04/prop.-202526246",
+          "publishedDate": "2026-04-16",
+          "retrievedDate": "2026-05-24"
+        }
+      ]
     },
     "questionProvenance": "derived",
     "difficulty": "medium",
@@ -29700,7 +29745,22 @@
       "title": "Sverige i fokus",
       "chapter": "Lag och rätt",
       "section": "Straffmyndighet och belastningsregister",
-      "page": 19
+      "page": 19,
+      "supplementalSources": [
+        {
+          "title": "Brottsbalk (1962:700), 1 kap. 6 §",
+          "publisher": "Sveriges riksdag",
+          "url": "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/brottsbalk-1962700_sfs-1962-700/",
+          "retrievedDate": "2026-05-24"
+        },
+        {
+          "title": "Prop. 2025/26:246 Skärpta regler för unga lagöverträdare",
+          "publisher": "Regeringskansliet",
+          "url": "https://www.regeringen.se/rattsliga-dokument/proposition/2026/04/prop.-202526246",
+          "publishedDate": "2026-04-16",
+          "retrievedDate": "2026-05-24"
+        }
+      ]
     },
     "questionProvenance": "derived",
     "difficulty": "medium",
@@ -29788,7 +29848,22 @@
       "title": "Sverige i fokus",
       "chapter": "Lag och rätt",
       "section": "Straffmyndighet och belastningsregister",
-      "page": 19
+      "page": 19,
+      "supplementalSources": [
+        {
+          "title": "Brottsbalk (1962:700), 1 kap. 6 §",
+          "publisher": "Sveriges riksdag",
+          "url": "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/brottsbalk-1962700_sfs-1962-700/",
+          "retrievedDate": "2026-05-24"
+        },
+        {
+          "title": "Prop. 2025/26:246 Skärpta regler för unga lagöverträdare",
+          "publisher": "Regeringskansliet",
+          "url": "https://www.regeringen.se/rattsliga-dokument/proposition/2026/04/prop.-202526246",
+          "publishedDate": "2026-04-16",
+          "retrievedDate": "2026-05-24"
+        }
+      ]
     },
     "questionProvenance": "derived",
     "difficulty": "medium",
