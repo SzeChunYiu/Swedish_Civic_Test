@@ -9705,6 +9705,39 @@ function chapterLocalizationEnglishGlossFailures(chapter, label) {
   return failures;
 }
 
+function findGlossaryNaturalnessIssue(term) {
+  if (!term || typeof term !== 'object') return null;
+
+  const fields = [
+    ['termEn', term.termEn],
+    ['explanationEn', term.explanationEn],
+    ['termSv', term.termSv],
+    ['explanationSv', term.explanationSv],
+  ];
+  const patterns = [
+    [/labou?r[- ]market parties/i, 'stilted labour-market-parties English wording'],
+    [/\blegal certainty\b/i, 'literal legal-certainty English wording for rättssäkerhet'],
+    [/\bolder and sick\b/i, 'literal older-and-sick English wording'],
+    [/\bFirst of May\b/i, 'literal First of May English wording'],
+    [/\bpublic sector\b/i, 'stilted public-sector English wording'],
+    [/\blargest lakes\b/i, 'stilted largest-lakes English wording'],
+    [/\bnational minorities\b/i, 'stilted national-minorities English wording'],
+    [/\bwork for peace\b/i, 'literal Council of Europe work-for English wording'],
+    [/not necessarily (must|have to) follow/i, 'literal advisory-referendum English wording'],
+    [/inte nödvändigtvis (måste|behöver) följa/i, 'literal advisory-referendum Swedish wording'],
+  ];
+
+  for (const [fieldName, value] of fields) {
+    if (!hasText(value)) continue;
+    for (const [pattern, message] of patterns) {
+      if (pattern.test(value)) {
+        return `${fieldName} uses ${message}`;
+      }
+    }
+  }
+  return null;
+}
+
 function validateQuestionSchema(question, index) {
   const label = hasText(question?.id) ? question.id : `question[${index}]`;
   let valid = true;
@@ -10268,6 +10301,8 @@ let examGeneratorTypeInterfacesValidated = 0;
 let examGeneratorTypeSchemaParityValidated = false;
 let glossaryTermsValidated = 0;
 let glossaryTermExactSchemaKeysValidated = 0;
+let glossaryNaturalnessTermsValidated = 0;
+let glossaryNaturalnessGuardParityValidated = false;
 let uxBenchmarksValidated = 0;
 let contentTypeUnionsValidated = 0;
 let contentTypeInterfacesValidated = 0;
@@ -11510,7 +11545,8 @@ function translateCompleteP0NaturalnessIsValidated(publishedQuestionCount) {
     questionRuleOfLawEnglishNaturalnessValidated === publishedQuestionCount * 3 &&
     questionReligiousFreedomParallelismValidated === publishedQuestionCount * 2 &&
     somaliGeographyNaturalnessParityValidated === true &&
-    somaliHolidayFoodNaturalnessParityValidated === true
+    somaliHolidayFoodNaturalnessParityValidated === true &&
+    glossaryNaturalnessGuardParityValidated === true
   );
 }
 
@@ -11663,6 +11699,7 @@ function validateTranslateCompleteP0Focus() {
   validateQuestionReligiousFreedomParallelism();
   validateSomaliGeographyNaturalnessParity();
   validateSomaliHolidayFoodNaturalnessParity();
+  validateGlossaryTerms();
 
   const publishedQuestionCount = publishedQuestionRows.length;
   const translationCompletenessParityValidated =
@@ -11708,6 +11745,9 @@ function validateTranslateCompleteP0Focus() {
     questionReligiousFreedomParallelismValidated,
     somaliGeographyNaturalnessParityValidated,
     somaliHolidayFoodNaturalnessParityValidated,
+    glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
+    glossaryNaturalnessTermsValidated,
+    glossaryNaturalnessGuardParityValidated,
     translationNaturalnessGuardParityValidated,
   });
   process.exit(0);
@@ -22266,13 +22306,21 @@ function validateGlossaryTerms() {
       for (const failure of glossaryTermExactSchemaKeyFailures(term, label)) {
         reject(failure);
       }
+
+      const naturalnessIssue = findGlossaryNaturalnessIssue(term);
+      if (naturalnessIssue) {
+        reject(`${label} ${naturalnessIssue}`);
+      }
     }
 
     if (valid) {
       glossaryTermsValidated += 1;
       glossaryTermExactSchemaKeysValidated += 1;
+      glossaryNaturalnessTermsValidated += 1;
     }
   });
+  glossaryNaturalnessGuardParityValidated =
+    glossaryTerms.length > 0 && glossaryNaturalnessTermsValidated === glossaryTerms.length;
 }
 
 function validateBadgeCatalog() {
@@ -27861,6 +27909,8 @@ console.log(
       glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
       glossaryTermsValidated,
       glossaryTermExactSchemaKeysValidated,
+      glossaryNaturalnessTermsValidated,
+      glossaryNaturalnessGuardParityValidated,
       uxBenchmarksValidated,
       supportedLanguagesValidated,
       localizationStrings:
