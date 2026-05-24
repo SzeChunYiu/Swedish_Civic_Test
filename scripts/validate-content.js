@@ -684,6 +684,44 @@ const QUESTION_RELIGIOUS_FREEDOM_OPTION_PARALLELISM_PATTERNS = [
   /\bRätten att utöva sin religion och skydd mot diskriminering på grund av tro\b/i,
   /\bThe right to practice (?:one’s|one's) religion and protection from discrimination because of belief\b/i,
 ];
+const GLOSSARY_NATURALNESS_PATTERNS = [
+  {
+    pattern: /\blegal certainty\b/i,
+    message: 'uses literal legal-certainty English for rättssäkerhet',
+  },
+  {
+    pattern: /\bolder and sick (?:people|persons)\b/i,
+    message: 'uses literal older-and-sick English wording',
+  },
+  {
+    pattern: /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i,
+    message: 'uses stilted state-welfare English wording',
+  },
+  {
+    pattern: /\bcommon to do\b/i,
+    message: 'uses literal common-to-do English wording',
+  },
+  {
+    pattern: /\bnot necessarily must\b/i,
+    message: 'uses literal advisory-referendum English wording',
+  },
+  {
+    pattern: /\bmåste inte följa resultatet\b/i,
+    message: 'uses ambiguous advisory-referendum Swedish wording',
+  },
+  {
+    pattern: /\bFirst of May\b/i,
+    message: 'uses literal First of May English wording',
+  },
+  {
+    pattern: /\bcompletely freely\b/i,
+    message: 'uses stilted religious-freedom English wording',
+  },
+  {
+    pattern: /\bthe person who is Lucia\b/i,
+    message: 'uses stilted Lucia-role English wording',
+  },
+];
 const QUESTION_TAX_VAT_TWO_CONCEPT_PATTERNS = [
   /\b(?:skatt och moms|tax and VAT)\b/i,
   /\bFöretag betalar också skatt,\s+och moms betalas\b/i,
@@ -6122,6 +6160,7 @@ function translationNaturalnessGuardParityIsValidated() {
     questionSourceCriticismEnglishNaturalnessValidated === publishedQuestions &&
     questionRuleOfLawEnglishNaturalnessValidated === publishedQuestions * 3 &&
     questionReligiousFreedomParallelismValidated === publishedQuestions * 2 &&
+    glossaryNaturalnessGuardParityValidated === true &&
     somaliGeographyNaturalnessParityValidated === true &&
     somaliHolidayFoodNaturalnessParityValidated === true
   );
@@ -9135,6 +9174,14 @@ function glossaryTermExactSchemaKeyFailures(term, label) {
   return schemaKeyFailures(term, EXPECTED_GLOSSARY_TERM_KEYS, label, 'GlossaryTerm');
 }
 
+function findGlossaryNaturalnessIssue(term) {
+  const text = [term.termSv, term.termEn, term.explanationSv, term.explanationEn]
+    .filter((value) => typeof value === 'string')
+    .join('\n');
+
+  return GLOSSARY_NATURALNESS_PATTERNS.find(({ pattern }) => pattern.test(text));
+}
+
 function mockExamConfigExactSchemaKeyFailures(config, label) {
   return schemaKeyFailures(config, EXPECTED_MOCK_EXAM_CONFIG_KEYS, label, 'MockExamConfig');
 }
@@ -10267,6 +10314,8 @@ let examGeneratorTypeInterfacesValidated = 0;
 let examGeneratorTypeSchemaParityValidated = false;
 let glossaryTermsValidated = 0;
 let glossaryTermExactSchemaKeysValidated = 0;
+let glossaryNaturalnessValidated = 0;
+let glossaryNaturalnessGuardParityValidated = false;
 let uxBenchmarksValidated = 0;
 let contentTypeUnionsValidated = 0;
 let contentTypeInterfacesValidated = 0;
@@ -11508,6 +11557,7 @@ function translateCompleteP0NaturalnessIsValidated(publishedQuestionCount) {
     questionSourceCriticismEnglishNaturalnessValidated === publishedQuestionCount &&
     questionRuleOfLawEnglishNaturalnessValidated === publishedQuestionCount * 3 &&
     questionReligiousFreedomParallelismValidated === publishedQuestionCount * 2 &&
+    glossaryNaturalnessGuardParityValidated === true &&
     somaliGeographyNaturalnessParityValidated === true &&
     somaliHolidayFoodNaturalnessParityValidated === true
   );
@@ -11662,6 +11712,7 @@ function validateTranslateCompleteP0Focus() {
   validateQuestionReligiousFreedomParallelism();
   validateSomaliGeographyNaturalnessParity();
   validateSomaliHolidayFoodNaturalnessParity();
+  validateGlossaryTerms();
 
   const publishedQuestionCount = publishedQuestionRows.length;
   const translationCompletenessParityValidated =
@@ -11705,6 +11756,9 @@ function validateTranslateCompleteP0Focus() {
     questionSourceCriticismEnglishNaturalnessValidated,
     questionRuleOfLawEnglishNaturalnessValidated,
     questionReligiousFreedomParallelismValidated,
+    glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
+    glossaryNaturalnessValidated,
+    glossaryNaturalnessGuardParityValidated,
     somaliGeographyNaturalnessParityValidated,
     somaliHolidayFoodNaturalnessParityValidated,
     translationNaturalnessGuardParityValidated,
@@ -22237,13 +22291,22 @@ function validateGlossaryTerms() {
       for (const failure of glossaryTermExactSchemaKeyFailures(term, label)) {
         reject(failure);
       }
+
+      const naturalnessIssue = findGlossaryNaturalnessIssue(term);
+      if (naturalnessIssue) {
+        reject(`${label} ${naturalnessIssue.message}`);
+      }
     }
 
     if (valid) {
       glossaryTermsValidated += 1;
       glossaryTermExactSchemaKeysValidated += 1;
+      glossaryNaturalnessValidated += 1;
     }
   });
+
+  glossaryNaturalnessGuardParityValidated =
+    glossaryTerms.length > 0 && glossaryNaturalnessValidated === glossaryTerms.length;
 }
 
 function validateBadgeCatalog() {
@@ -27832,6 +27895,8 @@ console.log(
       glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
       glossaryTermsValidated,
       glossaryTermExactSchemaKeysValidated,
+      glossaryNaturalnessValidated,
+      glossaryNaturalnessGuardParityValidated,
       uxBenchmarksValidated,
       supportedLanguagesValidated,
       localizationStrings:
