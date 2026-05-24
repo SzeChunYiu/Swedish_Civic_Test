@@ -623,6 +623,7 @@ const QUESTION_LUCIA_DAY_DATE_ENGLISH_NATURALNESS_PATTERNS = [/\bOn Lucia Day on
 const QUESTION_MAY_DAY_ENGLISH_NATURALNESS_PATTERNS = [/\bFirst of May\b/i];
 const QUESTION_REFERENDUM_ADVISORY_SWEDISH_NATURALNESS_PATTERNS = [
   /\bmåste inte följa resultatet\b/i,
+  /\binte måste följa resultatet\b/i,
   /\bbetyder att politikerna måste (?:inte|alltid) följa resultatet\b/i,
 ];
 const QUESTION_GOOD_FRIDAY_ENGLISH_NATURALNESS_PATTERNS = [

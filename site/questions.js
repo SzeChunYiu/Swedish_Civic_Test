@@ -3150,7 +3150,7 @@
     "answer": 1,
     "why": {
       "en": "Referendums in Sweden can be held nationally, in a region, or in a municipality. They are advisory, which means politicians do not have to follow the result.",
-      "sv": "Folkomröstningar i Sverige kan hållas nationellt, i en region eller i en kommun. De är rådgivande, vilket betyder att politikerna inte måste följa resultatet.",
+      "sv": "Folkomröstningar i Sverige kan hållas nationellt, i en region eller i en kommun. De är rådgivande, vilket betyder att politikerna inte behöver följa resultatet.",
       "zh-Hant": "瑞典的公投可以在全國、區域或市鎮舉行。公投是諮詢性的，這表示政治人物不一定必須遵循結果。",
       "zh-Hans": "瑞典的公投可以在全国、区域或市镇举行。公投是咨询性的，这表示政治人物不一定必须遵循结果。",
       "ar": "يمكن إجراء الاستفتاءات في السويد على المستوى الوطني أو في إقليم أو بلدية. وهي استشارية، وهذا يعني أن السياسيين لا يجب عليهم بالضرورة اتباع النتيجة.",
@@ -26406,7 +26406,7 @@
     "answer": 1,
     "why": {
       "en": "Referendums in Sweden can be held nationally, in a region, or in a municipality. They are advisory, which means politicians do not have to follow the result.",
-      "sv": "Folkomröstningar i Sverige kan hållas nationellt, i en region eller i en kommun. De är rådgivande, vilket betyder att politikerna inte måste följa resultatet."
+      "sv": "Folkomröstningar i Sverige kan hållas nationellt, i en region eller i en kommun. De är rådgivande, vilket betyder att politikerna inte behöver följa resultatet."
     },
     "source": {
       "title": "Sverige i fokus",

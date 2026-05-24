@@ -52,7 +52,7 @@ const luciaExplanationRoleScaffoldPattern =
   /\b(?:In a Lucia procession,\s+one person is Lucia|I ett luciatåg\s+(?:är en person Lucia|en person är Lucia))\b/i;
 const umeaDemonymOldSwedishPattern = /\bumebor\b/i;
 const referendumAdvisorySwedishNaturalnessPattern =
-  /\b(?:måste inte följa resultatet|Att folkomröstningar i Sverige är rådgivande betyder att|betyder att politikerna måste (?:inte|alltid) följa resultatet)\b/i;
+  /\b(?:måste inte följa resultatet|inte måste följa resultatet|Att folkomröstningar i Sverige är rådgivande betyder att|betyder att politikerna måste (?:inte|alltid) följa resultatet)\b/i;
 const referendumAdvisoryEnglishNaturalnessPattern =
   /\bThat referendums in Sweden are advisory means\b/i;
 const referendumAdvisoryNaturalnessPattern = new RegExp(
@@ -1123,7 +1123,13 @@ test('referendum advisory Swedish copy stays natural across source and exports',
     generatedQuestionId(sourceQuestions, 'q020', 'falseStatement'),
     generatedQuestionId(sourceQuestions, 'q020', 'judgement'),
   ];
-  const q020Ids = ['q020', ...q020GeneratedIds];
+  const q031GeneratedIds = [
+    generatedQuestionId(sourceQuestions, 'q031', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q031', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q031', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q031', 'judgement'),
+  ];
+  const referendumIds = ['q020', ...q020GeneratedIds, 'q031', ...q031GeneratedIds];
   const textForQuestion = (question) =>
     [
       question.q?.sv,
@@ -1133,7 +1139,12 @@ test('referendum advisory Swedish copy stays natural across source and exports',
       ...(question.opts || []).map((option) => option.sv),
       ...(question.opts || []).map((option) => option.en),
     ].join(' ');
-  const fileFindings = ['data/questions.ts', 'content/question-bank.csv', 'site/questions.js']
+  const fileFindings = [
+    'data/additionalQuestions.ts',
+    'data/questions.ts',
+    'content/question-bank.csv',
+    'site/questions.js',
+  ]
     .filter((relativePath) =>
       referendumAdvisoryNaturalnessPattern.test(
         fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'),
@@ -1141,11 +1152,11 @@ test('referendum advisory Swedish copy stays natural across source and exports',
     )
     .map((relativePath) => path.normalize(relativePath));
   const generatedOffenders = generatedSiteBank
-    .filter((question) => q020Ids.includes(question.id))
+    .filter((question) => referendumIds.includes(question.id))
     .filter((question) => referendumAdvisoryNaturalnessPattern.test(textForQuestion(question)))
     .map((question) => question.id);
   const actualOffenders = actualSiteBank
-    .filter((question) => q020Ids.includes(question.id))
+    .filter((question) => referendumIds.includes(question.id))
     .filter((question) => referendumAdvisoryNaturalnessPattern.test(textForQuestion(question)))
     .map((question) => question.id);
   const q020 = generatedSiteBank.find((question) => question.id === 'q020');
@@ -1154,6 +1165,10 @@ test('referendum advisory Swedish copy stays natural across source and exports',
   );
   const q020False = generatedSiteBank.find(
     (question) => question.id === generatedQuestionId(sourceQuestions, 'q020', 'falseStatement'),
+  );
+  const q031 = generatedSiteBank.find((question) => question.id === 'q031');
+  const q031False = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q031', 'falseStatement'),
   );
 
   assert.deepEqual(fileFindings, []);
@@ -1180,6 +1195,10 @@ test('referendum advisory Swedish copy stays natural across source and exports',
     q020False.q.en,
     'In Sweden, referendums are binding, so politicians are required to follow the result.',
   );
+  assert.ok(q031, 'q031 should be published in the site bank');
+  assert.match(q031.why.sv, /politikerna inte behöver följa resultatet/);
+  assert.ok(q031False, 'q031 false generated variant should be published');
+  assert.match(q031False.why.sv, /politikerna inte behöver följa resultatet/);
 });
 
 test('generated meaning-clause single-choice prompts use direct English questions', () => {
@@ -1234,7 +1253,10 @@ const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
   const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/questions.ts')) {
+  if (
+    normalizedPath.endsWith('/data/questions.ts') ||
+    normalizedPath.endsWith('/data/additionalQuestions.ts')
+  ) {
     return String(contents)
       .replace(
         'Politikerna behöver inte följa resultatet',
@@ -1243,6 +1265,10 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       .replace(
         'politikerna behöver inte följa resultatet.',
         'politikerna måste inte följa resultatet.',
+      )
+      .replace(
+        'politikerna inte behöver följa resultatet.',
+        'politikerna inte måste följa resultatet.',
       );
   }
   if (normalizedPath.endsWith('/scripts/validate-content.js')) {
@@ -1262,7 +1288,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /q020 uses ambiguous advisory-referendum Swedish wording/,
+    /q031 uses ambiguous advisory-referendum Swedish wording/,
   );
 });
 

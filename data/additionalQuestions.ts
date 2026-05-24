@@ -258,7 +258,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     'Politiker i Sverige måste följa resultatet av en folkomröstning.',
     'Politicians in Sweden must follow the result of a referendum.',
     false,
-    'Folkomröstningar i Sverige kan hållas nationellt, i en region eller i en kommun. De är rådgivande, vilket betyder att politikerna inte måste följa resultatet.',
+    'Folkomröstningar i Sverige kan hållas nationellt, i en region eller i en kommun. De är rådgivande, vilket betyder att politikerna inte behöver följa resultatet.',
     'Referendums in Sweden can be held nationally, in a region, or in a municipality. They are advisory, which means politicians do not have to follow the result.',
     ['referendum', 'advisory', 'euro-referendum'],
   ),
