@@ -21,6 +21,7 @@ type StaticSite = {
 };
 
 type Language = 'en' | 'sv';
+type ThemePreference = 'auto' | 'dark';
 
 type MockCopyContract = {
   answeredDotLabel: string;
@@ -155,7 +156,12 @@ async function expectNoHorizontalOverflow(page: Page, label: string) {
     .toBe(true);
 }
 
-async function openStaticMock(page: Page, baseUrl: string, language: Language) {
+async function openStaticMock(
+  page: Page,
+  baseUrl: string,
+  language: Language,
+  theme: ThemePreference = 'auto',
+) {
   const allowedOrigin = new URL(baseUrl).origin;
 
   await page.route('**/*', async (route) => {
@@ -168,23 +174,65 @@ async function openStaticMock(page: Page, baseUrl: string, language: Language) {
 
     await route.continue();
   });
-  await page.addInitScript((nextLanguage: Language) => {
-    localStorage.setItem('smt_ads_mode', 'none');
-    localStorage.setItem('smt_buddy_hidden', '1');
-    localStorage.setItem('smt_consent', 'min');
-    localStorage.setItem('smt_lang', nextLanguage);
-    localStorage.setItem(
-      'smt_mock_cfg',
-      JSON.stringify({ chapters: 'all', count: 5, minutes: 10 }),
-    );
-    localStorage.setItem('smt_motion', 'reduce');
-    sessionStorage.setItem('smt_anchor_closed', '1');
-    sessionStorage.setItem('smt_buddy_greeted', '1');
-  }, language);
+  await page.addInitScript(
+    ({ nextLanguage, nextTheme }: { nextLanguage: Language; nextTheme: ThemePreference }) => {
+      localStorage.setItem('smt_ads_mode', 'none');
+      localStorage.setItem('smt_buddy_hidden', '1');
+      localStorage.setItem('smt_consent', 'min');
+      localStorage.setItem('smt_lang', nextLanguage);
+      localStorage.setItem(
+        'smt_mock_cfg',
+        JSON.stringify({ chapters: 'all', count: 5, minutes: 10 }),
+      );
+      localStorage.setItem('smt_motion', 'reduce');
+      localStorage.setItem('smt_theme', nextTheme);
+      sessionStorage.setItem('smt_anchor_closed', '1');
+      sessionStorage.setItem('smt_buddy_greeted', '1');
+    },
+    { nextLanguage: language, nextTheme: theme },
+  );
 
   await page.goto(`${baseUrl}/#/mock`, { waitUntil: 'load' });
   await expect(page.locator('html')).toHaveAttribute('lang', language);
   await expect(page.locator('#mock-stage')).toBeVisible();
+}
+
+async function expectFocusedMockDot(page: Page, label: string) {
+  let focusedDotCount = 0;
+
+  for (let attempts = 0; attempts < 24; attempts += 1) {
+    await page.keyboard.press('Tab');
+    focusedDotCount = await page.locator('#mock-stage .mock-dot:focus').count();
+    if (focusedDotCount > 0) break;
+  }
+
+  expect(focusedDotCount, `${label} should be reachable by keyboard tabbing`).toBeGreaterThan(0);
+  const dot = page.locator('#mock-stage .mock-dot:focus').first();
+  await expect(dot).toBeFocused();
+
+  const focusState = await dot.evaluate((element) => {
+    const styles = window.getComputedStyle(element);
+    const rect = element.getBoundingClientRect();
+
+    return {
+      boxShadow: styles.boxShadow,
+      height: rect.height,
+      outlineStyle: styles.outlineStyle,
+      outlineWidth: Number.parseFloat(styles.outlineWidth),
+      visibleNumber: element.textContent?.trim()?.length ? true : false,
+      width: rect.width,
+    };
+  });
+
+  expect(focusState.visibleNumber, `${label} should keep a visible question number`).toBe(true);
+  expect(focusState.width, `${label} should keep a 44px-wide target`).toBeGreaterThanOrEqual(44);
+  expect(focusState.height, `${label} should keep a 44px-tall target`).toBeGreaterThanOrEqual(44);
+  expect(focusState.outlineStyle, `${label} should show a visible focus outline`).toBe('solid');
+  expect(
+    focusState.outlineWidth,
+    `${label} should use a strong focus outline`,
+  ).toBeGreaterThanOrEqual(3);
+  expect(focusState.boxShadow, `${label} should add a focus ring shadow`).not.toBe('none');
 }
 
 async function submitShortMockAttempt(page: Page, contract: MockCopyContract) {
@@ -249,6 +297,40 @@ for (const contract of copyContracts) {
     );
     await expect(stage).not.toContainText(contract.negative);
     await expectNoHorizontalOverflow(page, `${contract.language} mock result`);
+
+    expect(pageErrors).toEqual([]);
+  });
+}
+
+for (const theme of ['auto', 'dark'] as const) {
+  test(`static mock question navigation dots keep visible focus and target size in ${theme} theme`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    const pageErrors = collectPageErrors(page);
+    const stage = page.locator('#mock-stage');
+
+    await openStaticMock(page, staticSite.baseUrl, 'en', theme);
+    await expect(page.locator('html')).toHaveAttribute('data-theme-pref', theme);
+    if (theme === 'dark') {
+      await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    }
+
+    await page.locator('#cfg-start').click();
+    await expect(page).toHaveURL(/#\/mock\?run=1$/);
+    await expect(stage.getByRole('button', { name: copyContracts[1].currentDotLabel })).toHaveClass(
+      /is-on/,
+    );
+    await expectFocusedMockDot(page, `${theme} current mock dot`);
+    await expectNoHorizontalOverflow(page, `${theme} focused mock dot`);
+
+    await page.locator('#mock-stage .mock-opt').first().click();
+    await page.locator('#mock-next').click();
+    await expect(
+      stage.getByRole('button', { name: copyContracts[1].answeredDotLabel }),
+    ).toHaveClass(/is-done/);
+    await expectFocusedMockDot(page, `${theme} done mock dot`);
+    await expectNoHorizontalOverflow(page, `${theme} focused done mock dot`);
 
     expect(pageErrors).toEqual([]);
   });

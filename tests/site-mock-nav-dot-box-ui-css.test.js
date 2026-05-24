@@ -15,7 +15,7 @@ test('static mock question navigation dots use tactile progress boxes', () => {
   );
   assert.match(
     css,
-    /\.mock-dot\s*{[\s\S]*background: rgba\(255, 255, 255, 0\.62\);[\s\S]*border-radius: 12px;[\s\S]*min-height: 38px;/,
+    /\.mock-dot\s*{[\s\S]*background: rgba\(255, 255, 255, 0\.62\);[\s\S]*border-radius: 12px;[\s\S]*min-height: 44px;[\s\S]*min-width: 44px;/,
   );
   assert.match(
     css,
@@ -33,6 +33,14 @@ test('static mock question navigation dots use tactile progress boxes', () => {
   assert.match(css, /\.mock-dot\.is-on::after\s*{[\s\S]*background: var\(--gold\);/);
   assert.match(
     css,
-    /@media \(max-width: 640px\)\s*{[\s\S]*\.mock-grid\s*{[\s\S]*grid-template-columns: repeat\(auto-fill, minmax\(34px, 1fr\)\);[\s\S]*\.mock-dot\s*{[\s\S]*min-height: 36px;/,
+    /\.mock-dot:focus-visible\s*{[\s\S]*border-color: var\(--blue\);[\s\S]*box-shadow:[\s\S]*0 0 0 5px rgba\(0, 106, 167, 0\.2\),[\s\S]*var\(--card-shadow\);[\s\S]*outline: 3px solid var\(--gold\);[\s\S]*outline-offset: 3px;/,
+  );
+  assert.match(
+    css,
+    /:root\[data-theme='dark'\] \.mock-dot:focus-visible\s*{[\s\S]*border-color: var\(--gold\);[\s\S]*box-shadow:[\s\S]*0 0 0 5px rgba\(254, 204, 0, 0\.22\),[\s\S]*var\(--card-shadow\);[\s\S]*outline-color: var\(--gold\);/,
+  );
+  assert.match(
+    css,
+    /@media \(max-width: 640px\)\s*{[\s\S]*\.mock-grid\s*{[\s\S]*grid-template-columns: repeat\(auto-fill, minmax\(44px, 1fr\)\);[\s\S]*\.mock-dot\s*{[\s\S]*min-height: 44px;/,
   );
 });
