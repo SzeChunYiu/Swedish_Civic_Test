@@ -13805,6 +13805,7 @@ function validateRemoveAdsEntitlementHookParity() {
   let hookSource = '';
   let homeSource = '';
   let premiumBannerSource = '';
+  let removeAdsUnavailableCopySource = '';
 
   function reject(message) {
     valid = false;
@@ -13821,6 +13822,10 @@ function validateRemoveAdsEntitlementHookParity() {
       path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
       'utf8',
     );
+    removeAdsUnavailableCopySource = fs.readFileSync(
+      path.join(repoRoot, 'lib/monetization/removeAdsUnavailableCopy.ts'),
+      'utf8',
+    );
   } catch (error) {
     reject(`Remove Ads entitlement sources could not be read: ${error.message}`);
     return;
@@ -13829,6 +13834,10 @@ function validateRemoveAdsEntitlementHookParity() {
   const normalizedHookSource = hookSource.replace(/\s+/g, ' ');
   const normalizedHomeSource = homeSource.replace(/\s+/g, ' ');
   const normalizedPremiumBannerSource = premiumBannerSource.replace(/\s+/g, ' ');
+  const normalizedRemoveAdsUnavailableCopySource = removeAdsUnavailableCopySource.replace(
+    /\s+/g,
+    ' ',
+  );
   const resolvedAdEntitlementsHookStart = hookSource.indexOf(
     'export function useResolvedAdEntitlements',
   );
@@ -13945,9 +13954,8 @@ function validateRemoveAdsEntitlementHookParity() {
       'Home monetization surfaces must wait for Remove Ads entitlements before rendering',
     ],
     [
-      normalizedPremiumBannerSource.includes(
-        "purchaseRuntime?.purchaseUnavailableReason === 'web_store_unavailable'",
-      ) &&
+      normalizedPremiumBannerSource.includes('getRemoveAdsUnavailableCopy') &&
+        normalizedRemoveAdsUnavailableCopySource.includes("case 'web_store_unavailable'") &&
         normalizedPremiumBannerSource.includes('copy.webUnavailableBody(resolvedPriceLabel)') &&
         normalizedPremiumBannerSource.includes('copy.body(resolvedPriceLabel)') &&
         normalizedPremiumBannerSource.includes('copy.webUnavailableAccessibilityHint') &&
@@ -20599,6 +20607,7 @@ function validateRemoveAdsPurchaseRuntimeParity() {
   let placementCtaSource = '';
   let pricingWedgeSource = '';
   let purchaseSource = '';
+  let removeAdsUnavailableCopySource = '';
 
   function reject(message) {
     valid = false;
@@ -20620,6 +20629,10 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       path.join(repoRoot, 'components/monetization/PricingWedge.tsx'),
       'utf8',
     );
+    removeAdsUnavailableCopySource = fs.readFileSync(
+      path.join(repoRoot, 'lib/monetization/removeAdsUnavailableCopy.ts'),
+      'utf8',
+    );
   } catch (error) {
     reject(`Remove Ads purchase runtime sources could not be read: ${error.message}`);
     return;
@@ -20630,6 +20643,10 @@ function validateRemoveAdsPurchaseRuntimeParity() {
   const normalizedPaywallSource = paywallSource.replace(/\s+/g, ' ');
   const normalizedPlacementCtaSource = placementCtaSource.replace(/\s+/g, ' ');
   const normalizedPricingWedgeSource = pricingWedgeSource.replace(/\s+/g, ' ');
+  const normalizedRemoveAdsUnavailableCopySource = removeAdsUnavailableCopySource.replace(
+    /\s+/g,
+    ' ',
+  );
   const paywallDisabledPropCount =
     paywallSource.match(/disabled=\{actionsDisabled\}/g)?.length ?? 0;
   const paywallDisabledStateCount =
@@ -20849,15 +20866,19 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       'RemoveAdsPlacementCta must wire restoreRemoveAdsPurchase through the shared purchase runtime',
     ],
     [
-      normalizedPlacementCtaSource.includes(
-        "purchaseRuntime?.purchaseUnavailableReason === 'web_store_unavailable'",
-      ) &&
-        normalizedPlacementCtaSource.includes(
-          "purchaseRuntime?.purchaseUnavailableReason === 'native_receipt_validator_unavailable'",
+      normalizedPlacementCtaSource.includes('getRemoveAdsUnavailableCopy') &&
+        normalizedRemoveAdsUnavailableCopySource.includes("case 'web_store_unavailable'") &&
+        normalizedRemoveAdsUnavailableCopySource.includes(
+          "case 'native_receipt_validator_unavailable'",
+        ) &&
+        normalizedRemoveAdsUnavailableCopySource.includes(
+          'const exhaustiveReason: never = reason',
         ) &&
         normalizedPlacementCtaSource.includes(
-          'const purchaseUnavailable = webPurchaseUnavailable || nativePurchaseUnavailable;',
+          'const purchaseUnavailable = unavailableCopy !== undefined;',
         ) &&
+        normalizedPlacementCtaSource.includes('webStoreUnavailable:') &&
+        normalizedPlacementCtaSource.includes('nativeReceiptValidatorUnavailable:') &&
         normalizedPlacementCtaSource.includes('copy.webUnavailableBody(REMOVE_ADS_PRICE_LABEL)') &&
         normalizedPlacementCtaSource.includes('copy.webUnavailableAccessibilityHint') &&
         normalizedPlacementCtaSource.includes('copy.buyUnavailable') &&
@@ -20897,23 +20918,17 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       'RemoveAdsPlacementCta must disable buy and restore actions for unavailable web purchase runtime',
     ],
     [
-      normalizedPlacementCtaSource.includes(
-        'webPurchaseUnavailable ? copy.statusMessages.unavailable',
-      ) ||
-        (normalizedPlacementCtaSource.includes('copy.nativeUnavailableStatus') &&
-          normalizedPlacementCtaSource.includes('copy.statusMessages.unavailable') &&
-          normalizedPlacementCtaSource.includes(
-            'Remove Ads can be bought or restored in the mobile app.',
-          ) &&
-          normalizedPlacementCtaSource.includes(
-            'Ta bort annonser kan köpas eller återställas i mobilappen.',
-          )),
+      normalizedPlacementCtaSource.includes('statusMessage: copy.statusMessages.unavailable') &&
+        normalizedPlacementCtaSource.includes(
+          'Remove Ads can be bought or restored in the mobile app.',
+        ) &&
+        normalizedPlacementCtaSource.includes(
+          'Ta bort annonser kan köpas eller återställas i mobilappen.',
+        ),
       'RemoveAdsPlacementCta must show mobile-app-only status copy for unavailable web purchase runtime',
     ],
     [
-      normalizedPlacementCtaSource.includes(
-        'nativePurchaseUnavailable ? copy.nativeUnavailableStatus',
-      ) &&
+      normalizedPlacementCtaSource.includes('statusMessage: copy.nativeUnavailableStatus') &&
         normalizedPlacementCtaSource.includes(
           'Purchases are temporarily unavailable because receipt validation is not configured.',
         ) &&
@@ -20981,12 +20996,14 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       'PremiumBanner must render the fetched Remove Ads display price with fallback',
     ],
     [
-      normalizedPaywallSource.includes(
-        "purchaseRuntime?.purchaseUnavailableReason === 'native_receipt_validator_unavailable'",
-      ) &&
-        normalizedPaywallSource.includes(
-          'const purchaseUnavailable = webPurchaseUnavailable || nativePurchaseUnavailable;',
+      normalizedPaywallSource.includes('getRemoveAdsUnavailableCopy') &&
+        normalizedRemoveAdsUnavailableCopySource.includes(
+          "case 'native_receipt_validator_unavailable'",
         ) &&
+        normalizedPaywallSource.includes(
+          'const purchaseUnavailable = unavailableCopy !== undefined;',
+        ) &&
+        normalizedPaywallSource.includes('nativeReceiptValidatorUnavailable:') &&
         normalizedPaywallSource.includes('copy.nativeUnavailableAccessibilityHint') &&
         normalizedPaywallSource.includes('copy.buyNativeUnavailable') &&
         normalizedPaywallSource.includes('copy.restoreNativeUnavailable') &&

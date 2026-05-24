@@ -2746,6 +2746,10 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
     path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
     'utf8',
   );
+  const unavailableCopySource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/removeAdsUnavailableCopy.ts'),
+    'utf8',
+  );
   const placementCtaSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
     'utf8',
@@ -2762,11 +2766,12 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(paywallSource, /setCurrentEntitlements\(entitlements\)/);
   assert.match(paywallSource, /onEntitlementsChange/);
   assert.match(paywallSource, /adsDisabled/);
-  assert.match(paywallSource, /purchaseUnavailableReason === 'web_store_unavailable'/);
-  assert.match(
-    paywallSource,
-    /purchaseUnavailableReason === 'native_receipt_validator_unavailable'/,
-  );
+  assert.match(paywallSource, /getRemoveAdsUnavailableCopy/);
+  assert.match(unavailableCopySource, /case 'web_store_unavailable'/);
+  assert.match(unavailableCopySource, /case 'native_receipt_validator_unavailable'/);
+  assert.match(unavailableCopySource, /const exhaustiveReason: never = reason/);
+  assert.match(paywallSource, /webStoreUnavailable:/);
+  assert.match(paywallSource, /nativeReceiptValidatorUnavailable:/);
   assert.match(paywallSource, /copy\.webUnavailableBody\(resolvedPriceLabel\)/);
   assert.match(paywallSource, /copy\.nativeUnavailableBody\(resolvedPriceLabel\)/);
   assert.match(paywallSource, /copy\.body\(resolvedPriceLabel\)/);
@@ -2788,7 +2793,7 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(paywallSource, /Köp Ta bort annonser för \$\{price\}/);
   assert.match(
     paywallSource,
-    /webPurchaseUnavailable[\s\S]*\? copy\.webUnavailableAccessibilityHint[\s\S]*: copy\.buyAccessibilityHint/,
+    /unavailableCopy\?\.accessibilityHint \?\? copy\.buyAccessibilityHint/,
   );
   assert.match(paywallSource, /Purchase removes ads after store confirmation/);
   assert.match(paywallSource, /tidsatta övningsprov i appen redan är annonsfria/);
@@ -2797,7 +2802,7 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(paywallSource, /Återställ köp av Ta bort annonser/);
   assert.match(
     paywallSource,
-    /webPurchaseUnavailable[\s\S]*\? copy\.webUnavailableAccessibilityHint[\s\S]*: copy\.restoreAccessibilityHint/,
+    /unavailableCopy\?\.accessibilityHint \?\? copy\.restoreAccessibilityHint/,
   );
   assert.match(paywallSource, /same store account/);
   assert.match(paywallSource, /samma butikskonto/);
@@ -2819,11 +2824,9 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(profileSource, /useRemoveAdsEntitlements/);
   assert.match(profileSource, /onEntitlementsChange=\{setMonetizationEntitlements\}/);
   assert.match(profileSource, /runtimeOptions=\{purchaseRuntime\}/);
-  assert.match(placementCtaSource, /purchaseUnavailableReason === 'web_store_unavailable'/);
-  assert.match(
-    placementCtaSource,
-    /purchaseUnavailableReason === 'native_receipt_validator_unavailable'/,
-  );
+  assert.match(placementCtaSource, /getRemoveAdsUnavailableCopy/);
+  assert.match(placementCtaSource, /webStoreUnavailable:/);
+  assert.match(placementCtaSource, /nativeReceiptValidatorUnavailable:/);
   assert.match(placementCtaSource, /copy\.webUnavailableBody\(REMOVE_ADS_PRICE_LABEL\)/);
   assert.match(placementCtaSource, /copy\.nativeUnavailableBody\(REMOVE_ADS_PRICE_LABEL\)/);
   assert.match(placementCtaSource, /copy\.webUnavailableAccessibilityHint/);
