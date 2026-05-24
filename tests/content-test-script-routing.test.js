@@ -691,7 +691,7 @@ test('QuestionSourceCitation accessibility parity uses focused content validatio
     'questionSourceCitationAccessibilityParityValidated',
   ]);
 
-  assert.equal(summary.questionSourceCitationAccessibilityRulesValidated, 15);
+  assert.equal(summary.questionSourceCitationAccessibilityRulesValidated, 23);
   assert.equal(summary.questionSourceCitationAccessibilityParityValidated, true);
 });
 
@@ -814,6 +814,26 @@ test('Settings import summary nonzero parity uses focused content validation rou
   );
   assert.match(settingsRouteTestSource, /--focus-settings-import-summary-nonzero/);
   assert.match(localStudyImportTestSource, /--focus-settings-import-summary-nonzero/);
+  assert.match(settingsRouteTestSource, /runFocusedValidatorMutation/);
+  assert.match(localStudyImportTestSource, /runFocusedValidatorMutation/);
+  assert.match(
+    settingsRouteTestSource,
+    /const settingsImportSummaryModulePath = 'lib\/storage\/localStudyDataImportSummary\.ts';/,
+  );
+  assert.match(
+    localStudyImportTestSource,
+    /const settingsImportSummaryModulePath = 'lib\/storage\/localStudyDataImportSummary\.ts';/,
+  );
+  assert.match(settingsRouteTestSource, /targetFile: settingsImportSummaryModulePath/);
+  assert.match(localStudyImportTestSource, /targetFile: settingsImportSummaryModulePath/);
+  assert.match(
+    settingsRouteTestSource,
+    /if \(count > 0\) lines\.push\(formatLine\(count\)\);[\s\S]*if \(count >= 0\) lines\.push\(formatLine\(count\)\);/,
+  );
+  assert.match(
+    localStudyImportTestSource,
+    /if \(summary\.streakFreezeStateIncluded\) lines\.push\(copy\.importSummaryStreakFreeze\);[\s\S]*lines\.push\(copy\.importSummaryStreakFreeze\);/,
+  );
 });
 
 test('Badge accessibility parity uses focused content validation routing', () => {
