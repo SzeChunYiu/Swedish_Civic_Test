@@ -115,6 +115,9 @@ test('TRANSLATE-COMPLETE P0 has explicit SV/EN completeness and naturalness clos
   assert.equal(summary.translationNaturalnessGuardParityValidated, true);
   assert.equal(summary.questionBilingualTextPairsValidated, summary.publishedQuestions);
   assert.equal(summary.questionOptionBilingualTextPairsValidated, summary.publishedQuestions);
+  assert.ok(summary.glossaryTerms > 0);
+  assert.equal(summary.glossaryTranslationCompletenessValidated, summary.glossaryTerms);
+  assert.equal(summary.glossaryNaturalnessValidated, summary.glossaryTerms);
   assert.equal(summary.questionGeneratedTrueFalseNaturalnessValidated, summary.publishedQuestions);
   assert.equal(summary.questionLuciaRoleEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(
@@ -161,6 +164,75 @@ test('TRANSLATE-COMPLETE P0 has explicit SV/EN completeness and naturalness clos
   );
   assert.equal(summary.somaliGeographyNaturalnessParityValidated, true);
   assert.equal(summary.somaliHolidayFoodNaturalnessParityValidated, true);
+});
+
+test('TRANSLATE-COMPLETE rejects literal glossary English calques', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+process.argv.push('--focus-translate-complete-p0');
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/glossary.ts')) {
+    return String(contents)
+      .replace('Labour market partners', 'Labour-market parties')
+      .replace('society values different experiences', 'society makes use of different experiences');
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /arbetsmarknadens-parter uses literal labour-market parties English/,
+  );
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /integration uses stilted makes-use-of-experiences English/,
+  );
+});
+
+test('TRANSLATE-COMPLETE rejects literal glossary Swedish calques', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+process.argv.push('--focus-translate-complete-p0');
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/glossary.ts')) {
+    return String(contents).replace(
+      'En process där människor blir delaktiga i samhällslivet och samhället tar tillvara olika erfarenheter.',
+      'En process där människor blir delaktiga i samhällslivet och samhället gör användning av olika erfarenheter.',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /integration uses literal gör användning av Swedish/,
+  );
 });
 
 test('TRANSLATE-COMPLETE rejects q080 suffrage explanation meta wording', () => {
