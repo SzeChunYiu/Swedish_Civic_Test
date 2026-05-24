@@ -19,7 +19,6 @@ const MONETIZATION_THEME_SURFACES = [
   'components/monetization/RemoveAdsPlacementCta.tsx',
 ];
 const HEADER_THEME_SURFACES = [
-  'components/ui/LanguageToggle.tsx',
   'components/ui/LanguagePicker.tsx',
   'components/ui/TopBarActions.tsx',
 ];
@@ -43,7 +42,6 @@ const NATIVE_LEARNING_THEME_SURFACES = [
   'components/learning/BadgeRow.tsx',
   'components/learning/ChapterCard.tsx',
   'components/learning/Flashcard.tsx',
-  'components/learning/GuidedPracticePath.tsx',
   'components/learning/StudyArticleCard.tsx',
 ];
 const POST_ANSWER_REWARD_CALLERS = ['app/(tabs)/practice.tsx', 'app/quiz/[sessionId].tsx'];
@@ -51,6 +49,14 @@ const WEEKLY_RECAP_THEME_SURFACES = [
   'app/recap.tsx',
   'components/compliance/ComplianceActionLink.tsx',
 ];
+const THEME_TEST_SOURCE_FILES = [
+  'scripts/theme-discipline.test.js',
+  'tests/content-theme-token-schema.test.js',
+];
+const PLATFORM_VARIANT_COMPONENTS = new Map([
+  ['components/monetization/AdBanner.native.tsx', 'components/monetization/AdBanner.tsx'],
+  ['components/monetization/NativeAdCard.native.tsx', 'components/monetization/NativeAdCard.tsx'],
+]);
 const COLOR_LITERAL = /#[0-9a-fA-F]{6}|rgba?\(/;
 const SPACING_LITERAL = /\b(?:padding(?:Horizontal|Vertical)?|marginTop|gap|borderRadius):\s*\d/;
 const TYPOGRAPHY_LITERAL =
@@ -97,6 +103,89 @@ function walk(dir) {
 
 function read(relativePath) {
   return fs.readFileSync(path.join(ROOT, relativePath), 'utf8');
+}
+
+function sourceFilesUnder(relativeDir) {
+  return walk(path.join(ROOT, relativeDir)).map((filePath) =>
+    path.relative(ROOT, filePath).replace(/\\/g, '/'),
+  );
+}
+
+function resolveRelativeImport(fromRelativePath, specifier) {
+  if (!specifier.startsWith('.')) return null;
+
+  const fromDir = path.dirname(path.join(ROOT, fromRelativePath));
+  const basePath = path.resolve(fromDir, specifier);
+  const candidates = [
+    basePath,
+    `${basePath}.tsx`,
+    `${basePath}.ts`,
+    path.join(basePath, 'index.tsx'),
+    path.join(basePath, 'index.ts'),
+  ];
+
+  for (const candidate of candidates) {
+    if (!fs.existsSync(candidate)) continue;
+    const relativePath = path.relative(ROOT, candidate).replace(/\\/g, '/');
+    if (relativePath.startsWith('app/') || relativePath.startsWith('components/')) {
+      return relativePath;
+    }
+  }
+
+  return null;
+}
+
+function buildReachableAppComponentSet() {
+  const allSourceFiles = [...sourceFilesUnder('app'), ...sourceFilesUnder('components')];
+  const graph = new Map(allSourceFiles.map((filePath) => [filePath, []]));
+  const importPattern = /import(?:\s+type)?[\s\S]*?\sfrom\s+['"]([^'"]+)['"]/g;
+
+  for (const filePath of allSourceFiles) {
+    const source = read(filePath);
+    for (const match of source.matchAll(importPattern)) {
+      const resolved = resolveRelativeImport(filePath, match[1]);
+      if (resolved) graph.get(filePath).push(resolved);
+    }
+  }
+
+  const reachable = new Set();
+  const stack = allSourceFiles.filter((filePath) => filePath.startsWith('app/'));
+  while (stack.length > 0) {
+    const current = stack.pop();
+    if (reachable.has(current)) continue;
+    reachable.add(current);
+    for (const next of graph.get(current) || []) stack.push(next);
+  }
+
+  return reachable;
+}
+
+function themeTestComponentReferences(extraReferences = []) {
+  const references = new Set(extraReferences);
+  const componentPathPattern = /['"`](components\/[^'"`\s]+\.tsx?)['"`]/g;
+
+  for (const testFile of THEME_TEST_SOURCE_FILES) {
+    const source = read(testFile);
+    for (const match of source.matchAll(componentPathPattern)) {
+      references.add(match[1]);
+    }
+  }
+
+  return [...references].filter((componentPath) => fs.existsSync(path.join(ROOT, componentPath)));
+}
+
+function findDeadThemeTestComponentReferences(extraReferences = []) {
+  const reachable = buildReachableAppComponentSet();
+  const offenders = [];
+
+  for (const componentPath of themeTestComponentReferences(extraReferences)) {
+    const platformBase = PLATFORM_VARIANT_COMPONENTS.get(componentPath);
+    if (platformBase && reachable.has(platformBase)) continue;
+    if (reachable.has(componentPath)) continue;
+    offenders.push(componentPath);
+  }
+
+  return offenders.sort();
 }
 
 function readColorTokens() {
@@ -656,6 +745,14 @@ test('native learning child components resolve semantic colors from the active t
     /<QuestionSourceCitation[\s\S]*themeColors=\{themeColors\}/,
     'Flashcard source citations should receive active theme colors',
   );
+});
+
+test('theme tests only hardcode active component surfaces', () => {
+  assert.deepEqual(findDeadThemeTestComponentReferences(), []);
+  const deadLanguageTogglePath = ['components', 'ui', 'LanguageToggle.tsx'].join('/');
+  assert.deepEqual(findDeadThemeTestComponentReferences([deadLanguageTogglePath]), [
+    deadLanguageTogglePath,
+  ]);
 });
 
 test('TopBarActions LanguagePicker GlobeIcon SearchIcon AudioIcon focusSoft avoid the static colors singleton', () => {
