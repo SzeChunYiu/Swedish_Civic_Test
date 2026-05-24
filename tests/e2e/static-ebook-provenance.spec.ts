@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import {
   collectPageErrors,
+  expectNoHorizontalOverflow,
   openStaticEbook,
   setStaticSiteLanguage,
   startStaticSiteServer,
@@ -63,6 +64,35 @@ const officialTestSourceLinkLabels = [
   'UHR: Anmälan',
   'UHR: Utbildningsmaterial',
 ] as const;
+const localNoteRailCases = [
+  {
+    body: 'Highlights and notes stay in this browser and work locally without sign-in.',
+    chip: 'browser note',
+    direction: 'ltr',
+    language: 'en',
+    physicalSide: 'left',
+  },
+  {
+    body: 'تبقى التظليلات والملاحظات في هذا المتصفح وتعمل محلياً من دون تسجيل دخول.',
+    chip: 'ملاحظة المتصفح',
+    direction: 'rtl',
+    language: 'ar',
+    physicalSide: 'right',
+  },
+  {
+    body: 'نیشانەکردن و تێبینییەکان لەم وێبگەڕەدا دەمێننەوە و بەبێ چوونەژوورەوە ناوخۆیی کار دەکەن.',
+    chip: 'تێبینی وێبگەڕ',
+    direction: 'rtl',
+    language: 'ckb',
+    physicalSide: 'right',
+  },
+] as const satisfies readonly {
+  body: string;
+  chip: string;
+  direction: 'ltr' | 'rtl';
+  language: StaticSiteLanguage;
+  physicalSide: 'left' | 'right';
+}[];
 
 const badgeLabels: Record<(typeof languages)[number], Record<string, string>> = {
   en: {
@@ -259,6 +289,58 @@ for (const {
     await expect(reader).not.toContainText('Sources page');
     await expect(reader).not.toContainText('Original study guide');
 
+    expect(pageErrors).toEqual([]);
+  });
+}
+
+for (const { body, chip, direction, language, physicalSide } of localNoteRailCases) {
+  test(`static ebook local note rail uses inline-start in ${direction} ${language}`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 360, height: 780 });
+    const pageErrors = collectPageErrors(page);
+
+    await openStaticEbook(page, staticSite.baseUrl, language, '#/ebook?c=7');
+
+    const localNote = page.locator('.ebook__local-note');
+    await expect(page.locator('html')).toHaveAttribute('dir', direction);
+    await expect(localNote).toContainText(body);
+    if (language !== 'en') {
+      await expect(localNote).not.toContainText('Highlights and notes stay');
+    }
+
+    const rail = await localNote.evaluate((note, expectedChip) => {
+      const noteStyle = window.getComputedStyle(note);
+      const railStyle = window.getComputedStyle(note, '::before');
+      const chipStyle = window.getComputedStyle(note, '::after');
+      const unquoteCssContent = (value: string) =>
+        value.replace(/^["']|["']$/g, '').replace(/\\"/g, '"');
+
+      return {
+        chip: unquoteCssContent(chipStyle.content),
+        clientWidth: note.clientWidth,
+        direction: noteStyle.direction,
+        inlineStart: railStyle.insetInlineStart,
+        left: railStyle.left,
+        right: railStyle.right,
+        scrollWidth: note.scrollWidth,
+        width: railStyle.width,
+        chipMatchesDataAttribute: note.getAttribute('data-local-note-chip') === expectedChip,
+      };
+    }, chip);
+
+    expect(rail.direction).toBe(direction);
+    expect(rail.inlineStart).toBe('0px');
+    expect(Number.parseFloat(rail.width)).toBeGreaterThan(0);
+    expect(rail.chip).toBe(chip);
+    expect(rail.chipMatchesDataAttribute).toBe(true);
+    expect(rail.scrollWidth).toBeLessThanOrEqual(rail.clientWidth + 1);
+    if (physicalSide === 'left') {
+      expect(rail.left).toBe('0px');
+    } else {
+      expect(rail.right).toBe('0px');
+    }
+    await expectNoHorizontalOverflow(page, `ebook local note ${language}`);
     expect(pageErrors).toEqual([]);
   });
 }

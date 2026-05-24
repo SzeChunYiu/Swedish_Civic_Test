@@ -93,6 +93,15 @@ function extractSigninDictionaryLocales(source, key) {
   );
 }
 
+function extractCssRuleBlocks(source, selector) {
+  const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const matches = Array.from(
+    source.matchAll(new RegExp(`${escapedSelector}\\s*\\{([^}]*)\\}`, 'g')),
+  );
+  assert.ok(matches.length > 0, `${selector} rule should exist`);
+  return matches.map((match) => match[1]);
+}
+
 function createRenderContext({
   hash,
   language = 'en',
@@ -536,6 +545,51 @@ test('Settings language change persists extra locales and updates root direction
     'tr',
     'uk',
   ]);
+});
+
+test('static ebook local note rail uses inline-start for RTL direction parity', () => {
+  const app = read('site/app.js');
+  const extras = read('site/i18n-extras.js');
+  const index = read('site/index.html');
+  const styles = read('site/styles.css');
+  const localNoteBlock = extractCssRuleBlocks(styles, '.ebook__local-note').find((block) =>
+    block.includes('position: relative;'),
+  );
+  const localNoteRailBlock = extractCssRuleBlocks(styles, '.ebook__local-note::before').find(
+    (block) => block.includes('inset-inline-start: 0;'),
+  );
+  const localNoteChipBlock = extractCssRuleBlocks(styles, '.ebook__local-note::after').find(
+    (block) => block.includes('content: attr(data-local-note-chip);'),
+  );
+  assert.match(index, /class="ebook__local-note"[\s\S]*data-i18n="ebook\.localNote\.body"/);
+  assert.match(index, /data-i18n-local-note-chip="ebook\.localNote\.chip"/);
+  assert.match(index, /data-local-note-chip="browser note"/);
+  assert.match(app, /'ebook\.localNote\.body':/);
+  assert.match(app, /'ebook\.localNote\.chip': 'browser note'/);
+  assert.match(app, /document\.querySelectorAll\('\[data-i18n-local-note-chip\]'\)/);
+  assert.match(extras, /'ebook\.localNote\.chip': 'ملاحظة المتصفح'/);
+  assert.match(extras, /'ebook\.localNote\.chip': 'تێبینی وێبگەڕ'/);
+  assert.match(extras, /'ebook\.localNote\.chip': 'یادداشت مرورگر'/);
+  assert.ok(localNoteBlock, 'optimized ebook local note rule should exist');
+  assert.ok(localNoteRailBlock, 'ebook local note rail rule should use inline-start');
+  assert.ok(localNoteChipBlock, 'ebook local note chip rule should use the localized attribute');
+  assert.match(localNoteBlock, /position:\s*relative;/);
+  assert.match(localNoteBlock, /overflow:\s*hidden;/);
+  assert.match(localNoteBlock, /padding-inline-start:\s*18px;/);
+  assert.match(localNoteRailBlock, /position:\s*absolute;/);
+  assert.match(localNoteRailBlock, /inset-block:\s*0;/);
+  assert.match(localNoteRailBlock, /inset-inline-start:\s*0;/);
+  assert.match(localNoteRailBlock, /border-start-start-radius:\s*inherit;/);
+  assert.match(localNoteRailBlock, /border-end-start-radius:\s*inherit;/);
+  assert.match(localNoteRailBlock, /pointer-events:\s*none;/);
+  assert.match(localNoteChipBlock, /content:\s*attr\(data-local-note-chip\);/);
+  assert.doesNotMatch(localNoteRailBlock, /\bleft\s*:/);
+  assert.doesNotMatch(localNoteRailBlock, /\bright\s*:/);
+  assert.doesNotMatch(localNoteRailBlock, /inset:\s*0\s+auto\s+0\s+0/);
+  assert.match(
+    styles,
+    /@media \(max-width: 560px\) \{[\s\S]*?\.ebook__local-note\s*\{[^}]*padding-inline-start:\s*16px;/,
+  );
 });
 
 test('Settings Reduce motion toggle persists smt_motion and updates the static root flag', () => {

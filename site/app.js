@@ -817,6 +817,9 @@ const i18n = (window.i18n = {
     'ebook.ch.13.title': 'Traditions, holidays & everyday culture',
     'ebook.title': 'The Field Guide',
     'ebook.sub': 'An unofficial companion to the citizenship test.',
+    'ebook.localNote.body':
+      'Highlights and notes stay in this browser and work locally without sign-in.',
+    'ebook.localNote.chip': 'browser note',
     'footer.h.study': 'Study',
     'footer.h.about': 'About',
     'footer.h.fika': 'Mood',
@@ -1237,6 +1240,9 @@ const i18n = (window.i18n = {
     'ebook.ch.13.title': 'Traditioner, helgdagar & vardagskultur',
     'ebook.title': 'Fältguiden',
     'ebook.sub': 'En inofficiell följeslagare till medborgarskapsprovet.',
+    'ebook.localNote.body':
+      'Markeringar och anteckningar stannar i den här webbläsaren och fungerar lokalt utan inloggning.',
+    'ebook.localNote.chip': 'webbläsarnotis',
     'footer.h.study': 'Studera',
     'footer.h.about': 'Om',
     'footer.h.fika': 'Stämning',
@@ -1375,6 +1381,12 @@ function applyLang(lang) {
     if (value === undefined) return;
     // some strings have HTML (em, b, a) — preserve via innerHTML
     el.innerHTML = value;
+  });
+  document.querySelectorAll('[data-i18n-local-note-chip]').forEach((el) => {
+    const key = el.dataset.i18nLocalNoteChip;
+    const value = i18n[lang] && i18n[lang][key];
+    if (value === undefined) return;
+    el.setAttribute('data-local-note-chip', value);
   });
   smtApplyChapterQuestionCounts(lang);
   smtApplyA11yLabels(lang);
