@@ -64,8 +64,10 @@ test('question-bank CSV keeps its public row contract', () => {
 
   const summary = JSON.parse(match[0]);
   assert.equal(summary.questionBankCsvRowsValidated, summary.publishedQuestions);
-  assert.equal(summary.questionBankCsvHeaderColumnsValidated, 28);
+  assert.equal(summary.questionBankCsvHeaderColumnsValidated, 30);
   assert.equal(summary.questionBankCsvUniqueHeaderNamesValidated, true);
+  assert.equal(summary.questionBankCsvSourceCitationRowsValidated, summary.publishedQuestions);
+  assert.equal(summary.questionBankCsvSourceCitationParityValidated, true);
   assert.equal(summary.questionBankCsvUhrCitationRowsValidated, summary.publishedQuestions);
   assert.equal(summary.questionBankCsvUhrCitationParityValidated, true);
   assert.equal(summary.questionBankCsvUhrSourcePublisherRowsValidated, summary.publishedQuestions);
@@ -359,7 +361,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /content\/question-bank\.csv row 2 has 29 columns, expected 28/,
+    /content\/question-bank\.csv row 2 has 31 columns, expected 30/,
   );
 });
 
@@ -545,6 +547,31 @@ test('question-bank CSV exposes localized user-visible UHR citation strings', ()
   assert.ok(rows.every((row) => row[citationSvIndex] && row[citationEnIndex]));
 });
 
+test('question-bank CSV exposes full user-visible source citations', () => {
+  const output = runQuestionBankCsvValidation();
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'validation should print JSON summary');
+
+  const summary = JSON.parse(match[0]);
+  assert.equal(summary.questionBankCsvSourceCitationRowsValidated, summary.publishedQuestions);
+  assert.equal(summary.questionBankCsvSourceCitationParityValidated, true);
+
+  const rowsById = loadQuestionBankRowsById();
+  const q001 = rowsById.get('q001');
+  const q019 = rowsById.get('q019');
+  assert.ok(q001, 'q001 should be exported');
+  assert.ok(q019, 'q019 should be exported');
+
+  assert.equal(q001.sourceCitationSv, q001.uhrCitationSv);
+  assert.equal(q001.sourceCitationEn, q001.uhrCitationEn);
+  assert.match(q019.sourceCitationSv, /^Källa: Sverige i fokus,/);
+  assert.match(q019.sourceCitationSv, /Kompletterande källa: Rösträtten i svenska val/);
+  assert.match(q019.sourceCitationEn, /^Source: Sverige i fokus,/);
+  assert.match(q019.sourceCitationEn, /Additional source: Rösträtten i svenska val/);
+  assert.notEqual(q019.sourceCitationSv, q019.uhrCitationSv);
+  assert.notEqual(q019.sourceCitationEn, q019.uhrCitationEn);
+});
+
 test('question-bank CSV contract rejects localized UHR citation drift', () => {
   const result = spawnSync(
     process.execPath,
@@ -557,9 +584,15 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
   const contents = originalReadFileSync.call(this, filePath, ...args);
   if (normalizedPath.endsWith('/content/question-bank.csv')) {
+    let seen = 0;
     return String(contents).replace(
-      'Source: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, p. 5',
-      'Source: Sverige i fokus, Landet Sverige, wrong section, p. 5',
+      /Source: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, p\\. 5/g,
+      (match) => {
+        seen += 1;
+        return seen === 2
+          ? 'Source: Sverige i fokus, Landet Sverige, wrong section, p. 5'
+          : match;
+      },
     );
   }
   return contents;
@@ -630,6 +663,79 @@ test('question-bank CSV exposes Valmyndigheten supplemental source metadata for 
       assert.equal(row[fieldIndex], expected, `${row[idIndex]} ${field}`);
     }
   });
+});
+
+test('question-bank CSV contract rejects full source citations collapsed to UHR-only citations', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/content/question-bank.csv')) {
+    const lines = String(contents).trimEnd().split('\\n');
+    const header = lines[0].match(/"((?:""|[^"])*)"(?:,|$)/g).map((cell) => cell.slice(1, -1).replaceAll('""', '"'));
+    const sourceCitationSvIndex = header.indexOf('sourceCitationSv');
+    const sourceCitationEnIndex = header.indexOf('sourceCitationEn');
+    const uhrCitationSvIndex = header.indexOf('uhrCitationSv');
+    const uhrCitationEnIndex = header.indexOf('uhrCitationEn');
+    const mutated = lines.map((line, index) => {
+      if (index === 0) return line;
+      const cells = line.match(/"((?:""|[^"])*)"(?:,|$)/g).map((cell) => cell.slice(1, -1).replaceAll('""', '"'));
+      cells[sourceCitationSvIndex] = cells[uhrCitationSvIndex];
+      cells[sourceCitationEnIndex] = cells[uhrCitationEnIndex];
+      return cells.map((cell) => '"' + String(cell).replaceAll('"', '""') + '"').join(',');
+    }).join('\\n') + '\\n';
+    return mutated;
+  }
+  return contents;
+};
+process.argv.push('--focus-question-bank-csv');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.match(output, /q019 sourceCitationSv is .*Kompletterande källa: Rösträtten i svenska val/);
+  assert.match(output, /q019 sourceCitationEn is .*Additional source: Rösträtten i svenska val/);
+});
+
+test('question-bank CSV contract rejects missing supplemental-source text in full citations', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/content/question-bank.csv')) {
+    return String(contents)
+      .replace(/; Kompletterande källa: Rösträtten i svenska val, Valmyndigheten, publicerad 2025-11-21, hämtad 2026-05-22, https:\\/\\/www\\.val\\.se\\/det-svenska-valsystemet\\/sa-funkar-rostning-i-svenska-val\\/rostratten-i-svenska-val/g, '')
+      .replace(/; Additional source: Rösträtten i svenska val, Valmyndigheten, published 2025-11-21, retrieved 2026-05-22, https:\\/\\/www\\.val\\.se\\/det-svenska-valsystemet\\/sa-funkar-rostning-i-svenska-val\\/rostratten-i-svenska-val/g, '');
+  }
+  return contents;
+};
+process.argv.push('--focus-question-bank-csv');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.match(output, /q019 sourceCitationSv is .*Kompletterande källa: Rösträtten i svenska val/);
+  assert.match(output, /q019 sourceCitationEn is .*Additional source: Rösträtten i svenska val/);
 });
 
 test('question-bank CSV contract summarizes shared UHR source metadata drift', () => {
