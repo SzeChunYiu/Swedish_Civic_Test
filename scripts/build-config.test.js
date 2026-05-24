@@ -1405,8 +1405,12 @@ test('web export script is available for local production bundle smoke', () => {
     'node --test tests/web-export-budget.test.js',
   );
   assert.equal(
+    pkg.scripts['test:web-export-asset-path-hygiene'],
+    'node --test tests/web-export-asset-path-hygiene.test.js',
+  );
+  assert.equal(
     pkg.scripts['release:web-export-smoke'],
-    'rm -rf dist-web && npm run build:web:export && npm run test:web-export-budget',
+    'rm -rf dist-web && npm run build:web:export && node scripts/prepare-web-export.js --check dist-web && npm run test:web-export-budget && npm run test:web-export-asset-path-hygiene',
   );
   assert.deepEqual(vercelConfig.rewrites, [{ source: '/(.*)', destination: '/index.html' }]);
   assert.equal(redirects.trim(), '/* /index.html 200');
