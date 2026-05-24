@@ -90,34 +90,7 @@
       });
     }
     const copy = sourceCitationCopy[lang()] || sourceCitationCopy.en;
-    const currentLang = lang();
-    const uhrCitation = `${copy.source}: ${title}, ${source.chapter}, ${source.section}, ${copy.page} ${source.page}`;
-    const supplementalCitations = Array.isArray(source.supplementalSources)
-      ? source.supplementalSources
-          .filter((supplementalSource) => supplementalSource && supplementalSource.title)
-          .map((supplementalSource) => {
-            const published = supplementalSource.publishedDate
-              ? currentLang === 'sv'
-                ? `publicerad ${supplementalSource.publishedDate}`
-                : `published ${supplementalSource.publishedDate}`
-              : '';
-            const retrieved = supplementalSource.retrievedDate
-              ? currentLang === 'sv'
-                ? `hämtad ${supplementalSource.retrievedDate}`
-                : `retrieved ${supplementalSource.retrievedDate}`
-              : '';
-            return [
-              `${copy.source}: ${supplementalSource.title}`,
-              supplementalSource.publisher,
-              published,
-              retrieved,
-              supplementalSource.url,
-            ]
-              .filter(Boolean)
-              .join(', ');
-          })
-      : [];
-    return [uhrCitation, ...supplementalCitations].join('; ');
+    return `${copy.source}: ${title}, ${source.chapter}, ${source.section}, ${copy.page} ${source.page}`;
   }
   function questionReviewDisclaimer() {
     return tr({
@@ -339,8 +312,48 @@
       <div class="quiz__source-row">
         ${provenanceBadge(question)}
         <p class="${citationClassName}">${escapeHtml(sourceCitation(question))}</p>
+        ${supplementalSourceLinks(question)}
       </div>
     `;
+  }
+  function supplementalSourceLinks(question) {
+    const source = question && question.source;
+    const supplementalSources = Array.isArray(source && source.supplementalSources)
+      ? source.supplementalSources
+      : [];
+    const currentLang = lang();
+    const copy = sourceCitationCopy[currentLang] || sourceCitationCopy.en;
+    const links = supplementalSources
+      .filter(
+        (supplementalSource) =>
+          supplementalSource && supplementalSource.title && supplementalSource.url,
+      )
+      .map((supplementalSource) => {
+        const published = supplementalSource.publishedDate
+          ? currentLang === 'sv'
+            ? `publicerad ${supplementalSource.publishedDate}`
+            : `published ${supplementalSource.publishedDate}`
+          : '';
+        const retrieved = supplementalSource.retrievedDate
+          ? currentLang === 'sv'
+            ? `hämtad ${supplementalSource.retrievedDate}`
+            : `retrieved ${supplementalSource.retrievedDate}`
+          : '';
+        const meta = [supplementalSource.publisher, published, retrieved]
+          .filter(Boolean)
+          .join(' · ');
+        return `
+          <a class="quiz__supplemental-source-link" href="${escapeHtml(
+            supplementalSource.url,
+          )}" rel="noreferrer" target="_blank">
+            <span>${escapeHtml(`${copy.source}: ${supplementalSource.title}`)}</span>
+            ${meta ? `<span class="quiz__supplemental-source-meta">${escapeHtml(meta)}</span>` : ''}
+          </a>
+        `;
+      })
+      .join('');
+
+    return links ? `<div class="quiz__supplemental-source-list">${links}</div>` : '';
   }
   function hashString(value) {
     let hash = 2166136261;

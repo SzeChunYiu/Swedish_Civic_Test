@@ -45,6 +45,79 @@ function staticQuestionById(questionId) {
   return question;
 }
 
+function staticRendererContext(language = 'en') {
+  const noop = () => {};
+  const storageStub = {
+    getItem(key) {
+      return key === 'smt_lang' ? language : null;
+    },
+    setItem: noop,
+    removeItem: noop,
+  };
+  const context = {
+    window: {},
+    document: {
+      addEventListener: noop,
+      createElement() {
+        return {};
+      },
+      getElementById() {
+        return null;
+      },
+      querySelector() {
+        return null;
+      },
+      querySelectorAll() {
+        return [];
+      },
+      readyState: 'loading',
+      head: { appendChild: noop },
+    },
+    localStorage: storageStub,
+    sessionStorage: storageStub,
+    location: { hash: '#/practice' },
+    Event: function Event(type) {
+      this.type = type;
+    },
+    CustomEvent: function CustomEvent(type, init = {}) {
+      this.type = type;
+      this.detail = init.detail;
+    },
+    setTimeout: noop,
+    clearTimeout: noop,
+    requestAnimationFrame: noop,
+    confirm: () => true,
+  };
+  context.window = context;
+  context.globalThis = context.window;
+  context.window.addEventListener = noop;
+  context.window.dispatchEvent = () => true;
+  context.window.scrollTo = noop;
+  context.window.SMT_QUESTIONS = staticQuestionBank();
+  context.window.SMT_CHAPTERS_META = [];
+  vm.createContext(context);
+  return context;
+}
+
+function staticAppSourceRow(question, language) {
+  const context = staticRendererContext(language);
+  vm.runInContext(read('site/app.js'), context, { timeout: 3000 });
+  return context.smtQuizQuestionSourceRow(question, language);
+}
+
+function staticPracticeSourceRow(question, language) {
+  const context = staticRendererContext(language);
+  const source = read('site/practice.js').replace(
+    /\}\)\(\);\s*$/,
+    `
+  window.__staticPracticeSourceRow = questionSourceRow;
+})();
+`,
+  );
+  vm.runInContext(source, context, { timeout: 3000 });
+  return context.window.__staticPracticeSourceRow(question);
+}
+
 function staticQuestionBankRuntime() {
   const context = { window: {} };
   context.globalThis = context.window;
@@ -429,6 +502,32 @@ function sourceProvenanceSurface() {
     .replace(/<[^>]+>/g, ' ');
 }
 
+function primaryCitationHtml(sourceRowHtml, className) {
+  const match = sourceRowHtml.match(new RegExp(`<p class="${className}">([\\s\\S]*?)<\\/p>`));
+  assert.ok(match, `${className} primary citation should render`);
+  return normalizeInlineHtml(match[1]);
+}
+
+function assertSupplementalSourceLinkRow(sourceRowHtml, language) {
+  const label = language === 'sv' ? 'Källa' : 'Source';
+  const published = language === 'sv' ? 'publicerad 2025-11-21' : 'published 2025-11-21';
+  const retrieved = language === 'sv' ? 'hämtad 2026-05-22' : 'retrieved 2026-05-22';
+
+  assert.match(sourceRowHtml, /class="quiz__supplemental-source-list"/);
+  assert.match(sourceRowHtml, /class="quiz__supplemental-source-link"/);
+  assert.match(
+    sourceRowHtml,
+    /href="https:\/\/www\.val\.se\/det-svenska-valsystemet\/sa-funkar-rostning-i-svenska-val\/rostratten-i-svenska-val"/,
+  );
+  assert.match(sourceRowHtml, /rel="noreferrer"/);
+  assert.match(sourceRowHtml, /target="_blank"/);
+  assert.match(sourceRowHtml, new RegExp(`${label}: Rösträtten i svenska val`));
+  assert.match(sourceRowHtml, /class="quiz__supplemental-source-meta"/);
+  assert.match(sourceRowHtml, /Valmyndigheten/);
+  assert.match(sourceRowHtml, new RegExp(published));
+  assert.match(sourceRowHtml, new RegExp(retrieved));
+}
+
 function staticExtraI18n() {
   const context = { window: {} };
   vm.createContext(context);
@@ -536,6 +635,29 @@ test('static Home demo qcard source mirrors q039 source and UHR provenance', () 
       /Grundlagarna/,
       `${locale} qcard source should not keep stale Grundlagarna copy`,
     );
+  }
+});
+
+test('static practice renderers expose supplemental official sources as separate links', () => {
+  for (const questionId of ['q019', 'q030', 'q166']) {
+    const question = staticQuestionById(questionId);
+    assert.equal(question.source.supplementalSources[0].publisher, 'Valmyndigheten');
+
+    for (const language of ['en', 'sv']) {
+      const appRow = staticAppSourceRow(question, language);
+      const practiceRow = staticPracticeSourceRow(question, language);
+
+      for (const sourceRowHtml of [appRow, practiceRow]) {
+        const primaryCitation = primaryCitationHtml(sourceRowHtml, 'quiz__source');
+
+        assert.match(primaryCitation, /Sverige i fokus/);
+        assert.match(primaryCitation, /Val och röstning/);
+        assert.doesNotMatch(primaryCitation, /Valmyndigheten/);
+        assert.doesNotMatch(primaryCitation, /val\.se/);
+        assert.doesNotMatch(primaryCitation, /;/);
+        assertSupplementalSourceLinkRow(sourceRowHtml, language);
+      }
+    }
   }
 });
 

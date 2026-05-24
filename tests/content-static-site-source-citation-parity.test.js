@@ -25,14 +25,18 @@ function assertLocalizedSourceCitation(source, copyIdentifier) {
   assert.match(source, /const copy = .*?\|\| .*?\.en;/);
   assert.match(
     source,
-    /const uhrCitation = `\$\{copy\.source\}: \$\{title\}, \$\{source\.chapter\}, \$\{source\.section\}, \$\{copy\.page\} \$\{source\.page\}`;/,
+    /return `\$\{copy\.source\}: \$\{title\}, \$\{source\.chapter\}, \$\{source\.section\}, \$\{copy\.page\} \$\{source\.page\}`;/,
   );
   assert.match(source, /supplementalSources/);
   assert.match(
     source,
-    /const supplementalCitations = Array\.isArray\(source\.supplementalSources\)/,
+    /function (?:smtQuizSupplementalSourceLinks|supplementalSourceLinks)\(question/,
   );
-  assert.match(source, /return \[uhrCitation, \.\.\.supplementalCitations\]\.join\('; '\);/);
+  assert.match(source, /quiz__supplemental-source-link/);
+  assert.match(source, /rel="noreferrer"/);
+  assert.match(source, /target="_blank"/);
+  assert.match(source, /quiz__supplemental-source-meta/);
+  assert.doesNotMatch(source, /return \[uhrCitation, \.\.\.supplementalCitations\]\.join\('; '\);/);
 }
 
 test('static practice quiz renders localized source citations below each question', () => {
@@ -74,6 +78,9 @@ test('static source citation lines have dedicated styling', () => {
 
   assert.match(source, /\.quiz__source\s*\{/);
   assert.match(source, /\.quiz__source-row\s*\{/);
+  assert.match(source, /\.quiz__supplemental-source-list\s*\{/);
+  assert.match(source, /\.quiz__supplemental-source-link\s*\{/);
+  assert.match(source, /\.quiz__supplemental-source-meta\s*\{/);
   assert.match(source, /\.quiz__provenance\s*\{/);
   assert.match(source, /\.mock-review__source\s*\{/);
 });

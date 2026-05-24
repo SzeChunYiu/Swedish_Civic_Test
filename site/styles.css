@@ -1246,6 +1246,37 @@ button.quiz__dot:focus-visible {
   flex: 1 1 240px;
   margin: 0;
 }
+.quiz__supplemental-source-list {
+  display: flex;
+  flex: 1 1 100%;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.quiz__supplemental-source-link {
+  align-items: flex-start;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--ink);
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 44px;
+  padding: 8px 10px;
+  text-decoration: none;
+}
+.quiz__supplemental-source-link:hover,
+.quiz__supplemental-source-link:focus-visible {
+  background: var(--paper-warm);
+  border-color: var(--accent);
+  outline: none;
+}
+.quiz__supplemental-source-meta {
+  color: var(--ink-soft);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+}
 .quiz__provenance {
   display: inline-flex;
   align-items: center;
@@ -8857,6 +8888,10 @@ html[dir='rtl'] .lang-menu {
 .quiz__source-row .mock-review__source {
   color: var(--ink-soft);
   line-height: 1.55;
+  min-width: 0;
+}
+
+.quiz__source-row .quiz__supplemental-source-list {
   min-width: 0;
 }
 
