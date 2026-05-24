@@ -115,6 +115,9 @@ test('TRANSLATE-COMPLETE P0 has explicit SV/EN completeness and naturalness clos
   assert.equal(summary.translationNaturalnessGuardParityValidated, true);
   assert.equal(summary.questionBilingualTextPairsValidated, summary.publishedQuestions);
   assert.equal(summary.questionOptionBilingualTextPairsValidated, summary.publishedQuestions);
+  assert.ok(summary.glossaryTerms > 0);
+  assert.equal(summary.glossaryTermsValidated, summary.glossaryTerms);
+  assert.equal(summary.glossaryNaturalnessValidated, summary.glossaryTerms);
   assert.equal(summary.questionGeneratedTrueFalseNaturalnessValidated, summary.publishedQuestions);
   assert.equal(summary.questionLuciaRoleEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(
@@ -161,6 +164,48 @@ test('TRANSLATE-COMPLETE P0 has explicit SV/EN completeness and naturalness clos
   );
   assert.equal(summary.somaliGeographyNaturalnessParityValidated, true);
   assert.equal(summary.somaliHolidayFoodNaturalnessParityValidated, true);
+});
+
+test('TRANSLATE-COMPLETE rejects literal glossary naturalness regressions', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+process.argv.push('--focus-translate-complete-p0');
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/glossary.ts')) {
+    return String(contents)
+      .replace('Labour market social partners', 'Labour-market parties')
+      .replace(
+        'A vote where voters decide directly on a specific issue.',
+        'A vote where voters take a direct position on a specific issue.',
+      )
+      .replace(
+        'A process where people become included in society and society draws on different experiences.',
+        'A process where people become included in society and society makes use of different experiences.',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.match(
+    output,
+    /arbetsmarknadens-parter uses literal labour-market parties English wording/,
+  );
+  assert.match(output, /folkomrostning uses literal referendum-position English wording/);
+  assert.match(output, /integration uses literal integration experiences English wording/);
 });
 
 test('TRANSLATE-COMPLETE rejects q080 suffrage explanation meta wording', () => {
