@@ -378,22 +378,56 @@ function assertSearchRouteQueryHydration(source) {
       /const searchParams = useLocalSearchParams<SearchRouteParams>\(\);/,
       'local search params read',
     ],
-    [/const routeQuery = getRouteSearchQuery\(searchParams\);/, 'route query resolution'],
+    [/const routeQueryState = getRouteSearchQuery\(searchParams\);/, 'route query resolution'],
+    [/const routeQuery = routeQueryState\.query;/, 'route query value extraction'],
     [/const \[query, setQuery\] = useState\(\(\) => routeQuery\);/, 'route query initial state'],
+    [
+      /const \[showOverlongQueryClearedMessage, setShowOverlongQueryClearedMessage\] = useState\([\s\S]*?\(\) => routeQueryState\.wasClearedForLength/,
+      'overlong route-query cleared initial state',
+    ],
     [/const previousRouteQueryRef = useRef\(routeQuery\);/, 'route query sync ref'],
     [/useEffect\(\(\) => \{/, 'route query sync effect'],
+    [
+      /if \(routeQueryState\.wasClearedForLength\) \{[\s\S]*?setShowOverlongQueryClearedMessage\(true\);[\s\S]*?window\.history\.replaceState\(\{\}, '', '\/search'\);/,
+      'overlong route-query URL clear and message',
+    ],
     [/if \(previousRouteQueryRef\.current === routeQuery\) return;/, 'unchanged route query guard'],
     [/previousRouteQueryRef\.current = routeQuery;/, 'route query sync ref update'],
     [/setQuery\(routeQuery\);/, 'route query state resync'],
-    [/\}, \[routeQuery\]\);/, 'route query sync dependency'],
+    [
+      /\}, \[routeQuery, routeQueryState\.wasClearedForLength, router\]\);/,
+      'route query sync dependency',
+    ],
     [/function getFirstSearchParamValue/, 'single-value route param helper'],
     [/Array\.isArray\(value\) \? value\[0\] : value/, 'array route param support'],
     [/function getRouteSearchQuery\(params: SearchRouteParams\)/, 'route query helper'],
+    [/const maxSearchRouteQueryLength = 120;/, 'route query length cap'],
     [
-      /return getFirstSearchParamValue\(params\.q\) \|\| getFirstSearchParamValue\(params\.query\);/,
+      /if \(qValue\.length > maxSearchRouteQueryLength\) \{[\s\S]*?return \{ query: '', wasClearedForLength: true \};[\s\S]*?if \(qValue\) return \{ query: qValue, wasClearedForLength: false \};[\s\S]*?if \(queryValue\.length > maxSearchRouteQueryLength\) \{/,
       'q then query fallback order',
     ],
-    [/onChangeText=\{setQuery\}/, 'manual typing remains controlled'],
+    [
+      /return \{ query: queryValue, wasClearedForLength: false \};/,
+      'valid query route-param result',
+    ],
+    [
+      /\{showOverlongQueryClearedMessage \? \([\s\S]*?\{copy\.overlongQueryCleared\}[\s\S]*?\) : null\}/,
+      'localized overlong clear feedback render',
+    ],
+    [/overlongQueryCleared: string;/, 'overlong clear feedback copy type'],
+    [
+      /Sökningen rensades eftersom länken var längre än 120 tecken/,
+      'Swedish overlong clear feedback copy',
+    ],
+    [
+      /The search was cleared because the link was longer than 120 characters/,
+      'English overlong clear feedback copy',
+    ],
+    [
+      /const handleChangeSearchText = \(value: string\) => \{[\s\S]*?setShowOverlongQueryClearedMessage\(false\);[\s\S]*?setQuery\(value\);[\s\S]*?\};/,
+      'manual typing clears overlong feedback and remains controlled',
+    ],
+    [/onChangeText=\{handleChangeSearchText\}/, 'manual typing remains controlled'],
     [/const handleClearSearch = \(\) => \{/, 'clear search handler'],
     [/setQuery\(''\);/, 'clear search state reset'],
     [/router\.replace\('\/search'\);/, 'clear search URL replacement'],
@@ -690,7 +724,10 @@ test('focused Search route query hydration validator rejects mutation fixtures',
       label: 'removing mounted route-query sync',
       expectedFailure: /search route must resync mounted state only when the route query changes/,
       mutateSource: (source) =>
-        source.replace(/  useEffect\(\(\) => \{[\s\S]*?  \}, \[routeQuery\]\);\n/, ''),
+        source.replace(
+          /  useEffect\(\(\) => \{[\s\S]*?  \}, \[routeQuery, routeQueryState\.wasClearedForLength, router\]\);\n/,
+          '',
+        ),
     },
     {
       label: 'dropping the unchanged-route guard',
@@ -703,8 +740,18 @@ test('focused Search route query hydration validator rejects mutation fixtures',
       expectedFailure: /search route must prefer q then query fallback order/,
       mutateSource: (source) =>
         source.replace(
-          'return getFirstSearchParamValue(params.q) || getFirstSearchParamValue(params.query);',
-          'return getFirstSearchParamValue(params.query) || getFirstSearchParamValue(params.q);',
+          'if (qValue) return { query: qValue, wasClearedForLength: false };',
+          'if (queryValue) return { query: queryValue, wasClearedForLength: false };',
+        ),
+    },
+    {
+      label: 'dropping overlong query feedback',
+      expectedFailure:
+        /search route must surface localized feedback when overlong deep links are cleared/,
+      mutateSource: (source) =>
+        source.replace(
+          /        \{showOverlongQueryClearedMessage \? \([\s\S]*?        \) : null\}\n/,
+          '',
         ),
     },
     {
@@ -712,8 +759,8 @@ test('focused Search route query hydration validator rejects mutation fixtures',
       expectedFailure: /search route clear action must reset state and URL/,
       mutateSource: (source) =>
         source.replace(
-          "router.replace('/search');",
-          'router.replace(`/search?q=${encodeURIComponent(routeQuery)}`);',
+          "    if (routeQuery.length > 0) {\n      router.replace('/search');\n    }\n  };\n  const handleChangeSearchText",
+          '    if (routeQuery.length > 0) {\n      router.replace(`/search?q=${encodeURIComponent(routeQuery)}`);\n    }\n  };\n  const handleChangeSearchText',
         ),
     },
   ];
@@ -734,7 +781,7 @@ test('Search route hydration rejects blank initial query drift', () => {
 
 test('Search route hydration rejects mounted route-param sync drift', () => {
   const mutatedSource = readSearchRouteSource().replace(
-    /  const previousRouteQueryRef = useRef\(routeQuery\);\n[\s\S]*?  \}, \[routeQuery\]\);\n/,
+    /  const previousRouteQueryRef = useRef\(routeQuery\);\n[\s\S]*?  \}, \[routeQuery, routeQueryState\.wasClearedForLength, router\]\);\n/,
     '',
   );
 
@@ -760,7 +807,7 @@ test('Search route hydration rejects leaving clear search local-only', () => {
 
   assert.throws(
     () => assertSearchRouteQueryHydration(mutatedSource),
-    /clear search URL replacement/,
+    /clear search URL replacement|clear search uses URL-aware handler/,
   );
 });
 
@@ -789,17 +836,20 @@ test('Search route hydration rejects local-only submitted query drift', () => {
 
 test('Search route hydration rejects dropping the query fallback param', () => {
   const mutatedSource = readSearchRouteSource().replace(
-    'return getFirstSearchParamValue(params.q) || getFirstSearchParamValue(params.query);',
-    'return getFirstSearchParamValue(params.q);',
+    'return { query: queryValue, wasClearedForLength: false };',
+    "return { query: '', wasClearedForLength: false };",
   );
 
-  assert.throws(() => assertSearchRouteQueryHydration(mutatedSource), /q then query fallback/);
+  assert.throws(
+    () => assertSearchRouteQueryHydration(mutatedSource),
+    /q then query fallback|valid query route-param result/,
+  );
 });
 
 test('Search route hydration rejects query-before-q fallback drift', () => {
   const mutatedSource = readSearchRouteSource().replace(
-    'return getFirstSearchParamValue(params.q) || getFirstSearchParamValue(params.query);',
-    'return getFirstSearchParamValue(params.query) || getFirstSearchParamValue(params.q);',
+    'if (qValue) return { query: qValue, wasClearedForLength: false };',
+    'if (queryValue) return { query: queryValue, wasClearedForLength: false };',
   );
 
   assert.throws(() => assertSearchRouteQueryHydration(mutatedSource), /q then query fallback/);

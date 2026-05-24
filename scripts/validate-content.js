@@ -1041,13 +1041,24 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
   },
   {
     file: 'app/search.tsx',
-    pattern: /const routeQuery = getRouteSearchQuery\(searchParams\);/,
+    pattern: /const routeQueryState = getRouteSearchQuery\(searchParams\);/,
     message: 'search route must resolve route query',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /const routeQuery = routeQueryState\.query;/,
+    message: 'search route must extract the sanitized route query',
   },
   {
     file: 'app/search.tsx',
     pattern: /const \[query, setQuery\] = useState\(\(\) => routeQuery\);/,
     message: 'search route must hydrate initial input from route query',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern:
+      /const \[showOverlongQueryClearedMessage, setShowOverlongQueryClearedMessage\] = useState\([\s\S]*?\(\) => routeQueryState\.wasClearedForLength/,
+    message: 'search route must remember when an overlong route query was cleared',
   },
   {
     file: 'app/search.tsx',
@@ -1057,7 +1068,13 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
   {
     file: 'app/search.tsx',
     pattern:
-      /useEffect\(\(\) => \{[\s\S]*?if \(previousRouteQueryRef\.current === routeQuery\) return;[\s\S]*?previousRouteQueryRef\.current = routeQuery;[\s\S]*?setQuery\(routeQuery\);[\s\S]*?\}, \[routeQuery\]\);/,
+      /if \(routeQueryState\.wasClearedForLength\) \{[\s\S]*?setShowOverlongQueryClearedMessage\(true\);[\s\S]*?window\.history\.replaceState\(\{\}, '', '\/search'\);/,
+    message: 'search route must clear overlong route URLs while keeping user feedback visible',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern:
+      /useEffect\(\(\) => \{[\s\S]*?if \(previousRouteQueryRef\.current === routeQuery\) return;[\s\S]*?previousRouteQueryRef\.current = routeQuery;[\s\S]*?setQuery\(routeQuery\);[\s\S]*?\}, \[routeQuery, routeQueryState\.wasClearedForLength, router\]\);/,
     message: 'search route must resync mounted state only when the route query changes',
   },
   {
@@ -1092,13 +1109,50 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
   },
   {
     file: 'app/search.tsx',
+    pattern: /const maxSearchRouteQueryLength = 120;/,
+    message: 'search route must cap deep-link query length at 120 characters',
+  },
+  {
+    file: 'app/search.tsx',
     pattern:
-      /return getFirstSearchParamValue\(params\.q\) \|\| getFirstSearchParamValue\(params\.query\);/,
+      /if \(qValue\.length > maxSearchRouteQueryLength\) \{[\s\S]*?return \{ query: '', wasClearedForLength: true \};[\s\S]*?if \(qValue\) return \{ query: qValue, wasClearedForLength: false \};[\s\S]*?if \(queryValue\.length > maxSearchRouteQueryLength\) \{/,
     message: 'search route must prefer q then query fallback order',
   },
   {
     file: 'app/search.tsx',
-    pattern: /onChangeText=\{setQuery\}/,
+    pattern: /return \{ query: queryValue, wasClearedForLength: false \};/,
+    message: 'search route must preserve valid query fallback values',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern:
+      /\{showOverlongQueryClearedMessage \? \([\s\S]*?\{copy\.overlongQueryCleared\}[\s\S]*?\) : null\}/,
+    message: 'search route must surface localized feedback when overlong deep links are cleared',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /overlongQueryCleared: string;/,
+    message: 'search route copy type must include overlong clear feedback',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /Sökningen rensades eftersom länken var längre än 120 tecken/,
+    message: 'search route must include Swedish overlong clear feedback',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /The search was cleared because the link was longer than 120 characters/,
+    message: 'search route must include English overlong clear feedback',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern:
+      /const handleChangeSearchText = \(value: string\) => \{[\s\S]*?setShowOverlongQueryClearedMessage\(false\);[\s\S]*?setQuery\(value\);[\s\S]*?\};/,
+    message: 'search route typing must clear overlong feedback and update controlled input',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /onChangeText=\{handleChangeSearchText\}/,
     message: 'search route must preserve manual controlled typing',
   },
   {

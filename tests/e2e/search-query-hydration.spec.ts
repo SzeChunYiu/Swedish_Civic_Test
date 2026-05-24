@@ -7,6 +7,7 @@ type SearchStateCopy = {
   clearButtonName: string;
   filteredSummaryPattern: RegExp;
   inputName: string;
+  overlongClearedNotice: string;
   questionLinkName: RegExp;
   questionShownPattern: RegExp;
   submitButtonName: string;
@@ -18,6 +19,8 @@ const searchStateCopy: Record<'sv' | 'en', SearchStateCopy> = {
     clearButtonName: 'Rensa sökfältet',
     filteredSummaryPattern: /\d+ av \d+ begrepp och \d+ övningsfrågor matchar/,
     inputName: 'Sök samhällsbegrepp och övningsfrågor',
+    overlongClearedNotice:
+      'Sökningen rensades eftersom länken var längre än 120 tecken. Prova en kortare sökning.',
     questionLinkName: /Öppna övningsfrågan:/,
     questionShownPattern: /8 av \d+ källbaserade övningsfrågor visas/,
     submitButtonName: 'Sök med den inskrivna texten',
@@ -27,6 +30,8 @@ const searchStateCopy: Record<'sv' | 'en', SearchStateCopy> = {
     clearButtonName: 'Clear the search field',
     filteredSummaryPattern: /\d+ of \d+ terms and \d+ practice questions match/,
     inputName: 'Search civic terms and practice questions',
+    overlongClearedNotice:
+      'The search was cleared because the link was longer than 120 characters. Try a shorter search.',
     questionLinkName: /Open practice question:/,
     questionShownPattern: /8 of \d+ source-backed practice questions shown/,
     submitButtonName: 'Submit the typed search',
@@ -252,6 +257,40 @@ test('search route keeps q before query precedence for both params on load and m
   expectSearchUrlWithoutQueryParams(page);
 
   expect(consoleErrors).toEqual([]);
+});
+
+test('search route explains when an overlong q or query deep link is cleared', async ({ page }) => {
+  await seedSettingsLanguage(page, 'sv');
+  await markAboutTheTestSeen(page);
+
+  await page.goto('/search', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+  await expect(page.getByText(searchStateCopy.sv.overlongClearedNotice)).toHaveCount(0);
+
+  const overlongQuery = 'a'.repeat(121);
+  await page.evaluate((query) => {
+    window.history.pushState({}, '', `/search?query=municipality&q=${query}`);
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  }, overlongQuery);
+
+  await expect(page.getByTestId('search-input')).toHaveValue('');
+  await expect(page.getByText(searchStateCopy.sv.overlongClearedNotice)).toBeVisible();
+  await expect(page.getByText(searchStateCopy.sv.allTermsSummaryPattern)).toBeVisible();
+
+  const validMaxLengthQuery = 'r'.repeat(120);
+  await page.evaluate((query) => {
+    window.history.pushState({}, '', `/search?query=${query}`);
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  }, validMaxLengthQuery);
+  await expect(page.getByTestId('search-input')).toHaveValue(validMaxLengthQuery);
+  await expect(page.getByText(searchStateCopy.sv.overlongClearedNotice)).toHaveCount(0);
+
+  await page.evaluate((query) => {
+    window.history.pushState({}, '', `/search?query=${query}`);
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  }, 'b'.repeat(121));
+  await expect(page.getByTestId('search-input')).toHaveValue('');
+  await expect(page.getByText(searchStateCopy.sv.overlongClearedNotice)).toBeVisible();
 });
 
 test('English search route hydrates and clears q/query URL parameters before typing', async ({

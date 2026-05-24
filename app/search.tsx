@@ -33,6 +33,8 @@ type SearchRouteParams = {
   query?: string | string[];
 };
 
+const maxSearchRouteQueryLength = 120;
+
 function getQuestionResultHref(questionId: string, query: string): Href {
   const trimmedQuery = query.trim();
   if (!trimmedQuery) return `/quiz/${questionId}` as Href;
@@ -43,9 +45,14 @@ function getQuestionResultHref(questionId: string, query: string): Href {
 export default function SearchScreen() {
   const router = useRouter();
   const searchParams = useLocalSearchParams<SearchRouteParams>();
-  const routeQuery = getRouteSearchQuery(searchParams);
+  const routeQueryState = getRouteSearchQuery(searchParams);
+  const routeQuery = routeQueryState.query;
   const [query, setQuery] = useState(() => routeQuery);
+  const [showOverlongQueryClearedMessage, setShowOverlongQueryClearedMessage] = useState(
+    () => routeQueryState.wasClearedForLength,
+  );
   const previousRouteQueryRef = useRef(routeQuery);
+  const overlongRouteReplacedRef = useRef(false);
   const systemColorScheme = useColorScheme();
   const language = useSettingsStore((state) => state.language);
   const themeMode = useAccessibilityStore((state) => state.themeMode);
@@ -53,18 +60,40 @@ export default function SearchScreen() {
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const copy = searchRouteCopy[language];
   useEffect(() => {
+    if (routeQueryState.wasClearedForLength) {
+      setShowOverlongQueryClearedMessage(true);
+      if (routeQuery.length === 0 && !overlongRouteReplacedRef.current) {
+        overlongRouteReplacedRef.current = true;
+        if (typeof window !== 'undefined') {
+          window.history.replaceState({}, '', '/search');
+        } else {
+          router.replace('/search');
+        }
+      }
+    } else {
+      overlongRouteReplacedRef.current = false;
+      if (routeQuery.length > 0) {
+        setShowOverlongQueryClearedMessage(false);
+      }
+    }
+
     if (previousRouteQueryRef.current === routeQuery) return;
 
     previousRouteQueryRef.current = routeQuery;
     setQuery(routeQuery);
-  }, [routeQuery]);
+  }, [routeQuery, routeQueryState.wasClearedForLength, router]);
   const handleClearSearch = () => {
     setQuery('');
+    setShowOverlongQueryClearedMessage(false);
     previousRouteQueryRef.current = '';
 
     if (routeQuery.length > 0) {
       router.replace('/search');
     }
+  };
+  const handleChangeSearchText = (value: string) => {
+    setShowOverlongQueryClearedMessage(false);
+    setQuery(value);
   };
   const handleSubmitSearch = () => {
     const submittedQuery = query.trim();
@@ -136,7 +165,7 @@ export default function SearchScreen() {
           autoCapitalize="none"
           autoCorrect={false}
           clearButtonMode="while-editing"
-          onChangeText={setQuery}
+          onChangeText={handleChangeSearchText}
           onSubmitEditing={handleSubmitSearch}
           placeholder={copy.searchPlaceholder}
           placeholderTextColor={themeColors.textPlaceholder}
@@ -145,6 +174,11 @@ export default function SearchScreen() {
           testID="search-input"
           value={query}
         />
+        {showOverlongQueryClearedMessage ? (
+          <Text accessibilityLiveRegion="polite" aria-live="polite" style={styles.queryNotice}>
+            {copy.overlongQueryCleared}
+          </Text>
+        ) : null}
         <View style={styles.searchActions}>
           <Text accessibilityLiveRegion="polite" aria-live="polite" style={styles.resultSummary}>
             {resultSummary}
@@ -355,6 +389,7 @@ type SearchRouteCopy = {
   openChapterAccessibilityLabel: (chapterName: string) => string;
   openQuestion: string;
   openQuestionAccessibilityLabel: (title: string) => string;
+  overlongQueryCleared: string;
   questionAccessibilityLabel: ({
     chapterName,
     excerpt,
@@ -411,6 +446,8 @@ const searchRouteCopy: Record<AppLanguage, SearchRouteCopy> = {
     openChapterAccessibilityLabel: (chapterName) => `Öppna kapitlet ${chapterName}`,
     openQuestion: 'Öppna fråga',
     openQuestionAccessibilityLabel: (title) => `Öppna övningsfrågan: ${title}`,
+    overlongQueryCleared:
+      'Sökningen rensades eftersom länken var längre än 120 tecken. Prova en kortare sökning.',
     questionAccessibilityLabel: ({
       chapterName,
       excerpt,
@@ -472,6 +509,8 @@ const searchRouteCopy: Record<AppLanguage, SearchRouteCopy> = {
     openChapterAccessibilityLabel: (chapterName) => `Open the chapter ${chapterName}`,
     openQuestion: 'Open question',
     openQuestionAccessibilityLabel: (title) => `Open practice question: ${title}`,
+    overlongQueryCleared:
+      'The search was cleared because the link was longer than 120 characters. Try a shorter search.',
     questionAccessibilityLabel: ({
       chapterName,
       excerpt,
@@ -525,7 +564,18 @@ function getFirstSearchParamValue(value: string | string[] | undefined) {
 }
 
 function getRouteSearchQuery(params: SearchRouteParams) {
-  return getFirstSearchParamValue(params.q) || getFirstSearchParamValue(params.query);
+  const qValue = getFirstSearchParamValue(params.q);
+  if (qValue.length > maxSearchRouteQueryLength) {
+    return { query: '', wasClearedForLength: true };
+  }
+  if (qValue) return { query: qValue, wasClearedForLength: false };
+
+  const queryValue = getFirstSearchParamValue(params.query);
+  if (queryValue.length > maxSearchRouteQueryLength) {
+    return { query: '', wasClearedForLength: true };
+  }
+
+  return { query: queryValue, wasClearedForLength: false };
 }
 
 function createStyles(themeColors: ThemeColors) {
@@ -553,6 +603,12 @@ function createStyles(themeColors: ThemeColors) {
       minHeight: space[6],
       paddingHorizontal: space[1.5],
       paddingVertical: space[1],
+    },
+    queryNotice: {
+      color: themeColors.textSecondary,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+      marginTop: space[1],
     },
     searchActions: {
       alignItems: 'center',
