@@ -33,6 +33,52 @@ const searchStateCopy: Record<'sv' | 'en', SearchStateCopy> = {
   },
 };
 
+const mobileSearchActionLocaleFixtures = [
+  {
+    language: 'sv' as const,
+    query: 'kommun',
+    staleCopy: searchStateCopy.en,
+  },
+  {
+    language: 'en' as const,
+    query: 'municipality',
+    staleCopy: searchStateCopy.sv,
+  },
+];
+
+async function expectNoHorizontalOverflow(page: Page, label: string) {
+  const metrics = await page.evaluate(() => {
+    const root = document.documentElement;
+    const body = document.body;
+
+    return {
+      bodyScrollWidth: body.scrollWidth,
+      clientWidth: root.clientWidth,
+      rootScrollWidth: root.scrollWidth,
+    };
+  });
+
+  expect(metrics.rootScrollWidth, `${label} root width`).toBeLessThanOrEqual(
+    metrics.clientWidth + 1,
+  );
+  expect(metrics.bodyScrollWidth, `${label} body width`).toBeLessThanOrEqual(
+    metrics.clientWidth + 1,
+  );
+}
+
+async function expectReadableSearchSummary(page: Page, pattern: RegExp, label: string) {
+  const summary = page.getByText(pattern).first();
+  await expect(summary).toBeVisible();
+
+  const box = await summary.boundingBox();
+  if (!box) throw new Error(`${label} summary did not render a visible box`);
+  const viewport = page.viewportSize();
+  if (!viewport) throw new Error(`${label} viewport was unavailable`);
+
+  expect(box.x, `${label} summary left edge`).toBeGreaterThanOrEqual(0);
+  expect(box.x + box.width, `${label} summary right edge`).toBeLessThanOrEqual(viewport.width + 1);
+}
+
 async function expectSearchState(
   page: Page,
   expectedQuery: string,
@@ -308,6 +354,78 @@ test('English search route hydrates and clears q/query URL parameters before typ
   await municipalityInput.fill('parliament');
   await expect(municipalityInput).toHaveValue('parliament');
   expectSearchUrlWithoutQueryParams(page);
+
+  expect(consoleErrors).toEqual([]);
+});
+
+test('Search actions mobile locale matrix keeps Submit and Clear localized without overflow', async ({
+  page,
+}) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await page.setViewportSize({ width: 360, height: 740 });
+
+  for (const { language, query, staleCopy } of mobileSearchActionLocaleFixtures) {
+    const copy = searchStateCopy[language];
+    await seedSettingsLanguage(page, language);
+    await markAboutTheTestSeen(page);
+    await page.goto('/search', { waitUntil: 'networkidle' });
+    await dismissBlockingModals(page);
+
+    const input = page.getByRole('textbox', { name: copy.inputName });
+    const submitButton = page.getByRole('button', { name: copy.submitButtonName });
+    const clearButton = page.getByRole('button', { name: copy.clearButtonName });
+    await expect(input).toBeVisible();
+    await expect(submitButton).toBeVisible();
+    await expect(clearButton).toBeVisible();
+    await expect(submitButton).toBeDisabled();
+    await expect(clearButton).toBeDisabled();
+    await expect(page.getByRole('button', { name: staleCopy.submitButtonName })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: staleCopy.clearButtonName })).toHaveCount(0);
+    await expectReadableSearchSummary(
+      page,
+      copy.allTermsSummaryPattern,
+      `${language} empty mobile search`,
+    );
+    await expectNoHorizontalOverflow(page, `${language} empty mobile search`);
+    expectSearchUrlWithoutQueryParams(page);
+
+    await input.fill(query);
+    await expect(input).toHaveValue(query);
+    await expect(submitButton).toBeEnabled();
+    await expect(clearButton).toBeEnabled();
+    await expect(page.getByRole('button', { name: staleCopy.submitButtonName })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: staleCopy.clearButtonName })).toHaveCount(0);
+    await expectReadableSearchSummary(
+      page,
+      copy.filteredSummaryPattern,
+      `${language} typed mobile search`,
+    );
+    await expectNoHorizontalOverflow(page, `${language} typed mobile search`);
+    expectSearchUrlWithoutQueryParams(page);
+
+    await submitButton.click();
+    await expectSearchUrlWithQParam(page, query);
+    await expectSearchState(page, query, copy);
+    await expectNoHorizontalOverflow(page, `${language} submitted mobile search`);
+
+    await clearButton.click();
+    await expect(input).toHaveValue('');
+    await expect(submitButton).toBeDisabled();
+    await expect(clearButton).toBeDisabled();
+    await expectReadableSearchSummary(
+      page,
+      copy.allTermsSummaryPattern,
+      `${language} cleared mobile search`,
+    );
+    await expectNoHorizontalOverflow(page, `${language} cleared mobile search`);
+    expectSearchUrlWithoutQueryParams(page);
+  }
 
   expect(consoleErrors).toEqual([]);
 });
