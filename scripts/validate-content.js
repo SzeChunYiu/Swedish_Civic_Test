@@ -2178,7 +2178,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 15;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 39;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 42;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_RUNTIME_CASES = 9;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
@@ -5418,6 +5418,7 @@ const EXPECTED_PURCHASE_TYPE_UNIONS = [
     typeName: 'RemoveAdsPurchaseStatus',
     values: [
       'unavailable',
+      'cancelled',
       'purchased',
       'pending',
       'restored',
@@ -20709,6 +20710,14 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       'buyRemoveAds must request canonical Remove Ads product id',
     ],
     [
+      normalizedPurchaseSource.includes('function isUserCancelledPurchaseError(error') &&
+        normalizedPurchaseSource.includes('isUserCancelledPurchaseError(error)') &&
+        /return createResult\(\s*'cancelled',\s*await getFailClosedPurchaseEntitlements\(\{\s*provider,\s*storage\s*\}\)/.test(
+          purchaseSource,
+        ),
+      'buyRemoveAds must return a non-granting cancelled status for user-cancelled store requests',
+    ],
+    [
       normalizedPurchaseSource.includes(
         'const purchases = await provider.restorePurchases([REMOVE_ADS_PRODUCT_ID]);',
       ),
@@ -20933,6 +20942,16 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       'RemoveAdsPlacementCta must render localized persistence_failed recovery copy',
     ],
     [
+      normalizedPlacementCtaSource.includes('cancelled:') &&
+        normalizedPlacementCtaSource.includes(
+          'Köpet avbröts. Ingen betalning drogs och annonser är fortfarande på.',
+        ) &&
+        normalizedPlacementCtaSource.includes(
+          'Purchase cancelled. You were not charged and ads are still on.',
+        ),
+      'RemoveAdsPlacementCta must render localized cancelled purchase copy',
+    ],
+    [
       normalizedPlacementCtaSource.includes('statusAccessibilityLabel: (message) =>') &&
         normalizedPlacementCtaSource.includes(
           'accessibilityLabel={copy.statusAccessibilityLabel(statusMessage)}',
@@ -21000,6 +21019,16 @@ function validateRemoveAdsPurchaseRuntimeParity() {
         paywallDisabledPropCount === 2 &&
         paywallDisabledStateCount === 2,
       'PremiumBanner buy and restore actions must share actionsDisabled for disabled props and accessibility state',
+    ],
+    [
+      normalizedPaywallSource.includes('cancelled:') &&
+        normalizedPaywallSource.includes(
+          'Köpet avbröts. Ingen betalning drogs och annonser är fortfarande på.',
+        ) &&
+        normalizedPaywallSource.includes(
+          'Purchase cancelled. You were not charged and ads are still on.',
+        ),
+      'PremiumBanner must render localized cancelled purchase copy',
     ],
     paywallInFlightCase,
   ];

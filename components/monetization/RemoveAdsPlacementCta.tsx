@@ -65,6 +65,7 @@ const removeAdsPlacementCtaCopy: Record<AppLanguage, RemoveAdsPlacementCtaCopy> 
     restoring: 'Återställer...',
     statusAccessibilityLabel: (message) => `Status för Ta bort annonser: ${message}`,
     statusMessages: {
+      cancelled: 'Köpet avbröts. Ingen betalning drogs och annonser är fortfarande på.',
       error: 'Köp är inte tillgängligt. Försök igen senare.',
       finish_failed:
         'Annonser är avstängda. Butiken kunde inte markera köpet som slutfört, så återställ köpet om det visas igen.',
@@ -105,6 +106,7 @@ const removeAdsPlacementCtaCopy: Record<AppLanguage, RemoveAdsPlacementCtaCopy> 
     restoring: 'Restoring...',
     statusAccessibilityLabel: (message) => `Remove Ads status: ${message}`,
     statusMessages: {
+      cancelled: 'Purchase cancelled. You were not charged and ads are still on.',
       error: 'Purchase is unavailable. Try again later.',
       finish_failed:
         'Ads are disabled. The store could not mark the purchase as finished, so restore the purchase if it appears again.',

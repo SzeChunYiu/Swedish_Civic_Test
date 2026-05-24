@@ -77,6 +77,7 @@ export interface RemoveAdsPurchaseProvider {
 
 export type RemoveAdsPurchaseStatus =
   | 'unavailable'
+  | 'cancelled'
   | 'purchased'
   | 'pending'
   | 'restored'
@@ -153,6 +154,27 @@ function compactString(value: unknown): string | undefined {
   if (typeof value !== 'string') return undefined;
   const trimmed = value.trim();
   return trimmed ? trimmed : undefined;
+}
+
+function isUserCancelledPurchaseError(error: unknown): boolean {
+  if (!isRecord(error)) return false;
+
+  const values = [
+    optionalString(error.code),
+    optionalString(error.name),
+    optionalString(error.message),
+    optionalString(error.responseCode),
+  ]
+    .filter((value): value is string => Boolean(value))
+    .map((value) => value.toLowerCase());
+
+  return values.some(
+    (value) =>
+      value.includes('user_cancel') ||
+      value.includes('user cancel') ||
+      value.includes('cancelled') ||
+      value.includes('canceled'),
+  );
 }
 
 export function isCanonicalUtcIsoTimestamp(value: unknown): value is string {
@@ -1003,7 +1025,25 @@ export async function buyRemoveAds(
   await provider.connect();
 
   try {
-    const purchase = await provider.requestRemoveAdsPurchase(REMOVE_ADS_PRODUCT_ID);
+    async function requestPurchase() {
+      try {
+        const purchase = await provider.requestRemoveAdsPurchase(REMOVE_ADS_PRODUCT_ID);
+        return purchase;
+      } catch (error) {
+        if (isUserCancelledPurchaseError(error)) {
+          return createResult(
+            'cancelled',
+            await getFailClosedPurchaseEntitlements({ provider, storage }),
+          );
+        }
+
+        throw error;
+      }
+    }
+
+    const purchase = await requestPurchase();
+    if (purchase && 'status' in purchase) return purchase;
+
     if (!purchase || !isRemoveAdsPurchase(purchase)) {
       return createResult(
         'pending',

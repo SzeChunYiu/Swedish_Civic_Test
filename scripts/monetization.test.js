@@ -2443,6 +2443,41 @@ test('pending remove-ads purchase does not grant adsDisabled until store confirm
   assert.equal(await storage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
 });
 
+test('user-cancelled remove-ads purchase returns non-granting cancelled status', async () => {
+  const { REMOVE_ADS_STORAGE_KEY, buyRemoveAds, createMemoryPurchaseStorage } = loadTs(
+    'lib/monetization/purchases.ts',
+  );
+  const storage = createMemoryPurchaseStorage();
+  const events = [];
+
+  const result = await buyRemoveAds({
+    provider: {
+      async connect() {
+        events.push('connect');
+      },
+      async disconnect() {
+        events.push('disconnect');
+      },
+      async requestRemoveAdsPurchase() {
+        events.push('request');
+        const error = new Error('User cancelled purchase');
+        error.code = 'E_USER_CANCELLED';
+        throw error;
+      },
+      async restorePurchases() {
+        events.push('restore');
+        return [];
+      },
+    },
+    storage,
+  });
+
+  assert.equal(result.status, 'cancelled');
+  assert.equal(result.entitlements.adsDisabled, false);
+  assert.equal(await storage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
+  assert.deepEqual(events, ['connect', 'request', 'disconnect']);
+});
+
 test('failed remove-ads receipt validation does not grant adsDisabled', async () => {
   const {
     REMOVE_ADS_PRODUCT_ID,

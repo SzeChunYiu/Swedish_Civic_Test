@@ -45,7 +45,7 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
       /async function revalidateStoredRemoveAdsEntitlementRecordWithConnectedProvider\(\{[\s\S]*?\nfunction createResult/,
     )?.[0] ?? '';
 
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 39);
+  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 42);
   assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
   assert.match(purchaseSource, /REMOVE_ADS_RECORD_SCHEMA_VERSION = 1/);
   assert.match(purchaseSource, /interface RemoveAdsProductMetadata/);
@@ -79,7 +79,11 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.match(purchaseSource, /receiptValidator\?: NativeRemoveAdsReceiptValidator/);
   assert.match(purchaseSource, /native_receipt_validator_unavailable/);
   assert.match(purchaseSource, /\| 'unavailable'/);
+  assert.match(purchaseSource, /\| 'cancelled'/);
   assert.match(purchaseSource, /createResult\(\s*'unavailable'/);
+  assert.match(purchaseSource, /function isUserCancelledPurchaseError\(error/);
+  assert.match(purchaseSource, /isUserCancelledPurchaseError\(error\)/);
+  assert.match(purchaseSource, /createResult\(\s*'cancelled'/);
   assert.match(purchaseSource, /if \(!receiptValidator\) \{/);
   assert.match(purchaseSource, /status: 'pending'/);
   assert.doesNotMatch(nativeReceiptValidationBlock, /createReceiptValidationResult\s*\(/);
@@ -148,6 +152,15 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.match(placementCtaSource, /copy\.restoreAccessibilityHint/);
   assert.match(placementCtaSource, /Purchase restored\. Study ads are being removed/);
   assert.match(placementCtaSource, /finish_failed:/);
+  assert.match(placementCtaSource, /cancelled:/);
+  assert.match(
+    placementCtaSource,
+    /Purchase cancelled\. You were not charged and ads are still on/,
+  );
+  assert.match(
+    placementCtaSource,
+    /Köpet avbröts\. Ingen betalning drogs och annonser är fortfarande på/,
+  );
   assert.match(placementCtaSource, /The store could not mark the purchase as finished/);
   assert.match(placementCtaSource, /Butiken kunde inte markera köpet som slutfört/);
   assert.match(purchaseSource, /'finish_failed'/);
@@ -156,6 +169,12 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
     /catch \{[\s\S]*return createResult\('finish_failed', persistenceResult\.entitlements, purchase\);[\s\S]*\}/,
   );
   assert.match(paywallSource, /status === 'finish_failed'/);
+  assert.match(paywallSource, /cancelled:/);
+  assert.match(paywallSource, /Purchase cancelled\. You were not charged and ads are still on/);
+  assert.match(
+    paywallSource,
+    /Köpet avbröts\. Ingen betalning drogs och annonser är fortfarande på/,
+  );
   assert.match(paywallSource, /The store could not mark the purchase as finished/);
   assert.match(paywallSource, /Butiken kunde inte markera köpet som slutfört/);
   assert.match(paywallSource, /useRemoveAdsPriceLabel\(purchaseRuntime, priceLabel\)/);
@@ -265,6 +284,74 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /RemoveAdsPlacementCta must render localized mobile-app-only copy when web purchases are unavailable|RemoveAdsPlacementCta must disable buy and restore actions for unavailable web purchase runtime/,
+  );
+});
+
+test('Remove Ads purchase runtime parity rejects generic handling for user-cancelled buys', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/monetization/purchases.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace("  | 'cancelled'\\n", '')
+      .replace('function isUserCancelledPurchaseError(error: unknown): boolean', 'function isStoreFailure(error: unknown): boolean')
+      .replace('if (isUserCancelledPurchaseError(error)) {', 'if (false) {');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-remove-ads-purchase-runtime-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /buyRemoveAds must return a non-granting cancelled status for user-cancelled store requests/,
+  );
+});
+
+test('Remove Ads purchase runtime parity rejects missing cancelled status copy', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (
+    normalizedPath.endsWith('/components/monetization/PremiumBanner.tsx') ||
+    normalizedPath.endsWith('/components/monetization/RemoveAdsPlacementCta.tsx')
+  ) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replaceAll("      cancelled: 'Purchase cancelled. You were not charged and ads are still on.',\\n", '')
+      .replaceAll("      cancelled: 'Köpet avbröts. Ingen betalning drogs och annonser är fortfarande på.',\\n", '');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-remove-ads-purchase-runtime-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /RemoveAdsPlacementCta must render localized cancelled purchase copy|PremiumBanner must render localized cancelled purchase copy/,
   );
 });
 
