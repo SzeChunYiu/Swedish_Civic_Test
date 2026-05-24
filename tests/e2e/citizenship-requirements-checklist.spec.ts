@@ -5,10 +5,12 @@ import {
   collectConsoleAndPageErrors,
   dismissBlockingModals,
   markAboutTheTestSeen,
+  seedFreshSettingsLanguageAndAboutSeenWithStorage,
   seedSettingsLanguage,
 } from './browserLaunch';
 
 const checklistStorageKey = 'citizenship-requirements\\citizenshipRequirements.checkedAreaIds.v1';
+const legacyChecklistStorageKey = 'citizenship-requirements\\citizenshipRequirementsChecklistState';
 
 const areaSourceLayoutCases = [
   {
@@ -52,6 +54,20 @@ const neutralRequirementCopyCases = [
 async function openRequirementsRoute(page: Page, language: 'sv' | 'en') {
   await seedSettingsLanguage(page, language);
   await markAboutTheTestSeen(page);
+  await page.goto('/citizenship-requirements', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+}
+
+async function openRequirementsRouteWithRecoveredChecklistState(page: Page, language: 'sv' | 'en') {
+  await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, language, {
+    localStorageValues: {
+      [checklistStorageKey]: '{not-json',
+      [legacyChecklistStorageKey]: JSON.stringify({
+        checkedAreaIds: ['identity', 'residenceStatus'],
+      }),
+    },
+    reseedOnNavigation: false,
+  });
   await page.goto('/citizenship-requirements', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
 }
@@ -198,3 +214,68 @@ test('citizenship requirements checklist persists checked planning areas', async
 
   expect(consoleErrors.get()).toEqual([]);
 });
+
+for (const fixture of [
+  {
+    dismissName: 'Got it',
+    language: 'en',
+    summaryText: 'You have marked 2 of 7 planning items.',
+    warningTitle: 'Local study data could not be loaded',
+  },
+  {
+    dismissName: 'Jag förstår',
+    language: 'sv',
+    summaryText: 'Du har markerat 2 av 7 planeringspunkter.',
+    warningTitle: 'Lokal studiedata kunde inte läsas',
+  },
+] as const) {
+  test(`citizenship requirements recovered checklist warning can be dismissed in ${fixture.language}`, async ({
+    page,
+  }) => {
+    const consoleErrors = collectConsoleAndPageErrors(page);
+
+    await openRequirementsRouteWithRecoveredChecklistState(page, fixture.language);
+
+    const identity = page.getByRole('checkbox', {
+      name:
+        fixture.language === 'sv'
+          ? /Markerad: Jag kan styrka min identitet eller har kontrollerat vilken undantagsväg som gäller/i
+          : /Marked: I can prove my identity or have checked which exception route applies/i,
+    });
+    const residenceStatus = page.getByRole('checkbox', {
+      name:
+        fixture.language === 'sv'
+          ? /Markerad: Jag har kontrollerat att min vistelsestatus passar rätt kategori/i
+          : /Marked: I have checked that my residence status fits the right category/i,
+    });
+    const warning = page.getByRole('alert', { name: new RegExp(fixture.warningTitle, 'i') });
+
+    await expect(warning).toBeVisible();
+    await expect(identity).toHaveAttribute('aria-checked', 'true');
+    await expect(residenceStatus).toHaveAttribute('aria-checked', 'true');
+    await expect(page.getByText(fixture.summaryText)).toBeVisible();
+    await expect
+      .poll(() => page.evaluate((key) => window.localStorage.getItem(key), checklistStorageKey))
+      .toBe(JSON.stringify(['identity', 'residenceStatus']));
+
+    await page.getByRole('button', { name: fixture.dismissName }).click();
+
+    await expect(warning).toBeHidden();
+    await expect(identity).toHaveAttribute('aria-checked', 'true');
+    await expect(residenceStatus).toHaveAttribute('aria-checked', 'true');
+    await expect(page.getByText(fixture.summaryText)).toBeVisible();
+    await expect
+      .poll(() => page.evaluate((key) => window.localStorage.getItem(key), checklistStorageKey))
+      .toBe(JSON.stringify(['identity', 'residenceStatus']));
+
+    await page.reload({ waitUntil: 'networkidle' });
+    await dismissBlockingModals(page);
+
+    await expect(warning).toBeHidden();
+    await expect(identity).toHaveAttribute('aria-checked', 'true');
+    await expect(residenceStatus).toHaveAttribute('aria-checked', 'true');
+    await expect(page.getByText(fixture.summaryText)).toBeVisible();
+
+    expect(consoleErrors.get()).toEqual([]);
+  });
+}

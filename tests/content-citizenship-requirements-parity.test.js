@@ -255,6 +255,8 @@ test('citizenship requirements screen renders interactive sourced checklist with
   assert.match(routeSource, /citizenshipRequirementAreas\.map/);
   assert.match(routeSource, /useSettingsStore/);
   assert.match(routeSource, /QuestionDisclaimer/);
+  assert.match(routeSource, /clearPersistenceWarning/);
+  assert.match(routeSource, /onDismiss=\{clearPersistenceWarning\}/);
   assert.match(routeSource, /accessibilityRole="checkbox"/);
   assert.match(routeSource, /accessibilityState=\{\{\s*checked\s*\}\}/);
   assert.match(routeSource, /aria-checked=\{checked\}/);
