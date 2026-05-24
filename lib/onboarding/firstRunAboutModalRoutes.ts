@@ -4,7 +4,24 @@ export const FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PATH_PREFIXES = [
   '/(auth)',
   '/about-the-test',
   '/onboarding',
+  '/citizenship-requirements',
+  '/disclaimer',
+  '/privacy',
+  '/sources',
+  '/support',
+  '/terms',
 ] as const;
+
+export const FIRST_RUN_ABOUT_MODAL_STUDY_PATH_PREFIXES = [
+  '/',
+  '/home',
+  '/learn',
+  '/practice',
+  '/mistakes',
+  '/profile',
+] as const;
+
+export const FIRST_RUN_ABOUT_MODAL_SELF_SEEN_PATH_PREFIXES = ['/about-the-test'] as const;
 
 function normalizePathname(pathname: string | null | undefined): string {
   if (!pathname) return '';
