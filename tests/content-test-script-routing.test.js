@@ -282,6 +282,7 @@ test('npm test keeps selector routing in the project dispatcher', () => {
 
   assert.equal(pkg.scripts.test, 'node scripts/test-dispatch.js');
   assert.doesNotMatch(pkg.scripts.test, /&&/);
+  assert.equal(pkg.scripts['test:monetization'], 'node scripts/run-monetization-tests.js');
   assert.match(testContentScript, /tests\/content-test-script-routing\.test\.js/);
   assert.equal(
     (testContentScript.match(/tests\/content-study-reminder-runtime-parity\.test\.js/g) ?? [])
@@ -2285,6 +2286,80 @@ test('monetization selector runs only the focused monetization suite', () => {
     const fullResult = runDispatcher([], env);
     assert.equal(fullResult.status, 0, fullResult.stderr || fullResult.stdout);
     assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:all\n');
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('monetization runner fails missing dependency preflight before spawning tests', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'monetization-runner-preflight-'));
+  const nodeLog = path.join(tmpDir, 'node.log');
+  const env = {
+    ...process.env,
+    MONETIZATION_TEST_REPO_ROOT: tmpDir,
+    NODE_PATH: '',
+    TEST_DISPATCH_LOG: nodeLog,
+    TEST_MONETIZATION_RUNNER_CAPTURE: '1',
+    TEST_MONETIZATION_RUNNER_NODE: createFakeNode(tmpDir),
+  };
+
+  try {
+    const result = spawnSync(process.execPath, ['scripts/run-monetization-tests.js'], {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      env,
+    });
+
+    assert.equal(result.status, 1);
+    assert.match(
+      result.stderr,
+      /Install dependencies with npm ci before running monetization tests/,
+    );
+    assert.match(result.stderr, /Missing: typescript/);
+    assert.equal(
+      fs.existsSync(nodeLog),
+      false,
+      'preflight should fail before spawning node --test',
+    );
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('monetization runner preserves forwarded Node test options before file list', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'monetization-runner-args-'));
+  const nodeLog = path.join(tmpDir, 'node.log');
+  const env = {
+    ...process.env,
+    NODE_PATH: process.env.NODE_PATH || '',
+    TEST_DISPATCH_LOG: nodeLog,
+    TEST_MONETIZATION_RUNNER_CAPTURE: '1',
+    TEST_MONETIZATION_RUNNER_NODE: createFakeNode(tmpDir),
+  };
+
+  try {
+    const result = spawnSync(
+      process.execPath,
+      ['scripts/run-monetization-tests.js', '--test-name-pattern', 'storage harness'],
+      {
+        cwd: repoRoot,
+        encoding: 'utf8',
+        env,
+      },
+    );
+
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+    assert.equal(
+      fs.readFileSync(nodeLog, 'utf8'),
+      [
+        '--test',
+        '--test-name-pattern',
+        'storage harness',
+        'scripts/monetization.test.js',
+        'tests/remove-ads-web-e2e-mock-runtime.test.js',
+        '',
+      ].join('\n'),
+    );
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
   }
