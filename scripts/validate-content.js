@@ -704,6 +704,28 @@ const QUESTION_LUCIA_ROLE_ENGLISH_NATURALNESS_PATTERNS = [/\b(?:the\s+)?person w
 const QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS = [
   /\bThe EU is political and economic cooperation between European countries\b/i,
 ];
+const GLOSSARY_TERM_NATURALNESS_PATTERNS = [
+  {
+    fields: ['termEn'],
+    pattern: /\blabou?r[-\s]market parties\b/i,
+    message: 'uses literal labour-market parties English for arbetsmarknadens parter',
+  },
+  {
+    fields: ['explanationSv'],
+    pattern: /\bblir inkluderade i samh[aä]llet\b/i,
+    message: 'uses literal included-in-society Swedish wording for integration',
+  },
+  {
+    fields: ['explanationEn'],
+    pattern: /\bbecome included in society\b/i,
+    message: 'uses literal become-included English wording for integration',
+  },
+  {
+    fields: ['explanationEn'],
+    pattern: /\btake(?:s)? a direct position on a specific issue\b/i,
+    message: 'uses literal direct-position English wording for referendum',
+  },
+];
 const TARGETLESS_GENERATED_WHY_REASON_STEM_PATTERNS = [/^En anledning är\b/i, /^One reason is\b/i];
 const QUESTION_TRUE_FALSE_STEM_PREFIX_PATTERNS = [
   /^\s*Sant eller falskt\s*:/i,
@@ -7659,6 +7681,20 @@ function findQuestionEuCooperationEnglishNaturalnessIssue(question) {
   return QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
 }
 
+function findGlossaryTermNaturalnessIssue(term) {
+  if (!term || typeof term !== 'object') return null;
+
+  for (const { fields, pattern, message } of GLOSSARY_TERM_NATURALNESS_PATTERNS) {
+    const text = fields
+      .map((field) => term[field])
+      .filter((value) => typeof value === 'string')
+      .join(' ');
+    if (pattern.test(text)) return message;
+  }
+
+  return null;
+}
+
 function questionText(
   question,
   fields = ['questionSv', 'questionEn', 'explanationSv', 'explanationEn'],
@@ -10267,6 +10303,8 @@ let examGeneratorTypeInterfacesValidated = 0;
 let examGeneratorTypeSchemaParityValidated = false;
 let glossaryTermsValidated = 0;
 let glossaryTermExactSchemaKeysValidated = 0;
+let glossaryTermNaturalnessValidated = 0;
+let glossaryNaturalnessGuardParityValidated = false;
 let uxBenchmarksValidated = 0;
 let contentTypeUnionsValidated = 0;
 let contentTypeInterfacesValidated = 0;
@@ -11509,7 +11547,8 @@ function translateCompleteP0NaturalnessIsValidated(publishedQuestionCount) {
     questionRuleOfLawEnglishNaturalnessValidated === publishedQuestionCount * 3 &&
     questionReligiousFreedomParallelismValidated === publishedQuestionCount * 2 &&
     somaliGeographyNaturalnessParityValidated === true &&
-    somaliHolidayFoodNaturalnessParityValidated === true
+    somaliHolidayFoodNaturalnessParityValidated === true &&
+    glossaryNaturalnessGuardParityValidated === true
   );
 }
 
@@ -11662,6 +11701,7 @@ function validateTranslateCompleteP0Focus() {
   validateQuestionReligiousFreedomParallelism();
   validateSomaliGeographyNaturalnessParity();
   validateSomaliHolidayFoodNaturalnessParity();
+  validateGlossaryTerms();
 
   const publishedQuestionCount = publishedQuestionRows.length;
   const translationCompletenessParityValidated =
@@ -11707,6 +11747,9 @@ function validateTranslateCompleteP0Focus() {
     questionReligiousFreedomParallelismValidated,
     somaliGeographyNaturalnessParityValidated,
     somaliHolidayFoodNaturalnessParityValidated,
+    glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
+    glossaryTermNaturalnessValidated,
+    glossaryNaturalnessGuardParityValidated,
     translationNaturalnessGuardParityValidated,
   });
   process.exit(0);
@@ -22237,6 +22280,13 @@ function validateGlossaryTerms() {
       for (const failure of glossaryTermExactSchemaKeyFailures(term, label)) {
         reject(failure);
       }
+
+      const naturalnessIssue = findGlossaryTermNaturalnessIssue(term);
+      if (naturalnessIssue) {
+        reject(`${label} ${naturalnessIssue}`);
+      } else {
+        glossaryTermNaturalnessValidated += 1;
+      }
     }
 
     if (valid) {
@@ -22244,6 +22294,9 @@ function validateGlossaryTerms() {
       glossaryTermExactSchemaKeysValidated += 1;
     }
   });
+
+  glossaryNaturalnessGuardParityValidated =
+    glossaryTerms.length > 0 && glossaryTermNaturalnessValidated === glossaryTerms.length;
 }
 
 function validateBadgeCatalog() {
@@ -27832,6 +27885,8 @@ console.log(
       glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
       glossaryTermsValidated,
       glossaryTermExactSchemaKeysValidated,
+      glossaryTermNaturalnessValidated,
+      glossaryNaturalnessGuardParityValidated,
       uxBenchmarksValidated,
       supportedLanguagesValidated,
       localizationStrings:

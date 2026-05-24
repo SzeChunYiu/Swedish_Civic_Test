@@ -110,6 +110,7 @@ function validateContentSummary() {
 
 test('TRANSLATE-COMPLETE P0 has explicit SV/EN completeness and naturalness closure evidence', () => {
   const summary = validateContentSummary();
+  const glossaryTerms = loadTs('data/glossary.ts', 'glossaryTerms');
 
   assert.equal(summary.translationCompletenessParityValidated, true);
   assert.equal(summary.translationNaturalnessGuardParityValidated, true);
@@ -161,6 +162,9 @@ test('TRANSLATE-COMPLETE P0 has explicit SV/EN completeness and naturalness clos
   );
   assert.equal(summary.somaliGeographyNaturalnessParityValidated, true);
   assert.equal(summary.somaliHolidayFoodNaturalnessParityValidated, true);
+  assert.equal(summary.glossaryTerms, glossaryTerms.length);
+  assert.equal(summary.glossaryTermNaturalnessValidated, glossaryTerms.length);
+  assert.equal(summary.glossaryNaturalnessGuardParityValidated, true);
 });
 
 test('TRANSLATE-COMPLETE rejects q080 suffrage explanation meta wording', () => {
@@ -194,4 +198,43 @@ require('./scripts/validate-content.js');
     `${result.stdout}\n${result.stderr}`,
     /q080 uses meta suffrage-election English wording/,
   );
+});
+
+test('TRANSLATE-COMPLETE rejects literal glossary naturalness patterns', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+process.argv.push('--focus-translate-complete-p0');
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/glossary.ts')) {
+    return String(contents)
+      .replace("termEn: 'Social partners'", "termEn: 'Labour-market parties'")
+      .replace(
+        'A process in which people take part in society and society makes use of different experiences.',
+        'A process where people become included in society and society makes use of different experiences.',
+      )
+      .replace(
+        'A vote where voters decide directly on a specific issue.',
+        'A vote where voters take a direct position on a specific issue.',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.match(output, /arbetsmarknadens-parter uses literal labour-market parties English/);
+  assert.match(output, /integration uses literal become-included English/);
+  assert.match(output, /folkomrostning uses literal direct-position English/);
 });
