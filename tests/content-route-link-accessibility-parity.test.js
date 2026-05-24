@@ -97,6 +97,19 @@ test('RouteLink preserves web anchors, keyboard feedback, caller handlers, and r
   assert.match(source, /pressedReducedMotion: \{\s*backgroundColor: themeColors\.focusSoft,\s*\}/);
 });
 
+test('SocialProofRow uses shared RouteLink source navigation contract', () => {
+  const source = read('components/ui/SocialProofRow.tsx');
+
+  assert.match(source, /import \{ RouteLink \} from '\.\/RouteLink';/);
+  assert.doesNotMatch(source, /import \{ Link \} from 'expo-router';/);
+  assert.match(source, /<RouteLink[\s\S]*accessibilityLabel=\{rowAccessibilityLabel\}/);
+  assert.match(source, /href="\/sources"/);
+  assert.match(source, /useThemeColors\(\)/);
+  assert.match(source, /function createStyles\(themeColors: ThemeColors\)/);
+  assert.doesNotMatch(source, /useReducedMotion\(\)/);
+  assert.doesNotMatch(source, /motion\.(?:hoverScale|pressedScale)/);
+});
+
 test('all token scale feedback in app and components has a reduced-motion opt-out', () => {
   assert.deepEqual(collectScaledFeedbackOffenders(interactiveSourceEntries()), []);
 });

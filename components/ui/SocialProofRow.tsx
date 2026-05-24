@@ -1,9 +1,9 @@
-import { Link } from 'expo-router';
-import { useState } from 'react';
+import { useMemo } from 'react';
 import { StyleSheet, Text } from 'react-native';
 
-import { useReducedMotion } from '../../lib/motion/useReducedMotion';
-import { colors, motion, radius, space, typography } from '../../lib/theme';
+import { radius, space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
+import { RouteLink } from './RouteLink';
 
 type SocialProofLanguage = 'sv' | 'en';
 
@@ -32,89 +32,44 @@ export interface SocialProofRowProps {
 export function SocialProofRow({ accessibilityLabel, language }: SocialProofRowProps) {
   const t = copy[language];
   const rowAccessibilityLabel = accessibilityLabel ?? t.accessibilityLabel;
-  const [isFocused, setIsFocused] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
-  const [isPressed, setIsPressed] = useState(false);
-  const reduceMotion = useReducedMotion();
-  const interactionHandlers = {
-    onBlur: () => {
-      setIsFocused(false);
-      setIsPressed(false);
-    },
-    onFocus: () => setIsFocused(true),
-    onMouseEnter: () => setIsHovered(true),
-    onMouseLeave: () => {
-      setIsHovered(false);
-      setIsPressed(false);
-    },
-  };
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
 
   return (
-    <Link
-      {...interactionHandlers}
-      aria-label={rowAccessibilityLabel}
-      accessibilityLabel={rowAccessibilityLabel}
-      accessibilityRole="link"
-      href="/sources"
-      onPressIn={() => setIsPressed(true)}
-      onPressOut={() => setIsPressed(false)}
-      style={[
-        styles.row,
-        isFocused || isHovered
-          ? reduceMotion
-            ? styles.rowInteractiveReducedMotion
-            : styles.rowInteractive
-          : null,
-        isPressed ? (reduceMotion ? styles.rowPressedReducedMotion : styles.rowPressed) : null,
-      ]}
-    >
+    <RouteLink accessibilityLabel={rowAccessibilityLabel} href="/sources" style={styles.row}>
       <Text style={styles.label}>{t.label}</Text>
       <Text style={styles.dot}>·</Text>
       <Text style={styles.body}>{t.body}</Text>
-    </Link>
+    </RouteLink>
   );
 }
 
-const styles = StyleSheet.create({
-  row: {
-    alignItems: 'center',
-    borderRadius: radius.pill,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[0.75],
-    minHeight: space[6],
-    paddingHorizontal: space[1.25],
-    paddingVertical: space[0.75],
-    textDecorationLine: 'none',
-  },
-  rowInteractive: {
-    backgroundColor: colors.focusSoft,
-    transform: [{ scale: motion.hoverScale }],
-  },
-  rowInteractiveReducedMotion: {
-    backgroundColor: colors.focusSoft,
-  },
-  rowPressed: {
-    backgroundColor: colors.focusSoft,
-    transform: [{ scale: motion.pressedScale }],
-  },
-  rowPressedReducedMotion: {
-    backgroundColor: colors.focusSoft,
-  },
-  label: {
-    color: colors.text,
-    fontFamily: typography.bodySemibold.fontFamily,
-    fontSize: typography.bodySemibold.fontSize,
-    fontWeight: typography.bodySemibold.fontWeight,
-  },
-  dot: {
-    color: colors.textMuted,
-    fontFamily: typography.body.fontFamily,
-    fontSize: typography.body.fontSize,
-  },
-  body: {
-    color: colors.textMuted,
-    fontFamily: typography.bodyTight.fontFamily,
-    fontSize: typography.bodyTight.fontSize,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    row: {
+      alignSelf: 'flex-start',
+      borderRadius: radius.pill,
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[0.75],
+      paddingHorizontal: space[1.25],
+      paddingVertical: space[0.75],
+    },
+    label: {
+      color: themeColors.text,
+      fontFamily: typography.bodySemibold.fontFamily,
+      fontSize: typography.bodySemibold.fontSize,
+      fontWeight: typography.bodySemibold.fontWeight,
+    },
+    dot: {
+      color: themeColors.textMuted,
+      fontFamily: typography.body.fontFamily,
+      fontSize: typography.body.fontSize,
+    },
+    body: {
+      color: themeColors.textMuted,
+      fontFamily: typography.bodyTight.fontFamily,
+      fontSize: typography.bodyTight.fontSize,
+    },
+  });
+}
