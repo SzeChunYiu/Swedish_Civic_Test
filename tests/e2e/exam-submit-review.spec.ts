@@ -241,6 +241,7 @@ test('mock exam pauses timer while the browser document is hidden', async ({ pag
   });
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
+  await page.clock.install({ time: new Date('2026-05-21T12:00:00.000Z') });
   await openExamWithLanguage(page, 'en');
 
   const activeCount = page.getByText(`0/${totalQuestions} answered`);
@@ -262,7 +263,7 @@ test('mock exam pauses timer while the browser document is hidden', async ({ pag
   ).toBeVisible();
   const pausedTimerText = await timerLine.textContent();
 
-  await page.waitForTimeout(1250);
+  await page.clock.fastForward(1250);
   await expect(timerLine).toHaveText(pausedTimerText ?? '');
 
   await setDocumentHiddenForTest(page, false);

@@ -104,6 +104,33 @@ function collectMatches({ pattern, source, filePath }) {
   }));
 }
 
+function collectLongWaitForTimeoutViolations({ source, filePath }) {
+  const violations = [];
+  const lines = source.split(/\r?\n/);
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index];
+    const match = line.match(/\.waitForTimeout\(\s*([0-9][0-9_]*)\s*\)/);
+    if (!match) continue;
+
+    const timeoutMs = Number.parseInt(match[1].replaceAll('_', ''), 10);
+    if (timeoutMs < 1000) continue;
+
+    const previousLine = lines[index - 1] ?? '';
+    const reviewedException =
+      line.includes('e2e-long-wait-ok') || previousLine.includes('e2e-long-wait-ok');
+    if (reviewedException) continue;
+
+    violations.push({
+      file: path.relative(process.cwd(), filePath),
+      line: index + 1,
+      literal: match[0],
+    });
+  }
+
+  return violations;
+}
+
 function escapeRegExp(literal) {
   return literal.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
@@ -938,6 +965,20 @@ test('browser specs do not define local Date browser clock stubs', () => {
     violations,
     [],
     'use mockBrowserDate from tests/e2e/browserLaunch.ts instead of local Date constructor or Date.now stubs',
+  );
+});
+
+test('browser specs do not use long fixed waitForTimeout sleeps', () => {
+  const violations = [];
+  for (const filePath of browserSpecPaths) {
+    const source = fs.readFileSync(filePath, 'utf8');
+    violations.push(...collectLongWaitForTimeoutViolations({ source, filePath }));
+  }
+
+  assert.deepEqual(
+    violations,
+    [],
+    'replace waitForTimeout sleeps >=1000ms with event-based assertions, page.clock, or an explicit reviewed e2e-long-wait-ok exception',
   );
 });
 
