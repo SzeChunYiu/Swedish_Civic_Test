@@ -64,8 +64,10 @@ test('question-bank CSV keeps its public row contract', () => {
 
   const summary = JSON.parse(match[0]);
   assert.equal(summary.questionBankCsvRowsValidated, summary.publishedQuestions);
-  assert.equal(summary.questionBankCsvHeaderColumnsValidated, 28);
+  assert.equal(summary.questionBankCsvHeaderColumnsValidated, 30);
   assert.equal(summary.questionBankCsvUniqueHeaderNamesValidated, true);
+  assert.equal(summary.questionBankCsvSourceCitationRowsValidated, summary.publishedQuestions);
+  assert.equal(summary.questionBankCsvSourceCitationParityValidated, true);
   assert.equal(summary.questionBankCsvUhrCitationRowsValidated, summary.publishedQuestions);
   assert.equal(summary.questionBankCsvUhrCitationParityValidated, true);
   assert.equal(summary.questionBankCsvUhrSourcePublisherRowsValidated, summary.publishedQuestions);
@@ -359,7 +361,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /content\/question-bank\.csv row 2 has 29 columns, expected 28/,
+    /content\/question-bank\.csv row 2 has 31 columns, expected 30/,
   );
 });
 
@@ -545,6 +547,65 @@ test('question-bank CSV exposes localized user-visible UHR citation strings', ()
   assert.ok(rows.every((row) => row[citationSvIndex] && row[citationEnIndex]));
 });
 
+test('question-bank CSV exposes localized full source citation strings by header name', () => {
+  const output = runQuestionBankCsvValidation();
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'validation should print JSON summary');
+
+  const summary = JSON.parse(match[0]);
+  assert.equal(summary.questionBankCsvSourceCitationRowsValidated, summary.publishedQuestions);
+  assert.equal(summary.questionBankCsvSourceCitationParityValidated, true);
+
+  const rowsById = loadQuestionBankRowsById();
+  const q019 = rowsById.get('q019');
+  assert.ok(q019, 'q019 should be exported');
+  assert.match(q019.sourceCitationSv, /Valmyndigheten/);
+  assert.match(q019.sourceCitationEn, /Additional source: Rösträtten i svenska val/);
+  assert.doesNotMatch(q019.uhrCitationSv, /Valmyndigheten/);
+  assert.doesNotMatch(q019.uhrCitationEn, /Additional source/);
+});
+
+test('question-bank CSV keeps full source citation columns before UHR-only citation columns', () => {
+  const csv = fs.readFileSync(path.join(repoRoot, 'content', 'question-bank.csv'), 'utf8');
+  const header = parseExportedCsvLine(csv.split(/\r?\n/, 1)[0]);
+
+  assert.ok(header.indexOf('sourceCitationSv') < header.indexOf('uhrCitationSv'));
+  assert.ok(header.indexOf('sourceCitationEn') < header.indexOf('uhrCitationEn'));
+});
+
+test('question-bank CSV contract rejects full source citation drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/content/question-bank.csv')) {
+    return String(contents).replace(
+      'Additional source: Rösträtten i svenska val',
+      'Additional source: missing voting-rights source',
+    );
+  }
+  return contents;
+};
+process.argv.push('--focus-question-bank-csv');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /content\/question-bank\.csv row \d+ q019 sourceCitationEn is ".*missing voting-rights source.*", expected ".*Additional source: Rösträtten i svenska val/,
+  );
+});
+
 test('question-bank CSV contract rejects localized UHR citation drift', () => {
   const result = spawnSync(
     process.execPath,
@@ -574,7 +635,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /content\/question-bank\.csv row 2 q001 uhrCitationEn is "Source: Sverige i fokus, Landet Sverige, wrong section, p\. 5", expected "Source: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, p\. 5"/,
+    /content\/question-bank\.csv row 2 q001 (?:sourceCitationEn|uhrCitationEn) is "Source: Sverige i fokus, Landet Sverige, wrong section, p\. 5", expected "Source: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, p\. 5"/,
   );
 });
 

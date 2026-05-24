@@ -833,6 +833,8 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
       'questionBankCsvUniqueHeaderNamesValidated',
       'questionBankCsvRowsValidated',
       'questionBankCsvProvenanceCounts',
+      'questionBankCsvSourceCitationRowsValidated',
+      'questionBankCsvSourceCitationParityValidated',
       'questionBankCsvUhrSourcePublisherRowsValidated',
       'questionBankCsvUhrSourcePublisherParityValidated',
     ],

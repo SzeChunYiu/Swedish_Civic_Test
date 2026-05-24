@@ -18,10 +18,40 @@ function readValidationSummary() {
   return JSON.parse(match[0]);
 }
 
+function parseExportedCsvLine(line) {
+  return [...line.matchAll(/"((?:""|[^"])*)"(?:,|$)/g)].map((match) =>
+    match[1].replaceAll('""', '"'),
+  );
+}
+
+function readQuestionBankCsvRowsByHeader() {
+  const csv = fs.readFileSync(path.join(repoRoot, 'content', 'question-bank.csv'), 'utf8');
+  const lines = csv.trimEnd().split('\n');
+  const header = parseExportedCsvLine(lines[0]);
+  return lines.slice(1).map((line) => {
+    const fields = parseExportedCsvLine(line);
+    return Object.fromEntries(header.map((field, index) => [field, fields[index]]));
+  });
+}
+
 test('published question prompts and explanations keep distinct Swedish and English text', () => {
   const summary = readValidationSummary();
 
   assert.equal(summary.questionBilingualTextPairsValidated, summary.publishedQuestions);
+});
+
+test('question-bank CSV citation consumers use full source citation header fields', () => {
+  const rowsById = new Map(readQuestionBankCsvRowsByHeader().map((row) => [row.id, row]));
+  const supplementalIds = ['q019', 'q030', 'q166'];
+
+  for (const id of supplementalIds) {
+    const row = rowsById.get(id);
+    assert.ok(row, `${id} should be exported`);
+    assert.match(row.sourceCitationSv, /Valmyndigheten/);
+    assert.match(row.sourceCitationEn, /Additional source: Rösträtten i svenska val/);
+    assert.doesNotMatch(row.uhrCitationSv, /Valmyndigheten/);
+    assert.doesNotMatch(row.uhrCitationEn, /Additional source/);
+  }
 });
 
 test('published question bilingual text rejects copied prompts and explanations', () => {
