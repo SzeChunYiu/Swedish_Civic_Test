@@ -207,6 +207,12 @@ const officialPracticalTestSourceKeys = [
   'uhrOfficialTestSignup',
   'uhrOfficialTestStudyMaterial',
 ];
+const officialPracticalTestSourceUrlByKey = Object.fromEntries(
+  officialPracticalTestSourceKeys.map((key, index) => [
+    key,
+    officialPracticalTestSourceUrls[index],
+  ]),
+);
 const officialPracticalTestSignupSourceKeys = ['uhrOfficialTestAbout', 'uhrOfficialTestSignup'];
 const officialPracticalTestLanguageSourceKeys = ['uhrOfficialTestFaq'];
 const officialPracticalTestSeatsSourceKeys = ['uhrOfficialTestAbout', 'uhrOfficialTestFaq'];
@@ -556,6 +562,13 @@ function renderedExternalSourceAnchors(html) {
   return Array.from(html.matchAll(/<a\b(?=[^>]*\bhref="https?:\/\/)[^>]*>/g), (match) => match[0]);
 }
 
+function renderedExternalSourceHrefs(html) {
+  return Array.from(
+    html.matchAll(/<a\b(?=[^>]*\bhref="(https?:\/\/[^"]+)")[^>]*>/g),
+    (match) => match[1],
+  );
+}
+
 function assertSafeOfficialTestSourceLinks(block, label) {
   officialPracticalTestSourceUrls.forEach((url) => {
     assert.match(
@@ -584,6 +597,42 @@ function dataSourceKeys(block) {
   const match = block.match(/\bdata-source-keys="([^"]+)"/);
   assert.ok(match, `source block missing data-source-keys: ${block}`);
   return match[1].split(/\s+/).filter(Boolean);
+}
+
+function assertOfficialTestCurrentSourceUrlPairs(block, label) {
+  const keys = dataSourceKeys(block);
+  const hrefs = renderedExternalSourceHrefs(block);
+
+  assert.deepEqual(keys, officialPracticalTestSourceKeys, `${label} source keys drifted`);
+  assert.equal(
+    hrefs.length,
+    officialPracticalTestSourceKeys.length,
+    `${label} must render one current-source link per official-test source key`,
+  );
+
+  officialPracticalTestSourceKeys.forEach((key, index) => {
+    assert.equal(
+      hrefs[index],
+      officialPracticalTestSourceUrlByKey[key],
+      `${label} source key ${key} must link to ${officialPracticalTestSourceUrlByKey[key]}`,
+    );
+  });
+}
+
+function sourceWithOfficialTestUrl(searchUrl, replacementUrl) {
+  const source = readSiteFile('site/ebook.js');
+  const search = `url: '${searchUrl}'`;
+  const sourceNotesStart = source.indexOf('const OFFICIAL_TEST_SOURCE_NOTES = Object.freeze([');
+
+  assert.notEqual(sourceNotesStart, -1, 'site/ebook.js should define OFFICIAL_TEST_SOURCE_NOTES');
+  assert.notEqual(
+    source.indexOf(search, sourceNotesStart),
+    -1,
+    `OFFICIAL_TEST_SOURCE_NOTES should include ${searchUrl}`,
+  );
+  return `${source.slice(0, sourceNotesStart)}${source
+    .slice(sourceNotesStart)
+    .replace(search, `url: '${replacementUrl}'`)}`;
 }
 
 function dataSourceMetadata(block) {
@@ -756,6 +805,8 @@ test('static ebook raw factbox prose renders with non-default provenance', () =>
   assert.deepEqual(dataSourceKeys(swedishTipBlock), ['editorialCommentary']);
   assert.deepEqual(dataSourceKeys(englishCurrentSourceBlock), officialPracticalTestSourceKeys);
   assert.deepEqual(dataSourceKeys(swedishCurrentSourceBlock), officialPracticalTestSourceKeys);
+  assertOfficialTestCurrentSourceUrlPairs(englishCurrentSourceBlock, 'English current source note');
+  assertOfficialTestCurrentSourceUrlPairs(swedishCurrentSourceBlock, 'Swedish current source note');
   assert.doesNotMatch(englishTipBlock, /\buhrStudyMaterial\b/);
   assert.doesNotMatch(swedishTipBlock, /\buhrStudyMaterial\b/);
   assert.doesNotMatch(englishChapter12Html, /\buhrOfficialTestSources\b/);
@@ -769,6 +820,52 @@ test('static ebook raw factbox prose renders with non-default provenance', () =>
   });
   assertSafeOfficialTestSourceLinks(englishCurrentSourceBlock, 'English current source note');
   assertSafeOfficialTestSourceLinks(swedishCurrentSourceBlock, 'Swedish current source note');
+});
+
+test('static ebook chapter 12 official-test source URL pairing rejects mutated current notes', () => {
+  const swappedSource = sourceWithOfficialTestUrl(
+    officialPracticalTestSourceUrlByKey.uhrOfficialTestFaq,
+    officialPracticalTestSourceUrlByKey.uhrOfficialTestSignup,
+  );
+  const harness = createEbookHarness(swappedSource);
+  const englishHtml = renderChapter(harness, 'en', '12');
+  const englishCurrentSourceBlock = sourceBlockContaining(
+    annotatedSourceClaimBlocks(englishHtml),
+    /Sources accessed 2026-05-19/,
+    'English current source note',
+  );
+
+  assert.throws(
+    () =>
+      assertOfficialTestCurrentSourceUrlPairs(englishCurrentSourceBlock, 'mutated current note'),
+    /uhrOfficialTestFaq must link to https:\/\/www\.uhr\.se\/medborgarskapsprovet\/fragor-och-svar\//,
+  );
+});
+
+test('static ebook chapter 12 official-test source URL pairing ignores stale URLs outside current notes', () => {
+  const missingFaqSource = sourceWithOfficialTestUrl(
+    officialPracticalTestSourceUrlByKey.uhrOfficialTestFaq,
+    officialPracticalTestSourceUrlByKey.uhrOfficialTestSignup,
+  );
+  const harness = createEbookHarness(missingFaqSource);
+  const englishHtml = `${renderChapter(harness, 'en', '12')}<p>${
+    officialPracticalTestSourceUrlByKey.uhrOfficialTestFaq
+  }</p>`;
+  const englishCurrentSourceBlock = sourceBlockContaining(
+    annotatedSourceClaimBlocks(englishHtml),
+    /Sources accessed 2026-05-19/,
+    'English current source note',
+  );
+
+  assert.match(englishHtml, new RegExp(officialPracticalTestSourceUrlByKey.uhrOfficialTestFaq));
+  assert.throws(
+    () =>
+      assertOfficialTestCurrentSourceUrlPairs(
+        englishCurrentSourceBlock,
+        'mutated current note with stale outside URL',
+      ),
+    /uhrOfficialTestFaq must link to https:\/\/www\.uhr\.se\/medborgarskapsprovet\/fragor-och-svar\//,
+  );
 });
 
 test('static ebook chapter 12 official-test prose uses exact source-key footnotes', () => {
