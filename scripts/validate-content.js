@@ -2178,7 +2178,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 15;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 39;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 40;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_RUNTIME_CASES = 9;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
@@ -20598,6 +20598,7 @@ function validateRemoveAdsPurchaseRuntimeParity() {
   let placementCtaSource = '';
   let pricingWedgeSource = '';
   let purchaseSource = '';
+  let useRemoveAdsSource = '';
 
   function reject(message) {
     valid = false;
@@ -20619,6 +20620,10 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       path.join(repoRoot, 'components/monetization/PricingWedge.tsx'),
       'utf8',
     );
+    useRemoveAdsSource = fs.readFileSync(
+      path.join(repoRoot, 'lib/monetization/useRemoveAdsEntitlements.ts'),
+      'utf8',
+    );
   } catch (error) {
     reject(`Remove Ads purchase runtime sources could not be read: ${error.message}`);
     return;
@@ -20629,6 +20634,7 @@ function validateRemoveAdsPurchaseRuntimeParity() {
   const normalizedPaywallSource = paywallSource.replace(/\s+/g, ' ');
   const normalizedPlacementCtaSource = placementCtaSource.replace(/\s+/g, ' ');
   const normalizedPricingWedgeSource = pricingWedgeSource.replace(/\s+/g, ' ');
+  const normalizedUseRemoveAdsSource = useRemoveAdsSource.replace(/\s+/g, ' ');
   const paywallDisabledPropCount =
     paywallSource.match(/disabled=\{actionsDisabled\}/g)?.length ?? 0;
   const paywallDisabledStateCount =
@@ -20989,6 +20995,30 @@ function validateRemoveAdsPurchaseRuntimeParity() {
         /<PricingWedge[\s\S]*priceLabel=\{removeAdsPriceLabel\}/.test(homeSource) &&
         /<PremiumBanner[\s\S]*priceLabel=\{removeAdsPriceLabel\}/.test(homeSource),
       'Home PricingWedge and PremiumBanner must share the fetched Remove Ads price label',
+    ],
+    [
+      normalizedUseRemoveAdsSource.includes(
+        'const runtimePriceLabelCache = new WeakMap<PurchaseRuntimeOptions, RemoveAdsPriceLabelCacheEntry>();',
+      ) &&
+        normalizedUseRemoveAdsSource.includes('let defaultPriceLabelCacheEntry') &&
+        normalizedUseRemoveAdsSource.includes('export function getCachedRemoveAdsPriceLabel') &&
+        normalizedUseRemoveAdsSource.includes('runtimePriceLabelCache.get(runtimeOptions)') &&
+        normalizedUseRemoveAdsSource.includes(
+          'runtimePriceLabelCache.set(runtimeOptions, cacheEntry)',
+        ) &&
+        normalizedUseRemoveAdsSource.includes('defaultPriceLabelCacheEntry = cacheEntry') &&
+        normalizedUseRemoveAdsSource.includes(
+          '.then((metadata) => metadata.displayPrice || REMOVE_ADS_PRICE_LABEL)',
+        ) &&
+        normalizedUseRemoveAdsSource.includes('.catch(() => REMOVE_ADS_PRICE_LABEL)') &&
+        normalizedUseRemoveAdsSource.includes('getCachedRemoveAdsPriceLabel(runtimeOptions)') &&
+        /if \(overridePriceLabel\) \{[\s\S]*setPriceLabel\(overridePriceLabel\)[\s\S]*return \(\) =>/.test(
+          useRemoveAdsSource,
+        ) &&
+        /remove-ads price label cache shares concurrent store metadata lookups/.test(
+          fs.readFileSync(path.join(repoRoot, 'scripts/monetization.test.js'), 'utf8'),
+        ),
+      'Remove Ads price label hook must cache fallback-safe store display-price lookups per purchase runtime',
     ],
     [
       normalizedPaywallSource.includes('accessibilityState={{') &&

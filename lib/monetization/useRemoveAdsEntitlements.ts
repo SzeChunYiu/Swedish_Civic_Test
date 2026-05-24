@@ -24,6 +24,9 @@ const AD_BLOCKED_PENDING_ENTITLEMENTS: PremiumEntitlements = {
 };
 
 export type RemoveAdsEntitlementStatus = 'loading' | 'ready' | 'read_failed';
+type RemoveAdsPriceLabelCacheEntry = {
+  promise: Promise<string>;
+};
 
 type RemoveAdsE2ERuntime = typeof globalThis & {
   __SMT_E2E__?: boolean;
@@ -36,6 +39,8 @@ let defaultWebPurchaseRuntimeOptions: PurchaseRuntimeOptions | undefined;
 let sharedRemoveAdsEntitlements: PremiumEntitlements | undefined;
 let sharedRemoveAdsEntitlementsVersion = 0;
 const removeAdsEntitlementListeners = new Set<(entitlements: PremiumEntitlements) => void>();
+const runtimePriceLabelCache = new WeakMap<PurchaseRuntimeOptions, RemoveAdsPriceLabelCacheEntry>();
+let defaultPriceLabelCacheEntry: RemoveAdsPriceLabelCacheEntry | undefined;
 
 function publishRemoveAdsEntitlements(entitlements: PremiumEntitlements) {
   const nextEntitlements = { ...entitlements };
@@ -163,13 +168,11 @@ export function useRemoveAdsPriceLabel(
 
     setPriceLabel(REMOVE_ADS_PRICE_LABEL);
 
-    void fetchRemoveAdsProductMetadata(runtimeOptions)
-      .then((metadata) => {
-        if (isMounted) setPriceLabel(metadata.displayPrice || REMOVE_ADS_PRICE_LABEL);
+    void getCachedRemoveAdsPriceLabel(runtimeOptions)
+      .then((displayPrice) => {
+        if (isMounted) setPriceLabel(displayPrice);
       })
-      .catch(() => {
-        if (isMounted) setPriceLabel(REMOVE_ADS_PRICE_LABEL);
-      });
+      .catch(() => {});
 
     return () => {
       isMounted = false;
@@ -177,6 +180,29 @@ export function useRemoveAdsPriceLabel(
   }, [overridePriceLabel, runtimeOptions]);
 
   return priceLabel;
+}
+
+export function getCachedRemoveAdsPriceLabel(
+  runtimeOptions?: PurchaseRuntimeOptions,
+): Promise<string> {
+  const existingEntry = runtimeOptions
+    ? runtimePriceLabelCache.get(runtimeOptions)
+    : defaultPriceLabelCacheEntry;
+  if (existingEntry) return existingEntry.promise;
+
+  const cacheEntry: RemoveAdsPriceLabelCacheEntry = {
+    promise: fetchRemoveAdsProductMetadata(runtimeOptions)
+      .then((metadata) => metadata.displayPrice || REMOVE_ADS_PRICE_LABEL)
+      .catch(() => REMOVE_ADS_PRICE_LABEL),
+  };
+
+  if (runtimeOptions) {
+    runtimePriceLabelCache.set(runtimeOptions, cacheEntry);
+  } else {
+    defaultPriceLabelCacheEntry = cacheEntry;
+  }
+
+  return cacheEntry.promise;
 }
 
 export function useRemoveAdsEntitlements({

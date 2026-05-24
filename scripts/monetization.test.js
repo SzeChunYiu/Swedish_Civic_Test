@@ -2879,6 +2879,85 @@ test('home remove-ads pricing copy uses store price label with canonical fallbac
   );
 });
 
+test('remove-ads price label cache shares concurrent store metadata lookups', async () => {
+  let resolveMetadata;
+  let fetchCount = 0;
+  const metadataPromise = new Promise((resolve) => {
+    resolveMetadata = resolve;
+  });
+  const runtimeOptions = {
+    provider: {
+      async connect() {},
+      async disconnect() {},
+      async fetchRemoveAdsProductMetadata() {
+        fetchCount += 1;
+        return metadataPromise;
+      },
+    },
+  };
+  const { getCachedRemoveAdsPriceLabel, useRemoveAdsPriceLabel } = loadTs(
+    'lib/monetization/useRemoveAdsEntitlements.ts',
+    undefined,
+    new Map(),
+    {
+      react: createReactHookStub(),
+      'react-native': createReactNativeWebStub(),
+    },
+  );
+  const hookSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/useRemoveAdsEntitlements.ts'),
+    'utf8',
+  );
+
+  const firstLookup = getCachedRemoveAdsPriceLabel(runtimeOptions);
+  const secondLookup = getCachedRemoveAdsPriceLabel(runtimeOptions);
+  assert.strictEqual(firstLookup, secondLookup);
+  await Promise.resolve();
+  assert.equal(fetchCount, 1);
+
+  resolveMetadata({ displayPrice: '29,00 kr' });
+  assert.equal(await firstLookup, '29,00 kr');
+  assert.equal(await secondLookup, '29,00 kr');
+  assert.equal(await getCachedRemoveAdsPriceLabel(runtimeOptions), '29,00 kr');
+  assert.equal(fetchCount, 1);
+  assert.equal(useRemoveAdsPriceLabel(runtimeOptions, '39 SEK'), '39 SEK');
+  assert.match(hookSource, /const runtimePriceLabelCache = new WeakMap/);
+  assert.match(hookSource, /let defaultPriceLabelCacheEntry/);
+  assert.match(hookSource, /getCachedRemoveAdsPriceLabel\(runtimeOptions\)/);
+  assert.match(
+    hookSource,
+    /if \(overridePriceLabel\) \{[\s\S]*setPriceLabel\(overridePriceLabel\)/,
+  );
+});
+
+test('remove-ads price label cache stores canonical fallback after metadata failure', async () => {
+  let fetchCount = 0;
+  const { REMOVE_ADS_PRICE_LABEL } = loadTs('lib/monetization/purchases.ts');
+  const { getCachedRemoveAdsPriceLabel } = loadTs(
+    'lib/monetization/useRemoveAdsEntitlements.ts',
+    undefined,
+    new Map(),
+    {
+      react: createReactHookStub(),
+      'react-native': createReactNativeWebStub(),
+    },
+  );
+  const runtimeOptions = {
+    provider: {
+      async connect() {},
+      async disconnect() {},
+      async fetchRemoveAdsProductMetadata() {
+        fetchCount += 1;
+        throw new Error('store unavailable');
+      },
+    },
+  };
+
+  assert.equal(await getCachedRemoveAdsPriceLabel(runtimeOptions), REMOVE_ADS_PRICE_LABEL);
+  assert.equal(await getCachedRemoveAdsPriceLabel(runtimeOptions), REMOVE_ADS_PRICE_LABEL);
+  assert.equal(fetchCount, 1);
+});
+
 test('AdBanner testStatus copy stays platform-neutral while liveStatus stays live-only', () => {
   const webBannerSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
