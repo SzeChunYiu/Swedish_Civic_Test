@@ -14,7 +14,7 @@ export const glossaryTerms: GlossaryTerm[] = [
   {
     id: 'arbetsmarknadens-parter',
     termSv: 'Arbetsmarknadens parter',
-    termEn: 'Labour-market parties',
+    termEn: 'Labour market parties',
     explanationSv:
       'Arbetsgivare och fackliga organisationer som förhandlar om villkor på arbetsmarknaden.',
     explanationEn: 'Employers and trade unions that negotiate conditions in the labour market.',
@@ -27,7 +27,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     explanationSv:
       'En försäkring som kan ge ersättning under arbetslöshet om villkoren är uppfyllda.',
     explanationEn:
-      'Insurance that can provide compensation during unemployment when the conditions are met.',
+      'Insurance that can provide payments while you are unemployed if the conditions are met.',
     chapterId: 'ch08',
   },
   {
@@ -139,7 +139,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     explanationSv:
       'En process där människor blir delaktiga i samhällslivet och samhället tar tillvara olika erfarenheter.',
     explanationEn:
-      'A process where people become included in society and society makes use of different experiences.',
+      'A process where people take part in society and society values different experiences.',
     chapterId: 'ch02',
   },
   {

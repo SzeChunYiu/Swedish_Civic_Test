@@ -115,6 +115,7 @@ test('TRANSLATE-COMPLETE P0 has explicit SV/EN completeness and naturalness clos
   assert.equal(summary.translationNaturalnessGuardParityValidated, true);
   assert.equal(summary.questionBilingualTextPairsValidated, summary.publishedQuestions);
   assert.equal(summary.questionOptionBilingualTextPairsValidated, summary.publishedQuestions);
+  assert.equal(summary.glossaryBilingualTextPairsValidated, summary.glossaryTerms);
   assert.equal(summary.questionGeneratedTrueFalseNaturalnessValidated, summary.publishedQuestions);
   assert.equal(summary.questionLuciaRoleEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(
@@ -159,6 +160,7 @@ test('TRANSLATE-COMPLETE P0 has explicit SV/EN completeness and naturalness clos
     summary.questionRuleOfLawEnglishNaturalnessValidated,
     summary.publishedQuestions * 3,
   );
+  assert.equal(summary.glossaryNaturalnessValidated, summary.glossaryTerms);
   assert.equal(summary.somaliGeographyNaturalnessParityValidated, true);
   assert.equal(summary.somaliHolidayFoodNaturalnessParityValidated, true);
 });
@@ -193,5 +195,38 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q080 uses meta suffrage-election English wording/,
+  );
+});
+
+test('TRANSLATE-COMPLETE rejects literal glossary English wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+process.argv.push('--focus-translate-complete-p0');
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/glossary.ts')) {
+    return String(contents).replace(
+      'Insurance that can provide payments while you are unemployed if the conditions are met.',
+      'Insurance that can provide compensation during unemployment when the conditions are met.',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /a-kassa uses literal or stilted glossary English wording/,
   );
 });

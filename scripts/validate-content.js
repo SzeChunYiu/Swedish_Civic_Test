@@ -6091,11 +6091,33 @@ function optionBilingualTextPairsAreValid(question) {
   return question.options.every(optionTextPairIsTranslatedOrInvariant);
 }
 
+function glossaryTextPairsAreDistinct(term) {
+  return (
+    optionTextPairIsTranslatedOrInvariant({ textSv: term.termSv, textEn: term.termEn }) &&
+    normalizeComparableText(term.explanationSv) !== normalizeComparableText(term.explanationEn)
+  );
+}
+
+function findGlossaryNaturalnessIssue(term) {
+  const fields = [term.termEn, term.explanationEn];
+  const literalPatterns = [
+    /\bLabour-market parties\b/i,
+    /\bprovide compensation during unemployment\b/i,
+    /\bbecome included in society and society makes use of\b/i,
+  ];
+
+  return fields.some((value) =>
+    literalPatterns.some((pattern) => pattern.test(String(value ?? ''))),
+  );
+}
+
 function translationCompletenessParityIsValidated() {
   return (
     publishedQuestions > 0 &&
     questionBilingualTextPairsValidated === publishedQuestions &&
-    questionOptionBilingualTextPairsValidated === publishedQuestions
+    questionOptionBilingualTextPairsValidated === publishedQuestions &&
+    glossaryTerms.length > 0 &&
+    glossaryBilingualTextPairsValidated === glossaryTerms.length
   );
 }
 
@@ -6123,6 +6145,7 @@ function translationNaturalnessGuardParityIsValidated() {
     questionSourceCriticismEnglishNaturalnessValidated === publishedQuestions &&
     questionRuleOfLawEnglishNaturalnessValidated === publishedQuestions * 3 &&
     questionReligiousFreedomParallelismValidated === publishedQuestions * 2 &&
+    glossaryNaturalnessValidated === glossaryTerms.length &&
     somaliGeographyNaturalnessParityValidated === true &&
     somaliHolidayFoodNaturalnessParityValidated === true
   );
@@ -10268,6 +10291,8 @@ let examGeneratorTypeInterfacesValidated = 0;
 let examGeneratorTypeSchemaParityValidated = false;
 let glossaryTermsValidated = 0;
 let glossaryTermExactSchemaKeysValidated = 0;
+let glossaryBilingualTextPairsValidated = 0;
+let glossaryNaturalnessValidated = 0;
 let uxBenchmarksValidated = 0;
 let contentTypeUnionsValidated = 0;
 let contentTypeInterfacesValidated = 0;
@@ -11509,6 +11534,7 @@ function translateCompleteP0NaturalnessIsValidated(publishedQuestionCount) {
     questionSourceCriticismEnglishNaturalnessValidated === publishedQuestionCount &&
     questionRuleOfLawEnglishNaturalnessValidated === publishedQuestionCount * 3 &&
     questionReligiousFreedomParallelismValidated === publishedQuestionCount * 2 &&
+    glossaryNaturalnessValidated === glossaryTerms.length &&
     somaliGeographyNaturalnessParityValidated === true &&
     somaliHolidayFoodNaturalnessParityValidated === true
   );
@@ -11661,6 +11687,7 @@ function validateTranslateCompleteP0Focus() {
 
   validateQuestionRuleOfLawEnglishNaturalness();
   validateQuestionReligiousFreedomParallelism();
+  validateGlossaryTerms();
   validateSomaliGeographyNaturalnessParity();
   validateSomaliHolidayFoodNaturalnessParity();
 
@@ -11668,7 +11695,8 @@ function validateTranslateCompleteP0Focus() {
   const translationCompletenessParityValidated =
     publishedQuestionCount > 0 &&
     questionBilingualTextPairsValidated === publishedQuestionCount &&
-    questionOptionBilingualTextPairsValidated === publishedQuestionCount;
+    questionOptionBilingualTextPairsValidated === publishedQuestionCount &&
+    glossaryBilingualTextPairsValidated === glossaryTerms.length;
   const translationNaturalnessGuardParityValidated =
     translateCompleteP0NaturalnessIsValidated(publishedQuestionCount);
 
@@ -11684,6 +11712,8 @@ function validateTranslateCompleteP0Focus() {
     publishedQuestions: publishedQuestionCount,
     questionBilingualTextPairsValidated,
     questionOptionBilingualTextPairsValidated,
+    glossaryTerms: glossaryTerms.length,
+    glossaryBilingualTextPairsValidated,
     translationCompletenessParityValidated,
     questionGeneratedTrueFalseNaturalnessValidated,
     questionLuciaRoleEnglishNaturalnessValidated,
@@ -11706,6 +11736,7 @@ function validateTranslateCompleteP0Focus() {
     questionSourceCriticismEnglishNaturalnessValidated,
     questionRuleOfLawEnglishNaturalnessValidated,
     questionReligiousFreedomParallelismValidated,
+    glossaryNaturalnessValidated,
     somaliGeographyNaturalnessParityValidated,
     somaliHolidayFoodNaturalnessParityValidated,
     translationNaturalnessGuardParityValidated,
@@ -22252,6 +22283,14 @@ function validateGlossaryTerms() {
       ) {
         reject(`${label} explanationSv and explanationEn must be distinct bilingual text`);
       }
+      if (glossaryTextPairsAreDistinct(term)) {
+        glossaryBilingualTextPairsValidated += 1;
+      }
+      if (findGlossaryNaturalnessIssue(term)) {
+        reject(`${label} uses literal or stilted glossary English wording`);
+      } else {
+        glossaryNaturalnessValidated += 1;
+      }
 
       if (term.chapterId !== undefined) {
         if (!hasText(term.chapterId)) {
@@ -27861,6 +27900,8 @@ console.log(
       glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
       glossaryTermsValidated,
       glossaryTermExactSchemaKeysValidated,
+      glossaryBilingualTextPairsValidated,
+      glossaryNaturalnessValidated,
       uxBenchmarksValidated,
       supportedLanguagesValidated,
       localizationStrings:
