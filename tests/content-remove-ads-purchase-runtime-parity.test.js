@@ -36,6 +36,22 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
     'utf8',
   );
   const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+  const e2eFixtureSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/e2ePurchaseFixtures.ts'),
+    'utf8',
+  );
+  const e2eRuntimeSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/e2ePurchaseRuntime.ts'),
+    'utf8',
+  );
+  const browserLaunchSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/e2e/browserLaunch.ts'),
+    'utf8',
+  );
+  const profilePendingSpecSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/e2e/profile-remove-ads-pending.spec.ts'),
+    'utf8',
+  );
   const nativeReceiptValidationBlock =
     purchaseSource.match(
       /async validateRemoveAdsReceipt\(purchase, productId\) \{([\s\S]*?)\n    \},\n    async requestRemoveAdsPurchase/,
@@ -64,6 +80,33 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.doesNotMatch(purchaseSource, /storedValue === STORED_TRUE/);
   assert.match(purchaseSource, /requestRemoveAdsPurchase\(REMOVE_ADS_PRODUCT_ID\)/);
   assert.match(purchaseSource, /restorePurchases\(\[REMOVE_ADS_PRODUCT_ID\]\)/);
+  assert.match(e2eFixtureSource, /export \{ REMOVE_ADS_PRODUCT_ID as E2E_REMOVE_ADS_PRODUCT_ID \}/);
+  assert.match(e2eFixtureSource, /REMOVE_ADS_STORAGE_KEY as E2E_REMOVE_ADS_STORAGE_KEY/);
+  assert.match(e2eFixtureSource, /function normalizeE2EPurchaseProductId/);
+  assert.match(
+    e2eFixtureSource,
+    /productId\.replace\(\/\[\^a-z0-9\]\+\/gi, '-'\)\.toLowerCase\(\)/,
+  );
+  assert.match(e2eFixtureSource, /createE2EMockPurchase\(REMOVE_ADS_PRODUCT_ID, 'restore'\)/);
+  assert.match(
+    e2eRuntimeSource,
+    /import \{ createE2EMockPurchase \} from '\.\/e2ePurchaseFixtures';/,
+  );
+  assert.match(e2eRuntimeSource, /createE2EMockPurchase\(productId, 'buy'\)/);
+  assert.match(e2eRuntimeSource, /createE2EMockPurchase\(productId, 'restore'\)/);
+  assert.match(
+    browserLaunchSource,
+    /createStoredRemoveAdsE2ERestoreEntitlement,[\s\S]*E2E_REMOVE_ADS_STORAGE_KEY,[\s\S]*from '..\/..\/lib\/monetization\/e2ePurchaseFixtures';/,
+  );
+  assert.match(profilePendingSpecSource, /createStoredRemoveAdsE2ERestoreEntitlement/);
+  assert.match(
+    profilePendingSpecSource,
+    /\[E2E_REMOVE_ADS_STORAGE_KEY\]: JSON\.stringify\(storedRecord\)/,
+  );
+  assert.doesNotMatch(
+    profilePendingSpecSource,
+    /e2e-profile-pending-token|e2e-profile-pending-transaction|com\.billyyiu\.almostswedish\.removeads/,
+  );
   assert.match(purchaseSource, /function normalizeRemoveAdsStorePlatform\(platform/);
   assert.match(purchaseSource, /export function getRemoveAdsStoreProductId/);
   assert.match(purchaseSource, /const storeProductId = getPurchaseStoreProductId/);

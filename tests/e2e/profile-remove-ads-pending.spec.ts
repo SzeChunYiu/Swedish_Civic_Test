@@ -2,24 +2,13 @@ import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
 import {
+  createStoredRemoveAdsE2ERestoreEntitlement,
+  E2E_REMOVE_ADS_STORAGE_KEY,
   seedFreshSettingsLanguageAndAboutSeenWithStorage,
   type AppLanguage,
 } from './browserLaunch';
 
-const removeAdsStorageKey = 'monetization.removeAds.adsDisabled.v1';
-const removeAdsProductId = 'com.billyyiu.almostswedish.removeads';
 const entitlementHydrationDelayMs = 4000;
-
-type StoredRemoveAdsRecord = {
-  grantedAt: string;
-  productId: string;
-  purchaseToken: string;
-  receiptValidatedAt: string;
-  receiptValidationStatus: 'valid';
-  schemaVersion: 1;
-  source: 'purchase';
-  transactionId: string;
-};
 
 function collectConsoleErrors(page: Page) {
   const consoleErrors: string[] = [];
@@ -34,20 +23,11 @@ function collectConsoleErrors(page: Page) {
 
 async function seedDelayedPurchasedProfile(page: Page, language: AppLanguage) {
   const now = '2026-05-19T00:00:00.000Z';
-  const storedRecord: StoredRemoveAdsRecord = {
-    grantedAt: now,
-    productId: removeAdsProductId,
-    purchaseToken: 'e2e-profile-pending-token',
-    receiptValidatedAt: now,
-    receiptValidationStatus: 'valid',
-    schemaVersion: 1,
-    source: 'purchase',
-    transactionId: 'e2e-profile-pending-transaction',
-  };
+  const storedRecord = createStoredRemoveAdsE2ERestoreEntitlement({ nowIso: now });
 
   await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, language, {
     localStorageValues: {
-      [removeAdsStorageKey]: JSON.stringify(storedRecord),
+      [E2E_REMOVE_ADS_STORAGE_KEY]: JSON.stringify(storedRecord),
     },
     windowValues: {
       __SMT_E2E__: true,
@@ -59,7 +39,7 @@ async function seedDelayedPurchasedProfile(page: Page, language: AppLanguage) {
 
 test.use({ viewport: { width: 390, height: 844 } });
 
-test('profile hides Remove Ads paywall while stored entitlement hydration is pending', async ({
+test('profile Remove Ads hydration hides paywall while stored entitlement is pending', async ({
   page,
 }) => {
   const consoleErrors = collectConsoleErrors(page);

@@ -4,8 +4,8 @@ import type {
   PurchaseRuntimeOptions,
   PurchaseStorage,
   RemoveAdsPurchaseProvider,
-  RemoveAdsPurchaseRecord,
 } from './purchases';
+import { createE2EMockPurchase } from './e2ePurchaseFixtures';
 
 type E2EPurchaseScope = 'proLifetime' | 'removeAds';
 type E2EPurchaseAction = 'buy' | 'restore';
@@ -47,18 +47,6 @@ function recordE2EPurchaseCall(
   calls[key] = (calls[key] ?? 0) + 1;
 }
 
-function createE2EPurchase(productId: string, action: E2EPurchaseAction): RemoveAdsPurchaseRecord {
-  const normalizedProductId = productId.replace(/[^a-z0-9]+/gi, '-').toLowerCase();
-  const transactionId = `${action}-${normalizedProductId}`;
-
-  return {
-    productId,
-    purchaseToken: `mock-token-${transactionId}`,
-    raw: { ids: [productId] },
-    transactionId,
-  };
-}
-
 export function createInstrumentedE2EPurchaseRuntimeOptions({
   owned,
   scope,
@@ -95,14 +83,14 @@ export function createInstrumentedE2EPurchaseRuntimeOptions({
         recordE2EPurchaseCall(runtime, scope, 'buy');
         await waitForE2EDelay(delayMs);
         ownedProductIds.add(productId);
-        return createE2EPurchase(productId, 'buy');
+        return createE2EMockPurchase(productId, 'buy');
       },
       async restorePurchases(productIds) {
         recordE2EPurchaseCall(runtime, scope, 'restore');
         await waitForE2EDelay(delayMs);
         const productId = productIds[0];
         if (!productId || (!owned && !ownedProductIds.has(productId))) return [];
-        return [createE2EPurchase(productId, 'restore')];
+        return [createE2EMockPurchase(productId, 'restore')];
       },
     },
     storage,

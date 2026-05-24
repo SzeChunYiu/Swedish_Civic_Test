@@ -4,6 +4,10 @@ import { release } from 'node:os';
 import { chromium, expect, type Locator, type Page } from '@playwright/test';
 
 import type { AppLanguage } from '../../lib/storage/settingsStore';
+export {
+  createStoredRemoveAdsE2ERestoreEntitlement,
+  E2E_REMOVE_ADS_STORAGE_KEY,
+} from '../../lib/monetization/e2ePurchaseFixtures';
 
 export type { AppLanguage };
 
