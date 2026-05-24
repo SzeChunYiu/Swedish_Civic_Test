@@ -32,17 +32,46 @@ function contentTypeFor(filePath) {
   return CONTENT_TYPE_BY_EXT[path.extname(filePath)] || 'application/octet-stream';
 }
 
+function resolveStaticRequestPath(root, requestPathname) {
+  let requestedPath;
+  try {
+    requestedPath = decodeURIComponent(requestPathname);
+  } catch {
+    return { error: 'malformed-path' };
+  }
+
+  const normalizedPath = requestedPath === '/' ? '/index.html' : requestedPath;
+  const filePath = path.resolve(root, `.${normalizedPath}`);
+
+  if (!filePath.startsWith(`${root}${path.sep}`) && filePath !== root) {
+    return { error: 'forbidden' };
+  }
+
+  return { filePath };
+}
+
 function createStaticServer(root) {
   const missingRequests = [];
   const server = http.createServer((req, res) => {
     const url = new URL(req.url || '/', 'http://127.0.0.1');
-    const requestedPath = decodeURIComponent(url.pathname);
-    const normalizedPath = requestedPath === '/' ? '/index.html' : requestedPath;
-    const filePath = path.resolve(root, `.${normalizedPath}`);
+    const resolved = resolveStaticRequestPath(root, url.pathname);
 
-    if (!filePath.startsWith(root)) {
+    if (resolved.error === 'malformed-path') {
+      res.writeHead(400, { 'content-type': 'text/plain; charset=utf-8' }).end('bad request');
+      return;
+    }
+
+    if (resolved.error === 'forbidden') {
       res.writeHead(403).end('forbidden');
       return;
+    }
+
+    let { filePath } = resolved;
+    if (url.pathname === '/favicon.ico' && !fs.existsSync(filePath)) {
+      const pwaIconPath = path.join(root, 'icons', 'pwa-icon-192.png');
+      if (fs.existsSync(pwaIconPath)) {
+        filePath = pwaIconPath;
+      }
     }
 
     if (!fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
@@ -134,4 +163,5 @@ module.exports = {
   checkWebExportResources,
   createStaticServer,
   findSystemChromiumExecutable,
+  resolveStaticRequestPath,
 };
