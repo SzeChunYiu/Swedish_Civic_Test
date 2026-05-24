@@ -3,6 +3,10 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 const test = require('node:test');
+const {
+  assertNoUnreviewedTrustedHtmlToastCallsites,
+  assertStaticToastCallsiteInventory,
+} = require('./static-toast-callsite-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -184,6 +188,11 @@ function createRenderContext({
   vm.createContext(sandbox);
   return { sandbox, element };
 }
+
+test('static Practice feedback shares the reviewed text-safe toast call-site guard', () => {
+  assertStaticToastCallsiteInventory(repoRoot);
+  assertNoUnreviewedTrustedHtmlToastCallsites(repoRoot);
+});
 
 test('static Practice answer feedback renders citation and independent-study disclaimer', () => {
   const { sandbox, element } = createRenderContext({ hash: '#/practice?c=1', language: 'en' });

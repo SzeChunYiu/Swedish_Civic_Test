@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const vm = require('node:vm');
+const { assertStaticToastHelperTextSafeByDefault } = require('./static-toast-callsite-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -249,15 +250,7 @@ test('ebook highlights and notes stay local without account prompts', () => {
 });
 
 test('static toast helper keeps account and study messages text-safe by default', () => {
-  const fx = read('site/fx.js');
-  const purchase = read('site/purchase.js');
-  const signin = read('site/signin.js');
-  const extras = read('site/extras.js');
-  const ebookTools = read('site/ebook-tools.js');
-
-  assert.match(fx, /t\.textContent\s*=\s*String\(msg \?\? ''\)/);
-  assert.doesNotMatch(fx, /t\.innerHTML\s*=\s*msg/);
-  assert.doesNotMatch([purchase, signin, extras, ebookTools].join('\n'), /trustedHtml\s*:\s*true/);
+  assertStaticToastHelperTextSafeByDefault(repoRoot);
 });
 
 test('ebook highlight and note controls expose localized accessible names', () => {

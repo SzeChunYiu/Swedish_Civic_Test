@@ -3,6 +3,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const vm = require('node:vm');
+const {
+  assertStaticToastHelperTextSafeByDefault,
+} = require('../scripts/static-toast-callsite-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
 const purchaseLocales = ['ckb', 'fa', 'so', 'ti', 'tr'];
@@ -157,7 +160,6 @@ function createStaticFxHarness() {
 }
 
 test('static toast helper renders public messages as text by default', () => {
-  const fxSource = read('site/fx.js');
   const { elementsById, sandbox, timeouts } = createStaticFxHarness();
   const unsafeMessage = '<img src=x onerror=alert(1)> Signed in as a&b@example.test';
 
@@ -172,8 +174,7 @@ test('static toast helper renders public messages as text by default', () => {
   assert.equal(toast.textContent, unsafeMessage);
   assert.equal(toast.innerHTML, '');
   assert.equal(timeouts[0].delay, 1234);
-  assert.match(fxSource, /t\.textContent\s*=\s*String\(msg \?\? ''\)/);
-  assert.doesNotMatch(fxSource, /t\.innerHTML\s*=\s*msg/);
+  assertStaticToastHelperTextSafeByDefault(repoRoot);
 });
 
 test('static web purchase surface is present but locked to signed-in accounts', () => {
