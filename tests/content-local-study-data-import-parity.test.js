@@ -256,8 +256,14 @@ test('settings import browser fixtures cover accessibility and companion preview
     'utf8',
   );
 
-  assert.match(source, /const accessibilityEasyReadFontKey = 'accessibility\\\\a11y\.easyReadFont\.v1';/);
-  assert.match(source, /const accessibilityFontSizeStepKey = 'accessibility\\\\a11y\.fontSizeStep\.v1';/);
+  assert.match(
+    source,
+    /const accessibilityEasyReadFontKey = 'accessibility\\\\a11y\.easyReadFont\.v1';/,
+  );
+  assert.match(
+    source,
+    /const accessibilityFontSizeStepKey = 'accessibility\\\\a11y\.fontSizeStep\.v1';/,
+  );
   assert.match(
     source,
     /const accessibilityAudioPlaybackRateKey = 'accessibility\\\\a11y\.audioPlaybackRate\.v1';/,
@@ -267,6 +273,11 @@ test('settings import browser fixtures cover accessibility and companion preview
     /const accessibilityListenFirstAudioKey = 'accessibility\\\\a11y\.listenFirstAudio\.v1';/,
   );
   assert.match(source, /const accessibilityThemeModeKey = 'accessibility\\\\a11y\.themeMode\.v1';/);
+  assert.match(source, /const settingsStudyPlanIntensityKey = 'settings\\\\studyPlanIntensity';/);
+  assert.match(
+    source,
+    /const settingsStudyPlanTestDateIsoKey = 'settings\\\\studyPlanTestDateIso';/,
+  );
   assert.match(source, /const companionSelectedIdKey = 'companion\\\\companion\.selectedId\.v1';/);
   assert.match(source, /accessibility:\s*\{\s*themeMode: 'dark',\s*\}/);
   assert.match(
@@ -274,6 +285,12 @@ test('settings import browser fixtures cover accessibility and companion preview
     /accessibility:\s*\{\s*easyReadFont: true,\s*fontSizeStep: 3,\s*audioPlaybackRate: 1\.25,\s*listenFirstAudioEnabled: true,\s*themeMode: 'dark',\s*\}/,
   );
   assert.match(source, /companion:\s*\{\s*selectedId: 'dala-horse',\s*\}/);
+  assert.match(source, /studyPlanIntensity: 'casual'/);
+  assert.match(source, /studyPlanIntensity: 'serious'/);
+  assert.match(source, /studyPlanTestDateIso: null/);
+  assert.match(source, /studyPlanTestDateIso: '2026-08-15T00:00:00\.000Z'/);
+  assert.match(source, /'7 sparade inställningar'/);
+  assert.match(source, /'7 saved settings'/);
   assert.match(source, /'1 tillgänglighetsval'/);
   assert.match(source, /'5 tillgänglighetsval'/);
   assert.match(source, /'1 vald studiekompis'/);
@@ -281,6 +298,10 @@ test('settings import browser fixtures cover accessibility and companion preview
   assert.match(source, /'5 accessibility preferences'/);
   assert.match(source, /'1 selected study companion'/);
   assert.match(source, /expectImportedSettingsControlsPersistAfterReload/);
+  assert.match(source, /expectImportedStudyPlanControlsAfterReload/);
+  assert.match(source, /Välj seriöst dagligt mål med 40 svar/);
+  assert.match(source, /Choose serious daily goal with 40 answers/);
+  assert.match(source, /Enter test date as YYYY-MM-DD/);
   assert.match(source, /Dalahäst är vald som studiekompis/);
   assert.match(source, /Dala horse is selected as study companion/);
 });

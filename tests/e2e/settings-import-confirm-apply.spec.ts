@@ -14,6 +14,8 @@ const settingsLanguageKey = 'settings\\language';
 const settingsAudioEnabledKey = 'settings\\audioEnabled';
 const settingsDailyGoalKey = 'settings\\dailyGoalAnswers';
 const settingsIncludeSupplementaryKey = 'settings\\includeSupplementaryQuestions';
+const settingsStudyPlanIntensityKey = 'settings\\studyPlanIntensity';
+const settingsStudyPlanTestDateIsoKey = 'settings\\studyPlanTestDateIso';
 const accessibilityEasyReadFontKey = 'accessibility\\a11y.easyReadFont.v1';
 const accessibilityFontSizeStepKey = 'accessibility\\a11y.fontSizeStep.v1';
 const accessibilityAudioPlaybackRateKey = 'accessibility\\a11y.audioPlaybackRate.v1';
@@ -42,6 +44,12 @@ type ImportExpectation = {
   };
   companionSelectedId: string | null;
   checkedAreaIds: string[];
+  studyPlanControls: {
+    dailyGoalAnswers: 10 | 40;
+    studyPlanIntensity: 'casual' | 'serious';
+    studyPlanTestDateInput: string;
+    studyPlanTestDateStorage: string;
+  };
 };
 
 type ImportPayloadCase = {
@@ -112,6 +120,12 @@ const importPayloadCases: ImportPayloadCase[] = [
       },
       companionSelectedId: 'dala-horse',
       checkedAreaIds: [],
+      studyPlanControls: {
+        dailyGoalAnswers: 10,
+        studyPlanIntensity: 'casual',
+        studyPlanTestDateInput: '',
+        studyPlanTestDateStorage: '',
+      },
     },
     summaryTexts: {
       sv: [
@@ -121,7 +135,7 @@ const importPayloadCases: ImportPayloadCase[] = [
         '1 genomfört övningsprov',
         '1 repetitionskort',
         '1 repetitionsdag',
-        '5 sparade inställningar',
+        '7 sparade inställningar',
         '1 tillgänglighetsval',
         '1 vald studiekompis',
         'Studiesvit och svitskydd ingår',
@@ -133,7 +147,7 @@ const importPayloadCases: ImportPayloadCase[] = [
         '1 completed mock exam',
         '1 FSRS review card',
         '1 FSRS review day',
-        '5 saved settings',
+        '7 saved settings',
         '1 accessibility preference',
         '1 selected study companion',
         'Study streak and freeze status included',
@@ -164,6 +178,12 @@ const importPayloadCases: ImportPayloadCase[] = [
       },
       companionSelectedId: 'dala-horse',
       checkedAreaIds: ['identity', 'residenceStatus', 'conduct'],
+      studyPlanControls: {
+        dailyGoalAnswers: 40,
+        studyPlanIntensity: 'serious',
+        studyPlanTestDateInput: '2026-08-15',
+        studyPlanTestDateStorage: '2026-08-15T00:00:00.000Z',
+      },
     },
     summaryTexts: {
       sv: [
@@ -173,7 +193,7 @@ const importPayloadCases: ImportPayloadCase[] = [
         '2 genomförda övningsprov',
         '2 repetitionskort',
         '2 repetitionsdagar',
-        '5 sparade inställningar',
+        '7 sparade inställningar',
         '5 tillgänglighetsval',
         '1 vald studiekompis',
         '3 markerade kravområden',
@@ -186,7 +206,7 @@ const importPayloadCases: ImportPayloadCase[] = [
         '2 completed mock exams',
         '2 FSRS review cards',
         '2 FSRS review days',
-        '5 saved settings',
+        '7 saved settings',
         '5 accessibility preferences',
         '1 selected study companion',
         '3 marked requirements',
@@ -264,9 +284,11 @@ function buildSingularImportPayload(importedLanguage: AppLanguage): string {
     settings: {
       language: importedLanguage,
       audioEnabled: false,
-      dailyGoalAnswers: 20,
+      dailyGoalAnswers: 10,
       includeSupplementaryQuestions: true,
       hasSeenAboutTheTest: true,
+      studyPlanIntensity: 'casual',
+      studyPlanTestDateIso: null,
     },
     accessibility: {
       themeMode: 'dark',
@@ -373,9 +395,11 @@ function buildPluralImportPayload(importedLanguage: AppLanguage): string {
     settings: {
       language: importedLanguage,
       audioEnabled: false,
-      dailyGoalAnswers: 20,
+      dailyGoalAnswers: 40,
       includeSupplementaryQuestions: true,
       hasSeenAboutTheTest: true,
+      studyPlanIntensity: 'serious',
+      studyPlanTestDateIso: '2026-08-15T00:00:00.000Z',
     },
     accessibility: {
       easyReadFont: true,
@@ -401,6 +425,8 @@ async function readImportStorage(page: Page) {
       citizenshipRequirementsLegacyKey,
       dailyGoalKey,
       includeSupplementaryKey,
+      studyPlanIntensityKey,
+      studyPlanTestDateIsoKey,
       languageKey,
       mistakeKey,
       progressKey,
@@ -420,6 +446,8 @@ async function readImportStorage(page: Page) {
         audioEnabled: window.localStorage.getItem(audioKey),
         dailyGoalAnswers: window.localStorage.getItem(dailyGoalKey),
         includeSupplementaryQuestions: window.localStorage.getItem(includeSupplementaryKey),
+        studyPlanIntensity: window.localStorage.getItem(studyPlanIntensityKey),
+        studyPlanTestDateIso: window.localStorage.getItem(studyPlanTestDateIsoKey),
       },
       accessibilityPreferences: {
         easyReadFont: window.localStorage.getItem(accessibilityEasyReadFontKey),
@@ -440,6 +468,8 @@ async function readImportStorage(page: Page) {
       citizenshipRequirementsLegacyKey: citizenshipRequirementsLegacyStateKey,
       dailyGoalKey: settingsDailyGoalKey,
       includeSupplementaryKey: settingsIncludeSupplementaryKey,
+      studyPlanIntensityKey: settingsStudyPlanIntensityKey,
+      studyPlanTestDateIsoKey: settingsStudyPlanTestDateIsoKey,
       languageKey: settingsLanguageKey,
       mistakeKey: mistakeReviewStateKey,
       progressKey: progressStateKey,
@@ -466,6 +496,8 @@ async function expectNoImportApplied(page: Page, language: AppLanguage) {
         audioEnabled: null,
         dailyGoalAnswers: null,
         includeSupplementaryQuestions: null,
+        studyPlanIntensity: null,
+        studyPlanTestDateIso: null,
       },
       accessibilityPreferences: {
         easyReadFont: null,
@@ -500,6 +532,8 @@ async function expectImportApplied(
   importedLanguage: AppLanguage,
   expected: ImportExpectation,
 ) {
+  const { studyPlanControls: _studyPlanControls, ...expectedStorage } = expected;
+
   await expect
     .poll(async () => {
       const storage = await readImportStorage(page);
@@ -539,13 +573,15 @@ async function expectImportApplied(
       };
     })
     .toEqual({
-      ...expected,
+      ...expectedStorage,
       legacyCheckedAreaIds: expected.checkedAreaIds,
       settings: {
         language: importedLanguage,
         audioEnabled: 'false',
-        dailyGoalAnswers: '20',
+        dailyGoalAnswers: String(expected.studyPlanControls.dailyGoalAnswers),
         includeSupplementaryQuestions: 'true',
+        studyPlanIntensity: expected.studyPlanControls.studyPlanIntensity,
+        studyPlanTestDateIso: expected.studyPlanControls.studyPlanTestDateStorage,
       },
       accessibilityPreferences: expected.accessibilityPreferences,
       companionSelectedId: expected.companionSelectedId,
@@ -591,6 +627,45 @@ async function expectImportedSettingsControlsPersistAfterReload(
   const storage = await readImportStorage(page);
   expect(storage.accessibilityPreferences).toEqual(expected.accessibilityPreferences);
   expect(storage.companionSelectedId).toBe(expected.companionSelectedId);
+}
+
+async function expectImportedStudyPlanControlsAfterReload(
+  page: Page,
+  importedLanguage: AppLanguage,
+  expected: ImportExpectation,
+) {
+  await page.reload({ waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+  await page.goto('/onboarding', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  const goalLabel =
+    importedLanguage === 'sv'
+      ? expected.studyPlanControls.dailyGoalAnswers === 40
+        ? 'Välj seriöst dagligt mål med 40 svar'
+        : 'Välj lugnt dagligt mål med 10 svar'
+      : expected.studyPlanControls.dailyGoalAnswers === 40
+        ? 'Choose serious daily goal with 40 answers'
+        : 'Choose casual daily goal with 10 answers';
+  const dateInputName =
+    importedLanguage === 'sv' ? 'Ange provdatum som ÅÅÅÅ-MM-DD' : 'Enter test date as YYYY-MM-DD';
+
+  await expect(page.getByRole('radio', { exact: true, name: goalLabel })).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
+  await expect(page.getByRole('textbox', { name: dateInputName })).toHaveValue(
+    expected.studyPlanControls.studyPlanTestDateInput,
+  );
+
+  const storage = await readImportStorage(page);
+  expect(storage.settings.dailyGoalAnswers).toBe(
+    String(expected.studyPlanControls.dailyGoalAnswers),
+  );
+  expect(storage.settings.studyPlanIntensity).toBe(expected.studyPlanControls.studyPlanIntensity);
+  expect(storage.settings.studyPlanTestDateIso).toBe(
+    expected.studyPlanControls.studyPlanTestDateStorage,
+  );
 }
 
 async function installProgressImportWriteFailure(page: Page) {
@@ -640,6 +715,11 @@ for (const scenario of scenarios) {
       await expect(page.getByText(payloadCase.summaryTexts[scenario.language][0])).toHaveCount(0);
       await expectImportApplied(page, scenario.importedLanguage, payloadCase.expected);
       await expectImportedSettingsControlsPersistAfterReload(
+        page,
+        scenario.importedLanguage,
+        payloadCase.expected,
+      );
+      await expectImportedStudyPlanControlsAfterReload(
         page,
         scenario.importedLanguage,
         payloadCase.expected,
