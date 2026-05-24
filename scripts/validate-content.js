@@ -10040,6 +10040,8 @@ const calculateLevel = xpModule.calculateLevel;
 const dashboardProgressSnapshotModule = loadTs('lib/learning/dashboardProgressSnapshot.ts');
 const buildDashboardProgressSnapshot =
   dashboardProgressSnapshotModule.buildDashboardProgressSnapshot;
+const dashboardStatsModule = loadTs('lib/learning/dashboardStats.ts');
+const perChapterProgress = dashboardStatsModule.perChapterProgress;
 const weeklyRecapModule = loadTs('lib/learning/weeklyRecap.ts');
 const generateWeeklyRecap = weeklyRecapModule.generateWeeklyRecap;
 const masteryModule = loadTs('lib/learning/mastery.ts');
@@ -10315,6 +10317,8 @@ let streakFreezeCounterRuntimeCasesValidated = 0;
 let streakFreezeCounterRuntimeParityValidated = false;
 let dashboardProgressSnapshotCasesValidated = 0;
 let dashboardProgressSnapshotParityValidated = false;
+let dashboardPerChapterRuntimeCasesValidated = 0;
+let dashboardPerChapterRuntimeParityValidated = false;
 let weeklyRecapRuntimeCasesValidated = 0;
 let weeklyRecapRuntimeParityValidated = false;
 let monetizationTypeUnionsValidated = 0;
@@ -11105,6 +11109,16 @@ if (process.argv.includes('--focus-dashboard-progress-snapshot')) {
   printValidationSummary({
     dashboardProgressSnapshotCasesValidated,
     dashboardProgressSnapshotParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-dashboard-per-chapter-runtime')) {
+  validateDashboardPerChapterRuntimeParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    dashboardPerChapterRuntimeCasesValidated,
+    dashboardPerChapterRuntimeParityValidated,
   });
   process.exit(0);
 }
@@ -20201,6 +20215,147 @@ function validateDashboardProgressSnapshotParity() {
   dashboardProgressSnapshotParityValidated = valid && dashboardProgressSnapshotCasesValidated === 3;
 }
 
+function progressWithSessionsForDashboardRuntime(sessions) {
+  return {
+    totalXp: 0,
+    level: 1,
+    currentStreak: 0,
+    dailyGoalAnswers: 10,
+    questionProgress: {},
+    sessions,
+  };
+}
+
+function validateDashboardPerChapterRuntimeParity() {
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  if (typeof perChapterProgress !== 'function') {
+    reject('dashboard per-chapter progress selector must be exported');
+    return;
+  }
+
+  const makeAnswer = (questionId, isCorrect, minute) => ({
+    questionId,
+    selectedOptionIds: [],
+    isCorrect,
+    answeredAt: `2026-05-19T10:${String(minute).padStart(2, '0')}:00.000Z`,
+    timeSpentSeconds: 5,
+  });
+
+  try {
+    const malformedTotals = perChapterProgress(
+      progressWithSessionsForDashboardRuntime([
+        {
+          id: 'dashboard-per-chapter-malformed-totals',
+          mode: 'study',
+          questionIds: [],
+          startedAt: '2026-05-19T09:00:00.000Z',
+          answers: [
+            makeAnswer('nan-q', true, 0),
+            makeAnswer('negative-q', true, 1),
+            makeAnswer('fractional-q1', true, 2),
+            makeAnswer('fractional-q2', true, 3),
+            makeAnswer('undersized-q1', true, 4),
+            makeAnswer('undersized-q2', true, 5),
+          ],
+        },
+      ]),
+      [
+        { id: 'nan-count', questionCount: Number.NaN },
+        { id: 'negative-count', questionCount: -5 },
+        { id: 'fractional-count', questionCount: 2.5 },
+        { id: 'undersized-count', questionCount: 1 },
+      ],
+      {
+        'nan-q': 'nan-count',
+        'negative-q': 'negative-count',
+        'fractional-q1': 'fractional-count',
+        'fractional-q2': 'fractional-count',
+        'undersized-q1': 'undersized-count',
+        'undersized-q2': 'undersized-count',
+      },
+      { now: new Date('2026-05-19T12:00:00.000Z') },
+    );
+    if (
+      malformedTotals.every(
+        (chapter) =>
+          Number.isFinite(chapter.coverage) && chapter.coverage >= 0 && chapter.coverage <= 1,
+      ) &&
+      malformedTotals.find((chapter) => chapter.chapterId === 'nan-count')?.coverage === 0 &&
+      malformedTotals.find((chapter) => chapter.chapterId === 'negative-count')?.coverage === 0 &&
+      malformedTotals.find((chapter) => chapter.chapterId === 'fractional-count')?.coverage === 0 &&
+      malformedTotals.find((chapter) => chapter.chapterId === 'undersized-count')?.coverage === 1
+    ) {
+      dashboardPerChapterRuntimeCasesValidated += 1;
+    } else {
+      reject(
+        'dashboard per-chapter coverage must stay finite and clamped for malformed chapter totals',
+      );
+    }
+
+    const strictCorrectness = perChapterProgress(
+      progressWithSessionsForDashboardRuntime([
+        {
+          id: 'dashboard-per-chapter-strict-correctness',
+          mode: 'study',
+          questionIds: [],
+          startedAt: '2026-05-19T09:00:00.000Z',
+          answers: [
+            makeAnswer('q1', 'yes', 0),
+            makeAnswer('q2', 1, 1),
+            makeAnswer('q3', true, 2),
+            makeAnswer('q4', false, 3),
+          ],
+        },
+      ]),
+      [{ id: 'strict', questionCount: 4 }],
+      { q1: 'strict', q2: 'strict', q3: 'strict', q4: 'strict' },
+      { now: new Date('2026-05-19T12:00:00.000Z') },
+    )[0];
+    if (strictCorrectness?.accuracy === 0.25 && strictCorrectness.answers === 4) {
+      dashboardPerChapterRuntimeCasesValidated += 1;
+    } else {
+      reject(
+        'dashboard per-chapter accuracy must count only strict boolean true answers as correct',
+      );
+    }
+
+    const validCoverage = perChapterProgress(
+      progressWithSessionsForDashboardRuntime([
+        {
+          id: 'dashboard-per-chapter-valid',
+          mode: 'study',
+          questionIds: [],
+          startedAt: '2026-05-19T09:00:00.000Z',
+          answers: [makeAnswer('v1', true, 0), makeAnswer('v2', false, 1)],
+        },
+      ]),
+      [{ id: 'valid', questionCount: 4 }],
+      { v1: 'valid', v2: 'valid' },
+      { now: new Date('2026-05-19T12:00:00.000Z') },
+    )[0];
+    if (
+      validCoverage?.coverage === 0.5 &&
+      validCoverage.accuracy === 0.5 &&
+      validCoverage.uniqueQuestionsAnswered === 2
+    ) {
+      dashboardPerChapterRuntimeCasesValidated += 1;
+    } else {
+      reject('dashboard per-chapter valid coverage and accuracy behavior regressed');
+    }
+  } catch (error) {
+    reject(`dashboard per-chapter runtime parity threw: ${error.message}`);
+  }
+
+  dashboardPerChapterRuntimeParityValidated =
+    valid && dashboardPerChapterRuntimeCasesValidated === 3;
+}
+
 function validateContentTypeSchemaParity() {
   let valid = true;
   let contentTypesSource = '';
@@ -27579,6 +27734,7 @@ validateProgressTypeSchemaParity();
 validateProgressStoreSchemaParity();
 validateStreakFreezeNormalizerParity();
 validateDashboardProgressSnapshotParity();
+validateDashboardPerChapterRuntimeParity();
 validateWeeklyRecapRuntimeGuard();
 validateBadgeCatalog();
 validatePracticeScoringRules();
@@ -27896,6 +28052,8 @@ console.log(
       streakFreezeCounterRuntimeParityValidated,
       dashboardProgressSnapshotCasesValidated,
       dashboardProgressSnapshotParityValidated,
+      dashboardPerChapterRuntimeCasesValidated,
+      dashboardPerChapterRuntimeParityValidated,
       weeklyRecapRuntimeCasesValidated,
       weeklyRecapRuntimeParityValidated,
       badgesValidated,

@@ -25,6 +25,14 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     summaryKeys: ['generatedSwedenScopeFocusValidated', 'generatedSwedenScopeParityValidated'],
   },
   {
+    id: 'dashboardPerChapterRuntime',
+    flags: ['--focus-dashboard-per-chapter-runtime'],
+    summaryKeys: [
+      'dashboardPerChapterRuntimeCasesValidated',
+      'dashboardPerChapterRuntimeParityValidated',
+    ],
+  },
+  {
     id: 'generatedLocalizationTemplateParity',
     flags: ['--focus-generated-localization-template-parity', '--focus-generated-localization'],
     summaryKeys: [
