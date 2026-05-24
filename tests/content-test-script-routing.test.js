@@ -13,6 +13,7 @@ const {
   MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES,
   MALFORMED_ADAPTIVE_PRACTICE_SIZE_CASES,
 } = require('./helpers/adaptivePracticeRuntimeFixtures.cjs');
+const { countExpectedRulesForValidator } = require('./helpers/focusedValidatorRuleCount.cjs');
 const { runFocusedValidatorMutation } = require('./helpers/focusedValidatorMutation.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
@@ -653,6 +654,20 @@ test('SourceCitation accessibility parity uses focused content validation routin
     /\['scripts\/validate-content\.js'\]/,
     'SourceCitation accessibility tests must not route through full content validation',
   );
+
+  const expectedRules = countExpectedRulesForValidator(
+    validatorSource,
+    'validateSourceCitationAccessibilityParity',
+  );
+  assert.equal(expectedRules, 20, 'SourceCitation accessibility rule contract should remain 20');
+
+  const summary = assertFocusedValidationSummary('--focus-source-citation-accessibility', [
+    'sourceCitationAccessibilityRulesValidated',
+    'sourceCitationAccessibilityParityValidated',
+  ]);
+
+  assert.equal(summary.sourceCitationAccessibilityRulesValidated, expectedRules);
+  assert.equal(summary.sourceCitationAccessibilityParityValidated, true);
 });
 
 test('QuestionSourceCitation accessibility parity uses focused content validation routing', () => {
@@ -690,8 +705,17 @@ test('QuestionSourceCitation accessibility parity uses focused content validatio
     'questionSourceCitationAccessibilityRulesValidated',
     'questionSourceCitationAccessibilityParityValidated',
   ]);
+  const expectedRules = countExpectedRulesForValidator(
+    validatorSource,
+    'validateQuestionSourceCitationAccessibilityParity',
+  );
 
-  assert.equal(summary.questionSourceCitationAccessibilityRulesValidated, 15);
+  assert.equal(
+    expectedRules,
+    23,
+    'QuestionSourceCitation accessibility rule contract should remain 23',
+  );
+  assert.equal(summary.questionSourceCitationAccessibilityRulesValidated, expectedRules);
   assert.equal(summary.questionSourceCitationAccessibilityParityValidated, true);
 });
 
