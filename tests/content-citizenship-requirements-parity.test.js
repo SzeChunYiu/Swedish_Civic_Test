@@ -7,6 +7,10 @@ const { createMemoryMMKV, loadTsWithStorage } = require('./helpers/storageStoreH
 
 const repoRoot = path.resolve(__dirname, '..');
 const themeModeUtilityE2ePath = path.join(repoRoot, 'tests/e2e/theme-mode-utility-routes.spec.ts');
+const citizenshipRequirementsChecklistE2ePath = path.join(
+  repoRoot,
+  'tests/e2e/citizenship-requirements-checklist.spec.ts',
+);
 const citizenshipRequirementsStorageId = 'citizenship-requirements';
 const checkedAreaIdsKey = 'citizenshipRequirements.checkedAreaIds.v1';
 const legacyChecklistStateKey = 'citizenshipRequirementsChecklistState';
@@ -57,6 +61,10 @@ function read(relativePath) {
 
 function readThemeModeUtilityE2eSource() {
   return fs.readFileSync(themeModeUtilityE2ePath, 'utf8');
+}
+
+function readCitizenshipRequirementsChecklistE2eSource() {
+  return fs.readFileSync(citizenshipRequirementsChecklistE2ePath, 'utf8');
 }
 
 function loadTs(relativePath) {
@@ -364,6 +372,33 @@ test('citizenship dark source-affordance e2e covers Swedish and English locale n
   assert.match(source, /darkColors\.textDisclaimer/);
   assert.match(source, /darkColors\.accent/);
   assert.match(source, /await expectNoHorizontalOverflow\(page\);/);
+});
+
+test('citizenship requirements recovery e2e covers Swedish corrupt-primary legacy fallback', () => {
+  const source = readCitizenshipRequirementsChecklistE2eSource();
+
+  assert.match(source, /seedFreshSettingsLanguageAndAboutSeenWithStorage/);
+  assert.match(source, /const legacyChecklistStorageKey =/);
+  assert.match(source, /citizenshipRequirementsChecklistState/);
+  assert.match(source, /recovers corrupt primary storage from legacy state in Swedish/);
+  assert.match(source, /seedFreshSettingsLanguageAndAboutSeenWithStorage\(page, 'sv'/);
+  assert.match(source, /\[checklistStorageKey\]: '\{not-json'/);
+  assert.match(source, /\[legacyChecklistStorageKey\]: JSON\.stringify\(\{/);
+  assert.match(
+    source,
+    /checkedAreaIds: \['selfSupport', 'identity', 'prototype', 'swedishLanguage', 'identity'\]/,
+  );
+  assert.match(source, /reseedOnNavigation: false/);
+  assert.match(source, /Lokal studiedata kunde inte läsas/);
+  assert.match(source, /Markerad: Jag kan styrka min identitet/);
+  assert.match(source, /Markerad: Jag har kontrollerat egen inkomst/);
+  assert.match(source, /Markerad: Jag har kontrollerat hur jag kan visa svenska/);
+  assert.match(source, /Du har markerat 3 av 7 planeringspunkter/);
+  assert.match(source, /normalizedCheckedIds = \['identity', 'selfSupport', 'swedishLanguage'\]/);
+  assert.match(source, /window\.localStorage\.getItem\(key\), checklistStorageKey/);
+  assert.match(source, /window\.localStorage\.getItem\(key\), legacyChecklistStorageKey/);
+  assert.match(source, /page\.reload\(\{ waitUntil: 'networkidle' \}\)/);
+  assert.match(source, /toHaveCount\(\s*0,\s*\)/);
 });
 
 test('citizenship requirements route is discoverable from about-the-test copy', () => {

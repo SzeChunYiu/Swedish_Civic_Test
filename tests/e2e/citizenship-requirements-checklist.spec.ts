@@ -5,10 +5,12 @@ import {
   collectConsoleAndPageErrors,
   dismissBlockingModals,
   markAboutTheTestSeen,
+  seedFreshSettingsLanguageAndAboutSeenWithStorage,
   seedSettingsLanguage,
 } from './browserLaunch';
 
 const checklistStorageKey = 'citizenship-requirements\\citizenshipRequirements.checkedAreaIds.v1';
+const legacyChecklistStorageKey = 'citizenship-requirements\\citizenshipRequirementsChecklistState';
 
 const areaSourceLayoutCases = [
   {
@@ -99,6 +101,36 @@ async function expectSourceRowFits(locator: Locator) {
   expect(metrics.left).toBeGreaterThanOrEqual(0);
   expect(metrics.right).toBeLessThanOrEqual(metrics.viewportWidth + 1);
   expect(metrics.scrollWidth).toBeLessThanOrEqual(metrics.clientWidth + 1);
+}
+
+async function expectRecoveredSwedishChecklistState(page: Page) {
+  const identity = page.getByTestId('citizenship-requirement-identity-checkbox');
+  const selfSupport = page.getByTestId('citizenship-requirement-selfSupport-checkbox');
+  const swedishLanguage = page.getByTestId('citizenship-requirement-swedishLanguage-checkbox');
+  const residenceStatus = page.getByTestId('citizenship-requirement-residenceStatus-checkbox');
+
+  await expect(identity).toHaveAttribute('aria-checked', 'true');
+  await expect(selfSupport).toHaveAttribute('aria-checked', 'true');
+  await expect(swedishLanguage).toHaveAttribute('aria-checked', 'true');
+  await expect(residenceStatus).toHaveAttribute('aria-checked', 'false');
+  await expect(
+    page.getByRole('checkbox', {
+      name: /Markerad: Jag kan styrka min identitet eller har kontrollerat vilken undantagsväg som gäller/i,
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('checkbox', {
+      name: /Markerad: Jag har kontrollerat egen inkomst, varaktighet och försörjningsstöd mot de nya reglerna/i,
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('checkbox', {
+      name: /Markerad: Jag har kontrollerat hur jag kan visa svenska eller när språkprov kan bli aktuellt/i,
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByText('Du har markerat 3 av 7 planeringspunkter.', { exact: false }),
+  ).toBeVisible();
 }
 
 for (const fixture of areaSourceLayoutCases) {
@@ -195,6 +227,48 @@ test('citizenship requirements checklist persists checked planning areas', async
   await expect(identity).toHaveAttribute('aria-checked', 'true');
   await expect(residenceStatus).toHaveAttribute('aria-checked', 'true');
   await expect(page.getByText('You have marked 2 of 7 planning items.')).toBeVisible();
+
+  expect(consoleErrors.get()).toEqual([]);
+});
+
+test('citizenship requirements checklist recovers corrupt primary storage from legacy state in Swedish', async ({
+  page,
+}) => {
+  const consoleErrors = collectConsoleAndPageErrors(page);
+  const normalizedCheckedIds = ['identity', 'selfSupport', 'swedishLanguage'];
+
+  await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, 'sv', {
+    localStorageValues: {
+      [checklistStorageKey]: '{not-json',
+      [legacyChecklistStorageKey]: JSON.stringify({
+        checkedAreaIds: ['selfSupport', 'identity', 'prototype', 'swedishLanguage', 'identity'],
+      }),
+    },
+    reseedOnNavigation: false,
+  });
+
+  await page.goto('/citizenship-requirements', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  await expect(
+    page.getByRole('alert', { name: /Lokal studiedata kunde inte läsas/i }),
+  ).toBeVisible();
+  await expectRecoveredSwedishChecklistState(page);
+
+  await expect
+    .poll(() => page.evaluate((key) => window.localStorage.getItem(key), checklistStorageKey))
+    .toBe(JSON.stringify(normalizedCheckedIds));
+  await expect
+    .poll(() => page.evaluate((key) => window.localStorage.getItem(key), legacyChecklistStorageKey))
+    .toBe(JSON.stringify({ checkedAreaIds: normalizedCheckedIds }));
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  await expect(page.getByRole('alert', { name: /Lokal studiedata kunde inte läsas/i })).toHaveCount(
+    0,
+  );
+  await expectRecoveredSwedishChecklistState(page);
 
   expect(consoleErrors.get()).toEqual([]);
 });
