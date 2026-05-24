@@ -728,6 +728,40 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('Remove Ads purchase runtime parity rejects PremiumBanner-only missing in-flight guard', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/PremiumBanner.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('const purchaseActionInFlightRef = useRef(false);\\n', '')
+      .replace('if (purchaseActionInFlightRef.current) return;\\n', '')
+      .replace('    purchaseActionInFlightRef.current = true;\\n', '')
+      .replace('      purchaseActionInFlightRef.current = false;\\n', '');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-remove-ads-purchase-runtime-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /PremiumBanner must declare purchaseActionInFlightRef with useRef\(false\)|PremiumBanner must return early from the ref-backed in-flight guard before activating it/,
+  );
+});
+
 test('Remove Ads purchase runtime parity rejects late in-flight guard activation', () => {
   const result = spawnSync(
     process.execPath,
