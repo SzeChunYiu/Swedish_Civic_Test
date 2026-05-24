@@ -704,6 +704,23 @@ const QUESTION_LUCIA_ROLE_ENGLISH_NATURALNESS_PATTERNS = [/\b(?:the\s+)?person w
 const QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS = [
   /\bThe EU is political and economic cooperation between European countries\b/i,
 ];
+const GLOSSARY_ENGLISH_NATURALNESS_PATTERNS = [
+  {
+    field: 'explanationEn',
+    pattern: /\bmakes use of different experiences\b/i,
+    message: 'uses literal makes-use-of-experiences English wording',
+  },
+  {
+    field: 'explanationEn',
+    pattern: /\btake(?:s)? a direct position on\b/i,
+    message: 'uses literal direct-position English wording',
+  },
+  {
+    field: 'explanationEn',
+    pattern: /\bwhen the conditions are met\b/i,
+    message: 'uses literal conditions-are-met English wording',
+  },
+];
 const TARGETLESS_GENERATED_WHY_REASON_STEM_PATTERNS = [/^En anledning är\b/i, /^One reason is\b/i];
 const QUESTION_TRUE_FALSE_STEM_PREFIX_PATTERNS = [
   /^\s*Sant eller falskt\s*:/i,
@@ -6101,6 +6118,7 @@ function translationCompletenessParityIsValidated() {
 function translationNaturalnessGuardParityIsValidated() {
   return (
     publishedQuestions > 0 &&
+    glossaryNaturalnessGuardParityIsValidated() &&
     questionGeneratedTrueFalseNaturalnessValidated === publishedQuestions &&
     questionLuciaRoleEnglishNaturalnessValidated === publishedQuestions &&
     questionEuCooperationEnglishNaturalnessValidated === publishedQuestions &&
@@ -6124,6 +6142,14 @@ function translationNaturalnessGuardParityIsValidated() {
     questionReligiousFreedomParallelismValidated === publishedQuestions * 2 &&
     somaliGeographyNaturalnessParityValidated === true &&
     somaliHolidayFoodNaturalnessParityValidated === true
+  );
+}
+
+function glossaryNaturalnessGuardParityIsValidated() {
+  return (
+    Array.isArray(glossaryTerms) &&
+    glossaryTerms.length > 0 &&
+    glossaryTermNaturalnessValidated === glossaryTerms.length
   );
 }
 
@@ -10267,6 +10293,7 @@ let examGeneratorTypeInterfacesValidated = 0;
 let examGeneratorTypeSchemaParityValidated = false;
 let glossaryTermsValidated = 0;
 let glossaryTermExactSchemaKeysValidated = 0;
+let glossaryTermNaturalnessValidated = 0;
 let uxBenchmarksValidated = 0;
 let contentTypeUnionsValidated = 0;
 let contentTypeInterfacesValidated = 0;
@@ -11487,6 +11514,7 @@ const TRANSLATE_COMPLETE_P0_FOCUS_FLAG = '--focus-translate-complete-p0';
 function translateCompleteP0NaturalnessIsValidated(publishedQuestionCount) {
   return (
     publishedQuestionCount > 0 &&
+    glossaryNaturalnessGuardParityIsValidated() &&
     questionGeneratedTrueFalseNaturalnessValidated === publishedQuestionCount &&
     questionLuciaRoleEnglishNaturalnessValidated === publishedQuestionCount &&
     questionEuCooperationEnglishNaturalnessValidated === publishedQuestionCount &&
@@ -11662,12 +11690,14 @@ function validateTranslateCompleteP0Focus() {
   validateQuestionReligiousFreedomParallelism();
   validateSomaliGeographyNaturalnessParity();
   validateSomaliHolidayFoodNaturalnessParity();
+  validateGlossaryTerms();
 
   const publishedQuestionCount = publishedQuestionRows.length;
   const translationCompletenessParityValidated =
     publishedQuestionCount > 0 &&
     questionBilingualTextPairsValidated === publishedQuestionCount &&
     questionOptionBilingualTextPairsValidated === publishedQuestionCount;
+  const glossaryNaturalnessGuardParityValidated = glossaryNaturalnessGuardParityIsValidated();
   const translationNaturalnessGuardParityValidated =
     translateCompleteP0NaturalnessIsValidated(publishedQuestionCount);
 
@@ -11677,10 +11707,17 @@ function validateTranslateCompleteP0Focus() {
   if (!translationNaturalnessGuardParityValidated) {
     fail('TRANSLATE-COMPLETE P0 naturalness guard parity is not fully validated');
   }
+  if (!glossaryNaturalnessGuardParityValidated) {
+    fail('TRANSLATE-COMPLETE P0 glossary naturalness guard is not fully validated');
+  }
 
   exitWithValidationFailures();
   printValidationSummary({
     publishedQuestions: publishedQuestionCount,
+    glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
+    glossaryTermsValidated,
+    glossaryTermNaturalnessValidated,
+    glossaryNaturalnessGuardParityValidated,
     questionBilingualTextPairsValidated,
     questionOptionBilingualTextPairsValidated,
     translationCompletenessParityValidated,
@@ -22237,6 +22274,13 @@ function validateGlossaryTerms() {
       for (const failure of glossaryTermExactSchemaKeyFailures(term, label)) {
         reject(failure);
       }
+
+      const naturalnessIssue = findGlossaryTermNaturalnessIssue(term);
+      if (naturalnessIssue) {
+        fail(`${label} ${naturalnessIssue}`);
+      } else {
+        glossaryTermNaturalnessValidated += 1;
+      }
     }
 
     if (valid) {
@@ -22244,6 +22288,16 @@ function validateGlossaryTerms() {
       glossaryTermExactSchemaKeysValidated += 1;
     }
   });
+}
+
+function findGlossaryTermNaturalnessIssue(term) {
+  if (!term || typeof term !== 'object') return null;
+
+  const issue = GLOSSARY_ENGLISH_NATURALNESS_PATTERNS.find(({ field, pattern }) =>
+    pattern.test(String(term[field] ?? '')),
+  );
+
+  return issue ? issue.message : null;
 }
 
 function validateBadgeCatalog() {
@@ -27832,6 +27886,8 @@ console.log(
       glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
       glossaryTermsValidated,
       glossaryTermExactSchemaKeysValidated,
+      glossaryTermNaturalnessValidated,
+      glossaryNaturalnessGuardParityValidated: glossaryNaturalnessGuardParityIsValidated(),
       uxBenchmarksValidated,
       supportedLanguagesValidated,
       localizationStrings:
@@ -27962,6 +28018,8 @@ console.log(
       questionBilingualTextPairsValidated,
       questionOptionBilingualTextPairsValidated,
       translationCompletenessParityValidated: translationCompletenessParityIsValidated(),
+      glossaryTermNaturalnessValidated,
+      glossaryNaturalnessGuardParityValidated: glossaryNaturalnessGuardParityIsValidated(),
       questionExactSchemaKeysValidated,
       questionTextFieldsNormalizedValidated,
       questionSentenceEndingsValidated,

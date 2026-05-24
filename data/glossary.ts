@@ -27,7 +27,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     explanationSv:
       'En försäkring som kan ge ersättning under arbetslöshet om villkoren är uppfyllda.',
     explanationEn:
-      'Insurance that can provide compensation during unemployment when the conditions are met.',
+      'Insurance that can provide compensation during unemployment if you meet the requirements.',
     chapterId: 'ch08',
   },
   {
@@ -111,7 +111,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     termSv: 'Folkomröstning',
     termEn: 'Referendum',
     explanationSv: 'En omröstning där väljare tar ställning direkt i en sakfråga.',
-    explanationEn: 'A vote where voters take a direct position on a specific issue.',
+    explanationEn: 'A vote where voters decide directly on a specific issue.',
     chapterId: 'ch04',
   },
   {
@@ -139,7 +139,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     explanationSv:
       'En process där människor blir delaktiga i samhällslivet och samhället tar tillvara olika erfarenheter.',
     explanationEn:
-      'A process where people become included in society and society makes use of different experiences.',
+      'A process where people become part of society and society values different experiences.',
     chapterId: 'ch02',
   },
   {
