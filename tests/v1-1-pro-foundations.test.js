@@ -1173,6 +1173,108 @@ test('perChapterProgress: accuracy + coverage computed per chapter', () => {
   assert.equal(history.accuracy, 1);
 });
 
+test('perChapterProgress: malformed chapter totals cannot leak unsafe percentages', () => {
+  const { perChapterProgress } = loadTs('lib/learning/dashboardStats.ts');
+  const chapters = [
+    { id: 'nan-count', questionCount: Number.NaN },
+    { id: 'negative-count', questionCount: -2 },
+    { id: 'fractional-count', questionCount: 2.5 },
+    { id: 'undersized-count', questionCount: 1 },
+    { id: 'valid', questionCount: 4 },
+  ];
+  const sessions = [
+    {
+      id: 's1',
+      mode: 'study',
+      questionIds: [],
+      startedAt: '2026-05-19T00:00:00.000Z',
+      answers: [
+        {
+          questionId: 'nan-a',
+          selectedOptionIds: [],
+          isCorrect: 'yes',
+          answeredAt: '2026-05-19T10:00:00.000Z',
+          timeSpentSeconds: 5,
+        },
+        {
+          questionId: 'negative-a',
+          selectedOptionIds: [],
+          isCorrect: 1,
+          answeredAt: '2026-05-19T10:01:00.000Z',
+          timeSpentSeconds: 5,
+        },
+        {
+          questionId: 'fractional-a',
+          selectedOptionIds: [],
+          isCorrect: true,
+          answeredAt: '2026-05-19T10:02:00.000Z',
+          timeSpentSeconds: 5,
+        },
+        {
+          questionId: 'undersized-a',
+          selectedOptionIds: [],
+          isCorrect: true,
+          answeredAt: '2026-05-19T10:03:00.000Z',
+          timeSpentSeconds: 5,
+        },
+        {
+          questionId: 'undersized-b',
+          selectedOptionIds: [],
+          isCorrect: false,
+          answeredAt: '2026-05-19T10:04:00.000Z',
+          timeSpentSeconds: 5,
+        },
+        {
+          questionId: 'valid-a',
+          selectedOptionIds: [],
+          isCorrect: true,
+          answeredAt: '2026-05-19T10:05:00.000Z',
+          timeSpentSeconds: 5,
+        },
+        {
+          questionId: 'valid-b',
+          selectedOptionIds: [],
+          isCorrect: 'true',
+          answeredAt: '2026-05-19T10:06:00.000Z',
+          timeSpentSeconds: 5,
+        },
+        {
+          questionId: 'valid-c',
+          selectedOptionIds: [],
+          isCorrect: false,
+          answeredAt: '2026-05-19T10:07:00.000Z',
+          timeSpentSeconds: 5,
+        },
+      ],
+    },
+  ];
+
+  const result = perChapterProgress(progressWithSessions(sessions), chapters, {
+    'nan-a': 'nan-count',
+    'negative-a': 'negative-count',
+    'fractional-a': 'fractional-count',
+    'undersized-a': 'undersized-count',
+    'undersized-b': 'undersized-count',
+    'valid-a': 'valid',
+    'valid-b': 'valid',
+    'valid-c': 'valid',
+  });
+
+  result.forEach((chapter) => {
+    assert.ok(Number.isFinite(chapter.coverage));
+    assert.ok(chapter.coverage >= 0 && chapter.coverage <= 1);
+    if (chapter.accuracy !== null) {
+      assert.ok(Number.isFinite(chapter.accuracy));
+      assert.ok(chapter.accuracy >= 0 && chapter.accuracy <= 1);
+    }
+  });
+  assert.equal(result.find((chapter) => chapter.chapterId === 'nan-count').coverage, 0);
+  assert.equal(result.find((chapter) => chapter.chapterId === 'negative-count').coverage, 0);
+  assert.equal(result.find((chapter) => chapter.chapterId === 'fractional-count').coverage, 0);
+  assert.equal(result.find((chapter) => chapter.chapterId === 'undersized-count').coverage, 1);
+  assert.equal(result.find((chapter) => chapter.chapterId === 'valid').accuracy, 1 / 3);
+});
+
 test('mockHistory + bestMockScore: returns only exam-mode completed sessions', () => {
   const { mockHistory, bestMockScore } = loadTs('lib/learning/dashboardStats.ts');
   const sessions = [

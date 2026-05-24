@@ -632,6 +632,70 @@ test('weak chapter selector ignores malformed runtime progress and chapter metad
   );
 });
 
+test('dashboard per-chapter progress clamps malformed totals and strict correctness', () => {
+  const { perChapterProgress } = loadAllTs('lib/learning/dashboardStats.ts');
+  const progress = {
+    totalXp: 0,
+    level: 1,
+    currentStreak: 0,
+    dailyGoalAnswers: 10,
+    questionProgress: {},
+    sessions: [
+      {
+        id: 'session-1',
+        mode: 'study',
+        questionIds: [],
+        answers: [
+          { questionId: 'nan-a', isCorrect: 'yes', answeredAt: '2026-05-18T10:00:00.000Z' },
+          { questionId: 'negative-a', isCorrect: 1, answeredAt: '2026-05-18T10:01:00.000Z' },
+          { questionId: 'fractional-a', isCorrect: true, answeredAt: '2026-05-18T10:02:00.000Z' },
+          { questionId: 'undersized-a', isCorrect: true, answeredAt: '2026-05-18T10:03:00.000Z' },
+          { questionId: 'undersized-b', isCorrect: false, answeredAt: '2026-05-18T10:04:00.000Z' },
+          { questionId: 'valid-a', isCorrect: true, answeredAt: '2026-05-18T10:05:00.000Z' },
+          { questionId: 'valid-b', isCorrect: 'true', answeredAt: '2026-05-18T10:06:00.000Z' },
+          { questionId: 'valid-c', isCorrect: false, answeredAt: '2026-05-18T10:07:00.000Z' },
+        ],
+      },
+    ],
+  };
+
+  const result = perChapterProgress(
+    progress,
+    [
+      { id: 'nan-count', questionCount: Number.NaN },
+      { id: 'negative-count', questionCount: -5 },
+      { id: 'fractional-count', questionCount: 2.5 },
+      { id: 'undersized-count', questionCount: 1 },
+      { id: 'valid', questionCount: 4 },
+    ],
+    {
+      'nan-a': 'nan-count',
+      'negative-a': 'negative-count',
+      'fractional-a': 'fractional-count',
+      'undersized-a': 'undersized-count',
+      'undersized-b': 'undersized-count',
+      'valid-a': 'valid',
+      'valid-b': 'valid',
+      'valid-c': 'valid',
+    },
+  );
+
+  for (const chapter of result) {
+    assert.ok(Number.isFinite(chapter.coverage));
+    assert.ok(chapter.coverage >= 0 && chapter.coverage <= 1);
+    if (chapter.accuracy !== null) {
+      assert.ok(Number.isFinite(chapter.accuracy));
+      assert.ok(chapter.accuracy >= 0 && chapter.accuracy <= 1);
+    }
+  }
+
+  assert.equal(result.find((chapter) => chapter.chapterId === 'nan-count').coverage, 0);
+  assert.equal(result.find((chapter) => chapter.chapterId === 'negative-count').coverage, 0);
+  assert.equal(result.find((chapter) => chapter.chapterId === 'fractional-count').coverage, 0);
+  assert.equal(result.find((chapter) => chapter.chapterId === 'undersized-count').coverage, 1);
+  assert.equal(result.find((chapter) => chapter.chapterId === 'valid').accuracy, 1 / 3);
+});
+
 test('readiness score can be derived from the persisted question progress snapshot', () => {
   const { computeReadinessFromQuestionProgress } = loadAllTs('lib/learning/readiness.ts');
 
