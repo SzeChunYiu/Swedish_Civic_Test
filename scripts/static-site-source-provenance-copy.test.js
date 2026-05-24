@@ -45,6 +45,44 @@ function staticQuestionById(questionId) {
   return question;
 }
 
+function staticQuizSourceRuntime() {
+  const appSource = read('site/app.js');
+  const start = appSource.indexOf('const SMT_QUIZ_SOURCE_CITATION_COPY = {');
+  const end = appSource.indexOf('const SMT_QUIZ_MAX_CORRECT_POSITION_SHARE =', start);
+  assert.notEqual(start, -1, 'static quiz source-copy block should exist');
+  assert.notEqual(end, -1, 'static quiz source-copy block should have a stable end marker');
+  const context = { window: {} };
+  vm.createContext(context);
+  vm.runInContext(
+    `
+function smtTr(map) {
+  return map && (map.en || Object.values(map)[0]) || '';
+}
+function smtQuizEscapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+}
+${appSource.slice(start, end)}
+window.__staticQuizSourceRuntime = {
+  smtQuizSourceCitation,
+  smtQuizSupplementalSourceLinks,
+  smtQuizQuestionSourceRow,
+};
+`,
+    context,
+    { timeout: 3000 },
+  );
+  return context.window.__staticQuizSourceRuntime;
+}
+
+function visibleText(html) {
+  return decodeStaticHtmlEntities(
+    html
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim(),
+  );
+}
+
 function staticQuestionBankRuntime() {
   const context = { window: {} };
   context.globalThis = context.window;
@@ -557,6 +595,33 @@ test('static question bank exports visible question provenance', () => {
   assert.ok(counts.derived > 0, 'static bank should include supplementary derived rows');
   assert.deepEqual(fromVm(metadata.provenanceCounts), counts);
   assert.equal(metadata.questionCount, questions.length);
+});
+
+test('static Practice feedback source rows keep supplemental sources as localized links', () => {
+  const runtime = staticQuizSourceRuntime();
+
+  for (const questionId of ['q019', 'q030', 'q166']) {
+    const question = staticQuestionById(questionId);
+    const supplementalSource = question.source?.supplementalSources?.[0];
+    assert.ok(supplementalSource, `${questionId} should have a supplemental source`);
+    assert.equal(supplementalSource.publisher, 'Valmyndigheten');
+
+    const preAnswerRow = runtime.smtQuizQuestionSourceRow(question, 'sv', 'quiz__source');
+    const feedbackRow = runtime.smtQuizQuestionSourceRow(question, 'en', 'quiz__feedback-source');
+
+    assert.match(preAnswerRow, /class="[^"]*\bquiz__source-link\b[^"]*"/);
+    assert.match(preAnswerRow, /href="https:\/\/www\.val\.se[^"]+"/);
+    assert.match(preAnswerRow, /Källa: [^<]*Valmyndigheten/);
+    assert.match(
+      feedbackRow,
+      /class="[^"]*\bquiz__feedback-source\b[^"]*\bquiz__source-link\b[^"]*"/,
+    );
+    assert.match(feedbackRow, /href="https:\/\/www\.val\.se[^"]+"/);
+    assert.match(feedbackRow, /Source: [^<]*Valmyndigheten/);
+    assert.match(feedbackRow, /Sverige i fokus/);
+    assert.doesNotMatch(visibleText(feedbackRow), /https?:\/\//);
+    assert.doesNotMatch(visibleText(feedbackRow), /;\s*Source:/);
+  }
 });
 
 test('static ebook provenance metadata is route-preserving and count-addressable', () => {

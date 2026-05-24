@@ -41,7 +41,30 @@ test('static practice quiz renders localized source citations below each questio
   assert.match(source, /function smtQuizSourceCitation\(question, lang\)/);
   assert.match(source, /Källhänvisning saknas/);
   assert.match(source, /Source citation unavailable/);
-  assertLocalizedSourceCitation(source, 'SMT_QUIZ_SOURCE_CITATION_COPY');
+  assert.match(
+    source,
+    /SMT_QUIZ_SOURCE_CITATION_COPY = \{[\s\S]*en: \{ source: 'Source', page: 'p\.' \}/,
+  );
+  assert.match(
+    source,
+    /SMT_QUIZ_SOURCE_CITATION_COPY = \{[\s\S]*sv: \{ source: 'Källa', page: 's\.' \}/,
+  );
+  assert.match(
+    source,
+    /const uhrCitation = `\$\{copy\.source\}: \$\{title\}, \$\{source\.chapter\}, \$\{source\.section\}, \$\{copy\.page\} \$\{source\.page\}`;/,
+  );
+  assert.match(source, /function smtQuizSupplementalSourceLinks\(question, lang/);
+  assert.match(source, /class="\$\{escapedClassName\} quiz__source-link"/);
+  assert.match(source, /target="_blank" rel="noopener noreferrer"/);
+  assert.match(
+    source,
+    /const feedbackSourceRow = smtQuizQuestionSourceRow\(q, lang, ['"]quiz__feedback-source['"]\);/,
+  );
+  assert.match(source, /\$\{feedbackSourceRow\}/);
+  assert.doesNotMatch(
+    source,
+    /const feedbackSource = smtQuizEscapeHtml\(smtQuizSourceCitation\(q, lang\)\)/,
+  );
   assert.match(
     source,
     /function smtQuizQuestionSourceRow\(question, lang, citationClassName = ['"]quiz__source['"]\)/,
@@ -74,6 +97,8 @@ test('static source citation lines have dedicated styling', () => {
 
   assert.match(source, /\.quiz__source\s*\{/);
   assert.match(source, /\.quiz__source-row\s*\{/);
+  assert.match(source, /\.quiz__supplemental-sources\s*\{/);
+  assert.match(source, /\.quiz__source-link\s*\{/);
   assert.match(source, /\.quiz__provenance\s*\{/);
   assert.match(source, /\.mock-review__source\s*\{/);
 });

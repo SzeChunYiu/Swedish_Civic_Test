@@ -2153,32 +2153,47 @@ function smtQuizSourceCitation(question, lang) {
   }
   const copy = SMT_QUIZ_SOURCE_CITATION_COPY[lang] || SMT_QUIZ_SOURCE_CITATION_COPY.en;
   const uhrCitation = `${copy.source}: ${title}, ${source.chapter}, ${source.section}, ${copy.page} ${source.page}`;
-  const supplementalCitations = Array.isArray(source.supplementalSources)
+  return uhrCitation;
+}
+
+function smtQuizSupplementalSourceLinks(question, lang, citationClassName = 'quiz__source') {
+  const source = question && question.source;
+  const copy = SMT_QUIZ_SOURCE_CITATION_COPY[lang] || SMT_QUIZ_SOURCE_CITATION_COPY.en;
+  const supplementalSources = Array.isArray(source && source.supplementalSources)
     ? source.supplementalSources
-        .filter((supplementalSource) => supplementalSource && supplementalSource.title)
-        .map((supplementalSource) => {
-          const published = supplementalSource.publishedDate
-            ? lang === 'sv'
-              ? `publicerad ${supplementalSource.publishedDate}`
-              : `published ${supplementalSource.publishedDate}`
-            : '';
-          const retrieved = supplementalSource.retrievedDate
-            ? lang === 'sv'
-              ? `hämtad ${supplementalSource.retrievedDate}`
-              : `retrieved ${supplementalSource.retrievedDate}`
-            : '';
-          return [
-            `${copy.source}: ${supplementalSource.title}`,
-            supplementalSource.publisher,
-            published,
-            retrieved,
-            supplementalSource.url,
-          ]
-            .filter(Boolean)
-            .join(', ');
-        })
     : [];
-  return [uhrCitation, ...supplementalCitations].join('; ');
+  const links = supplementalSources
+    .filter((supplementalSource) => supplementalSource && supplementalSource.title)
+    .map((supplementalSource) => {
+      const published = supplementalSource.publishedDate
+        ? lang === 'sv'
+          ? `publicerad ${supplementalSource.publishedDate}`
+          : `published ${supplementalSource.publishedDate}`
+        : '';
+      const retrieved = supplementalSource.retrievedDate
+        ? lang === 'sv'
+          ? `hämtad ${supplementalSource.retrievedDate}`
+          : `retrieved ${supplementalSource.retrievedDate}`
+        : '';
+      const label = [
+        `${copy.source}: ${supplementalSource.title}`,
+        supplementalSource.publisher,
+        published,
+        retrieved,
+      ]
+        .filter(Boolean)
+        .join(', ');
+      const escapedLabel = smtQuizEscapeHtml(label);
+      const escapedClassName = smtQuizEscapeHtml(citationClassName);
+      if (!supplementalSource.url) {
+        return `<span class="${escapedClassName} quiz__source-link">${escapedLabel}</span>`;
+      }
+      const escapedUrl = smtQuizEscapeHtml(supplementalSource.url);
+      return `<a class="${escapedClassName} quiz__source-link" href="${escapedUrl}" target="_blank" rel="noopener noreferrer">${escapedLabel}</a>`;
+    });
+
+  if (!links.length) return '';
+  return `<div class="quiz__supplemental-sources">${links.join('')}</div>`;
 }
 
 function smtQuizQuestionDisclaimer(lang) {
@@ -2326,10 +2341,12 @@ function smtQuizProvenanceBadge(question, lang) {
 
 function smtQuizQuestionSourceRow(question, lang, citationClassName = 'quiz__source') {
   const sourceCitation = smtQuizEscapeHtml(smtQuizSourceCitation(question, lang));
+  const supplementalSourceLinks = smtQuizSupplementalSourceLinks(question, lang, citationClassName);
   return `
       <div class="quiz__source-row">
         ${smtQuizProvenanceBadge(question, lang)}
         <p class="${citationClassName}">${sourceCitation}</p>
+        ${supplementalSourceLinks}
       </div>
     `;
 }
@@ -2649,12 +2666,12 @@ function smtQuizRender() {
   let feedback = '';
   if (answered) {
     const right = ans === q.answer;
-    const feedbackSource = smtQuizEscapeHtml(smtQuizSourceCitation(q, lang));
     const feedbackExplanation = smtQuizEscapeHtml(q.why[lang] || q.why.en);
+    const feedbackSourceRow = smtQuizQuestionSourceRow(q, lang, 'quiz__feedback-source');
     feedback = `
       <div class="quiz__feedback ${right ? '' : 'is-wrong'}">
         <b>${right ? copy.correct : copy.wrong}</b> ${feedbackExplanation}
-        <p class="quiz__feedback-source">${feedbackSource}</p>
+        ${feedbackSourceRow}
       </div>
     `;
   }

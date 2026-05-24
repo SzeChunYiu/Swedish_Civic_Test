@@ -1246,6 +1246,16 @@ button.quiz__dot:focus-visible {
   flex: 1 1 240px;
   margin: 0;
 }
+.quiz__supplemental-sources {
+  display: grid;
+  flex: 1 1 100%;
+  gap: 6px;
+  margin-left: 0;
+}
+.quiz__source-link {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 .quiz__provenance {
   display: inline-flex;
   align-items: center;
