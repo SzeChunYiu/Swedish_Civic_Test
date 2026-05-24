@@ -21,6 +21,7 @@ function createSigninHarness(hash = '#/ebook?c=ch04', storageValues = new Map(),
     hostname: 'almostswedish.se',
     origin: 'https://almostswedish.se',
     pathname: '/',
+    search: options.search || '',
   };
   const document = {
     addEventListener(type, listener) {
@@ -79,6 +80,7 @@ function createSigninHarness(hash = '#/ebook?c=ch04', storageValues = new Map(),
     location,
     localStorage,
     sessionStorage,
+    URLSearchParams,
     window: {
       SMT_SITE_ORIGIN: 'https://almostswedish.se',
       addEventListener(type, listener) {
@@ -218,6 +220,10 @@ test('sign-in session persistence exposes stable account identity for purchases'
 test('static sign-in preserves sanitized hash return routes without putting them in Supabase redirects', () => {
   const signin = read('site/signin.js');
   assert.match(signin, /SIGNIN_RETURN_ROUTE_KEY = ['"]smt_signin_return_route['"]/);
+  assert.match(signin, /function\s+hasSigninCallbackInLocation\(\)/);
+  assert.match(signin, /search\.has\('code'\)/);
+  assert.match(signin, /params\.has\('access_token'\)\s*&&\s*params\.has\('refresh_token'\)/);
+  assert.match(signin, /if \(!hasSigninCallbackInLocation\(\) && !signedIn\(\)\) return;/);
   assert.match(
     signin,
     /captureSigninReturnRoute\(\);\s*\n\s*client\.auth\s*\n\s*\.signInWithOAuth/,
@@ -256,6 +262,25 @@ test('static sign-in preserves sanitized hash return routes without putting them
   assert.equal(context.window.smtNormalizeSigninReturnRoute('#/admin'), '#/');
   assert.equal(context.window.smtNormalizeSigninReturnRoute('https://evil.test/#/ebook'), '#/');
   assert.equal(context.window.smtNormalizeSigninReturnRoute('#/ebook?c=<script>'), '#/');
+});
+
+test('static sign-in distinguishes auth callbacks from ordinary route hashes', () => {
+  const routeHash = createSigninHarness('#/dashboard');
+  assert.equal(routeHash.context.window.smtSigninHasAuthCallback(), false);
+
+  const nestedRouteHash = createSigninHarness('#/ebook?c=ch04#notes');
+  assert.equal(nestedRouteHash.context.window.smtSigninHasAuthCallback(), false);
+
+  const accessTokenHash = createSigninHarness(
+    '#access_token=fake-token&refresh_token=fake-refresh',
+  );
+  assert.equal(accessTokenHash.context.window.smtSigninHasAuthCallback(), true);
+
+  const incompleteHash = createSigninHarness('#access_token=fake-token');
+  assert.equal(incompleteHash.context.window.smtSigninHasAuthCallback(), false);
+
+  const codeCallback = createSigninHarness('#/dashboard', new Map(), { search: '?code=fake-code' });
+  assert.equal(codeCallback.context.window.smtSigninHasAuthCallback(), true);
 });
 
 test('static sign-in return-route storage ignores stale and unsafe payloads', () => {
