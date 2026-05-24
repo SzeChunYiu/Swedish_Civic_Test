@@ -10,6 +10,11 @@ const {
   createTsLoader,
   withGlobalProperties,
 } = require('../tests/helpers/monetizationRuntimeHarness.cjs');
+const {
+  assertCanonicalTimestampSourceBoundary,
+  canonicalTimestampHelperExportPattern,
+  purchasesCanonicalTimestampImportPattern,
+} = require('../tests/helpers/monetizationSourceBoundary.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
 const loadTs = createTsLoader(repoRoot);
@@ -2297,18 +2302,27 @@ test('Pro Lifetime entitlement storage and receipts require canonical UTC timest
 });
 
 test('Pro Lifetime uses the shared canonical timestamp helper', () => {
-  const proLifetimeSource = fs.readFileSync(
-    path.join(repoRoot, 'lib/monetization/proLifetimePurchase.ts'),
-    'utf8',
-  );
+  assertCanonicalTimestampSourceBoundary(repoRoot, {
+    sharedImportFiles: ['lib/monetization/proLifetimePurchase.ts'],
+  });
+});
+
+test('monetization source boundary helper rejects purchases timestamp exports and barrel imports', () => {
+  for (const source of [
+    'export function isCanonicalUtcIsoTimestamp(value) { return true; }',
+    'export const isCanonicalUtcIsoTimestamp = (value) => true;',
+    "export { isCanonicalUtcIsoTimestamp } from '../time/canonicalTimestamp';",
+  ]) {
+    assert.match(source, canonicalTimestampHelperExportPattern);
+  }
 
   assert.match(
-    proLifetimeSource,
-    /import\s*\{\s*isCanonicalUtcIsoTimestamp\s*\}\s*from\s*['"]\.\.\/time\/canonicalTimestamp['"]/,
+    "import { isCanonicalUtcIsoTimestamp } from './purchases';",
+    purchasesCanonicalTimestampImportPattern,
   );
-  assert.doesNotMatch(
-    proLifetimeSource,
-    /import\s*\{[^}]*\bisCanonicalUtcIsoTimestamp\b[^}]*\}\s*from\s*['"]\.\/purchases['"]/,
+  assert.match(
+    "import { isCanonicalUtcIsoTimestamp } from '../purchases';",
+    purchasesCanonicalTimestampImportPattern,
   );
 });
 

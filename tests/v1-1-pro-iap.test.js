@@ -7,6 +7,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
+const {
+  assertCanonicalTimestampSourceBoundary,
+} = require('./helpers/monetizationSourceBoundary.cjs');
 const { assertPurchaseActionInFlightGuard } = require('../scripts/purchase-inflight-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
@@ -128,14 +131,9 @@ test('proLifetime: v1.1 setup docs and identity stay in Pro lane', () => {
   assert.match(appStoreIdentitySource, /APP_NATIVE_IDENTIFIER = 'com\.billyyiu\.almostswedish'/);
   assert.match(appStoreIdentitySource, /proLifetime:\s*`\$\{APP_NATIVE_IDENTIFIER\}\.prolifetime`/);
   assert.match(proLifetimeSource, /appStoreProductIds\.proLifetime/);
-  assert.match(
-    proLifetimeSource,
-    /import\s*\{\s*isCanonicalUtcIsoTimestamp\s*\}\s*from\s*['"]\.\.\/time\/canonicalTimestamp['"]/,
-  );
-  assert.doesNotMatch(
-    proLifetimeSource,
-    /import\s*\{[^}]*\bisCanonicalUtcIsoTimestamp\b[^}]*\}\s*from\s*['"]\.\/purchases['"]/,
-  );
+  assertCanonicalTimestampSourceBoundary(repoRoot, {
+    sharedImportFiles: ['lib/monetization/proLifetimePurchase.ts'],
+  });
   assert.doesNotMatch(appStoreIdentitySource, staleNativeIdentifierPattern());
   assert.doesNotMatch(proLifetimeSource, staleNativeIdentifierPattern());
   assert.doesNotMatch(publishingGateSource, /proLifetime|Pro Lifetime|PRO_LIFETIME/);

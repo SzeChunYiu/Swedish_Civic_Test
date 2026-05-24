@@ -4,6 +4,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const { assertPurchaseActionInFlightGuard } = require('../scripts/purchase-inflight-guard');
+const {
+  assertCanonicalTimestampSourceBoundary,
+} = require('./helpers/monetizationSourceBoundary.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -45,7 +48,7 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
       /async function revalidateStoredRemoveAdsEntitlementRecordWithConnectedProvider\(\{[\s\S]*?\nfunction createResult/,
     )?.[0] ?? '';
 
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 39);
+  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 40);
   assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
   assert.match(purchaseSource, /REMOVE_ADS_RECORD_SCHEMA_VERSION = 1/);
   assert.match(purchaseSource, /interface RemoveAdsProductMetadata/);
@@ -57,8 +60,15 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.match(purchaseSource, /interface StoredRemoveAdsEntitlementRecord/);
   assert.match(purchaseSource, /receiptValidationStatus: 'valid'/);
   assert.match(purchaseSource, /receiptValidatedAt: string/);
-  assert.match(purchaseSource, /function isCanonicalUtcIsoTimestamp/);
-  assert.match(purchaseSource, /parsed\.toISOString\(\) === value/);
+  assert.match(
+    purchaseSource,
+    /import\s*\{\s*isCanonicalUtcIsoTimestamp\s*\}\s*from\s*['"]\.\.\/time\/canonicalTimestamp['"]/,
+  );
+  assert.doesNotMatch(purchaseSource, /function isCanonicalUtcIsoTimestamp/);
+  assert.doesNotMatch(purchaseSource, /parsed\.toISOString\(\) === value/);
+  assertCanonicalTimestampSourceBoundary(repoRoot, {
+    sharedImportFiles: ['lib/monetization/proLifetimePurchase.ts'],
+  });
   assert.doesNotMatch(purchaseSource, /function isValidIsoDate/);
   assert.match(purchaseSource, /parseStoredRemoveAdsEntitlementRecord\(storedValue\)/);
   assert.doesNotMatch(purchaseSource, /storedValue === STORED_TRUE/);

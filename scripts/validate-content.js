@@ -2178,7 +2178,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 15;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 39;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 40;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_RUNTIME_CASES = 9;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
@@ -20664,6 +20664,43 @@ function validateRemoveAdsPurchaseRuntimeParity() {
     awaitedCalls: ['await buyRemoveAds(', 'await restoreRemoveAdsPurchase('],
     surfaceName: 'PremiumBanner',
   });
+  const canonicalTimestampHelperExportPattern =
+    /export\s+(?:function|const|let|var)\s+isCanonicalUtcIsoTimestamp\b|export\s*\{[^}]*\bisCanonicalUtcIsoTimestamp\b[^}]*\}/;
+  const purchasesCanonicalTimestampImportPattern =
+    /import\s*\{[^}]*\bisCanonicalUtcIsoTimestamp\b[^}]*\}\s*from\s*['"](?:\.\/|\.\.\/)*purchases['"]/;
+  const removeAdsImportsSharedCanonicalTimestampHelper =
+    /import\s*\{\s*isCanonicalUtcIsoTimestamp\s*\}\s*from\s*['"]\.\.\/time\/canonicalTimestamp['"]/.test(
+      purchaseSource,
+    );
+  const canonicalTimestampBoundaryOffenders = [];
+  if (canonicalTimestampHelperExportPattern.test(purchaseSource)) {
+    canonicalTimestampBoundaryOffenders.push(
+      'lib/monetization/purchases.ts exports or re-exports isCanonicalUtcIsoTimestamp',
+    );
+  }
+  try {
+    const monetizationDir = path.join(repoRoot, 'lib/monetization');
+    const walkMonetizationSources = (directory) =>
+      fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+        const entryPath = path.join(directory, entry.name);
+        if (entry.isDirectory()) return walkMonetizationSources(entryPath);
+        return /\.[jt]sx?$/.test(entry.name) ? [entryPath] : [];
+      });
+    for (const filePath of walkMonetizationSources(monetizationDir)) {
+      const relativePath = path.relative(repoRoot, filePath).replace(/\\/g, '/');
+      if (relativePath === 'lib/monetization/purchases.ts') continue;
+      const source = fs.readFileSync(filePath, 'utf8');
+      if (purchasesCanonicalTimestampImportPattern.test(source)) {
+        canonicalTimestampBoundaryOffenders.push(
+          `${relativePath} imports isCanonicalUtcIsoTimestamp through purchases.ts`,
+        );
+      }
+    }
+  } catch (error) {
+    canonicalTimestampBoundaryOffenders.push(
+      `monetization canonical timestamp source scan failed: ${error.message}`,
+    );
+  }
   const runtimeCases = [
     [
       typeof REMOVE_ADS_PRODUCT_ID === 'string' &&
@@ -20768,6 +20805,14 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       normalizedPurchaseSource.includes('receiptValidationStatus:') &&
         normalizedPurchaseSource.includes('receiptValidatedAt:'),
       'Remove Ads entitlement records must persist receipt validation status and timestamp',
+    ],
+    [
+      removeAdsImportsSharedCanonicalTimestampHelper &&
+        !normalizedPurchaseSource.includes('function isCanonicalUtcIsoTimestamp') &&
+        !/parsed\.toISOString\(\) === value/.test(purchaseSource) &&
+        canonicalTimestampBoundaryOffenders.length === 0,
+      canonicalTimestampBoundaryOffenders[0] ??
+        'Remove Ads and monetization consumers must use the shared canonical timestamp helper without purchases.ts exports or barrel imports',
     ],
     [
       normalizedPurchaseSource.includes('validateRemoveAdsReceipt?(') &&
