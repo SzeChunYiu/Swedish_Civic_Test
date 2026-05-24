@@ -10268,6 +10268,7 @@ let examGeneratorTypeInterfacesValidated = 0;
 let examGeneratorTypeSchemaParityValidated = false;
 let glossaryTermsValidated = 0;
 let glossaryTermExactSchemaKeysValidated = 0;
+let glossarySwedishNaturalnessValidated = 0;
 let uxBenchmarksValidated = 0;
 let contentTypeUnionsValidated = 0;
 let contentTypeInterfacesValidated = 0;
@@ -11485,6 +11486,38 @@ if (
 
 const TRANSLATE_COMPLETE_P0_FOCUS_FLAG = '--focus-translate-complete-p0';
 
+function findGlossarySwedishNaturalnessIssue(term) {
+  const explanation = String(term?.explanationSv ?? '');
+  const stalePatterns = [
+    {
+      pattern: /\btar en direkt position\b/i,
+      message: 'literal direct-position Swedish wording',
+    },
+    {
+      pattern: /\bdemokratiska kanaler\b/i,
+      message: 'literal democratic-channels Swedish wording',
+    },
+    {
+      pattern: /\b(länkad|kopplad) till rättigheter och skyldigheter\b/i,
+      message: 'literal linked-to-rights Swedish wording',
+    },
+    {
+      pattern: /\bblir inkluderade i samhället\b/i,
+      message: 'literal included-in-society Swedish wording',
+    },
+    {
+      pattern: /\bappliceras rättvist\b/i,
+      message: 'literal applied-fairly Swedish wording',
+    },
+    {
+      pattern: /\bunder lagen\b/i,
+      message: 'literal under-the-law Swedish wording',
+    },
+  ];
+
+  return stalePatterns.find(({ pattern }) => pattern.test(explanation))?.message ?? null;
+}
+
 function translateCompleteP0NaturalnessIsValidated(publishedQuestionCount) {
   return (
     publishedQuestionCount > 0 &&
@@ -11509,6 +11542,8 @@ function translateCompleteP0NaturalnessIsValidated(publishedQuestionCount) {
     questionSourceCriticismEnglishNaturalnessValidated === publishedQuestionCount &&
     questionRuleOfLawEnglishNaturalnessValidated === publishedQuestionCount * 3 &&
     questionReligiousFreedomParallelismValidated === publishedQuestionCount * 2 &&
+    Array.isArray(glossaryTerms) &&
+    glossarySwedishNaturalnessValidated === glossaryTerms.length &&
     somaliGeographyNaturalnessParityValidated === true &&
     somaliHolidayFoodNaturalnessParityValidated === true
   );
@@ -11663,6 +11698,7 @@ function validateTranslateCompleteP0Focus() {
   validateQuestionReligiousFreedomParallelism();
   validateSomaliGeographyNaturalnessParity();
   validateSomaliHolidayFoodNaturalnessParity();
+  validateGlossaryTerms();
 
   const publishedQuestionCount = publishedQuestionRows.length;
   const translationCompletenessParityValidated =
@@ -11706,6 +11742,9 @@ function validateTranslateCompleteP0Focus() {
     questionSourceCriticismEnglishNaturalnessValidated,
     questionRuleOfLawEnglishNaturalnessValidated,
     questionReligiousFreedomParallelismValidated,
+    glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
+    glossaryTermsValidated,
+    glossarySwedishNaturalnessValidated,
     somaliGeographyNaturalnessParityValidated,
     somaliHolidayFoodNaturalnessParityValidated,
     translationNaturalnessGuardParityValidated,
@@ -22266,11 +22305,17 @@ function validateGlossaryTerms() {
       for (const failure of glossaryTermExactSchemaKeyFailures(term, label)) {
         reject(failure);
       }
+
+      const swedishNaturalnessIssue = findGlossarySwedishNaturalnessIssue(term);
+      if (swedishNaturalnessIssue) {
+        reject(`${label} uses ${swedishNaturalnessIssue}`);
+      }
     }
 
     if (valid) {
       glossaryTermsValidated += 1;
       glossaryTermExactSchemaKeysValidated += 1;
+      glossarySwedishNaturalnessValidated += 1;
     }
   });
 }
@@ -27861,6 +27906,7 @@ console.log(
       glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
       glossaryTermsValidated,
       glossaryTermExactSchemaKeysValidated,
+      glossarySwedishNaturalnessValidated,
       uxBenchmarksValidated,
       supportedLanguagesValidated,
       localizationStrings:

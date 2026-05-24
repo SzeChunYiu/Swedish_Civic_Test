@@ -159,8 +159,77 @@ test('TRANSLATE-COMPLETE P0 has explicit SV/EN completeness and naturalness clos
     summary.questionRuleOfLawEnglishNaturalnessValidated,
     summary.publishedQuestions * 3,
   );
+  assert.equal(summary.glossaryTerms, 35);
+  assert.equal(summary.glossaryTermsValidated, summary.glossaryTerms);
+  assert.equal(summary.glossarySwedishNaturalnessValidated, summary.glossaryTerms);
   assert.equal(summary.somaliGeographyNaturalnessParityValidated, true);
   assert.equal(summary.somaliHolidayFoodNaturalnessParityValidated, true);
+});
+
+test('TRANSLATE-COMPLETE rejects literal Swedish glossary wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+process.argv.push('--focus-translate-complete-p0');
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/glossary.ts')) {
+    return String(contents).replace(
+      'En omröstning där väljare tar ställning direkt i en sakfråga.',
+      'En omröstning där väljare tar en direkt position i en sakfråga.',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /folkomrostning uses literal direct-position Swedish wording/,
+  );
+});
+
+test('TRANSLATE-COMPLETE rejects bureaucratic Swedish glossary calques', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+process.argv.push('--focus-translate-complete-p0');
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/glossary.ts')) {
+    return String(contents).replace(
+      'En juridisk tillhörighet till ett land som hör ihop med rättigheter och skyldigheter.',
+      'En juridisk koppling till ett land som är länkad till rättigheter och skyldigheter.',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /medborgarskap uses literal linked-to-rights Swedish wording/,
+  );
 });
 
 test('TRANSLATE-COMPLETE rejects q080 suffrage explanation meta wording', () => {
