@@ -154,13 +154,21 @@ test('Remove Ads E2E mock owned runtime has a dedicated focused harness', () => 
     path.join(repoRoot, 'scripts/monetization.test.js'),
     'utf8',
   );
-  const monetizationTestFileSources = `${focusedHarnessSource}\n${monetizationSuiteSource}`;
+  const monetizationRunnerSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/run-monetization-tests.js'),
+    'utf8',
+  );
+  const storageHarnessSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/monetization-storage-harness.test.js'),
+    'utf8',
+  );
+  const monetizationTestFileSources = `${focusedHarnessSource}\n${monetizationSuiteSource}\n${storageHarnessSource}`;
   const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
 
-  assert.match(
-    packageJson.scripts['test:monetization'],
-    /tests\/remove-ads-web-e2e-mock-runtime\.test\.js/,
-  );
+  assert.equal(packageJson.scripts['test:monetization'], 'node scripts/run-monetization-tests.js');
+  assert.match(monetizationRunnerSource, /tests\/remove-ads-web-e2e-mock-runtime\.test\.js/);
+  assert.match(monetizationRunnerSource, /tests\/monetization-storage-harness\.test\.js/);
+  assert.match(monetizationRunnerSource, /\['--test',\s*\.\.\.forwardedArgs,\s*\.\.\.monetizationTestFiles\]/);
   assert.match(focusedHarnessSource, /__SMT_E2E__/);
   assert.match(focusedHarnessSource, /__SMT_REMOVE_ADS_MOCK_OWNED__/);
   assert.match(focusedHarnessSource, /createDefaultPurchaseRuntimeOptions/);
@@ -179,7 +187,9 @@ test('Remove Ads E2E mock owned runtime has a dedicated focused harness', () => 
   assert.doesNotMatch(focusedHarnessSource, /Object\.getOwnPropertyDescriptor\(globalThis/);
   assert.doesNotMatch(focusedHarnessSource, /Object\.defineProperty\(globalThis/);
   assert.doesNotMatch(monetizationSuiteSource, /function createMemoryLocalStorage/);
+  assert.doesNotMatch(storageHarnessSource, /function createMemoryLocalStorage/);
   assert.doesNotMatch(monetizationSuiteSource, /function withGlobalProperties/);
+  assert.doesNotMatch(storageHarnessSource, /function withGlobalProperties/);
   assert.doesNotMatch(
     monetizationSuiteSource,
     /Object\.getOwnPropertyDescriptor\(globalThis,\s*'localStorage'\)/,
