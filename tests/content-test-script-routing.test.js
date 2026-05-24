@@ -13,6 +13,9 @@ const {
   MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES,
   MALFORMED_ADAPTIVE_PRACTICE_SIZE_CASES,
 } = require('./helpers/adaptivePracticeRuntimeFixtures.cjs');
+const {
+  deriveFocusedValidatorExpectedRuleCount,
+} = require('./helpers/focusedValidatorRuleCount.cjs');
 const { runFocusedValidatorMutation } = require('./helpers/focusedValidatorMutation.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
@@ -667,6 +670,9 @@ test('QuestionSourceCitation accessibility parity uses focused content validatio
   const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get(
     'questionSourceCitationAccessibility',
   );
+  const expectedRules = deriveFocusedValidatorExpectedRuleCount(
+    'validateQuestionSourceCitationAccessibilityParity',
+  );
 
   assert.ok(registryEntry, 'QuestionSourceCitation accessibility focus mode must be registered');
   assert.deepEqual(registryEntry.flags, ['--focus-question-source-citation-accessibility']);
@@ -691,7 +697,8 @@ test('QuestionSourceCitation accessibility parity uses focused content validatio
     'questionSourceCitationAccessibilityParityValidated',
   ]);
 
-  assert.equal(summary.questionSourceCitationAccessibilityRulesValidated, 15);
+  assert.equal(expectedRules, 23);
+  assert.equal(summary.questionSourceCitationAccessibilityRulesValidated, expectedRules);
   assert.equal(summary.questionSourceCitationAccessibilityParityValidated, true);
 });
 
@@ -2548,6 +2555,40 @@ test('content-focused npm script forwards test-name pattern before file list', (
       'religious-freedom option parallelism|focus-religious-freedom',
       'tests/content-test-script-routing.test.js',
       'tests/content-published-question-types.test.js',
+    ]);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('content dispatcher forwards direct test-name pattern before file list', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-direct-pattern-'));
+  const nodeLog = path.join(tmpDir, 'node.log');
+  const env = {
+    ...process.env,
+    TEST_DISPATCH_CAPTURE: '1',
+    TEST_DISPATCH_LOG: nodeLog,
+    TEST_DISPATCH_NODE: createFakeNode(tmpDir),
+  };
+
+  try {
+    const result = runPackageTest(
+      [
+        '--test-name-pattern',
+        'mock exam source-section locator',
+        'tests/content-mock-exam-runtime-parity.test.js',
+        'tests/content-test-script-routing.test.js',
+      ],
+      env,
+    );
+
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+    assert.deepEqual(fs.readFileSync(nodeLog, 'utf8').trim().split('\n'), [
+      '--test',
+      '--test-name-pattern',
+      'mock exam source-section locator',
+      'tests/content-mock-exam-runtime-parity.test.js',
+      'tests/content-test-script-routing.test.js',
     ]);
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });

@@ -50,6 +50,7 @@ function failUnsupported(args) {
   console.error(
     '  content-focused -> node --test --test-name-pattern <pattern> <files...> (focused Node test files)',
   );
+  console.error('  --test-name-pattern <pattern> <files...> -> direct focused Node test files');
   console.error('Run `npm test` with no selector for the full test suite.');
   process.exit(1);
 }
@@ -153,6 +154,10 @@ if (args.length === 0) {
 
 if (args[0] === 'content-focused') {
   runFocusedNodeTests(args.slice(1));
+}
+
+if (args[0] === '--test-name-pattern' || args[0]?.startsWith('--test-name-pattern=')) {
+  runFocusedNodeTests(args);
 }
 
 if (args.length !== 1 || !selectors.has(args[0])) {
