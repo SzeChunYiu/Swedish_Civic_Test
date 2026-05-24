@@ -115,6 +115,23 @@ test('lazy static question bank remains manifest-backed without eager index load
   assert.ok(manifest.assets?.['questions.js']);
 });
 
+test('static service worker registration wires install update checks from register result', () => {
+  const indexHtml = readSiteIndex();
+
+  assert.match(indexHtml, /!\('serviceWorker' in navigator\)/);
+  assert.match(indexHtml, /!window\.isSecureContext/);
+  assert.match(indexHtml, /window\.location\.protocol === 'file:'/);
+  assert.match(
+    indexHtml,
+    /navigator\.serviceWorker\s*\.\s*register\('\.\/sw\.js',\s*\{\s*scope:\s*'\.\/',\s*updateViaCache:\s*'none'\s*\}\)/,
+  );
+  assert.match(
+    indexHtml,
+    /\.then\(function \(registration\) \{[\s\S]*typeof window\.smtInstallServiceWorkerUpdateChecks === 'function'[\s\S]*window\.smtInstallServiceWorkerUpdateChecks\(registration\);[\s\S]*\}\)/,
+  );
+  assert.match(indexHtml, /\.catch\(function \(\) \{\}\)/);
+});
+
 test('asset manifest check rejects referenced assets omitted by manifest scope', () => {
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'site-asset-reference-'));
   const tempSiteDir = path.join(tempDir, 'site');

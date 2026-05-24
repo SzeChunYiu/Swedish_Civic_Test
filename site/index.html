@@ -1594,6 +1594,11 @@
         window.addEventListener('load', function () {
           navigator.serviceWorker
             .register('./sw.js', { scope: './', updateViaCache: 'none' })
+            .then(function (registration) {
+              if (typeof window.smtInstallServiceWorkerUpdateChecks === 'function') {
+                window.smtInstallServiceWorkerUpdateChecks(registration);
+              }
+            })
             .catch(function () {});
         });
       })();
