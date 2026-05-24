@@ -178,6 +178,7 @@ function validateContentFocusFlags() {
 }
 
 const registryCompletenessFocusIds = [
+  'authFoundation',
   'appConfigSchema',
   'generatedLocalizationTemplateParity',
   'generatedSwedenScopeParity',

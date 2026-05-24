@@ -50,6 +50,7 @@ const {
   MALFORMED_ADAPTIVE_PRACTICE_SIZE_CASES,
 } = require('../tests/helpers/adaptivePracticeRuntimeFixtures.cjs');
 const { getMockExamSourceCitationSections } = require('./mock-exam-source-sections');
+const { validateAuthFoundationContract } = require('./auth-foundation-contract');
 
 const repoRoot = path.resolve(__dirname, '..');
 const failures = [];
@@ -10578,6 +10579,13 @@ let questionChapterReferenceParityValidated = 0;
 let authoredSourceQuestionsValidated = 0;
 let authoredSourcePartitionQuestionsValidated = 0;
 let sourcePublicationParityValidated = 0;
+let authFoundationDependencyRulesValidated = 0;
+let authFoundationRouteFilesValidated = 0;
+let authFoundationFailClosedRulesValidated = 0;
+let authFoundationRootLayoutRulesValidated = 0;
+let authFoundationAnonymousChoiceRulesValidated = 0;
+let authFoundationAccountSeparationRulesValidated = 0;
+let authFoundationParityValidated = false;
 let generationParityValidated = false;
 let chapterGenerationParityValidated = 0;
 let generatedSourceMetadataParityValidated = 0;
@@ -10622,6 +10630,33 @@ function loadCommittedStaticSiteQuestions() {
   }
 
   return context.window.SMT_QUESTIONS;
+}
+
+function validateAuthFoundationParity() {
+  const result = validateAuthFoundationContract({ repoRoot });
+  result.errors.forEach(fail);
+  ({
+    authFoundationAccountSeparationRulesValidated,
+    authFoundationAnonymousChoiceRulesValidated,
+    authFoundationDependencyRulesValidated,
+    authFoundationFailClosedRulesValidated,
+    authFoundationRouteFilesValidated,
+    authFoundationRootLayoutRulesValidated,
+    authFoundationParityValidated,
+  } = result.summary);
+}
+
+if (process.argv.includes('--focus-auth-foundation')) {
+  validateAuthFoundationParity();
+  finishFocusedValidation({
+    authFoundationDependencyRulesValidated,
+    authFoundationRouteFilesValidated,
+    authFoundationFailClosedRulesValidated,
+    authFoundationRootLayoutRulesValidated,
+    authFoundationAnonymousChoiceRulesValidated,
+    authFoundationAccountSeparationRulesValidated,
+    authFoundationParityValidated,
+  });
 }
 
 function validateSomaliGeographyNaturalnessParity() {
@@ -27607,6 +27642,7 @@ validateQuestionBankCsvContract();
 validateStaticSiteQuestionBankParity();
 validateUhrSourceMaterialLinkParity();
 validateContentTestValidateContentExecCwdGuard();
+validateAuthFoundationParity();
 
 if (failures.length) {
   exitWithValidationFailures();
@@ -27973,6 +28009,13 @@ console.log(
       authoredSourceQuestionsValidated,
       authoredSourcePartitionQuestionsValidated,
       sourcePublicationParityValidated,
+      authFoundationDependencyRulesValidated,
+      authFoundationRouteFilesValidated,
+      authFoundationFailClosedRulesValidated,
+      authFoundationRootLayoutRulesValidated,
+      authFoundationAnonymousChoiceRulesValidated,
+      authFoundationAccountSeparationRulesValidated,
+      authFoundationParityValidated,
       generationParityValidated,
       chapterGenerationParityValidated,
       generatedSourceMetadataParityValidated,
