@@ -1,37 +1,37 @@
+import {
+  expoRouterNativeIntentDynamicRoutes,
+  expoRouterNativeIntentStaticRoutes,
+  expoRouterShellContract,
+} from '../lib/scaffold/routerShellManifest';
+
 type RedirectSystemPathEvent = {
   initial: boolean;
   path: string;
 };
 
-const APP_SCHEME = 'almost-swedish:';
-const APP_LINK_BASE = 'almost-swedish://app';
+const APP_SCHEME = `${expoRouterShellContract.appScheme}:`;
+const APP_LINK_BASE = `${expoRouterShellContract.appScheme}://app`;
 const protocolPattern = /^([A-Za-z][A-Za-z0-9+.-]*):/;
 
-const staticRoutes = new Set([
-  '/',
-  '/about-the-test',
-  '/citizenship-requirements',
-  '/dashboard',
-  '/disclaimer',
-  '/ebook',
-  '/exam',
-  '/home',
-  '/learn',
-  '/mistakes',
-  '/onboarding',
-  '/practice',
-  '/privacy',
-  '/profile',
-  '/recap',
-  '/search',
-  '/settings',
-  '/sources',
-  '/support',
-  '/terms',
-]);
+function escapeRegExp(literal: string) {
+  return literal.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
-const chapterRoutePattern = /^\/chapter\/ch\d{2}$/;
-const quizRoutePattern = /^\/quiz\/[A-Za-z0-9_-]+$/;
+const staticRoutes = new Set<string>(expoRouterNativeIntentStaticRoutes);
+const dynamicRoutePatterns = expoRouterNativeIntentDynamicRoutes.map(
+  ({ route, parameterPatterns }) =>
+    new RegExp(
+      `^${route
+        .split('/')
+        .map((segment) => {
+          const parameterName = segment.match(/^\[([^\]]+)\]$/)?.[1];
+          const patternsByParameter: Readonly<Record<string, string>> = parameterPatterns;
+
+          return parameterName ? `(${patternsByParameter[parameterName]})` : escapeRegExp(segment);
+        })
+        .join('/')}$`,
+    ),
+);
 
 function routeFromUrl(url: URL) {
   const hostPath = url.hostname && url.hostname !== 'app' ? `/${url.hostname}` : '';
@@ -51,9 +51,7 @@ function isKnownStudyRoute(route: string) {
   const pathname = routePath(route);
 
   return (
-    staticRoutes.has(pathname) ||
-    chapterRoutePattern.test(pathname) ||
-    quizRoutePattern.test(pathname)
+    staticRoutes.has(pathname) || dynamicRoutePatterns.some((pattern) => pattern.test(pathname))
   );
 }
 
