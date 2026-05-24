@@ -11,6 +11,7 @@ const {
   generatedFixtureIdExpression,
   generatedFixtureIdHelperSource,
   generatedQuestionId,
+  q167StatedSourceFixture,
 } = require('../scripts/generated-question-fixture-ids');
 
 const repoRoot = path.resolve(__dirname, '..');
@@ -116,6 +117,10 @@ function contentQuestionBankCsvRowsById(ids) {
       .filter((columns) => targetIds.has(columns[0]))
       .map((columns) => [columns[0], columns]),
   );
+}
+
+function plainJson(value) {
+  return JSON.parse(JSON.stringify(value));
 }
 
 function generatedSingleChoiceIdsForTrueFalseSource(sourceQuestions, sourceId) {
@@ -3522,6 +3527,50 @@ test('generated-output expectedRows guard rejects literal and helper-derived map
       'scripts/derived-content.test.js:6 uses a generated expectedRows map key without generatedQuestionId(...)',
     ],
   );
+});
+
+test('q167 stated-on source fixture keeps generated exports and source metadata in sync', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const fixture = q167StatedSourceFixture(sourceQuestions);
+  const generatedById = new Map(generatedSiteBank.map((question) => [question.id, question]));
+  const actualById = new Map(actualSiteBank.map((question) => [question.id, question]));
+  const csvRowsById = contentQuestionBankCsvRowsById(fixture.allIds);
+
+  assert.deepEqual(fixture.generatedIds, [
+    generatedQuestionId(sourceQuestions, fixture.sourceId, 'singleChoice'),
+    generatedQuestionId(sourceQuestions, fixture.sourceId, 'trueStatement'),
+    generatedQuestionId(sourceQuestions, fixture.sourceId, 'falseStatement'),
+    generatedQuestionId(sourceQuestions, fixture.sourceId, 'judgement'),
+  ]);
+
+  for (const id of fixture.allIds) {
+    const expected = fixture.expectedRows[id];
+    const generated = generatedById.get(id);
+    const actual = actualById.get(id);
+    const csvColumns = csvRowsById.get(id);
+
+    assert.ok(generated, `${id} should be present in generated site bank`);
+    assert.ok(actual, `${id} should be present in static site bank`);
+    assert.ok(csvColumns, `${id} should be present in question-bank CSV`);
+    assert.equal(generated.q.sv, expected.q.sv);
+    assert.equal(generated.q.en, expected.q.en);
+    assert.equal(actual.q.sv, expected.q.sv);
+    assert.equal(actual.q.en, expected.q.en);
+    assert.equal(csvColumns[3], expected.q.sv);
+    assert.equal(csvColumns[4], expected.q.en);
+    assert.deepEqual(generated.source, fixture.source);
+    assert.deepEqual(plainJson(actual.source), fixture.source);
+    assert.equal(csvColumns[10], fixture.uhrReference.chapter);
+    assert.equal(csvColumns[11], fixture.uhrReference.section);
+    assert.equal(csvColumns[12], String(fixture.uhrReference.pageApprox));
+    assert.equal(generated.questionProvenance, expected.questionProvenance);
+    assert.equal(actual.questionProvenance, expected.questionProvenance);
+    assert.equal(csvColumns[27], expected.questionProvenance);
+  }
 });
 
 test('published question schema validates localized q001 generated answer templates', () => {

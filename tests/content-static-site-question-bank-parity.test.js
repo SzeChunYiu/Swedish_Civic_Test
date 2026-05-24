@@ -15,6 +15,7 @@ const {
 const {
   generatedQuestionId,
   generatedQuestionIdLiteralFindingsForSource,
+  q167StatedSourceFixture,
 } = require('../scripts/generated-question-fixture-ids');
 const {
   Q050_SOURCE_CRITICISM_NATURALNESS_IDS,
@@ -68,6 +69,10 @@ const BASE_LOCALES = new Set(['sv', 'en']);
 
 function withSvEn(localizedText, sv, en) {
   return localizedText ? { ...localizedText, sv, en } : localizedText;
+}
+
+function plainJson(value) {
+  return JSON.parse(JSON.stringify(value));
 }
 
 function withQ020AdvisoryFixture(question) {
@@ -416,6 +421,38 @@ test('static site question bank keeps q166/q169 kommun-region i18n target-langua
   }
 
   assert.deepEqual(offenders, []);
+});
+
+test('static site question bank keeps q167 stated-on generated fixture source-shaped', () => {
+  const expectedBank = buildSiteQuestionBank();
+  const sourceQuestions = expectedBank.questions.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const fixture = q167StatedSourceFixture(sourceQuestions);
+  const context = { window: {} };
+  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
+  const questionsById = new Map(
+    context.window.SMT_QUESTIONS.map((question) => [question.id, question]),
+  );
+
+  assert.deepEqual(fixture.generatedIds, [
+    generatedQuestionId(sourceQuestions, fixture.sourceId, 'singleChoice'),
+    generatedQuestionId(sourceQuestions, fixture.sourceId, 'trueStatement'),
+    generatedQuestionId(sourceQuestions, fixture.sourceId, 'falseStatement'),
+    generatedQuestionId(sourceQuestions, fixture.sourceId, 'judgement'),
+  ]);
+
+  for (const id of fixture.allIds) {
+    const expected = fixture.expectedRows[id];
+    const question = questionsById.get(id);
+    assert.ok(question, `${id} should be present in static question bank`);
+    assert.equal(question.q.sv, expected.q.sv);
+    assert.equal(question.q.en, expected.q.en);
+    assert.equal(question.why.sv, expected.why.sv);
+    assert.equal(question.why.en, expected.why.en);
+    assert.equal(question.questionProvenance, expected.questionProvenance);
+    assert.deepEqual(plainJson(question.source), fixture.source);
+  }
 });
 
 test('static site question bank keeps q093 religious-freedom i18n direct', () => {

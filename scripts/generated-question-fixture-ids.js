@@ -45,6 +45,83 @@ function generatedFixtureIdHelperSource(functionName = 'generatedFixtureId') {
   ].join('\n');
 }
 
+function q167StatedSourceFixture(sourceQuestions) {
+  const sourceId = 'q167';
+  const ids = {
+    source: sourceId,
+    singleChoice: generatedQuestionId(sourceQuestions, sourceId, 'singleChoice'),
+    trueStatement: generatedQuestionId(sourceQuestions, sourceId, 'trueStatement'),
+    falseStatement: generatedQuestionId(sourceQuestions, sourceId, 'falseStatement'),
+    judgement: generatedQuestionId(sourceQuestions, sourceId, 'judgement'),
+  };
+  const source = {
+    title: 'Sverige i fokus',
+    chapter: 'Politiska val och partier',
+    section: 'Så här går det till att rösta',
+    page: 14,
+  };
+  const uhrReference = {
+    chapter: 'Politiska val och partier',
+    section: 'Så här går det till att rösta',
+    pageApprox: 14,
+  };
+  const commonExplanation = {
+    sv: 'Röstkortet visar vilken vallokal väljaren ska gå till. Det går också att rösta i förväg på särskilda platser, och i vallokalen finns valsedlar till de olika partierna.',
+    en: 'The voting card shows which polling station the voter should go to. It is also possible to vote in advance at special places, and polling stations have ballot papers for the different parties.',
+  };
+
+  return {
+    sourceId,
+    ids,
+    generatedIds: [ids.singleChoice, ids.trueStatement, ids.falseStatement, ids.judgement],
+    allIds: [ids.source, ids.singleChoice, ids.trueStatement, ids.falseStatement, ids.judgement],
+    source,
+    uhrReference,
+    expectedRows: {
+      [ids.source]: {
+        q: {
+          sv: 'Vad står på röstkortet som skickas hem före valet?',
+          en: 'What is stated on the voting card sent home before an election?',
+        },
+        why: commonExplanation,
+        questionProvenance: 'uhr',
+      },
+      [ids.singleChoice]: {
+        q: {
+          sv: 'Vad stämmer om röstkortet som skickas hem före valets innehåll?',
+          en: "What is correct about the voting card sent home before an election's contents?",
+        },
+        why: commonExplanation,
+        questionProvenance: 'derived',
+      },
+      [ids.trueStatement]: {
+        q: {
+          sv: 'Röstkortet visar vilken vallokal väljaren ska gå till.',
+          en: 'The voting card shows which polling station the voter should go to.',
+        },
+        why: commonExplanation,
+        questionProvenance: 'derived',
+      },
+      [ids.falseStatement]: {
+        q: {
+          sv: 'Röstkortet visar vilket parti väljaren måste rösta på.',
+          en: 'The voting card shows which party the voter must vote for.',
+        },
+        why: commonExplanation,
+        questionProvenance: 'derived',
+      },
+      [ids.judgement]: {
+        q: {
+          sv: 'Vilken uppgift stämmer om röstkortet som skickas hem före valets innehåll?',
+          en: "Which fact is correct about the voting card sent home before an election's contents?",
+        },
+        why: commonExplanation,
+        questionProvenance: 'derived',
+      },
+    },
+  };
+}
+
 function lineNumberForIndex(source, index) {
   return source.slice(0, index).split(/\r?\n/).length;
 }
@@ -165,4 +242,5 @@ module.exports = {
   generatedQuestionIdLiteralFindingsForSource,
   generatedQuestionId,
   generatedVariantOffsets,
+  q167StatedSourceFixture,
 };
