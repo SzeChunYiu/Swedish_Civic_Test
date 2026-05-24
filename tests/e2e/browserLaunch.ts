@@ -511,3 +511,54 @@ export async function mockBrowserDate(page: Page, fixedDate: string | Date): Pro
     window.Date = MockDate as DateConstructor;
   }, mockedNow);
 }
+
+type PlaywrightClockController = {
+  fastForward: (ticks: number | string) => Promise<void>;
+  install: (options?: { time?: Date | number | string }) => Promise<void>;
+  setSystemTime: (time: Date | number | string) => Promise<void>;
+};
+
+export type DeterministicBrowserClock = {
+  advanceBy: (milliseconds: number) => Promise<void>;
+  setTimeBy: (milliseconds: number) => Promise<void>;
+};
+
+function requireFiniteMilliseconds(milliseconds: number): number {
+  if (!Number.isFinite(milliseconds) || milliseconds < 0) {
+    throw new Error(`Expected a finite non-negative millisecond value, received ${milliseconds}.`);
+  }
+
+  return Math.floor(milliseconds);
+}
+
+export async function installDeterministicBrowserClock(
+  page: Page,
+  startTime: string | Date,
+): Promise<DeterministicBrowserClock> {
+  const startTimeMs =
+    startTime instanceof Date ? startTime.getTime() : new Date(startTime).getTime();
+  if (!Number.isFinite(startTimeMs)) {
+    throw new Error(`Expected a valid browser clock start time, received ${String(startTime)}.`);
+  }
+
+  const clock = (page as Page & { clock?: PlaywrightClockController }).clock;
+  if (!clock) {
+    throw new Error('Playwright page.clock is required for deterministic browser-time E2E tests.');
+  }
+
+  let currentTimeMs = startTimeMs;
+  await clock.install({ time: new Date(currentTimeMs) });
+
+  return {
+    advanceBy: async (milliseconds) => {
+      const safeMilliseconds = requireFiniteMilliseconds(milliseconds);
+      currentTimeMs += safeMilliseconds;
+      await clock.fastForward(safeMilliseconds);
+    },
+    setTimeBy: async (milliseconds) => {
+      const safeMilliseconds = requireFiniteMilliseconds(milliseconds);
+      currentTimeMs += safeMilliseconds;
+      await clock.setSystemTime(new Date(currentTimeMs));
+    },
+  };
+}

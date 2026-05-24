@@ -623,6 +623,62 @@ test('countdown browser date coverage uses the shared clock helper', () => {
   );
 });
 
+test('mock exam realistic mode coverage uses deterministic browser time', () => {
+  const browserLaunchSource = readRelative('browserLaunch.ts');
+  const examSource = readRelative('exam-submit-review.spec.ts');
+
+  assert.match(
+    browserLaunchSource,
+    /export async function installDeterministicBrowserClock\(\s+page: Page,\s+startTime: string \| Date,\s+\): Promise<DeterministicBrowserClock>/,
+    'browserLaunch should export a shared deterministic browser clock helper',
+  );
+  assert.match(
+    browserLaunchSource,
+    /await clock\.install\(\{ time: new Date\(currentTimeMs\) \}\);/,
+    'deterministic browser clock should install before route navigation',
+  );
+  assert.match(
+    browserLaunchSource,
+    /await clock\.fastForward\(safeMilliseconds\);/,
+    'deterministic browser clock should advance timers without real-time sleeps',
+  );
+  assert.match(
+    browserLaunchSource,
+    /await clock\.setSystemTime\(new Date\(currentTimeMs\)\);/,
+    'deterministic browser clock should advance Date.now independently for hidden-time checks',
+  );
+  assert.match(
+    examSource,
+    /import \{[\s\S]*dismissBlockingModals,[\s\S]*installDeterministicBrowserClock,[\s\S]*\} from '\.\/browserLaunch';/,
+    'mock exam e2e coverage should import the shared deterministic browser clock helper',
+  );
+  assert.match(
+    examSource,
+    /test\('realistic mock exam uses deterministic browser time for focus breaks and results'/,
+    'mock exam e2e coverage should name the deterministic realistic-mode path',
+  );
+  assert.match(
+    examSource,
+    /await clock\.advanceBy\(1000\);[\s\S]*await expect\(timerLine\)\.toContainText\('19:59'\);/,
+    'realistic-mode coverage should prove visible timer countdown through the deterministic clock',
+  );
+  assert.match(
+    examSource,
+    /await clock\.setTimeBy\(1250\);[\s\S]*await setDocumentHiddenForTest\(page, false\);[\s\S]*1 tab switch during this mock exam\./,
+    'realistic-mode coverage should prove deterministic hidden-time focus-break status',
+  );
+  assert.match(
+    examSource,
+    /await expect\(page\.getByText\('Focus breaks', \{ exact: true \}\)\)\.toBeVisible\(\);[\s\S]*await expect\(page\.getByText\('1 tab switch', \{ exact: true \}\)\)\.toBeVisible\(\);/,
+    'realistic-mode coverage should prove the result metric after submission',
+  );
+  assert.doesNotMatch(
+    examSource,
+    /waitForTimeout\(1250\)/,
+    'mock exam e2e coverage should not rely on the old fixed real-time sleep',
+  );
+});
+
 test('browser speech synthesis audio mock coverage uses the shared helper contract', () => {
   const browserLaunchSource = readRelative('browserLaunch.ts');
   const practiceFeedbackSource = readRelative('practice-feedback.spec.ts');

@@ -3,6 +3,7 @@ import type { Locator, Page } from '@playwright/test';
 
 import {
   dismissBlockingModals,
+  installDeterministicBrowserClock,
   markAboutTheTestSeen,
   seedSettingsLanguage,
   type AppLanguage,
@@ -235,6 +236,7 @@ test('mock exam requires all answers before showing Swedish score and source pro
 
 test('mock exam pauses timer while the browser document is hidden', async ({ page }) => {
   const consoleErrors: string[] = [];
+  const clock = await installDeterministicBrowserClock(page, '2026-05-24T10:00:00.000Z');
 
   page.on('console', (message) => {
     if (message.type() === 'error') consoleErrors.push(message.text());
@@ -262,11 +264,73 @@ test('mock exam pauses timer while the browser document is hidden', async ({ pag
   ).toBeVisible();
   const pausedTimerText = await timerLine.textContent();
 
-  await page.waitForTimeout(1250);
+  await clock.advanceBy(1250);
   await expect(timerLine).toHaveText(pausedTimerText ?? '');
 
   await setDocumentHiddenForTest(page, false);
   await expect(page.getByText('Timer resumed. Hidden time was not counted.')).toBeVisible();
+
+  expect(consoleErrors).toEqual([]);
+});
+
+test('realistic mock exam uses deterministic browser time for focus breaks and results', async ({
+  page,
+}) => {
+  const consoleErrors: string[] = [];
+  const clock = await installDeterministicBrowserClock(page, '2026-05-24T11:00:00.000Z');
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await openExamWithLanguage(page, 'en');
+
+  const realisticMode = page.getByRole('switch', { name: 'Realistic exam mode' });
+  await expect(realisticMode).toHaveAttribute('aria-checked', 'false');
+  await realisticMode.click();
+  await expect(realisticMode).toHaveAttribute('aria-checked', 'true');
+  await expect(page.getByText('Realistic mode', { exact: true })).toBeVisible();
+
+  const activeCount = page.getByText(`0/${totalQuestions} answered`);
+  if ((await activeCount.count()) === 0) {
+    const start = page.getByLabel('Start mock exam');
+    await expect(start).toBeEnabled();
+    await start.click();
+  }
+
+  await expect(activeCount).toBeVisible();
+  const timerLine = page.getByText(/^Time left/);
+  await expect(timerLine).toContainText('20:00');
+
+  await clock.advanceBy(1000);
+  await expect(timerLine).toContainText('19:59');
+
+  await setDocumentHiddenForTest(page, true);
+  await expect(
+    page.getByText(
+      'Paused while the app is in the background. The timer and question timing resume when you return.',
+    ),
+  ).toHaveCount(0);
+  await clock.setTimeBy(1250);
+  await setDocumentHiddenForTest(page, false);
+
+  await expect(page.getByText('1 tab switch during this mock exam.')).toBeVisible();
+  await expect(timerLine).toContainText('19:58');
+
+  for (let questionNumber = 1; questionNumber <= totalQuestions; questionNumber += 1) {
+    await page
+      .getByLabel(new RegExp(`^Select answer .+ for question ${questionNumber}$`))
+      .first()
+      .click();
+  }
+
+  await expect(page.getByText(`${totalQuestions}/${totalQuestions} answered`)).toBeVisible();
+  await page.getByRole('button', { name: 'Submit mock exam' }).click();
+
+  await expect(page.getByText('Mock exam result', { exact: true })).toBeVisible();
+  await expect(page.getByText('Focus breaks', { exact: true })).toBeVisible();
+  await expect(page.getByText('1 tab switch', { exact: true })).toBeVisible();
 
   expect(consoleErrors).toEqual([]);
 });
