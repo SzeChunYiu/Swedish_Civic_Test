@@ -24,15 +24,23 @@ export const PRO_LIFETIME_PRODUCT_ID = appStoreProductIds.proLifetime;
 export const PRO_LIFETIME_PRICE_LABEL = '59 SEK';
 export const PRO_LIFETIME_STORAGE_KEY = 'monetization.proLifetime.entitled.v1';
 export const PRO_LIFETIME_RECORD_SCHEMA_VERSION = 1;
+export const PRO_LIFETIME_PURCHASE_UNAVAILABLE_REASONS = {
+  nativeReceiptValidatorUnavailable: 'native_receipt_validator_unavailable',
+  webStoreUnavailable: 'web_store_unavailable',
+} as const;
 
 type ProLifetimeGrantSource = 'purchase' | 'restore';
+
+export type ProLifetimePurchaseUnavailableReason =
+  (typeof PRO_LIFETIME_PURCHASE_UNAVAILABLE_REASONS)[keyof typeof PRO_LIFETIME_PURCHASE_UNAVAILABLE_REASONS];
 
 export type ProLifetimePurchaseStatus =
   | 'purchased'
   | 'pending'
   | 'restored'
   | 'not_found'
-  | 'persistence_failed';
+  | 'persistence_failed'
+  | 'unavailable';
 
 export interface StoredProLifetimeEntitlementRecord {
   grantedAt: string;
@@ -55,6 +63,7 @@ export interface ProLifetimePurchaseResult {
 }
 
 export interface ProLifetimeRuntimeOptions {
+  purchaseUnavailableReason?: ProLifetimePurchaseUnavailableReason;
   provider?: RemoveAdsPurchaseProvider;
   storage?: PurchaseStorage;
 }
@@ -389,9 +398,14 @@ export async function getProLifetimeEntitlement({
 }
 
 export async function buyProLifetime({
+  purchaseUnavailableReason,
   provider = createNativePurchaseProvider(),
   storage = createSecureStorePurchaseStorage(),
 }: ProLifetimeRuntimeOptions = {}): Promise<ProLifetimePurchaseResult> {
+  if (purchaseUnavailableReason) {
+    return createResult('unavailable', await getProLifetimeEntitlement({ storage }));
+  }
+
   await provider.connect();
   try {
     const purchase = await provider.requestRemoveAdsPurchase(PRO_LIFETIME_PRODUCT_ID);
@@ -422,9 +436,14 @@ export async function buyProLifetime({
 }
 
 export async function restoreProLifetime({
+  purchaseUnavailableReason,
   provider = createNativePurchaseProvider(),
   storage = createSecureStorePurchaseStorage(),
 }: ProLifetimeRuntimeOptions = {}): Promise<ProLifetimePurchaseResult> {
+  if (purchaseUnavailableReason) {
+    return createResult('unavailable', await getProLifetimeEntitlement({ storage }));
+  }
+
   await provider.connect();
   try {
     const purchases = await provider.restorePurchases([PRO_LIFETIME_PRODUCT_ID]);

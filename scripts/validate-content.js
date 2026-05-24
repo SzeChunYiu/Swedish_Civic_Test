@@ -10334,6 +10334,7 @@ let proLifetimeStructuredRecordParsingValidated = 0;
 let proLifetimeProviderReceiptRevalidationValidated = 0;
 let proLifetimeFailClosedClearingValidated = 0;
 let proLifetimeNativeHookProviderWiringValidated = 0;
+let proLifetimeUnavailableReasonExhaustiveValidated = 0;
 let proLifetimeRelaunchParityValidated = false;
 let adConsentTypeUnionsValidated = 0;
 let adConsentTypeInterfacesValidated = 0;
@@ -12087,6 +12088,7 @@ if (process.argv.includes('--focus-pro-lifetime-relaunch-parity')) {
     proLifetimeProviderReceiptRevalidationValidated,
     proLifetimeFailClosedClearingValidated,
     proLifetimeNativeHookProviderWiringValidated,
+    proLifetimeUnavailableReasonExhaustiveValidated,
     proLifetimeRelaunchParityValidated,
   });
   process.exit(0);
@@ -21132,6 +21134,7 @@ function validateProLifetimeRelaunchParity() {
   let proLifetimeSource = '';
   let proHookSource = '';
   let proIapTestSource = '';
+  let proPaywallSource = '';
 
   function reject(message) {
     valid = false;
@@ -21141,22 +21144,25 @@ function validateProLifetimeRelaunchParity() {
   for (const [label, filePath] of [
     ['Pro Lifetime purchase runtime', 'lib/monetization/proLifetimePurchase.ts'],
     ['Pro Lifetime entitlement hook', 'lib/monetization/useProLifetimeEntitlements.ts'],
+    ['Pro Lifetime paywall', 'components/monetization/ProPaywall.tsx'],
     ['Pro Lifetime runtime tests', 'tests/v1-1-pro-iap.test.js'],
   ]) {
     try {
       const source = fs.readFileSync(path.join(repoRoot, filePath), 'utf8');
       if (filePath.endsWith('proLifetimePurchase.ts')) proLifetimeSource = source;
       if (filePath.endsWith('useProLifetimeEntitlements.ts')) proHookSource = source;
+      if (filePath.endsWith('ProPaywall.tsx')) proPaywallSource = source;
       if (filePath.endsWith('v1-1-pro-iap.test.js')) proIapTestSource = source;
     } catch (error) {
       reject(`${label} source could not be read: ${error.message}`);
     }
   }
 
-  if (!proLifetimeSource || !proHookSource || !proIapTestSource) return;
+  if (!proLifetimeSource || !proHookSource || !proPaywallSource || !proIapTestSource) return;
 
   const normalizedProLifetimeSource = proLifetimeSource.replace(/\s+/g, ' ');
   const normalizedProHookSource = proHookSource.replace(/\s+/g, ' ');
+  const normalizedProPaywallSource = proPaywallSource.replace(/\s+/g, ' ');
   const normalizedProIapTestSource = proIapTestSource.replace(/\s+/g, ' ');
   const proLifetimeImportsSharedCanonicalTimestampHelper =
     /import\s*\{\s*isCanonicalUtcIsoTimestamp\s*\}\s*from\s*['"]\.\.\/time\/canonicalTimestamp['"]/.test(
@@ -21256,15 +21262,67 @@ function validateProLifetimeRelaunchParity() {
     normalizedProHookSource.includes(
       "import { createNativePurchaseProvider, createSecureStorePurchaseStorage, createWebPurchaseStorage, } from './purchases';",
     ) &&
-    normalizedProHookSource.includes("if (Platform.OS !== 'web') {") &&
     normalizedProHookSource.includes(
-      'provider: createNativePurchaseProvider({ platform: getNativePurchasePlatform() }),',
+      "import { createNativeRemoveAdsReceiptValidator } from './removeAdsReceiptValidator.native';",
+    ) &&
+    normalizedProHookSource.includes("if (Platform.OS !== 'web') {") &&
+    normalizedProHookSource.includes('const nativePlatform = getNativePurchasePlatform();') &&
+    normalizedProHookSource.includes(
+      'const receiptValidator = createNativeRemoveAdsReceiptValidator({ platform: nativePlatform });',
+    ) &&
+    normalizedProHookSource.includes(
+      'provider: createNativePurchaseProvider({ platform: nativePlatform, receiptValidator, }),',
+    ) &&
+    normalizedProHookSource.includes(
+      "purchaseUnavailableReason: receiptValidator ? undefined : 'native_receipt_validator_unavailable',",
     ) &&
     normalizedProHookSource.includes('storage: createSecureStorePurchaseStorage(),') &&
     normalizedProHookSource.includes('storage: createWebPurchaseStorage(),') &&
-    normalizedProHookSource.includes('return { storage: createWebPurchaseStorage(), };') &&
+    normalizedProHookSource.includes(
+      "return { purchaseUnavailableReason: 'web_store_unavailable', storage: createWebPurchaseStorage(), };",
+    ) &&
     normalizedProHookSource.includes('void getProLifetimeEntitlement(proRuntime)') &&
     (normalizedProHookSource.match(/\bprovider:/g) ?? []).length === 1;
+  const unavailableReasonCaseIsValid =
+    /export const PRO_LIFETIME_PURCHASE_UNAVAILABLE_REASONS = \{[\s\S]*nativeReceiptValidatorUnavailable: 'native_receipt_validator_unavailable'[\s\S]*webStoreUnavailable: 'web_store_unavailable'[\s\S]*\} as const;/.test(
+      proLifetimeSource,
+    ) &&
+    normalizedProLifetimeSource.includes(
+      'export type ProLifetimePurchaseUnavailableReason = (typeof PRO_LIFETIME_PURCHASE_UNAVAILABLE_REASONS)[keyof typeof PRO_LIFETIME_PURCHASE_UNAVAILABLE_REASONS];',
+    ) &&
+    normalizedProLifetimeSource.includes(
+      'purchaseUnavailableReason?: ProLifetimePurchaseUnavailableReason;',
+    ) &&
+    normalizedProLifetimeSource.includes("'unavailable';") &&
+    normalizedProLifetimeSource.includes(
+      "if (purchaseUnavailableReason) { return createResult('unavailable', await getProLifetimeEntitlement({ storage })); }",
+    ) &&
+    normalizedProPaywallSource.includes('type ProPaywallStatus = ProLifetimePurchaseStatus |') &&
+    normalizedProPaywallSource.includes(
+      'function getProLifetimeUnavailableCopy( copy: ProPaywallCopy, reason: ProLifetimePurchaseUnavailableReason, ): ProUnavailableCopy { switch (reason) {',
+    ) &&
+    normalizedProPaywallSource.includes("case 'native_receipt_validator_unavailable':") &&
+    normalizedProPaywallSource.includes("case 'web_store_unavailable':") &&
+    normalizedProPaywallSource.includes('return assertNever(reason);') &&
+    normalizedProPaywallSource.includes('const purchaseUnavailable = unavailableCopy !== null;') &&
+    normalizedProPaywallSource.includes(
+      "if (purchaseUnavailable) { setStatus('unavailable'); return; }",
+    ) &&
+    normalizedProPaywallSource.includes('disabled: activeAction !== null || purchaseUnavailable') &&
+    normalizedProPaywallSource.includes(
+      'disabled={activeAction !== null || purchaseUnavailable}',
+    ) &&
+    normalizedProPaywallSource.includes('Buy in mobile app') &&
+    normalizedProPaywallSource.includes('Buy unavailable') &&
+    normalizedProPaywallSource.includes(
+      'Pro purchases are temporarily unavailable because receipt validation is not configured',
+    ) &&
+    normalizedProIapTestSource.includes(
+      "test('buyProLifetime and restoreProLifetime: unavailable runtime fails closed without store calls'",
+    ) &&
+    normalizedProIapTestSource.includes(
+      "test('ProPaywall: unavailable reason copy is exhaustive and disables store actions'",
+    );
 
   for (const [caseIsValid, message, markValidated] of [
     [
@@ -21302,6 +21360,13 @@ function validateProLifetimeRelaunchParity() {
         proLifetimeNativeHookProviderWiringValidated += 1;
       },
     ],
+    [
+      unavailableReasonCaseIsValid,
+      'Pro Lifetime relaunch validator must require exhaustive unavailable-reason runtime and paywall handling',
+      () => {
+        proLifetimeUnavailableReasonExhaustiveValidated += 1;
+      },
+    ],
   ]) {
     if (!caseIsValid) {
       reject(message);
@@ -21316,7 +21381,8 @@ function validateProLifetimeRelaunchParity() {
     proLifetimeStructuredRecordParsingValidated === 1 &&
     proLifetimeProviderReceiptRevalidationValidated === 1 &&
     proLifetimeFailClosedClearingValidated === 1 &&
-    proLifetimeNativeHookProviderWiringValidated === 1
+    proLifetimeNativeHookProviderWiringValidated === 1 &&
+    proLifetimeUnavailableReasonExhaustiveValidated === 1
   ) {
     proLifetimeRelaunchParityValidated = true;
   }
@@ -27828,6 +27894,7 @@ console.log(
       proLifetimeProviderReceiptRevalidationValidated,
       proLifetimeFailClosedClearingValidated,
       proLifetimeNativeHookProviderWiringValidated,
+      proLifetimeUnavailableReasonExhaustiveValidated,
       proLifetimeRelaunchParityValidated,
       adConsentTypeUnionsValidated,
       adConsentTypeInterfacesValidated,
