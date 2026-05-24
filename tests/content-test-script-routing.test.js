@@ -2554,6 +2554,39 @@ test('content-focused npm script forwards test-name pattern before file list', (
   }
 });
 
+test('package npm test forwards focused node test pattern before file list', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-npm-focused-'));
+  const nodeLog = path.join(tmpDir, 'node.log');
+  const env = {
+    ...process.env,
+    npm_config_loglevel: 'silent',
+    TEST_DISPATCH_CAPTURE: '1',
+    TEST_DISPATCH_LOG: nodeLog,
+    TEST_DISPATCH_NODE: createFakeNode(tmpDir),
+  };
+
+  try {
+    const result = runPackageTest(
+      [
+        '--test-name-pattern',
+        'mock exam source-section locator',
+        'tests/content-mock-exam-runtime-parity.test.js',
+      ],
+      env,
+    );
+
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+    assert.deepEqual(fs.readFileSync(nodeLog, 'utf8').trim().split('\n'), [
+      '--test',
+      '--test-name-pattern',
+      'mock exam source-section locator',
+      'tests/content-mock-exam-runtime-parity.test.js',
+    ]);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
 test('unsupported npm test selectors fail before running any suite', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-unsupported-'));
   const npmLog = path.join(tmpDir, 'npm.log');
