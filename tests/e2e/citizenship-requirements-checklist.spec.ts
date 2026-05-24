@@ -48,6 +48,22 @@ const neutralRequirementCopyCases = [
       'The requirements also cover long-term income from work or self-employment, stability over time, and no more than six months of income support during the past three years.',
   },
 ] as const;
+const actionLinkFeedbackCases = [
+  {
+    aboutName: 'Gå tillbaka till sidan om medborgarskapsprovet',
+    language: 'sv',
+    practiceName: 'Öppna övningsläget för samhällskunskap',
+    viewport: { height: 844, width: 390 },
+    viewportName: 'mobile',
+  },
+  {
+    aboutName: 'Go back to the page about the citizenship test',
+    language: 'en',
+    practiceName: 'Open civic knowledge practice mode',
+    viewport: { height: 800, width: 1024 },
+    viewportName: 'desktop',
+  },
+] as const;
 
 async function openRequirementsRoute(page: Page, language: 'sv' | 'en') {
   await seedSettingsLanguage(page, language);
@@ -101,6 +117,30 @@ async function expectSourceRowFits(locator: Locator) {
   expect(metrics.scrollWidth).toBeLessThanOrEqual(metrics.clientWidth + 1);
 }
 
+async function expectActionLinkFeedback(page: Page, locator: Locator) {
+  await locator.scrollIntoViewIfNeeded();
+  await expectSourceRowFits(locator);
+
+  const beforeFocus = await getPaint(locator);
+  await locator.focus();
+  await expect(locator).toBeFocused();
+  const afterFocus = await getPaint(locator);
+
+  expect(afterFocus.backgroundColor).not.toBe(beforeFocus.backgroundColor);
+
+  await locator.hover();
+  const box = await locator.boundingBox();
+  expect(box).not.toBeNull();
+
+  await page.mouse.move(box!.x + box!.width / 2, box!.y + box!.height / 2);
+  await page.mouse.down();
+  const afterPress = await getPaint(locator);
+  await page.mouse.move(1, 1);
+  await page.mouse.up();
+
+  expect(afterPress.backgroundColor).not.toBe(beforeFocus.backgroundColor);
+}
+
 for (const fixture of areaSourceLayoutCases) {
   test(`citizenship requirements area source rows fit and focus on ${fixture.viewportName} in ${fixture.language}`, async ({
     page,
@@ -125,6 +165,28 @@ for (const fixture of areaSourceLayoutCases) {
 
     expect(afterFocus.borderColor).not.toBe(beforeFocus.borderColor);
     expect(afterFocus.backgroundColor).not.toBe(beforeFocus.backgroundColor);
+    expect(consoleErrors.get()).toEqual([]);
+  });
+}
+
+for (const fixture of actionLinkFeedbackCases) {
+  test(`citizenship requirements action links keep shared feedback on ${fixture.viewportName} in ${fixture.language}`, async ({
+    page,
+  }) => {
+    const consoleErrors = collectConsoleAndPageErrors(page);
+
+    await page.setViewportSize(fixture.viewport);
+    await openRequirementsRoute(page, fixture.language);
+
+    const practiceLink = page.getByRole('link', { name: fixture.practiceName });
+    const aboutLink = page.getByRole('link', { name: fixture.aboutName });
+
+    await expect(practiceLink).toHaveAttribute('href', /\/practice$/);
+    await expect(aboutLink).toHaveAttribute('href', /\/about-the-test$/);
+    await expectActionLinkFeedback(page, practiceLink);
+    await expectActionLinkFeedback(page, aboutLink);
+    await expectNoHorizontalOverflow(page);
+
     expect(consoleErrors.get()).toEqual([]);
   });
 }

@@ -251,6 +251,8 @@ test('citizenship requirements screen renders interactive sourced checklist with
   const checkboxRowCheckedStyle = extractNamedStyle(routeSource, 'checkboxRowChecked');
   const checkboxBoxCheckedStyle = extractNamedStyle(routeSource, 'checkboxBoxChecked');
   const checkboxDotStyle = extractNamedStyle(routeSource, 'checkboxDot');
+  const primaryLinkStyle = extractNamedStyle(routeSource, 'primaryLink');
+  const secondaryLinkStyle = extractNamedStyle(routeSource, 'secondaryLink');
 
   assert.match(routeSource, /citizenshipRequirementAreas\.map/);
   assert.match(routeSource, /useSettingsStore/);
@@ -282,6 +284,19 @@ test('citizenship requirements screen renders interactive sourced checklist with
   assert.match(routeSource, /<ScreenShell[\s\S]*themeColors=\{themeColors\}/);
   assert.match(routeSource, /<QuestionDisclaimer themeColors=\{themeColors\}/);
   assert.match(routeSource, /function createStyles\(themeColors: ThemeColors\)/);
+  assert.doesNotMatch(routeSource, /import \{ Link \} from 'expo-router';/);
+  assert.match(
+    routeSource,
+    /<RouteLink[\s\S]*accessibilityLabel=\{copy\.openPracticeAccessibilityLabel\}[\s\S]*href="\/practice"[\s\S]*style=\{styles\.primaryLink\}[\s\S]*variant="primary"/,
+  );
+  assert.match(
+    routeSource,
+    /<RouteLink[\s\S]*accessibilityLabel=\{copy\.backAboutAccessibilityLabel\}[\s\S]*href="\/about-the-test"[\s\S]*style=\{styles\.secondaryLink\}[\s\S]*variant="secondary"/,
+  );
+  assert.doesNotMatch(primaryLinkStyle, /backgroundColor|borderRadius|color|paddingHorizontal/);
+  assert.doesNotMatch(secondaryLinkStyle, /backgroundColor|borderRadius|color|paddingHorizontal/);
+  assert.match(primaryLinkStyle, /flexGrow: 1/);
+  assert.match(secondaryLinkStyle, /flexGrow: 1/);
   assert.match(checkboxRowCheckedStyle, /backgroundColor: themeColors\.successSoft/);
   assert.match(checkboxRowCheckedStyle, /borderColor: themeColors\.success/);
   assert.match(checkboxBoxCheckedStyle, /backgroundColor: themeColors\.success/);
@@ -319,7 +334,7 @@ test('citizenship requirements cards surface precise source titles and currentne
     routeSource,
     /focusedSourceRow === sourceFocusKey \? styles\.sourceRowFocused : null/,
   );
-  assert.match(routeSource, /accessibilityRole="link"/);
+  assert.match(routeSource, /<RouteLink/);
   assert.match(routeSource, /rel="noreferrer"/);
   assert.match(routeSource, /target="_blank"/);
   assert.match(sourceRefRowStyle, /minHeight: space\[6\]/);
