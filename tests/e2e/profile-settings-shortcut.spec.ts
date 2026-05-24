@@ -15,6 +15,9 @@ const fixtures: Record<
   AppLanguage,
   {
     audioSwitchName: string;
+    audioRateGroup: string;
+    audioRateProfileBadge: string;
+    audioRateRadioName: string;
     backToProfileName: string;
     dailyGoalGroup: string;
     dailyGoalSetupBadge: string;
@@ -31,6 +34,9 @@ const fixtures: Record<
 > = {
   sv: {
     audioSwitchName: 'Stäng av ljud',
+    audioRateGroup: 'Uppläsningshastighet',
+    audioRateProfileBadge: 'Hastighet: 1x',
+    audioRateRadioName: 'Ställ in uppläsningshastighet till 1x',
     backToProfileName: 'Tillbaka till profil',
     dailyGoalGroup: 'Dagligt mål',
     dailyGoalSetupBadge: 'Dagligt mål: 10 svar/dag',
@@ -39,13 +45,16 @@ const fixtures: Record<
     languageSetupBadge: 'Språk: Svenska',
     languageRadioName: 'Byt studiespråk till Svenska',
     profileHeading: 'Framsteg utan konto',
-    settingsCtaName: 'Öppna inställningar för dagligt mål, språk och ljud',
+    settingsCtaName: 'Öppna inställningar för dagligt mål, språk, ljud och hastighet',
     settingsHeading: 'Inställningar',
     studyFocusCue: 'Studieinställningarna från profilen är markerade här.',
     studySetupHeading: 'Studieinställningar',
   },
   en: {
     audioSwitchName: 'Disable audio',
+    audioRateGroup: 'Playback speed',
+    audioRateProfileBadge: 'Speed: 1x',
+    audioRateRadioName: 'Set audio playback speed to 1x',
     backToProfileName: 'Back to profile',
     dailyGoalGroup: 'Daily goal',
     dailyGoalSetupBadge: 'Daily goal: 10 answers/day',
@@ -54,7 +63,7 @@ const fixtures: Record<
     languageSetupBadge: 'Language: English support',
     languageRadioName: 'Set study language to English support',
     profileHeading: 'Progress without an account',
-    settingsCtaName: 'Open settings for daily goal, language, and audio',
+    settingsCtaName: 'Open settings for daily goal, language, audio, and playback speed',
     settingsHeading: 'Settings',
     studyFocusCue: 'The study setup controls from Profile are highlighted here.',
     studySetupHeading: 'Study setup',
@@ -121,6 +130,11 @@ for (const language of ['sv', 'en'] as const) {
       'aria-checked',
       'true',
     );
+    await expect(page.getByRole('radiogroup', { name: copy.audioRateGroup })).toBeVisible();
+    await expect(page.getByRole('radio', { name: copy.audioRateRadioName })).toHaveAttribute(
+      'aria-checked',
+      'true',
+    );
 
     expect(errors.get()).toEqual([]);
   });
@@ -149,6 +163,7 @@ for (const language of ['sv', 'en'] as const) {
     await expect(page.getByRole('heading', { name: copy.studySetupHeading })).toBeVisible();
     await expectAnyVisibleExactText(page, copy.dailyGoalSetupBadge);
     await expectAnyVisibleExactText(page, copy.languageSetupBadge);
+    await expectAnyVisibleExactText(page, copy.audioRateProfileBadge);
 
     expect(errors.get()).toEqual([]);
   });

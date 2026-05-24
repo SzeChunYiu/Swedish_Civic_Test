@@ -23,8 +23,9 @@ import {
   formatImportSummaryCount,
   type LocalStudyDataImportSummaryCopy,
 } from '../lib/storage/localStudyDataImportSummary';
-import type { ThemeMode } from '../lib/storage/accessibilityStore';
+import type { AudioPlaybackRate, ThemeMode } from '../lib/storage/accessibilityStore';
 import { useAccessibilityStore } from '../lib/storage/accessibilityStore';
+import { AUDIO_PLAYBACK_RATES } from '../lib/storage/accessibilityStore';
 import { useCompanionStore } from '../lib/storage/companionStore';
 import type { AppLanguage } from '../lib/storage/settingsStore';
 import { supportedDailyGoalAnswerOptions, useSettingsStore } from '../lib/storage/settingsStore';
@@ -38,6 +39,9 @@ type SettingsCopy = LocalStudyDataImportSummaryCopy & {
   audioListenFirstDisabledLabel: string;
   audioListenFirstEnabledLabel: string;
   audioListenFirstTitle: string;
+  audioPlaybackRateTitle: string;
+  audioPlaybackRateSummary: (rateLabel: string) => string;
+  setAudioPlaybackRateAccessibilityLabel: (rateLabel: string) => string;
   audioTitle: string;
   backToProfile: string;
   backToProfileAccessibilityLabel: string;
@@ -123,6 +127,13 @@ function appendImportErrorDetail(
 
 const localStudyDataImportMaxLabel = `${LOCAL_STUDY_DATA_IMPORT_MAX_BYTES / (1024 * 1024)} MB`;
 
+function formatAudioPlaybackRate(rate: AudioPlaybackRate, language: AppLanguage): string {
+  return `${rate.toLocaleString(language === 'sv' ? 'sv-SE' : 'en-US', {
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 0,
+  })}x`;
+}
+
 const settingsCopy: Record<AppLanguage, SettingsCopy> = {
   sv: {
     audioDisabledLabel: 'Ljud avstängt',
@@ -130,6 +141,10 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     audioListenFirstDisabledLabel: 'Lyssna först av',
     audioListenFirstEnabledLabel: 'Lyssna först på',
     audioListenFirstTitle: 'Lyssna först',
+    audioPlaybackRateTitle: 'Uppläsningshastighet',
+    audioPlaybackRateSummary: (rateLabel) => `Uppläsningshastighet: ${rateLabel}`,
+    setAudioPlaybackRateAccessibilityLabel: (rateLabel) =>
+      `Ställ in uppläsningshastighet till ${rateLabel}`,
     audioTitle: 'Ljud',
     backToProfile: '← Tillbaka till profil',
     backToProfileAccessibilityLabel: 'Tillbaka till profil',
@@ -253,6 +268,10 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     audioListenFirstDisabledLabel: 'Listen first disabled',
     audioListenFirstEnabledLabel: 'Listen first enabled',
     audioListenFirstTitle: 'Listen first',
+    audioPlaybackRateTitle: 'Playback speed',
+    audioPlaybackRateSummary: (rateLabel) => `Playback speed: ${rateLabel}`,
+    setAudioPlaybackRateAccessibilityLabel: (rateLabel) =>
+      `Set audio playback speed to ${rateLabel}`,
     audioTitle: 'Audio',
     backToProfile: '← Back to Profile',
     backToProfileAccessibilityLabel: 'Back to profile',
@@ -407,6 +426,8 @@ export default function Screen() {
   const clearPersistenceWarning = useSettingsStore((state) => state.clearPersistenceWarning);
   const themeMode = useAccessibilityStore((state) => state.themeMode);
   const setThemeMode = useAccessibilityStore((state) => state.setThemeMode);
+  const audioPlaybackRate = useAccessibilityStore((state) => state.audioPlaybackRate);
+  const setAudioPlaybackRate = useAccessibilityStore((state) => state.setAudioPlaybackRate);
   const listenFirstAudioEnabled = useAccessibilityStore((state) => state.listenFirstAudioEnabled);
   const setListenFirstAudioEnabled = useAccessibilityStore(
     (state) => state.setListenFirstAudioEnabled,
@@ -437,6 +458,7 @@ export default function Screen() {
   const scrollViewRef = useRef<ScrollView | null>(null);
   const dailyGoalOptionRefs = useRef<Record<string, FocusableElement | null>>({});
   const languageOptionRefs = useRef<Record<string, FocusableElement | null>>({});
+  const audioPlaybackRateOptionRefs = useRef<Record<string, FocusableElement | null>>({});
   const themeOptionRefs = useRef<Record<string, FocusableElement | null>>({});
   const themeOptions: { value: ThemeMode; label: string }[] = [
     { value: 'system', label: copy.themeSystemLabel },
@@ -445,6 +467,7 @@ export default function Screen() {
   ];
   const activeThemeLabel =
     themeOptions.find((option) => option.value === themeMode)?.label ?? copy.themeSystemLabel;
+  const activeAudioPlaybackRateLabel = formatAudioPlaybackRate(audioPlaybackRate, language);
   const importPayloadByteCount = useMemo(
     () => getLocalStudyDataImportPayloadByteCount(importText),
     [importText],
@@ -596,6 +619,48 @@ export default function Screen() {
           value,
           setThemeMode,
           themeOptionRefs,
+        )}
+      >
+        <Text style={[styles.pillText, selected ? styles.pillTextActive : null]}>{label}</Text>
+      </Pressable>
+    );
+  };
+
+  const renderAudioPlaybackRateButton = (value: AudioPlaybackRate) => {
+    const selected = audioPlaybackRate === value;
+    const label = formatAudioPlaybackRate(value, language);
+    const focusKey = `audio-playback-rate-${value}`;
+
+    return (
+      <Pressable
+        key={value}
+        aria-checked={selected}
+        accessibilityLabel={copy.setAudioPlaybackRateAccessibilityLabel(label)}
+        accessibilityRole="radio"
+        accessibilityState={{ checked: selected }}
+        hitSlop={space[1]}
+        onBlur={() => setFocusedControl(null)}
+        onFocus={() => setFocusedControl(focusKey)}
+        onPress={() => setAudioPlaybackRate(value)}
+        ref={(node) => {
+          audioPlaybackRateOptionRefs.current[String(value)] = node as FocusableElement | null;
+        }}
+        style={({ pressed }) => [
+          styles.pill,
+          selected ? styles.pillActive : null,
+          focusedControl === focusKey ? styles.controlFocused : null,
+          pressed
+            ? reduceMotion
+              ? styles.controlPressedReducedMotion
+              : styles.controlPressed
+            : null,
+        ]}
+        {...getWebRadioKeyboardProps(
+          AUDIO_PLAYBACK_RATES,
+          audioPlaybackRate,
+          value,
+          setAudioPlaybackRate,
+          audioPlaybackRateOptionRefs,
         )}
       >
         <Text style={[styles.pillText, selected ? styles.pillTextActive : null]}>{label}</Text>
@@ -832,6 +897,17 @@ export default function Screen() {
                 : copy.audioListenFirstDisabledLabel}
             </Text>
           </Pressable>
+          <Text style={styles.subtitle}>
+            {copy.audioPlaybackRateSummary(activeAudioPlaybackRateLabel)}
+          </Text>
+          <View
+            aria-label={copy.audioPlaybackRateTitle}
+            accessibilityLabel={copy.audioPlaybackRateTitle}
+            accessibilityRole="radiogroup"
+            style={styles.row}
+          >
+            {AUDIO_PLAYBACK_RATES.map((rate) => renderAudioPlaybackRateButton(rate))}
+          </View>
         </View>
       </View>
 

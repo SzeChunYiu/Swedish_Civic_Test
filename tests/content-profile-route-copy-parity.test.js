@@ -25,7 +25,7 @@ test('profile route shell copy stays keyed by the settings language', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
 
-  assert.equal(summary.profileRouteCopyLabelsValidated, 46);
+  assert.equal(summary.profileRouteCopyLabelsValidated, 48);
   assert.equal(summary.profileRouteCopyParityValidated, true);
   assert.equal(summary.badgesValidated, 4);
   assert.equal(summary.badgeMilestoneParityValidated, true);
@@ -56,17 +56,19 @@ test('profile route shell copy stays keyed by the settings language', () => {
   );
   assert.match(source, /<SectionHeader title=\{copy\.studySetupTitle\}/);
   assert.match(source, /const dailyGoalAnswers = useSettingsStore/);
+  assert.match(source, /const audioPlaybackRate = useAccessibilityStore/);
+  assert.match(source, /formatAudioPlaybackRate\(audioPlaybackRate, language\)/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(
     source,
-    /openSettingsAccessibilityLabel: 'Öppna inställningar för dagligt mål, språk och ljud'/,
+    /openSettingsAccessibilityLabel:\s+'Öppna inställningar för dagligt mål, språk, ljud och hastighet'/,
   );
   assert.match(
     source,
-    /openSettingsAccessibilityLabel: 'Open settings for daily goal, language, and audio'/,
+    /openSettingsAccessibilityLabel:\s+'Open settings for daily goal, language, audio, and playback speed'/,
   );
-  assert.match(source, /studySetupCta: 'Ändra mål, språk och ljud'/);
-  assert.match(source, /studySetupCta: 'Adjust goal, language, and audio'/);
+  assert.match(source, /studySetupCta: 'Ändra mål, språk och ljudhastighet'/);
+  assert.match(source, /studySetupCta: 'Adjust goal, language, and audio speed'/);
   assert.doesNotMatch(source, /openSettings: '/);
   assert.match(source, /const badgeInput: BadgeInput = \{/);
   assert.match(source, /const unlockedBadgeIds = new Set\(deriveBadges\(badgeInput\)/);
@@ -206,6 +208,7 @@ test('profile study setup card owns the localized settings shortcut', () => {
     /\{copy\.dailyGoalBadgeLabel\}: \{dailyGoalAnswers\} \{copy\.answersPerDay\}/,
   );
   assert.match(studySetupCard, /\{copy\.languageBadgeLabel\}: \{copy\.languageBadge\}/);
+  assert.match(studySetupCard, /\{copy\.audioPlaybackRateBadgeLabel\}: \{audioPlaybackRateLabel\}/);
   assert.match(
     studySetupCard,
     /<Link[\s\S]*asChild[\s\S]*href=\{\{[\s\S]*pathname: '\/settings'[\s\S]*params: \{ focus: 'study' \}[\s\S]*\}\}[\s\S]*>/,

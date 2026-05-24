@@ -1551,6 +1551,7 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Små dagliga mål är lättare att hålla än långa maratonpass.',
     'svar/dag',
     'Svenska',
+    'Hastighet',
     'Veckans översikt',
     'Svar, övningsprov och nästa lugna repetition samlas i en lokal veckovy.',
     'Öppna veckans studieöversikt',
@@ -1558,8 +1559,8 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Märken',
     'Milstolpar gör framsteg synliga utan att störa lärandet.',
     'Inga märken ännu',
-    'Öppna inställningar för dagligt mål, språk och ljud',
-    'Ändra mål, språk och ljud',
+    'Öppna inställningar för dagligt mål, språk, ljud och hastighet',
+    'Ändra mål, språk och ljudhastighet',
   ],
   en: [
     'Local profile',
@@ -1576,6 +1577,7 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Small daily goals are easier to keep than long cram sessions.',
     'answers/day',
     'English support',
+    'Speed',
     'Weekly recap',
     'Answers, mock exams, and the next calm review live in a local weekly view.',
     'Open this week’s study recap',
@@ -1583,8 +1585,8 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Badges',
     'Achievement cues make progress visible without distracting from learning.',
     'No badges yet',
-    'Open settings for daily goal, language, and audio',
-    'Adjust goal, language, and audio',
+    'Open settings for daily goal, language, audio, and playback speed',
+    'Adjust goal, language, and audio speed',
   ],
 };
 const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
@@ -1983,8 +1985,22 @@ const EXPECTED_DAILY_GOAL_DEFAULT = 10;
 const EXPECTED_DAILY_GOAL_MIN = 1;
 const EXPECTED_DAILY_GOAL_MAX = 50;
 const EXPECTED_AUDIO_SETTING_KEY = 'audioEnabled';
-const EXPECTED_AUDIO_LABELS = ['Audio enabled', 'Audio disabled'];
-const EXPECTED_AUDIO_ACCESSIBILITY_LABELS = ['Disable audio', 'Enable audio'];
+const EXPECTED_AUDIO_LABELS = [
+  'Audio enabled',
+  'Audio disabled',
+  'Playback speed',
+  'Playback speed: ${rateLabel}',
+  'Ljud på',
+  'Ljud avstängt',
+  'Uppläsningshastighet',
+  'Uppläsningshastighet: ${rateLabel}',
+];
+const EXPECTED_AUDIO_ACCESSIBILITY_LABELS = [
+  'Disable audio',
+  'Enable audio',
+  'Ställ in uppläsningshastighet till ${rateLabel}',
+  'Set audio playback speed to ${rateLabel}',
+];
 const EXPECTED_SPEECH_RUNTIME_CASES = 10;
 const EXPECTED_SWEDISH_SPEECH_LANGUAGE = 'sv-SE';
 const EXPECTED_SETTINGS_STORE_FIELDS = [

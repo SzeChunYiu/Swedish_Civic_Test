@@ -85,7 +85,7 @@ test('audio setting stays in parity between storage and settings switch', () => 
   const settingsRoute = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
   const normalizedSettingsRoute = settingsRoute.replace(/\s+/g, ' ');
 
-  assert.equal(summary.settingsAudioLabelsValidated, 2);
+  assert.equal(summary.settingsAudioLabelsValidated, 8);
   assert.equal(summary.settingsAudioParityValidated, true);
   assert.match(settingsStore, /const audioEnabledKey = 'audioEnabled';/);
   assert.match(settingsStore, /const storedValue = readStorageBoolean\(audioEnabledKey\);/);
@@ -95,6 +95,14 @@ test('audio setting stays in parity between storage and settings switch', () => 
     /function readStorageBoolean\(key: string\): boolean \| undefined \{[\s\S]*readRecoverably\(settingsStorage, settingsStorageId, key,[\s\S]*settingsStorage\?\.getBoolean\(key\),[\s\S]*return result\.value;/,
   );
   assert.match(settingsRoute, /accessibilityRole="switch"/);
+  assert.match(
+    settingsRoute,
+    /AUDIO_PLAYBACK_RATES\.map\(\(rate\) => renderAudioPlaybackRateButton\(rate\)\)/,
+  );
+  assert.match(settingsRoute, /const audioPlaybackRate = useAccessibilityStore/);
+  assert.match(settingsRoute, /const setAudioPlaybackRate = useAccessibilityStore/);
+  assert.match(settingsRoute, /copy\.audioPlaybackRateSummary\(activeAudioPlaybackRateLabel\)/);
+  assert.match(settingsRoute, /copy\.setAudioPlaybackRateAccessibilityLabel\(label\)/);
   assert.match(settingsRoute, /accessibilityState=\{\{ checked: audioEnabled \}\}/);
   assert.match(settingsRoute, /setAudioEnabled\(!audioEnabled\)/);
   assert.match(
@@ -111,6 +119,12 @@ test('audio setting stays in parity between storage and settings switch', () => 
   assert.match(settingsRoute, /Slå på ljud/);
   assert.match(settingsRoute, /Audio enabled/);
   assert.match(settingsRoute, /Audio disabled/);
+  assert.match(settingsRoute, /Uppläsningshastighet/);
+  assert.match(settingsRoute, /Playback speed/);
+  assert.match(settingsRoute, /Ställ in uppläsningshastighet till/);
+  assert.match(settingsRoute, /Set audio playback speed to/);
+  assert.match(settingsRoute, /sv-SE/);
+  assert.match(settingsRoute, /en-US/);
 });
 
 test('audio setting hydration falls back when MMKV getBoolean throws', () => {

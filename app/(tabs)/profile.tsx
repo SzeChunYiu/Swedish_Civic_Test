@@ -25,6 +25,10 @@ import { calculateStreakWithFreeze, freezeBannerCopy } from '../../lib/learning/
 import { calculateLevel } from '../../lib/learning/xp';
 import { isProRuntimeScopeEnabled } from '../../lib/monetization/releasePolicy';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
+import {
+  useAccessibilityStore,
+  type AudioPlaybackRate,
+} from '../../lib/storage/accessibilityStore';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { radius, space, typography, type ThemeColors } from '../../lib/theme';
@@ -50,6 +54,7 @@ type ProfileCopy = {
   eyebrow: string;
   audioDisabledBadge: string;
   audioEnabledBadge: string;
+  audioPlaybackRateBadgeLabel: string;
   audioStatusLabel: string;
   dailyGoalBadgeLabel: string;
   languageBadge: string;
@@ -85,17 +90,19 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     eyebrow: 'Lokal profil',
     audioDisabledBadge: 'Ljud av',
     audioEnabledBadge: 'Ljud på',
+    audioPlaybackRateBadgeLabel: 'Hastighet',
     audioStatusLabel: 'Ljud',
     dailyGoalBadgeLabel: 'Dagligt mål',
     languageBadge: 'Svenska',
     languageBadgeLabel: 'Språk',
     levelMetric: 'nivå',
     noBadges: 'Inga märken ännu',
-    openSettingsAccessibilityLabel: 'Öppna inställningar för dagligt mål, språk och ljud',
+    openSettingsAccessibilityLabel:
+      'Öppna inställningar för dagligt mål, språk, ljud och hastighet',
     questionsHelper: 'frågor',
     removeAdsFocusCue: 'Ta bort annonser är markerat. Köp- och återställningsknapparna finns här.',
     streakFreezeBadge: 'Svitskydd',
-    studySetupCta: 'Ändra mål, språk och ljud',
+    studySetupCta: 'Ändra mål, språk och ljudhastighet',
     studySetupSubtitle: 'Små dagliga mål är lättare att hålla än långa maratonpass.',
     studySetupTitle: 'Studieinställningar',
     subtitle:
@@ -123,17 +130,19 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     eyebrow: 'Local profile',
     audioDisabledBadge: 'Audio off',
     audioEnabledBadge: 'Audio on',
+    audioPlaybackRateBadgeLabel: 'Speed',
     audioStatusLabel: 'Audio',
     dailyGoalBadgeLabel: 'Daily goal',
     languageBadge: 'English support',
     languageBadgeLabel: 'Language',
     levelMetric: 'level',
     noBadges: 'No badges yet',
-    openSettingsAccessibilityLabel: 'Open settings for daily goal, language, and audio',
+    openSettingsAccessibilityLabel:
+      'Open settings for daily goal, language, audio, and playback speed',
     questionsHelper: 'questions',
     removeAdsFocusCue: 'Remove Ads is highlighted. Buy and Restore controls are here.',
     streakFreezeBadge: 'Streak freeze',
-    studySetupCta: 'Adjust goal, language, and audio',
+    studySetupCta: 'Adjust goal, language, and audio speed',
     studySetupSubtitle: 'Small daily goals are easier to keep than long cram sessions.',
     studySetupTitle: 'Study setup',
     subtitle:
@@ -147,6 +156,13 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     xpMetric: 'XP',
   },
 };
+
+function formatAudioPlaybackRate(rate: AudioPlaybackRate, language: AppLanguage): string {
+  return `${rate.toLocaleString(language === 'sv' ? 'sv-SE' : 'en-US', {
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 0,
+  })}x`;
+}
 
 export default function Screen() {
   const { focus } = useLocalSearchParams<{ focus?: string }>();
@@ -165,6 +181,7 @@ export default function Screen() {
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
+  const audioPlaybackRate = useAccessibilityStore((state) => state.audioPlaybackRate);
   const copy = profileCopy[language];
   const themeColors = useThemeColors();
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
@@ -197,6 +214,7 @@ export default function Screen() {
   };
   const allBadges = getAllBadges();
   const unlockedBadgeIds = new Set(deriveBadges(badgeInput).map((badge) => badge.id));
+  const audioPlaybackRateLabel = formatAudioPlaybackRate(audioPlaybackRate, language);
 
   useEffect(() => {
     setStreakFreezeState(streakWithFreeze.freezeState);
@@ -254,6 +272,9 @@ export default function Screen() {
           <Badge tone={audioEnabled ? 'green' : 'warm'}>
             {copy.audioStatusLabel}:{' '}
             {audioEnabled ? copy.audioEnabledBadge : copy.audioDisabledBadge}
+          </Badge>
+          <Badge tone="blue">
+            {copy.audioPlaybackRateBadgeLabel}: {audioPlaybackRateLabel}
           </Badge>
         </View>
         <Link
