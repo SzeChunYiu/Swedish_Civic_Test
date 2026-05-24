@@ -185,6 +185,236 @@ function createRenderContext({
   return { sandbox, element };
 }
 
+function createQcardLanguageContext({ language = 'en' } = {}) {
+  const documentListeners = [];
+  const windowListeners = [];
+
+  class FakeClassList {
+    constructor() {
+      this.values = new Set();
+    }
+
+    add(...names) {
+      names.forEach((name) => this.values.add(name));
+    }
+
+    remove(...names) {
+      names.forEach((name) => this.values.delete(name));
+    }
+
+    contains(name) {
+      return this.values.has(name);
+    }
+
+    toggle(name, force) {
+      const next = force === undefined ? !this.values.has(name) : Boolean(force);
+      if (next) this.values.add(name);
+      else this.values.delete(name);
+    }
+  }
+
+  class FakeElement {
+    constructor({ id = '', className = '', dataset = {}, textContent = '' } = {}) {
+      this.id = id;
+      this.dataset = { ...dataset };
+      this.attributes = new Map();
+      this.children = [];
+      this.disabled = false;
+      this.parent = null;
+      this.classList = new FakeClassList();
+      this._textContent = textContent;
+      className
+        .split(/\s+/)
+        .filter(Boolean)
+        .forEach((name) => this.classList.add(name));
+    }
+
+    get textContent() {
+      if (this.children.length > 0) {
+        return this.children.map((child) => child.textContent).join('');
+      }
+      return this._textContent;
+    }
+
+    set textContent(value) {
+      this._textContent = String(value);
+      this.children = [];
+    }
+
+    set innerHTML(value) {
+      this.textContent = value;
+    }
+
+    get innerHTML() {
+      return this.textContent;
+    }
+
+    append(child) {
+      child.parent = this;
+      this.children.push(child);
+      return child;
+    }
+
+    setAttribute(name, value) {
+      this.attributes.set(name, String(value));
+    }
+
+    getAttribute(name) {
+      if (name === 'lang') return this.attributes.get(name) || language;
+      return this.attributes.get(name) || null;
+    }
+
+    removeAttribute(name) {
+      this.attributes.delete(name);
+    }
+
+    matches(selector) {
+      if (selector.startsWith('#')) return this.id === selector.slice(1);
+      if (selector === '.qopt') return this.classList.contains('qopt');
+      if (selector === '.qcard') return this.classList.contains('qcard');
+      if (selector === '#qreset') return this.id === 'qreset';
+      if (selector === '[data-i18n]') return Boolean(this.dataset.i18n);
+      if (selector === ".qopt[data-correct='true']") {
+        return this.classList.contains('qopt') && this.dataset.correct === 'true';
+      }
+      if (selector === '.qopt[aria-pressed="true"]') {
+        return this.classList.contains('qopt') && this.getAttribute('aria-pressed') === 'true';
+      }
+      return false;
+    }
+
+    closest(selector) {
+      let current = this;
+      while (current) {
+        if (current.matches(selector)) return current;
+        current = current.parent;
+      }
+      return null;
+    }
+
+    querySelectorAll(selector) {
+      const found = [];
+      const visit = (node) => {
+        if (node.matches(selector)) found.push(node);
+        node.children.forEach(visit);
+      };
+      this.children.forEach(visit);
+      return found;
+    }
+
+    querySelector(selector) {
+      if (selector === `#${this.id}`) return this;
+      return this.querySelectorAll(selector)[0] || null;
+    }
+  }
+
+  const documentElement = new FakeElement();
+  documentElement.setAttribute('lang', language);
+  const card = new FakeElement({ id: 'qcard', className: 'qcard' });
+  const optionA = card.append(
+    new FakeElement({ className: 'qopt', dataset: { correct: 'false' } }),
+  );
+  optionA.append(new FakeElement({ dataset: { i18n: 'qcard.a' }, textContent: 'Jantelagen' }));
+  const optionB = card.append(new FakeElement({ className: 'qopt', dataset: { correct: 'true' } }));
+  optionB.append(new FakeElement({ dataset: { i18n: 'qcard.b' }, textContent: 'Allemansrätten' }));
+  const explanation = card.append(
+    new FakeElement({
+      id: 'qcard-explanation',
+      textContent: 'Allemansrätten lets people use nature.',
+    }),
+  );
+  explanation.append(
+    new FakeElement({ dataset: { i18n: 'qcard.ex.b' }, textContent: 'Allemansrätten' }),
+  );
+  explanation.append(
+    new FakeElement({
+      dataset: { i18n: 'qcard.ex.p' },
+      textContent: ' lets people use nature.',
+    }),
+  );
+  const status = card.append(new FakeElement({ id: 'qcard-status' }));
+  const reset = new FakeElement({ id: 'qreset' });
+
+  const sandbox = {
+    console,
+    localStorage: {
+      getItem() {
+        return language;
+      },
+      setItem() {},
+    },
+    location: { hash: '#/' },
+    document: {
+      readyState: 'loading',
+      documentElement,
+      title: '',
+      getElementById(id) {
+        if (id === 'qcard') return card;
+        if (id === 'qcard-status') return status;
+        if (id === 'qcard-explanation') return explanation;
+        if (id === 'qreset') return reset;
+        return null;
+      },
+      querySelector(selector) {
+        if (selector === 'meta[name="description"]') return null;
+        return card.querySelector(selector);
+      },
+      querySelectorAll(selector) {
+        if (selector === '[data-i18n]') return card.querySelectorAll(selector);
+        if (selector === '.lang button[data-lang]') return [];
+        return card.querySelectorAll(selector);
+      },
+      addEventListener(type, handler) {
+        documentListeners.push({ type, handler });
+      },
+    },
+    window: {},
+    Event: function Event(type) {
+      this.type = type;
+    },
+    CustomEvent: function CustomEvent(type, init = {}) {
+      this.type = type;
+      this.detail = init.detail;
+    },
+    setInterval: () => 1,
+    clearInterval() {},
+    setTimeout(handler) {
+      if (typeof handler === 'function') handler();
+      return 1;
+    },
+    requestAnimationFrame(handler) {
+      if (typeof handler === 'function') handler();
+      return 1;
+    },
+  };
+
+  sandbox.window = sandbox;
+  sandbox.window.addEventListener = (type, handler) => {
+    windowListeners.push({ type, handler });
+  };
+  sandbox.window.dispatchEvent = (event) => {
+    windowListeners
+      .filter((listener) => listener.type === event.type)
+      .forEach((listener) => listener.handler(event));
+  };
+  sandbox.window.scrollTo = () => {};
+
+  vm.createContext(sandbox);
+  return {
+    card,
+    optionA,
+    optionB,
+    reset,
+    sandbox,
+    status,
+    click(target) {
+      documentListeners
+        .filter((listener) => listener.type === 'click')
+        .forEach((listener) => listener.handler({ target }));
+    },
+  };
+}
+
 test('static Practice answer feedback renders citation and independent-study disclaimer', () => {
   const { sandbox, element } = createRenderContext({ hash: '#/practice?c=1', language: 'en' });
   vm.runInContext(read('site/app.js'), sandbox, { timeout: 3000 });
@@ -333,6 +563,43 @@ test('static Home demo qcard exposes accessible answer state', () => {
     assert.match(appSource, new RegExp(`'${key.replace('.', '\\.')}'`));
     assert.match(extraSource, new RegExp(`'${key.replace('.', '\\.')}'`));
   }
+});
+
+test('static Home demo qcard relocalizes selected correct answer after language change', () => {
+  const { card, click, optionA, optionB, reset, sandbox, status } = createQcardLanguageContext({
+    language: 'en',
+  });
+  vm.runInContext(read('site/app.js'), sandbox, { timeout: 3000 });
+
+  click(optionB);
+
+  assert.equal(card.classList.contains('is-answered'), true);
+  assert.equal(optionB.getAttribute('aria-pressed'), 'true');
+  assert.equal(optionA.getAttribute('aria-pressed'), 'false');
+  assert.match(optionB.getAttribute('aria-label'), /Selected answer, correct/);
+  assert.match(status.textContent, /^Correct\./);
+
+  vm.runInContext("smtSetLanguage('sv')", sandbox, { timeout: 3000 });
+
+  assert.equal(card.classList.contains('is-answered'), true);
+  assert.equal(optionB.disabled, true);
+  assert.equal(optionA.disabled, true);
+  assert.equal(optionB.getAttribute('aria-pressed'), 'true');
+  assert.equal(optionA.getAttribute('aria-pressed'), 'false');
+  assert.match(optionB.getAttribute('aria-label'), /Valt svar, rätt/);
+  assert.match(status.textContent, /^Rätt\./);
+  assert.doesNotMatch(optionB.getAttribute('aria-label'), /Selected answer, correct/);
+  assert.doesNotMatch(status.textContent, /^Correct\./);
+
+  click(reset);
+
+  assert.equal(card.classList.contains('is-answered'), false);
+  assert.equal(optionB.disabled, false);
+  assert.equal(optionA.disabled, false);
+  assert.equal(optionB.getAttribute('aria-pressed'), 'false');
+  assert.equal(optionA.getAttribute('aria-pressed'), 'false');
+  assert.equal(optionB.getAttribute('aria-label'), null);
+  assert.equal(status.textContent, '');
 });
 
 test('static Mock review renders citation and disclaimer for every reviewed question', () => {
