@@ -90,34 +90,58 @@
       });
     }
     const copy = sourceCitationCopy[lang()] || sourceCitationCopy.en;
+    return `${copy.source}: ${title}, ${source.chapter}, ${source.section}, ${copy.page} ${source.page}`;
+  }
+  function supplementalSourceLabel(currentLang) {
+    return tr({
+      sv: 'Kompletterande källa',
+      en: 'Additional source',
+      'zh-Hans': '补充来源',
+      'zh-Hant': '補充來源',
+      ar: 'مصدر إضافي',
+      ckb: 'سەرچاوەی تەواوکەر',
+      fa: 'منبع تکمیلی',
+      pl: 'Dodatkowe źródło',
+      so: 'Ilo dheeraad ah',
+      ti: 'ተወሳኺ ምንጪ',
+      tr: 'Ek kaynak',
+      uk: 'Додаткове джерело',
+    });
+  }
+  function supplementalSourceMeta(source, currentLang) {
+    const published = source.publishedDate
+      ? currentLang === 'sv'
+        ? `publicerad ${source.publishedDate}`
+        : `published ${source.publishedDate}`
+      : '';
+    const retrieved = source.retrievedDate
+      ? currentLang === 'sv'
+        ? `hämtad ${source.retrievedDate}`
+        : `retrieved ${source.retrievedDate}`
+      : '';
+    return [source.publisher, published, retrieved].filter(Boolean).join(', ');
+  }
+  function supplementalSourceLinks(question) {
     const currentLang = lang();
-    const uhrCitation = `${copy.source}: ${title}, ${source.chapter}, ${source.section}, ${copy.page} ${source.page}`;
-    const supplementalCitations = Array.isArray(source.supplementalSources)
-      ? source.supplementalSources
-          .filter((supplementalSource) => supplementalSource && supplementalSource.title)
-          .map((supplementalSource) => {
-            const published = supplementalSource.publishedDate
-              ? currentLang === 'sv'
-                ? `publicerad ${supplementalSource.publishedDate}`
-                : `published ${supplementalSource.publishedDate}`
-              : '';
-            const retrieved = supplementalSource.retrievedDate
-              ? currentLang === 'sv'
-                ? `hämtad ${supplementalSource.retrievedDate}`
-                : `retrieved ${supplementalSource.retrievedDate}`
-              : '';
-            return [
-              `${copy.source}: ${supplementalSource.title}`,
-              supplementalSource.publisher,
-              published,
-              retrieved,
-              supplementalSource.url,
-            ]
-              .filter(Boolean)
-              .join(', ');
-          })
-      : [];
-    return [uhrCitation, ...supplementalCitations].join('; ');
+    const sources = question && question.source && question.source.supplementalSources;
+    if (!Array.isArray(sources) || sources.length === 0) return '';
+    const label = supplementalSourceLabel(currentLang);
+    const links = sources
+      .filter((source) => source && source.title && source.url)
+      .map((source) => {
+        const meta = supplementalSourceMeta(source, currentLang);
+        const ariaLabel = [label, source.publisher, source.title, meta].filter(Boolean).join(': ');
+        return `
+          <a class="quiz__supplemental-source-link" href="${escapeHtml(source.url)}" target="_blank" rel="noreferrer" aria-label="${escapeHtml(ariaLabel)}">
+            <span class="quiz__supplemental-source-label">${escapeHtml(label)}</span>
+            <span class="quiz__supplemental-source-title">${escapeHtml(source.title)}</span>
+            ${meta ? `<span class="quiz__supplemental-source-meta">${escapeHtml(meta)}</span>` : ''}
+          </a>
+        `;
+      })
+      .join('');
+    if (!links) return '';
+    return `<div class="quiz__supplemental-sources">${links}</div>`;
   }
   function questionReviewDisclaimer() {
     return tr({
@@ -339,6 +363,7 @@
       <div class="quiz__source-row">
         ${provenanceBadge(question)}
         <p class="${citationClassName}">${escapeHtml(sourceCitation(question))}</p>
+        ${supplementalSourceLinks(question)}
       </div>
     `;
   }

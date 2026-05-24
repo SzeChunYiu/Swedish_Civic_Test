@@ -2152,33 +2152,60 @@ function smtQuizSourceCitation(question, lang) {
     });
   }
   const copy = SMT_QUIZ_SOURCE_CITATION_COPY[lang] || SMT_QUIZ_SOURCE_CITATION_COPY.en;
-  const uhrCitation = `${copy.source}: ${title}, ${source.chapter}, ${source.section}, ${copy.page} ${source.page}`;
-  const supplementalCitations = Array.isArray(source.supplementalSources)
-    ? source.supplementalSources
-        .filter((supplementalSource) => supplementalSource && supplementalSource.title)
-        .map((supplementalSource) => {
-          const published = supplementalSource.publishedDate
-            ? lang === 'sv'
-              ? `publicerad ${supplementalSource.publishedDate}`
-              : `published ${supplementalSource.publishedDate}`
-            : '';
-          const retrieved = supplementalSource.retrievedDate
-            ? lang === 'sv'
-              ? `hämtad ${supplementalSource.retrievedDate}`
-              : `retrieved ${supplementalSource.retrievedDate}`
-            : '';
-          return [
-            `${copy.source}: ${supplementalSource.title}`,
-            supplementalSource.publisher,
-            published,
-            retrieved,
-            supplementalSource.url,
-          ]
-            .filter(Boolean)
-            .join(', ');
-        })
-    : [];
-  return [uhrCitation, ...supplementalCitations].join('; ');
+  return `${copy.source}: ${title}, ${source.chapter}, ${source.section}, ${copy.page} ${source.page}`;
+}
+
+function smtQuizSupplementalSourceLabel(lang) {
+  return smtTr({
+    sv: 'Kompletterande källa',
+    en: 'Additional source',
+    'zh-Hans': '补充来源',
+    'zh-Hant': '補充來源',
+    ar: 'مصدر إضافي',
+    ckb: 'سەرچاوەی تەواوکەر',
+    fa: 'منبع تکمیلی',
+    pl: 'Dodatkowe źródło',
+    so: 'Ilo dheeraad ah',
+    ti: 'ተወሳኺ ምንጪ',
+    tr: 'Ek kaynak',
+    uk: 'Додаткове джерело',
+  });
+}
+
+function smtQuizSupplementalSourceMeta(source, lang) {
+  const published = source.publishedDate
+    ? lang === 'sv'
+      ? `publicerad ${source.publishedDate}`
+      : `published ${source.publishedDate}`
+    : '';
+  const retrieved = source.retrievedDate
+    ? lang === 'sv'
+      ? `hämtad ${source.retrievedDate}`
+      : `retrieved ${source.retrievedDate}`
+    : '';
+  return [source.publisher, published, retrieved].filter(Boolean).join(', ');
+}
+
+function smtQuizSupplementalSourceLinks(question, lang) {
+  const sources = question && question.source && question.source.supplementalSources;
+  if (!Array.isArray(sources) || sources.length === 0) return '';
+  const label = smtQuizSupplementalSourceLabel(lang);
+  const links = sources
+    .filter((source) => source && source.title && source.url)
+    .map((source) => {
+      const meta = smtQuizSupplementalSourceMeta(source, lang);
+      const ariaLabel = [label, source.publisher, source.title, meta].filter(Boolean).join(': ');
+      return `
+          <a class="quiz__supplemental-source-link" href="${smtQuizEscapeHtml(source.url)}" target="_blank" rel="noreferrer" aria-label="${smtQuizEscapeHtml(ariaLabel)}">
+            <span class="quiz__supplemental-source-label">${smtQuizEscapeHtml(label)}</span>
+            <span class="quiz__supplemental-source-title">${smtQuizEscapeHtml(source.title)}</span>
+            ${meta ? `<span class="quiz__supplemental-source-meta">${smtQuizEscapeHtml(meta)}</span>` : ''}
+          </a>
+        `;
+    })
+    .join('');
+  if (!links) return '';
+  return `<div class="quiz__supplemental-sources">${links}</div>`;
 }
 
 function smtQuizQuestionDisclaimer(lang) {
@@ -2326,10 +2353,12 @@ function smtQuizProvenanceBadge(question, lang) {
 
 function smtQuizQuestionSourceRow(question, lang, citationClassName = 'quiz__source') {
   const sourceCitation = smtQuizEscapeHtml(smtQuizSourceCitation(question, lang));
+  const supplementalSourceLinks = smtQuizSupplementalSourceLinks(question, lang);
   return `
       <div class="quiz__source-row">
         ${smtQuizProvenanceBadge(question, lang)}
         <p class="${citationClassName}">${sourceCitation}</p>
+        ${supplementalSourceLinks}
       </div>
     `;
 }
