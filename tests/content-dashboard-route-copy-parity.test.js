@@ -81,9 +81,14 @@ function assertNaturalSwedishDashboardCopy(sources) {
 }
 
 function assertDashboardSummaryPluralization() {
-  const { formatDashboardSummaryAccessibilityLabel, formatDashboardSummaryLine } = loadTs(
-    'lib/learning/dashboardSummaryCopy.ts',
-  );
+  const {
+    formatDashboardActiveDayCount,
+    formatDashboardAnswerCount,
+    formatDashboardMockExamCount,
+    formatDashboardStreakCount,
+    formatDashboardSummaryAccessibilityLabel,
+    formatDashboardSummaryLine,
+  } = loadTs('lib/learning/dashboardSummaryCopy.ts');
 
   const cases = [
     {
@@ -134,6 +139,21 @@ function assertDashboardSummaryPluralization() {
     assert.equal(formatDashboardSummaryLine(language, ...values), line);
     assert.equal(formatDashboardSummaryAccessibilityLabel(language, ...values), accessibilityLabel);
   }
+
+  assert.equal(formatDashboardAnswerCount('sv', 1), '1 svar');
+  assert.equal(formatDashboardAnswerCount('en', 1), '1 answer');
+  assert.equal(formatDashboardAnswerCount('en', 2), '2 answers');
+  assert.equal(formatDashboardActiveDayCount('sv', 1), '1 aktiv dag');
+  assert.equal(formatDashboardActiveDayCount('sv', 2), '2 aktiva dagar');
+  assert.equal(formatDashboardActiveDayCount('en', 1), '1 active day');
+  assert.equal(formatDashboardActiveDayCount('en', 2), '2 active days');
+  assert.equal(formatDashboardMockExamCount('sv', 1), '1 övningsprov');
+  assert.equal(formatDashboardMockExamCount('en', 1), '1 mock exam');
+  assert.equal(formatDashboardMockExamCount('en', 2), '2 mock exams');
+  assert.equal(formatDashboardStreakCount('sv', 1), '1 dags svit');
+  assert.equal(formatDashboardStreakCount('sv', 2), '2 dagars svit');
+  assert.equal(formatDashboardStreakCount('en', 1), '1-day streak');
+  assert.equal(formatDashboardStreakCount('en', 2), '2-day streak');
 }
 
 function assertLocalizedMockHistoryDates(sources) {
@@ -166,7 +186,15 @@ test('dashboard summary count copy is singular and plural in Swedish and English
   assert.match(sources.dashboard, /formatDashboardSummaryLine\('en'/);
   assert.match(sources.dashboard, /formatDashboardSummaryAccessibilityLabel\(\s*'sv'/);
   assert.match(sources.dashboard, /formatDashboardSummaryAccessibilityLabel\(\s*'en'/);
+  assert.match(sources.dashboard, /formatDashboardActiveDayCount\(/);
+  assert.match(sources.dashboard, /formatDashboardAnswerCount\(/);
+  assert.match(sources.dashboard, /formatDashboardMockExamCount\(/);
+  assert.match(sources.dashboard, /formatDashboardStreakCount\(/);
   assert.doesNotMatch(sources.dashboard, /chapters tried, \$\{unresolved\} unresolved mistakes/);
+  assert.doesNotMatch(sources.dashboard, /\$\{activeDays\} aktiva dagar/);
+  assert.doesNotMatch(sources.dashboard, /\$\{activeDays\} active days/);
+  assert.doesNotMatch(sources.dashboard, /\$\{attemptCount\} mock exams/);
+  assert.doesNotMatch(sources.dashboard, /\$\{currentStreak\} dagars svit/);
   assertDashboardSummaryPluralization();
 });
 
