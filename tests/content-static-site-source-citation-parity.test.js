@@ -25,14 +25,8 @@ function assertLocalizedSourceCitation(source, copyIdentifier) {
   assert.match(source, /const copy = .*?\|\| .*?\.en;/);
   assert.match(
     source,
-    /const uhrCitation = `\$\{copy\.source\}: \$\{title\}, \$\{source\.chapter\}, \$\{source\.section\}, \$\{copy\.page\} \$\{source\.page\}`;/,
+    /return `\$\{copy\.source\}: \$\{title\}, \$\{source\.chapter\}, \$\{source\.section\}, \$\{copy\.page\} \$\{source\.page\}`;/,
   );
-  assert.match(source, /supplementalSources/);
-  assert.match(
-    source,
-    /const supplementalCitations = Array\.isArray\(source\.supplementalSources\)/,
-  );
-  assert.match(source, /return \[uhrCitation, \.\.\.supplementalCitations\]\.join\('; '\);/);
 }
 
 test('static practice quiz renders localized source citations below each question', () => {
@@ -46,6 +40,9 @@ test('static practice quiz renders localized source citations below each questio
     source,
     /function smtQuizQuestionSourceRow\(question, lang, citationClassName = ['"]quiz__source['"]\)/,
   );
+  assert.match(source, /function smtQuizSupplementalSourceLinks\(question, lang\)/);
+  assert.match(source, /class="quiz__supplemental-source-link"/);
+  assert.match(source, /target="_blank" rel="noreferrer"/);
   assert.match(source, /const sourceRow = smtQuizQuestionSourceRow\(q, lang\);/);
   assert.match(source, /\$\{sourceRow\}/);
   assert.match(source, /questionProvenance/);
@@ -63,6 +60,9 @@ test('static mock exam and review render per-question source citations', () => {
     source,
     /function questionSourceRow\(question, citationClassName = ['"]quiz__source['"]\)/,
   );
+  assert.match(source, /function supplementalSourceLinks\(question\)/);
+  assert.match(source, /class="quiz__supplemental-source-link"/);
+  assert.match(source, /target="_blank" rel="noreferrer"/);
   assert.match(source, /\$\{questionSourceRow\(q\)\}/);
   assert.match(source, /\$\{questionSourceRow\(q, ['"]mock-review__source['"]\)\}/);
   assert.match(source, /questionProvenance/);
@@ -74,6 +74,8 @@ test('static source citation lines have dedicated styling', () => {
 
   assert.match(source, /\.quiz__source\s*\{/);
   assert.match(source, /\.quiz__source-row\s*\{/);
+  assert.match(source, /\.quiz__supplemental-sources\s*\{/);
+  assert.match(source, /\.quiz__supplemental-source-link\s*\{/);
   assert.match(source, /\.quiz__provenance\s*\{/);
   assert.match(source, /\.mock-review__source\s*\{/);
 });

@@ -45,6 +45,116 @@ function staticQuestionById(questionId) {
   return question;
 }
 
+function sourceRendererRuntime(kind, language = 'en') {
+  const source = read(kind === 'practice' ? 'site/practice.js' : 'site/app.js');
+  if (kind === 'practice') {
+    const start = source.indexOf('  function lang()');
+    const end = source.indexOf('  function hashString(value)');
+    assert.ok(start >= 0 && end > start, 'static practice source renderer block should be found');
+    return vm.runInNewContext(
+      `(() => {
+        const window = { SMT_CHAPTERS_META: [] };
+        const localStorage = { getItem: () => __lang };
+        ${source.slice(start, end)}
+        return { questionSourceRow, sourceCitation, supplementalSourceLinks };
+      })()`,
+      { __lang: language },
+      { timeout: 3000 },
+    );
+  }
+
+  const start = source.indexOf('function smtQuizEscapeHtml(value)');
+  const end = source.indexOf('const SMT_QUIZ_MAX_CORRECT_POSITION_SHARE');
+  assert.ok(start >= 0 && end > start, 'static app source renderer block should be found');
+  return vm.runInNewContext(
+    `(() => {
+      const localStorage = { getItem: () => __lang };
+      function smtTr(map) { return (map && (map[__lang] || map.en)) || ''; }
+      ${source.slice(start, end)}
+      return {
+        questionSourceRow: (question, lang = __lang) => smtQuizQuestionSourceRow(question, lang),
+        sourceCitation: (question, lang = __lang) => smtQuizSourceCitation(question, lang),
+        supplementalSourceLinks: (question, lang = __lang) =>
+          smtQuizSupplementalSourceLinks(question, lang),
+      };
+    })()`,
+    { __lang: language },
+    { timeout: 3000 },
+  );
+}
+
+function assertSupplementalSourceLinkMarkup(html, questionId, rendererLabel, language = 'en') {
+  assert.match(html, /class="quiz__source-row"/, `${rendererLabel} should render a source row`);
+  const primarySourceMatch = html.match(/<p class="[^"]*quiz__source[^"]*">([\s\S]*?)<\/p>/);
+  assert.ok(primarySourceMatch, `${rendererLabel} should render a primary UHR citation`);
+  const primarySource = normalizeInlineHtml(primarySourceMatch[1]);
+  assert.match(primarySource, /Sverige i fokus/, `${rendererLabel} should keep UHR citation text`);
+  assert.doesNotMatch(
+    primarySource,
+    /;\s*https?:\/\//,
+    `${rendererLabel} should not join supplemental URLs into the primary citation`,
+  );
+  assert.doesNotMatch(
+    primarySource,
+    /Valmyndigheten/,
+    `${rendererLabel} should keep supplemental metadata out of the primary citation`,
+  );
+
+  const links = Array.from(
+    html.matchAll(
+      /<a\b[^>]*class="[^"]*\bquiz__supplemental-source-link\b[^"]*"[^>]*>[\s\S]*?<\/a>/g,
+    ),
+    (match) => match[0],
+  );
+  assert.equal(
+    links.length,
+    1,
+    `${rendererLabel} should render one supplemental link for ${questionId}`,
+  );
+  const link = links[0];
+  assert.match(
+    link,
+    /href="https:\/\/www\.val\.se\/det-svenska-valsystemet\/sa-funkar-rostning-i-svenska-val\/rostratten-i-svenska-val"/,
+    `${rendererLabel} should link to Valmyndigheten voting-rights source`,
+  );
+  assert.match(
+    link,
+    /target="_blank"/,
+    `${rendererLabel} should open official source in a new tab`,
+  );
+  assert.match(link, /rel="noreferrer"/, `${rendererLabel} should avoid referrer leakage`);
+  if (language === 'sv') {
+    assert.match(
+      link,
+      /Kompletterande källa/,
+      `${rendererLabel} should render Swedish supplemental label`,
+    );
+    assert.match(
+      link,
+      /hämtad 2026-05-2[12]/,
+      `${rendererLabel} should render Swedish retrieved date`,
+    );
+  } else {
+    assert.match(
+      link,
+      /Additional source/,
+      `${rendererLabel} should render English supplemental label`,
+    );
+    assert.match(
+      link,
+      /retrieved 2026-05-2[12]/,
+      `${rendererLabel} should render English retrieved date`,
+    );
+  }
+  assert.match(link, /Valmyndigheten/, `${rendererLabel} should render source publisher metadata`);
+  assert.match(link, /Rösträtten i svenska val/, `${rendererLabel} should render source title`);
+  assert.doesNotMatch(
+    normalizeInlineHtml(link),
+    /;\s*https?:\/\//,
+    `${rendererLabel} should not show semicolon-delimited raw URL text`,
+  );
+}
+
 function staticQuestionBankRuntime() {
   const context = { window: {} };
   context.globalThis = context.window;
@@ -489,6 +599,38 @@ test('static source claims match the shipped question-bank source titles', () =>
   assert.match(surface, /UHR/i);
   assert.match(surface, /current question bank|nuvarande fr[aå]gebanken/i);
   assert.match(surface, /Primary source\s+1|Prim[aä]r k[aä]lla\s+1/i);
+});
+
+test('static Practice source rows render supplemental sources as separate official links', () => {
+  const renderers = [
+    ['app quiz renderer', sourceRendererRuntime('app', 'en'), 'en'],
+    ['app quiz renderer SV', sourceRendererRuntime('app', 'sv'), 'sv'],
+    ['practice/mock renderer', sourceRendererRuntime('practice', 'en'), 'en'],
+    ['practice/mock renderer SV', sourceRendererRuntime('practice', 'sv'), 'sv'],
+  ];
+  for (const questionId of ['q019', 'q030', 'q166']) {
+    const question = staticQuestionById(questionId);
+    assert.equal(
+      question.source.supplementalSources?.[0]?.publisher,
+      'Valmyndigheten',
+      `${questionId} should carry the Valmyndigheten supplemental source fixture`,
+    );
+    for (const [rendererLabel, renderer, language] of renderers) {
+      const sourcePrefix = language === 'sv' ? 'Källa' : 'Source';
+      const pagePrefix = language === 'sv' ? 's.' : 'p.';
+      assert.equal(
+        renderer.sourceCitation(question),
+        `${sourcePrefix}: Sverige i fokus, ${question.source.chapter}, ${question.source.section}, ${pagePrefix} ${question.source.page}`,
+        `${rendererLabel} primary citation should stay UHR-only for ${questionId}`,
+      );
+      assertSupplementalSourceLinkMarkup(
+        fromVm(renderer.questionSourceRow(question)),
+        questionId,
+        rendererLabel,
+        language,
+      );
+    }
+  }
 });
 
 test('static Home demo qcard source mirrors q039 source and UHR provenance', () => {

@@ -1246,6 +1246,33 @@ button.quiz__dot:focus-visible {
   flex: 1 1 240px;
   margin: 0;
 }
+.quiz__supplemental-sources {
+  display: grid;
+  flex: 1 1 100%;
+  gap: 6px;
+  padding-left: 34px;
+}
+.quiz__supplemental-source-link {
+  align-items: baseline;
+  color: var(--blue);
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 44px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.quiz__supplemental-source-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.quiz__supplemental-source-meta {
+  color: var(--ink-soft);
+  font-family: var(--mono);
+  font-size: 11px;
+}
 .quiz__provenance {
   display: inline-flex;
   align-items: center;
