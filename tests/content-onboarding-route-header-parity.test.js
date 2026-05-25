@@ -146,7 +146,7 @@ test('first-run about modal suppresses onboarding without blocking study routes'
   );
   const adsSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/ads.ts'), 'utf8');
 
-  assert.equal(summary.firstRunAboutModalSuppressedRoutesValidated, 5);
+  assert.equal(summary.firstRunAboutModalSuppressedRoutesValidated, 11);
   assert.equal(summary.firstRunAboutModalSuppressionParityValidated, true);
   assert.match(source, /FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PATH_PREFIXES/);
   assert.match(
@@ -155,14 +155,31 @@ test('first-run about modal suppresses onboarding without blocking study routes'
   );
   assert.doesNotMatch(source, /function pathIsSuppressed|const SUPPRESSED_PATH_PREFIXES/);
   assert.match(routePolicySource, /export const FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PATH_PREFIXES/);
+  assert.match(routePolicySource, /export const FIRST_RUN_ABOUT_MODAL_STUDY_PATH_PREFIXES/);
+  assert.match(routePolicySource, /export const FIRST_RUN_ABOUT_MODAL_SELF_SEEN_PATH_PREFIXES/);
   assert.match(routePolicySource, /export function shouldSuppressFirstRunAboutModalForPath/);
   assert.match(routePolicySource, /'\/onboarding'/);
+  assert.match(routePolicySource, /'\/citizenship-requirements'/);
+  assert.match(routePolicySource, /'\/disclaimer'/);
+  assert.match(routePolicySource, /'\/privacy'/);
+  assert.match(routePolicySource, /'\/sources'/);
+  assert.match(routePolicySource, /'\/support'/);
+  assert.match(routePolicySource, /'\/terms'/);
   assert.match(adsSource, /'\/onboarding'/);
-  assert.doesNotMatch(routePolicySource, /'\/home'/);
-  assert.doesNotMatch(routePolicySource, /'\/learn'/);
-  assert.doesNotMatch(routePolicySource, /'\/practice'/);
-  assert.doesNotMatch(routePolicySource, /'\/mistakes'/);
-  assert.doesNotMatch(routePolicySource, /'\/profile'/);
+  assert.match(routePolicySource, /FIRST_RUN_ABOUT_MODAL_STUDY_PATH_PREFIXES = \[[\s\S]*'\/home'/);
+  assert.match(routePolicySource, /FIRST_RUN_ABOUT_MODAL_STUDY_PATH_PREFIXES = \[[\s\S]*'\/learn'/);
+  assert.match(
+    routePolicySource,
+    /FIRST_RUN_ABOUT_MODAL_STUDY_PATH_PREFIXES = \[[\s\S]*'\/practice'/,
+  );
+  assert.match(
+    routePolicySource,
+    /FIRST_RUN_ABOUT_MODAL_STUDY_PATH_PREFIXES = \[[\s\S]*'\/mistakes'/,
+  );
+  assert.match(
+    routePolicySource,
+    /FIRST_RUN_ABOUT_MODAL_STUDY_PATH_PREFIXES = \[[\s\S]*'\/profile'/,
+  );
 });
 
 test('first-run about modal suppression rejects dropping onboarding', () => {
@@ -193,6 +210,37 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /first-run about modal must suppress \/onboarding/,
+  );
+});
+
+test('first-run about modal suppression rejects launch compliance route drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/onboarding/firstRunAboutModalRoutes.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace("\\n  '/privacy',", '');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-onboarding-route-copy');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /first-run about modal must suppress \/privacy/,
   );
 });
 

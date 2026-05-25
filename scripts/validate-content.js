@@ -2054,6 +2054,34 @@ const EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTES = [
   '/support',
   '/terms',
 ];
+const EXPECTED_FIRST_RUN_MODAL_BASE_SUPPRESSED_ROUTES = [
+  '/exam',
+  '/quiz',
+  '/(auth)',
+  '/about-the-test',
+  '/onboarding',
+];
+const EXPECTED_FIRST_RUN_MODAL_COMPLIANCE_SUPPRESSED_ROUTES = [
+  '/citizenship-requirements',
+  '/disclaimer',
+  '/privacy',
+  '/sources',
+  '/support',
+  '/terms',
+];
+const EXPECTED_FIRST_RUN_MODAL_SUPPRESSED_ROUTES = [
+  ...EXPECTED_FIRST_RUN_MODAL_BASE_SUPPRESSED_ROUTES,
+  ...EXPECTED_FIRST_RUN_MODAL_COMPLIANCE_SUPPRESSED_ROUTES,
+];
+const EXPECTED_FIRST_RUN_MODAL_STUDY_ROUTES = [
+  '/',
+  '/home',
+  '/learn',
+  '/practice',
+  '/mistakes',
+  '/profile',
+];
+const EXPECTED_FIRST_RUN_MODAL_SELF_SEEN_ROUTES = ['/about-the-test'];
 const EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTE_FILES = {
   '/exam': 'app/(tabs)/exam.tsx',
   '/practice': 'app/(tabs)/practice.tsx',
@@ -17243,15 +17271,12 @@ function validateOnboardingRouteCopyParity() {
     }
   });
 
-  const expectedFirstRunSuppressedRoutes = [
-    '/exam',
-    '/quiz',
-    '/(auth)',
-    '/onboarding',
-    '/about-the-test',
-  ];
   const helperSuppressedRoutes =
     firstRunAboutModalRoutePolicy?.FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PATH_PREFIXES;
+  const helperStudyRoutes =
+    firstRunAboutModalRoutePolicy?.FIRST_RUN_ABOUT_MODAL_STUDY_PATH_PREFIXES;
+  const helperSelfSeenRoutes =
+    firstRunAboutModalRoutePolicy?.FIRST_RUN_ABOUT_MODAL_SELF_SEEN_PATH_PREFIXES;
   const shouldSuppressFirstRunAboutModalForPath =
     firstRunAboutModalRoutePolicy?.shouldSuppressFirstRunAboutModalForPath;
 
@@ -17266,7 +17291,33 @@ function validateOnboardingRouteCopyParity() {
   if (/function pathIsSuppressed|const SUPPRESSED_PATH_PREFIXES/.test(firstRunAboutModal)) {
     reject('first-run about modal must not keep a private route suppression policy');
   }
-  for (const route of expectedFirstRunSuppressedRoutes) {
+  if (!arrayEquals(helperSuppressedRoutes || [], EXPECTED_FIRST_RUN_MODAL_SUPPRESSED_ROUTES)) {
+    reject(
+      `first-run about modal suppressed routes are ${JSON.stringify(
+        helperSuppressedRoutes,
+      )}, expected ${JSON.stringify(EXPECTED_FIRST_RUN_MODAL_SUPPRESSED_ROUTES)}`,
+    );
+  }
+  if (!arrayEquals(helperStudyRoutes || [], EXPECTED_FIRST_RUN_MODAL_STUDY_ROUTES)) {
+    reject(
+      `first-run about modal study routes are ${JSON.stringify(
+        helperStudyRoutes,
+      )}, expected ${JSON.stringify(EXPECTED_FIRST_RUN_MODAL_STUDY_ROUTES)}`,
+    );
+  }
+  if (!arrayEquals(helperSelfSeenRoutes || [], EXPECTED_FIRST_RUN_MODAL_SELF_SEEN_ROUTES)) {
+    reject(
+      `first-run about modal self-seen routes are ${JSON.stringify(
+        helperSelfSeenRoutes,
+      )}, expected ${JSON.stringify(EXPECTED_FIRST_RUN_MODAL_SELF_SEEN_ROUTES)}`,
+    );
+  }
+  EXPECTED_FIRST_RUN_MODAL_COMPLIANCE_SUPPRESSED_ROUTES.forEach((route) => {
+    if (!EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTES.includes(route)) {
+      reject(`first-run compliance route ${route} must also be launch-popup suppressed`);
+    }
+  });
+  for (const route of EXPECTED_FIRST_RUN_MODAL_SUPPRESSED_ROUTES) {
     const routeIsSuppressed =
       Array.isArray(helperSuppressedRoutes) &&
       helperSuppressedRoutes.includes(route) &&
@@ -17284,9 +17335,14 @@ function validateOnboardingRouteCopyParity() {
   if (!adsSource.includes("'/onboarding'")) {
     reject('launch popup route suppression must include /onboarding');
   }
-  for (const route of ['/home', '/learn', '/practice', '/mistakes', '/profile']) {
+  for (const route of EXPECTED_FIRST_RUN_MODAL_COMPLIANCE_SUPPRESSED_ROUTES) {
+    if (!adsSource.includes(`'${route}'`)) {
+      reject(`launch popup route suppression must include first-run compliance route ${route}`);
+    }
+  }
+  for (const route of EXPECTED_FIRST_RUN_MODAL_STUDY_ROUTES) {
     if (
-      firstRunAboutModalRoutes.includes(`'${route}'`) ||
+      (Array.isArray(helperSuppressedRoutes) && helperSuppressedRoutes.includes(route)) ||
       (typeof shouldSuppressFirstRunAboutModalForPath === 'function' &&
         shouldSuppressFirstRunAboutModalForPath(route) !== false)
     ) {
@@ -17324,7 +17380,8 @@ function validateOnboardingRouteCopyParity() {
   if (
     valid &&
     onboardingRouteCopyLabelsValidated === expectedLabelCount &&
-    firstRunAboutModalSuppressedRoutesValidated === expectedFirstRunSuppressedRoutes.length
+    firstRunAboutModalSuppressedRoutesValidated ===
+      EXPECTED_FIRST_RUN_MODAL_SUPPRESSED_ROUTES.length
   ) {
     onboardingRouteCopyParityValidated = true;
     firstRunAboutModalSuppressionParityValidated = true;
