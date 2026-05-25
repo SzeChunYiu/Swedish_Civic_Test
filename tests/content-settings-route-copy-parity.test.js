@@ -618,6 +618,54 @@ test('settings accessibilityPersistenceWarning browser coverage keeps warningSco
   );
 });
 
+test('settings mobile scroll browser coverage reaches import and compliance footer', () => {
+  const e2eSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/e2e/settings-accessibility-state.spec.ts'),
+    'utf8',
+  );
+
+  assertIncludes(
+    e2eSource,
+    'settings mobile scroll reaches lower controls in ${scenario.language}',
+    'Settings E2E must include a localized mobile scroll reachability proof',
+  );
+  assertIncludes(
+    e2eSource,
+    "path: '/settings?focus=study'",
+    'Settings E2E must preserve focus=study highlight coverage',
+  );
+  assertIncludes(
+    e2eSource,
+    "path: '/settings'",
+    'Settings E2E must cover the plain Settings route',
+  );
+  assertIncludes(
+    e2eSource,
+    'expectNoDocumentHorizontalOverflow',
+    'Settings E2E must assert no horizontal overflow',
+  );
+  assertIncludes(
+    e2eSource,
+    'Preview local study data import',
+    'Settings E2E must reach the English import controls',
+  );
+  assertIncludes(
+    e2eSource,
+    'Förhandsgranska lokal studiedataimport',
+    'Settings E2E must reach the Swedish import controls',
+  );
+  assertIncludes(
+    e2eSource,
+    'Legal and sources',
+    'Settings E2E must reach the English compliance footer',
+  );
+  assertIncludes(
+    e2eSource,
+    'Juridik och källor',
+    'Settings E2E must reach the Swedish compliance footer',
+  );
+});
+
 test('settings import rejected purchase-field alerts include bounded field detail', () => {
   const settingsSource = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
   const e2eSource = fs.readFileSync(

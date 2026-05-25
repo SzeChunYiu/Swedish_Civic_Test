@@ -14,6 +14,20 @@ type MMKVPersistenceFailureHarnessOptions = {
   failingWrites?: string[];
 };
 
+type SettingsScrollReachabilityScenario = {
+  complianceHeading: string;
+  complianceLinkName: string | RegExp;
+  focusCue?: string;
+  importHeading: string;
+  importInputName: string;
+  language: 'en' | 'sv';
+  path: string;
+  previewImportName: string;
+  resetImportName: string;
+  studyControlsName: string;
+  title: string;
+};
+
 async function installMMKVPersistenceFailureHarness(
   page: Page,
   { failingReads = [], failingWrites = [] }: MMKVPersistenceFailureHarnessOptions,
@@ -64,6 +78,119 @@ async function expectStableCompanionPreview(preview: Locator, assetPattern: RegE
   await expect(preview).toHaveCSS('height', '48px');
   await expect(preview).toHaveCSS('width', '48px');
   await expectPreviewAsset(preview, assetPattern);
+}
+
+async function expectNoDocumentHorizontalOverflow(page: Page, label: string) {
+  const metrics = await page.evaluate(() => {
+    const root = document.documentElement;
+    const body = document.body;
+    return {
+      bodyScrollWidth: body.scrollWidth,
+      rootClientWidth: root.clientWidth,
+      rootScrollWidth: root.scrollWidth,
+      viewportWidth: window.innerWidth,
+    };
+  });
+
+  expect(
+    metrics.rootScrollWidth,
+    `${label} root scroll width ${JSON.stringify(metrics)}`,
+  ).toBeLessThanOrEqual(metrics.viewportWidth + 1);
+  expect(
+    metrics.bodyScrollWidth,
+    `${label} body scroll width ${JSON.stringify(metrics)}`,
+  ).toBeLessThanOrEqual(metrics.viewportWidth + 1);
+  expect(
+    metrics.rootClientWidth,
+    `${label} root client width ${JSON.stringify(metrics)}`,
+  ).toBeLessThanOrEqual(metrics.viewportWidth);
+}
+
+async function expectWithinViewport(locator: Locator, label: string) {
+  const [box, viewport] = await Promise.all([
+    locator.boundingBox(),
+    locator.page().evaluate(() => ({
+      height: window.innerHeight,
+      width: window.innerWidth,
+    })),
+  ]);
+
+  expect(box, `${label} should have a visible bounding box`).not.toBeNull();
+  if (!box) return;
+
+  expect(box.x, `${label} left edge`).toBeGreaterThanOrEqual(-1);
+  expect(box.x + box.width, `${label} right edge`).toBeLessThanOrEqual(viewport.width + 1);
+  expect(box.y, `${label} top edge`).toBeGreaterThanOrEqual(-1);
+  expect(box.y + box.height, `${label} bottom edge`).toBeLessThanOrEqual(viewport.height + 1);
+}
+
+const settingsScrollReachabilityScenarios: SettingsScrollReachabilityScenario[] = [
+  {
+    complianceHeading: 'Juridik och källor',
+    complianceLinkName: 'Öppna Källor',
+    focusCue: 'Studieinställningarna från profilen är markerade här.',
+    importHeading: 'Importera studiedata',
+    importInputName: 'Klistra in JSON-export',
+    language: 'sv',
+    path: '/settings?focus=study',
+    previewImportName: 'Förhandsgranska lokal studiedataimport',
+    resetImportName: 'Återställ importfält',
+    studyControlsName: 'Dagligt mål, språk och ljud',
+    title: 'Inställningar',
+  },
+  {
+    complianceHeading: 'Legal and sources',
+    complianceLinkName: 'Open Sources',
+    importHeading: 'Import study data',
+    importInputName: 'Paste JSON export',
+    language: 'en',
+    path: '/settings',
+    previewImportName: 'Preview local study data import',
+    resetImportName: 'Reset import field',
+    studyControlsName: 'Daily goal, language, and audio',
+    title: 'Settings',
+  },
+];
+
+for (const scenario of settingsScrollReachabilityScenarios) {
+  test(`settings mobile scroll reaches lower controls in ${scenario.language}`, async ({
+    page,
+  }) => {
+    const browserErrors = collectConsoleAndPageErrors(page);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await seedFreshSettingsLanguageAndAboutSeen(page, scenario.language);
+
+    await page.goto(scenario.path, { waitUntil: 'networkidle' });
+    await dismissBlockingModals(page);
+
+    await expect(page.getByRole('heading', { name: scenario.title })).toBeVisible();
+    const studyControls = page.getByLabel(scenario.studyControlsName);
+    await expect(studyControls).toBeVisible();
+    await expectWithinViewport(studyControls, `${scenario.language} study controls`);
+    if (scenario.focusCue) {
+      await expect(page.getByText(scenario.focusCue)).toBeVisible();
+    }
+    await expectNoDocumentHorizontalOverflow(page, `${scenario.language} settings top`);
+
+    const importHeading = page.getByRole('heading', { name: scenario.importHeading });
+    await importHeading.scrollIntoViewIfNeeded();
+    await expect(importHeading).toBeVisible();
+    await expect(page.getByLabel(scenario.importInputName)).toBeVisible();
+    await expect(page.getByRole('button', { name: scenario.previewImportName })).toBeVisible();
+    await expect(page.getByRole('button', { name: scenario.resetImportName })).toBeVisible();
+    await expectWithinViewport(importHeading, `${scenario.language} import heading`);
+    await expectNoDocumentHorizontalOverflow(page, `${scenario.language} settings import`);
+
+    const complianceHeading = page.getByRole('heading', { name: scenario.complianceHeading });
+    await complianceHeading.scrollIntoViewIfNeeded();
+    await expect(complianceHeading).toBeVisible();
+    const complianceLink = page.getByRole('link', { name: scenario.complianceLinkName });
+    await expect(complianceLink).toBeVisible();
+    await expectWithinViewport(complianceLink, `${scenario.language} compliance source link`);
+    await expectNoDocumentHorizontalOverflow(page, `${scenario.language} settings footer`);
+
+    expect(browserErrors.get()).toEqual([]);
+  });
 }
 
 test('settings renders separate accessibility persistence warning and settings persistence warning', async ({
