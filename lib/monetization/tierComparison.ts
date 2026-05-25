@@ -12,6 +12,21 @@ import type { ProTierEntitlements } from '../../types/monetization';
 
 export type TierColumnId = 'free' | 'adFree' | 'pro';
 
+const TIER_PRICE_COPY = {
+  free: {
+    sv: 'Gratis för alltid',
+    en: 'Free forever',
+  },
+  adFree: {
+    sv: '29 kr · engångsköp',
+    en: '29 SEK · one-time',
+  },
+  pro: {
+    sv: '59 kr · engångsköp',
+    en: '59 SEK · one-time',
+  },
+} as const satisfies Record<TierColumnId, { sv: string; en: string }>;
+
 export interface TierColumn {
   id: TierColumnId;
   // copy is intentionally short — column header, not body text
@@ -26,22 +41,22 @@ export const TIER_COLUMNS: readonly TierColumn[] = [
     id: 'free',
     labelSv: 'Gratis',
     labelEn: 'Free',
-    priceSv: 'Gratis för alltid',
-    priceEn: 'Free forever',
+    priceSv: TIER_PRICE_COPY.free.sv,
+    priceEn: TIER_PRICE_COPY.free.en,
   },
   {
     id: 'adFree',
     labelSv: 'Annonsfri',
     labelEn: 'Ad-Free',
-    priceSv: '29 kr · engångsköp',
-    priceEn: '29 SEK · one-time',
+    priceSv: TIER_PRICE_COPY.adFree.sv,
+    priceEn: TIER_PRICE_COPY.adFree.en,
   },
   {
     id: 'pro',
     labelSv: 'Pro',
     labelEn: 'Pro',
-    priceSv: '59 kr · engångsköp',
-    priceEn: '59 SEK · one-time',
+    priceSv: TIER_PRICE_COPY.pro.sv,
+    priceEn: TIER_PRICE_COPY.pro.en,
   },
 ];
 
@@ -165,6 +180,14 @@ export const TIER_ROWS: readonly TierRow[] = [
     free: CHECK,
     adFree: CHECK,
     pro: CHECK,
+  },
+  {
+    id: 'price',
+    labelSv: 'Pris',
+    labelEn: 'Price',
+    free: { kind: 'text', sv: TIER_PRICE_COPY.free.sv, en: TIER_PRICE_COPY.free.en },
+    adFree: { kind: 'text', sv: TIER_PRICE_COPY.adFree.sv, en: TIER_PRICE_COPY.adFree.en },
+    pro: { kind: 'text', sv: TIER_PRICE_COPY.pro.sv, en: TIER_PRICE_COPY.pro.en },
   },
 ];
 

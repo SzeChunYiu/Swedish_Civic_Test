@@ -792,6 +792,31 @@ test('tierComparison: three columns in canonical order', () => {
   assert.equal(columnsById.pro.priceEn, '59 SEK · one-time');
 });
 
+test('tierComparison: canonical price row closes the comparison table', () => {
+  const { TIER_COLUMNS, TIER_ROWS } = loadTs('lib/monetization/tierComparison.ts');
+  const columnsById = Object.fromEntries(TIER_COLUMNS.map((column) => [column.id, column]));
+  const priceRow = TIER_ROWS.at(-1);
+
+  assert.equal(priceRow.id, 'price');
+  assert.equal(priceRow.labelSv, 'Pris');
+  assert.equal(priceRow.labelEn, 'Price');
+  assert.deepEqual(priceRow.free, {
+    kind: 'text',
+    sv: columnsById.free.priceSv,
+    en: columnsById.free.priceEn,
+  });
+  assert.deepEqual(priceRow.adFree, {
+    kind: 'text',
+    sv: columnsById.adFree.priceSv,
+    en: columnsById.adFree.priceEn,
+  });
+  assert.deepEqual(priceRow.pro, {
+    kind: 'text',
+    sv: columnsById.pro.priceSv,
+    en: columnsById.pro.priceEn,
+  });
+});
+
 test('tierComparison: Swedish mock exam row uses övningsprov copy, not provexamina', () => {
   const { TIER_ROWS } = loadTs('lib/monetization/tierComparison.ts');
   const mockExamRow = TIER_ROWS.find((row) => row.id === 'mockExams');
@@ -879,7 +904,12 @@ test('ProPaywall: renders the canonical tier model with separate Pro and Remove 
     source,
     /Ta bort annonser för \$\{REMOVE_ADS_PRICE_LABEL\} finns kvar som en egen enklare annonsfri väg/,
   );
+  assert.match(source, /column\.id === 'pro'[\s\S]*styles\.proTierHeaderCell/);
+  assert.match(source, /column\.id === 'pro'[\s\S]*styles\.proTierCell/);
+  assert.match(source, /proTierCell:[\s\S]*color: themeColors\.accent/);
+  assert.match(source, /proTierHeaderCell:[\s\S]*themeColors\.badgeBlueBg/);
   assert.doesNotMatch(source, /29 kr|29 kronor/);
+  assert.doesNotMatch(source, /best value|bäst värde|limited time|begränsad tid/i);
   assert.match(source, /copy\.secondaryPathHint\(secondaryLabel, alreadyAdFree\)/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });

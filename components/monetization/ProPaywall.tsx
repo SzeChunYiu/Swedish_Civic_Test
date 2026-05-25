@@ -208,12 +208,24 @@ export function ProPaywall({
               accessibilityLabel={copy.priceAccessibilityLabel(column)}
               accessibilityRole="text"
               key={column.id}
-              style={styles.tierHeaderCell}
+              style={
+                column.id === 'pro'
+                  ? [styles.tierHeaderCell, styles.proTierHeaderCell]
+                  : styles.tierHeaderCell
+              }
             >
-              <Text style={styles.tierName}>
+              <Text
+                style={
+                  column.id === 'pro' ? [styles.tierName, styles.proTierName] : styles.tierName
+                }
+              >
                 {language === 'sv' ? column.labelSv : column.labelEn}
               </Text>
-              <Text style={styles.tierPrice}>
+              <Text
+                style={
+                  column.id === 'pro' ? [styles.tierPrice, styles.proTierPrice] : styles.tierPrice
+                }
+              >
                 {language === 'sv' ? column.priceSv : column.priceEn}
               </Text>
             </View>
@@ -243,7 +255,11 @@ export function ProPaywall({
                   }
                   accessibilityRole="text"
                   key={column.id}
-                  style={styles.tierCell}
+                  style={[
+                    styles.tierCell,
+                    column.id === 'pro' ? styles.proTierCell : null,
+                    row.id === 'price' ? styles.priceTierCell : null,
+                  ]}
                 >
                   {cellText}
                 </Text>
@@ -356,22 +372,43 @@ function createStyles(themeColors: ThemeColors) {
       flex: 1,
       gap: space[0.5],
     },
+    proTierHeaderCell: {
+      backgroundColor: themeColors.badgeBlueBg,
+      borderColor: themeColors.badgeBlueText,
+      borderRadius: radius.small,
+      borderWidth: space.hairline,
+      paddingHorizontal: space[0.75],
+      paddingVertical: space[0.5],
+    },
     tierName: {
       color: themeColors.text,
       fontSize: typography.finePrint.fontSize,
       fontWeight: typography.bodyBold.fontWeight,
       lineHeight: typography.finePrint.lineHeight,
     },
+    proTierName: {
+      color: themeColors.badgeBlueText,
+    },
     tierPrice: {
       color: themeColors.textMuted,
       fontSize: typography.micro.fontSize,
       lineHeight: typography.micro.lineHeight,
+    },
+    proTierPrice: {
+      color: themeColors.badgeBlueText,
     },
     tierCell: {
       color: themeColors.textSecondary,
       flex: 1,
       fontSize: typography.micro.fontSize,
       lineHeight: typography.micro.lineHeight,
+    },
+    proTierCell: {
+      color: themeColors.accent,
+      fontWeight: typography.bodyBold.fontWeight,
+    },
+    priceTierCell: {
+      fontWeight: typography.bodyBold.fontWeight,
     },
     actions: {
       flexDirection: 'row',
