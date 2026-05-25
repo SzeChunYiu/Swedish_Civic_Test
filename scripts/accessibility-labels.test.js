@@ -10,6 +10,7 @@ const HOME_ROUTE_SOURCE = path.join(ROOT, 'app', '(tabs)', 'home.tsx');
 const EXAM_ROUTE_SOURCE = path.join(ROOT, 'app', '(tabs)', 'exam.tsx');
 const PRACTICE_ROUTE_SOURCE = path.join(ROOT, 'app', '(tabs)', 'practice.tsx');
 const QUESTION_NAVIGATOR_SOURCE = path.join(ROOT, 'components', 'QuestionNavigator.tsx');
+const ROUTE_LINK_SOURCE = path.join(ROOT, 'components', 'ui', 'RouteLink.tsx');
 const TOP_BAR_ACTIONS_SOURCE = path.join(ROOT, 'components', 'ui', 'TopBarActions.tsx');
 
 function walk(dir) {
@@ -119,6 +120,43 @@ test('QuestionNavigator keeps interactive tabs and status-only dots distinct', (
   assert.match(source, /hitSlop=\{space\[1\]\}/);
   assert.match(source, /minHeight:\s*space\[6\]/);
   assert.match(source, /minWidth:\s*space\[6\]/);
+});
+
+test('RouteLink keeps web accessible names and delayed keyboard activation guarded', () => {
+  const source = fs.readFileSync(ROUTE_LINK_SOURCE, 'utf8');
+  const keyDownStart = source.indexOf('onKeyDown:');
+  const keyUpStart = source.indexOf('onKeyUp:');
+  const mouseDownStart = source.indexOf('onMouseDown:');
+
+  assert.notEqual(keyDownStart, -1, 'RouteLink should define an onKeyDown web handler');
+  assert.notEqual(keyUpStart, -1, 'RouteLink should define an onKeyUp web handler');
+  assert.notEqual(mouseDownStart, -1, 'RouteLink should define mouse handlers after key handlers');
+
+  const keyDownBlock = source.slice(keyDownStart, keyUpStart);
+  const keyUpBlock = source.slice(keyUpStart, mouseDownStart);
+
+  assert.match(source, /<Link\s/);
+  assert.doesNotMatch(source, /<Link[^>]*\basChild\b/);
+  assert.match(source, /aria-label=\{accessibilityLabel\}/);
+  assert.match(source, /accessibilityLabel=\{accessibilityLabel\}/);
+  assert.match(source, /accessibilityRole="link"/);
+  assert.match(source, /keyboardActivationKeys = new Set\(\['Enter', ' ', 'Space', 'Spacebar'\]\)/);
+  assert.match(source, /const reduceMotion = useReducedMotion\(\);/);
+  assert.match(source, /minHeight:\s*space\[6\]/);
+  assert.match(source, /transform: \[\{ scale: motion\.pressedScale \}\]/);
+  assert.match(source, /pressedReducedMotion: \{\s*backgroundColor: themeColors\.focusSoft,\s*\}/);
+
+  assert.match(keyDownBlock, /if \(isKeyboardActivationKey\(event\.key\)\)/);
+  assert.match(keyDownBlock, /setIsPressed\(true\);/);
+  assert.match(keyDownBlock, /event\.preventDefault\?\.\(\);/);
+  assert.match(keyDownBlock, /onKeyDown\?\.\(event\);/);
+  assert.doesNotMatch(keyDownBlock, /click\?\.\(\)/);
+
+  assert.match(keyUpBlock, /if \(isKeyboardActivationKey\(event\.key\)\)/);
+  assert.match(keyUpBlock, /setIsPressed\(false\);/);
+  assert.match(keyUpBlock, /event\.preventDefault\?\.\(\);/);
+  assert.match(keyUpBlock, /event\.currentTarget\?\.click\?\.\(\);/);
+  assert.match(keyUpBlock, /onKeyUp\?\.\(event\);/);
 });
 
 test('Home rewarded extra exam actions expose labels roles and state', () => {
