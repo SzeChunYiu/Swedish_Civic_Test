@@ -311,7 +311,7 @@ test('settings route remains scrollable on narrow mobile viewports', () => {
   );
   assert.match(
     source,
-    /<ScrollView style=\{styles\.container\} contentContainerStyle=\{styles\.content\}>/,
+    /<ScrollView[\s\S]*\bstyle=\{styles\.container\}[\s\S]*\bcontentContainerStyle=\{styles\.content\}[\s\S]*>/,
   );
   assert.match(source, /<\/ScrollView>/);
   assert.match(source, /content: \{\n\s+flexGrow: 1,/);
@@ -674,7 +674,10 @@ test('question card groups prompt and translation into an accessible summary', (
   assert.match(helperSource, /According to the UHR material/);
   assert.match(source, /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.question\}>/);
-  assert.match(source, /<Text style=\{styles\.sourceCitation\}>\{sourceCitation\}<\/Text>/);
+  assert.match(
+    source,
+    /<QuestionSourceCitation[\s\S]*accessibilityLabel=\{`\$\{copy\.sourceCitationLabel\}: \$\{sourceCitation\}`\}[\s\S]*question=\{question\}[\s\S]*style=\{styles\.sourceCitationSurface\}/,
+  );
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
@@ -1041,7 +1044,9 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   assert.match(source, /const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy>/);
   assert.match(source, /language = 'sv'/);
   assert.match(source, /const copy = premiumBannerCopy\[language\]/);
-  assert.match(source, /const statusMessage = getStatusMessage/);
+  assert.match(source, /const statusMessage =/);
+  assert.match(source, /getStatusMessage\(visibleStatus, copy\)/);
+  assert.match(source, /copy\.nativeUnavailableStatus/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(source, /accessibilityLabel=\{copy\.statusAccessibilityLabel\(statusMessage\)\}/);
   assert.match(source, /accessibilityLabel=\{copy\.buyAccessibilityLabel\(resolvedPriceLabel\)\}/);
