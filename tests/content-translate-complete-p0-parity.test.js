@@ -159,8 +159,55 @@ test('TRANSLATE-COMPLETE P0 has explicit SV/EN completeness and naturalness clos
     summary.questionRuleOfLawEnglishNaturalnessValidated,
     summary.publishedQuestions * 3,
   );
+  assert.equal(
+    summary.questionReligiousFreedomParallelismValidated,
+    summary.publishedQuestions * 2,
+  );
+  assert.equal(summary.questionReligiousFreedomParallelismTargetRowsValidated, 4);
   assert.equal(summary.somaliGeographyNaturalnessParityValidated, true);
   assert.equal(summary.somaliHolidayFoodNaturalnessParityValidated, true);
+});
+
+test('TRANSLATE-COMPLETE rejects nonparallel religious-freedom option wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+process.argv.push('--focus-translate-complete-p0');
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (
+    normalizedPath.endsWith('/data/additionalQuestions.ts') ||
+    normalizedPath.endsWith('/content/question-bank.csv') ||
+    normalizedPath.endsWith('/site/questions.js')
+  ) {
+    return String(contents)
+      .replace(
+        'Rätten att utöva sin religion och att skyddas mot diskriminering på grund av tro',
+        'Rätten att utöva sin religion och skydd mot diskriminering på grund av tro',
+      )
+      .replace(
+        'The right to practice one’s religion and to be protected from discrimination because of belief',
+        'The right to practice one’s religion and protection from discrimination because of belief',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q116 uses nonparallel religious-freedom option wording/,
+  );
 });
 
 test('TRANSLATE-COMPLETE rejects q080 suffrage explanation meta wording', () => {
