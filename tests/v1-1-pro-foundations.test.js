@@ -758,6 +758,55 @@ test('tierComparison: native-language explanation promise stays hidden until a r
   );
 });
 
+test('native-language explanation availability requires reviewed localized text', () => {
+  const {
+    getReviewedExplanationLocales,
+    getReviewedNativeExplanationLocales,
+    NATIVE_EXPLANATION_LOCALES,
+  } = loadTs('lib/content/explanationLanguageAvailability.ts');
+  const { QUESTION_LOCALIZATION_REVIEW_STATUS } = loadTs('data/questionLocalizations.ts');
+  const { questions } = loadTs('data/questions.ts');
+  const question = questions.find((candidate) => candidate.id === 'q001');
+
+  assert.ok(question, 'q001 exists in the published bank');
+  assert.ok(NATIVE_EXPLANATION_LOCALES.includes('ar'));
+  assert.deepEqual(getReviewedExplanationLocales(question), ['sv', 'en']);
+  assert.deepEqual(getReviewedNativeExplanationLocales(question), []);
+
+  const reviewedStatus = {
+    ...QUESTION_LOCALIZATION_REVIEW_STATUS,
+    q001: {
+      ...QUESTION_LOCALIZATION_REVIEW_STATUS.q001,
+      ar: {
+        status: 'native_reviewed',
+        nativeReviewStatus: 'reviewed',
+        source: 'question_localization_v8',
+        reviewer: 'native-review-fixture',
+        reviewedAt: '2026-05-23',
+      },
+      pl: {
+        status: 'machine_assisted',
+        nativeReviewStatus: 'reviewed',
+        source: 'question_localization_v8',
+      },
+    },
+  };
+
+  assert.deepEqual(getReviewedNativeExplanationLocales(question, reviewedStatus), ['ar']);
+
+  const missingArabicExplanation = {
+    ...question,
+    explanationText: {
+      ...question.explanationText,
+      ar: '',
+    },
+  };
+  assert.deepEqual(
+    getReviewedNativeExplanationLocales(missingArabicExplanation, reviewedStatus),
+    [],
+  );
+});
+
 test('tierComparison: Pro Lifetime includes ad-free study while Remove Ads stays non-Pro', () => {
   const tier = loadTs('lib/monetization/tierComparison.ts');
   const premium = loadTs('lib/monetization/premium.ts');

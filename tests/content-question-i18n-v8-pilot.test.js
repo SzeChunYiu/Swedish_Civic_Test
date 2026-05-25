@@ -1,6 +1,24 @@
 const assert = require('node:assert/strict');
 const { execFileSync } = require('node:child_process');
+const fs = require('node:fs');
+const path = require('node:path');
 const test = require('node:test');
+const ts = require('typescript');
+
+const repoRoot = path.resolve(__dirname, '..');
+
+require.extensions['.ts'] = function tsLoader(module, filename) {
+  const source = fs.readFileSync(filename, 'utf8');
+  const transpiled = ts.transpileModule(source, {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
+    fileName: filename,
+  }).outputText;
+  module._compile(transpiled, filename);
+};
+
+function loadTs(relativePath) {
+  return require(path.join(repoRoot, relativePath));
+}
 
 const {
   Q050_SOURCE_CRITICISM_NATURALNESS_IDS,
@@ -103,6 +121,44 @@ test('question localization v8 review metadata rejects missing or prematurely ap
   assert.ok(errors.includes('q001.review.ar.status must be machine_assisted before native review'));
   assert.ok(errors.includes('q001.review.ar.nativeReviewStatus must be pending_native_review'));
   assert.ok(errors.includes('q001.review.pl missing'));
+});
+
+test('question localization v8 explanation availability stays closed until native review', () => {
+  const { getReviewedExplanationLocales, getReviewedNativeExplanationLocales } = loadTs(
+    'lib/content/explanationLanguageAvailability.ts',
+  );
+  const { QUESTION_LOCALIZATION_REVIEW_STATUS } = loadTs('data/questionLocalizations.ts');
+  const { questions } = loadTs('data/questions.ts');
+  const question = questions.find((candidate) => candidate.id === 'q001');
+
+  assert.ok(question, 'q001 exists in the published bank');
+  assert.deepEqual(getReviewedExplanationLocales(question), ['sv', 'en']);
+  assert.deepEqual(getReviewedNativeExplanationLocales(question), []);
+
+  const reviewedStatus = {
+    ...QUESTION_LOCALIZATION_REVIEW_STATUS,
+    q001: {
+      ...QUESTION_LOCALIZATION_REVIEW_STATUS.q001,
+      ar: {
+        status: 'native_reviewed',
+        nativeReviewStatus: 'reviewed',
+        source: 'question_localization_v8',
+        reviewer: 'native-review-fixture',
+        reviewedAt: '2026-05-23',
+      },
+    },
+  };
+
+  assert.deepEqual(getReviewedNativeExplanationLocales(question, reviewedStatus), ['ar']);
+
+  const fallbackQuestion = {
+    ...question,
+    explanationText: {
+      ...question.explanationText,
+      ar: question.explanationText.en,
+    },
+  };
+  assert.deepEqual(getReviewedNativeExplanationLocales(fallbackQuestion, reviewedStatus), []);
 });
 
 test('question localization v8 rejects inconsistent true-false target labels', () => {
