@@ -484,6 +484,40 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('ad placement route parity rejects native practice interstitial platform unit drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/PracticeInterstitialAd.native.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        "getPlatformAdUnitId('quiz_completed_interstitial', Platform.OS)",
+        "getPlatformAdUnitId('quiz_completed_interstitial')",
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-ad-placement-route-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /PracticeInterstitialAd native placement must resolve the quiz_completed_interstitial unit by platform/,
+  );
+});
+
 test('ad placement route parity rejects PracticeInterstitialAd fallback status drift', () => {
   const result = spawnSync(
     process.execPath,
