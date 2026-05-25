@@ -11,6 +11,127 @@ function read(filePath) {
   return fs.readFileSync(path.join(repoRoot, filePath), 'utf8');
 }
 
+const STATIC_TOAST_SURFACE_FILES = Object.freeze([
+  'site/app.js',
+  'site/purchase.js',
+  'site/signin.js',
+  'site/extras.js',
+  'site/ebook-tools.js',
+]);
+
+const EXPECTED_STATIC_TOAST_CALLEE_COUNTS = Object.freeze({
+  'site/app.js': 1,
+  'site/purchase.js': 1,
+  'site/signin.js': 3,
+  'site/extras.js': 11,
+  'site/ebook-tools.js': 2,
+});
+
+const EXPECTED_STATIC_TOAST_CALL_SITES = Object.freeze([
+  'site/app.js:2784',
+  'site/purchase.js:65',
+  'site/signin.js:452',
+  'site/signin.js:510',
+  'site/signin.js:563',
+  'site/extras.js:673',
+  'site/extras.js:692',
+  'site/extras.js:700',
+  'site/extras.js:739',
+  'site/extras.js:747',
+  'site/extras.js:786',
+  'site/extras.js:792',
+  'site/extras.js:802',
+  'site/extras.js:808',
+  'site/extras.js:830',
+  'site/extras.js:909',
+  'site/ebook-tools.js:320',
+  'site/ebook-tools.js:388',
+]);
+
+const REVIEWED_TRUSTED_HTML_TOAST_ALLOWLIST = Object.freeze([]);
+
+function sourceLineNumberForIndex(source, index) {
+  return source.slice(0, index).split('\n').length;
+}
+
+function findMatchingParen(source, openParenIndex) {
+  let depth = 0;
+  let quote = null;
+  let templateExpressionDepth = 0;
+
+  for (let index = openParenIndex; index < source.length; index += 1) {
+    const char = source[index];
+    const previous = source[index - 1];
+
+    if (quote) {
+      if (char === '\\') {
+        index += 1;
+        continue;
+      }
+      if (quote === '`' && char === '$' && source[index + 1] === '{') {
+        templateExpressionDepth += 1;
+        index += 1;
+        continue;
+      }
+      if (quote === '`' && templateExpressionDepth > 0) {
+        if (char === '{') templateExpressionDepth += 1;
+        if (char === '}') templateExpressionDepth -= 1;
+        continue;
+      }
+      if (char === quote && previous !== '\\') quote = null;
+      continue;
+    }
+
+    if (char === '"' || char === "'" || char === '`') {
+      quote = char;
+      continue;
+    }
+
+    if (char === '(') depth += 1;
+    if (char === ')') {
+      depth -= 1;
+      if (depth === 0) return index;
+    }
+  }
+
+  return -1;
+}
+
+function collectStaticToastCalls(source, filePath) {
+  const calls = [];
+  const toastCallPattern = /(?:window\.)?(?:smtFx|fx)\.toast\s*\(/g;
+  let match;
+
+  while ((match = toastCallPattern.exec(source)) !== null) {
+    const openParenIndex = source.indexOf('(', match.index);
+    const closeParenIndex = findMatchingParen(source, openParenIndex);
+    assert.notEqual(closeParenIndex, -1, `unterminated static toast call in ${filePath}`);
+    const callSource = source.slice(match.index, closeParenIndex + 1);
+    calls.push({
+      callSource,
+      filePath,
+      hasTrustedHtml: /\btrustedHtml\s*:\s*true\b/.test(callSource),
+      line: sourceLineNumberForIndex(source, match.index),
+    });
+    toastCallPattern.lastIndex = closeParenIndex + 1;
+  }
+
+  return calls;
+}
+
+function collectAllStaticToastCalls(fileSourceOverrides = {}) {
+  return STATIC_TOAST_SURFACE_FILES.flatMap((filePath) =>
+    collectStaticToastCalls(fileSourceOverrides[filePath] ?? read(filePath), filePath),
+  );
+}
+
+function findUnreviewedTrustedHtmlToastCalls(calls) {
+  const allowlist = new Set(REVIEWED_TRUSTED_HTML_TOAST_ALLOWLIST);
+  return calls.filter(
+    (call) => call.hasTrustedHtml && !allowlist.has(`${call.filePath}:${call.line}`),
+  );
+}
+
 function createEbookToolsHarness() {
   const documentListeners = new Map();
   const windowListeners = new Map();
@@ -288,6 +409,44 @@ test('static toast helper keeps account and study messages text-safe by default'
   assert.match(fx, /t\.textContent\s*=\s*String\(msg \?\? ''\)/);
   assert.doesNotMatch(fx, /t\.innerHTML\s*=\s*msg/);
   assert.equal(calls.length, 18);
+});
+
+test('static toast call-site guard enumerates reviewed trusted HTML opt-ins', () => {
+  const calls = collectAllStaticToastCalls();
+  const callsByFile = Object.fromEntries(
+    STATIC_TOAST_SURFACE_FILES.map((filePath) => [filePath, 0]),
+  );
+  calls.forEach((call) => {
+    callsByFile[call.filePath] += 1;
+  });
+
+  assert.deepEqual(callsByFile, EXPECTED_STATIC_TOAST_CALLEE_COUNTS);
+  assert.deepEqual(
+    calls.map((call) => `${call.filePath}:${call.line}`),
+    EXPECTED_STATIC_TOAST_CALL_SITES,
+  );
+  assert.deepEqual(
+    findUnreviewedTrustedHtmlToastCalls(calls),
+    [],
+    'static toast trustedHtml opt-ins must be explicitly reviewed',
+  );
+});
+
+test('static toast call-site guard rejects unreviewed trusted HTML mutations', () => {
+  const purchase = read('site/purchase.js');
+  const mutatedPurchase = purchase.replace(
+    /window\.smtFx\.toast\(message,\s*\{\s*duration:\s*2600\s*\}\)/,
+    'window.smtFx.toast(message, { duration: 2600, trustedHtml: true })',
+  );
+  assert.notEqual(mutatedPurchase, purchase, 'purchase toast fixture should mutate');
+
+  const calls = collectAllStaticToastCalls({ 'site/purchase.js': mutatedPurchase });
+  const offenders = findUnreviewedTrustedHtmlToastCalls(calls);
+
+  assert.deepEqual(
+    offenders.map((call) => `${call.filePath}:${call.line}`),
+    ['site/purchase.js:65'],
+  );
 });
 
 test('ebook highlight and note controls expose localized accessible names', () => {
