@@ -684,6 +684,29 @@ test('Search route e2e covers manual Enter submit URL state', () => {
   );
 });
 
+test('Search route e2e covers direct quiz backlink q-before-query precedence', () => {
+  const source = readSearchQueryHydrationE2eSource();
+
+  assert.match(source, /direct quiz visits keep q before query precedence for Search backlinks/);
+  assert.match(source, /function expectDirectQuizBacklinkNavigation\(\{/);
+  assert.match(
+    source,
+    /expectedSearchQuery: 'riksdag'[\s\S]*?url: '\/quiz\/q001\?query=kommun&q=riksdag'/,
+  );
+  assert.match(source, /expectedSearchQuery: 'kommun'[\s\S]*?url: '\/quiz\/q001\?query=kommun'/);
+  assert.match(
+    source,
+    /toHaveAttribute\(\s*'href',\s*`\/search\?q=\$\{encodeURIComponent\(expectedSearchQuery\)\}`/,
+  );
+  assert.match(
+    source,
+    /new RegExp\(`\/search\\\\\?q=\$\{encodeURIComponent\(expectedSearchQuery\)\}\$`\)/,
+  );
+  assert.match(source, /await expectSearchState\(page, expectedSearchQuery, copy\)/);
+  assert.match(source, /direct quiz visits keep the search backlink query-free/);
+  assert.match(source, /direct quiz visits ignore malformed and overlong search backlink params/);
+});
+
 test('Search dark source-affordance e2e covers Swedish and English locale names', () => {
   const source = readThemeModeUtilityE2eSource();
 

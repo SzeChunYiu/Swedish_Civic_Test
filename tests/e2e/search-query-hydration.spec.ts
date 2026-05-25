@@ -225,6 +225,40 @@ async function expectQuestionResultNavigation({
   await expect(page.getByRole('link', { name: backSearchLinkName })).toHaveCount(0);
 }
 
+async function expectDirectQuizBacklinkNavigation({
+  backSearchLinkName,
+  copy,
+  expectedSearchQuery,
+  language,
+  page,
+  url,
+}: {
+  backSearchLinkName: RegExp;
+  copy: SearchStateCopy;
+  expectedSearchQuery: string;
+  language: 'sv' | 'en';
+  page: Page;
+  url: string;
+}) {
+  await seedSettingsLanguage(page, language);
+  await markAboutTheTestSeen(page);
+  await page.goto(url, { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  const backToSearchLink = page.getByRole('link', { name: backSearchLinkName }).first();
+  await expect(backToSearchLink).toBeVisible();
+  await expect(backToSearchLink).toHaveAttribute(
+    'href',
+    `/search?q=${encodeURIComponent(expectedSearchQuery)}`,
+  );
+
+  await backToSearchLink.click();
+  await expect(page).toHaveURL(
+    new RegExp(`/search\\?q=${encodeURIComponent(expectedSearchQuery)}$`),
+  );
+  await expectSearchState(page, expectedSearchQuery, copy);
+}
+
 test('search route hydrates q and query URL parameters before typing', async ({ page }) => {
   const consoleErrors: string[] = [];
 
@@ -583,6 +617,35 @@ test('direct quiz visits keep the search backlink query-free', async ({ page }) 
   await backToSearchLink.click();
   await expect(page).toHaveURL(/\/search$/);
   expectSearchUrlWithoutQueryParams(page);
+});
+
+test('direct quiz visits keep q before query precedence for Search backlinks', async ({ page }) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await expectDirectQuizBacklinkNavigation({
+    backSearchLinkName: /Sök efter övningsfrågor|Sök övningsfrågor/,
+    copy: searchStateCopy.sv,
+    expectedSearchQuery: 'riksdag',
+    language: 'sv',
+    page,
+    url: '/quiz/q001?query=kommun&q=riksdag',
+  });
+
+  await expectDirectQuizBacklinkNavigation({
+    backSearchLinkName: /Search for practice questions|Search questions/,
+    copy: searchStateCopy.en,
+    expectedSearchQuery: 'kommun',
+    language: 'en',
+    page,
+    url: '/quiz/q001?query=kommun',
+  });
+
+  expect(consoleErrors).toEqual([]);
 });
 
 test('direct quiz visits ignore malformed and overlong search backlink params', async ({
