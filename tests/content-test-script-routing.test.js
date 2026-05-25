@@ -2521,6 +2521,8 @@ test('question-bank CSV focus registry matches focused validator output', () => 
     'questionBankCsvUniqueHeaderNamesValidated',
     'questionBankCsvRowsValidated',
     'questionBankCsvProvenanceCounts',
+    'questionBankCsvSourceCitationRowsValidated',
+    'questionBankCsvSourceCitationParityValidated',
     'questionBankCsvUhrSourcePublisherRowsValidated',
     'questionBankCsvUhrSourcePublisherParityValidated',
   ]);
@@ -2561,6 +2563,8 @@ test('question-bank CSV focus registry matches focused validator output', () => 
   assert.equal(summary.questionBankCsvHeaderColumnsValidated, csvHeaderColumns.length);
   assert.equal(summary.questionBankCsvUniqueHeaderNamesValidated, true);
   assert.equal(summary.questionBankCsvRowsValidated, summary.publishedQuestions);
+  assert.equal(summary.questionBankCsvSourceCitationRowsValidated, summary.publishedQuestions);
+  assert.equal(summary.questionBankCsvSourceCitationParityValidated, true);
   assert.equal(summary.questionBankCsvUhrSourcePublisherRowsValidated, summary.publishedQuestions);
   assert.equal(summary.questionBankCsvUhrSourcePublisherParityValidated, true);
   assert.deepEqual(Object.keys(summary.questionBankCsvProvenanceCounts).sort(), [
