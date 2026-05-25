@@ -3,6 +3,12 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 
+const {
+  EXPECTED_AUTH_DEPENDENCIES,
+  EXPECTED_AUTH_PATHS,
+  validateAuthFoundationContract,
+} = require('../scripts/auth-foundation-contract');
+
 const repoRoot = path.resolve(__dirname, '..');
 
 function read(relativePath) {
@@ -12,6 +18,50 @@ function read(relativePath) {
 function readJson(relativePath) {
   return JSON.parse(read(relativePath));
 }
+
+function createContractReader(overrides = {}) {
+  return {
+    exists(relativePath) {
+      return Object.prototype.hasOwnProperty.call(overrides, relativePath)
+        ? overrides[relativePath] !== null
+        : fs.existsSync(path.join(repoRoot, relativePath));
+    },
+    readFile(relativePath) {
+      if (Object.prototype.hasOwnProperty.call(overrides, relativePath)) {
+        const value = overrides[relativePath];
+        if (value === null) throw new Error(`${relativePath} missing`);
+        return value;
+      }
+      return read(relativePath);
+    },
+    readJson(relativePath) {
+      return JSON.parse(this.readFile(relativePath));
+    },
+  };
+}
+
+function validateWithOverrides(overrides = {}) {
+  return validateAuthFoundationContract({
+    repoRoot,
+    reader: createContractReader(overrides),
+  });
+}
+
+test('optional auth foundation shared contract validates the current source', () => {
+  const result = validateWithOverrides();
+
+  assert.deepEqual(result.errors, []);
+  assert.equal(
+    result.summary.authFoundationDependencyRulesValidated,
+    EXPECTED_AUTH_DEPENDENCIES.length,
+  );
+  assert.equal(result.summary.authFoundationRouteFilesValidated, EXPECTED_AUTH_PATHS.length);
+  assert.equal(result.summary.authFoundationFailClosedRulesValidated, 8);
+  assert.equal(result.summary.authFoundationRootLayoutRulesValidated, 6);
+  assert.equal(result.summary.authFoundationAnonymousChoiceRulesValidated, 10);
+  assert.equal(result.summary.authFoundationAccountSeparationRulesValidated, 6);
+  assert.equal(result.summary.authFoundationParityValidated, true);
+});
 
 test('optional auth foundation dependencies and routes are present', () => {
   const packageJson = readJson('package.json');
@@ -103,4 +153,37 @@ test('account surface keeps local progress and purchase entitlements separate fr
   assert.match(accountSource, /useRemoveAdsEntitlements\(\{ skipPurchaseRuntime: true \}\)/);
   assert.doesNotMatch(accountSource, /from\('progress|from\("progress|upsert\(\{[\s\S]*progress/);
   assert.doesNotMatch(accountSource, /adsDisabled\s*=|proLifetime\s*=/);
+});
+
+test('optional auth foundation shared contract catches focused mutations', () => {
+  const packageJson = readJson('package.json');
+  delete packageJson.dependencies['@supabase/supabase-js'];
+  const missingDependency = validateWithOverrides({
+    'package.json': JSON.stringify(packageJson),
+  });
+  assert.equal(missingDependency.summary.authFoundationParityValidated, false);
+  assert.match(missingDependency.errors.join('\n'), /@supabase\/supabase-js dependency missing/);
+
+  const supabaseSource = read('lib/supabase.ts');
+  const supabaseOpenMutation = validateWithOverrides({
+    'lib/supabase.ts': supabaseSource.replaceAll('optional-auth-not-configured', 'auth-open'),
+  });
+  assert.equal(supabaseOpenMutation.summary.authFoundationParityValidated, false);
+  assert.match(supabaseOpenMutation.errors.join('\n'), /optional-auth-not-configured/);
+
+  const onboardingSource = read('app/onboarding.tsx');
+  const anonymousChoiceMutation = validateWithOverrides({
+    'app/onboarding.tsx': onboardingSource
+      .replace('Fortsätt utan konto', 'Skapa konto först')
+      .replace('Continue without an account', 'Create an account first'),
+  });
+  assert.equal(anonymousChoiceMutation.summary.authFoundationParityValidated, false);
+  assert.match(anonymousChoiceMutation.errors.join('\n'), /anonymous study choice/);
+
+  const accountSource = read('app/account.tsx');
+  const accountCouplingMutation = validateWithOverrides({
+    'app/account.tsx': `${accountSource}\nconst adsDisabled = true;\n`,
+  });
+  assert.equal(accountCouplingMutation.summary.authFoundationParityValidated, false);
+  assert.match(accountCouplingMutation.errors.join('\n'), /purchase entitlements/);
 });
