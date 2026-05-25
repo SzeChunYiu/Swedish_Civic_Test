@@ -10377,6 +10377,8 @@ let citizenshipTimelineDateParityValidated = false;
 let citizenshipTimelineReturnShapeKeysValidated = false;
 let citizenshipRequirementsCopyFieldsValidated = 0;
 let citizenshipRequirementsSourceAuthorityCopyParityValidated = false;
+let citizenshipRequirementsActionRouteLinkRulesValidated = 0;
+let citizenshipRequirementsActionRouteLinkParityValidated = false;
 let countdownBannerTimelineCopyParityValidated = false;
 let countdownBannerHomeMountRulesValidated = 0;
 let countdownBannerHomeMountParityValidated = false;
@@ -11169,6 +11171,16 @@ if (process.argv.includes('--focus-about-the-test-route-copy')) {
     aboutTheTestSeenEffectParityValidated,
     citizenshipRequirementsCopyFieldsValidated,
     citizenshipRequirementsSourceAuthorityCopyParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-citizenship-requirements-actions')) {
+  validateCitizenshipRequirementsActionRouteLinkParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    citizenshipRequirementsActionRouteLinkRulesValidated,
+    citizenshipRequirementsActionRouteLinkParityValidated,
   });
   process.exit(0);
 }
@@ -16412,6 +16424,96 @@ function validateMistakeReviewHydrationEvidence() {
   ) {
     mistakeReviewHydrationValidated = true;
   }
+}
+
+function validateCitizenshipRequirementsActionRouteLinkParity() {
+  let valid = true;
+  let routeSource = '';
+  let routeLinkSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  function check(condition, message) {
+    if (condition) {
+      citizenshipRequirementsActionRouteLinkRulesValidated += 1;
+    } else {
+      reject(message);
+    }
+  }
+
+  try {
+    routeSource = fs.readFileSync(path.join(repoRoot, 'app/citizenship-requirements.tsx'), 'utf8');
+  } catch (error) {
+    reject(`citizenship requirements route source could not be read: ${error.message}`);
+    return;
+  }
+
+  try {
+    routeLinkSource = fs.readFileSync(path.join(repoRoot, 'components/ui/RouteLink.tsx'), 'utf8');
+  } catch (error) {
+    reject(`RouteLink source could not be read: ${error.message}`);
+    return;
+  }
+
+  const actionsMatch = routeSource.match(
+    /<View style=\{styles\.actions\}>\s*([\s\S]*?)\s*<\/View>/,
+  );
+  const actionsSource = actionsMatch?.[1] || '';
+  const routeLinkCount = actionsSource.match(/<RouteLink\b/g)?.length || 0;
+
+  check(Boolean(actionsMatch), 'citizenship requirements action block must be present');
+  check(
+    routeLinkCount === 2,
+    'citizenship requirements bottom actions must render exactly two shared RouteLink actions',
+  );
+  check(
+    /href="\/practice"[\s\S]*variant="primary"[\s\S]*accessibilityLabel=\{copy\.openPracticeAccessibilityLabel\}/.test(
+      actionsSource,
+    ) ||
+      /accessibilityLabel=\{copy\.openPracticeAccessibilityLabel\}[\s\S]*href="\/practice"[\s\S]*variant="primary"/.test(
+        actionsSource,
+      ),
+    'citizenship requirements practice action must use RouteLink primary variant with localized accessibility label',
+  );
+  check(
+    /href="\/about-the-test"[\s\S]*variant="secondary"[\s\S]*accessibilityLabel=\{copy\.backAboutAccessibilityLabel\}/.test(
+      actionsSource,
+    ) ||
+      /accessibilityLabel=\{copy\.backAboutAccessibilityLabel\}[\s\S]*href="\/about-the-test"[\s\S]*variant="secondary"/.test(
+        actionsSource,
+      ),
+    'citizenship requirements About action must use RouteLink secondary variant with localized accessibility label',
+  );
+  check(
+    !/<Link\b/.test(actionsSource) && !/from 'expo-router'/.test(routeSource),
+    'citizenship requirements bottom actions must not use raw expo-router Link',
+  );
+  check(
+    !/styles\.(?:primaryLink|secondaryLink)/.test(routeSource) &&
+      !/\b(?:primaryLink|secondaryLink):\s*\{/.test(routeSource),
+    'citizenship requirements bottom actions must not keep direct Link style overrides',
+  );
+  check(
+    /base:\s*\{[\s\S]*minHeight:\s*space\[6\]/.test(routeLinkSource),
+    'RouteLink base style must keep the shared >=44px target minHeight inherited by action variants',
+  );
+  check(
+    /primaryInteractive:\s*\{[\s\S]*backgroundColor:\s*themeColors\.accentActive/.test(
+      routeLinkSource,
+    ) &&
+      /interactive:\s*\{[\s\S]*backgroundColor:\s*themeColors\.focusSoft/.test(routeLinkSource) &&
+      /pressed:\s*\{[\s\S]*backgroundColor:\s*themeColors\.focusSoft/.test(routeLinkSource) &&
+      /primaryPressed:\s*\{[\s\S]*backgroundColor:\s*themeColors\.accentActive/.test(
+        routeLinkSource,
+      ),
+    'RouteLink action variants must keep token-backed focus, hover, and pressed feedback',
+  );
+
+  citizenshipRequirementsActionRouteLinkParityValidated =
+    valid && citizenshipRequirementsActionRouteLinkRulesValidated === 8;
 }
 
 function validateMistakesRouteHeaderParity() {
@@ -27553,6 +27655,7 @@ validateHomeRouteSwedishMistakeReviewCopyNaturalness();
 validateHomeRouteCopyParity();
 validateAboutTheTestRouteCopyParity();
 validateCitizenshipRequirementsSourceAuthorityCopy();
+validateCitizenshipRequirementsActionRouteLinkParity();
 validateMistakesRouteHeaderParity();
 validateMistakesRouteCopyParity();
 validateMistakeReviewHydrationEvidence();
@@ -27745,6 +27848,8 @@ console.log(
       aboutTheTestOfficialSourceRetrievedDateValidated,
       aboutTheTestSourceAuthorityCopyPatternsValidated,
       aboutTheTestSourceAuthorityCopyParityValidated,
+      citizenshipRequirementsActionRouteLinkRulesValidated,
+      citizenshipRequirementsActionRouteLinkParityValidated,
       mistakesRouteHeadersValidated,
       mistakesRouteHeaderParityValidated,
       mistakesRouteCopyLabelsValidated,

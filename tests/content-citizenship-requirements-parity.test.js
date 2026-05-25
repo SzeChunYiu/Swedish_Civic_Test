@@ -1,4 +1,5 @@
 const assert = require('node:assert/strict');
+const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
@@ -84,6 +85,17 @@ function loadCitizenshipRequirementsStoreWithStorage(storage) {
     storage,
     store: storeModule.useCitizenshipRequirementsChecklistStore,
   };
+}
+
+function runFocusedCitizenshipRequirementsActionsValidation() {
+  return spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-citizenship-requirements-actions'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
 }
 
 function extractNamedStyle(source, styleName) {
@@ -294,6 +306,7 @@ test('citizenship requirements screen renders interactive sourced checklist with
 
 test('citizenship requirements cards surface precise source titles and currentness metadata', () => {
   const routeSource = read('app/citizenship-requirements.tsx');
+  const routeLinkSource = read('components/ui/RouteLink.tsx');
   const sourceHrefCount = (routeSource.match(/href=\{source\.url\}/g) || []).length;
   const sourceRefRowStyle = extractNamedStyle(routeSource, 'sourceRefRow');
   const sourceRefRowFocusedStyle = extractNamedStyle(routeSource, 'sourceRefRowFocused');
@@ -319,7 +332,7 @@ test('citizenship requirements cards surface precise source titles and currentne
     routeSource,
     /focusedSourceRow === sourceFocusKey \? styles\.sourceRowFocused : null/,
   );
-  assert.match(routeSource, /accessibilityRole="link"/);
+  assert.match(routeLinkSource, /accessibilityRole="link"/);
   assert.match(routeSource, /rel="noreferrer"/);
   assert.match(routeSource, /target="_blank"/);
   assert.match(sourceRefRowStyle, /minHeight: space\[6\]/);
@@ -373,6 +386,43 @@ test('citizenship requirements route is discoverable from about-the-test copy', 
   assert.match(aboutSource, /Se kravguiden/);
   assert.match(aboutSource, /View requirements guide/);
   assert.match(aboutSource, /accessibilityLabel=\{copy\.openRequirementsAccessibilityLabel\}/);
+});
+
+test('citizenship requirements bottom actions use shared RouteLink variants', () => {
+  const result = runFocusedCitizenshipRequirementsActionsValidation();
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused citizenship requirements action validation should print JSON');
+  const summary = JSON.parse(match[0]);
+  assert.equal(summary.citizenshipRequirementsActionRouteLinkRulesValidated, 8);
+  assert.equal(summary.citizenshipRequirementsActionRouteLinkParityValidated, true);
+
+  const routeSource = read('app/citizenship-requirements.tsx');
+  const routeLinkSource = read('components/ui/RouteLink.tsx');
+  const actionsMatch = routeSource.match(
+    /<View style=\{styles\.actions\}>\s*([\s\S]*?)\s*<\/View>/,
+  );
+  assert.ok(actionsMatch, 'bottom action block should exist');
+
+  const actionsSource = actionsMatch[1];
+  assert.equal(actionsSource.match(/<RouteLink\b/g)?.length, 2);
+  assert.match(
+    actionsSource,
+    /accessibilityLabel=\{copy\.openPracticeAccessibilityLabel\}[\s\S]*href="\/practice"[\s\S]*variant="primary"/,
+  );
+  assert.match(
+    actionsSource,
+    /accessibilityLabel=\{copy\.backAboutAccessibilityLabel\}[\s\S]*href="\/about-the-test"[\s\S]*variant="secondary"/,
+  );
+  assert.doesNotMatch(actionsSource, /<Link\b/);
+  assert.doesNotMatch(routeSource, /from 'expo-router'/);
+  assert.doesNotMatch(routeSource, /styles\.(?:primaryLink|secondaryLink)/);
+  assert.doesNotMatch(routeSource, /\b(?:primaryLink|secondaryLink):\s*\{/);
+  assert.match(routeLinkSource, /base:\s*\{[\s\S]*minHeight:\s*space\[6\]/);
+  assert.match(routeLinkSource, /primaryInteractive:\s*\{[\s\S]*themeColors\.accentActive/);
+  assert.match(routeLinkSource, /interactive:\s*\{[\s\S]*themeColors\.focusSoft/);
+  assert.match(routeLinkSource, /pressed:\s*\{[\s\S]*themeColors\.focusSoft/);
+  assert.match(routeLinkSource, /primaryPressed:\s*\{[\s\S]*themeColors\.accentActive/);
 });
 
 test('citizenship requirements checklist reads valid primary state before legacy state', () => {

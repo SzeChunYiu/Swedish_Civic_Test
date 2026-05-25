@@ -353,6 +353,58 @@ test('npm test keeps selector routing in the project dispatcher', () => {
   );
 });
 
+test('citizenship requirements action RouteLink focus uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const citizenshipRequirementsTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-citizenship-requirements-parity.test.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('citizenshipRequirementsActions');
+
+  assert.ok(registryEntry, 'citizenship requirements action focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-citizenship-requirements-actions']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'citizenshipRequirementsActionRouteLinkRulesValidated',
+    'citizenshipRequirementsActionRouteLinkParityValidated',
+  ]);
+  assert.match(validatorSource, /--focus-citizenship-requirements-actions/);
+  assert.match(
+    validatorSource,
+    /validateCitizenshipRequirementsActionRouteLinkParity\(\);[\s\S]*citizenshipRequirementsActionRouteLinkRulesValidated[\s\S]*citizenshipRequirementsActionRouteLinkParityValidated/,
+  );
+  assert.match(citizenshipRequirementsTestSource, /--focus-citizenship-requirements-actions/);
+
+  const summary = assertFocusedValidationSummary('--focus-citizenship-requirements-actions', [
+    'citizenshipRequirementsActionRouteLinkRulesValidated',
+    'citizenshipRequirementsActionRouteLinkParityValidated',
+  ]);
+  assert.equal(summary.citizenshipRequirementsActionRouteLinkRulesValidated, 8);
+  assert.equal(summary.citizenshipRequirementsActionRouteLinkParityValidated, true);
+
+  const result = runFocusedValidatorMutation({
+    focusFlag: '--focus-citizenship-requirements-actions',
+    targetFile: 'app/citizenship-requirements.tsx',
+    mutateSource: function mutateCitizenshipRequirementsActions(source) {
+      return source
+        .replace(
+          /<RouteLink([\s\S]*?href="\/practice"[\s\S]*?variant="primary"[\s\S]*?)>/,
+          '<Link$1 style={styles.primaryLink}>',
+        )
+        .replace('</RouteLink>', '</Link>');
+    },
+  });
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.equal(result.status, 1, output);
+  assert.match(
+    output,
+    /bottom actions must not use raw expo-router Link|practice action must use RouteLink primary variant|bottom actions must not keep direct Link style overrides/,
+  );
+  assert.doesNotMatch(output, /questionSchemasValidated/);
+});
+
 test('QuestionCard accessibility parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
@@ -692,7 +744,7 @@ test('QuestionSourceCitation accessibility parity uses focused content validatio
     'questionSourceCitationAccessibilityParityValidated',
   ]);
 
-  assert.equal(summary.questionSourceCitationAccessibilityRulesValidated, 15);
+  assert.equal(summary.questionSourceCitationAccessibilityRulesValidated, 23);
   assert.equal(summary.questionSourceCitationAccessibilityParityValidated, true);
 });
 
