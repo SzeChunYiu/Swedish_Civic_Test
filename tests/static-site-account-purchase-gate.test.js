@@ -158,6 +158,127 @@ function createStaticFxHarness() {
   return { elementsById, sandbox, timeouts };
 }
 
+function loadExtraI18n() {
+  const sandbox = { window: {} };
+  vm.createContext(sandbox);
+  vm.runInContext(read('site/i18n-extras.js'), sandbox, { timeout: 3000 });
+  return sandbox.window.__i18n_extra;
+}
+
+function createPurchaseHarness(locale = 'so') {
+  const extra = loadExtraI18n();
+  const listeners = new Map();
+  const storageValues = new Map([
+    ['smt_lang', locale],
+    ['smt_signed_in', '1'],
+    ['smt_account_id', 'acct-extra-locale'],
+    ['smt_account_email', 'learner@example.test'],
+  ]);
+  const statusElement = { textContent: '' };
+  const button = {
+    dataset: {
+      purchaseKind: 'remove_ads',
+      purchaseOwned: 'false',
+    },
+    disabled: false,
+    removeAttribute() {},
+    closest(selector) {
+      return selector === '[data-purchase-kind]' ? button : null;
+    },
+  };
+  const toasts = [];
+  const context = {
+    console: { warn() {} },
+    document: {
+      addEventListener(type, listener) {
+        listeners.set(type, listener);
+      },
+      getElementById(id) {
+        return id === 'purchase-status' ? statusElement : null;
+      },
+      querySelectorAll(selector) {
+        return selector === '[data-purchase-kind]' ? [button] : [];
+      },
+      title: 'Almost Swedish',
+    },
+    fetch: async () => ({
+      ok: false,
+      status: 400,
+      json: async () => ({
+        code: 'PGRST205',
+        message: 'Could not find the table public.purchase_intents in the schema cache',
+      }),
+    }),
+    localStorage: {
+      getItem(key) {
+        return storageValues.get(key) || null;
+      },
+      setItem(key, value) {
+        storageValues.set(key, String(value));
+      },
+    },
+    URL,
+    URLSearchParams,
+    window: {
+      i18n: {
+        en: {
+          'purchase.status.backendMissing':
+            'Purchase setup is not finished yet: the purchase-intent table is missing in Supabase.',
+          'purchase.status.error': 'Purchase could not start. Please sign in again and retry.',
+          'purchase.status.preparing': 'Preparing your account-bound Google Play handoff…',
+        },
+        [locale]: extra[locale],
+      },
+      SMT_SUPABASE_URL: 'https://supabase.example',
+      SMT_SUPABASE_ANON_KEY: 'anon-key',
+      addEventListener(type, listener) {
+        listeners.set(type, listener);
+      },
+      location: {
+        href: 'https://almostswedish.se/#/',
+        search: '',
+      },
+      localStorage: {
+        getItem(key) {
+          return storageValues.get(key) || null;
+        },
+        setItem(key, value) {
+          storageValues.set(key, String(value));
+        },
+      },
+      smtFx: {
+        toast(message) {
+          toasts.push(message);
+        },
+      },
+      smtGetSupabaseClient: async () => ({
+        auth: {
+          getSession: async () => ({ data: { session: { access_token: 'token' } } }),
+        },
+        from: () => ({
+          select: () => ({
+            eq: async () => ({ data: [], error: null }),
+          }),
+        }),
+      }),
+      smtIsSignedIn: () => true,
+    },
+  };
+  context.globalThis = context;
+  context.window.window = context.window;
+  context.window.document = context.document;
+
+  vm.runInNewContext(read('site/purchase.js'), context, { filename: 'site/purchase.js' });
+
+  return { button, context, listeners, statusElement, toasts };
+}
+
+async function flushPurchasePromises() {
+  await new Promise((resolve) => setImmediate(resolve));
+  await new Promise((resolve) => setImmediate(resolve));
+  await new Promise((resolve) => setImmediate(resolve));
+}
+
 test('static toast helper renders public messages as text by default', () => {
   const fxSource = read('site/fx.js');
   const { elementsById, sandbox, timeouts } = createStaticFxHarness();
@@ -205,6 +326,32 @@ test('purchase handoff binds the selected plan to the signed-in Supabase account
   assert.match(purchase, /body:\s*JSON\.stringify\(\{\s*plan\s*\}\)/);
   assert.match(purchase, /Stripe Checkout Session/);
   assert.match(purchase, /client\.from\('entitlements'\)\.select\('plan'\)\.eq\('active', true\)/);
+});
+
+test('purchase handoff localizes Supabase PGRST205 backend-missing status in an extra locale', async () => {
+  const purchase = read('site/purchase.js');
+  const { button, listeners, statusElement, toasts } = createPurchaseHarness('so');
+
+  assert.match(purchase, /isPurchaseBackendMissing/);
+  assert.match(purchase, /PGRST205/);
+  assert.match(purchase, /purchase\.status\.backendMissing/);
+
+  listeners.get('click')({
+    target: button,
+    preventDefault() {},
+  });
+  await flushPurchasePromises();
+
+  assert.equal(
+    statusElement.textContent,
+    'Dejinta iibsigu weli ma dhammaan: jadwalka ujeeddada iibsiga ayaa ka maqan Supabase.',
+  );
+  assert.equal(button.disabled, false);
+  assert.equal(toasts.at(-1), statusElement.textContent);
+  assert.doesNotMatch(
+    statusElement.textContent,
+    /Purchase setup|purchase-intent table|Online purchases/i,
+  );
 });
 
 test('sign-in session persistence exposes stable account identity for purchases', () => {
