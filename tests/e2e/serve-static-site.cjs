@@ -14,6 +14,21 @@ const contentTypeByExt = {
   '.png': 'image/png',
 };
 
+function decodePathname(pathname) {
+  try {
+    return decodeURIComponent(pathname);
+  } catch {
+    return pathname;
+  }
+}
+
+function hasPathTraversal(pathname) {
+  return decodePathname(pathname)
+    .replace(/\\/g, '/')
+    .split('/')
+    .some((segment) => segment === '..');
+}
+
 function assertStaticSiteReady(siteRoot = root) {
   if (!fs.existsSync(path.join(siteRoot, 'index.html'))) {
     throw new Error('site/index.html is missing.');
@@ -38,12 +53,21 @@ function sendFile(res, filePath) {
 }
 
 function createRequestHandler({ siteRoot = root, listenPort = port } = {}) {
+  const resolvedSiteRoot = path.resolve(siteRoot);
+
   return (req, res) => {
+    const rawPathname = (req.url || '/').split(/[?#]/, 1)[0] || '/';
+    if (hasPathTraversal(rawPathname)) {
+      res.writeHead(403);
+      res.end('Forbidden');
+      return;
+    }
+
     const url = new URL(req.url || '/', `http://127.0.0.1:${listenPort}`);
     const relativePath = url.pathname === '/' ? 'index.html' : url.pathname.replace(/^\/+/, '');
-    const requested = path.resolve(siteRoot, relativePath);
+    const requested = path.resolve(resolvedSiteRoot, relativePath);
 
-    if (!requested.startsWith(`${siteRoot}${path.sep}`) && requested !== siteRoot) {
+    if (!requested.startsWith(`${resolvedSiteRoot}${path.sep}`) && requested !== resolvedSiteRoot) {
       res.writeHead(403);
       res.end('Forbidden');
       return;
@@ -54,7 +78,7 @@ function createRequestHandler({ siteRoot = root, listenPort = port } = {}) {
       return;
     }
 
-    sendFile(res, path.join(siteRoot, 'index.html'));
+    sendFile(res, path.join(resolvedSiteRoot, 'index.html'));
   };
 }
 
