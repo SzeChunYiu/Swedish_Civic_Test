@@ -2362,6 +2362,78 @@ test('monetization selector runs only the focused monetization suite', () => {
   }
 });
 
+test('monetization runner preflights dependencies before spawning test files', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'monetization-runner-preflight-'));
+  const fixtureScripts = path.join(tmpDir, 'scripts');
+  fs.mkdirSync(fixtureScripts, { recursive: true });
+  fs.copyFileSync(
+    path.join(repoRoot, 'scripts/run-monetization-tests.js'),
+    path.join(fixtureScripts, 'run-monetization-tests.js'),
+  );
+
+  try {
+    const result = spawnSync(process.execPath, ['scripts/run-monetization-tests.js'], {
+      cwd: tmpDir,
+      encoding: 'utf8',
+      env: {
+        ...process.env,
+        NODE_PATH: '',
+        TEST_DISPATCH_LOG: path.join(tmpDir, 'node.log'),
+        TEST_MONETIZATION_RUNNER_REPO_ROOT: tmpDir,
+        TEST_MONETIZATION_RUNNER_NODE: createFakeNode(tmpDir),
+        TEST_MONETIZATION_RUNNER_CAPTURE: '1',
+      },
+    });
+
+    assert.equal(result.status, 1);
+    assert.match(
+      result.stderr,
+      /Install dependencies with npm ci before running monetization tests/,
+    );
+    assert.match(result.stderr, /Missing dependency: typescript/);
+    assert.equal(
+      fs.existsSync(path.join(tmpDir, 'node.log')),
+      false,
+      'runner must fail before spawning monetization files',
+    );
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('monetization runner forwards Node test options before monetization file list', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'monetization-runner-args-'));
+  const nodeLog = path.join(tmpDir, 'node.log');
+  const env = {
+    ...process.env,
+    TEST_MONETIZATION_RUNNER_CAPTURE: '1',
+    TEST_DISPATCH_LOG: nodeLog,
+    TEST_MONETIZATION_RUNNER_NODE: createFakeNode(tmpDir),
+  };
+
+  try {
+    const result = runPackageScript(
+      'test:monetization',
+      ['--test-name-pattern', 'storage harness'],
+      env,
+    );
+
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+    assert.deepEqual(fs.readFileSync(nodeLog, 'utf8').trim().split('\n'), [
+      '--test',
+      '--test-name-pattern',
+      'storage harness',
+      'scripts/monetization.test.js',
+      'tests/remove-ads-web-e2e-mock-runtime.test.js',
+    ]);
+
+    const pkg = readPackageJson();
+    assert.equal(pkg.scripts['test:monetization'], 'node scripts/run-monetization-tests.js');
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
 test('correct-display-position selector runs the P0 answer shuffle acceptance script', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-shuffle-routing-'));
   const npmLog = path.join(tmpDir, 'npm.log');
