@@ -8,12 +8,21 @@ import { trapExternalRequests } from './staticSiteNetworkGuards';
 
 test.use({ serviceWorkers: 'block' });
 
+const expectedAdSenseExternalHosts = ['pagead2.googlesyndication.com'] as const;
+
 async function seedStaticNetworkRun(page: Page) {
   await page.addInitScript(() => {
     localStorage.removeItem('smt_consent');
     localStorage.setItem('smt_buddy_hidden', '1');
     sessionStorage.setItem('smt_buddy_greeted', '1');
   });
+}
+
+function expectNoUnexpectedExternalRequests(unexpectedExternalRequests: string[]) {
+  expect(
+    unexpectedExternalRequests,
+    'static network checks should not hide blocked third-party requests',
+  ).toEqual([]);
 }
 
 let staticSite: StaticSite;
@@ -30,24 +39,34 @@ test('static site first load and necessary-only consent do not request Google Fo
   page,
 }) => {
   const googleFontRequests: string[] = [];
+  const unexpectedExternalRequests: string[] = [];
   await seedStaticNetworkRun(page);
-  await trapExternalRequests(page, new URL(staticSite.baseUrl).origin, googleFontRequests);
+  await trapExternalRequests(page, new URL(staticSite.baseUrl).origin, {
+    capturedGoogleFontRequests: googleFontRequests,
+    expectedExternalHosts: expectedAdSenseExternalHosts,
+    unexpectedExternalRequests,
+  });
 
   await page.goto(staticSite.baseUrl, { waitUntil: 'domcontentloaded' });
   await expect(page.locator('#consent')).toBeVisible();
   expect(googleFontRequests).toEqual([]);
+  expectNoUnexpectedExternalRequests(unexpectedExternalRequests);
 
   await page.locator('#consent-min').click();
   await page.waitForTimeout(250);
   expect(googleFontRequests).toEqual([]);
+  expectNoUnexpectedExternalRequests(unexpectedExternalRequests);
 });
 
 test('static site lazy-loads the question bank only on study-data routes', async ({ browser }) => {
   const quietPage = await browser.newPage();
   const quietQuestionBankRequests: string[] = [];
+  const quietUnexpectedExternalRequests: string[] = [];
   try {
     await seedStaticNetworkRun(quietPage);
-    await trapExternalRequests(quietPage, new URL(staticSite.baseUrl).origin, []);
+    await trapExternalRequests(quietPage, new URL(staticSite.baseUrl).origin, {
+      unexpectedExternalRequests: quietUnexpectedExternalRequests,
+    });
     quietPage.on('request', (request) => {
       if (new URL(request.url()).pathname.endsWith('/questions.js')) {
         quietQuestionBankRequests.push(request.url());
@@ -60,6 +79,7 @@ test('static site lazy-loads the question bank only on study-data routes', async
     }
 
     expect(quietQuestionBankRequests).toEqual([]);
+    expectNoUnexpectedExternalRequests(quietUnexpectedExternalRequests);
   } finally {
     await quietPage.close();
   }
@@ -67,9 +87,12 @@ test('static site lazy-loads the question bank only on study-data routes', async
   for (const hash of ['#/practice', '#/mock', '#/sources', '#/dashboard']) {
     const page = await browser.newPage();
     const questionBankRequests: string[] = [];
+    const unexpectedExternalRequests: string[] = [];
     try {
       await seedStaticNetworkRun(page);
-      await trapExternalRequests(page, new URL(staticSite.baseUrl).origin, []);
+      await trapExternalRequests(page, new URL(staticSite.baseUrl).origin, {
+        unexpectedExternalRequests,
+      });
       page.on('request', (request) => {
         if (new URL(request.url()).pathname.endsWith('/questions.js')) {
           questionBankRequests.push(request.url());
@@ -82,6 +105,7 @@ test('static site lazy-loads the question bank only on study-data routes', async
       );
 
       expect(questionBankRequests.length, `${hash} should request questions.js`).toBeGreaterThan(0);
+      expectNoUnexpectedExternalRequests(unexpectedExternalRequests);
     } finally {
       await page.close();
     }
@@ -167,8 +191,11 @@ test('static system font fallback keeps primary routes inside mobile and desktop
   page,
 }) => {
   const routeHashes = ['#/', '#/practice', '#/mock', '#/ebook', '#/privacy', '#/support'];
+  const unexpectedExternalRequests: string[] = [];
   await seedStaticNetworkRun(page);
-  await trapExternalRequests(page, new URL(staticSite.baseUrl).origin, []);
+  await trapExternalRequests(page, new URL(staticSite.baseUrl).origin, {
+    unexpectedExternalRequests,
+  });
 
   for (const viewport of [
     { height: 844, width: 390 },
@@ -185,4 +212,5 @@ test('static system font fallback keeps primary routes inside mobile and desktop
       await expect(page.locator('main.is-active')).toBeVisible();
     }
   }
+  expectNoUnexpectedExternalRequests(unexpectedExternalRequests);
 });

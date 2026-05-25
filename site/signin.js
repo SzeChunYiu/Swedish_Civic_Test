@@ -310,8 +310,9 @@
   }
 
   // Lazy singleton Supabase client. The SDK is only fetched from the CDN when
-  // configured AND a provider/magic-link action is taken (or on load to pick
-  // up an existing session). Unconfigured visitors never touch the network.
+  // configured AND a provider/magic-link action is taken, a real stored
+  // session must be rechecked, or an OAuth redirect returns. Ordinary
+  // signed-out visitors never touch the auth CDN.
   let _clientPromise = null;
   function getClient() {
     if (!isConfigured()) return Promise.resolve(null);
@@ -405,6 +406,30 @@
     } catch {
       return false;
     }
+  }
+
+  function hasStoredRealAccountSession() {
+    try {
+      return (
+        localStorage.getItem('smt_signed_in') === '1' &&
+        localStorage.getItem('smt_account_id') !== 'local-demo'
+      );
+    } catch {
+      return false;
+    }
+  }
+
+  function hasSupabaseRedirectParams() {
+    const search = typeof location !== 'undefined' ? location.search || '' : '';
+    const hash = typeof location !== 'undefined' ? location.hash || '' : '';
+    const authHash = hash && !hash.startsWith('#/') ? hash.slice(1) : '';
+    const authParamPattern =
+      /(?:^|[?&#])(access_token|refresh_token|code|error|error_code|error_description|type)=/;
+    return authParamPattern.test(search) || authParamPattern.test(authHash);
+  }
+
+  function shouldLoadConfiguredClientOnBoot() {
+    return isConfigured() && (hasStoredRealAccountSession() || hasSupabaseRedirectParams());
   }
 
   function clearConfiguredLocalDemoSession() {
@@ -601,13 +626,13 @@
     }
   });
 
-  // On load: when configured, load the client (which registers
-  // onAuthStateChange) and read any existing session — this also captures the
-  // session created by an OAuth redirect-back. When unconfigured this is a
-  // no-op (getClient resolves null without touching the network).
+  // On load: read an existing real session only when local account state or an
+  // OAuth redirect proves that auth work is needed. Unconfigured or signed-out
+  // visits stay local-only and do not fetch the Supabase SDK.
   function initAuth() {
     if (!isConfigured()) return;
     clearConfiguredLocalDemoSession();
+    if (!shouldLoadConfiguredClientOnBoot()) return;
     getClient().then((client) => {
       if (!client) {
         applySession(null);
