@@ -340,3 +340,83 @@ test('mistake review store drops corrupt persisted selected-answer reviews', () 
     },
   });
 });
+
+test('mistake review store normalizes wrong-answer runtime input before persisting', () => {
+  const storage = createMemoryMMKV();
+  const { useMistakeReviewStore } = loadTsWithStorage(
+    repoRoot,
+    'lib/storage/mistakeReviewStore.ts',
+    {
+      'mistake-review': storage,
+    },
+  );
+
+  const invalidInputs = [
+    {
+      questionId: '',
+      selectedOptionTextEn: 'Wrong answer',
+      selectedOptionTextSv: 'Fel svar',
+    },
+    {
+      questionId: '   ',
+      selectedOptionTextEn: 'Wrong answer',
+      selectedOptionTextSv: 'Fel svar',
+    },
+    {
+      questionId: '__proto__',
+      selectedOptionTextEn: 'Wrong answer',
+      selectedOptionTextSv: 'Fel svar',
+    },
+    {
+      questionId: 'constructor',
+      selectedOptionTextEn: 'Wrong answer',
+      selectedOptionTextSv: 'Fel svar',
+    },
+    {
+      questionId: 'prototype',
+      selectedOptionTextEn: 'Wrong answer',
+      selectedOptionTextSv: 'Fel svar',
+    },
+    {
+      questionId: 'qBlankEn',
+      selectedOptionTextEn: '   ',
+      selectedOptionTextSv: 'Fel svar',
+    },
+    {
+      questionId: 'qBlankSv',
+      selectedOptionTextEn: 'Wrong answer',
+      selectedOptionTextSv: '   ',
+    },
+    {
+      questionId: 'qTooLong',
+      selectedOptionTextEn: 'x'.repeat(501),
+      selectedOptionTextSv: 'Fel svar',
+    },
+  ];
+
+  for (const input of invalidInputs) {
+    useMistakeReviewStore.getState().recordWrongAnswerReview(input);
+  }
+
+  assert.deepEqual(useMistakeReviewStore.getState().wrongAnswerReviews, {});
+  assert.equal(storage.getString('mistakeReviewState'), undefined);
+
+  useMistakeReviewStore.getState().recordWrongAnswerReview({
+    questionId: '  q001  ',
+    selectedOptionTextEn: '  Wrong answer  ',
+    selectedOptionTextSv: '  Fel svar  ',
+  });
+
+  const reviews = useMistakeReviewStore.getState().wrongAnswerReviews;
+  assert.deepEqual(Object.keys(reviews), ['q001']);
+  assert.equal(reviews.q001.questionId, 'q001');
+  assert.equal(reviews.q001.selectedOptionTextEn, 'Wrong answer');
+  assert.equal(reviews.q001.selectedOptionTextSv, 'Fel svar');
+  assert.match(reviews.q001.answeredAt, /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
+  assert.deepEqual(JSON.parse(storage.getString('mistakeReviewState')).wrongAnswerReviews.q001, {
+    answeredAt: reviews.q001.answeredAt,
+    questionId: 'q001',
+    selectedOptionTextEn: 'Wrong answer',
+    selectedOptionTextSv: 'Fel svar',
+  });
+});

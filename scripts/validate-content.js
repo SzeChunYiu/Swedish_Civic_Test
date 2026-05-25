@@ -10428,7 +10428,9 @@ let searchQuestionPunctuationParityValidated = false;
 let mistakesRouteCopyLabelsValidated = 0;
 let mistakesRouteCopyParityValidated = false;
 let mistakeReviewHydrationFixtureCasesValidated = 0;
+let mistakeReviewRuntimeInputCasesValidated = 0;
 let mistakeReviewHydrationTestContentParityValidated = false;
+let mistakeReviewRuntimeInputParityValidated = false;
 let mistakeReviewHydrationValidated = false;
 let settingsStoreFieldsValidated = 0;
 let settingsStoreSchemaParityValidated = false;
@@ -16532,6 +16534,7 @@ function validateAboutTheTestRouteCopyParity() {
 function validateMistakeReviewHydrationEvidence() {
   let valid = true;
   let testSource = '';
+  let storeSource = '';
   let packageSource = '';
 
   function reject(message) {
@@ -16553,6 +16556,13 @@ function validateMistakeReviewHydrationEvidence() {
     packageSource = fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8');
   } catch (error) {
     reject(`package.json could not be read for mistake review hydration wiring: ${error.message}`);
+    return;
+  }
+
+  try {
+    storeSource = fs.readFileSync(path.join(repoRoot, 'lib/storage/mistakeReviewStore.ts'), 'utf8');
+  } catch (error) {
+    reject(`mistake review store source could not be read: ${error.message}`);
     return;
   }
 
@@ -16588,6 +16598,65 @@ function validateMistakeReviewHydrationEvidence() {
     reject('mistake review hydration guard must assert hydrated wrongAnswerReviews state');
   }
 
+  if (
+    !testSource.includes(
+      'mistake review store normalizes wrong-answer runtime input before persisting',
+    )
+  ) {
+    reject('mistake review runtime input guard test is missing');
+  }
+
+  const runtimeFixtureKeys = [
+    "questionId: ''",
+    "questionId: '   '",
+    "questionId: '__proto__'",
+    "questionId: 'constructor'",
+    "questionId: 'prototype'",
+    "questionId: 'qBlankEn'",
+    "questionId: 'qBlankSv'",
+    "questionId: 'qTooLong'",
+  ];
+  runtimeFixtureKeys.forEach((fixtureKey) => {
+    if (testSource.includes(fixtureKey)) {
+      mistakeReviewRuntimeInputCasesValidated += 1;
+    } else {
+      reject(`mistake review runtime input fixture is missing ${fixtureKey}`);
+    }
+  });
+
+  if (!testSource.includes("assert.equal(storage.getString('mistakeReviewState'), undefined)")) {
+    reject('mistake review runtime input guard must assert invalid writes are not persisted');
+  }
+  if (!testSource.includes("questionId: '  q001  '")) {
+    reject('mistake review runtime input guard must exercise trimmed question ids');
+  }
+  if (!testSource.includes("selectedOptionTextEn: '  Wrong answer  '")) {
+    reject('mistake review runtime input guard must exercise trimmed English selected answer text');
+  }
+  if (!testSource.includes("selectedOptionTextSv: '  Fel svar  '")) {
+    reject('mistake review runtime input guard must exercise trimmed Swedish selected answer text');
+  }
+
+  if (
+    !/const safeQuestionId = normalizeQuestionId\(questionId\);[\s\S]*const safeSelectedOptionTextEn = normalizeSelectedAnswerText\(selectedOptionTextEn\);[\s\S]*const safeSelectedOptionTextSv = normalizeSelectedAnswerText\(selectedOptionTextSv\);/.test(
+      storeSource,
+    )
+  ) {
+    reject('recordWrongAnswerReview must normalize runtime question id and selected-answer text');
+  }
+  if (
+    !/!isSafeImportedMapKey\(safeQuestionId\)/.test(storeSource) ||
+    !/\[safeQuestionId\]: \{[\s\S]*questionId: safeQuestionId/.test(storeSource)
+  ) {
+    reject('recordWrongAnswerReview must reject unsafe keys and persist under the normalized id');
+  }
+  if (
+    !/selectedOptionTextEn: safeSelectedOptionTextEn/.test(storeSource) ||
+    !/selectedOptionTextSv: safeSelectedOptionTextSv/.test(storeSource)
+  ) {
+    reject('recordWrongAnswerReview must persist normalized selected-answer text');
+  }
+
   const testContentOccurrences = (
     packageSource.match(/tests\/content-mistakes-route-copy-parity\.test\.js/g) || []
   ).length;
@@ -16602,9 +16671,11 @@ function validateMistakeReviewHydrationEvidence() {
   if (
     valid &&
     mistakeReviewHydrationFixtureCasesValidated === corruptFixtureKeys.length &&
+    mistakeReviewRuntimeInputCasesValidated === runtimeFixtureKeys.length &&
     mistakeReviewHydrationTestContentParityValidated
   ) {
     mistakeReviewHydrationValidated = true;
+    mistakeReviewRuntimeInputParityValidated = true;
   }
 }
 
@@ -28367,7 +28438,9 @@ console.log(
       mistakesRouteCopyLabelsValidated,
       mistakesRouteCopyParityValidated,
       mistakeReviewHydrationFixtureCasesValidated,
+      mistakeReviewRuntimeInputCasesValidated,
       mistakeReviewHydrationTestContentParityValidated,
+      mistakeReviewRuntimeInputParityValidated,
       mistakeReviewHydrationValidated,
       legalRouteHeadersValidated,
       legalRouteHeaderParityValidated,
