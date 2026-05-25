@@ -378,6 +378,13 @@ test('Dashboard summary text is separate from interactive links, buttons, and sc
     chapterSource,
     /<Text accessibilityRole="summary" style=\{styles\.accessibilitySummary\}>\s*\{accessibilityLabel\}\s*<\/Text>/,
   );
+  assert.match(chapterSource, /function getSortKeyboardTarget\(/);
+  assert.match(chapterSource, /key === 'ArrowRight' \|\| key === 'ArrowDown'/);
+  assert.match(chapterSource, /key === 'ArrowLeft' \|\| key === 'ArrowUp'/);
+  assert.match(chapterSource, /key === 'Home'/);
+  assert.match(chapterSource, /key === 'End'/);
+  assert.match(chapterSource, /sortOptionRefs\.current\[nextMode\]\?\.focus\?\.\(\)/);
+  assert.match(chapterSource, /onKeyDown: handleSortKeyDown[\s\S]*tabIndex: selected \? 0 : -1/);
   assert.doesNotMatch(chapterSource, /<Card[\s\S]{0,120}accessibilityLabel=\{accessibilityLabel\}/);
 });
 

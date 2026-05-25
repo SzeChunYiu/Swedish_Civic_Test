@@ -1,6 +1,6 @@
 import { Link } from 'expo-router';
-import { useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useMemo, useRef, useState } from 'react';
+import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { ChapterProgressBar } from '../../lib/learning/dashboardStats';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
@@ -32,6 +32,17 @@ type PerChapterProgressBarsProps = {
   language: AppLanguage;
 };
 
+type FocusableElement = { focus?: () => void };
+type KeyboardEventLike = {
+  key?: string;
+  nativeEvent?: { key?: string };
+  preventDefault?: () => void;
+};
+type WebRadioKeyboardProps = {
+  onKeyDown?: (event: KeyboardEventLike) => void;
+  tabIndex?: 0 | -1;
+};
+
 function ratio(value: number | null): number {
   if (value === null || !Number.isFinite(value)) return 0;
   return Math.max(0, Math.min(1, value));
@@ -47,6 +58,22 @@ function chapterWeaknessScore(bar: ChapterProgressBar): number {
   return accuracyGap * 0.7 + coverageGap * 0.3;
 }
 
+function getSortKeyboardTarget(
+  event: KeyboardEventLike,
+  currentMode: ChapterSortMode,
+): ChapterSortMode | null {
+  const key = event.nativeEvent?.key ?? event.key;
+  if (key === 'ArrowRight' || key === 'ArrowDown') {
+    return currentMode === 'chapter' ? 'weakest' : 'chapter';
+  }
+  if (key === 'ArrowLeft' || key === 'ArrowUp') {
+    return currentMode === 'chapter' ? 'weakest' : 'chapter';
+  }
+  if (key === 'Home') return 'chapter';
+  if (key === 'End') return 'weakest';
+  return null;
+}
+
 export function PerChapterProgressBars({
   bars,
   chapters,
@@ -56,6 +83,10 @@ export function PerChapterProgressBars({
   const themeColors = useThemeColors();
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const [sortMode, setSortMode] = useState<ChapterSortMode>('chapter');
+  const sortOptionRefs = useRef<Record<ChapterSortMode, FocusableElement | null>>({
+    chapter: null,
+    weakest: null,
+  });
   const chapterById = useMemo(
     () => new Map(chapters.map((chapter) => [chapter.id, chapter])),
     [chapters],
@@ -66,6 +97,21 @@ export function PerChapterProgressBars({
   }, [bars, sortMode]);
   const answeredChapters = bars.filter((bar) => bar.answers > 0).length;
   const accessibilityLabel = `${copy.title}: ${answeredChapters} / ${chapters.length}`;
+  const handleSortKeyDown = (event: KeyboardEventLike) => {
+    const nextMode = getSortKeyboardTarget(event, sortMode);
+    if (!nextMode) return;
+
+    event.preventDefault?.();
+    setSortMode(nextMode);
+    sortOptionRefs.current[nextMode]?.focus?.();
+  };
+  const getWebSortKeyboardProps = (selected: boolean): WebRadioKeyboardProps =>
+    Platform.OS === 'web'
+      ? {
+          onKeyDown: handleSortKeyDown,
+          tabIndex: selected ? 0 : -1,
+        }
+      : {};
 
   return (
     <>
@@ -101,11 +147,15 @@ export function PerChapterProgressBars({
                 accessibilityState={{ checked: selected }}
                 hitSlop={space[0.5]}
                 onPress={() => setSortMode(mode)}
+                ref={(node) => {
+                  sortOptionRefs.current[mode] = node as FocusableElement | null;
+                }}
                 style={({ pressed }) => [
                   styles.sortButton,
                   selected ? styles.sortButtonSelected : null,
                   pressed ? styles.sortButtonPressed : null,
                 ]}
+                {...getWebSortKeyboardProps(selected)}
               >
                 <Text
                   style={[styles.sortButtonText, selected ? styles.sortButtonTextSelected : null]}
