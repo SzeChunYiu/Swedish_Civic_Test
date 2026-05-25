@@ -155,6 +155,10 @@ if (args[0] === 'content-focused') {
   runFocusedNodeTests(args.slice(1));
 }
 
+if (args[0] === '--test-name-pattern' || args[0]?.startsWith('--test-name-pattern=')) {
+  runFocusedNodeTests(args);
+}
+
 if (args.length !== 1 || !selectors.has(args[0])) {
   failUnsupported(args);
 }
