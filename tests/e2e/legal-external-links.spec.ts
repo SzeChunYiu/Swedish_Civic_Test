@@ -39,9 +39,12 @@ type SourcesAuthorityBoundaryFixture = {
   educationMaterialVisibleLabel: string;
   language: AppLanguage;
   neutralBodyText: string;
+  publisherLabel: string;
+  retrievedLabel: string;
   staleAuthorityPattern: RegExp;
   sectionTitle: string;
   title: string;
+  urlLabel: string;
   visibleLabel: string;
 };
 
@@ -257,9 +260,12 @@ const sourcesAuthorityBoundaryFixtures: SourcesAuthorityBoundaryFixture[] = [
     educationMaterialVisibleLabel: 'UHR: Utbildningsmaterial om det svenska samhället',
     language: 'sv',
     neutralBodyText: 'det här är oberoende övningsinnehåll',
+    publisherLabel: 'Utgivare',
+    retrievedLabel: 'Hämtad',
     staleAuthorityPattern: /UHR:s sida[^.?!]{0,120}säger/iu,
     sectionTitle: 'Myndighetsgräns',
     title: 'Källor',
+    urlLabel: 'URL',
     visibleLabel: 'UHR: Om medborgarskapsprovet',
   },
   {
@@ -268,9 +274,12 @@ const sourcesAuthorityBoundaryFixtures: SourcesAuthorityBoundaryFixture[] = [
     educationMaterialVisibleLabel: 'UHR: Study material about Swedish society',
     language: 'en',
     neutralBodyText: 'it is independent practice content',
+    publisherLabel: 'Publisher',
+    retrievedLabel: 'Retrieved',
     staleAuthorityPattern: /UHR(?:'s)?[^.?!]{0,120}page says/iu,
     sectionTitle: 'Authority boundaries',
     title: 'Sources',
+    urlLabel: 'URL',
     visibleLabel: 'UHR: About the citizenship test',
   },
 ];
@@ -641,6 +650,68 @@ for (const viewport of legalSourceMaterialViewports) {
         await expectKeyboardFocusVisible(link, fixture.actionLabel);
         await expectExternalLinksAreTouchSafe(page);
         await expectNoHorizontalOverflow(page);
+
+        expect(pageErrors).toEqual([]);
+      });
+    }
+  });
+}
+
+for (const viewport of legalSourceMaterialViewports) {
+  test.describe(`${viewport.label} sources authority-boundary link layout`, () => {
+    test.use({ viewport: viewport.size });
+
+    for (const fixture of sourcesAuthorityBoundaryFixtures) {
+      test(`/sources keeps ${fixture.language} authority-boundary source link text wrapped and focus-visible`, async ({
+        page,
+      }) => {
+        const pageErrors = collectPageErrors(page);
+        await stubExternalDestinations(page);
+        await seedCleanLanguage(page, fixture.language);
+
+        await page.goto('/sources', { waitUntil: 'networkidle' });
+        await dismissBlockingModals(page);
+
+        await expect(page.getByRole('heading', { name: fixture.title }).last()).toBeVisible();
+        await expect(
+          page.getByRole('heading', { name: fixture.sectionTitle }).last(),
+        ).toBeVisible();
+
+        const authorityBoundaryLink = page.getByRole('link', { name: fixture.actionLabel }).first();
+        await expect(authorityBoundaryLink).toBeVisible();
+
+        await expectLinkTextSegmentsStayInsideBox(authorityBoundaryLink, [
+          fixture.visibleLabel,
+          `${fixture.publisherLabel}: Universitets- och högskolerådet (UHR)`,
+          `${fixture.retrievedLabel}: ${SOURCE_MATERIAL_LINK_RETRIEVED_DATE}`,
+          `${fixture.urlLabel}: ${UHR_AUTHORITY_BOUNDARY_URL}`,
+        ]);
+        await expect(authorityBoundaryLink).not.toContainText(fixture.actionLabel);
+        await expect(authorityBoundaryLink).toHaveAttribute('href', UHR_AUTHORITY_BOUNDARY_URL);
+        await expect(authorityBoundaryLink).toHaveAttribute('target', '_blank');
+        await expect(authorityBoundaryLink).toHaveAttribute('rel', 'noreferrer');
+
+        const authorityBoundaryBox = await expectRenderedBox(
+          authorityBoundaryLink,
+          `/sources ${fixture.language} authority-boundary source link`,
+        );
+        expect(authorityBoundaryBox.width, `${fixture.actionLabel} width`).toBeGreaterThanOrEqual(
+          44,
+        );
+        expect(authorityBoundaryBox.height, `${fixture.actionLabel} height`).toBeGreaterThanOrEqual(
+          44,
+        );
+
+        await focusLinkWithKeyboard(page, authorityBoundaryLink, fixture.actionLabel);
+        await expectKeyboardFocusVisible(authorityBoundaryLink, fixture.actionLabel);
+        await expectExternalLinksAreTouchSafe(page);
+        await expectNoHorizontalOverflow(page);
+
+        const popupPromise = page.waitForEvent('popup');
+        await authorityBoundaryLink.click();
+        const popup = await popupPromise;
+        await expect.poll(() => popup.url()).toBe(UHR_AUTHORITY_BOUNDARY_URL);
+        await popup.close();
 
         expect(pageErrors).toEqual([]);
       });
