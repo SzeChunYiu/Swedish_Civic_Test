@@ -102,6 +102,19 @@ function createGrantedRuntime() {
   };
 }
 
+function createStudyReminderNotificationResponse({ identifier, route = '/practice' } = {}) {
+  return {
+    notification: {
+      request: {
+        ...(identifier ? { identifier } : {}),
+        content: {
+          data: { route, source: 'local-study-reminder' },
+        },
+      },
+    },
+  };
+}
+
 test('study reminder time sanitizer accepts only finite integer clock values', () => {
   const { formatStudyReminderTime, sanitizeStudyReminderTime } = loadTs(
     'lib/notifications/studyReminder.ts',
@@ -320,6 +333,129 @@ test('study reminder notification response listener navigates only validated rou
   assert.doesNotThrow(() =>
     registerStudyReminderNotificationResponseRouting(null, () => undefined)(),
   );
+});
+
+test('study reminder notification cold start rejection fails closed', async () => {
+  const { registerStudyReminderNotificationResponseRouting } = loadTs(
+    'lib/notifications/studyReminderRouting.ts',
+  );
+  const navigations = [];
+  const listeners = [];
+  let removeCount = 0;
+  const runtime = {
+    addNotificationResponseReceivedListener: (listener) => {
+      listeners.push(listener);
+      return {
+        remove: () => {
+          removeCount += 1;
+        },
+      };
+    },
+    getLastNotificationResponseAsync: async () => {
+      throw new Error('native notification response lookup failed');
+    },
+  };
+
+  const cleanup = registerStudyReminderNotificationResponseRouting(runtime, (route) => {
+    navigations.push(route);
+  });
+  await new Promise((resolve) => setImmediate(resolve));
+
+  assert.deepEqual(navigations, []);
+  assert.equal(listeners.length, 1);
+  listeners[0](createStudyReminderNotificationResponse({ identifier: 'listener-valid' }));
+  assert.deepEqual(navigations, ['/practice']);
+  cleanup();
+  assert.equal(removeCount, 1);
+});
+
+test('study reminder notification cold start ignores late responses after cleanup', async () => {
+  const { registerStudyReminderNotificationResponseRouting } = loadTs(
+    'lib/notifications/studyReminderRouting.ts',
+  );
+  const navigations = [];
+  let removeCount = 0;
+  let resolveColdStart;
+  const runtime = {
+    addNotificationResponseReceivedListener: () => ({
+      remove: () => {
+        removeCount += 1;
+      },
+    }),
+    getLastNotificationResponseAsync: () =>
+      new Promise((resolve) => {
+        resolveColdStart = resolve;
+      }),
+  };
+
+  const cleanup = registerStudyReminderNotificationResponseRouting(runtime, (route) => {
+    navigations.push(route);
+  });
+  cleanup();
+  resolveColdStart(createStudyReminderNotificationResponse({ identifier: 'late-cold-start' }));
+  await new Promise((resolve) => setImmediate(resolve));
+
+  assert.deepEqual(navigations, []);
+  assert.equal(removeCount, 1);
+});
+
+test('study reminder notification routing dedupes cold-start and listener responses by request id', async () => {
+  const { registerStudyReminderNotificationResponseRouting } = loadTs(
+    'lib/notifications/studyReminderRouting.ts',
+  );
+  const navigations = [];
+  const listeners = [];
+  let resolveColdStart;
+  const runtime = {
+    addNotificationResponseReceivedListener: (listener) => {
+      listeners.push(listener);
+      return { remove: () => undefined };
+    },
+    getLastNotificationResponseAsync: () =>
+      new Promise((resolve) => {
+        resolveColdStart = resolve;
+      }),
+  };
+
+  const cleanup = registerStudyReminderNotificationResponseRouting(runtime, (route) => {
+    navigations.push(route);
+  });
+
+  listeners[0](createStudyReminderNotificationResponse({ identifier: 'same-request-id' }));
+  resolveColdStart(createStudyReminderNotificationResponse({ identifier: 'same-request-id' }));
+  await new Promise((resolve) => setImmediate(resolve));
+
+  assert.deepEqual(navigations, ['/practice']);
+
+  resolveColdStart = null;
+  listeners[0](createStudyReminderNotificationResponse({ identifier: 'different-request-id' }));
+  assert.deepEqual(navigations, ['/practice', '/practice']);
+  cleanup();
+});
+
+test('study reminder notification routing dedupes listener delivery after cold start', async () => {
+  const { registerStudyReminderNotificationResponseRouting } = loadTs(
+    'lib/notifications/studyReminderRouting.ts',
+  );
+  const navigations = [];
+  const listeners = [];
+  const runtime = {
+    addNotificationResponseReceivedListener: (listener) => {
+      listeners.push(listener);
+      return { remove: () => undefined };
+    },
+    getLastNotificationResponseAsync: async () =>
+      createStudyReminderNotificationResponse({ identifier: 'cold-first-request-id' }),
+  };
+
+  const cleanup = registerStudyReminderNotificationResponseRouting(runtime, (route) => {
+    navigations.push(route);
+  });
+  await new Promise((resolve) => setImmediate(resolve));
+  listeners[0](createStudyReminderNotificationResponse({ identifier: 'cold-first-request-id' }));
+
+  assert.deepEqual(navigations, ['/practice']);
+  cleanup();
 });
 
 test('root layout registers fail-closed study reminder notification routing', () => {
