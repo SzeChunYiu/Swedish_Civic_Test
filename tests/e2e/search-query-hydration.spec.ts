@@ -602,6 +602,32 @@ test('search question result links open the exact routed quiz question', async (
   expect(consoleErrors).toEqual([]);
 });
 
+test('search both params keep q before query through question result and Back to Search', async ({
+  page,
+}) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await expectQuestionResultNavigation({
+    backSearchLinkName: /Sök efter övningsfrågor|Sök övningsfrågor/,
+    expectedSearchQuery: 'riksdag',
+    inputName: 'Sök samhällsbegrepp och övningsfrågor',
+    language: 'sv',
+    linkName: /Öppna övningsfrågan:/,
+    linkPrefix: 'Öppna övningsfrågan: ',
+    page,
+    sourceSummaryLabel: 'Källa',
+    sourceCitationLabel: 'Källhänvisning',
+    url: '/search?query=kommun&q=riksdag',
+  });
+
+  expect(consoleErrors).toEqual([]);
+});
+
 test('direct quiz visits keep the search backlink query-free', async ({ page }) => {
   await seedSettingsLanguage(page, 'en');
   await markAboutTheTestSeen(page);
