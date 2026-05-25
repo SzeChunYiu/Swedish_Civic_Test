@@ -92,7 +92,9 @@ export function resolveCompanionId(stored: unknown): MascotId {
   return isMascotId(stored) ? stored : DEFAULT_COMPANION_ID;
 }
 
-export function importCompanionSnapshot(companion: ImportableCompanion): void {
+export function importCompanionSnapshot(
+  companion: ImportableCompanion,
+): RecoverablePersistenceWarning | null {
   const normalizedCompanion = normalizeImportedCompanion(companion);
   let persistenceWarning: RecoverablePersistenceWarning | null = null;
   if (normalizedCompanion.selectedId !== undefined) {
@@ -105,4 +107,5 @@ export function importCompanionSnapshot(companion: ImportableCompanion): void {
   }
 
   useCompanionStore.setState({ ...normalizedCompanion, persistenceWarning });
+  return persistenceWarning;
 }

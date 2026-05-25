@@ -68,6 +68,7 @@ type Scenario = {
   confirmName: string;
   resetName: string;
   invalidJsonText: string;
+  multiPersistenceWarningText: RegExp;
   persistenceWarningText: RegExp;
   successText: string;
 };
@@ -81,6 +82,8 @@ const scenarios: Scenario[] = [
     confirmName: 'Bekräfta lokal studiedataimport',
     resetName: 'Återställ importfält',
     invalidJsonText: 'JSON kunde inte läsas.',
+    multiPersistenceWarningText:
+      /Importen lades in, men kunde inte sparas varaktigt för: progression, tillgänglighetsval och studiekompis\. Den datan finns bara i minnet tills appen stängs\./,
     persistenceWarningText:
       /Importen lades in, men kunde inte sparas varaktigt för: progression\. Den datan finns bara i minnet tills appen stängs\./,
     successText: 'Importen är klar.',
@@ -93,6 +96,8 @@ const scenarios: Scenario[] = [
     confirmName: 'Confirm local study data import',
     resetName: 'Reset import field',
     invalidJsonText: 'JSON could not be read.',
+    multiPersistenceWarningText:
+      /Import applied, but durable storage failed for: progress, accessibility preferences, and study companion\. That data is only in memory until the app closes\./,
     persistenceWarningText:
       /Import applied, but durable storage failed for: progress\. That data is only in memory until the app closes\./,
     successText: 'Import complete.',
@@ -669,16 +674,21 @@ async function expectImportedStudyPlanControlsAfterReload(
 }
 
 async function installProgressImportWriteFailure(page: Page) {
-  await page.addInitScript((progressKey) => {
+  await installImportWriteFailures(page, [progressStateKey]);
+}
+
+async function installImportWriteFailures(page: Page, blockedKeys: string[]) {
+  await page.addInitScript((keys) => {
+    const blockedKeys = new Set(keys);
     const originalSetItem = Storage.prototype.setItem;
     Storage.prototype.setItem = function patchedSetItem(key, value) {
       const runtime = window as typeof window & { __SMT_IMPORT_WRITE_FAIL__?: boolean };
-      if (runtime.__SMT_IMPORT_WRITE_FAIL__ && key === progressKey) {
-        throw new Error('progress import write failed');
+      if (runtime.__SMT_IMPORT_WRITE_FAIL__ && blockedKeys.has(key)) {
+        throw new Error(`${key} import write failed`);
       }
       return originalSetItem.call(this, key, value);
     };
-  }, progressStateKey);
+  }, blockedKeys);
 }
 
 for (const scenario of scenarios) {
@@ -772,6 +782,45 @@ for (const scenario of scenarios) {
         progress: null,
         language: scenario.importedLanguage,
       });
+    expect(errors.get()).toEqual([]);
+  });
+}
+
+for (const scenario of scenarios) {
+  test(`settings import keeps multiple persistence warnings in learner-readable order in ${scenario.language}`, async ({
+    page,
+  }) => {
+    await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, scenario.language, {
+      reseedOnNavigation: false,
+    });
+    await installImportWriteFailures(page, [
+      companionSelectedIdKey,
+      accessibilityThemeModeKey,
+      progressStateKey,
+    ]);
+    const errors = collectConsoleAndPageErrors(page);
+    const payloadCase = importPayloadCases.find((candidate) => candidate.name === 'singular');
+    expect(payloadCase).toBeDefined();
+
+    await page.goto('/settings', { waitUntil: 'networkidle' });
+    await dismissBlockingModals(page);
+    await expectNoImportApplied(page, scenario.language);
+
+    await page
+      .getByLabel(scenario.inputLabel)
+      .fill(payloadCase!.buildPayload(scenario.importedLanguage));
+    await page.getByRole('button', { name: scenario.previewName }).click();
+    await expect(page.getByRole('button', { name: scenario.confirmName })).toBeVisible();
+
+    await page.evaluate(() => {
+      (
+        window as typeof window & { __SMT_IMPORT_WRITE_FAIL__?: boolean }
+      ).__SMT_IMPORT_WRITE_FAIL__ = true;
+    });
+    await page.getByRole('button', { name: scenario.confirmName }).click();
+
+    await expect(page.getByText(scenario.multiPersistenceWarningText)).toBeVisible();
+    await expect(page.getByText(scenario.successText)).toHaveCount(0);
     expect(errors.get()).toEqual([]);
   });
 }

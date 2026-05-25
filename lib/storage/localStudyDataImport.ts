@@ -95,6 +95,8 @@ export type LocalStudyDataImportSection =
   | 'mistakeReview'
   | 'reviews'
   | 'settings'
+  | 'accessibility'
+  | 'companion'
   | 'citizenshipRequirements'
   | 'highlights';
 
@@ -138,6 +140,16 @@ const allowedTopLevelKeys = new Set([
   'version',
   'wrongAnswerReviews',
 ]);
+const localStudyDataImportWarningSectionOrder: Record<LocalStudyDataImportSection, number> = {
+  progress: 0,
+  mistakeReview: 1,
+  reviews: 2,
+  settings: 3,
+  accessibility: 4,
+  companion: 5,
+  citizenshipRequirements: 6,
+  highlights: 7,
+};
 const forbiddenPurchaseKeyFragments = [
   'adsdisabled',
   'adfree',
@@ -494,9 +506,11 @@ export function applyLocalStudyDataImport(
   };
 
   if (preview.sections.accessibility) {
-    importAccessibilityPreferencesSnapshot(preview.accessibility);
+    recordWarning('accessibility', importAccessibilityPreferencesSnapshot(preview.accessibility));
   }
-  if (preview.sections.companion) importCompanionSnapshot(preview.companion);
+  if (preview.sections.companion) {
+    recordWarning('companion', importCompanionSnapshot(preview.companion));
+  }
 
   if (preview.sections.progress) {
     recordWarning('progress', importProgressSnapshot(preview.progress));
@@ -522,6 +536,10 @@ export function applyLocalStudyDataImport(
 
   return {
     summary: preview.summary,
-    warnings,
+    warnings: warnings.sort(
+      (left, right) =>
+        localStudyDataImportWarningSectionOrder[left.section] -
+        localStudyDataImportWarningSectionOrder[right.section],
+    ),
   };
 }
