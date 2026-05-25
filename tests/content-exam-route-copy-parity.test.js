@@ -122,6 +122,10 @@ test('exam route shell and review copy follows the persisted settings language',
     source,
     /<QuestionNavigator[\s\S]*currentIndex=\{null\}[\s\S]*flaggedIndexes=\{flaggedIndexes\}/,
   );
+  assert.match(
+    source,
+    /<QuestionNavigator[\s\S]*showLegend[\s\S]*stateLabels=\{copy\.navigatorStateLabels\}/,
+  );
   assert.doesNotMatch(
     source.match(/<QuestionNavigator[\s\S]*?\/>/)?.[0] ?? '',
     /onSelect=/,

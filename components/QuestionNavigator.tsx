@@ -8,6 +8,12 @@ import { colors, motion, radius, space, typography } from '../lib/theme';
 
 export type QuestionNavigatorItemState = 'current' | 'answered' | 'flagged' | 'unanswered';
 
+const statusLegendStates: readonly QuestionNavigatorItemState[] = [
+  'answered',
+  'flagged',
+  'unanswered',
+];
+
 type QuestionNavigatorCopy = {
   navigationLabel: string;
   questionLabel: string;
@@ -59,6 +65,7 @@ export interface QuestionNavigatorProps extends Omit<
   itemTextStyle?: StyleProp<TextStyle>;
   languageOverride?: AppLanguage;
   onSelect?: (index: number) => void;
+  showLegend?: boolean;
   stateLabels?: Partial<Record<QuestionNavigatorItemState, string>>;
   style?: StyleProp<ViewStyle>;
   totalCount: number;
@@ -116,6 +123,7 @@ export function QuestionNavigator({
   itemTextStyle,
   languageOverride,
   onSelect,
+  showLegend = false,
   stateLabels,
   style,
   totalCount,
@@ -147,8 +155,9 @@ export function QuestionNavigator({
       : (requestedAccessibilityRole ?? 'list');
   const resolvedAccessibilityLabel =
     accessibilityLabel ?? (isInteractive ? copy.navigationLabel : copy.statusLabel);
+  const shouldShowLegend = showLegend === true && !isInteractive && safeTotalCount > 0;
 
-  return (
+  const grid = (
     <View
       accessibilityLabel={resolvedAccessibilityLabel}
       accessibilityRole={resolvedAccessibilityRole}
@@ -213,9 +222,28 @@ export function QuestionNavigator({
       })}
     </View>
   );
+
+  if (!shouldShowLegend) return grid;
+
+  return (
+    <View style={styles.container}>
+      {grid}
+      <View accessibilityLabel={copy.statusLabel} accessibilityRole="text" style={styles.legend}>
+        {statusLegendStates.map((state) => (
+          <View key={state} style={styles.legendItem}>
+            <View style={[styles.legendSwatch, styles[state]]} />
+            <NativeText style={styles.legendText}>{resolvedStateLabels[state]}</NativeText>
+          </View>
+        ))}
+      </View>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    gap: space[1],
+  },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -266,5 +294,25 @@ const styles = StyleSheet.create({
   },
   currentText: {
     color: colors.surface,
+  },
+  legend: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: space[1],
+  },
+  legendItem: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: space[0.5],
+  },
+  legendSwatch: {
+    borderRadius: radius.small,
+    borderWidth: space.hairline,
+    height: space[1.25],
+    width: space[1.25],
+  },
+  legendText: {
+    ...typography.captionLight,
+    color: colors.textSecondary,
   },
 });

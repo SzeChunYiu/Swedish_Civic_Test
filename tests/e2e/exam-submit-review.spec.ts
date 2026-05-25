@@ -133,6 +133,9 @@ test('mock exam requires all answers before showing Swedish score and source pro
   }
 
   await expect(activeCount).toBeVisible();
+  await expect(page.getByText('Besvarad', { exact: true })).toBeVisible();
+  await expect(page.getByText('Flaggad', { exact: true })).toBeVisible();
+  await expect(page.getByText('Obesvarad', { exact: true })).toBeVisible();
   await expect(page.getByText(/^Tid kvar/)).toBeVisible();
   await expect(page.getByText(/^Källa: Sverige i fokus/).first()).toBeVisible();
   const activeQuestionOne = examRegion(page, 'Fråga 1 i övningsprovet');
@@ -292,6 +295,9 @@ test('mock exam provenance review follows English support mode', async ({ page }
   }
 
   await expect(activeCount).toBeVisible();
+  await expect(page.getByText('Answered', { exact: true })).toBeVisible();
+  await expect(page.getByText('Flagged', { exact: true })).toBeVisible();
+  await expect(page.getByText('Unanswered', { exact: true })).toBeVisible();
   await expect(page.getByText(/^Time left/)).toBeVisible();
   await expect(page.getByText(/^Source: Sverige i fokus/).first()).toBeVisible();
   const activeQuestionOne = examRegion(page, 'Question 1 in mock exam');
