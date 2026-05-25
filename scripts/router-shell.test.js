@@ -46,6 +46,13 @@ function extractStackScreenNames(rootLayoutSource) {
 function loadTsRuntime(relativePath, globals = {}) {
   const source = read(relativePath);
   const module = { exports: {} };
+  const runtimeRequire = (specifier) => {
+    if (specifier === '../lib/scaffold/routerShellManifest') {
+      return loadTsRuntime('lib/scaffold/routerShellManifest.ts');
+    }
+
+    return require(specifier);
+  };
   const transpiled = ts.transpileModule(source, {
     compilerOptions: {
       module: ts.ModuleKind.CommonJS,
@@ -58,6 +65,7 @@ function loadTsRuntime(relativePath, globals = {}) {
     {
       module,
       exports: module.exports,
+      require: runtimeRequire,
       ...globals,
     },
     { filename: relativePath },
@@ -96,6 +104,22 @@ function readRouterShellManifest() {
       (entry) => entry.description,
     ),
     nativeIntentStaticRoutes: Array.from(manifest.expoRouterNativeIntentStaticRoutes),
+    nativeIntentDynamicRoutes: Array.from(
+      manifest.expoRouterNativeIntentDynamicRoutes,
+      (entry) => entry.route,
+    ),
+    nativeIntentDynamicRouteFiles: Array.from(
+      manifest.expoRouterNativeIntentDynamicRoutes,
+      (entry) => entry.routeFile,
+    ),
+    nativeIntentDynamicRouteParameterPatterns: Array.from(
+      manifest.expoRouterNativeIntentDynamicRoutes,
+      (entry) => Object.fromEntries(Object.entries(entry.parameterPatterns)),
+    ),
+    nativeIntentDynamicRouteSamplePaths: Array.from(
+      manifest.expoRouterNativeIntentDynamicRoutes,
+      (entry) => entry.samplePath,
+    ),
     nativeIntentRuntimeSampleInputs: Array.from(
       manifest.expoRouterNativeIntentRuntimeSamples,
       (entry) => entry.input,
@@ -266,6 +290,9 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
   assert.deepEqual(manifest.rootStackScreenNames, [
     'index',
     '(tabs)',
+    '(auth)',
+    'account',
+    'auth/callback',
     'search',
     'dashboard',
     'citizenship-requirements',
@@ -274,6 +301,9 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
   assert.deepEqual(manifest.rootStackScreenFiles, [
     'app/index.tsx',
     'app/(tabs)/_layout.tsx',
+    'app/(auth)/_layout.tsx',
+    'app/account.tsx',
+    'app/auth/callback.tsx',
     'app/search.tsx',
     'app/dashboard.tsx',
     'app/citizenship-requirements.tsx',
@@ -333,6 +363,19 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
     true,
     'native intent static route allowlist should include the citizenship requirements guide',
   );
+  assert.deepEqual(manifest.nativeIntentDynamicRoutes, [
+    '/chapter/[chapterId]',
+    '/quiz/[sessionId]',
+  ]);
+  assert.deepEqual(manifest.nativeIntentDynamicRouteFiles, [
+    'app/chapter/[chapterId].tsx',
+    'app/quiz/[sessionId].tsx',
+  ]);
+  assert.deepEqual(manifest.nativeIntentDynamicRouteParameterPatterns, [
+    { chapterId: 'ch\\d{2}' },
+    { sessionId: '[A-Za-z0-9_-]+' },
+  ]);
+  assert.deepEqual(manifest.nativeIntentDynamicRouteSamplePaths, ['/chapter/ch01', '/quiz/q001']);
   assert.deepEqual(manifest.nativeIntentRuntimeSampleInputs.slice(0, 6), [
     '   ',
     '/practice?mode=review#question',
@@ -403,8 +446,27 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
     `<html data-app-shell="${manifest.webAppShellMarkers[0]}" lang={webDocumentMetadata.language}>`,
   );
   assertContains(htmlShell, `content={${manifest.themeColorTokens[0]}} name="theme-color"`);
-  assertContains(nativeIntent, `const APP_SCHEME = '${appScheme}:';`);
-  assertContains(nativeIntent, `const APP_LINK_BASE = '${appScheme}://app';`);
+  assertContains(nativeIntent, 'expoRouterShellContract.appScheme');
+  assertContains(nativeIntent, 'const APP_SCHEME = `${expoRouterShellContract.appScheme}:`;');
+  assertContains(
+    nativeIntent,
+    'const APP_LINK_BASE = `${expoRouterShellContract.appScheme}://app`;',
+  );
+  assertContains(
+    nativeIntent,
+    'expoRouterNativeIntentDynamicRoutes.map',
+    'native intent should derive dynamic route matchers from the shared manifest',
+  );
+  assertMatches(
+    nativeIntent,
+    /new Set<\s*string\s*>\(expoRouterNativeIntentStaticRoutes\)/,
+    'native intent should derive the static allowlist from the shared manifest',
+  );
+  assert.equal(
+    /chapterRoutePattern|quizRoutePattern/.test(nativeIntent),
+    false,
+    'native intent should not keep route-specific dynamic regex literals outside the manifest',
+  );
   assert.equal(
     manifest.nativeIntentRuntimeSampleInputs.some((input) => input.startsWith(`${appScheme}://`)),
     true,
@@ -546,6 +608,30 @@ test('native intent resolves weekly recap deep links before the Home fallback', 
   );
   assert.equal(redirectSystemPath({ initial: true, path: `${appScheme}://recap` }), '/recap');
   assert.equal(redirectSystemPath({ initial: true, path: '/recap/archive' }), '/home');
+});
+
+test('native intent resolves manifest dynamic routes before the Home fallback', () => {
+  const appScheme = readAppScheme();
+  const { redirectSystemPath } = loadNativeIntentRuntime();
+
+  assert.equal(
+    redirectSystemPath({ initial: true, path: '/chapter/ch01?from=learn#intro' }),
+    '/chapter/ch01?from=learn#intro',
+  );
+  assert.equal(
+    redirectSystemPath({ initial: true, path: `${appScheme}://app/chapter/ch13?from=learn` }),
+    '/chapter/ch13?from=learn',
+  );
+  assert.equal(
+    redirectSystemPath({ initial: true, path: `${appScheme}://quiz/session_abc-123` }),
+    '/quiz/session_abc-123',
+  );
+  assert.equal(redirectSystemPath({ initial: true, path: '/chapter/ch1' }), '/home');
+  assert.equal(redirectSystemPath({ initial: true, path: '/chapter/01' }), '/home');
+  assert.equal(redirectSystemPath({ initial: true, path: '/chapter/ch001' }), '/home');
+  assert.equal(redirectSystemPath({ initial: true, path: '/chapter/ch01/extra' }), '/home');
+  assert.equal(redirectSystemPath({ initial: true, path: '/quiz/session.abc' }), '/home');
+  assert.equal(redirectSystemPath({ initial: true, path: '/quiz/session/extra' }), '/home');
 });
 
 test('native intent rejects foreign absolute URL schemes before route allowlisting', () => {

@@ -44,7 +44,7 @@ export type ExpoRouterRootLayoutGlobalPlacement = {
 export type ExpoRouterNativeIntentDynamicRoute = {
   readonly route: string;
   readonly routeFile: string;
-  readonly patternName: string;
+  readonly parameterPatterns: Readonly<Record<string, string>>;
   readonly samplePath: string;
 };
 
@@ -248,13 +248,17 @@ export const expoRouterNativeIntentDynamicRoutes = [
   {
     route: '/chapter/[chapterId]',
     routeFile: 'app/chapter/[chapterId].tsx',
-    patternName: 'chapterRoutePattern',
+    parameterPatterns: {
+      chapterId: 'ch\\d{2}',
+    },
     samplePath: '/chapter/ch01',
   },
   {
     route: '/quiz/[sessionId]',
     routeFile: 'app/quiz/[sessionId].tsx',
-    patternName: 'quizRoutePattern',
+    parameterPatterns: {
+      sessionId: '[A-Za-z0-9_-]+',
+    },
     samplePath: '/quiz/q001',
   },
 ] as const satisfies readonly ExpoRouterNativeIntentDynamicRoute[];
