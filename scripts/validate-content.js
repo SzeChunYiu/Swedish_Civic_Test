@@ -10135,6 +10135,8 @@ let mockExamRuntimeParityValidated = false;
 let mockExamChapterBalanceParityValidated = false;
 let mockExamChapterDistributionSafetyCasesValidated = 0;
 let mockExamChapterDistributionSafetyParityValidated = false;
+let mockExamQuestionIdSafetyCasesValidated = 0;
+let mockExamQuestionIdSafetyParityValidated = false;
 let mockExamTimerParityValidated = false;
 let examSubmissionFinalityParityValidated = false;
 let examRouteHeadersValidated = 0;
@@ -12152,6 +12154,7 @@ if (process.argv.includes('--focus-mock-exam-runtime-parity')) {
   validateMockExamConfigTypeSchemaParity();
   validateMockExamRuntimeParity(defaultMockExamConfig);
   validateMockExamChapterDistributionSafety();
+  validateMockExamQuestionIdSafety();
   validateMockExamTimerParity(defaultMockExamConfig);
   validateExamRouteHeaderParity();
   validateExamRouteCopyParity();
@@ -12165,6 +12168,8 @@ if (process.argv.includes('--focus-mock-exam-runtime-parity')) {
     mockExamChapterBalanceParityValidated,
     mockExamChapterDistributionSafetyCasesValidated,
     mockExamChapterDistributionSafetyParityValidated,
+    mockExamQuestionIdSafetyCasesValidated,
+    mockExamQuestionIdSafetyParityValidated,
     mockExamTimerParityValidated,
     examRouteHeadersValidated,
     examRouteHeaderParityValidated,
@@ -14492,6 +14497,85 @@ function validateMockExamChapterDistributionSafety() {
 
   mockExamChapterDistributionSafetyCasesValidated = casesValidated;
   if (valid && casesValidated === 9) mockExamChapterDistributionSafetyParityValidated = true;
+}
+
+function validateMockExamQuestionIdSafety() {
+  if (typeof materializeMock !== 'function') return;
+
+  let valid = true;
+  let casesValidated = 0;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  function validateCase(condition, message) {
+    casesValidated += 1;
+    if (!condition) reject(message);
+  }
+
+  const materialized = materializeMock({
+    mockId: 'mock-2',
+    bank: [
+      { id: ' question-valid ', difficulty: 'medium', chapterId: 'ch01' },
+      { id: 'question-valid', difficulty: 'medium', chapterId: 'ch02' },
+      { id: 'question-top-up', difficulty: 'easy', chapterId: 'ch03' },
+      { id: '__proto__', difficulty: 'medium', chapterId: 'ch04' },
+      { id: 'constructor', difficulty: 'medium', chapterId: 'ch05' },
+      { id: 'prototype', difficulty: 'medium', chapterId: 'ch06' },
+      { id: '   ', difficulty: 'medium', chapterId: 'ch07' },
+      { id: 17, difficulty: 'medium', chapterId: 'ch08' },
+      { id: { id: 'question-object' }, difficulty: 'medium', chapterId: 'ch09' },
+    ],
+  });
+  const questionIds = Array.isArray(materialized?.questions)
+    ? materialized.questions.map((question) => question.questionId)
+    : [];
+
+  validateCase(
+    Array.isArray(materialized?.questions),
+    'mock exam library must return materialized questions for question-id safety',
+  );
+  validateCase(
+    questionIds.length === 2,
+    `mock exam question-id safety emitted ${questionIds.length} ids, expected 2`,
+  );
+  validateCase(
+    questionIds.includes('question-valid'),
+    'mock exam question-id safety must trim and keep the valid filtered id',
+  );
+  validateCase(
+    questionIds.includes('question-top-up'),
+    'mock exam question-id safety must preserve valid top-up ids',
+  );
+  validateCase(
+    new Set(questionIds).size === questionIds.length,
+    'mock exam question ids must be de-duplicated after trimming',
+  );
+  validateCase(
+    questionIds.every(
+      (questionId) => typeof questionId === 'string' && questionId.trim() === questionId,
+    ),
+    'mock exam question ids must emit trimmed strings only',
+  );
+  validateCase(
+    !questionIds.some((questionId) =>
+      ['__proto__', 'constructor', 'prototype'].includes(questionId),
+    ),
+    'mock exam question ids must reject unsafe map keys',
+  );
+  validateCase(
+    !questionIds.some((questionId) => questionId.length === 0),
+    'mock exam question ids must reject blank ids',
+  );
+  validateCase(
+    !questionIds.some((questionId) => ['17', '[object Object]'].includes(questionId)),
+    'mock exam question ids must reject non-string ids instead of coercing them',
+  );
+
+  mockExamQuestionIdSafetyCasesValidated = casesValidated;
+  if (valid && casesValidated === 9) mockExamQuestionIdSafetyParityValidated = true;
 }
 
 function expectedFormattedExamTime(totalSeconds) {
@@ -27693,6 +27777,8 @@ console.log(
       mockExamChapterBalanceParityValidated,
       mockExamChapterDistributionSafetyCasesValidated,
       mockExamChapterDistributionSafetyParityValidated,
+      mockExamQuestionIdSafetyCasesValidated,
+      mockExamQuestionIdSafetyParityValidated,
       mockExamTimerParityValidated,
       examSubmissionFinalityParityValidated,
       examRouteHeadersValidated,

@@ -134,19 +134,32 @@ function normalizeChapterDistributionKey(value: unknown): string | null {
   return chapterId;
 }
 
+function normalizeMockQuestionId(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  const questionId = value.trim();
+  if (!questionId || !isSafeImportedMapKey(questionId)) return null;
+  return questionId;
+}
+
 export interface MockExamQuestionPick {
   questionId: string;
   /** Difficulty as the bank declared it, kept for the result-screen breakdown. */
   difficulty?: 'easy' | 'medium' | 'hard';
 }
 
+type MaterializeMockBankRow = {
+  id: unknown;
+  difficulty?: 'easy' | 'medium' | 'hard';
+  chapterId?: unknown;
+};
+
+type NormalizedMockExamBankRow = Omit<MaterializeMockBankRow, 'id'> & {
+  id: string;
+};
+
 export interface MaterializeMockInput {
   mockId: string;
-  bank: ReadonlyArray<{
-    id: string;
-    difficulty?: 'easy' | 'medium' | 'hard';
-    chapterId?: string;
-  }>;
+  bank: ReadonlyArray<MaterializeMockBankRow>;
   /** Overrides the seed (used by 'mock-random' to roll fresh each time). */
   seedOverride?: number;
 }
@@ -158,6 +171,26 @@ export interface MaterializedMock {
   chapterDistribution: Record<string, number>;
   /** True when the bank didn't have enough questions to fill the format. */
   isUnderfilled: boolean;
+}
+
+function normalizeMockExamBank(
+  bank: ReadonlyArray<MaterializeMockBankRow>,
+): NormalizedMockExamBankRow[] {
+  const normalizedRows: NormalizedMockExamBankRow[] = [];
+  const seenQuestionIds = new Set<string>();
+
+  for (const row of bank) {
+    const questionId = normalizeMockQuestionId(row.id);
+    if (!questionId || seenQuestionIds.has(questionId)) continue;
+
+    seenQuestionIds.add(questionId);
+    normalizedRows.push({
+      ...row,
+      id: questionId,
+    });
+  }
+
+  return normalizedRows;
 }
 
 /**
@@ -179,18 +212,19 @@ export function materializeMock(input: MaterializeMockInput): MaterializedMock |
     input.seedOverride ??
     (descriptor.seed === -1 ? Math.floor(Math.random() * 0xffffffff) : descriptor.seed);
   const rand = mulberry32(seed);
+  const bank = normalizeMockExamBank(input.bank);
 
   const filtered =
     descriptor.difficulty === 'mixed'
-      ? input.bank.slice()
-      : input.bank.filter((q) => q.difficulty === descriptor.difficulty);
+      ? bank.slice()
+      : bank.filter((q) => q.difficulty === descriptor.difficulty);
   const filteredShuffled = shuffle(filtered, rand);
 
   let picked = filteredShuffled.slice(0, MOCK_EXAM_QUESTION_COUNT);
 
   if (picked.length < MOCK_EXAM_QUESTION_COUNT) {
     const pickedIds = new Set(picked.map((q) => q.id));
-    const topUp = shuffle(input.bank, rand).filter((q) => !pickedIds.has(q.id));
+    const topUp = shuffle(bank, rand).filter((q) => !pickedIds.has(q.id));
     picked = picked.concat(topUp).slice(0, MOCK_EXAM_QUESTION_COUNT);
   }
 
