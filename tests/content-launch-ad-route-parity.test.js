@@ -1,8 +1,10 @@
 const assert = require('node:assert/strict');
 const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
+const Module = require('node:module');
 const path = require('node:path');
 const test = require('node:test');
+const ts = require('typescript');
 
 const { FOCUSED_VALIDATION_REGISTRY_BY_ID } = require('../scripts/validate-content-focus-registry');
 
@@ -32,6 +34,39 @@ function parseJsonSummary(output, label) {
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, `${label} should print a JSON summary`);
   return JSON.parse(match[0]);
+}
+
+function loadLaunchPopupSessionModule() {
+  const filename = path.join(repoRoot, 'components/monetization/launchPopupSession.ts');
+  const source = fs.readFileSync(filename, 'utf8');
+  const output = ts.transpileModule(source, {
+    compilerOptions: {
+      esModuleInterop: true,
+      module: ts.ModuleKind.CommonJS,
+      target: ts.ScriptTarget.ES2020,
+    },
+    fileName: filename,
+  });
+  const mod = new Module(filename, module);
+  mod.filename = filename;
+  mod.paths = Module._nodeModulePaths(path.dirname(filename));
+  mod._compile(output.outputText, filename);
+  return mod.exports;
+}
+
+function createSessionStorageStub() {
+  const values = new Map();
+  return {
+    getItem(key) {
+      return values.has(key) ? values.get(key) : null;
+    },
+    removeItem(key) {
+      values.delete(key);
+    },
+    setItem(key, value) {
+      values.set(key, String(value));
+    },
+  };
 }
 
 function launchSuppressedRoutes(source = read('lib/monetization/ads.ts')) {
@@ -319,4 +354,61 @@ test('native first-run deferral stays wired to the eligible app-open path', () =
   assert.match(validatorSource, /launchAdFirstRunDeferralParityValidated/);
   assert.match(validatorSource, /launchAdLoadTimeoutRulesValidated/);
   assert.match(validatorSource, /launchAdLoadTimeoutParityValidated/);
+});
+
+test('launch popup session deferral runtime clears storage and notifies subscribers', () => {
+  const previousRuntimeDeferral = globalThis.__sctLaunchPopupFirstRunDeferred;
+  const hadSessionStorage = Object.prototype.hasOwnProperty.call(globalThis, 'sessionStorage');
+  const previousSessionStorage = globalThis.sessionStorage;
+  const sessionStorage = createSessionStorageStub();
+
+  try {
+    globalThis.__sctLaunchPopupFirstRunDeferred = false;
+    Object.defineProperty(globalThis, 'sessionStorage', {
+      configurable: true,
+      value: sessionStorage,
+      writable: true,
+    });
+
+    const launchPopupSession = loadLaunchPopupSessionModule();
+    const notifications = [];
+    const unsubscribe =
+      launchPopupSession.subscribeToFirstRunAboutModalDeferralForLaunchSession(() => {
+        notifications.push(launchPopupSession.shouldDeferFirstRunAboutModalForLaunchSession());
+      });
+
+    launchPopupSession.deferFirstRunAboutModalForLaunchSession();
+
+    assert.equal(globalThis.__sctLaunchPopupFirstRunDeferred, true);
+    assert.equal(sessionStorage.getItem('sct_launch_popup_first_run_deferred'), '1');
+    assert.equal(launchPopupSession.shouldDeferFirstRunAboutModalForLaunchSession(), true);
+    assert.deepEqual(notifications, [true]);
+
+    launchPopupSession.clearFirstRunAboutModalDeferralForLaunchSession();
+
+    assert.equal(globalThis.__sctLaunchPopupFirstRunDeferred, false);
+    assert.equal(sessionStorage.getItem('sct_launch_popup_first_run_deferred'), null);
+    assert.equal(launchPopupSession.shouldDeferFirstRunAboutModalForLaunchSession(), false);
+    assert.deepEqual(notifications, [true, false]);
+
+    unsubscribe();
+    launchPopupSession.deferFirstRunAboutModalForLaunchSession();
+
+    assert.deepEqual(notifications, [true, false]);
+  } finally {
+    if (previousRuntimeDeferral === undefined) {
+      delete globalThis.__sctLaunchPopupFirstRunDeferred;
+    } else {
+      globalThis.__sctLaunchPopupFirstRunDeferred = previousRuntimeDeferral;
+    }
+    if (hadSessionStorage) {
+      Object.defineProperty(globalThis, 'sessionStorage', {
+        configurable: true,
+        value: previousSessionStorage,
+        writable: true,
+      });
+    } else {
+      delete globalThis.sessionStorage;
+    }
+  }
 });
