@@ -52,6 +52,52 @@ test('static ebook reader keeps navigation, highlights, sources link, and mobile
   expect(pageErrors).toEqual([]);
 });
 
+test('static ebook reader exposes annotation controls after keyboard text selection', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+
+  await openStaticEbook(page, staticSite.baseUrl, 'en', '#/ebook?c=1');
+  await expect(page.locator('#ebook-reader')).toBeVisible();
+
+  await page.evaluate(() => {
+    const reader = document.querySelector('#ebook-reader');
+    if (!reader) {
+      throw new Error('ebook reader not found');
+    }
+
+    const walker = document.createTreeWalker(reader, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        return node.textContent && node.textContent.trim().length > 20
+          ? NodeFilter.FILTER_ACCEPT
+          : NodeFilter.FILTER_REJECT;
+      },
+    });
+    const textNode = walker.nextNode();
+    if (!textNode?.textContent) {
+      throw new Error('ebook text node not found');
+    }
+
+    const range = document.createRange();
+    range.setStart(textNode, 0);
+    range.setEnd(textNode, Math.min(textNode.textContent.length, 12));
+    const selection = window.getSelection();
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+
+    document.dispatchEvent(new Event('selectionchange'));
+    document.dispatchEvent(
+      new KeyboardEvent('keyup', { key: 'ArrowRight', shiftKey: true, bubbles: true }),
+    );
+  });
+
+  const popover = page.locator('.eb-pop');
+  await expect(popover).toBeVisible();
+  await expect(popover.locator('[data-act="hl"]')).toHaveAttribute('aria-label', 'Highlight');
+  await expect(popover.locator('[data-act="note"]')).toHaveAttribute('aria-label', 'Add note');
+  await expectElementNoHorizontalOverflow(page, '.eb-pop');
+});
+
 test('static ebook route shows a localized error when the route bundle fails to load', async ({
   page,
 }) => {

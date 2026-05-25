@@ -18,6 +18,10 @@ function createEbookToolsHarness() {
   const storageValues = new Map();
   const querySelectors = [];
   const appended = [];
+  const selectionState = {
+    anchorInsideReader: true,
+    isCollapsed: false,
+  };
 
   function makeElement(tagName) {
     const selectors = new Map();
@@ -82,7 +86,7 @@ function createEbookToolsHarness() {
 
   const reader = makeElement('section');
   reader.innerText = 'viktig text for the ebook reader';
-  reader.contains = () => true;
+  reader.contains = () => selectionState.anchorInsideReader;
   elementsById.set('ebook-reader', reader);
 
   const notesHost = makeElement('section');
@@ -140,7 +144,7 @@ function createEbookToolsHarness() {
       getSelection() {
         return {
           anchorNode: {},
-          isCollapsed: false,
+          isCollapsed: selectionState.isCollapsed,
           getRangeAt() {
             return {
               getBoundingClientRect() {
@@ -171,6 +175,7 @@ function createEbookToolsHarness() {
     localStorage,
     notesHost,
     querySelectors,
+    selectionState,
     windowListeners,
   };
 }
@@ -250,7 +255,30 @@ test('ebook highlights and notes stay local without account prompts', () => {
   );
   assert.match(ebookTools, /localStorage\.setItem\(\s*['"]smt_hl_['"]\s*\+/);
   assert.match(ebookTools, /function showPopForSelection\(\)/);
+  assert.match(ebookTools, /function schedulePopForSelection\(\)/);
+  assert.match(ebookTools, /document\.addEventListener\('keyup'/);
+  assert.match(ebookTools, /document\.addEventListener\('selectionchange'/);
   assert.doesNotMatch(ebookTools, /isSignedIn|showSigninNudge|data-act="signin"/);
+});
+
+test('ebook annotation popover is reachable after keyboard text selection', () => {
+  const harness = createEbookToolsHarness();
+
+  harness.documentListeners.get('keyup')({ target: { closest: () => null } });
+  const popover = harness.appended.find((element) => element.className === 'eb-pop');
+  assert.ok(popover, 'keyboard selection should create the annotation popover');
+  assert.equal(popover.hidden, false);
+  assert.equal(popover.querySelector('[data-act="hl"]').getAttribute('aria-label'), 'Highlight');
+  assert.equal(popover.querySelector('[data-act="note"]').getAttribute('aria-label'), 'Add note');
+
+  harness.selectionState.isCollapsed = true;
+  harness.documentListeners.get('selectionchange')();
+  assert.equal(popover.hidden, true, 'collapsed keyboard selection should hide the popover');
+
+  harness.selectionState.isCollapsed = false;
+  harness.selectionState.anchorInsideReader = false;
+  harness.documentListeners.get('keyup')({ target: { closest: () => null } });
+  assert.equal(popover.hidden, true, 'selection outside the reader should not show the popover');
 });
 
 test('static toast helper keeps account and study messages text-safe by default', () => {
