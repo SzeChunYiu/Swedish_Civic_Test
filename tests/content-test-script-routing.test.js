@@ -2469,8 +2469,14 @@ test('question-bank CSV focus registry matches focused validator output', () => 
     'questionBankCsvUniqueHeaderNamesValidated',
     'questionBankCsvRowsValidated',
     'questionBankCsvProvenanceCounts',
+    'questionBankCsvUhrCitationRowsValidated',
+    'questionBankCsvUhrCitationParityValidated',
     'questionBankCsvUhrSourcePublisherRowsValidated',
     'questionBankCsvUhrSourcePublisherParityValidated',
+    'questionBankCsvSupplementalSourceRowsValidated',
+    'questionBankCsvVotingRightsSupplementalSourceParityValidated',
+    'uhrMapExactSchemaKeysValidated',
+    'uhrSourceMaterialLinkParityValidated',
   ]);
   assert.match(validatorSource, /--focus-question-bank-csv/);
   assert.match(
@@ -2500,6 +2506,11 @@ test('question-bank CSV focus registry matches focused validator output', () => 
   for (const key of registryEntry.summaryKeys) {
     assert.ok(Object.prototype.hasOwnProperty.call(summary, key), `${key} is present`);
   }
+  assert.deepEqual(
+    Object.keys(summary).sort(),
+    [...registryEntry.summaryKeys].sort(),
+    'question-bank CSV focus registry must advertise every emitted summary key',
+  );
   const csvHeaderColumns = fs
     .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
     .split(/\r?\n/, 1)[0]
@@ -2509,13 +2520,19 @@ test('question-bank CSV focus registry matches focused validator output', () => 
   assert.equal(summary.questionBankCsvHeaderColumnsValidated, csvHeaderColumns.length);
   assert.equal(summary.questionBankCsvUniqueHeaderNamesValidated, true);
   assert.equal(summary.questionBankCsvRowsValidated, summary.publishedQuestions);
+  assert.equal(summary.questionBankCsvUhrCitationRowsValidated, summary.publishedQuestions);
+  assert.equal(summary.questionBankCsvUhrCitationParityValidated, true);
   assert.equal(summary.questionBankCsvUhrSourcePublisherRowsValidated, summary.publishedQuestions);
   assert.equal(summary.questionBankCsvUhrSourcePublisherParityValidated, true);
+  assert.equal(summary.questionBankCsvSupplementalSourceRowsValidated, 15);
+  assert.equal(summary.questionBankCsvVotingRightsSupplementalSourceParityValidated, true);
   assert.deepEqual(Object.keys(summary.questionBankCsvProvenanceCounts).sort(), [
     'derived',
     'editorial',
     'uhr',
   ]);
+  assert.equal(summary.uhrMapExactSchemaKeysValidated, true);
+  assert.equal(summary.uhrSourceMaterialLinkParityValidated, true);
   assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
 });
 
