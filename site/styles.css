@@ -12317,7 +12317,7 @@ img.ebook__brand-mark {
   display: inline-flex;
   gap: 7px;
   margin: -4px -7px;
-  min-height: 32px;
+  min-height: 44px;
   padding: 4px 8px 4px 7px;
   transition:
     background-color 0.18s ease,
@@ -12351,7 +12351,7 @@ img.ebook__brand-mark {
 
 @media (max-width: 720px) {
   .footer__cols a {
-    min-height: 36px;
+    min-height: 44px;
     width: 100%;
   }
 }

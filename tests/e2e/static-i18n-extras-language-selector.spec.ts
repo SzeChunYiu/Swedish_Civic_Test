@@ -350,6 +350,25 @@ async function expectStaticFooterAppLinkCoverage(page: Page, locale: ExtraLocale
   expect(await dictionaryText(page, locale, 'footer.app.5')).not.toMatch(/Roadmap/i);
 }
 
+async function expectStaticFooterColumnLinksTargetSize(page: Page) {
+  const linkBoxes = await page.locator('footer.footer .footer__cols a').evaluateAll((links) =>
+    links.map((link) => {
+      const box = link.getBoundingClientRect();
+      return {
+        height: Math.floor(box.height),
+        label: link.textContent?.trim() || link.getAttribute('href') || 'footer link',
+        width: Math.floor(box.width),
+      };
+    }),
+  );
+
+  expect(linkBoxes.length, 'static footer should render column links').toBeGreaterThan(0);
+  for (const box of linkBoxes) {
+    expect(box.width, `${box.label} footer link width`).toBeGreaterThanOrEqual(44);
+    expect(box.height, `${box.label} footer link height`).toBeGreaterThanOrEqual(44);
+  }
+}
+
 async function expectRootLocale(page: Page, locale: ExtraLocale) {
   await expect
     .poll(() =>
@@ -862,8 +881,20 @@ test('static footer extra languages render footer.app links without Roadmap dict
     await switchStaticSiteLanguage(page, locale);
     await expectRootLocale(page, locale);
     await expectStaticFooterAppLinkCoverage(page, locale);
+    await expectStaticFooterColumnLinksTargetSize(page);
     await expectNoHorizontalOverflow(page);
   }
+
+  expect(pageErrors).toEqual([]);
+});
+
+test('static footer column links keep 44px targets on desktop', async ({ page }) => {
+  await page.setViewportSize({ width: 1024, height: 768 });
+  const pageErrors = collectPageErrors(page);
+  await openStaticHome(page, staticSite.baseUrl);
+
+  await expectStaticFooterColumnLinksTargetSize(page);
+  await expectNoHorizontalOverflow(page);
 
   expect(pageErrors).toEqual([]);
 });
