@@ -204,6 +204,8 @@ export default function CitizenshipRequirementsScreen() {
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const checkedIds = useMemo(() => new Set(checkedAreaIds), [checkedAreaIds]);
   const [focusedSourceRow, setFocusedSourceRow] = useState<string | null>(null);
+  const [hoveredSourceRow, setHoveredSourceRow] = useState<string | null>(null);
+  const [pressedSourceRow, setPressedSourceRow] = useState<string | null>(null);
 
   const missingAreas = useMemo(
     () => citizenshipRequirementAreas.filter((area) => !checkedIds.has(area.id)),
@@ -291,10 +293,25 @@ export default function CitizenshipRequirementsScreen() {
                         href={source.url}
                         onBlur={() => setFocusedSourceRow(null)}
                         onFocus={() => setFocusedSourceRow(sourceFocusKey)}
+                        onMouseDown={() => setPressedSourceRow(sourceFocusKey)}
+                        onMouseEnter={() => setHoveredSourceRow(sourceFocusKey)}
+                        onMouseLeave={() => {
+                          setHoveredSourceRow(null);
+                          setPressedSourceRow(null);
+                        }}
+                        onMouseUp={() => setPressedSourceRow(null)}
+                        onPressIn={() => setPressedSourceRow(sourceFocusKey)}
+                        onPressOut={() => setPressedSourceRow(null)}
+                        onTouchCancel={() => setPressedSourceRow(null)}
+                        onTouchEnd={() => setPressedSourceRow(null)}
+                        onTouchStart={() => setPressedSourceRow(sourceFocusKey)}
                         rel="noreferrer"
                         style={[
                           styles.sourceRefRow,
-                          focusedSourceRow === sourceFocusKey ? styles.sourceRefRowFocused : null,
+                          focusedSourceRow === sourceFocusKey || hoveredSourceRow === sourceFocusKey
+                            ? styles.sourceRefRowFocused
+                            : null,
+                          pressedSourceRow === sourceFocusKey ? styles.sourceRefRowPressed : null,
                         ]}
                         target="_blank"
                         variant="card"
@@ -358,10 +375,25 @@ export default function CitizenshipRequirementsScreen() {
                 href={source.url}
                 onBlur={() => setFocusedSourceRow(null)}
                 onFocus={() => setFocusedSourceRow(sourceFocusKey)}
+                onMouseDown={() => setPressedSourceRow(sourceFocusKey)}
+                onMouseEnter={() => setHoveredSourceRow(sourceFocusKey)}
+                onMouseLeave={() => {
+                  setHoveredSourceRow(null);
+                  setPressedSourceRow(null);
+                }}
+                onMouseUp={() => setPressedSourceRow(null)}
+                onPressIn={() => setPressedSourceRow(sourceFocusKey)}
+                onPressOut={() => setPressedSourceRow(null)}
+                onTouchCancel={() => setPressedSourceRow(null)}
+                onTouchEnd={() => setPressedSourceRow(null)}
+                onTouchStart={() => setPressedSourceRow(sourceFocusKey)}
                 rel="noreferrer"
                 style={[
                   styles.sourceRow,
-                  focusedSourceRow === sourceFocusKey ? styles.sourceRowFocused : null,
+                  focusedSourceRow === sourceFocusKey || hoveredSourceRow === sourceFocusKey
+                    ? styles.sourceRowFocused
+                    : null,
+                  pressedSourceRow === sourceFocusKey ? styles.sourceRowPressed : null,
                 ]}
                 target="_blank"
                 variant="card"
