@@ -327,6 +327,17 @@ test('settings import summary copy keeps singular and plural labels for bookmark
     path.join(repoRoot, 'tests/e2e/settings-import-confirm-apply.spec.ts'),
     'utf8',
   );
+  const fixtureSource = fs
+    .readdirSync(path.join(repoRoot, 'tests/fixtures/local-study-data-import'))
+    .filter((fileName) => fileName.endsWith('.json'))
+    .sort()
+    .map((fileName) =>
+      fs.readFileSync(
+        path.join(repoRoot, 'tests/fixtures/local-study-data-import', fileName),
+        'utf8',
+      ),
+    )
+    .join('\n');
   const labelSnippets = [
     "one: 'fråga med sparad progression'",
     "other: 'frågor med sparad progression'",
@@ -425,11 +436,18 @@ test('settings import summary copy keeps singular and plural labels for bookmark
     'if (summary.streakFreezeStateIncluded) lines.push(copy.importSummaryStreakFreeze);',
     'settings import summary streak row',
   );
+  assertIncludes(e2eSource, 'loadImportPayloadCases', 'settings import shared fixture loader');
+  assertIncludes(e2eSource, 'payloadCase.summaryTexts', 'settings import E2E preview assertions');
+  assertIncludes(
+    e2eSource,
+    'payloadCase.absentSummaryTexts',
+    'settings import E2E zero-row rejection',
+  );
   for (const row of [...pluralPreviewRows, ...singularPreviewRows]) {
-    assertIncludes(e2eSource, row, 'settings import E2E preview assertions');
+    assertIncludes(fixtureSource, row, 'settings import shared fixture preview assertions');
   }
   for (const row of absentZeroRows) {
-    assertIncludes(e2eSource, row, 'settings import E2E zero-row rejection');
+    assertIncludes(fixtureSource, row, 'settings import shared fixture zero-row rejection');
   }
   assertIncludes(settingsSource, 'importPersistenceWarning', 'settings import write-fail copy');
   assertIncludes(settingsSource, 'kunde inte sparas varaktigt', 'settings import Swedish warning');
@@ -456,7 +474,7 @@ test('settings import summary copy keeps singular and plural labels for bookmark
     'settings import warning alert',
   );
   assertIncludes(e2eSource, 'absentSummaryTexts', 'settings import E2E zero-row cases');
-  assertIncludes(e2eSource, "name: 'plural'", 'settings import E2E payload cases');
+  assertIncludes(fixtureSource, '"name": "plural"', 'settings import shared fixture payload cases');
 });
 
 test('settings companion picker previews are decorative while labels stay on the option', () => {

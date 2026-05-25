@@ -11,6 +11,75 @@ const {
 } = require('./helpers/storageStoreHarness.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
+const localStudyDataImportFixtureDir = path.join(
+  repoRoot,
+  'tests/fixtures/local-study-data-import',
+);
+const localStudyDataImportSummaryKeys = [
+  'completedQuestionCount',
+  'bookmarkedQuestionCount',
+  'wrongAnswerReviewCount',
+  'mockExamSessionCount',
+  'streakFreezeStateIncluded',
+  'fsrsReviewCardCount',
+  'gradedReviewDayCount',
+  'settingCount',
+  'accessibilityPreferenceCount',
+  'companionPreferenceCount',
+  'citizenshipRequirementChecklistCount',
+  'highlightCount',
+];
+const localStudyDataImportExpectedStorageKeys = [
+  'completedQuestionIds',
+  'bookmarkedQuestionIds',
+  'wrongAnswerReviewIds',
+  'mockExamSessionIds',
+  'rescuedDayKeys',
+  'reviewIds',
+  'gradedPerDay',
+  'accessibilityPreferences',
+  'companionSelectedId',
+  'checkedAreaIds',
+];
+const purchaseFieldPattern = /purchase|receipt|entitlement|removeAds|adsDisabled|\biap\b/i;
+
+function loadLocalStudyDataImportFixtureCases() {
+  return fs
+    .readdirSync(localStudyDataImportFixtureDir)
+    .filter((fileName) => fileName.endsWith('.json'))
+    .sort()
+    .map((fileName) => ({
+      fileName,
+      fixture: JSON.parse(
+        fs.readFileSync(path.join(localStudyDataImportFixtureDir, fileName), 'utf8'),
+      ),
+    }));
+}
+
+function findForbiddenPurchaseField(value, pathParts = []) {
+  if (!value || typeof value !== 'object') return null;
+
+  if (Array.isArray(value)) {
+    for (let index = 0; index < value.length; index += 1) {
+      const nested = findForbiddenPurchaseField(value[index], [...pathParts, String(index)]);
+      if (nested) return nested;
+    }
+    return null;
+  }
+
+  for (const [key, nestedValue] of Object.entries(value)) {
+    const nextPath = [...pathParts, key];
+    if (purchaseFieldPattern.test(key)) return nextPath.join('.');
+    const nested = findForbiddenPurchaseField(nestedValue, nextPath);
+    if (nested) return nested;
+  }
+
+  return null;
+}
+
+function storedValueAsStringOrNull(value) {
+  return value == null ? null : String(value);
+}
 
 function createStorageById() {
   return {
@@ -255,9 +324,23 @@ test('settings import browser fixtures cover accessibility and companion preview
     path.join(repoRoot, 'tests/e2e/settings-import-confirm-apply.spec.ts'),
     'utf8',
   );
+  const fixtureByName = new Map(
+    loadLocalStudyDataImportFixtureCases().map(({ fixture }) => [fixture.name, fixture]),
+  );
+  const singularFixture = fixtureByName.get('singular');
+  const pluralFixture = fixtureByName.get('plural');
 
-  assert.match(source, /const accessibilityEasyReadFontKey = 'accessibility\\\\a11y\.easyReadFont\.v1';/);
-  assert.match(source, /const accessibilityFontSizeStepKey = 'accessibility\\\\a11y\.fontSizeStep\.v1';/);
+  assert.ok(singularFixture, 'singular shared import fixture must exist');
+  assert.ok(pluralFixture, 'plural shared import fixture must exist');
+
+  assert.match(
+    source,
+    /const accessibilityEasyReadFontKey = 'accessibility\\\\a11y\.easyReadFont\.v1';/,
+  );
+  assert.match(
+    source,
+    /const accessibilityFontSizeStepKey = 'accessibility\\\\a11y\.fontSizeStep\.v1';/,
+  );
   assert.match(
     source,
     /const accessibilityAudioPlaybackRateKey = 'accessibility\\\\a11y\.audioPlaybackRate\.v1';/,
@@ -268,21 +351,230 @@ test('settings import browser fixtures cover accessibility and companion preview
   );
   assert.match(source, /const accessibilityThemeModeKey = 'accessibility\\\\a11y\.themeMode\.v1';/);
   assert.match(source, /const companionSelectedIdKey = 'companion\\\\companion\.selectedId\.v1';/);
-  assert.match(source, /accessibility:\s*\{\s*themeMode: 'dark',\s*\}/);
-  assert.match(
-    source,
-    /accessibility:\s*\{\s*easyReadFont: true,\s*fontSizeStep: 3,\s*audioPlaybackRate: 1\.25,\s*listenFirstAudioEnabled: true,\s*themeMode: 'dark',\s*\}/,
-  );
-  assert.match(source, /companion:\s*\{\s*selectedId: 'dala-horse',\s*\}/);
-  assert.match(source, /'1 tillgänglighetsval'/);
-  assert.match(source, /'5 tillgänglighetsval'/);
-  assert.match(source, /'1 vald studiekompis'/);
-  assert.match(source, /'1 accessibility preference'/);
-  assert.match(source, /'5 accessibility preferences'/);
-  assert.match(source, /'1 selected study companion'/);
+  assert.match(source, /loadImportPayloadCases/);
+  assert.match(source, /tests\/fixtures\/local-study-data-import/);
+  assert.match(source, /payloadCase\.payload\[scenario\.importedLanguage\]/);
+  assert.deepEqual(singularFixture.payload.sv.accessibility, { themeMode: 'dark' });
+  assert.deepEqual(pluralFixture.payload.sv.accessibility, {
+    easyReadFont: true,
+    fontSizeStep: 3,
+    audioPlaybackRate: 1.25,
+    listenFirstAudioEnabled: true,
+    themeMode: 'dark',
+  });
+  assert.deepEqual(pluralFixture.payload.en.companion, { selectedId: 'dala-horse' });
+  assert.ok(singularFixture.summaryTexts.sv.includes('1 tillgänglighetsval'));
+  assert.ok(pluralFixture.summaryTexts.sv.includes('5 tillgänglighetsval'));
+  assert.ok(singularFixture.summaryTexts.sv.includes('1 vald studiekompis'));
+  assert.ok(singularFixture.summaryTexts.en.includes('1 accessibility preference'));
+  assert.ok(pluralFixture.summaryTexts.en.includes('5 accessibility preferences'));
+  assert.ok(singularFixture.summaryTexts.en.includes('1 selected study companion'));
   assert.match(source, /expectImportedSettingsControlsPersistAfterReload/);
   assert.match(source, /Dalahäst är vald som studiekompis/);
   assert.match(source, /Dala horse is selected as study companion/);
+});
+
+test('local study import fixture contract keeps the browser and Node schema complete', () => {
+  const cases = loadLocalStudyDataImportFixtureCases();
+
+  assert.deepEqual(
+    cases.map((entry) => entry.fixture.name),
+    ['plural', 'singular'].sort(),
+    'shared fixture names should cover exactly the singular and plural preview cases',
+  );
+
+  for (const { fileName, fixture } of cases) {
+    assert.equal(fixture.fileName, undefined, `${fileName} should not duplicate its file name`);
+    assert.ok(['singular', 'plural'].includes(fixture.name), `${fileName} must name its case`);
+    assert.deepEqual(
+      Object.keys(fixture.payload).sort(),
+      ['en', 'sv'],
+      `${fileName} must define Swedish and English imported payloads`,
+    );
+    assert.deepEqual(
+      Object.keys(fixture.summaryTexts).sort(),
+      ['en', 'sv'],
+      `${fileName} must define Swedish and English visible summary text`,
+    );
+    assert.deepEqual(
+      Object.keys(fixture.absentSummaryTexts).sort(),
+      ['en', 'sv'],
+      `${fileName} must define Swedish and English absent summary text`,
+    );
+    assert.deepEqual(
+      Object.keys(fixture.summaryCounts).sort(),
+      [...localStudyDataImportSummaryKeys].sort(),
+      `${fileName} must define every import preview summary count`,
+    );
+    assert.deepEqual(
+      Object.keys(fixture.expectedStorageIds).sort(),
+      [...localStudyDataImportExpectedStorageKeys].sort(),
+      `${fileName} must define expected stored ids for browser assertions`,
+    );
+    assert.deepEqual(
+      fixture.expectedStorageIds.checkedAreaIds,
+      fixture.citizenshipRequirements.currentCheckedAreaIds,
+      `${fileName} current citizenship requirement ids must match expected storage ids`,
+    );
+    assert.deepEqual(
+      fixture.citizenshipRequirements.legacyCheckedAreaIds,
+      fixture.citizenshipRequirements.currentCheckedAreaIds,
+      `${fileName} legacy citizenship requirement ids must stay sanitized with current ids`,
+    );
+
+    for (const language of ['sv', 'en']) {
+      assert.equal(
+        fixture.payload[language].settings.language,
+        language,
+        `${fileName} ${language} payload must import the requested language`,
+      );
+      assert.ok(
+        fixture.summaryTexts[language].length > 0,
+        `${fileName} ${language} summary texts must not be empty`,
+      );
+      assert.ok(
+        fixture.absentSummaryTexts[language].length > 0,
+        `${fileName} ${language} absent summary texts must not be empty`,
+      );
+    }
+
+    const forbiddenField = findForbiddenPurchaseField(fixture.payload);
+    assert.equal(forbiddenField, null, `${fileName} payload must not include ${forbiddenField}`);
+    assert.doesNotMatch(
+      JSON.stringify(fixture.payload),
+      /purchase_fields_rejected|remove_ads_entitlement/i,
+      `${fileName} payload must not carry purchase/ad-entitlement implementation fields`,
+    );
+  }
+});
+
+test('local study data import Node preview consumes the shared browser fixture list', () => {
+  const cases = loadLocalStudyDataImportFixtureCases();
+
+  for (const { fixture } of cases) {
+    const storageById = createStorageById();
+    const speech = createSpeechStub();
+    const { applyLocalStudyDataImport, previewLocalStudyDataImport } = loadImportModule(
+      storageById,
+      {
+        'expo-speech': () => speech,
+      },
+    );
+    const rawPayload = JSON.stringify(fixture.payload.en);
+    const previewResult = previewLocalStudyDataImport(rawPayload);
+
+    assert.equal(previewResult.ok, true, fixture.name);
+    assert.deepEqual(previewResult.preview.summary, fixture.summaryCounts, fixture.name);
+    assert.deepEqual(
+      previewResult.preview.citizenshipRequirements?.checkedAreaIds ?? [],
+      fixture.citizenshipRequirements.currentCheckedAreaIds,
+      fixture.name,
+    );
+
+    const applyResult = applyLocalStudyDataImport(previewResult.preview);
+    assert.deepEqual(applyResult.summary, fixture.summaryCounts, fixture.name);
+    assert.deepEqual(applyResult.warnings, [], fixture.name);
+
+    const progress = JSON.parse(storageById.progress.values.get('progressState'));
+    assert.deepEqual(
+      progress.completedQuestionIds,
+      fixture.expectedStorageIds.completedQuestionIds,
+      fixture.name,
+    );
+    assert.deepEqual(
+      Object.entries(progress.questionProgress)
+        .filter(([, value]) => value.bookmarked === true)
+        .map(([questionId]) => questionId)
+        .sort(),
+      fixture.expectedStorageIds.bookmarkedQuestionIds,
+      fixture.name,
+    );
+    assert.deepEqual(
+      progress.mockExamSessions.map((session) => session.sessionId).sort(),
+      fixture.expectedStorageIds.mockExamSessionIds,
+      fixture.name,
+    );
+    assert.deepEqual(
+      progress.streakFreezeState.rescuedDayKeys,
+      fixture.expectedStorageIds.rescuedDayKeys,
+      fixture.name,
+    );
+
+    const mistakeReview = JSON.parse(
+      storageById['mistake-review'].values.get('mistakeReviewState'),
+    );
+    assert.deepEqual(
+      Object.keys(mistakeReview.wrongAnswerReviews).sort(),
+      fixture.expectedStorageIds.wrongAnswerReviewIds,
+      fixture.name,
+    );
+
+    const reviews = JSON.parse(storageById.reviews.values.get('learning.reviews.cards.v1'));
+    assert.deepEqual(Object.keys(reviews.byId).sort(), fixture.expectedStorageIds.reviewIds);
+    assert.deepEqual(reviews.gradedPerDay, fixture.expectedStorageIds.gradedPerDay, fixture.name);
+
+    assert.equal(storageById.settings.values.get('language'), 'en', fixture.name);
+    assert.equal(storageById.settings.values.get('audioEnabled'), false, fixture.name);
+    assert.equal(storageById.settings.values.get('dailyGoalAnswers'), 20, fixture.name);
+    assert.equal(
+      storageById.settings.values.get('includeSupplementaryQuestions'),
+      true,
+      fixture.name,
+    );
+
+    const storedAccessibility = {
+      easyReadFont: storedValueAsStringOrNull(
+        storageById.accessibility.values.get('a11y.easyReadFont.v1'),
+      ),
+      fontSizeStep: storedValueAsStringOrNull(
+        storageById.accessibility.values.get('a11y.fontSizeStep.v1'),
+      ),
+      audioPlaybackRate: storedValueAsStringOrNull(
+        storageById.accessibility.values.get('a11y.audioPlaybackRate.v1'),
+      ),
+      listenFirstAudioEnabled: storedValueAsStringOrNull(
+        storageById.accessibility.values.get('a11y.listenFirstAudio.v1'),
+      ),
+      themeMode: storedValueAsStringOrNull(
+        storageById.accessibility.values.get('a11y.themeMode.v1'),
+      ),
+    };
+    assert.deepEqual(
+      storedAccessibility,
+      fixture.expectedStorageIds.accessibilityPreferences,
+      fixture.name,
+    );
+    assert.equal(
+      storageById.companion.values.get('companion.selectedId.v1') ?? null,
+      fixture.expectedStorageIds.companionSelectedId,
+      fixture.name,
+    );
+
+    const checkedAreaIds = storageById['citizenship-requirements'].values.has(
+      'citizenshipRequirements.checkedAreaIds.v1',
+    )
+      ? JSON.parse(
+          storageById['citizenship-requirements'].values.get(
+            'citizenshipRequirements.checkedAreaIds.v1',
+          ),
+        )
+      : [];
+    const legacyChecklist = storageById['citizenship-requirements'].values.has(
+      'citizenshipRequirementsChecklistState',
+    )
+      ? JSON.parse(
+          storageById['citizenship-requirements'].values.get(
+            'citizenshipRequirementsChecklistState',
+          ),
+        )
+      : { checkedAreaIds: [] };
+    assert.deepEqual(checkedAreaIds, fixture.citizenshipRequirements.currentCheckedAreaIds);
+    assert.deepEqual(
+      legacyChecklist.checkedAreaIds,
+      fixture.citizenshipRequirements.legacyCheckedAreaIds,
+    );
+    assert.equal(speech.stopCalls, 1, fixture.name);
+  }
 });
 
 test('local study data import previews and applies all learner snapshot sections', () => {

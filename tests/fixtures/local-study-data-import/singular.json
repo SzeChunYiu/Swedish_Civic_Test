@@ -1,0 +1,221 @@
+{
+  "name": "singular",
+  "payload": {
+    "sv": {
+      "version": 1,
+      "progress": {
+        "completedQuestionIds": ["q001", "q002"],
+        "questionProgress": {
+          "q001": {
+            "seenCount": 3,
+            "correctCount": 2,
+            "wrongCount": 1,
+            "correctStreak": 2,
+            "bookmarked": true,
+            "lastAnsweredAt": "2026-05-20T08:00:00.000Z",
+            "nextReviewAt": "2026-05-21T08:00:00.000Z"
+          }
+        },
+        "totalXp": 42,
+        "answerDates": ["2026-05-20"],
+        "mockExamSessions": [
+          {
+            "sessionId": "mock-1",
+            "score": 0.75,
+            "completedAt": "2026-05-20T09:00:00.000Z",
+            "correctCount": 3,
+            "totalCount": 4
+          }
+        ],
+        "streakFreezeState": {
+          "available": 2,
+          "lastEarnedAt": "2026-05-20",
+          "lifetimeEarned": 4,
+          "lifetimeSpent": 1,
+          "rescuedDayKeys": ["2026-05-19"]
+        }
+      },
+      "mistakeReview": {
+        "wrongAnswerReviews": {
+          "q001": {
+            "answeredAt": "2026-05-20T08:05:00.000Z",
+            "selectedOptionTextEn": "Wrong answer",
+            "selectedOptionTextSv": "Fel svar"
+          }
+        }
+      },
+      "reviews": {
+        "byId": {
+          "q001": {
+            "questionId": "q001",
+            "difficulty": 5,
+            "stability": 7,
+            "reps": 2,
+            "lapses": 0,
+            "state": "review",
+            "lastReviewAt": null,
+            "dueAt": "2026-05-21T08:00:00.000Z"
+          }
+        },
+        "gradedPerDay": {
+          "2026-05-20": 2
+        }
+      },
+      "settings": {
+        "language": "sv",
+        "audioEnabled": false,
+        "dailyGoalAnswers": 20,
+        "includeSupplementaryQuestions": true,
+        "hasSeenAboutTheTest": true
+      },
+      "accessibility": {
+        "themeMode": "dark"
+      },
+      "companion": {
+        "selectedId": "dala-horse"
+      }
+    },
+    "en": {
+      "version": 1,
+      "progress": {
+        "completedQuestionIds": ["q001", "q002"],
+        "questionProgress": {
+          "q001": {
+            "seenCount": 3,
+            "correctCount": 2,
+            "wrongCount": 1,
+            "correctStreak": 2,
+            "bookmarked": true,
+            "lastAnsweredAt": "2026-05-20T08:00:00.000Z",
+            "nextReviewAt": "2026-05-21T08:00:00.000Z"
+          }
+        },
+        "totalXp": 42,
+        "answerDates": ["2026-05-20"],
+        "mockExamSessions": [
+          {
+            "sessionId": "mock-1",
+            "score": 0.75,
+            "completedAt": "2026-05-20T09:00:00.000Z",
+            "correctCount": 3,
+            "totalCount": 4
+          }
+        ],
+        "streakFreezeState": {
+          "available": 2,
+          "lastEarnedAt": "2026-05-20",
+          "lifetimeEarned": 4,
+          "lifetimeSpent": 1,
+          "rescuedDayKeys": ["2026-05-19"]
+        }
+      },
+      "mistakeReview": {
+        "wrongAnswerReviews": {
+          "q001": {
+            "answeredAt": "2026-05-20T08:05:00.000Z",
+            "selectedOptionTextEn": "Wrong answer",
+            "selectedOptionTextSv": "Fel svar"
+          }
+        }
+      },
+      "reviews": {
+        "byId": {
+          "q001": {
+            "questionId": "q001",
+            "difficulty": 5,
+            "stability": 7,
+            "reps": 2,
+            "lapses": 0,
+            "state": "review",
+            "lastReviewAt": null,
+            "dueAt": "2026-05-21T08:00:00.000Z"
+          }
+        },
+        "gradedPerDay": {
+          "2026-05-20": 2
+        }
+      },
+      "settings": {
+        "language": "en",
+        "audioEnabled": false,
+        "dailyGoalAnswers": 20,
+        "includeSupplementaryQuestions": true,
+        "hasSeenAboutTheTest": true
+      },
+      "accessibility": {
+        "themeMode": "dark"
+      },
+      "companion": {
+        "selectedId": "dala-horse"
+      }
+    }
+  },
+  "expectedStorageIds": {
+    "completedQuestionIds": ["q001", "q002"],
+    "bookmarkedQuestionIds": ["q001"],
+    "wrongAnswerReviewIds": ["q001"],
+    "mockExamSessionIds": ["mock-1"],
+    "rescuedDayKeys": ["2026-05-19"],
+    "reviewIds": ["q001"],
+    "gradedPerDay": {
+      "2026-05-20": 2
+    },
+    "accessibilityPreferences": {
+      "easyReadFont": null,
+      "fontSizeStep": null,
+      "audioPlaybackRate": null,
+      "listenFirstAudioEnabled": null,
+      "themeMode": "dark"
+    },
+    "companionSelectedId": "dala-horse",
+    "checkedAreaIds": []
+  },
+  "summaryCounts": {
+    "completedQuestionCount": 2,
+    "bookmarkedQuestionCount": 1,
+    "wrongAnswerReviewCount": 1,
+    "mockExamSessionCount": 1,
+    "streakFreezeStateIncluded": true,
+    "fsrsReviewCardCount": 1,
+    "gradedReviewDayCount": 1,
+    "settingCount": 5,
+    "accessibilityPreferenceCount": 1,
+    "companionPreferenceCount": 1,
+    "citizenshipRequirementChecklistCount": 0,
+    "highlightCount": 0
+  },
+  "summaryTexts": {
+    "sv": [
+      "2 frågor med sparad progression",
+      "1 bokmärke",
+      "1 granskning av fel svar",
+      "1 genomfört övningsprov",
+      "1 repetitionskort",
+      "1 repetitionsdag",
+      "5 sparade inställningar",
+      "1 tillgänglighetsval",
+      "1 vald studiekompis",
+      "Studiesvit och svitskydd ingår"
+    ],
+    "en": [
+      "2 questions with saved progress",
+      "1 bookmark",
+      "1 wrong-answer review",
+      "1 completed mock exam",
+      "1 FSRS review card",
+      "1 FSRS review day",
+      "5 saved settings",
+      "1 accessibility preference",
+      "1 selected study companion",
+      "Study streak and freeze status included"
+    ]
+  },
+  "absentSummaryTexts": {
+    "sv": ["0 markeringar i e-boken", "0 markerade kravområden"],
+    "en": ["0 ebook highlights", "0 marked requirements"]
+  },
+  "citizenshipRequirements": {
+    "currentCheckedAreaIds": [],
+    "legacyCheckedAreaIds": []
+  }
+}
