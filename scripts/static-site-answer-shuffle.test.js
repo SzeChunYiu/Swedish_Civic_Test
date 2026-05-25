@@ -351,6 +351,8 @@ test('static Mock renders shuffled labels and reviews the selected original answ
       'renderMockExam();',
       'window.__mockExamHtml = document.getElementById("mock-stage").innerHTML;',
       'MOCK.answers = [0];',
+      'renderMockExam();',
+      'window.__mockSelectedHtml = document.getElementById("mock-stage").innerHTML;',
       'MOCK.submitted = true;',
       'renderMockResult();',
       'window.__mockReviewHtml = document.getElementById("mock-stage").innerHTML;',
@@ -360,6 +362,11 @@ test('static Mock renders shuffled labels and reviews the selected original answ
   vm.runInContext(source, sandbox, { timeout: 3000 });
 
   assert.deepEqual(parseDataIndexes(sandbox.window.__mockExamHtml, 'data-pick'), order);
+  assert.equal((sandbox.window.__mockExamHtml.match(/aria-checked="false"/g) || []).length, 4);
+  assert.match(
+    sandbox.window.__mockSelectedHtml,
+    /data-pick="0" type="button" role="radio" aria-checked="true"/,
+  );
   const reviewHtml = element('mock-stage').innerHTML;
   assert.match(reviewHtml, /<div class="mock-result is-strong">/);
   assert.match(reviewHtml, /<span class="result-ch__score">1\/1<\/span>/);
