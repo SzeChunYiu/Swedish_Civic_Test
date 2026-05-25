@@ -25,8 +25,13 @@ test('static footer brand and tagline use tactile hero boxes', () => {
     css,
     /\.footer__tagline em\s*{[\s\S]*background: linear-gradient\(90deg, var\(--gold\), #ffe680\);[\s\S]*background-clip: text;[\s\S]*color: transparent;/,
   );
-  assert.match(
-    css,
-    /@media \(max-width: 720px\)\s*{[\s\S]*\.footer__brand\s*{[\s\S]*min-height: 42px;[\s\S]*\.footer__tagline\s*{[\s\S]*border-radius: 22px;[\s\S]*font-size: clamp\(31px, 10vw, 42px\);/,
+  const footerBrandSection = css.slice(
+    css.indexOf('FOOTER BRAND AND TAGLINE BOX OPTIMIZATION ROUND'),
   );
+  const mobileFooterBrandRule = footerBrandSection.match(
+    /@media \(max-width: 720px\)\s*{[\s\S]*?\.footer__brand\s*{(?<rule>[\s\S]*?)}[\s\S]*?\.footer__tagline\s*{[\s\S]*?border-radius: 22px;[\s\S]*?font-size: clamp\(31px, 10vw, 42px\);/,
+  );
+  assert.ok(mobileFooterBrandRule?.groups?.rule, 'mobile footer brand rule should exist');
+  assert.match(mobileFooterBrandRule.groups.rule, /min-height: 44px;/);
+  assert.doesNotMatch(mobileFooterBrandRule.groups.rule, /min-height: 42px;/);
 });
