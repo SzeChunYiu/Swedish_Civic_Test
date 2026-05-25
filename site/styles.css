@@ -9477,7 +9477,8 @@ html[dir='rtl'] .lang-menu {
   border-radius: 12px;
   box-shadow: 0 8px 20px -18px rgba(11, 31, 51, 0.72);
   color: var(--ink);
-  min-height: 38px;
+  min-height: 44px;
+  min-width: 44px;
   position: relative;
 }
 
@@ -9520,6 +9521,15 @@ html[dir='rtl'] .lang-menu {
   box-shadow: var(--card-shadow);
 }
 
+.mock-dot:focus-visible {
+  border-color: var(--blue);
+  box-shadow:
+    0 0 0 5px rgba(0, 106, 167, 0.2),
+    var(--card-shadow);
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
+
 :root[data-theme='dark'] .mock-grid,
 :root[data-theme='dark'] .mock-dot {
   background: rgba(255, 255, 255, 0.045);
@@ -9533,15 +9543,23 @@ html[dir='rtl'] .lang-menu {
   color: var(--gold);
 }
 
+:root[data-theme='dark'] .mock-dot:focus-visible {
+  border-color: var(--gold);
+  box-shadow:
+    0 0 0 5px rgba(254, 204, 0, 0.22),
+    var(--card-shadow);
+  outline-color: var(--gold);
+}
+
 @media (max-width: 640px) {
   .mock-grid {
     gap: 7px;
-    grid-template-columns: repeat(auto-fill, minmax(34px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
     padding: 9px;
   }
   .mock-dot {
     border-radius: 10px;
-    min-height: 36px;
+    min-height: 44px;
   }
 }
 
