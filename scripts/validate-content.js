@@ -19395,8 +19395,10 @@ function validateLocalStudyCorruptJsonWarnings() {
     mistakeReview: 'lib/storage/mistakeReviewStore.ts',
     review: 'lib/storage/reviewStore.ts',
     highlights: 'lib/storage/highlightsStore.ts',
+    citizenshipRequirements: 'lib/storage/citizenshipRequirementsStore.ts',
     storageTests: 'tests/content-storage-write-fail-soft.test.js',
     reviewTests: 'tests/v1-1-review-store.test.js',
+    citizenshipRequirementsTests: 'tests/content-citizenship-requirements-parity.test.js',
   };
 
   for (const [key, relativePath] of Object.entries(sourceFiles)) {
@@ -19504,6 +19506,43 @@ function validateLocalStudyCorruptJsonWarnings() {
     }
   }
 
+  const citizenshipRequirementsSource = sources.citizenshipRequirements;
+  const citizenshipPrimaryParsePattern =
+    /const parseResult = parseJsonRecoverably\([\s\S]*?checkedAreaIdsKey[\s\S]*?normalizeImportedCitizenshipRequirementsChecklist[\s\S]*?\[\s*\]\s*,\s*\);/;
+  const citizenshipLegacyParsePattern =
+    /const legacyParseResult = parseJsonRecoverably\([\s\S]*?legacyChecklistStateKey[\s\S]*?normalizeImportedCitizenshipRequirementsChecklist[\s\S]*?\[\s*\]\s*,\s*\);/;
+  let citizenshipRequirementsStoreValid = true;
+
+  [
+    "const citizenshipRequirementsStorageId = 'citizenship-requirements';",
+    "const checkedAreaIdsKey = 'citizenshipRequirements.checkedAreaIds.v1';",
+    "const legacyChecklistStateKey = 'citizenshipRequirementsChecklistState';",
+    'readRecoverably(',
+    'readLegacyCheckedAreaIds(parseResult.warning)',
+    'persistenceWarning: primaryPersistenceWarning',
+  ].forEach((snippet) => {
+    if (!citizenshipRequirementsSource.includes(snippet)) {
+      reject(`citizenship requirements store corrupt JSON warning path is missing ${snippet}`);
+      citizenshipRequirementsStoreValid = false;
+    }
+  });
+
+  if (!citizenshipPrimaryParsePattern.test(citizenshipRequirementsSource)) {
+    reject(
+      'citizenship requirements primary store corrupt JSON warning path is missing parseJsonRecoverably for citizenshipRequirements.checkedAreaIds.v1',
+    );
+    citizenshipRequirementsStoreValid = false;
+  }
+
+  if (!citizenshipLegacyParsePattern.test(citizenshipRequirementsSource)) {
+    reject(
+      'citizenship requirements legacy store corrupt JSON warning path is missing parseJsonRecoverably for citizenshipRequirementsChecklistState',
+    );
+    citizenshipRequirementsStoreValid = false;
+  }
+
+  if (citizenshipRequirementsStoreValid) localStudyCorruptJsonStoresValidated += 1;
+
   function testBlock(source, title) {
     const start = source.indexOf(`test('${title}'`);
     if (start === -1) return '';
@@ -19564,6 +19603,22 @@ function validateLocalStudyCorruptJsonWarnings() {
         'persistenceWarning.errorMessage',
       ],
     },
+    {
+      label: 'citizenship requirements',
+      sourceKey: 'citizenshipRequirementsTests',
+      title:
+        'citizenship requirements checklist recovers legacy state when primary JSON is corrupt',
+      snippets: [
+        "[checkedAreaIdsKey]: '{not-json'",
+        'persistenceWarning',
+        'persistenceWarning?.storageId, citizenshipRequirementsStorageId',
+        'persistenceWarning?.key, checkedAreaIdsKey',
+        "persistenceWarning?.operation, 'read'",
+        'persistenceWarning?.errorMessage',
+        'storage.getString(checkedAreaIdsKey)',
+        'storage.getString(legacyChecklistStateKey)',
+      ],
+    },
   ];
 
   for (const testCase of testCases) {
@@ -19585,7 +19640,7 @@ function validateLocalStudyCorruptJsonWarnings() {
 
   if (
     valid &&
-    localStudyCorruptJsonStoresValidated === storeCases.length &&
+    localStudyCorruptJsonStoresValidated === storeCases.length + 1 &&
     localStudyCorruptJsonRecoverableReadWarningTestsValidated === testCases.length
   ) {
     localStudyCorruptJsonWarningParityValidated = true;
