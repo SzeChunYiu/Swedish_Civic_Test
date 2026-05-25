@@ -4,9 +4,12 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 
+const { runFocusedValidatorMutation } = require('./helpers/focusedValidatorMutation.cjs');
+
 const repoRoot = path.resolve(__dirname, '..');
 const sourcePath = path.join(repoRoot, 'components/ui/TopBarActions.tsx');
 const focusFlag = '--focus-topbar-actions-accessibility';
+const targetFile = 'components/ui/TopBarActions.tsx';
 
 function readSource() {
   return fs.readFileSync(sourcePath, 'utf8');
@@ -87,4 +90,45 @@ test('top bar route links keep web anchor touch targets and theme token feedback
   assert.match(source, /iconLinkPressed: \{\s*backgroundColor: themeColors\.focusSoft,/);
   assert.match(source, /transform: \[\{ scale: motion\.pressedScale \}\]/);
   assert.match(source, /@media \(prefers-reduced-motion: reduce\)[\s\S]*transform: none;/);
+});
+
+test('focused TopBarActions accessibility validator rejects realistic link mutations', () => {
+  const mutationFixtures = [
+    {
+      label: 'missing web focus feedback',
+      expectedFailure: /TopBarActions missing web focus soft feedback for accessibility parity/,
+      mutateSource: (source) =>
+        source.replaceAll(
+          'background-color: ${themeColors.focusSoft};',
+          'background-color: transparent;',
+        ),
+    },
+    {
+      label: 'missing keyboard pressed-state reset',
+      expectedFailure: /TopBarActions missing keyboard up pressed reset for accessibility parity/,
+      mutateSource: (source) =>
+        source.replace(
+          /    onKeyUp: \(event: \{ key\?: string \}\) => \{\n      if \(isKeyboardActivationKey\(event\.key\)\) setIsPressed\(false\);\n    \},/,
+          '    onKeyUp: () => undefined,',
+        ),
+    },
+    {
+      label: 'Expo Link asChild bypass',
+      expectedFailure: /TopBarActions must not include Expo Link asChild bypass/,
+      mutateSource: (source) => source.replace('<Link\n', '<Link asChild\n'),
+    },
+  ];
+
+  for (const fixture of mutationFixtures) {
+    const result = runFocusedValidatorMutation({
+      focusFlag,
+      targetFile,
+      mutateSource: fixture.mutateSource,
+    });
+    const output = `${result.stdout}\n${result.stderr}`;
+
+    assert.equal(result.status, 1, `${fixture.label} should fail focused validation\n${output}`);
+    assert.match(output, fixture.expectedFailure);
+    assert.doesNotMatch(output, /questionSchemasValidated/);
+  }
 });
