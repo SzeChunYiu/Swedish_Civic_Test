@@ -38,6 +38,14 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     summaryKeys: ['generatedSwedenScopeFocusValidated', 'generatedSwedenScopeParityValidated'],
   },
   {
+    id: 'generatedSingleChoiceMeaningClause',
+    flags: ['--focus-generated-single-choice-meaning-clause'],
+    summaryKeys: [
+      'generatedSingleChoiceMeaningClausePromptsValidated',
+      'generatedSingleChoiceMeaningClauseFocusValidated',
+    ],
+  },
+  {
     id: 'generatedLocalizationTemplateParity',
     flags: ['--focus-generated-localization-template-parity', '--focus-generated-localization'],
     summaryKeys: [

@@ -1223,6 +1223,51 @@ test('generated meaning-clause single-choice prompts use direct English question
   }
 });
 
+test('generated meaning-clause focused validation rejects stale meta-stems', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "const staleMeaningClausePrompt = {",
+        "  [generatedFixtureId('q020', 3)]: { questionEn: 'Which meaning is correct for referendums in Sweden are advisory?' },",
+        "};",
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  staleMeaningClausePrompt[question.id]",
+        "    ? {",
+        "        ...question,",
+        "        ...staleMeaningClausePrompt[question.id],",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+process.argv.push('--focus-generated-single-choice-meaning-clause');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.match(output, /uses a generated single-choice meaning-clause meta-stem/);
+});
+
 test('referendum advisory Swedish naturalness guard rejects old måste inte wording', () => {
   const result = spawnSync(
     process.execPath,
