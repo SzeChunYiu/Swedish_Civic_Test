@@ -31,6 +31,10 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
     path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
     'utf8',
   );
+  const unavailableCopySource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/removeAdsUnavailableCopy.ts'),
+    'utf8',
+  );
   const paywallSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
     'utf8',
@@ -121,11 +125,12 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.match(purchaseSource, /type: 'in-app'/);
   assert.match(placementCtaSource, /restoreRemoveAdsPurchase/);
   assert.match(placementCtaSource, /runPurchaseAction\('restore', restoreRemoveAdsPurchase\)/);
-  assert.match(placementCtaSource, /purchaseUnavailableReason === 'web_store_unavailable'/);
-  assert.match(
-    placementCtaSource,
-    /purchaseUnavailableReason === 'native_receipt_validator_unavailable'/,
-  );
+  assert.match(placementCtaSource, /getRemoveAdsUnavailableCopy/);
+  assert.match(unavailableCopySource, /case 'web_store_unavailable'/);
+  assert.match(unavailableCopySource, /case 'native_receipt_validator_unavailable'/);
+  assert.match(unavailableCopySource, /const exhaustiveReason: never = reason/);
+  assert.match(placementCtaSource, /webStoreUnavailable:/);
+  assert.match(placementCtaSource, /nativeReceiptValidatorUnavailable:/);
   assert.match(placementCtaSource, /copy\.webUnavailableBody\(REMOVE_ADS_PRICE_LABEL\)/);
   assert.match(placementCtaSource, /copy\.nativeUnavailableBody\(REMOVE_ADS_PRICE_LABEL\)/);
   assert.match(placementCtaSource, /copy\.webUnavailableAccessibilityHint/);
@@ -266,10 +271,10 @@ const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/components/monetization/RemoveAdsPlacementCta.tsx')) {
+  if (normalizedPath.endsWith('/lib/monetization/removeAdsUnavailableCopy.ts')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace("purchaseRuntime?.purchaseUnavailableReason === 'web_store_unavailable'", 'false');
+      .replace("case 'web_store_unavailable':", "case 'web_store_unavailable_disabled':");
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
