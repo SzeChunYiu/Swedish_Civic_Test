@@ -1086,10 +1086,17 @@ function focusedValidationRequested(id, args = processArgs()) {
   return entry.flags.some((flag) => args.includes(flag));
 }
 
+function focusedValidationSummaryKeys(id) {
+  const entry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get(id);
+  if (!entry) throw new Error(`Unknown focused validation registry id: ${id}`);
+  return entry.summaryKeys.slice();
+}
+
 module.exports = {
   FOCUSED_VALIDATION_REGISTRY,
   FOCUSED_VALIDATION_REGISTRY_BY_ID,
   SUPPORTED_FOCUSED_VALIDATION_FLAGS,
+  focusedValidationSummaryKeys,
   focusedValidationRequested,
   rejectUnsupportedFocusedValidationFlags,
   requestedFocusedValidationFlags,

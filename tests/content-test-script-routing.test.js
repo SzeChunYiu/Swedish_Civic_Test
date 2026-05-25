@@ -8,6 +8,7 @@ const nodeTest = require('node:test');
 const {
   FOCUSED_VALIDATION_REGISTRY,
   FOCUSED_VALIDATION_REGISTRY_BY_ID,
+  focusedValidationSummaryKeys,
 } = require('../scripts/validate-content-focus-registry');
 const {
   MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES,
@@ -151,6 +152,21 @@ function assertFocusedValidationSummary(flag, expectedSummaryKeys) {
   assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
 
   return summary;
+}
+
+function legalSectionSummaryKeysFrom(summary) {
+  return Object.keys(summary)
+    .filter((key) => key.startsWith('legalSection'))
+    .sort();
+}
+
+function assertLegalSectionFocusRegistryMatchesSummary(registryEntry, summary) {
+  assert.ok(registryEntry, 'LegalSection rendering focus mode must be registered');
+  assert.deepEqual(
+    registryEntry.summaryKeys.filter((key) => key.startsWith('legalSection')).sort(),
+    legalSectionSummaryKeysFrom(summary),
+    'LegalSection registered summary keys must match emitted legalSection* focus output',
+  );
 }
 
 const staticEbookProvenanceUmbrellaConstituents = [
@@ -585,6 +601,11 @@ test('LegalSection rendering focus registry lists granular summary keys', () => 
   assert.ok(match, 'focused LegalSection validation should print a JSON summary');
   const summary = JSON.parse(match[0]);
 
+  assert.deepEqual(
+    focusedValidationSummaryKeys('legalSectionRendering'),
+    registryEntry.summaryKeys,
+  );
+  assertLegalSectionFocusRegistryMatchesSummary(registryEntry, summary);
   for (const key of registryEntry.summaryKeys) {
     assert.ok(Object.prototype.hasOwnProperty.call(summary, key), `${key} is present`);
   }
@@ -595,6 +616,43 @@ test('LegalSection rendering focus registry lists granular summary keys', () => 
   assert.equal(summary.legalSectionRawTextUnderViewValidated, true);
   assert.equal(summary.legalSectionRenderingParityValidated, true);
   assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
+});
+
+test('LegalSection rendering focus registry rejects summary-key drift', () => {
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('legalSectionRendering');
+  const summary = assertFocusedValidationSummary(
+    '--focus-legal-section-rendering',
+    focusedValidationSummaryKeys('legalSectionRendering'),
+  );
+
+  const missingEmittedKeyRegistryEntry = {
+    ...registryEntry,
+    summaryKeys: registryEntry.summaryKeys.filter(
+      (key) => key !== 'legalSectionRawTextUnderViewValidated',
+    ),
+  };
+  assert.throws(
+    () => assertLegalSectionFocusRegistryMatchesSummary(missingEmittedKeyRegistryEntry, summary),
+    /registered summary keys must match emitted legalSection\* focus output/,
+  );
+
+  const extraRegisteredKeyRegistryEntry = {
+    ...registryEntry,
+    summaryKeys: [...registryEntry.summaryKeys, 'legalSectionUnemittedParityValidated'],
+  };
+  assert.throws(
+    () => assertLegalSectionFocusRegistryMatchesSummary(extraRegisteredKeyRegistryEntry, summary),
+    /registered summary keys must match emitted legalSection\* focus output/,
+  );
+
+  assert.throws(
+    () =>
+      assertLegalSectionFocusRegistryMatchesSummary(registryEntry, {
+        ...summary,
+        legalSectionUnexpectedParityValidated: true,
+      }),
+    /registered summary keys must match emitted legalSection\* focus output/,
+  );
 });
 
 test('mock exam copy parity focus registry executes a narrow summary', () => {
