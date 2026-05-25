@@ -116,7 +116,7 @@ test('semantic hairline token is reserved for border widths', () => {
   );
 });
 
-test('search and language controls keep 2px divider layout token separate from hairline borders', () => {
+test('search settings and language picker keep divider layout tokens separate from hairline borders', () => {
   const searchSource = fs.readFileSync(path.join(repoRoot, 'app/search.tsx'), 'utf8');
   const settingsSource = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
   const languagePickerSource = fs.readFileSync(
