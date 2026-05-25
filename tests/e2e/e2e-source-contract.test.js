@@ -514,6 +514,36 @@ test('routed quiz Back to Search links use stack-aware route dismissal', () => {
     /await expect\(page\.getByRole\('link', \{ name: backSearchLinkName \}\)\)\.toHaveCount\(0\);/,
     'Search return e2e should verify retained Back to Search links are gone after return',
   );
+  assert.match(
+    source,
+    /async function expectDirectQuizReturnSearchState\(\{/,
+    'direct quiz return e2e should share a retained-shell assertion helper',
+  );
+  assert.match(
+    source,
+    /await expect\(page\.getByRole\('heading', \{ name: sessionHeading \}\)\)\.toHaveCount\(0\);/,
+    'direct quiz return e2e should verify the old quiz session heading is no longer role-queryable',
+  );
+  assert.match(
+    source,
+    /await expect\(page\.getByRole\('link', \{ name: backSearchLinkName \}\)\)\.toHaveCount\(0\);/,
+    'direct quiz return e2e should verify retained direct Back to Search links are gone after return',
+  );
+  assert.match(
+    source,
+    /await expectDirectQuizReturnSearchState\(\{\s*backSearchLinkName:/,
+    'direct quiz query-free and malformed fallback cases should assert retained-shell cleanup',
+  );
+  assert.match(
+    source,
+    /direct quiz visits keep the Swedish search backlink query-free without retained shell/,
+    'direct quiz return e2e should cover the Swedish query-free retained-shell path',
+  );
+  assert.match(
+    source,
+    /sessionHeading: 'Frågepass q001'/,
+    'direct quiz return e2e should verify the Swedish quiz session heading is not retained',
+  );
 });
 
 test('practice feedback specs target answer option accessibility result labels', () => {
@@ -908,7 +938,7 @@ test('static site network specs share one external request trap helper', () => {
   );
   assert.deepEqual(
     callArgumentCounts(networkSource, 'trapExternalRequests'),
-    [3, 3, 3, 3],
+    [3, 3, 3, 3, 3],
     'font/network coverage should use the shared helper with an explicit capture array',
   );
   assert.match(
