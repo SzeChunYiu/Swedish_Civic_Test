@@ -19,6 +19,8 @@ test('premium entitlement parity keeps Remove Ads decoupled from full premium', 
 
   assert.equal(summary.premiumEntitlementStatesValidated, 3);
   assert.equal(summary.premiumEntitlementParityValidated, true);
+  assert.ok(summary.monetizationStrictBooleanSourceFilesValidated >= 10);
+  assert.equal(summary.monetizationStrictBooleanSourceScanParityValidated, true);
   assert.match(premiumSource, /export const REMOVE_ADS_ENTITLEMENTS/);
   assert.match(premiumSource, /adsDisabled: true/);
   assert.match(premiumSource, /unlimitedMockExams: false/);
@@ -27,6 +29,41 @@ test('premium entitlement parity keeps Remove Ads decoupled from full premium', 
     /isStrictEntitlementFlag\(entitlements\.unlimitedMockExams\)[\s\S]*isStrictEntitlementFlag\(entitlements\.fullMistakeReview\)/,
   );
   assert.match(premiumSource, /return isStrictEntitlementFlag\(entitlements\.adsDisabled\);/);
+});
+
+test('premium entitlement parity rejects raw source-level entitlement truthiness', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+process.argv.push('--focus-monetization-strict-boolean-source-scan');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/account.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'Remove Ads is {removeAdsActive ? \\'active\\' : \\'not active\\'} on this device.',
+        'Remove Ads is {entitlements.adsDisabled ? \\'active\\' : \\'not active\\'} on this device.',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /Monetization entitlement consumers must use strict boolean checks or shared helpers/,
+  );
+  assert.match(`${result.stdout}\n${result.stderr}`, /app\/account\.tsx/);
 });
 
 test('premium entitlement parity rejects Remove Ads granting unlimited exams', () => {

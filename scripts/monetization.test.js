@@ -1402,6 +1402,31 @@ test('remove-ads entitlement is decoupled from premium feature bundle', () => {
   );
 });
 
+test('monetization strict boolean source scan rejects raw entitlement truthiness', () => {
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-monetization-strict-boolean-source-scan'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.ok(summary.monetizationStrictBooleanSourceFilesValidated >= 10);
+  assert.equal(summary.monetizationStrictBooleanSourceScanParityValidated, true);
+  assert.doesNotMatch(
+    fs.readFileSync(path.join(repoRoot, 'app/account.tsx'), 'utf8'),
+    /entitlements\.adsDisabled\s*\?/,
+  );
+  assert.match(
+    fs.readFileSync(path.join(repoRoot, 'app/account.tsx'), 'utf8'),
+    /hasAdsDisabled\(entitlements\)/,
+  );
+});
+
 test('effective entitlement resolver normalizes malformed entitlement flags to strict booleans', () => {
   const { unionEntitlements } = loadTs('lib/monetization/premium.ts');
   const { resolveEffectiveEntitlement } = loadTs('lib/monetization/effectiveEntitlements.ts');

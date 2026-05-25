@@ -5,6 +5,7 @@ import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-nati
 import { Avatar } from '../components/auth/Avatar';
 import { deriveAuthDisplayInfo } from '../lib/auth/displayName';
 import { useAuth } from '../lib/auth/AuthContext';
+import { hasAdsDisabled } from '../lib/monetization/premium';
 import { useRemoveAdsEntitlements } from '../lib/monetization/useRemoveAdsEntitlements';
 import { RouteLink } from '../components/ui/RouteLink';
 import { radius, space, typography, type ThemeColors } from '../lib/theme';
@@ -17,6 +18,7 @@ export default function AccountScreen() {
   const themeColors = useThemeColors();
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const display = deriveAuthDisplayInfo(user);
+  const removeAdsActive = hasAdsDisabled(entitlements);
 
   const handleSignOut = async () => {
     setIsSigningOut(true);
@@ -103,8 +105,8 @@ export default function AccountScreen() {
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Purchases stay separate</Text>
         <Text style={styles.body}>
-          Remove Ads is {entitlements.adsDisabled ? 'active' : 'not active'} on this device. The
-          account session does not rename, merge, or replace Remove Ads or Pro entitlements.
+          Remove Ads is {removeAdsActive ? 'active' : 'not active'} on this device. The account
+          session does not rename, merge, or replace Remove Ads or Pro entitlements.
         </Text>
       </View>
 
