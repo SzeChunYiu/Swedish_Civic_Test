@@ -64,14 +64,34 @@ test('settings route shell copy follows the persisted settings language', () => 
     'utf8',
   );
 
-  assert.equal(summary.settingsRouteCopyLabelsValidated, 127);
+  assert.equal(summary.settingsRouteCopyLabelsValidated, 161);
   assert.equal(summary.settingsRouteCopyParityValidated, true);
   assert.match(source, /import \{ useLocalSearchParams \} from 'expo-router';/);
   assert.match(source, /const \{ focus \} = useLocalSearchParams<\{ focus\?: string \}>\(\);/);
   assert.match(source, /const studyFocusActive = focus === 'study';/);
   assert.match(source, /const companionFocusActive = focus === 'companion';/);
-  assert.match(source, /studyControlsTitle: 'Dagligt mål, språk och ljud'/);
-  assert.match(source, /studyControlsTitle: 'Daily goal, language, and audio'/);
+  assert.match(
+    source,
+    /const studyPlanTestDateIso = useSettingsStore\(\(state\) => state\.studyPlanTestDateIso\);/,
+  );
+  assert.match(
+    source,
+    /const setStudyPlanTestDateIso = useSettingsStore\(\(state\) => state\.setStudyPlanTestDateIso\);/,
+  );
+  assert.match(source, /normalizeStudyPlanTestDateIso\(trimmedInput\)/);
+  assert.match(source, /const studyIntensityOptions: StudyIntensityOption\[\] = \[/);
+  assert.match(source, /onLayout=\{handleStudySectionLayout\}/);
+  assert.match(source, /studyControlsTitle: 'Provdatum, intensitet, dagligt mål, språk och ljud'/);
+  assert.match(
+    source,
+    /studyControlsTitle: 'Test date, intensity, daily goal, language, and audio'/,
+  );
+  assert.match(source, /studyPlanTestDateTitle: 'Provdatum'/);
+  assert.match(source, /studyPlanTestDateTitle: 'Test date'/);
+  assert.match(source, /studyPlanTestDateInputLabel: 'Ange provdatum som ÅÅÅÅ-MM-DD'/);
+  assert.match(source, /studyPlanTestDateInputLabel: 'Enter test date as YYYY-MM-DD'/);
+  assert.match(source, /studyPlanIntensityTitle: 'Studieintensitet'/);
+  assert.match(source, /studyPlanIntensityTitle: 'Study intensity'/);
   assert.match(
     source,
     /studyControlsFocusLabel: 'Studieinställningarna från profilen är markerade här\.'/,
@@ -91,6 +111,7 @@ test('settings route shell copy follows the persisted settings language', () => 
   assert.match(source, /testID="companion-settings-controls"/);
   assert.match(source, /ref=\{scrollViewRef\}/);
   assert.match(source, /scrollViewRef\.current\?\.scrollTo/);
+  assert.match(source, /const handleStudySectionLayout = \(event: LayoutChangeEvent\) => \{/);
   assert.match(source, /onLayout=\{handleCompanionSectionLayout\}/);
   assert.match(source, /studyFocusActive \? styles\.studyControlsGroupFocused : null/);
   assert.match(source, /companionFocusActive \? styles\.companionControlsGroupFocused : null/);

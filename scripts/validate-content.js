@@ -3079,6 +3079,8 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Ljud',
     '← Tillbaka till profil',
     'Tillbaka till profil',
+    'Rensa provdatum',
+    'Rensa lokalt provdatum',
     'Välj en studiekompis för övningen. Valet är gratis och sparas bara på enheten.',
     'Studiekompisen från övningen är markerad här.',
     'Studiekompis',
@@ -3125,7 +3127,22 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Byt studiespråk till ${label}',
     'Studiespråk',
     'Studieinställningarna från profilen är markerade här.',
-    'Dagligt mål, språk och ljud',
+    'Provdatum, intensitet, dagligt mål, språk och ljud',
+    'Provdatumet är rensat.',
+    'Ange ett giltigt datum som ÅÅÅÅ-MM-DD.',
+    'Sparat provdatum: ${dateLabel}.',
+    'Välj studieintensitet: ${label}',
+    'Lugn',
+    'Lagom',
+    'Intensiv',
+    'Studieintensitet: ${label}',
+    'Studieintensitet',
+    'Ange provdatum som ÅÅÅÅ-MM-DD',
+    '2026-08-15',
+    'Används bara lokalt för nedräkning och den personliga studieplanen.',
+    'Provdatum',
+    'Spara provdatum',
+    'Spara lokalt provdatum',
     'Ställ in dagligt mål till ${goal} svar',
     'Välj tema: ${label}',
     'Styr studiespråk, ljud, tema, studiekompis och ditt dagliga mål.',
@@ -3144,6 +3161,8 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Audio',
     '← Back to Profile',
     'Back to profile',
+    'Clear test date',
+    'Clear local test date',
     'Choose a study companion for practice. It is free and saved only on this device.',
     'The study companion picker from Practice is highlighted here.',
     'Study companion',
@@ -3191,7 +3210,22 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Set study language to ${label}',
     'Study language',
     'The study setup controls from Profile are highlighted here.',
-    'Daily goal, language, and audio',
+    'Test date, intensity, daily goal, language, and audio',
+    'Test date cleared.',
+    'Enter a valid date as YYYY-MM-DD.',
+    'Saved test date: ${dateLabel}.',
+    'Choose study intensity: ${label}',
+    'Calm',
+    'Steady',
+    'Intensive',
+    'Study intensity: ${label}',
+    'Study intensity',
+    'Enter test date as YYYY-MM-DD',
+    '2026-08-15',
+    'Used only locally for the countdown and personal study plan.',
+    'Test date',
+    'Save test date',
+    'Save local test date',
     'Set daily goal to ${goal} answers',
     'Choose theme: ${label}',
     'Control study language, audio, theme, study companion, and your daily goal.',
@@ -3218,6 +3252,26 @@ const EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS = [
   [
     'const language = useSettingsStore((state) => state.language);',
     'settings route must read language from settings store',
+  ],
+  [
+    'const studyPlanTestDateIso = useSettingsStore((state) => state.studyPlanTestDateIso);',
+    'settings route must read the local study-plan test date',
+  ],
+  [
+    'const setStudyPlanTestDateIso = useSettingsStore((state) => state.setStudyPlanTestDateIso);',
+    'settings route must write the local study-plan test date',
+  ],
+  [
+    'normalizeStudyPlanTestDateIso',
+    'settings route must normalize study-plan test dates before persisting',
+  ],
+  [
+    'const studyIntensityOptions: StudyIntensityOption[] = [',
+    'settings route must expose study-plan intensity choices',
+  ],
+  [
+    'onLayout={handleStudySectionLayout}',
+    'settings route must measure the study controls for focused handoff scrolling',
   ],
   [
     'const copy = settingsCopy[language];',
