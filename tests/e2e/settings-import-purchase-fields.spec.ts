@@ -1,12 +1,13 @@
 import { Buffer } from 'node:buffer';
 
-import { expect, test, type Locator, type Page } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 import {
   dismissBlockingModals,
   seedFreshSettingsLanguageAndAboutSeen,
   type AppLanguage,
 } from './browserLaunch';
+import { forceTextInputValue } from './helpers/textInput';
 
 test.use({ viewport: { width: 390, height: 844 } });
 
@@ -103,21 +104,6 @@ function collectConsoleErrors(page: Page): string[] {
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
   return consoleErrors;
-}
-
-async function forceTextInputValue(locator: Locator, value: string): Promise<void> {
-  await locator.evaluate((element, nextValue) => {
-    const target = element as HTMLInputElement | HTMLTextAreaElement;
-    const prototype =
-      target instanceof HTMLTextAreaElement
-        ? HTMLTextAreaElement.prototype
-        : HTMLInputElement.prototype;
-    const valueSetter = Object.getOwnPropertyDescriptor(prototype, 'value')?.set;
-
-    valueSetter?.call(target, nextValue);
-    target.dispatchEvent(new Event('input', { bubbles: true }));
-    target.dispatchEvent(new Event('change', { bubbles: true }));
-  }, value);
 }
 
 async function expectNoLocalStudyDataStoresWritten(page: Page): Promise<void> {
