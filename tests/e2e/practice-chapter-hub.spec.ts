@@ -15,37 +15,29 @@ async function seedEnglishHub(page: Page) {
   await markAboutTheTestSeen(page);
 }
 
-function seededChapterProgressState() {
+function seededProgressState(entries: { isCorrect: boolean; questionId: string }[]) {
   const answeredAt = new Date(Date.now() - 60 * 60 * 1000).toISOString();
   const answerDate = answeredAt.slice(0, 10);
 
   return {
     answerDates: [answerDate],
-    answerHistory: [
-      { answeredAt, isCorrect: true, questionId: 'q011' },
-      { answeredAt, isCorrect: false, questionId: 'q012' },
-    ],
-    completedQuestionIds: ['q011', 'q012'],
+    answerHistory: entries.map((entry) => ({ ...entry, answeredAt })),
+    completedQuestionIds: entries.map((entry) => entry.questionId),
     dailyChallengeCompletions: {},
     mockExamSessions: [],
-    questionProgress: {
-      q011: {
-        correctCount: 1,
-        correctStreak: 1,
-        lastAnsweredAt: answeredAt,
-        questionId: 'q011',
-        seenCount: 1,
-        wrongCount: 0,
-      },
-      q012: {
-        correctCount: 0,
-        correctStreak: 0,
-        lastAnsweredAt: answeredAt,
-        questionId: 'q012',
-        seenCount: 1,
-        wrongCount: 1,
-      },
-    },
+    questionProgress: Object.fromEntries(
+      entries.map((entry) => [
+        entry.questionId,
+        {
+          correctCount: entry.isCorrect ? 1 : 0,
+          correctStreak: entry.isCorrect ? 1 : 0,
+          lastAnsweredAt: answeredAt,
+          questionId: entry.questionId,
+          seenCount: 1,
+          wrongCount: entry.isCorrect ? 0 : 1,
+        },
+      ]),
+    ),
     streakFreezeState: {
       available: 0,
       lastEarnedAt: null,
@@ -57,10 +49,32 @@ function seededChapterProgressState() {
   };
 }
 
+function seededChapterProgressState() {
+  return seededProgressState([
+    { isCorrect: true, questionId: 'q011' },
+    { isCorrect: false, questionId: 'q012' },
+  ]);
+}
+
+function seededVisiblePracticeProgressState() {
+  return seededProgressState([
+    { isCorrect: true, questionId: 'q001' },
+    { isCorrect: true, questionId: 'q002' },
+  ]);
+}
+
 async function seedEnglishHubWithChapterProgress(page: Page) {
   await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, 'en', {
     localStorageValues: {
       [currentProgressStateStorageKey]: JSON.stringify(seededChapterProgressState()),
+    },
+  });
+}
+
+async function seedEnglishHubWithVisibleProgress(page: Page) {
+  await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, 'en', {
+    localStorageValues: {
+      [currentProgressStateStorageKey]: JSON.stringify(seededVisiblePracticeProgressState()),
     },
   });
 }
@@ -106,6 +120,60 @@ test('practice opens on a localized hub with chapter cards and mock exam link', 
   await expectTapTarget(quickRound, 'quick-round CTA');
   await expectTapTarget(mockExam, 'mock exam link');
   await expectTapTarget(chapterCard, 'chapter practice card');
+  expect(consoleErrors).toEqual([]);
+});
+
+test('all-practice CTA starts the first unanswered visible question', async ({ page }) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await seedEnglishHubWithVisibleProgress(page);
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  await expect(page.getByText(/You have answered 2 of \d+ visible questions\./)).toBeVisible();
+  await page.getByRole('button', { name: 'Start practice with all visible questions' }).click();
+
+  await expect(page.getByText('Question 3', { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole('heading', {
+      name: 'Approximately how far does Sweden stretch from Treriksröset to Smygehuk?',
+    }),
+  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Where is Sweden located?' })).toHaveCount(0);
+  await expect(
+    page.getByRole('heading', {
+      name: "Sweden's northernmost part lies north of the Arctic Circle.",
+    }),
+  ).toHaveCount(0);
+  expect(consoleErrors).toEqual([]);
+});
+
+test('quick-round CTA starts the first unanswered quick question', async ({ page }) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await seedEnglishHubWithVisibleProgress(page);
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  await page.getByRole('button', { name: 'Start a quick round with 10 questions' }).click();
+
+  await expect(page.getByText('Question 3', { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole('heading', {
+      name: 'Approximately how far does Sweden stretch from Treriksröset to Smygehuk?',
+    }),
+  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Where is Sweden located?' })).toHaveCount(0);
   expect(consoleErrors).toEqual([]);
 });
 
