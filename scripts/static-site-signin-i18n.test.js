@@ -50,6 +50,21 @@ const signedInMeaningPatterns = {
   uk: [/увійшли/i, /Виділення/i, /нотатки/i, /панель/i, /синхронізуються/i, /пристроями/i],
 };
 
+const oldFineprintNoSharingPatterns = [
+  /share your study data/i,
+  /delar aldrig dina studiedata/i,
+  /分享你的学习数据/,
+  /分享你的學習資料/,
+  /نشارك بيانات دراستك/,
+  /داتای خوێندنت بەش ناکەین/,
+  /داده‌های مطالعه‌ات را به اشتراک نمی‌گذاریم/,
+  /udostępniamy Twoich danych nauki/i,
+  /wadaagno xogtaada waxbarashada/i,
+  /ሓበሬታ መጽናዕትኻ ኣይነካፍልን/,
+  /çalışma verilerinizi paylaşmayız/i,
+  /передаємо ваші навчальні дані/i,
+];
+
 function injectCopyExport(source) {
   return source.replace(
     '\n\n  // ----------------------------------------------------------------',
@@ -251,6 +266,39 @@ test('signin.signedin renders from the active locale for signed-in accounts', ()
         harness.signedInMessage.textContent,
         copy['signin.signedin'].en,
         `${locale} rendered signed-in copy should not fall back to English`,
+      );
+    }
+  }
+});
+
+test('signin.fineprint avoids absolute no-sharing promises and names account processing', () => {
+  const copy = loadSigninCopy();
+  const fineprintCopy = copy['signin.fineprint'];
+  const index = read('site/index.html');
+  const signin = read('site/signin.js');
+  const surface = `${index}\n${signin}`;
+
+  assert.deepEqual(Object.keys(fineprintCopy).sort(), [...signInLocales].sort());
+  oldFineprintNoSharingPatterns.forEach((pattern) => assert.doesNotMatch(surface, pattern));
+  assert.match(
+    index,
+    /No password needed\. We never post anything or sell your study data\. Account sync uses\s+Supabase or your sign-in provider only for account-backed features\./,
+  );
+
+  for (const locale of signInLocales) {
+    const value = fineprintCopy[locale];
+
+    assert.equal(typeof value, 'string', `${locale} fineprint copy should be a string`);
+    assert.ok(value.trim().length > 0, `${locale} fineprint copy should not be empty`);
+    assert.match(value, /Supabase|Google/i, `${locale} fineprint should name account processing`);
+    assert.doesNotMatch(value, /share your study data/i);
+    assert.doesNotMatch(value, /never .*share|share .*data/i);
+
+    if (locale !== 'en') {
+      assert.notEqual(
+        value,
+        fineprintCopy.en,
+        `${locale} fineprint should not fall back to English`,
       );
     }
   }
