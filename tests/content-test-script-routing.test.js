@@ -180,6 +180,7 @@ function validateContentFocusFlags() {
 const registryCompletenessFocusIds = [
   'authFoundation',
   'appConfigSchema',
+  'dashboardPerChapterRuntime',
   'generatedLocalizationTemplateParity',
   'generatedSwedenScopeParity',
   'onboardingRouteCopy',
@@ -2279,6 +2280,24 @@ test('weekly recap runtime guard uses focused content validation routing', () =>
     validatorSource,
     /validateDashboardProgressSnapshotParity\(\);[\s\S]*validateWeeklyRecapRuntimeGuard\(\);[\s\S]*validateBadgeCatalog\(\);/,
     'full content validation must still invoke the weekly recap runtime guard',
+  );
+});
+
+test('dashboard per-chapter runtime guard uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-dashboard-per-chapter-runtime/);
+  assert.match(
+    validatorSource,
+    /validateDashboardPerChapterRuntimeParity\(\);[\s\S]*dashboardPerChapterRuntimeCasesValidated[\s\S]*dashboardPerChapterRuntimeParityValidated/,
+  );
+  assert.match(
+    validatorSource,
+    /validateDashboardProgressSnapshotParity\(\);[\s\S]*validateDashboardPerChapterRuntimeParity\(\);[\s\S]*validateWeeklyRecapRuntimeGuard\(\);/,
+    'full content validation must still invoke the dashboard per-chapter runtime guard',
   );
 });
 

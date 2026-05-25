@@ -1173,6 +1173,64 @@ test('perChapterProgress: accuracy + coverage computed per chapter', () => {
   assert.equal(history.accuracy, 1);
 });
 
+test('perChapterProgress: malformed totals and non-boolean correctness stay bounded', () => {
+  const { perChapterProgress } = loadTs('lib/learning/dashboardStats.ts');
+  const makeAnswer = (questionId, isCorrect, minute) => ({
+    questionId,
+    selectedOptionIds: [],
+    isCorrect,
+    answeredAt: `2026-05-19T10:${String(minute).padStart(2, '0')}:00.000Z`,
+    timeSpentSeconds: 5,
+  });
+  const result = perChapterProgress(
+    progressWithSessions([
+      {
+        id: 'dashboard-per-chapter-runtime',
+        mode: 'study',
+        questionIds: [],
+        startedAt: '2026-05-19T09:00:00.000Z',
+        answers: [
+          makeAnswer('nan-q', true, 0),
+          makeAnswer('negative-q', true, 1),
+          makeAnswer('fractional-q', true, 2),
+          makeAnswer('valid-1', 'yes', 3),
+          makeAnswer('valid-2', 1, 4),
+          makeAnswer('valid-3', true, 5),
+          makeAnswer('valid-4', false, 6),
+        ],
+      },
+    ]),
+    [
+      { id: 'nan-count', questionCount: Number.NaN },
+      { id: 'negative-count', questionCount: -2 },
+      { id: 'fractional-count', questionCount: 2.5 },
+      { id: 'valid', questionCount: 4 },
+    ],
+    {
+      'nan-q': 'nan-count',
+      'negative-q': 'negative-count',
+      'fractional-q': 'fractional-count',
+      'valid-1': 'valid',
+      'valid-2': 'valid',
+      'valid-3': 'valid',
+      'valid-4': 'valid',
+    },
+    { now: new Date('2026-05-19T12:00:00.000Z') },
+  );
+
+  result.forEach((chapter) => {
+    assert.ok(Number.isFinite(chapter.coverage));
+    assert.ok(chapter.coverage >= 0 && chapter.coverage <= 1);
+  });
+  assert.equal(result.find((chapter) => chapter.chapterId === 'nan-count').coverage, 0);
+  assert.equal(result.find((chapter) => chapter.chapterId === 'negative-count').coverage, 0);
+  assert.equal(result.find((chapter) => chapter.chapterId === 'fractional-count').coverage, 0);
+  const valid = result.find((chapter) => chapter.chapterId === 'valid');
+  assert.equal(valid.answers, 4);
+  assert.equal(valid.accuracy, 0.25);
+  assert.equal(valid.coverage, 1);
+});
+
 test('mockHistory + bestMockScore: returns only exam-mode completed sessions', () => {
   const { mockHistory, bestMockScore } = loadTs('lib/learning/dashboardStats.ts');
   const sessions = [
