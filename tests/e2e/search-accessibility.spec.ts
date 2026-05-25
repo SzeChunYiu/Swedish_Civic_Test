@@ -19,6 +19,8 @@ const copy = {
     query: 'riksdag',
     showMoreQuestions: 'Visa fler övningsfrågor',
     sourceNote: /^Källanteckning:/,
+    termSource:
+      /Källa: Universitets- och högskolerådet \(UHR\), Sverige i fokus · redaktionell sammanfattning/,
     termName: 'Kommun',
     browseChapters: 'Gå till alla kapitel',
   },
@@ -35,6 +37,8 @@ const copy = {
     query: 'municipality',
     showMoreQuestions: 'Show more practice questions',
     sourceNote: /^Source note:/,
+    termSource:
+      /Source: Universitets- och högskolerådet \(UHR\), Sverige i fokus · editorial summary/,
     termName: 'Riksdag',
     browseChapters: 'Go to all chapters',
   },
@@ -154,6 +158,7 @@ for (const language of ['sv', 'en'] as const satisfies readonly Language[]) {
     );
     await expect(punctuatedQuestionVisibilityStatus).toHaveText(t.questionShown);
     await expect(page.getByText(t.termName, { exact: true }).first()).toBeVisible();
+    await expect(page.getByText(t.termSource).first()).toBeVisible();
     await expect(
       page.getByRole('link', { name: /Öppna kapitlet|Open the chapter/ }).first(),
     ).toBeVisible();

@@ -7,13 +7,32 @@ const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
 
+function resolveLocalModule(fromFilePath, request) {
+  const base = path.resolve(path.dirname(fromFilePath), request);
+  const candidates = [base, `${base}.ts`, `${base}.tsx`, `${base}.js`, path.join(base, 'index.ts')];
+  const found = candidates.find(
+    (candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isFile(),
+  );
+  if (!found) throw new Error(`Cannot resolve ${request} from ${fromFilePath}`);
+  return found;
+}
+
 function loadTs(relativePath, exportName) {
-  const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+  const filePath = path.join(repoRoot, relativePath);
+  const source = fs.readFileSync(filePath, 'utf8');
   const output = ts.transpileModule(source, {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
   }).outputText;
   const mod = { exports: {} };
-  new Function('module', 'exports', 'require', output)(mod, mod.exports, require);
+
+  function localRequire(request) {
+    if (request.startsWith('.')) {
+      return loadTs(path.relative(repoRoot, resolveLocalModule(filePath, request)));
+    }
+    return require(request);
+  }
+
+  new Function('module', 'exports', 'require', output)(mod, mod.exports, localRequire);
   return exportName ? mod.exports[exportName] : mod.exports;
 }
 
@@ -44,8 +63,13 @@ test('glossary terms use the shared content schema', () => {
   const contentTypeSource = fs.readFileSync(path.join(repoRoot, 'types/content.ts'), 'utf8');
 
   assert.match(glossarySource, /import type \{ GlossaryTerm \} from '\.\.\/types\/content';/);
+  assert.match(glossarySource, /UHR_SVERIGE_I_FOKUS_SOURCE/);
+  assert.match(glossarySource, /provenance: 'editorial'/);
+  assert.match(glossarySource, /source: UHR_SVERIGE_I_FOKUS_SOURCE/);
   assert.doesNotMatch(glossarySource, /interface GlossaryTerm/);
   assert.match(contentTypeSource, /export interface GlossaryTerm/);
+  assert.match(contentTypeSource, /provenance: QuestionProvenance;/);
+  assert.match(contentTypeSource, /source: OfficialSourceReference;/);
   assert.match(contentTypeSource, /chapterId\?: string;/);
 });
 

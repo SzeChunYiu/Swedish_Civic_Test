@@ -62,9 +62,13 @@ function assertSearchRouteAccessibilityParity(source) {
   assert.match(source, /accessibilityLabel=\{copy\.searchInputAccessibilityLabel\}/);
   assert.match(source, /accessibilityLabel=\{copy\.clearSearchAccessibilityLabel\}/);
   assert.match(source, /const termSummary = copy\.termAccessibilityLabel\(\{/);
+  assert.match(source, /sourceText: termSourceText,/);
   assert.match(source, /const termSummaryId = `search-term-summary-\$\{term\.id\}`;/);
   assert.match(source, /nativeID=\{termSummaryId\}/);
   assert.match(source, /aria-describedby=\{termSummaryId\}/);
+  assert.match(source, /<Text style=\{styles\.termSource\}>\{termSourceText\}<\/Text>/);
+  assert.match(source, /Källa: \$\{publisher\}, \$\{title\} · \$\{provenanceLabel\}/);
+  assert.match(source, /Source: \$\{publisher\}, \$\{title\} · \$\{provenanceLabel\}/);
   assert.match(source, /accessibilityLabel=\{copy\.openChapterAccessibilityLabel\(chapterName\)\}/);
   assert.match(source, /const questionSummary = copy\.questionAccessibilityLabel\(\{/);
   assert.match(

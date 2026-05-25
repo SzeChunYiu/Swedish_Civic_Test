@@ -272,6 +272,33 @@ function assertSearchRouteGlossarySearchParity(source) {
     ],
     [/copy\.allTermsSummary\(glossaryTerms\.length\)/, 'total glossary count summary'],
     [/href=\{`\/chapter\/\$\{term\.chapterId\}`\}/, 'glossary chapter link'],
+    [/const sourceTitle = getSourceDisplayTitle\(term\.source\);/, 'glossary source title'],
+    [
+      /const termProvenanceLabel = copy\.termProvenanceLabel\(term\.provenance\);/,
+      'localized glossary provenance label',
+    ],
+    [
+      /const termSourceText = copy\.termSourceText\(\{[\s\S]*?publisher: term\.source\.publisher,[\s\S]*?title: sourceTitle,[\s\S]*?\}\);/,
+      'localized glossary source text',
+    ],
+    [/sourceText: termSourceText,/, 'glossary source text in accessibility summary'],
+    [/<Text style=\{styles\.termSource\}>\{termSourceText\}<\/Text>/, 'visible glossary source'],
+    [
+      /termProvenanceLabel: \(provenance\) =>[\s\S]*?'redaktionell sammanfattning'/,
+      'Swedish editorial glossary provenance copy',
+    ],
+    [
+      /termProvenanceLabel: \(provenance\) =>[\s\S]*?'editorial summary'/,
+      'English editorial glossary provenance copy',
+    ],
+    [
+      /termSourceText: \(\{ provenanceLabel, publisher, title \}\) =>[\s\S]*?`Källa: \$\{publisher\}, \$\{title\} · \$\{provenanceLabel\}`/,
+      'Swedish glossary source copy',
+    ],
+    [
+      /termSourceText: \(\{ provenanceLabel, publisher, title \}\) =>[\s\S]*?`Source: \$\{publisher\}, \$\{title\} · \$\{provenanceLabel\}`/,
+      'English glossary source copy',
+    ],
   ];
 
   for (const [pattern, label] of requiredRules) {
@@ -288,6 +315,31 @@ function assertSearchRouteGlossarySearchParity(source) {
     /glossaryTermMatchesQuery/,
     'Search route must not fork glossary filtering away from searchGlossary()',
   );
+}
+
+function assertGlossarySourceProvenanceMetadata(terms) {
+  assert.ok(Array.isArray(terms), 'glossaryTerms must be an array');
+  assert.ok(terms.length > 0, 'glossaryTerms must not be empty');
+
+  for (const term of terms) {
+    assert.equal(
+      term.provenance,
+      'editorial',
+      `${term.id} must label glossary explanations as editorial summaries`,
+    );
+    assert.equal(
+      term.source.publisher,
+      'Universitets- och högskolerådet (UHR)',
+      `${term.id} must carry UHR publisher metadata`,
+    );
+    assert.match(term.source.title, /^Sverige i fokus\./, `${term.id} must name Sverige i fokus`);
+    assert.match(term.source.url, /^https:\/\/www\.uhr\.se\//, `${term.id} must carry UHR URL`);
+    assert.match(
+      term.source.retrievedDate,
+      /^\d{4}-\d{2}-\d{2}$/,
+      `${term.id} must carry a source retrieval date`,
+    );
+  }
 }
 
 function assertNeutralSearchPunctuationNormalizer(source) {
@@ -477,9 +529,12 @@ test('Search route hydrates and resyncs q or query URL params around typing', ()
 
 test('Search helpers normalize malformed runtime result limits', () => {
   const { chapters } = loadTs('data/chapters.ts');
+  const { glossaryTerms } = loadTs('data/glossary.ts');
   const { questions } = loadTs('data/questions.ts');
   const { searchGlossary } = loadTs('lib/learning/glossarySearch.ts');
   const { searchQuestions, searchQuestionsWithTotal } = loadTs('lib/search/questionSearch.ts');
+
+  assertGlossarySourceProvenanceMetadata(glossaryTerms);
 
   const questionSearchInput = { chapters, query: 'riksdag', questions };
   const defaultQuestionResults = searchQuestions(questionSearchInput);
@@ -763,11 +818,15 @@ test('validate-content reports Search route query hydration parity', () => {
   const summary = parseValidationSummary(output);
 
   assert.deepEqual(Object.keys(summary).sort(), [
+    'glossaryTermExactSchemaKeysValidated',
+    'glossaryTermsValidated',
     'searchQuestionPunctuationParityValidated',
     'searchQuestionPunctuationRulesValidated',
     'searchRouteQueryHydrationParityValidated',
     'searchRouteQueryHydrationRulesValidated',
   ]);
+  assert.ok(summary.glossaryTermsValidated > 0);
+  assert.equal(summary.glossaryTermExactSchemaKeysValidated, summary.glossaryTermsValidated);
   assert.equal(
     summary.searchRouteQueryHydrationRulesValidated,
     getExpectedSearchRouteFocusedRuleCount(),

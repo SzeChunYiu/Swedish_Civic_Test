@@ -1,6 +1,15 @@
 import type { GlossaryTerm } from '../types/content';
+import { UHR_SVERIGE_I_FOKUS_SOURCE } from './sourceReferences';
 
-export const glossaryTerms: GlossaryTerm[] = [
+function editorialGlossaryTerm(term: Omit<GlossaryTerm, 'provenance' | 'source'>): GlossaryTerm {
+  return {
+    ...term,
+    provenance: 'editorial',
+    source: UHR_SVERIGE_I_FOKUS_SOURCE,
+  };
+}
+
+const glossaryTermRecords: Array<Omit<GlossaryTerm, 'provenance' | 'source'>> = [
   {
     id: 'allemansratten',
     termSv: 'Allemansrätten',
@@ -328,3 +337,5 @@ export const glossaryTerms: GlossaryTerm[] = [
     chapterId: 'ch09',
   },
 ];
+
+export const glossaryTerms: GlossaryTerm[] = glossaryTermRecords.map(editorialGlossaryTerm);
