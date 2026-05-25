@@ -341,6 +341,19 @@ async function expectDictionaryRenderedText(
   await expect(page.locator(selector).first()).toHaveText(expected);
 }
 
+async function expectOpenFaqRenderedText(page: Page, locale: ExtraLocale, key: string) {
+  const expected = plainDictionaryText(await dictionaryText(page, locale, key));
+  const answer = page.locator(i18nSelector(key)).first();
+  const details = answer.locator('xpath=ancestor::details[1]');
+
+  if ((await details.count()) > 0) {
+    await details.evaluate((element) => element.setAttribute('open', ''));
+  }
+
+  await expect(answer).toHaveText(expected);
+  return answer.evaluate((element) => element.textContent?.replace(/\s+/g, ' ').trim() ?? '');
+}
+
 async function expectStaticFooterAppLinkCoverage(page: Page, locale: ExtraLocale) {
   await expectDictionaryText(
     page,
@@ -1009,6 +1022,13 @@ test('static sign-in signed-in account view localizes in extra languages', async
     expect(signedInCopy).not.toMatch(/\bdhban\b|isugu\s+dhban/i);
     for (const pattern of signedInCopySnippets[locale]) {
       expect(signedInCopy).toMatch(pattern);
+    }
+
+    if (locale === 'so') {
+      const faqAccountCopy = await expectOpenFaqRenderedText(page, locale, 'faq.3.a');
+      expect(faqAccountCopy).toMatch(/dashboard-kaaga/i);
+      expect(faqAccountCopy).toMatch(/isku waafajinayaa/i);
+      expect(faqAccountCopy).not.toMatch(/\bdhban\b|isugu\s+dhban/i);
     }
 
     await page.locator('#signin-modal button[data-close="signin"]').click();
