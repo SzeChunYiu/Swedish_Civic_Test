@@ -427,7 +427,7 @@ test('local study data import previews and applies all learner snapshot sections
     streakFreezeStateIncluded: true,
     fsrsReviewCardCount: 1,
     gradedReviewDayCount: 1,
-    settingCount: 5,
+    settingCount: 6,
     accessibilityPreferenceCount: 5,
     companionPreferenceCount: 1,
     citizenshipRequirementChecklistCount: 2,
@@ -462,6 +462,7 @@ test('local study data import previews and applies all learner snapshot sections
   assert.equal(storageById.settings.values.get('dailyGoalAnswers'), 20);
   assert.equal(storageById.settings.values.get('includeSupplementaryQuestions'), true);
   assert.equal(storageById.settings.values.get('hasSeenAboutTheTest'), true);
+  assert.equal(storageById.settings.values.get('hasCompletedOnboarding'), true);
   assert.equal(storageById.accessibility.values.get('a11y.easyReadFont.v1'), true);
   assert.equal(storageById.accessibility.values.get('a11y.fontSizeStep.v1'), 3);
   assert.equal(storageById.accessibility.values.get('a11y.audioPlaybackRate.v1'), 1.25);
@@ -790,7 +791,7 @@ test('local study data import summary reports plural bookmark wrong-answer mock 
     streakFreezeStateIncluded: true,
     fsrsReviewCardCount: 2,
     gradedReviewDayCount: 2,
-    settingCount: 5,
+    settingCount: 6,
     accessibilityPreferenceCount: 0,
     companionPreferenceCount: 0,
     citizenshipRequirementChecklistCount: 3,
@@ -834,6 +835,7 @@ test('local study data import summary reports plural bookmark wrong-answer mock 
   );
   assert.deepEqual(checkedAreaIds, ['identity', 'residenceStatus', 'conduct']);
   assert.deepEqual(legacyChecklist.checkedAreaIds, checkedAreaIds);
+  assert.equal(storageById.settings.values.get('hasCompletedOnboarding'), true);
 
   const highlights = JSON.parse(storageById.highlights.values.get('ebook.highlights.v1'));
   assert.deepEqual(Object.keys(highlights.byChapter), ['ch01', 'ch02']);
@@ -930,6 +932,7 @@ test('local study data export round-trips citizenship requirements without purch
   assert.equal(snapshot.settings.language, 'en');
   assert.equal(snapshot.settings.dailyGoalAnswers, 20);
   assert.equal(snapshot.settings.mockExamRealisticMode, true);
+  assert.equal(snapshot.settings.hasCompletedOnboarding, false);
   assert.deepEqual(snapshot.accessibility, {
     easyReadFont: true,
     fontSizeStep: 2,
@@ -950,7 +953,7 @@ test('local study data export round-trips citizenship requirements without purch
   assert.equal(previewResult.ok, true);
   assert.equal(previewResult.preview.summary.citizenshipRequirementChecklistCount, 3);
   assert.equal(previewResult.preview.summary.highlightCount, 1);
-  assert.equal(previewResult.preview.summary.settingCount, 6);
+  assert.equal(previewResult.preview.summary.settingCount, 7);
   assert.equal(previewResult.preview.summary.accessibilityPreferenceCount, 5);
   assert.equal(previewResult.preview.summary.companionPreferenceCount, 1);
   applyLocalStudyDataImport(previewResult.preview);

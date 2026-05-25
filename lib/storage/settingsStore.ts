@@ -24,6 +24,7 @@ const audioEnabledKey = 'audioEnabled';
 const dailyGoalKey = 'dailyGoalAnswers';
 const includeSupplementaryKey = 'includeSupplementaryQuestions';
 const hasSeenAboutTheTestKey = 'hasSeenAboutTheTest';
+const hasCompletedOnboardingKey = 'hasCompletedOnboarding';
 const studyPlanTestDateIsoKey = 'studyPlanTestDateIso';
 const studyPlanIntensityKey = 'studyPlanIntensity';
 const mockExamRealisticModeKey = 'mockExamRealisticMode';
@@ -157,6 +158,11 @@ function readHasSeenAboutTheTest(): boolean {
   return storedValue ?? false;
 }
 
+function readHasCompletedOnboarding(): boolean {
+  const storedValue = readStorageBoolean(hasCompletedOnboardingKey);
+  return storedValue ?? readHasSeenAboutTheTest();
+}
+
 function readStudyPlanTestDateIso(): string | null {
   const storedValue = readStorageString(studyPlanTestDateIsoKey);
   return normalizeStudyPlanTestDateIso(storedValue);
@@ -174,6 +180,7 @@ type SettingsState = {
   includeSupplementaryQuestions: boolean;
   mockExamRealisticMode: boolean;
   hasSeenAboutTheTest: boolean;
+  hasCompletedOnboarding: boolean;
   studyPlanTestDateIso: string | null;
   studyPlanIntensity: StudyIntensity;
   persistenceWarning: RecoverablePersistenceWarning | null;
@@ -185,6 +192,7 @@ type SettingsState = {
   setStudyPlanTestDateIso: (testDateIso: string | null) => void;
   setStudyPlanIntensity: (intensity: StudyIntensity) => void;
   markAboutTheTestSeen: () => void;
+  markOnboardingComplete: () => void;
   clearPersistenceWarning: () => void;
 };
 
@@ -197,6 +205,7 @@ export type ImportableSettings = Partial<
     | 'includeSupplementaryQuestions'
     | 'mockExamRealisticMode'
     | 'hasSeenAboutTheTest'
+    | 'hasCompletedOnboarding'
     | 'studyPlanTestDateIso'
     | 'studyPlanIntensity'
   >
@@ -226,6 +235,12 @@ export function normalizeImportedSettings(value: unknown): ImportableSettings {
   if (typeof candidate.hasSeenAboutTheTest === 'boolean') {
     settings.hasSeenAboutTheTest = candidate.hasSeenAboutTheTest;
   }
+  if (typeof candidate.hasCompletedOnboarding === 'boolean') {
+    settings.hasCompletedOnboarding = candidate.hasCompletedOnboarding;
+  }
+  if (settings.hasCompletedOnboarding === undefined && settings.hasSeenAboutTheTest === true) {
+    settings.hasCompletedOnboarding = true;
+  }
   if (Object.prototype.hasOwnProperty.call(candidate, 'studyPlanTestDateIso')) {
     const studyPlanTestDateIso = normalizeStudyPlanTestDateIso(candidate.studyPlanTestDateIso);
     if (studyPlanTestDateIso !== null) {
@@ -249,6 +264,7 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   includeSupplementaryQuestions: readIncludeSupplementary(),
   mockExamRealisticMode: readMockExamRealisticMode(),
   hasSeenAboutTheTest: readHasSeenAboutTheTest(),
+  hasCompletedOnboarding: readHasCompletedOnboarding(),
   studyPlanTestDateIso: readStudyPlanTestDateIso(),
   studyPlanIntensity: readStudyPlanIntensity(),
   persistenceWarning: initialPersistenceWarning,
@@ -332,6 +348,15 @@ export const useSettingsStore = create<SettingsState>((set) => ({
     );
     set({ hasSeenAboutTheTest: true, persistenceWarning });
   },
+  markOnboardingComplete: () => {
+    const persistenceWarning = writeRecoverably(
+      settingsStorage,
+      settingsStorageId,
+      hasCompletedOnboardingKey,
+      true,
+    );
+    set({ hasCompletedOnboarding: true, persistenceWarning });
+  },
   clearPersistenceWarning: () => set({ persistenceWarning: null }),
 }));
 
@@ -395,6 +420,15 @@ export function importSettingsSnapshot(
         settingsStorageId,
         hasSeenAboutTheTestKey,
         normalizedSettings.hasSeenAboutTheTest,
+      ) ?? persistenceWarning;
+  }
+  if (normalizedSettings.hasCompletedOnboarding !== undefined) {
+    persistenceWarning =
+      writeRecoverably(
+        settingsStorage,
+        settingsStorageId,
+        hasCompletedOnboardingKey,
+        normalizedSettings.hasCompletedOnboarding,
       ) ?? persistenceWarning;
   }
   if (normalizedSettings.studyPlanTestDateIso !== undefined) {

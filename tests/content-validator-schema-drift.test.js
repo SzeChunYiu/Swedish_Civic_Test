@@ -30,7 +30,7 @@ test('content validator schema expectations track current persisted release cont
     /types\/content\.ts Chapter\.nameText type is LocalizedContentTextOverrides, expected LocalizedContentText/,
     /NativePurchaseProviderOptions fields are \["loadIap","platform","purchaseTimeoutMs","receiptValidator"\], expected \["loadIap","platform","purchaseTimeoutMs"\]/,
     /RewardedExtraExamAdOptions fields are \["confirmReward","entitlements","requestNonPersonalizedAdsOnly","timeoutMs","webConsentDecision"\], expected \["entitlements","requestNonPersonalizedAdsOnly","timeoutMs"\]/,
-    /SettingsState fields are \["language","audioEnabled","dailyGoalAnswers","includeSupplementaryQuestions","hasSeenAboutTheTest","persistenceWarning"/,
+    /SettingsState fields are \["language","audioEnabled","dailyGoalAnswers","includeSupplementaryQuestions","mockExamRealisticMode","hasSeenAboutTheTest","hasCompletedOnboarding"/,
     /setLanguage must persist through languageKey/,
     /QuestionProgress fields are \["questionId","seenCount","correctCount","wrongCount","correctStreak","lastAnsweredAt","nextReviewAt","confidenceRating","bookmarked"\], expected/,
     /types\/progress\.ts Confidence union could not be read/,

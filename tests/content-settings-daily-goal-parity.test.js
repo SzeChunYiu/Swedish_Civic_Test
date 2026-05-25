@@ -350,6 +350,7 @@ test('settings hydration falls back when MMKV reads throw', () => {
   assert.equal(state.dailyGoalAnswers, 10);
   assert.equal(state.includeSupplementaryQuestions, false);
   assert.equal(state.hasSeenAboutTheTest, false);
+  assert.equal(state.hasCompletedOnboarding, false);
   assert.equal(state.studyPlanTestDateIso, null);
   assert.equal(state.studyPlanIntensity, 'regular');
 });

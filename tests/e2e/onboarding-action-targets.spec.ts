@@ -11,6 +11,7 @@ test.use({ viewport: { width: 390, height: 844 } });
 const minimumTargetSizePx = 44;
 const seededOnceMarkerKey = '__onboardingDailyGoalPersistenceSeeded';
 const settingsDailyGoalKey = 'settings\\dailyGoalAnswers';
+const settingsCompletedOnboardingKey = 'settings\\hasCompletedOnboarding';
 const settingsLanguageKey = 'settings\\language';
 const settingsSeenAboutKey = 'settings\\hasSeenAboutTheTest';
 const settingsStudyPlanIntensityKey = 'settings\\studyPlanIntensity';
@@ -178,6 +179,108 @@ async function seedFreshSettingsLanguageAndAboutSeenOnce(
     },
   );
 }
+
+test('Fresh root launch enters onboarding and persists completion before Home', async ({
+  page,
+}) => {
+  const consoleErrors = collectConsoleErrors(page);
+
+  await page.addInitScript(
+    ({ languageKey }: { languageKey: string }) => {
+      window.localStorage.clear();
+      window.sessionStorage.clear();
+      window.localStorage.setItem(languageKey, 'sv');
+    },
+    { languageKey: settingsLanguageKey },
+  );
+
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  await expect(page).toHaveURL(/\/onboarding$/);
+  await expect(
+    page.getByRole('heading', { name: 'Förbered dig lugnt för samhällskunskapsprovet' }),
+  ).toBeVisible();
+  await expect(page.locator('[role="dialog"][aria-modal="true"]')).toHaveCount(0);
+  await expect
+    .poll(() =>
+      page.evaluate((key) => window.localStorage.getItem(key), settingsCompletedOnboardingKey),
+    )
+    .toBeNull();
+
+  await page.getByRole('link', { exact: true, name: 'Börja studera' }).click();
+
+  await expect(page).toHaveURL(/\/home$/);
+  await expect
+    .poll(() =>
+      page.evaluate((key) => window.localStorage.getItem(key), settingsCompletedOnboardingKey),
+    )
+    .toBe('true');
+  await expect
+    .poll(() => page.evaluate((key) => window.localStorage.getItem(key), settingsSeenAboutKey))
+    .toBeNull();
+  await expect(page.getByRole('heading', { name: 'Dagens mål' })).toBeVisible();
+
+  expect(consoleErrors).toEqual([]);
+});
+
+test('Returning root launch stays on Home and Home/Profile can revisit onboarding', async ({
+  page,
+}) => {
+  const consoleErrors = collectConsoleErrors(page);
+
+  await page.addInitScript(
+    ({
+      completedKey,
+      languageKey,
+      seenKey,
+    }: {
+      completedKey: string;
+      languageKey: string;
+      seenKey: string;
+    }) => {
+      window.localStorage.clear();
+      window.sessionStorage.clear();
+      window.localStorage.setItem(languageKey, 'en');
+      window.localStorage.setItem(seenKey, 'true');
+      window.localStorage.setItem(completedKey, 'true');
+    },
+    {
+      completedKey: settingsCompletedOnboardingKey,
+      languageKey: settingsLanguageKey,
+      seenKey: settingsSeenAboutKey,
+    },
+  );
+
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  await expect(page).toHaveURL(/\/home$/);
+  await dismissBlockingModals(page);
+  const homeSetupLink = page.getByRole('link', {
+    exact: true,
+    name: 'Open onboarding setup again',
+  });
+  await expect(homeSetupLink).toContainText('Revisit setup');
+  await expectMinimumTargetSize(homeSetupLink, 'Home setup revisit link');
+  await homeSetupLink.click();
+
+  await expect(page).toHaveURL(/\/onboarding$/);
+  await expect(
+    page.getByRole('heading', { name: 'Prepare calmly for the civic test' }),
+  ).toBeVisible();
+
+  await page.goto('/profile', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+  const profileSetupLink = page.getByRole('link', {
+    exact: true,
+    name: 'Open onboarding setup again',
+  });
+  await expect(profileSetupLink).toContainText('Revisit setup');
+  await expectMinimumTargetSize(profileSetupLink, 'Profile setup revisit link');
+  await profileSetupLink.click();
+  await expect(page).toHaveURL(/\/onboarding$/);
+
+  expect(consoleErrors).toEqual([]);
+});
 
 test('Onboarding actions keep mobile-safe targets and daily goal selection', async ({ page }) => {
   const consoleErrors = collectConsoleErrors(page);

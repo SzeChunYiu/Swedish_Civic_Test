@@ -2069,6 +2069,7 @@ const EXPECTED_SETTINGS_STORE_FIELDS = [
   { name: 'includeSupplementaryQuestions', type: 'boolean', optional: false },
   { name: 'mockExamRealisticMode', type: 'boolean', optional: false },
   { name: 'hasSeenAboutTheTest', type: 'boolean', optional: false },
+  { name: 'hasCompletedOnboarding', type: 'boolean', optional: false },
   { name: 'studyPlanTestDateIso', type: 'string | null', optional: false },
   { name: 'studyPlanIntensity', type: 'StudyIntensity', optional: false },
   { name: 'persistenceWarning', type: 'RecoverablePersistenceWarning | null', optional: false },
@@ -2084,6 +2085,7 @@ const EXPECTED_SETTINGS_STORE_FIELDS = [
   },
   { name: 'setStudyPlanIntensity', type: '(intensity: StudyIntensity) => void', optional: false },
   { name: 'markAboutTheTestSeen', type: '() => void', optional: false },
+  { name: 'markOnboardingComplete', type: '() => void', optional: false },
   { name: 'clearPersistenceWarning', type: '() => void', optional: false },
 ];
 const EXPECTED_APP_CONFIG_PLUGINS = [
@@ -3523,6 +3525,10 @@ const EXPECTED_ONBOARDING_ROUTE_COPY_SNIPPETS = [
     'onboarding route must read language from settings store',
   ],
   [
+    'const markOnboardingComplete = useSettingsStore((state) => state.markOnboardingComplete);',
+    'onboarding route must read the persisted completion action',
+  ],
+  [
     'supportedDailyGoalAnswerOptions,',
     'onboarding route daily goal presets must import supported settings options',
   ],
@@ -3558,6 +3564,7 @@ const EXPECTED_ONBOARDING_ROUTE_COPY_SNIPPETS = [
     'accessibilityLabel={copy.startStudyingAccessibilityLabel}',
     'onboarding start link must expose localized accessibility copy',
   ],
+  ['onPress={handleCompleteOnboarding}', 'onboarding exit links must complete onboarding'],
   ['{copy.startStudying}', 'onboarding start link must render localized copy'],
   [
     'accessibilityLabel={copy.adjustSettingsAccessibilityLabel}',

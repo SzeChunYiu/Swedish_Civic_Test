@@ -45,6 +45,10 @@ test('onboarding route title stays accessible as a header', () => {
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(
     source,
+    /const markOnboardingComplete = useSettingsStore\(\(state\) => state\.markOnboardingComplete\);/,
+  );
+  assert.match(
+    source,
     /const setDailyGoalAnswers = useSettingsStore\(\(state\) => state\.setDailyGoalAnswers\);/,
   );
   assert.match(
@@ -123,7 +127,55 @@ test('onboarding route title stays accessible as a header', () => {
   );
   assert.match(source, /accessibilityLabel=\{copy\.startStudyingAccessibilityLabel\}/);
   assert.match(source, /accessibilityLabel=\{copy\.adjustSettingsAccessibilityLabel\}/);
+  assert.match(
+    source,
+    /const handleCompleteOnboarding = \(\) => \{\s*markOnboardingComplete\(\);\s*\};/,
+  );
+  assert.equal(source.match(/onPress=\{handleCompleteOnboarding\}/g)?.length, 4);
   assert.doesNotMatch(source, /<Text style=\{styles\.title\}>/);
+});
+
+test('root entrypoint sends fresh learners to onboarding and keeps revisit links', () => {
+  const indexSource = fs.readFileSync(path.join(repoRoot, 'app/index.tsx'), 'utf8');
+  const settingsSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/storage/settingsStore.ts'),
+    'utf8',
+  );
+  const modalSource = fs.readFileSync(
+    path.join(repoRoot, 'components/onboarding/FirstRunAboutTheTestModal.tsx'),
+    'utf8',
+  );
+  const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+  const profileSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
+
+  assert.match(
+    indexSource,
+    /const hasCompletedOnboarding = useSettingsStore\(\(state\) => state\.hasCompletedOnboarding\);/,
+  );
+  assert.match(
+    indexSource,
+    /<Redirect href=\{hasCompletedOnboarding \? '\/home' : '\/onboarding'\} \/>/,
+  );
+  assert.match(settingsSource, /const hasCompletedOnboardingKey = 'hasCompletedOnboarding';/);
+  assert.match(
+    settingsSource,
+    /function readHasCompletedOnboarding\(\): boolean \{\s*const storedValue = readStorageBoolean\(hasCompletedOnboardingKey\);\s*return storedValue \?\? readHasSeenAboutTheTest\(\);\s*\}/,
+  );
+  assert.match(
+    settingsSource,
+    /settings\.hasCompletedOnboarding === undefined && settings\.hasSeenAboutTheTest === true/,
+  );
+  assert.match(settingsSource, /markOnboardingComplete: \(\) => void;/);
+  assert.match(settingsSource, /set\(\{ hasCompletedOnboarding: true, persistenceWarning \}\);/);
+  assert.match(
+    modalSource,
+    /const hasCompletedOnboarding = useSettingsStore\(\(state\) => state\.hasCompletedOnboarding\);/,
+  );
+  assert.match(modalSource, /if \(!hasCompletedOnboarding\) return null;/);
+  assert.match(homeSource, /revisitSetupAccessibilityLabel/);
+  assert.match(homeSource, /href="\/onboarding"/);
+  assert.match(profileSource, /studySetupOnboardingAccessibilityLabel/);
+  assert.match(profileSource, /href="\/onboarding"/);
 });
 
 test('about-the-test marks the first-run guide as seen after mount', () => {
