@@ -1,5 +1,5 @@
-import { Link } from 'expo-router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Link, useRouter } from 'expo-router';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { AdBanner } from '../../components/monetization/AdBanner';
@@ -474,6 +474,8 @@ function waitForRewardedExamBusyState(): Promise<void> {
 }
 
 export default function Screen() {
+  const router = useRouter();
+  const dailyChallengeLaunchNonceRef = useRef(0);
   const [rewardPreviewCompleted, setRewardPreviewCompleted] = useState(false);
   const [rewardUnlockInFlight, setRewardUnlockInFlight] = useState(false);
   const [rewardUnlockMessage, setRewardUnlockMessage] = useState<string | null>(null);
@@ -529,6 +531,18 @@ export default function Screen() {
     () => dailyChallengeBannerCopy(dailyChallengeCompleted, language),
     [dailyChallengeCompleted, language],
   );
+  const handleStartDailyChallenge = useCallback(() => {
+    dailyChallengeLaunchNonceRef.current += 1;
+    const launchState = dailyChallengeCompleted ? 'retry' : 'start';
+
+    router.push({
+      pathname: '/practice',
+      params: {
+        launch: `${todayKey}-${launchState}-${dailyChallengeLaunchNonceRef.current}`,
+        mode: 'challenge',
+      },
+    });
+  }, [dailyChallengeCompleted, router, todayKey]);
   const completedToday = useMemo(
     () => Math.min(countAnswersForLocalDate(questionProgress, today), dailyGoalAnswers),
     [dailyGoalAnswers, questionProgress, today],
@@ -776,18 +790,18 @@ export default function Screen() {
           {dailyChallenge.questionIds.length}{' '}
           {language === 'sv' ? 'frågor valda för idag' : 'questions selected for today'}
         </Text>
-        <Link
+        <Button
           accessibilityLabel={copy.dailyChallengeAccessibilityLabel(
             dailyChallengeCopy.title,
             dailyChallengeCopy.subtitle,
             dailyChallengeCompleted,
           )}
           accessibilityRole="link"
-          href="/practice?mode=challenge"
-          style={styles.dailyChallengeLink}
+          onPress={handleStartDailyChallenge}
+          style={styles.dailyChallengeButton}
         >
           {copy.dailyChallengeCta(dailyChallengeCompleted)}
-        </Link>
+        </Button>
       </Card>
       {showRemoveAdsOffer ? (
         <PricingWedge
@@ -1097,17 +1111,9 @@ function createStyles(themeColors: ThemeColors) {
       fontSize: typography.caption.fontSize,
       lineHeight: typography.caption.lineHeight,
     },
-    dailyChallengeLink: {
+    dailyChallengeButton: {
       alignSelf: 'flex-start',
-      backgroundColor: themeColors.accent,
-      borderRadius: radius.micro,
-      color: themeColors.surface,
-      fontSize: typography.navButton.fontSize,
-      fontWeight: typography.navButton.fontWeight,
       marginTop: space[0.5],
-      paddingHorizontal: space[2],
-      paddingVertical: space[1],
-      textDecorationLine: 'none',
     },
     quickActions: {
       flexDirection: 'row',

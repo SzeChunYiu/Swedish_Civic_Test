@@ -130,9 +130,14 @@ test('buildDailyChallenge: small bank still produces some output', () => {
 test('daily challenge is surfaced from Home', () => {
   const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
 
-  assert.match(homeSource, /buildDailyChallenge\(\{ bank: questions \}\)/);
+  assert.match(homeSource, /buildDailyChallenge\(\{ bank: questions, now: today \}\)/);
   assert.match(homeSource, /dailyChallengeBannerCopy\(dailyChallengeCompleted, language\)/);
-  assert.match(homeSource, /href="\/practice\?mode=challenge"/);
+  assert.match(homeSource, /const handleStartDailyChallenge = useCallback\(\(\) => \{/);
+  assert.match(homeSource, /dailyChallengeLaunchNonceRef\.current \+= 1;/);
+  assert.match(homeSource, /dailyChallengeCompleted \? 'retry' : 'start'/);
+  assert.match(homeSource, /router\.push\(\{\s*pathname: '\/practice',\s*params: \{/);
+  assert.match(homeSource, /launch: `\$\{todayKey\}-\$\{launchState\}-/);
+  assert.match(homeSource, /mode: 'challenge'/);
   assert.match(homeSource, /dailyChallengeCompletions/);
 });
 
@@ -141,6 +146,12 @@ test('Practice route keeps the current hub and source-backed practice flow', () 
 
   assert.match(practiceSource, /type PracticeScope =/);
   assert.match(practiceSource, /const \[practiceScope, setPracticeScope\]/);
+  assert.match(practiceSource, /launch\?: string \| string\[\];/);
+  assert.match(practiceSource, /normalizePracticeRouteLaunchToken\(launch\)/);
+  assert.match(
+    practiceSource,
+    /key: `mode:\$\{routeLaunchMode\}:\$\{routeLaunchToken \?\? 'default'\}`/,
+  );
   assert.match(practiceSource, /getQuestionsForPracticeScope\(filteredQuestions, practiceScope\)/);
   assert.match(practiceSource, /startPracticeScope\(\{ type: 'all' \}\)/);
   assert.match(practiceSource, /startPracticeScope\(\{ type: 'quick', limit: 10 \}\)/);
