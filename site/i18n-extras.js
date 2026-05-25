@@ -48,6 +48,7 @@
       'a11y.close': '关闭',
       'a11y.ad.close': '关闭广告',
       'a11y.studyBuddy': '学习伙伴',
+      'a11y.footer.nav': '页脚导航',
       'consent.title': 'Cookie，刚刚好。',
       'consent.body':
         '我们使用 Google AdSense 显示少量广告。AdSense 可能会设置 Cookie，并用于个性化广告。你可以全部接受、只保留必要 Cookie，或阅读<a href="#/privacy">隐私页面</a>。',
@@ -447,6 +448,7 @@
       'a11y.close': '關閉',
       'a11y.ad.close': '關閉廣告',
       'a11y.studyBuddy': '學習夥伴',
+      'a11y.footer.nav': '頁尾導覽',
       'consent.title': 'Cookie，剛剛好。',
       'consent.body':
         '我們使用 Google AdSense 顯示少量廣告。AdSense 可能會設定 Cookie，並用於個人化廣告。你可以全部接受、只保留必要 Cookie，或閱讀<a href="#/privacy">隱私頁面</a>。',
@@ -851,6 +853,7 @@
       'a11y.close': 'إغلاق',
       'a11y.ad.close': 'إغلاق الإعلان',
       'a11y.studyBuddy': 'رفيق الدراسة',
+      'a11y.footer.nav': 'تنقّل التذييل',
       'consent.title': 'ملفات تعريف الارتباط، باعتدال.',
       'consent.body':
         'نستخدم Google AdSense لعرض عدد قليل من الإعلانات. قد يستخدم AdSense ملفات تعريف الارتباط، وقد يستعملها للإعلانات المخصّصة. اقبل الكل، أو الضروري فقط، أو اقرأ <a href="#/privacy">صفحة الخصوصية</a>.',
@@ -1269,6 +1272,7 @@
       'a11y.close': 'داخستن',
       'a11y.ad.close': 'داخستنی ڕیکلام',
       'a11y.studyBuddy': 'هاوڕێی فێربوون',
+      'a11y.footer.nav': 'ڕێنیشاندانی پێپەڕە',
       'consent.title': 'کوکییەکان، تەنها ئەوەندەی پێویستە.',
       'consent.body':
         'بۆ پیشاندانی ژمارەیەکی کەم ڕیکلام Google AdSense بەکاردەهێنین. AdSense دەتوانێت کوکی دابنێت و بۆ ڕیکلامی تاکەکەسی بەکاریان بهێنێت. دەتوانیت هەموویان قبوڵ بکەیت، تەنها پێویستەکان هەڵبژێریت، یان <a href="#/privacy">پەڕەی پاراستنی نهێنی</a> بخوێنیتەوە.',
@@ -1692,6 +1696,7 @@
       'a11y.close': 'بستن',
       'a11y.ad.close': 'بستن تبلیغ',
       'a11y.studyBuddy': 'همراه مطالعه',
+      'a11y.footer.nav': 'پیمایش پانویس',
       'consent.title': 'کوکی‌ها، فقط به اندازه لازم.',
       'consent.body':
         'برای نمایش تعداد کمی تبلیغ از Google AdSense استفاده می‌کنیم. AdSense ممکن است کوکی تنظیم کند و از آن‌ها برای تبلیغات شخصی‌سازی‌شده استفاده کند. می‌توانید همه را بپذیرید، فقط کوکی‌های ضروری را انتخاب کنید، یا <a href="#/privacy">صفحه حریم خصوصی</a> را بخوانید.',
@@ -2116,6 +2121,7 @@
       'a11y.close': 'Zamknij',
       'a11y.ad.close': 'Zamknij reklamę',
       'a11y.studyBuddy': 'Towarzysz nauki',
+      'a11y.footer.nav': 'Nawigacja w stopce',
       'consent.title': 'Pliki cookie, tylko tyle, ile trzeba.',
       'consent.body':
         'Używamy Google AdSense, aby wyświetlać niewielką liczbę reklam. AdSense może ustawiać pliki cookie i używać ich do personalizacji reklam. Możesz zaakceptować wszystkie, wybrać tylko niezbędne albo przeczytać <a href="#/privacy">stronę prywatności</a>.',
@@ -2550,6 +2556,7 @@
       'a11y.close': 'Xir',
       'a11y.ad.close': 'Xir xayaysiinta',
       'a11y.studyBuddy': 'Saaxiibka barashada',
+      'a11y.footer.nav': 'Hagidda qaybta hoose',
       'consent.title': 'Cookies, si lagom ah.',
       'consent.body':
         'Waxaan isticmaalnaa Google AdSense si aan u muujinno xayaysiisyo kooban. AdSense waxay isticmaashaa cookies, waxaana laga yaabaa inay u adeegsato xayaysiisyo la shakhsiyeeyay. Aqbal dhammaan, kaliya kuwa lagama maarmaanka ah, ama akhri <a href="#/privacy">bogga asturnaanta</a>.',
@@ -2978,6 +2985,7 @@
       'a11y.close': 'ዕጾ',
       'a11y.ad.close': 'ምልክታ ዕጾ',
       'a11y.studyBuddy': 'መማህርቲ ብጻይ',
+      'a11y.footer.nav': 'ናይ ታሕቲ ገጽ መምርሒ',
       'consent.title': 'ኩኪታት፣ ከም ዘድሊ ጥራይ።',
       'consent.body':
         'ገለ ምልክታታት ንምርኣይ Google AdSense ንጥቀም። AdSense ኩኪታት ከቐምጥን ንውልቃዊ ምልክታ ክጥቀመሉን ይኽእል። ኩሉ ክትቅበል፣ ኣገዳሲ ጥራይ ክትመርጽ፣ ወይ <a href="#/privacy">ገጽ ምስጢርነት</a> ክተንብብ ትኽእል።',
@@ -3385,6 +3393,7 @@
       'a11y.close': 'Kapat',
       'a11y.ad.close': 'Reklamı kapat',
       'a11y.studyBuddy': 'Çalışma arkadaşı',
+      'a11y.footer.nav': 'Alt bilgi gezinmesi',
       'consent.title': 'Çerezler, gerektiği kadar.',
       'consent.body':
         'Az sayıda reklam göstermek için Google AdSense kullanıyoruz. AdSense çerezler ayarlayabilir ve bunları kişiselleştirilmiş reklamlar için kullanabilir. Tümünü kabul edebilir, yalnızca gerekli çerezleri seçebilir veya <a href="#/privacy">gizlilik sayfasını</a> okuyabilirsiniz.',
@@ -3809,6 +3818,7 @@
       'a11y.close': 'Закрити',
       'a11y.ad.close': 'Закрити рекламу',
       'a11y.studyBuddy': 'Помічник у навчанні',
+      'a11y.footer.nav': 'Навігація нижнього колонтитула',
       'consent.title': 'Файли cookie — лише стільки, скільки потрібно.',
       'consent.body':
         'Ми використовуємо Google AdSense, щоб показувати невелику кількість реклами. AdSense може встановлювати файли cookie і використовувати їх для персоналізованої реклами. Ви можете прийняти всі, вибрати лише необхідні або прочитати <a href="#/privacy">сторінку приватності</a>.',
