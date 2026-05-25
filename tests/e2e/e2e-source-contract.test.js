@@ -97,11 +97,39 @@ function waitForExit(child) {
   });
 }
 
+function sourceLocationAt(source, index) {
+  let line = 1;
+  let column = 1;
+
+  for (let offset = 0; offset < index; offset += 1) {
+    const char = source[offset];
+    if (char === '\r') {
+      line += 1;
+      column = 1;
+      if (source[offset + 1] === '\n') {
+        offset += 1;
+      }
+    } else if (char === '\n') {
+      line += 1;
+      column = 1;
+    } else {
+      column += 1;
+    }
+  }
+
+  return { line, column };
+}
+
 function collectMatches({ pattern, source, filePath }) {
-  return Array.from(source.matchAll(pattern), (match) => ({
-    file: path.relative(process.cwd(), filePath),
-    literal: match[0],
-  }));
+  return Array.from(source.matchAll(pattern), (match) => {
+    const { line, column } = sourceLocationAt(source, match.index ?? 0);
+    return {
+      file: path.relative(process.cwd(), filePath),
+      literal: match[0],
+      line,
+      column,
+    };
+  });
 }
 
 function collectLongWaitForTimeoutViolations({ source, filePath }) {
@@ -715,6 +743,33 @@ test('browser speech synthesis audio mock coverage uses the shared helper contra
     [],
     'browser specs should use installSpeechSynthesisMock, speechEvents, clearSpeechEvents, and speakEvents from tests/e2e/browserLaunch.ts instead of route-local speech mocks',
   );
+});
+
+test('browser speech local speech mock source contract diagnostics include line and column', () => {
+  const filePath = path.join(repoRoot, 'tests/e2e/practice-feedback.spec.ts');
+  const source = [
+    "test('fixture', async ({ page }) => {",
+    '  await page.addInitScript(() => {',
+    '    window.speechSynthesis = { speak() {} };',
+    '  });',
+    '});',
+    '',
+  ].join('\n');
+
+  const violations = collectMatches({
+    pattern: /window\.speechSynthesis\s*=\s*\{/g,
+    source,
+    filePath,
+  });
+
+  assert.deepEqual(violations, [
+    {
+      file: path.relative(process.cwd(), filePath),
+      literal: 'window.speechSynthesis = {',
+      line: 3,
+      column: 5,
+    },
+  ]);
 });
 
 test('static site privacy grep focus stays isolated to privacy assertions', () => {
