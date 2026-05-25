@@ -50,7 +50,6 @@ test('mock exam English answer options expose radio state through submit and rev
   if ((await activeCount.count()) === 0) {
     const start = page.getByLabel('Start mock exam');
     await expect(start).toBeEnabled();
-    await page.waitForTimeout(2000);
     await start.click();
   }
 
