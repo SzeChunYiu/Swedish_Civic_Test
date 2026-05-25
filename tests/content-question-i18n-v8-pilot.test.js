@@ -5,11 +5,13 @@ const test = require('node:test');
 const {
   Q050_SOURCE_CRITICISM_NATURALNESS_IDS,
   Q062_PUBLIC_SECTOR_NATURALNESS_IDS,
+  Q014_Q041_RULE_OF_LAW_NATURALNESS_IDS,
   Q093_RELIGIOUS_FREEDOM_1951_NATURALNESS_IDS,
   Q115_RELIGIOUS_FREEDOM_1860_NATURALNESS_IDS,
   Q166_Q169_KOMMUN_REGION_NATURALNESS_IDS,
   checkQuestions,
   checkLocalizationSourceShape,
+  checkQ014Q041RuleOfLawNaturalness,
   checkQ050SourceCriticismNaturalness,
   checkQ062PublicSectorNaturalness,
   checkQ093ReligiousFreedom1951Naturalness,
@@ -24,6 +26,7 @@ const {
   SOMALI_HOLIDAY_FOOD_NATURALNESS_IDS,
   summarizeQ050SourceCriticismNaturalness,
   summarizeQ062PublicSectorNaturalness,
+  summarizeQ014Q041RuleOfLawNaturalness,
   summarizeQ093ReligiousFreedom1951Naturalness,
   summarizeQ115ReligiousFreedom1860Naturalness,
   summarizeQ166Q169KommunRegionNaturalness,
@@ -402,6 +405,84 @@ test('question localization v8 summarizes q062 public-sector naturalness cases',
   assert.deepEqual(summary.errors, []);
   assert.equal(summary.casesValidated, 1);
   assert.equal(summary.expectedCases, 1);
+  assert.equal(summary.parityValidated, true);
+});
+
+function ruleOfLawTextMap() {
+  return {
+    sv: 'rättssäkerhet',
+    en: 'the rule of law',
+    'zh-Hant': '法治',
+    'zh-Hans': '法治',
+    ar: 'سيادة القانون',
+    ckb: 'سەروەری یاسا',
+    fa: 'حاکمیت قانون',
+    pl: 'praworządność',
+    so: 'sarraynta sharciga',
+    ti: 'ልዕልና ሕጊ',
+    tr: 'hukukun üstünlüğü',
+    uk: 'верховенство права',
+  };
+}
+
+function q014Q041RuleOfLawFixture({ stale = false } = {}) {
+  const termMap = stale ? completeMap('legal certainty') : ruleOfLawTextMap();
+  return [
+    {
+      id: 'q014',
+      questionSv: 'Vad kallas rättssäkerhet?',
+      questionEn: 'What is the rule of law called?',
+      questionText: completeMap('What is the rule of law called?'),
+      explanationSv: 'Rättssäkerhet innebär att lagen gäller lika för alla.',
+      explanationEn: 'The rule of law means that the law applies equally to everyone.',
+      explanationText: termMap,
+      options: [{ id: 'a', textSv: 'Rättssäkerhet', textEn: 'The rule of law', text: termMap }],
+      correctOptionId: 'a',
+    },
+    {
+      id: 'q041',
+      questionSv: 'Vilket påstående beskriver rättssäkerhet i Sverige?',
+      questionEn: 'Which statement describes the rule of law in Sweden?',
+      questionText: termMap,
+      explanationSv: 'Rättssäkerhet innebär oberoende domstolar.',
+      explanationEn: 'The rule of law means independent courts.',
+      explanationText: termMap,
+      options: [
+        { id: 'a', textSv: 'Domstolar är oberoende', textEn: 'Courts are independent' },
+        {
+          id: 'd',
+          textSv: 'Vissa står över lagen',
+          textEn: 'Some people are above the law',
+          text: termMap,
+        },
+      ],
+      correctOptionId: 'a',
+    },
+  ];
+}
+
+test('question localization v8 rejects literal rule-of-law calques for q014/q041', () => {
+  const errors = checkQ014Q041RuleOfLawNaturalness(
+    q014Q041RuleOfLawFixture({ stale: true }),
+    Q014_Q041_RULE_OF_LAW_NATURALNESS_IDS,
+  );
+
+  assert.ok(errors.includes('q014.correctOption.text.en uses literal rule-of-law calque'));
+  assert.ok(errors.includes('q014.explanationText.en uses literal rule-of-law calque'));
+  assert.ok(errors.includes('q041.questionText.en uses literal rule-of-law calque'));
+  assert.ok(errors.includes('q041.options.d.text.en uses literal rule-of-law calque'));
+  assert.ok(errors.some((error) => error.includes('missing rule-of-law term(s)')));
+});
+
+test('question localization v8 summarizes q014/q041 rule-of-law naturalness cases', () => {
+  const summary = summarizeQ014Q041RuleOfLawNaturalness(
+    q014Q041RuleOfLawFixture(),
+    Q014_Q041_RULE_OF_LAW_NATURALNESS_IDS,
+  );
+
+  assert.deepEqual(summary.errors, []);
+  assert.equal(summary.casesValidated, 2);
+  assert.equal(summary.expectedCases, 2);
   assert.equal(summary.parityValidated, true);
 });
 
