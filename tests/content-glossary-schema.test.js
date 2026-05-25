@@ -33,6 +33,7 @@ test('glossary schema validates bundled glossary terms', () => {
   assert.equal(summary.glossaryTerms, glossaryTerms.length);
   assert.equal(summary.glossaryTermsValidated, glossaryTerms.length);
   assert.equal(summary.glossaryTermExactSchemaKeysValidated, glossaryTerms.length);
+  assert.equal(summary.glossaryNaturalnessValidated, glossaryTerms.length);
   assert.equal(summary.contentTypeSchemaParityValidated, true);
   assert.equal(summary.contentTypeInterfacesValidated, 6);
   assert.equal(ids.size, glossaryTerms.length);
