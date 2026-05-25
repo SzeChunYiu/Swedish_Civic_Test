@@ -80,8 +80,11 @@ test('home route title and dashboard card headings stay accessible as headers', 
     source,
     /const studyPlanTestDateIso = useSettingsStore\(\(state\) => state\.studyPlanTestDateIso\);/,
   );
+  assert.match(source, /isStudyPlanTestDateExpired\(studyPlanDate, today\)/);
   assert.match(source, /formatExamDate\(studyPlanDate, language\)/);
   assert.match(source, /daysUntil\(studyPlanDate, today\)/);
+  assert.match(source, /studyPlanExpiredSummary/);
+  assert.match(source, /Update it when your next appointment is booked/);
   assert.match(source, /Din studieplan/);
   assert.match(source, /Your study plan/);
   assert.match(source, /href="\/study-plan"/);

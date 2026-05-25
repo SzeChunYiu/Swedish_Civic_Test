@@ -25,6 +25,10 @@ function futureTestDateIso() {
   return date.toISOString();
 }
 
+function expiredTestDateIso() {
+  return '2026-05-20T00:00:00.000Z';
+}
+
 function buildProgressSeed() {
   const now = new Date();
   now.setHours(10, 0, 0, 0);
@@ -142,6 +146,19 @@ test('Free study plan detail keeps countdown and upgrade copy', async ({ page })
   await expect(page.getByText(/days until/)).toBeVisible();
   await expect(page.getByRole('link', { name: 'View Pro' })).toBeVisible();
   await expect(page.getByText('This week')).toHaveCount(0);
+});
+
+test('Expired study plan date asks for an updated date without weekly targets', async ({
+  page,
+}) => {
+  await seedStudyPlan(page, { pro: true, testDateIso: expiredTestDateIso() });
+
+  await page.goto('/study-plan', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  await expect(page.getByRole('heading', { name: 'Test date has passed' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Update test date' })).toBeVisible();
+  await expect(page.getByText(/0 days until|80 questions per day|This week/)).toHaveCount(0);
 });
 
 test('Home and Dashboard plan cards navigate to the study plan detail route', async ({ page }) => {

@@ -24,6 +24,15 @@ export function daysUntil(target: Date, now: Date = new Date()): number {
   return Math.max(0, Math.ceil(diff / msPerDay));
 }
 
+export function isStudyPlanTestDateExpired(
+  testDate: Date | null | undefined,
+  now: Date = new Date(),
+): boolean {
+  if (!isFiniteDate(testDate) || !isFiniteDate(now)) return false;
+
+  return startOfLocalDay(testDate).getTime() < startOfLocalDay(now).getTime();
+}
+
 export type CitizenshipTimelineCountdownPhase = 'rules' | 'civicKnowledgeTest';
 
 export type CitizenshipTimelineCountdown = {

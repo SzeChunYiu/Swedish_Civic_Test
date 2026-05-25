@@ -25,7 +25,7 @@ import {
 } from '../lib/learning/dashboardSummaryCopy';
 import { formatDashboardCompletedDate } from '../lib/learning/dashboardDateFormat';
 import { buildDashboardProgressSnapshot } from '../lib/learning/dashboardProgressSnapshot';
-import { daysUntil, formatExamDate } from '../lib/learning/examDate';
+import { daysUntil, formatExamDate, isStudyPlanTestDateExpired } from '../lib/learning/examDate';
 import { calculateStreakWithFreeze } from '../lib/learning/streakWithFreeze';
 import { useProgressStore } from '../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
@@ -109,6 +109,7 @@ type DashboardCopy = {
     badge: string;
     cta: string;
     dateSummary: (daysRemaining: number, dateLabel: string) => string;
+    expiredSummary: (dateLabel: string) => string;
     noDateSummary: string;
     title: string;
   };
@@ -201,6 +202,8 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
       cta: 'Öppna studieplan',
       dateSummary: (daysRemaining, dateLabel) =>
         `${daysRemaining} dagar till ${dateLabel}. Pro visar veckomål på detaljsidan.`,
+      expiredSummary: (dateLabel) =>
+        `Provdatumet ${dateLabel} har passerat. Uppdatera datumet för en ny aktiv plan.`,
       noDateSummary: 'Lägg till ett provdatum för nedräkning och lokala veckomål på detaljsidan.',
       title: 'Studieplan',
     },
@@ -298,6 +301,8 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
       cta: 'Open study plan',
       dateSummary: (daysRemaining, dateLabel) =>
         `${daysRemaining} days until ${dateLabel}. Pro shows weekly targets on the detail screen.`,
+      expiredSummary: (dateLabel) =>
+        `The test date ${dateLabel} has passed. Update it for a new active plan.`,
       noDateSummary: 'Add a test date for countdown and local weekly targets on the detail screen.',
       title: 'Study plan',
     },
@@ -339,11 +344,16 @@ export default function DashboardScreen() {
     const date = new Date(studyPlanTestDateIso);
     return Number.isFinite(date.getTime()) ? date : null;
   }, [studyPlanTestDateIso]);
+  const studyPlanDateExpired = studyPlanDate
+    ? isStudyPlanTestDateExpired(studyPlanDate, today)
+    : false;
   const studyPlanSummary = studyPlanDate
-    ? copy.studyPlan.dateSummary(
-        daysUntil(studyPlanDate, today),
-        formatExamDate(studyPlanDate, language),
-      )
+    ? studyPlanDateExpired
+      ? copy.studyPlan.expiredSummary(formatExamDate(studyPlanDate, language))
+      : copy.studyPlan.dateSummary(
+          daysUntil(studyPlanDate, today),
+          formatExamDate(studyPlanDate, language),
+        )
     : copy.studyPlan.noDateSummary;
   const progress = useMemo(
     () =>

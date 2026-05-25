@@ -24,7 +24,7 @@ import {
   dailyChallengeBannerCopy,
   isDailyChallengeCompleted,
 } from '../../lib/learning/dailyChallenge';
-import { daysUntil, formatExamDate } from '../../lib/learning/examDate';
+import { daysUntil, formatExamDate, isStudyPlanTestDateExpired } from '../../lib/learning/examDate';
 import { buildChapterQuestionIndex, findWeakChapterIds } from '../../lib/learning/mastery';
 import {
   buildReadinessQuestionBankIndex,
@@ -128,6 +128,7 @@ type HomeCopy = {
   studyPlanBadge: string;
   studyPlanCta: string;
   studyPlanDateSummary: (daysRemaining: number, dateLabel: string) => string;
+  studyPlanExpiredSummary: (dateLabel: string) => string;
   studyPlanNoDateSummary: string;
   studyPlanTitle: string;
   studyLoopItems: StudyLoopItemCopy[];
@@ -270,6 +271,8 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     studyPlanCta: 'Öppna studieplan',
     studyPlanDateSummary: (daysRemaining, dateLabel) =>
       `${daysRemaining} dagar till ${dateLabel}. Nedräkningen är gratis; Pro visar dagliga mål.`,
+    studyPlanExpiredSummary: (dateLabel) =>
+      `Provdatumet ${dateLabel} har passerat. Uppdatera datumet när nästa tid är bokad.`,
     studyPlanNoDateSummary:
       'Lägg till ett provdatum för en lokal nedräkning. Pro lägger till dagliga mål.',
     studyPlanTitle: 'Din studieplan',
@@ -433,6 +436,8 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     studyPlanCta: 'Open study plan',
     studyPlanDateSummary: (daysRemaining, dateLabel) =>
       `${daysRemaining} days until ${dateLabel}. The countdown is free; Pro shows daily targets.`,
+    studyPlanExpiredSummary: (dateLabel) =>
+      `The test date ${dateLabel} has passed. Update it when your next appointment is booked.`,
     studyPlanNoDateSummary: 'Add a test date for a local countdown. Pro adds daily targets.',
     studyPlanTitle: 'Your study plan',
     studyLoopItems: [
@@ -507,11 +512,16 @@ export default function Screen() {
     const date = new Date(studyPlanTestDateIso);
     return Number.isFinite(date.getTime()) ? date : null;
   }, [studyPlanTestDateIso]);
+  const studyPlanDateExpired = studyPlanDate
+    ? isStudyPlanTestDateExpired(studyPlanDate, today)
+    : false;
   const studyPlanSummary = studyPlanDate
-    ? copy.studyPlanDateSummary(
-        daysUntil(studyPlanDate, today),
-        formatExamDate(studyPlanDate, language),
-      )
+    ? studyPlanDateExpired
+      ? copy.studyPlanExpiredSummary(formatExamDate(studyPlanDate, language))
+      : copy.studyPlanDateSummary(
+          daysUntil(studyPlanDate, today),
+          formatExamDate(studyPlanDate, language),
+        )
     : copy.studyPlanNoDateSummary;
   const dailyChallenge = useMemo(
     () => buildDailyChallenge({ bank: questions, now: today }),

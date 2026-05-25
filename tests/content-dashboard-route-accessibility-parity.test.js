@@ -108,6 +108,16 @@ function assertDashboardAccessibilitySeparation(sources) {
   );
   assert.match(
     sources.dashboard,
+    /isStudyPlanTestDateExpired\(studyPlanDate, today\)/,
+    'Dashboard must treat past local-day study-plan dates as expired',
+  );
+  assert.match(
+    sources.dashboard,
+    /expiredSummary/,
+    'Dashboard must show update-date copy for expired study-plan dates',
+  );
+  assert.match(
+    sources.dashboard,
     /href="\/study-plan"/,
     'Dashboard study-plan card must link to the detail route',
   );
@@ -135,6 +145,16 @@ function assertDashboardAccessibilitySeparation(sources) {
     sources.studyPlan,
     /generateStudyPlanWeeklyBreakdown\(/,
     'Study-plan detail route must render the generated weekly breakdown',
+  );
+  assert.match(
+    sources.studyPlan,
+    /isStudyPlanTestDateExpired\(testDate, now\)/,
+    'Study-plan detail route must detect expired local-day test dates before planning',
+  );
+  assert.match(
+    sources.studyPlan,
+    /title=\{copy\.expiredTitle\}/,
+    'Study-plan detail route must show a dedicated expired-date update state',
   );
   assert.match(sources.studyPlan, /questionTargetMet/);
   assert.match(sources.studyPlan, /mockTargetMet/);
