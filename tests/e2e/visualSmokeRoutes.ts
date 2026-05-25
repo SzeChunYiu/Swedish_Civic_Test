@@ -230,6 +230,17 @@ function formatVisualSmokeDuplicateCapture(capture: VisualSmokeDuplicateCapture)
   return `${capture.name} (${capture.route} -> ${capture.file})`;
 }
 
+export function formatVisualSmokeDuplicateHashGroupReport(
+  group: Pick<VisualSmokeDuplicateHashGroup, 'captures' | 'sha256'>,
+): string {
+  const captureDetails = [...group.captures]
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map(formatVisualSmokeDuplicateCapture)
+    .join(', ');
+
+  return `${group.sha256}: ${captureDetails}`;
+}
+
 export function collectVisualSmokeDuplicateHashGroups(
   captures: readonly VisualSmokeDuplicateCapture[],
   explanations: readonly VisualSmokeDuplicateExplanation[] = visualSmokeDuplicateExplanations,
@@ -262,11 +273,5 @@ export function findUnexplainedVisualSmokeDuplicateReports(
 ): string[] {
   return collectVisualSmokeDuplicateHashGroups(captures, explanations)
     .filter((group) => !group.explained)
-    .map((group) => {
-      const captureDetails = [...group.captures]
-        .sort((a, b) => a.name.localeCompare(b.name))
-        .map(formatVisualSmokeDuplicateCapture)
-        .join(', ');
-      return `${group.sha256}: ${captureDetails}`;
-    });
+    .map(formatVisualSmokeDuplicateHashGroupReport);
 }

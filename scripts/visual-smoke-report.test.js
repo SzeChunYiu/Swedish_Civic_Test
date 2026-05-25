@@ -70,6 +70,7 @@ function visualSmokeDuplicateContract() {
     assertValidVisualSmokeRouteEntries,
     collectVisualSmokeDuplicateHashGroups,
     findUnexplainedVisualSmokeDuplicateReports,
+    formatVisualSmokeDuplicateHashGroupReport,
     hasValidVisualSmokeDuplicateExplanation,
     isExplainedVisualSmokeDuplicate,
     validateVisualSmokeRouteEntries,
@@ -82,6 +83,7 @@ function visualSmokeDuplicateContract() {
     assertValidVisualSmokeRouteEntries,
     collectVisualSmokeDuplicateHashGroups,
     findUnexplainedVisualSmokeDuplicateReports,
+    formatVisualSmokeDuplicateHashGroupReport,
     hasValidVisualSmokeDuplicateExplanation,
     isExplainedVisualSmokeDuplicate,
     validateVisualSmokeRouteEntries,
@@ -106,7 +108,7 @@ test('visual smoke uses the shared route filename contract and blocking modal ov
   assert.match(browserLaunchSource, /\[role="dialog"\]\[aria-modal="true"\]/);
   assert.match(browserLaunchSource, /\[role="menu"\]\[aria-modal="true"\]/);
   assert.match(browserLaunchSource, /function activateBlockingModalControl/);
-  assert.match(browserLaunchSource, /dispatchEvent\('click'\)/);
+  assert.match(browserLaunchSource, /dispatchEvent\('click', undefined, \{ timeout: 2_000 \}\)/);
   assert.match(
     visualSmokeSource,
     /import \{[\s\S]*visualSmokeRouteManifestEntries[\s\S]*\} from '\.\/visualSmokeRoutes';/,
@@ -129,6 +131,10 @@ test('visual smoke uses the shared route filename contract and blocking modal ov
   assert.match(visualSmokeRoutesSource, /export function validateVisualSmokeDuplicateExplanations/);
   assert.match(visualSmokeRoutesSource, /export function isExplainedVisualSmokeDuplicate/);
   assert.match(visualSmokeRoutesSource, /export function collectVisualSmokeDuplicateHashGroups/);
+  assert.match(
+    visualSmokeRoutesSource,
+    /export function formatVisualSmokeDuplicateHashGroupReport/,
+  );
   assert.match(
     visualSmokeRoutesSource,
     /export function findUnexplainedVisualSmokeDuplicateReports/,
@@ -454,7 +460,8 @@ test('visual smoke duplicate collector groups hashes consistently for runtime an
 });
 
 test('visual smoke duplicate failure reports include route paths and screenshot files', () => {
-  const { findUnexplainedVisualSmokeDuplicateReports } = visualSmokeDuplicateContract();
+  const { findUnexplainedVisualSmokeDuplicateReports, formatVisualSmokeDuplicateHashGroupReport } =
+    visualSmokeDuplicateContract();
   const captures = [
     {
       file: 'learn.png',
@@ -491,6 +498,13 @@ test('visual smoke duplicate failure reports include route paths and screenshot 
   assert.deepEqual(findUnexplainedVisualSmokeDuplicateReports(captures), [
     'duplicate-hash: learn (/learn -> learn.png), practice (/practice -> practice.png)',
   ]);
+  assert.equal(
+    formatVisualSmokeDuplicateHashGroupReport({
+      captures: [captures[1], captures[0]],
+      sha256: 'duplicate-hash',
+    }),
+    'duplicate-hash: learn (/learn -> learn.png), practice (/practice -> practice.png)',
+  );
 });
 
 test('visual smoke manifest matches the shared route list and screenshot filenames without launch overlays', () => {
@@ -499,6 +513,7 @@ test('visual smoke manifest matches the shared route list and screenshot filenam
   const {
     collectVisualSmokeDuplicateHashGroups,
     findUnexplainedVisualSmokeDuplicateReports,
+    formatVisualSmokeDuplicateHashGroupReport,
     hasValidVisualSmokeDuplicateExplanation,
     validateVisualSmokeDuplicateExplanations,
     visualSmokeDuplicateExplanations,
@@ -570,13 +585,7 @@ test('visual smoke manifest matches the shared route list and screenshot filenam
     unexplainedDuplicates,
     duplicateHashGroups
       .filter((group) => !group.explained)
-      .map((group) => {
-        const captureDetails = [...group.captures]
-          .sort((a, b) => a.name.localeCompare(b.name))
-          .map((capture) => `${capture.name} (${capture.route} -> ${capture.file})`)
-          .join(', ');
-        return `${group.sha256}: ${captureDetails}`;
-      }),
+      .map(formatVisualSmokeDuplicateHashGroupReport),
   );
   assert.deepEqual(unexplainedDuplicates, []);
 });
