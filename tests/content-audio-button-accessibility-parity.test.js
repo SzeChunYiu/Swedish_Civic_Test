@@ -59,7 +59,7 @@ test('learning AudioButton keeps playback guards and accessibility copy in parit
     'utf8',
   );
 
-  assert.equal(summary.audioButtonAccessibilityRulesValidated, 29);
+  assert.equal(summary.audioButtonAccessibilityRulesValidated, 43);
   assert.equal(summary.audioButtonAccessibilityParityValidated, true);
   assert.match(source, /import \{ useEffect, useRef, useState \} from 'react';/);
   assert.match(source, /import type \{ AppLanguage \}/);
@@ -68,6 +68,9 @@ test('learning AudioButton keeps playback guards and accessibility copy in parit
   assert.match(source, /rate,/);
   assert.match(source, /rate\?: number;/);
   assert.match(source, /const \[isSpeaking, setIsSpeaking\] = useState\(false\);/);
+  assert.match(source, /const \[rateMenuOpen, setRateMenuOpen\] = useState\(false\);/);
+  assert.match(source, /const storedAudioPlaybackRate = useAccessibilityStore/);
+  assert.match(source, /const resolvedRate = AUDIO_PLAYBACK_RATES\.includes/);
   assert.match(source, /const playbackRunRef = useRef\(0\);/);
   assert.match(source, /const previousSpeechTextRef = useRef<string \| null>\(null\);/);
   assert.match(
@@ -102,7 +105,7 @@ test('learning AudioButton keeps playback guards and accessibility copy in parit
   );
   assert.match(
     source,
-    /speakSwedish\(speechText, \{[\s\S]*rate,[\s\S]*onDone: \(\) => clearSpeakingForRun\(runId\),[\s\S]*onError: \(\) => clearSpeakingForRun\(runId\),[\s\S]*onStopped: \(\) => clearSpeakingForRun\(runId\),/,
+    /speakSwedish\(speechText, \{[\s\S]*rate: resolvedRate,[\s\S]*onDone: \(\) => clearSpeakingForRun\(runId\),[\s\S]*onError: \(\) => clearSpeakingForRun\(runId\),[\s\S]*onStopped: \(\) => clearSpeakingForRun\(runId\),/,
   );
   assert.match(
     source,
@@ -143,6 +146,9 @@ test('learning FeedbackAudioButton exposes localized play and stop states', () =
   assert.match(source, /const hasSpeechText = speechText\.length > 0;/);
   assert.match(source, /const canPlayAudio = enabled && hasSpeechText;/);
   assert.match(source, /accessibilityState=\{\{ busy: isSpeaking, disabled: !canPlayAudio \}\}/);
+  assert.match(source, /const \[rateMenuOpen, setRateMenuOpen\] = useState\(false\);/);
+  assert.match(source, /const storedAudioPlaybackRate = useAccessibilityStore/);
+  assert.match(source, /const resolvedRate = AUDIO_PLAYBACK_RATES\.includes/);
   assert.match(source, /if \(!canPlayAudio\) return;/);
   assert.match(
     source,
@@ -154,7 +160,7 @@ test('learning FeedbackAudioButton exposes localized play and stop states', () =
   );
   assert.match(
     source,
-    /speakSwedish\(speechText, \{[\s\S]*onDone: \(\) => clearSpeakingForRun\(runId\),[\s\S]*onError: \(\) => clearSpeakingForRun\(runId\),[\s\S]*onStopped: \(\) => clearSpeakingForRun\(runId\),/,
+    /speakSwedish\(speechText, \{[\s\S]*rate: resolvedRate,[\s\S]*onDone: \(\) => clearSpeakingForRun\(runId\),[\s\S]*onError: \(\) => clearSpeakingForRun\(runId\),[\s\S]*onStopped: \(\) => clearSpeakingForRun\(runId\),/,
   );
   assert.match(
     source,
@@ -169,6 +175,53 @@ test('learning FeedbackAudioButton exposes localized play and stop states', () =
     /<FeedbackAudioButton[\s\S]*text=\{buildAnswerFeedbackSpeechText\(question, selectedOptionId\)\}[\s\S]*\/>/,
   );
   assert.doesNotMatch(examSource, /FeedbackAudioButton|buildAnswerFeedbackSpeechText/);
+});
+
+test('question and feedback audio expose a persisted in-context rate menu', () => {
+  const audioSource = fs.readFileSync(
+    path.join(repoRoot, 'components/learning/AudioButton.tsx'),
+    'utf8',
+  );
+  const feedbackSource = fs.readFileSync(
+    path.join(repoRoot, 'components/learning/FeedbackAudioButton.tsx'),
+    'utf8',
+  );
+  const rateMenuSource = fs.readFileSync(
+    path.join(repoRoot, 'components/learning/AudioRateMenu.tsx'),
+    'utf8',
+  );
+
+  for (const source of [audioSource, feedbackSource]) {
+    assert.match(source, /import \{ AudioRateMenu \} from '\.\/AudioRateMenu';/);
+    assert.match(source, /useAccessibilityStore\(\(state\) => state\.audioPlaybackRate\)/);
+    assert.match(source, /AUDIO_PLAYBACK_RATES\.includes\(rate as AudioPlaybackRate\)/);
+    assert.match(source, /onLongPress=\{\(\) => setRateMenuOpen\(true\)\}/);
+    assert.match(
+      source,
+      /<AudioRateMenu[\s\S]*expanded=\{rateMenuOpen\}[\s\S]*language=\{language\}[\s\S]*onExpandedChange=\{setRateMenuOpen\}[\s\S]*selectedRate=\{resolvedRate\}[\s\S]*\/>/,
+    );
+  }
+
+  assert.match(rateMenuSource, /type AudioRateMenuCopy = \{/);
+  assert.match(rateMenuSource, /const audioRateMenuCopy: Record<AppLanguage, AudioRateMenuCopy>/);
+  assert.match(rateMenuSource, /Hastighet \$\{rateLabel\}/);
+  assert.match(rateMenuSource, /Speed \$\{rateLabel\}/);
+  assert.match(rateMenuSource, /Välj ljudhastighet/);
+  assert.match(rateMenuSource, /Choose audio speed/);
+  assert.match(rateMenuSource, /0,5x/);
+  assert.match(rateMenuSource, /0\.5x/);
+  assert.match(rateMenuSource, /useAccessibilityStore\(\(state\) => state\.setAudioPlaybackRate\)/);
+  assert.match(rateMenuSource, /AUDIO_PLAYBACK_RATES\.map\(\(rateOption\) =>/);
+  assert.match(rateMenuSource, /accessibilityRole="radiogroup"/);
+  assert.match(rateMenuSource, /accessibilityRole="radio"/);
+  assert.match(rateMenuSource, /accessibilityState=\{\{ checked: selected \}\}/);
+  assert.match(rateMenuSource, /setAudioPlaybackRate\(rateOption\);/);
+  assert.match(rateMenuSource, /onExpandedChange\(false\);/);
+  assert.match(rateMenuSource, /variant=\{selected \? 'primary' : 'secondary'\}/);
+  assert.doesNotMatch(
+    rateMenuSource,
+    /hasProEntitlement|ProTierEntitlements|isPremiumUser|premium|entitlement|paywall/i,
+  );
 });
 
 test('listen-first question audio is opt-in, rate-aware, and excluded from timed exams', () => {
@@ -292,7 +345,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/components/learning/AudioButton.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('if (isSpeaking) {\\n          playbackRunRef.current += 1;\\n          stopSpeech();\\n          setIsSpeaking(false);\\n          return;\\n        }', '');
+      .replace(/if \\(isSpeaking\\) \\{\\n\\s+playbackRunRef\\.current \\+= 1;\\n\\s+stopSpeech\\(\\);\\n\\s+setIsSpeaking\\(false\\);\\n\\s+return;\\n\\s+\\}/, '');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };

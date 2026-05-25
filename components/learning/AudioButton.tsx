@@ -2,7 +2,13 @@ import { useEffect, useRef, useState } from 'react';
 
 import { Button } from '../Button';
 import { speakSwedish, stopSpeech } from '../../lib/audio/speak';
+import {
+  AUDIO_PLAYBACK_RATES,
+  type AudioPlaybackRate,
+  useAccessibilityStore,
+} from '../../lib/storage/accessibilityStore';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
+import { AudioRateMenu } from './AudioRateMenu';
 
 type AudioButtonCopy = {
   disabledHint: string;
@@ -50,6 +56,11 @@ export function AudioButton({
   text?: string | null;
 }) {
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [rateMenuOpen, setRateMenuOpen] = useState(false);
+  const storedAudioPlaybackRate = useAccessibilityStore((state) => state.audioPlaybackRate);
+  const resolvedRate = AUDIO_PLAYBACK_RATES.includes(rate as AudioPlaybackRate)
+    ? (rate as AudioPlaybackRate)
+    : storedAudioPlaybackRate;
   const speechText = typeof text === 'string' ? text.trim() : '';
   const hasSpeechText = speechText.length > 0;
   const canPlayAudio = enabled && hasSpeechText;
@@ -104,33 +115,42 @@ export function AudioButton({
   }, [canPlayAudio, isSpeaking]);
 
   return (
-    <Button
-      accessibilityHint={accessibilityHint}
-      accessibilityLabel={accessibilityLabel}
-      accessibilityRole="button"
-      accessibilityState={{ busy: isSpeaking, disabled: !canPlayAudio }}
-      disabled={!canPlayAudio}
-      onPress={() => {
-        if (!canPlayAudio) return;
-        if (isSpeaking) {
-          playbackRunRef.current += 1;
+    <>
+      <Button
+        accessibilityHint={accessibilityHint}
+        accessibilityLabel={accessibilityLabel}
+        accessibilityRole="button"
+        accessibilityState={{ busy: isSpeaking, disabled: !canPlayAudio }}
+        disabled={!canPlayAudio}
+        onLongPress={() => setRateMenuOpen(true)}
+        onPress={() => {
+          if (!canPlayAudio) return;
+          if (isSpeaking) {
+            playbackRunRef.current += 1;
+            stopSpeech();
+            setIsSpeaking(false);
+            return;
+          }
+          const runId = playbackRunRef.current + 1;
+          playbackRunRef.current = runId;
           stopSpeech();
-          setIsSpeaking(false);
-          return;
-        }
-        const runId = playbackRunRef.current + 1;
-        playbackRunRef.current = runId;
-        stopSpeech();
-        setIsSpeaking(true);
-        speakSwedish(speechText, {
-          rate,
-          onDone: () => clearSpeakingForRun(runId),
-          onError: () => clearSpeakingForRun(runId),
-          onStopped: () => clearSpeakingForRun(runId),
-        });
-      }}
-    >
-      {label}
-    </Button>
+          setIsSpeaking(true);
+          speakSwedish(speechText, {
+            rate: resolvedRate,
+            onDone: () => clearSpeakingForRun(runId),
+            onError: () => clearSpeakingForRun(runId),
+            onStopped: () => clearSpeakingForRun(runId),
+          });
+        }}
+      >
+        {label}
+      </Button>
+      <AudioRateMenu
+        expanded={rateMenuOpen}
+        language={language}
+        onExpandedChange={setRateMenuOpen}
+        selectedRate={resolvedRate}
+      />
+    </>
   );
 }
