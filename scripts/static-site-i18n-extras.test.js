@@ -212,6 +212,33 @@ const supportMetadataEnglishFallbacks = {
   'support.meta2.v': /English or Swedish/i,
   'support.meta3.v': /^Free$/i,
 };
+const supportSectionCopyKeys = [
+  'support.s1.t',
+  'support.s1.p',
+  'support.s1.li1',
+  'support.s1.li2',
+  'support.s1.li3',
+  'support.s1.li4',
+  'support.s1.li5',
+  'support.s1.li6',
+  'support.s2.t',
+  'support.s2.p',
+  'support.s2.li1',
+  'support.s2.li2',
+  'support.s2.li3',
+  'support.s2.li4',
+  'support.s3.t',
+  'support.s3.callout.b',
+  'support.s3.callout.p',
+  'support.s4.t',
+  'support.s4.p',
+  'support.s4.li1',
+  'support.s4.li2',
+  'support.s4.li3',
+  'support.s4.li4',
+  'support.s5.t',
+  'support.s5.p',
+];
 const privacyPurchaseActionKeys = ['privacy.lede', 'privacy.s5.p'];
 const englishPrivacyPurchaseActionLabel = /\bRemove Ads\b/i;
 const purchaseBackendMissingEnglishFallback =
@@ -775,6 +802,39 @@ test('extra locale Support metadata values reject English fallbacks', () => {
 
   assert.equal(extra.ckb['support.meta1.v'], '~2 ڕۆژی کاری');
   assert.match(extra.ckb['support.meta1.v'], /ڕۆژی کاری/);
+});
+
+test('extra locale Support section copy rejects empty values and exact English fallbacks', () => {
+  const base = loadBaseI18n();
+  const extra = loadExtraI18n();
+  const english = base.en;
+
+  for (const locale of extraLocales) {
+    const dictionary = extra?.[locale];
+    assert.equal(typeof dictionary, 'object', `${locale} dictionary must exist`);
+
+    for (const key of supportSectionCopyKeys) {
+      const value = dictionary[key];
+      const englishValue = english[key];
+
+      assert.equal(typeof value, 'string', `${locale}.${key} must be a string`);
+      assert.notEqual(value.trim(), '', `${locale}.${key} must not be empty`);
+      assert.equal(
+        typeof englishValue,
+        'string',
+        `en.${key} must be available as the fallback source`,
+      );
+      assert.notEqual(
+        value.trim(),
+        englishValue.trim(),
+        `${locale}.${key} must not use the exact English fallback text`,
+      );
+    }
+  }
+
+  assert.match(extra.so['support.s1.li5'], /imtixaan/i);
+  assert.match(extra.ti['support.s3.callout.p'], /personnummer/i);
+  assert.match(extra.tr['support.s5.p'], /support@medborgartest\.app/);
 });
 
 test('extra locale Privacy copy localizes Remove Ads purchase-action labels', () => {

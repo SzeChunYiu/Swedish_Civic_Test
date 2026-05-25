@@ -233,6 +233,33 @@ const supportMetadataEnglishFallbacks: Record<(typeof supportMetadataValueKeys)[
   'support.meta2.v': /English or Swedish/i,
   'support.meta3.v': /^Free$/i,
 };
+const supportSectionCopyKeys = [
+  'support.s1.t',
+  'support.s1.p',
+  'support.s1.li1',
+  'support.s1.li2',
+  'support.s1.li3',
+  'support.s1.li4',
+  'support.s1.li5',
+  'support.s1.li6',
+  'support.s2.t',
+  'support.s2.p',
+  'support.s2.li1',
+  'support.s2.li2',
+  'support.s2.li3',
+  'support.s2.li4',
+  'support.s3.t',
+  'support.s3.callout.b',
+  'support.s3.callout.p',
+  'support.s4.t',
+  'support.s4.p',
+  'support.s4.li1',
+  'support.s4.li2',
+  'support.s4.li3',
+  'support.s4.li4',
+  'support.s5.t',
+  'support.s5.p',
+] as const;
 
 type StaticSite = {
   baseUrl: string;
@@ -596,6 +623,13 @@ async function assertSupportRouteCopy(page: Page, locale: ExtraLocale) {
       expect(value).toBe('~2 ڕۆژی کاری');
       expect(value).toMatch(/ڕۆژی کاری/);
     }
+  }
+
+  for (const key of supportSectionCopyKeys) {
+    const value = await dictionaryText(page, locale, key);
+
+    expect(value.trim(), `${locale}.${key} should not be empty`).not.toBe('');
+    await expectDictionaryRenderedText(page, locale, key);
   }
 
   await expectRootLocale(page, locale);
