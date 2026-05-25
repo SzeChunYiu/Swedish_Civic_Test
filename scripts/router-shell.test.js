@@ -266,6 +266,9 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
   assert.deepEqual(manifest.rootStackScreenNames, [
     'index',
     '(tabs)',
+    '(auth)',
+    'account',
+    'auth/callback',
     'search',
     'dashboard',
     'citizenship-requirements',
@@ -274,6 +277,9 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
   assert.deepEqual(manifest.rootStackScreenFiles, [
     'app/index.tsx',
     'app/(tabs)/_layout.tsx',
+    'app/(auth)/_layout.tsx',
+    'app/account.tsx',
+    'app/auth/callback.tsx',
     'app/search.tsx',
     'app/dashboard.tsx',
     'app/citizenship-requirements.tsx',

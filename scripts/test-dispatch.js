@@ -31,6 +31,13 @@ const selectors = new Map([
       description: 'focused Mobile Ads consent runtime and schema gate',
     },
   ],
+  [
+    'architecture',
+    {
+      scripts: ['test:architecture', 'test:router-shell'],
+      description: 'focused architecture scaffold and router shell release gate',
+    },
+  ],
 ]);
 
 function supportedSelectorText() {

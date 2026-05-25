@@ -27,7 +27,15 @@ function createFakeNpm(tmpDir) {
   const fakeNpm = path.join(tmpDir, 'npm');
   fs.writeFileSync(
     fakeNpm,
-    ['#!/bin/sh', 'printf "%s\\n" "$*" >> "$TEST_DISPATCH_LOG"', 'exit 0', ''].join('\n'),
+    [
+      '#!/bin/sh',
+      'printf "%s\\n" "$*" >> "$TEST_DISPATCH_LOG"',
+      'if [ "$*" = "run $TEST_DISPATCH_FAIL_SCRIPT" ]; then',
+      '  exit "${TEST_DISPATCH_FAIL_STATUS:-1}"',
+      'fi',
+      'exit 0',
+      '',
+    ].join('\n'),
     { mode: 0o755 },
   );
   return fakeNpm;
@@ -691,7 +699,7 @@ test('QuestionSourceCitation accessibility parity uses focused content validatio
     'questionSourceCitationAccessibilityParityValidated',
   ]);
 
-  assert.equal(summary.questionSourceCitationAccessibilityRulesValidated, 15);
+  assert.equal(summary.questionSourceCitationAccessibilityRulesValidated, 23);
   assert.equal(summary.questionSourceCitationAccessibilityParityValidated, true);
 });
 
@@ -2370,6 +2378,49 @@ test('xp selector runs only the focused XP rules parity script', () => {
   }
 });
 
+test('architecture selector runs scaffold and router shell scripts in order', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-architecture-routing-'));
+  const npmLog = path.join(tmpDir, 'npm.log');
+  const env = {
+    ...process.env,
+    TEST_DISPATCH_CAPTURE: '1',
+    TEST_DISPATCH_LOG: npmLog,
+    TEST_DISPATCH_NPM: createFakeNpm(tmpDir),
+  };
+
+  try {
+    const selectedResult = runDispatcher(['--', 'architecture'], env);
+    assert.equal(selectedResult.status, 0, selectedResult.stderr || selectedResult.stdout);
+    assert.deepEqual(fs.readFileSync(npmLog, 'utf8').trim().split('\n'), [
+      'run test:architecture',
+      'run test:router-shell',
+    ]);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('architecture selector stops after the first failing script', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-architecture-failfast-'));
+  const npmLog = path.join(tmpDir, 'npm.log');
+  const env = {
+    ...process.env,
+    TEST_DISPATCH_CAPTURE: '1',
+    TEST_DISPATCH_FAIL_SCRIPT: 'test:architecture',
+    TEST_DISPATCH_FAIL_STATUS: '7',
+    TEST_DISPATCH_LOG: npmLog,
+    TEST_DISPATCH_NPM: createFakeNpm(tmpDir),
+  };
+
+  try {
+    const selectedResult = runDispatcher(['--', 'architecture'], env);
+    assert.equal(selectedResult.status, 7, selectedResult.stderr || selectedResult.stdout);
+    assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:architecture\n');
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
 test('mobile ads consent selector runs only the focused runtime and schema parity bundle', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-mobile-ads-routing-'));
   const npmLog = path.join(tmpDir, 'npm.log');
@@ -2576,6 +2627,10 @@ test('unsupported npm test selectors fail before running any suite', () => {
     assert.match(result.stderr, /monetization -> npm run test:monetization/);
     assert.match(result.stderr, /mobile-ads-consent -> npm run test:mobile-ads-consent/);
     assert.match(result.stderr, /xp -> npm run test:xp-rules/);
+    assert.match(
+      result.stderr,
+      /architecture -> npm run test:architecture && npm run test:router-shell/,
+    );
     assert.equal(fs.existsSync(npmLog), false);
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
