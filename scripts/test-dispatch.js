@@ -14,7 +14,8 @@ const selectors = new Map([
     'correct-display-position',
     {
       scripts: ['test:correct-display-position'],
-      description: 'P0 routed/static answer-shuffle distribution, stability, and scoring gate',
+      description:
+        'P0 routed/static answer-shuffle distribution, attempt-seed, stability, and scoring gate',
     },
   ],
   [

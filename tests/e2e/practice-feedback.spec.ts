@@ -1,17 +1,19 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { expect, test } from '@playwright/test';
-import type { Locator, Page } from '@playwright/test';
+import type { Browser, Locator, Page } from '@playwright/test';
 
 import {
   clearSpeechEvents,
   currentProgressStateStorageKey,
   dismissBlockingModals,
+  installDeterministicBrowserEntropy,
   installSpeechSynthesisMock,
   seedFreshSettingsLanguageAndAboutSeen,
   seedFreshSettingsLanguageAndAboutSeenWithStorage,
   speakEvents,
   speechEvents,
+  type BrowserEntropySeed,
 } from './browserLaunch';
 import { startAllVisiblePractice, type PracticeHubLanguage } from './practiceHub';
 
@@ -138,6 +140,53 @@ async function answerRadioAccessibilityLabels(page: Page) {
         .map((element) => element.getAttribute('aria-label') ?? '')
         .filter((label) => label.length > 0),
     );
+}
+
+async function openFreshRoutedQuizVisit(
+  browser: Browser,
+  entropy: BrowserEntropySeed,
+): Promise<{
+  close: () => Promise<void>;
+  consoleErrors: string[];
+  order: string[];
+  page: Page;
+}> {
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await installDeterministicBrowserEntropy(page, entropy);
+  await seedFreshSettingsLanguageAndAboutSeen(page, 'en');
+  await page.goto('/quiz/q001', { waitUntil: 'networkidle' });
+  await closeLaunchAdIfPresent(page);
+  await dismissBlockingModals(page);
+  await expect(page.getByRole('heading', { name: 'Session q001' })).toBeVisible();
+
+  const order = await answerRadioAccessibilityLabels(page);
+  expect(order).toHaveLength(4);
+
+  return {
+    close: () => context.close(),
+    consoleErrors,
+    order,
+    page,
+  };
+}
+
+async function expectTryAgainKeepsRoutedQuizOrder(page: Page, expectedOrder: string[]) {
+  await answerRadio(page, 'Select answer In southern Europe').click();
+
+  const tryAgain = page.getByRole('button', { name: 'Try this quiz question again' });
+  await expect(tryAgain).toBeVisible();
+  await tryAgain.click();
+
+  await expect(answerRadio(page, 'Select answer In southern Europe')).toBeVisible();
+  expect(await answerRadioAccessibilityLabels(page)).toEqual(expectedOrder);
 }
 
 async function openPracticeQuestion(page: Page, language: PracticeHubLanguage) {
@@ -399,6 +448,26 @@ test('routed quiz Try again keeps the current route-entry answer order', async (
   await expect(answerRadio(page, 'Select answer In southern Europe')).toBeVisible();
   expect(await answerRadioAccessibilityLabels(page)).toEqual(initialOrder);
   expect(consoleErrors).toEqual([]);
+});
+
+test('fresh routed quiz visits can change order while Try again keeps the route-entry shuffle', async ({
+  browser,
+}) => {
+  const firstVisit = await openFreshRoutedQuizVisit(browser, { now: 1_000, random: 0.1 });
+  const secondVisit = await openFreshRoutedQuizVisit(browser, { now: 2_000, random: 0.9 });
+
+  try {
+    expect(firstVisit.order).not.toEqual(secondVisit.order);
+
+    await expectTryAgainKeepsRoutedQuizOrder(firstVisit.page, firstVisit.order);
+    await expectTryAgainKeepsRoutedQuizOrder(secondVisit.page, secondVisit.order);
+
+    expect(firstVisit.consoleErrors).toEqual([]);
+    expect(secondVisit.consoleErrors).toEqual([]);
+  } finally {
+    await firstVisit.close();
+    await secondVisit.close();
+  }
 });
 
 test('routed quiz Back to Practice and Tillbaka till övning return without retained quiz content', async ({
