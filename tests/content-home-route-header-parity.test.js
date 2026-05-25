@@ -142,13 +142,16 @@ test('home source-trust row links learners to sources without unsupported rating
   );
 
   assert.match(homeSource, /<SocialProofRow language=\{language\} \/>/);
-  assert.match(socialProofRow, /import \{ Link \} from 'expo-router';/);
+  assert.match(socialProofRow, /import \{ RouteLink \} from '\.\/RouteLink';/);
+  assert.doesNotMatch(socialProofRow, /from 'expo-router';/);
   assert.match(socialProofRow, /href="\/sources"/);
-  assert.match(socialProofRow, /accessibilityRole="link"/);
+  assert.match(socialProofRow, /<RouteLink[\s\S]*accessibilityLabel=\{rowAccessibilityLabel\}/);
   assert.match(socialProofRow, /Källor och transparens/);
   assert.match(socialProofRow, /Sources and transparency/);
   assert.match(socialProofRow, /Öppna källor och transparens/);
   assert.match(socialProofRow, /Open sources and transparency/);
+  assert.match(socialProofRow, /useThemeColors\(\)/);
+  assert.match(socialProofRow, /function createStyles\(themeColors: ThemeColors\)/);
   assert.doesNotMatch(socialProofRow, /Excellent|Utmärkt|5 of 5|5 av 5|★★★★★/);
 });
 
