@@ -84,6 +84,10 @@ function walkFiles(directory) {
   return files;
 }
 
+function hasForbiddenExportPathFragment(relativePath) {
+  return /(?:^|\/)(?:__home|node_modules)(?:\/|$)/.test(relativePath);
+}
+
 test('web export path hygiene allows public support URLs containing repository slug prefixes', () => {
   assert.equal(new URL(publicUrls.support).origin, 'https://szechunyiu.github.io');
   assert.equal(new URL(publicUrls.support).pathname, '/Swedish_Civic_Test-public-site/support/');
@@ -156,28 +160,13 @@ test('prepare web export preserves duplicate asset basenames with matching bundl
 
 test('web export check fails when checkout or dependency path fragments leak', () => {
   const { outputDir, tmpDir } = makeExportFixture();
-  const indexPath = path.join(outputDir, 'index.html');
   const bundlePath = path.join(outputDir, '_expo/static/js/web/entry-test.js');
-  const index = fs
-    .readFileSync(indexPath, 'utf8')
-    .replace(
-      '<script src="/_expo/static/js/web/entry-test.js" defer></script>',
-      [
-        '<script data-web-export-loader="true">',
-        'window.__bundle = "_expo/static/js/web/entry-test.js";',
-        '</script>',
-      ].join('\n'),
-    );
 
   try {
-    fs.writeFileSync(indexPath, index);
-    fs.writeFileSync(path.join(outputDir, '404.html'), index);
+    prepare(outputDir);
     fs.writeFileSync(
       bundlePath,
-      fs
-        .readFileSync(bundlePath, 'utf8')
-        .replaceAll('"/_expo/', '"_expo/')
-        .replaceAll('"/assets/', '"assets/'),
+      `${fs.readFileSync(bundlePath, 'utf8')}\nconst leaked = {uri:"assets/__home/billy/Swedish_Civic_Test/node_modules/example.png"};`,
     );
 
     assert.throws(
@@ -189,9 +178,16 @@ test('web export check fails when checkout or dependency path fragments leak', (
   }
 });
 
-test('build config keeps the legacy asset path hygiene fixture out of npm test dispatch', () => {
+test('build config wires asset path hygiene into deterministic npm dispatch', () => {
   const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
 
-  assert.equal(packageJson.scripts['test:web-export-asset-path-hygiene'], undefined);
-  assert.doesNotMatch(packageJson.scripts.test, /test:web-export-asset-path-hygiene/);
+  assert.equal(
+    packageJson.scripts['test:web-export-asset-path-hygiene'],
+    'node --test tests/web-export-asset-path-hygiene.test.js',
+  );
+  assert.match(
+    packageJson.scripts['release:web-export-smoke'],
+    /test:web-export-asset-path-hygiene/,
+  );
+  assert.match(packageJson.scripts['test:all'], /test:web-export-asset-path-hygiene/);
 });
