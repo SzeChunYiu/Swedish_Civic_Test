@@ -2,6 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
+import { resolveStaticRequestPath } from './staticPathResolver.cjs';
 
 const siteRoot = path.resolve('site');
 
@@ -97,14 +98,7 @@ function sanitizedIndexHtml() {
 async function startStaticSiteServer(): Promise<StaticSite> {
   const server = http.createServer((request, response) => {
     const url = new URL(request.url ?? '/', 'http://127.0.0.1');
-    const safePath = path.normalize(decodeURIComponent(url.pathname)).replace(/^\.\.(?:\/|$)/, '');
-    const requestedPath = path.join(siteRoot, safePath === '/' ? 'index.html' : safePath);
-    const filePath =
-      requestedPath.startsWith(siteRoot) &&
-      fs.existsSync(requestedPath) &&
-      fs.statSync(requestedPath).isFile()
-        ? requestedPath
-        : path.join(siteRoot, 'index.html');
+    const filePath = resolveStaticRequestPath({ root: siteRoot, pathname: url.pathname });
     const extension = path.extname(filePath);
 
     response.writeHead(200, {
