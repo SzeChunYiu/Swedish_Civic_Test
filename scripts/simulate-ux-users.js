@@ -2,7 +2,10 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const repoRoot = path.resolve(__dirname, '..');
-const reportDir = path.join(repoRoot, 'reports');
+const defaultReportDir = path.join(repoRoot, 'reports');
+const reportDir = process.env.UX_SIM_OUTPUT_DIR
+  ? path.resolve(repoRoot, process.env.UX_SIM_OUTPUT_DIR)
+  : defaultReportDir;
 const userCount = Number(process.env.UX_SIM_USER_COUNT ?? 10000);
 const jsonPath = path.join(reportDir, '2026-05-15-10000-user-ux-simulation.json');
 const markdownPath = path.join(reportDir, '2026-05-15-10000-user-ux-simulation.md');
@@ -16,13 +19,24 @@ function has(relativePath, pattern) {
 }
 
 function getGeneratedAt() {
-  if (process.env.UX_SIM_GENERATED_AT) return process.env.UX_SIM_GENERATED_AT;
-
   try {
     return JSON.parse(fs.readFileSync(jsonPath, 'utf8')).generatedAt;
   } catch {
-    return new Date().toISOString();
+    return process.env.UX_SIM_GENERATED_AT ?? new Date().toISOString();
   }
+}
+
+function readFeatureEvidenceOverrides() {
+  if (!process.env.UX_SIM_FEATURE_EVIDENCE_OVERRIDES) return {};
+
+  const parsed = JSON.parse(process.env.UX_SIM_FEATURE_EVIDENCE_OVERRIDES);
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    throw new Error('UX_SIM_FEATURE_EVIDENCE_OVERRIDES must be a JSON object');
+  }
+
+  return Object.fromEntries(
+    Object.entries(parsed).filter(([, value]) => typeof value === 'boolean'),
+  );
 }
 
 function formatMarkdownTable(columns, rows) {
@@ -72,6 +86,7 @@ const featureEvidence = {
   settingsLink:
     has('app/(tabs)/profile.tsx', /openSettingsAccessibilityLabel/) &&
     has('app/(tabs)/profile.tsx', /pathname: '\/settings'/),
+  ...readFeatureEvidenceOverrides(),
 };
 
 const personas = [
