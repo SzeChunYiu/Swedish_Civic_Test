@@ -6,6 +6,18 @@ import {
 } from './staticSiteServer';
 import { trapExternalRequests } from './staticSiteNetworkGuards';
 
+declare global {
+  interface Window {
+    __smtServiceWorkerRegisterCalls?: Array<{
+      receivedStubbedRegistration?: boolean;
+      options?: RegistrationOptions;
+      scriptUrl?: string;
+      type: 'register' | 'update-check';
+    }>;
+    smtInstallServiceWorkerUpdateChecks?: (registration: unknown) => void;
+  }
+}
+
 async function seedStaticPwaRun(page: Page) {
   await page.addInitScript(() => {
     localStorage.setItem('smt_consent', 'min');
@@ -70,6 +82,64 @@ test.beforeAll(async () => {
 
 test.afterAll(async () => {
   await staticSite.close();
+});
+
+test('static PWA registration wiring passes installed registration to foreground update checks', async ({
+  page,
+}) => {
+  await seedStaticPwaRun(page);
+  await trapExternalRequests(page, new URL(staticSite.baseUrl).origin, []);
+  await page.addInitScript(() => {
+    const registration = { scope: 'stubbed-static-scope' };
+    const calls: Array<{
+      receivedStubbedRegistration?: boolean;
+      options?: RegistrationOptions;
+      scriptUrl?: string;
+      type: 'register' | 'update-check';
+    }> = [];
+
+    Object.defineProperty(window, 'isSecureContext', {
+      configurable: true,
+      value: true,
+    });
+    Object.defineProperty(navigator, 'serviceWorker', {
+      configurable: true,
+      value: {
+        register(scriptUrl: string, options?: RegistrationOptions) {
+          calls.push({ options, scriptUrl, type: 'register' });
+          return Promise.resolve(registration);
+        },
+      },
+    });
+
+    window.smtInstallServiceWorkerUpdateChecks = (installedRegistration: unknown) => {
+      calls.push({
+        receivedStubbedRegistration: installedRegistration === registration,
+        type: 'update-check',
+      });
+    };
+    window.__smtServiceWorkerRegisterCalls = calls;
+  });
+
+  await page.goto(staticSite.baseUrl, { waitUntil: 'load' });
+
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        return window.__smtServiceWorkerRegisterCalls ?? [];
+      }),
+    )
+    .toEqual([
+      {
+        options: { scope: './', updateViaCache: 'none' },
+        scriptUrl: './sw.js',
+        type: 'register',
+      },
+      {
+        receivedStubbedRegistration: true,
+        type: 'update-check',
+      },
+    ]);
 });
 
 test('static PWA shell installs and reloads core study routes offline', async ({
