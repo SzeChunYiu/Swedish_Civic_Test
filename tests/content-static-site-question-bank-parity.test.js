@@ -141,15 +141,24 @@ function staticLocalizedSegments(question, locales) {
 }
 
 function staticQuestionToI18nQuestion(question) {
+  const optionIds = ['a', 'b', 'c', 'd'];
+  const answerIndex =
+    typeof question.answer === 'number' && Number.isInteger(question.answer)
+      ? question.answer
+      : undefined;
+
   return {
     id: question.id,
     questionText: question.q,
     explanationText: question.why,
     options: (question.opts || []).map((option, index) => ({
-      id: String(index),
+      id: optionIds[index] || String(index),
       text: option,
     })),
-    correctOptionId: String(question.answer),
+    correctOptionId:
+      answerIndex === undefined
+        ? String(question.answer)
+        : optionIds[answerIndex] || String(answerIndex),
   };
 }
 
@@ -491,6 +500,39 @@ test('static site question bank keeps q115 1860 religious-freedom i18n precise',
     [],
   );
   assert.doesNotMatch(staticQuestionVisibleText(q115), Q115_RELIGIOUS_FREEDOM_STALE_STATIC_PATTERN);
+});
+
+test('static q115 religious-freedom summary rejects stale option b wording', () => {
+  const context = { window: {} };
+  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
+  const questionsById = new Map(
+    context.window.SMT_QUESTIONS.map((question) => [question.id, question]),
+  );
+  const q115 = questionsById.get('q115');
+  assert.ok(q115, 'q115 should be present in static question bank');
+
+  const mutatedQ115 = {
+    ...q115,
+    opts: q115.opts.map((option, index) =>
+      index === 1
+        ? {
+            ...option,
+            'zh-Hant': '完全自由選擇任何宗教或完全不選宗教',
+          }
+        : option,
+    ),
+  };
+  const summary = summarizeQ115ReligiousFreedom1860Naturalness(
+    [staticQuestionToI18nQuestion(mutatedQ115)],
+    Q115_RELIGIOUS_FREEDOM_1860_NATURALNESS_IDS,
+  );
+
+  assert.ok(
+    summary.errors.includes(
+      'q115.options.b.text.zh-Hant uses over-intensified 1860 religious-freedom wording',
+    ),
+  );
+  assert.equal(summary.parityValidated, false);
 });
 
 test('static site question bank keeps q080 suffrage explanations learner-facing', () => {
