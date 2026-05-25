@@ -10490,6 +10490,7 @@ let settingsAudioLabelsValidated = 0;
 let settingsAudioParityValidated = false;
 let persistenceWarningScopeCasesValidated = 0;
 let persistenceWarningScopeParityValidated = false;
+let persistenceWarningSettingsAccessibilityNoticeCountValidated = 0;
 let localStudyCorruptJsonStoresValidated = 0;
 let localStudyCorruptJsonRecoverableReadWarningTestsValidated = 0;
 let localStudyCorruptJsonWarningParityValidated = false;
@@ -11517,6 +11518,7 @@ if (process.argv.includes('--focus-persistence-warning-scope')) {
   exitWithValidationFailures();
   printValidationSummary({
     persistenceWarningScopeCasesValidated,
+    persistenceWarningSettingsAccessibilityNoticeCountValidated,
     persistenceWarningScopeParityValidated,
   });
   process.exit(0);
@@ -19573,6 +19575,24 @@ function validatePersistenceWarningScopeParity() {
     )
   ) {
     reject('Settings must pass warningScope="accessibilityPreferences" for accessibility warnings');
+  }
+
+  const settingsPersistenceWarningNotices = Array.from(
+    settingsSource.matchAll(/<PersistenceWarningNotice\b[\s\S]*?\/>/g),
+  ).map((match) => match[0]);
+  const settingsAccessibilityWarningNoticeCount = settingsPersistenceWarningNotices.filter(
+    (noticeSource) =>
+      /warning=\{accessibilityPersistenceWarning\}/.test(noticeSource) &&
+      /warningScope="accessibilityPreferences"/.test(noticeSource),
+  ).length;
+
+  if (settingsAccessibilityWarningNoticeCount !== 1) {
+    reject(
+      `Settings must mount exactly one accessibilityPreferences PersistenceWarningNotice for accessibilityPersistenceWarning; found ${settingsAccessibilityWarningNoticeCount}`,
+    );
+  } else {
+    persistenceWarningSettingsAccessibilityNoticeCountValidated =
+      settingsAccessibilityWarningNoticeCount;
   }
 
   if (
@@ -28661,6 +28681,7 @@ console.log(
       settingsAudioLabelsValidated,
       settingsAudioParityValidated,
       persistenceWarningScopeCasesValidated,
+      persistenceWarningSettingsAccessibilityNoticeCountValidated,
       persistenceWarningScopeParityValidated,
       localStudyCorruptJsonStoresValidated,
       localStudyCorruptJsonRecoverableReadWarningTestsValidated,

@@ -840,12 +840,6 @@ export default function Screen() {
           {copy.themeModeTitle}
         </Text>
         <Text style={styles.subtitle}>{copy.themeModeSummary(activeThemeLabel)}</Text>
-        <PersistenceWarningNotice
-          language={language}
-          onDismiss={clearAccessibilityPersistenceWarning}
-          warning={accessibilityPersistenceWarning}
-          warningScope="accessibilityPreferences"
-        />
         <View
           aria-label={copy.themeModeTitle}
           accessibilityLabel={copy.themeModeTitle}

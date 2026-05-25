@@ -682,10 +682,35 @@ test('routes render localized storage warning notices with dismiss hooks', () =>
   assert.match(settingsSource, /warning=\{accessibilityPersistenceWarning\}/);
   assert.match(settingsSource, /warningScope="accessibilityPreferences"/);
   assert.match(settingsSource, /onDismiss=\{clearAccessibilityPersistenceWarning\}/);
+  const settingsPersistenceWarningBlocks = Array.from(
+    settingsSource.matchAll(/<PersistenceWarningNotice\b[\s\S]*?\/>/g),
+  ).map((match) => match[0]);
+  assert.equal(
+    settingsPersistenceWarningBlocks.filter(
+      (block) =>
+        /warning=\{accessibilityPersistenceWarning\}/.test(block) &&
+        /warningScope="accessibilityPreferences"/.test(block),
+    ).length,
+    1,
+  );
   assert.match(mistakesSource, /progressPersistenceWarning/);
   assert.match(mistakesSource, /mistakeReviewPersistenceWarning/);
   assert.doesNotMatch(practiceSource, /warningScope="accessibilityPreferences"/);
   assert.doesNotMatch(mistakesSource, /warningScope="accessibilityPreferences"/);
+});
+
+test('focused persistence warning scope summary counts one Settings accessibility warning', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-persistence-warning-scope'],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+
+  const summary = parseValidationSummary(result.stdout);
+  assert.equal(summary.persistenceWarningSettingsAccessibilityNoticeCountValidated, 1);
+  assert.equal(summary.persistenceWarningScopeParityValidated, true);
 });
 
 expectPersistenceWarningScopeMutationFailure(
@@ -702,6 +727,38 @@ expectPersistenceWarningScopeMutationFailure(
     },
   ],
   /Settings must pass warningScope="accessibilityPreferences" for accessibility warnings/,
+);
+
+expectPersistenceWarningScopeMutationFailure(
+  'persistence warning scope validator rejects duplicate Settings accessibility warnings',
+  [
+    {
+      file: '/app/settings.tsx',
+      replacements: [
+        {
+          from: `      <PersistenceWarningNotice
+        language={language}
+        onDismiss={clearAccessibilityPersistenceWarning}
+        warning={accessibilityPersistenceWarning}
+        warningScope="accessibilityPreferences"
+      />`,
+          to: `      <PersistenceWarningNotice
+        language={language}
+        onDismiss={clearAccessibilityPersistenceWarning}
+        warning={accessibilityPersistenceWarning}
+        warningScope="accessibilityPreferences"
+      />
+      <PersistenceWarningNotice
+        language={language}
+        onDismiss={clearAccessibilityPersistenceWarning}
+        warning={accessibilityPersistenceWarning}
+        warningScope="accessibilityPreferences"
+      />`,
+        },
+      ],
+    },
+  ],
+  /Settings must mount exactly one accessibilityPreferences PersistenceWarningNotice for accessibilityPersistenceWarning; found 2/,
 );
 
 expectPersistenceWarningScopeMutationFailure(
