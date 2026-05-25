@@ -85,7 +85,7 @@ test('audio setting stays in parity between storage and settings switch', () => 
   const settingsRoute = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
   const normalizedSettingsRoute = settingsRoute.replace(/\s+/g, ' ');
 
-  assert.equal(summary.settingsAudioLabelsValidated, 2);
+  assert.equal(summary.settingsAudioLabelsValidated, 8);
   assert.equal(summary.settingsAudioParityValidated, true);
   assert.match(settingsStore, /const audioEnabledKey = 'audioEnabled';/);
   assert.match(settingsStore, /const storedValue = readStorageBoolean\(audioEnabledKey\);/);
@@ -109,8 +109,18 @@ test('audio setting stays in parity between storage and settings switch', () => 
   assert.match(settingsRoute, /Ljud avstängt/);
   assert.match(settingsRoute, /Stäng av ljud/);
   assert.match(settingsRoute, /Slå på ljud/);
+  assert.match(settingsRoute, /Lyssna först/);
+  assert.match(settingsRoute, /Lyssna först på/);
+  assert.match(settingsRoute, /Lyssna först av/);
+  assert.match(settingsRoute, /Stäng av automatisk uppläsning av nya frågor/);
+  assert.match(settingsRoute, /Slå på automatisk uppläsning av nya frågor/);
   assert.match(settingsRoute, /Audio enabled/);
   assert.match(settingsRoute, /Audio disabled/);
+  assert.match(settingsRoute, /Listen first/);
+  assert.match(settingsRoute, /Listen first enabled/);
+  assert.match(settingsRoute, /Listen first disabled/);
+  assert.match(settingsRoute, /Disable automatic playback for new questions/);
+  assert.match(settingsRoute, /Enable automatic playback for new questions/);
 });
 
 test('audio setting hydration falls back when MMKV getBoolean throws', () => {

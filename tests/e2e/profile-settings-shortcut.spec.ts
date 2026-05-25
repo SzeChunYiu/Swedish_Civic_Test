@@ -22,11 +22,14 @@ const fixtures: Record<
     languageGroup: string;
     languageSetupBadge: string;
     languageRadioName: string;
+    listenFirstSwitchName: string;
+    listenFirstTitle: string;
     profileHeading: string;
     settingsCtaName: string;
     settingsHeading: string;
     studyFocusCue: string;
     studySetupHeading: string;
+    themeHeading: string;
   }
 > = {
   sv: {
@@ -38,11 +41,14 @@ const fixtures: Record<
     languageGroup: 'Studiespråk',
     languageSetupBadge: 'Språk: Svenska',
     languageRadioName: 'Byt studiespråk till Svenska',
+    listenFirstSwitchName: 'Slå på automatisk uppläsning av nya frågor',
+    listenFirstTitle: 'Lyssna först',
     profileHeading: 'Framsteg utan konto',
     settingsCtaName: 'Öppna inställningar för dagligt mål, språk och ljud',
     settingsHeading: 'Inställningar',
     studyFocusCue: 'Studieinställningarna från profilen är markerade här.',
     studySetupHeading: 'Studieinställningar',
+    themeHeading: 'Tema',
   },
   en: {
     audioSwitchName: 'Disable audio',
@@ -53,11 +59,14 @@ const fixtures: Record<
     languageGroup: 'Study language',
     languageSetupBadge: 'Language: English support',
     languageRadioName: 'Set study language to English support',
+    listenFirstSwitchName: 'Enable automatic playback for new questions',
+    listenFirstTitle: 'Listen first',
     profileHeading: 'Progress without an account',
     settingsCtaName: 'Open settings for daily goal, language, and audio',
     settingsHeading: 'Settings',
     studyFocusCue: 'The study setup controls from Profile are highlighted here.',
     studySetupHeading: 'Study setup',
+    themeHeading: 'Theme',
   },
 };
 
@@ -68,6 +77,49 @@ async function expectMinimumTargetSize(locator: Locator, name: string): Promise<
   expect(box, `${name} should have a rendered target box`).not.toBeNull();
   expect(box!.width, `${name} target width`).toBeGreaterThanOrEqual(minimumTargetSizePx);
   expect(box!.height, `${name} target height`).toBeGreaterThanOrEqual(minimumTargetSizePx);
+}
+
+async function expectNoHorizontalOverflow(locator: Locator, name: string): Promise<void> {
+  await locator.scrollIntoViewIfNeeded();
+  const metrics = await locator.evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    return {
+      clientWidth: element.clientWidth,
+      left: rect.left,
+      right: rect.right,
+      scrollWidth: element.scrollWidth,
+      viewportWidth: document.documentElement.clientWidth,
+    };
+  });
+
+  expect(metrics.left, `${name} should not overflow left`).toBeGreaterThanOrEqual(0);
+  expect(metrics.right, `${name} should not overflow right`).toBeLessThanOrEqual(
+    metrics.viewportWidth + 1,
+  );
+  expect(metrics.scrollWidth, `${name} content should not overflow`).toBeLessThanOrEqual(
+    metrics.clientWidth + 1,
+  );
+}
+
+async function expectBeforeInDocument(
+  first: Locator,
+  second: Locator,
+  name: string,
+): Promise<void> {
+  const secondHandle = await second.elementHandle();
+  expect(secondHandle, `${name} comparison target should exist`).not.toBeNull();
+  if (!secondHandle) return;
+  const precedes = await first.evaluate(
+    (firstElement, secondElement) =>
+      Boolean(
+        secondElement &&
+        firstElement.compareDocumentPosition(secondElement) & Node.DOCUMENT_POSITION_FOLLOWING,
+      ),
+    secondHandle,
+  );
+  await secondHandle?.dispose();
+
+  expect(precedes, name).toBe(true);
 }
 
 async function expectAnyVisibleExactText(page: Page, text: string): Promise<void> {
@@ -120,6 +172,19 @@ for (const language of ['sv', 'en'] as const) {
     await expect(page.getByRole('switch', { name: copy.audioSwitchName })).toHaveAttribute(
       'aria-checked',
       'true',
+    );
+    await expect(page.getByText(copy.listenFirstTitle, { exact: true })).toBeVisible();
+    const listenFirstSwitch = page.getByRole('switch', { name: copy.listenFirstSwitchName });
+    await expect(listenFirstSwitch).toHaveAttribute('aria-checked', 'false');
+    await expectMinimumTargetSize(listenFirstSwitch, `${language} listen-first audio switch`);
+    await expectNoHorizontalOverflow(
+      page.getByTestId('study-settings-controls'),
+      `${language} focused Settings study controls`,
+    );
+    await expectBeforeInDocument(
+      page.getByText(copy.listenFirstTitle, { exact: true }),
+      page.getByRole('heading', { name: copy.themeHeading }),
+      `${language} listen-first audio control should stay before unrelated Settings sections`,
     );
 
     expect(errors.get()).toEqual([]);
