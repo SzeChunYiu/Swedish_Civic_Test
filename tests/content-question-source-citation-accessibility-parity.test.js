@@ -134,6 +134,30 @@ test('QuestionSourceCitation accessibility parity rejects missing reference forw
   );
 });
 
+test('QuestionSourceCitation accessibility parity rejects theme color forwarding drift', () => {
+  const result = runValidationWithQuestionSourcePatch(
+    `replace('themeColors={resolvedThemeColors}', 'themeColors={themeColors}')`,
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /QuestionSourceCitation missing resolved theme color forwarding/,
+  );
+});
+
+test('QuestionSourceCitation accessibility parity rejects bodyStyle forwarding drift', () => {
+  const result = runValidationWithQuestionSourcePatch(
+    `replace('<NativeText style={[styles.body, bodyStyle]}>{primarySourceCitation}</NativeText>', '<NativeText style={styles.body}>{primarySourceCitation}</NativeText>')`,
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /QuestionSourceCitation missing helper citation body rendering/,
+  );
+});
+
 test('QuestionSourceCitation accessibility parity rejects custom body drift', () => {
   const result = runValidationWithQuestionSourcePatch(
     `replace('{hasCustomBody ? (', '{false ? (')`,
