@@ -110,6 +110,10 @@ test('native Swedish övningsprov copy guard preserves English mock exam copy', 
 test('practice route shell copy follows the persisted settings language', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
+  const routeLaunchE2eSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/e2e/practice-route-launch.spec.ts'),
+    'utf8',
+  );
 
   assert.equal(summary.practiceRouteCopyLabelsValidated, 76);
   assert.equal(summary.practiceRouteCopyParityValidated, true);
@@ -166,6 +170,12 @@ test('practice route shell copy follows the persisted settings language', () => 
   assert.doesNotMatch(source, /copy\.completedQuestions\(completedQuestionIds\.length\)/);
   assert.match(source, /Question \$\{questionNumber\}/);
   assert.match(source, /Fråga \$\{questionNumber\}/);
+  assert.match(routeLaunchE2eSource, /invalid mode=review route stays on the Practice hub/);
+  assert.match(routeLaunchE2eSource, /invalid mode=bad route stays on the Practice hub/);
+  assert.match(routeLaunchE2eSource, /page\.goto\(`\/practice\?mode=\$\{mode\}`/);
+  assert.match(routeLaunchE2eSource, /getByText\('Practice hub', \{ exact: true \}\)/);
+  assert.match(routeLaunchE2eSource, /getByText\('Question 1', \{ exact: true \}\)/);
+  assert.match(routeLaunchE2eSource, /expect\(consoleErrors\)\.toEqual\(\[\]\)/);
   assert.match(source, /Close source details/);
   assert.doesNotMatch(source, /Close about-the-sources|about-the-sources/);
   assert.doesNotMatch(source, new RegExp(phrase(['traced', 'directly', 'to', 'UHR']), 'i'));
@@ -211,7 +221,7 @@ test('practice route source wires selected companion copy to answer feedback sta
   );
   assert.match(companionCard, /settingsAccessibilityLabel: 'Change study companion in Settings'/);
   assert.match(companionCard, /settingsAccessibilityLabel: 'Byt studiekompis i Inställningar'/);
-  assert.match(companionCard, /href="\/settings"/);
+  assert.match(companionCard, /href="\/settings\?focus=companion"/);
   assert.match(companionCard, /<MascotArtwork[\s\S]*mascotId=\{mascot\.id\}/);
   assert.doesNotMatch(companionCard, /label\.slice\(0,\s*1\)\.toUpperCase\(\)/);
   assert.match(mascotArtwork, /SvgUri/);
