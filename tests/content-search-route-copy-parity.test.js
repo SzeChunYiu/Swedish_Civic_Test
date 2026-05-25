@@ -598,6 +598,31 @@ test('Search route e2e covers English query URL clearing', () => {
   );
 });
 
+test('Search route e2e covers mobile action locale matrix without overflow', () => {
+  const source = readSearchQueryHydrationE2eSource();
+
+  assert.match(
+    source,
+    /Search actions mobile locale matrix keeps Submit and Clear localized without overflow/,
+  );
+  assert.match(source, /const mobileSearchActionLocaleFixtures = \[/);
+  assert.match(source, /language: 'sv' as const[\s\S]*?query: 'kommun'/);
+  assert.match(source, /language: 'en' as const[\s\S]*?query: 'municipality'/);
+  assert.match(source, /await page\.setViewportSize\(\{ width: 360, height: 740 \}\)/);
+  assert.match(source, /await seedSettingsLanguage\(page, language\)/);
+  assert.match(source, /staleCopy\.submitButtonName[\s\S]*?toHaveCount\(0\)/);
+  assert.match(source, /staleCopy\.clearButtonName[\s\S]*?toHaveCount\(0\)/);
+  assert.match(source, /copy\.allTermsSummaryPattern/);
+  assert.match(source, /copy\.filteredSummaryPattern/);
+  assert.match(source, /await expectSearchUrlWithQParam\(page, query\)/);
+  assert.match(source, /expectSearchUrlWithoutQueryParams\(page\)/);
+  assert.match(source, /async function expectNoHorizontalOverflow\(page: Page, label: string\)/);
+  assert.match(source, /rootScrollWidth[\s\S]*?toBeLessThanOrEqual/);
+  assert.match(source, /bodyScrollWidth[\s\S]*?toBeLessThanOrEqual/);
+  assert.match(source, /async function expectReadableSearchSummary/);
+  assert.match(source, /summary right edge/);
+});
+
 test('Search route e2e covers manual Enter submit URL state', () => {
   const source = readSearchQueryHydrationE2eSource();
 
