@@ -18,6 +18,13 @@ const selectors = new Map([
     },
   ],
   [
+    'routed-quiz-shuffle-e2e',
+    {
+      scripts: ['test:correct-display-position', 'test:routed-quiz-fresh-visit-shuffle-e2e'],
+      description: 'P0 answer-shuffle bundle plus routed quiz fresh-visit browser proof',
+    },
+  ],
+  [
     'xp',
     {
       scripts: ['test:xp-rules'],

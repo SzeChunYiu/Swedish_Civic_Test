@@ -20,6 +20,7 @@
     "test:question-text": "node --test scripts/question-text.test.js",
     "test:answer-shuffle": "node --test scripts/answer-shuffle.test.js",
     "test:correct-display-position": "npm run test:answer-shuffle && npm run test:static-site-answer-shuffle && node scripts/validate-content.js --focus-answer-shuffle-parity",
+    "test:routed-quiz-fresh-visit-shuffle-e2e": "npm run build:web:export -- --max-workers 2 && playwright test tests/e2e/practice-feedback.spec.ts --workers=1 --grep \"routed quiz Try again keeps the current route-entry answer order\"",
     "test:xp-rules": "node --test tests/content-test-script-routing.test.js tests/content-xp-rules-parity.test.js scripts/learning.test.js --test-name-pattern \"XP|xp|calculateAnswerXp|calculateQuizCompletionXp|calculateLevel|dispatcher|selector\"",
     "test:mobile-ads-consent": "node --test tests/mobile-ads-consent-runtime.test.js tests/content-mobile-ads-consent-schema-parity.test.js --test-name-pattern \"mobile ads consent|Mobile Ads consent runtime|ATT|UMP|SDK init|focus-mobile-ads-consent\" && node scripts/validate-content.js --focus-mobile-ads-consent",
     "test": "node scripts/test-dispatch.js",

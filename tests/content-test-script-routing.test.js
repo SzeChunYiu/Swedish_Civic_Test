@@ -318,10 +318,22 @@ test('npm test keeps selector routing in the project dispatcher', () => {
       'node scripts/validate-content.js --focus-answer-shuffle-parity',
     ].join(' && '),
   );
+  assert.equal(
+    pkg.scripts['test:routed-quiz-fresh-visit-shuffle-e2e'],
+    [
+      'npm run build:web:export -- --max-workers 2',
+      'playwright test tests/e2e/practice-feedback.spec.ts --workers=1 --grep "routed quiz Try again keeps the current route-entry answer order"',
+    ].join(' && '),
+  );
   assert.doesNotMatch(
     pkg.scripts['test:correct-display-position'],
     /test:content|test:all|validate:content(?!\.js --focus-answer-shuffle-parity)/,
     'correct-display-position must stay limited to the P0 answer-shuffle acceptance bundle',
+  );
+  assert.doesNotMatch(
+    pkg.scripts['test:routed-quiz-fresh-visit-shuffle-e2e'],
+    /npm run test:content|npm run test:all|npm test/,
+    'routed quiz e2e shortcut must stay limited to build plus the focused browser proof',
   );
   assert.equal(
     pkg.scripts['test:mobile-ads-consent'],
@@ -691,7 +703,7 @@ test('QuestionSourceCitation accessibility parity uses focused content validatio
     'questionSourceCitationAccessibilityParityValidated',
   ]);
 
-  assert.equal(summary.questionSourceCitationAccessibilityRulesValidated, 15);
+  assert.equal(summary.questionSourceCitationAccessibilityRulesValidated, 23);
   assert.equal(summary.questionSourceCitationAccessibilityParityValidated, true);
 });
 
@@ -2316,6 +2328,43 @@ test('correct-display-position selector runs the P0 answer shuffle acceptance sc
   }
 });
 
+test('routed-quiz-shuffle-e2e selector includes the fresh-visit routed quiz proof', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-routed-shuffle-'));
+  const npmLog = path.join(tmpDir, 'npm.log');
+  const env = {
+    ...process.env,
+    TEST_DISPATCH_CAPTURE: '1',
+    TEST_DISPATCH_LOG: npmLog,
+    TEST_DISPATCH_NPM: createFakeNpm(tmpDir),
+  };
+
+  try {
+    const selectedResult = runDispatcher(['--', 'routed-quiz-shuffle-e2e'], env);
+    assert.equal(selectedResult.status, 0, selectedResult.stderr || selectedResult.stdout);
+    assert.equal(
+      fs.readFileSync(npmLog, 'utf8'),
+      [
+        'run test:correct-display-position',
+        'run test:routed-quiz-fresh-visit-shuffle-e2e',
+        '',
+      ].join('\n'),
+    );
+
+    const pkg = readPackageJson();
+    const script = pkg.scripts['test:routed-quiz-fresh-visit-shuffle-e2e'];
+    assert.match(script, /npm run build:web:export -- --max-workers 2/);
+    assert.match(script, /playwright test tests\/e2e\/practice-feedback\.spec\.ts/);
+    assert.match(script, /--workers=1/);
+    assert.match(
+      script,
+      /--grep "routed quiz Try again keeps the current route-entry answer order"/,
+    );
+    assert.doesNotMatch(script, /test:content|test:all|npm test/);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
 test('mobile-ads-consent selector runs only the focused Mobile Ads consent suite', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-mobile-ads-routing-'));
   const npmLog = path.join(tmpDir, 'npm.log');
@@ -2420,6 +2469,22 @@ test('package npm test selector enters the dispatcher before running suites', ()
     const shuffleResult = runPackageTest(['correct-display-position'], env);
     assert.equal(shuffleResult.status, 0, shuffleResult.stderr || shuffleResult.stdout);
     assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:correct-display-position\n');
+
+    fs.writeFileSync(npmLog, '');
+    const routedShuffleResult = runPackageTest(['routed-quiz-shuffle-e2e'], env);
+    assert.equal(
+      routedShuffleResult.status,
+      0,
+      routedShuffleResult.stderr || routedShuffleResult.stdout,
+    );
+    assert.equal(
+      fs.readFileSync(npmLog, 'utf8'),
+      [
+        'run test:correct-display-position',
+        'run test:routed-quiz-fresh-visit-shuffle-e2e',
+        '',
+      ].join('\n'),
+    );
 
     fs.writeFileSync(npmLog, '');
     const mobileAdsResult = runPackageTest(['mobile-ads-consent'], env);
@@ -2571,6 +2636,10 @@ test('unsupported npm test selectors fail before running any suite', () => {
     assert.match(
       result.stderr,
       /correct-display-position -> npm run test:correct-display-position/,
+    );
+    assert.match(
+      result.stderr,
+      /routed-quiz-shuffle-e2e -> npm run test:correct-display-position && npm run test:routed-quiz-fresh-visit-shuffle-e2e/,
     );
     assert.match(result.stderr, /mobile-ads-consent -> npm run test:mobile-ads-consent/);
     assert.match(result.stderr, /monetization -> npm run test:monetization/);
