@@ -163,3 +163,90 @@ test('configured Supabase never treats an existing local demo account as purchas
     });
   expect(unexpectedPageErrors(pageErrors)).toEqual([]);
 });
+
+test('configured Supabase hash callback boots the SDK while ordinary route hashes stay local', async ({
+  page,
+}) => {
+  const pageErrors = collectPageErrors(page);
+  await configureHostedSupabase(page);
+  let sdkRequests = 0;
+  await page.route(/https:\/\/esm\.sh\/@supabase\/supabase-js@2.*/, (route) => {
+    sdkRequests += 1;
+    return route.fulfill({
+      body: `
+export function createClient() {
+  return {
+    auth: {
+      getSession() {
+        const params = new URLSearchParams(globalThis.location.hash.slice(1));
+        if (params.has('access_token') && params.has('refresh_token')) {
+          return Promise.resolve({
+            data: {
+              session: {
+                user: {
+                  id: 'hash-callback-user',
+                  email: 'hash-callback@example.test'
+                }
+              }
+            }
+          });
+        }
+        return Promise.resolve({ data: { session: null } });
+      },
+      onAuthStateChange() {},
+      signInWithOAuth() {
+        return Promise.resolve();
+      },
+      signInWithOtp() {
+        return Promise.resolve();
+      },
+      signOut() {
+        return Promise.resolve();
+      },
+    },
+  };
+}
+`,
+      contentType: 'text/javascript',
+      headers: { 'access-control-allow-origin': '*' },
+    });
+  });
+
+  await page.goto(`${staticSite.baseUrl}/#/dashboard`, { waitUntil: 'domcontentloaded' });
+  await expect.poll(() => sdkRequests).toBe(0);
+  await expect
+    .poll(() =>
+      page.evaluate(() => ({
+        accountEmail: window.localStorage.getItem('smt_account_email'),
+        accountId: window.localStorage.getItem('smt_account_id'),
+        signedIn: window.localStorage.getItem('smt_signed_in'),
+      })),
+    )
+    .toEqual({
+      accountEmail: null,
+      accountId: null,
+      signedIn: null,
+    });
+
+  await page.goto(`${staticSite.baseUrl}/#access_token=fake-token&refresh_token=fake-refresh`, {
+    waitUntil: 'domcontentloaded',
+  });
+  await expect.poll(() => sdkRequests).toBe(1);
+  await expect
+    .poll(() =>
+      page.evaluate(() => ({
+        accountEmail: window.localStorage.getItem('smt_account_email'),
+        accountId: window.localStorage.getItem('smt_account_id'),
+        signedIn: window.localStorage.getItem('smt_signed_in'),
+      })),
+    )
+    .toEqual({
+      accountEmail: 'hash-callback@example.test',
+      accountId: 'hash-callback-user',
+      signedIn: '1',
+    });
+  await page.locator('#signin-open').click();
+  await expect(page.locator('#signin-modal .signin__account')).toBeVisible();
+  await expect(page.locator('#signin-modal .signin__login')).toBeHidden();
+  expect(unexpectedPageErrors(pageErrors)).toEqual([]);
+});

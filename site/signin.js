@@ -309,6 +309,21 @@
     return route;
   }
 
+  function hasSigninCallbackInLocation() {
+    try {
+      const search = new URLSearchParams(location.search || '');
+      if (search.has('code')) return true;
+    } catch {}
+    try {
+      const hash = String(location.hash || '');
+      if (!hash.startsWith('#')) return false;
+      const params = new URLSearchParams(hash.slice(1));
+      return params.has('access_token') && params.has('refresh_token');
+    } catch {
+      return false;
+    }
+  }
+
   // Lazy singleton Supabase client. The SDK is only fetched from the CDN when
   // configured AND a provider/magic-link action is taken (or on load to pick
   // up an existing session). Unconfigured visitors never touch the network.
@@ -601,13 +616,12 @@
     }
   });
 
-  // On load: when configured, load the client (which registers
-  // onAuthStateChange) and read any existing session — this also captures the
-  // session created by an OAuth redirect-back. When unconfigured this is a
-  // no-op (getClient resolves null without touching the network).
+  // On load: when configured, load the client only for an auth callback or an
+  // already-signed-in real account. Ordinary static route hashes stay SDK-free.
   function initAuth() {
     if (!isConfigured()) return;
     clearConfiguredLocalDemoSession();
+    if (!hasSigninCallbackInLocation() && !signedIn()) return;
     getClient().then((client) => {
       if (!client) {
         applySession(null);
@@ -637,4 +651,5 @@
   window.smtSigninRedirectTarget = redirectTarget;
   window.smtSigninRestoreReturnRoute = restoreSigninReturnRoute;
   window.smtNormalizeSigninReturnRoute = normalizeSigninReturnRoute;
+  window.smtSigninHasAuthCallback = hasSigninCallbackInLocation;
 })();
