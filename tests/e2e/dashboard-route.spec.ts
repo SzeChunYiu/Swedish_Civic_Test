@@ -498,9 +498,32 @@ async function expectNonEmptyProgressVisible(
   await expect(chapterLink).toContainText(fixture.nonEmptyChapterProgressCoverageText);
 
   await expect(page.getByLabel(fixture.nonEmptyStreakSummary).first()).toBeVisible();
-  await expect(page.getByLabel(`${seed.todayKey}: 10`).first()).toBeVisible();
-  await expect(page.getByLabel(`${seed.yesterdayKey}: 10`).first()).toBeVisible();
-  await expect(page.getByLabel(`${seed.dayBeforeYesterdayKey}: 10`).first()).toBeVisible();
+  await expect(
+    page
+      .getByLabel(
+        fixture.language === 'sv' ? `Den ${seed.todayKey}: 10 XP` : `10 XP on ${seed.todayKey}`,
+      )
+      .first(),
+  ).toBeVisible();
+  await expect(
+    page
+      .getByLabel(
+        fixture.language === 'sv'
+          ? `Den ${seed.yesterdayKey}: 10 XP`
+          : `10 XP on ${seed.yesterdayKey}`,
+      )
+      .first(),
+  ).toBeVisible();
+  await expect(
+    page
+      .getByLabel(
+        fixture.language === 'sv'
+          ? `Den ${seed.dayBeforeYesterdayKey}: 10 XP`
+          : `10 XP on ${seed.dayBeforeYesterdayKey}`,
+      )
+      .first(),
+  ).toBeVisible();
+  await expect(page.getByLabel(`${seed.todayKey}: 10`).first()).toHaveCount(0);
   await expect(page.getByText(fixture.mockHistoryTitle, { exact: true }).last()).toBeVisible();
   await expect(page.getByText(fixture.mockHistoryEmptyState, { exact: true })).toHaveCount(0);
   await expectNoHorizontalOverflow(page);

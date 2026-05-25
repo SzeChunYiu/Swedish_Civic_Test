@@ -97,6 +97,7 @@ type DashboardCopy = {
     trendSummary: (pointCount: number, firstScore: number, latestScore: number) => string;
   };
   streakXp: {
+    dayLabel: (date: string, xp: number) => string;
     emptyState: string;
     levelLabel: string;
     streakLabel: string;
@@ -187,6 +188,7 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
       },
     },
     streakXp: {
+      dayLabel: (date, xp) => `Den ${date}: ${xp} XP`,
       emptyState: 'XP-kurvan visas när du börjar få rätt svar.',
       levelLabel: 'nivå',
       streakLabel: 'dagars svit',
@@ -284,6 +286,7 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
       },
     },
     streakXp: {
+      dayLabel: (date, xp) => `${xp} XP on ${date}`,
       emptyState: 'The XP line appears once you start getting answers right.',
       levelLabel: 'level',
       streakLabel: 'day streak',

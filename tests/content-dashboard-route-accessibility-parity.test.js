@@ -350,6 +350,36 @@ function assertDashboardAccessibilitySeparation(sources) {
   );
   assert.match(sources.sparkline, /copy\.emptyState/);
   assert.match(sources.sparkline, /aria-label=\{accessibilityLabel\}/);
+  assert.match(
+    sources.sparkline,
+    /dayLabel: \(date: string, xp: number\) => string;/,
+    'StreakXpSparkline copy must include localized per-day XP labels',
+  );
+  assert.match(
+    sources.sparkline,
+    /accessibilityLabel=\{copy\.dayLabel\(point\.date, point\.xp\)\}/,
+    'StreakXpSparkline day tracks must use localized per-day XP labels',
+  );
+  assert.doesNotMatch(
+    sources.sparkline,
+    /accessibilityLabel=\{`\$\{point\.date\}: \$\{point\.xp\}`\}/,
+    'StreakXpSparkline must not expose raw numeric-only per-day labels',
+  );
+  assert.match(
+    sources.sparkline,
+    /point\.xp > 0 \? \([\s\S]*<View style=\{\[styles\.barFill, \{ height: `\$\{fillPercent\}%` \}\]\} \/>[\s\S]*\) : null/,
+    'StreakXpSparkline must leave zero-XP tracks empty while keeping positive bars visible',
+  );
+  assert.match(
+    sources.dashboard,
+    /dayLabel: \(date, xp\) => `Den \$\{date\}: \$\{xp\} XP`/,
+    'Dashboard Swedish XP sparkline labels must include the XP unit in natural wording',
+  );
+  assert.match(
+    sources.dashboard,
+    /dayLabel: \(date, xp\) => `\$\{xp\} XP on \$\{date\}`/,
+    'Dashboard English XP sparkline labels must include the XP unit in natural wording',
+  );
 
   assert.match(
     sources.dashboard,
