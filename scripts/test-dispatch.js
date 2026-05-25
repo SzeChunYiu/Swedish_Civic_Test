@@ -25,6 +25,13 @@ const selectors = new Map([
     },
   ],
   [
+    'review-store-due-limit',
+    {
+      scripts: ['test:review-store-due-limit'],
+      description: 'focused review-store due-limit selector and validator gate',
+    },
+  ],
+  [
     'mobile-ads-consent',
     {
       scripts: ['test:mobile-ads-consent'],
