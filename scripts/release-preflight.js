@@ -208,6 +208,7 @@ const removeAdsStep3WiringRoots = envPathList('RELEASE_PREFLIGHT_REMOVE_ADS_WIRI
 const removeAdsStep3StructuralGate =
   'Remove Ads structural gate replacing GOAL step 3 grep: purchases.ts exists, canonical buy/restore flows use REMOVE_ADS_PRODUCT_ID, 29 SEK pricing is exported, and app/components/lib expose Remove Ads wiring';
 const releaseScopeOverrideId = 'release-scope-v11';
+const appStoreIdentityPath = 'lib/monetization/appStoreIdentity.ts';
 const removeAdsDeviceQaArtifactRoot = 'reports/release-device-qa/';
 const removeAdsDeviceQaRequiredChecks = [
   'admob-test-ads-study-screens',
@@ -489,6 +490,24 @@ function removeAdsStep3StructuralFindings(purchasesSource, options = {}) {
       'Remove Ads price label must stay 29 SEK',
     ],
     [
+      /export\s+const\s+REMOVE_ADS_ANDROID_PRODUCT_ID\s*=\s*['"]removeads['"]/.test(
+        purchasesSource,
+      ),
+      'Android Remove Ads store product id must stay removeads',
+    ],
+    [
+      /export\s+const\s+REMOVE_ADS_IOS_PRODUCT_ID\s*=\s*REMOVE_ADS_PRODUCT_ID\b/.test(
+        purchasesSource,
+      ),
+      'iOS Remove Ads store product id must reference REMOVE_ADS_PRODUCT_ID',
+    ],
+    [
+      /export\s+const\s+REMOVE_ADS_STORE_PRODUCT_IDS\s*=\s*\{[^}]*android:\s*REMOVE_ADS_ANDROID_PRODUCT_ID\s*,[^}]*ios:\s*REMOVE_ADS_IOS_PRODUCT_ID\s*,?[^}]*\}\s*as\s+const/s.test(
+        purchasesSource,
+      ),
+      'REMOVE_ADS_STORE_PRODUCT_IDS must map android to REMOVE_ADS_ANDROID_PRODUCT_ID and ios to REMOVE_ADS_IOS_PRODUCT_ID',
+    ],
+    [
       normalizedPurchasesSource.includes(
         'const purchase = await provider.requestRemoveAdsPurchase(REMOVE_ADS_PRODUCT_ID);',
       ),
@@ -517,9 +536,45 @@ function removeAdsStep3StructuralFindings(purchasesSource, options = {}) {
   return findings;
 }
 
+function extractExportedConstValue(source, name) {
+  const match = source.match(
+    new RegExp(`export\\s+const\\s+${name}\\s*=\\s*(['"\`])([^'"\`]+)\\1`),
+  );
+  return match ? match[2] : '';
+}
+
+function extractAppNativeIdentifier() {
+  return extractExportedConstValue(readFileIfExists(appStoreIdentityPath), 'APP_NATIVE_IDENTIFIER');
+}
+
+function removeAdsStep3StructuralEvidence(purchasesSource) {
+  const appNativeIdentifier = extractAppNativeIdentifier();
+  const productId = /export\s+const\s+REMOVE_ADS_PRODUCT_ID\s*=\s*`\$\{APP_NATIVE_IDENTIFIER\}\.removeads`/.test(
+    purchasesSource,
+  )
+    ? `${appNativeIdentifier}.removeads`
+    : extractExportedConstValue(purchasesSource, 'REMOVE_ADS_PRODUCT_ID');
+  const androidStoreProductId = extractExportedConstValue(
+    purchasesSource,
+    'REMOVE_ADS_ANDROID_PRODUCT_ID',
+  );
+  const iosStoreProductId = /export\s+const\s+REMOVE_ADS_IOS_PRODUCT_ID\s*=\s*REMOVE_ADS_PRODUCT_ID\b/.test(
+    purchasesSource,
+  )
+    ? productId
+    : extractExportedConstValue(purchasesSource, 'REMOVE_ADS_IOS_PRODUCT_ID');
+
+  if (!productId || !androidStoreProductId || !iosStoreProductId) {
+    return 'Remove Ads structural gate is green.';
+  }
+
+  return `Remove Ads structural gate is green. Store ids checked: Android ${androidStoreProductId}; iOS ${iosStoreProductId}. Canonical entitlement id: ${productId}.`;
+}
+
 function releaseScopeOverrideGate(manualEvidence) {
   const v11Surfaces = listV11ScopeSurfaces();
   const removeAdsFindings = removeAdsV1AcceptanceFindings();
+  const purchasesSource = readFileIfExists(removeAdsPurchasesPath);
 
   if (v11Surfaces.length === 0) {
     return gate(
@@ -536,7 +591,9 @@ function releaseScopeOverrideGate(manualEvidence) {
       releaseScopeOverrideId,
       'v1.1 scope held behind v1.0 Remove Ads',
       'READY',
-      `v1.1 surfaces are present, but the structural Remove Ads v1.0 and device-QA gates are closed. Surfaces: ${formatV11ScopeSurfaces(
+      `v1.1 surfaces are present, but the structural Remove Ads v1.0 and device-QA gates are closed. ${removeAdsStep3StructuralEvidence(
+        purchasesSource,
+      )} Surfaces: ${formatV11ScopeSurfaces(
         v11Surfaces,
       )}.`,
       'Keep monitoring release scope before store submission.',

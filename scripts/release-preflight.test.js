@@ -1543,6 +1543,46 @@ test('release preflight blocks Remove Ads step 3 structural drift without the br
         ),
     },
     {
+      id: 'android-store-product-id',
+      expected: /Android Remove Ads store product id must stay removeads/i,
+      transform: (source) =>
+        replaceRequired(
+          source,
+          "export const REMOVE_ADS_ANDROID_PRODUCT_ID = 'removeads';",
+          'export const REMOVE_ADS_ANDROID_PRODUCT_ID = REMOVE_ADS_PRODUCT_ID;',
+        ),
+    },
+    {
+      id: 'ios-store-product-id',
+      expected: /iOS Remove Ads store product id must reference REMOVE_ADS_PRODUCT_ID/i,
+      transform: (source) =>
+        replaceRequired(
+          source,
+          'export const REMOVE_ADS_IOS_PRODUCT_ID = REMOVE_ADS_PRODUCT_ID;',
+          "export const REMOVE_ADS_IOS_PRODUCT_ID = 'removeads';",
+        ),
+    },
+    {
+      id: 'store-product-id-map',
+      expected: /REMOVE_ADS_STORE_PRODUCT_IDS must map android to REMOVE_ADS_ANDROID_PRODUCT_ID and ios to REMOVE_ADS_IOS_PRODUCT_ID/i,
+      transform: (source) =>
+        replaceRequired(
+          source,
+          [
+            'export const REMOVE_ADS_STORE_PRODUCT_IDS = {',
+            '  android: REMOVE_ADS_ANDROID_PRODUCT_ID,',
+            '  ios: REMOVE_ADS_IOS_PRODUCT_ID,',
+            '} as const;',
+          ].join('\n'),
+          [
+            'export const REMOVE_ADS_STORE_PRODUCT_IDS = {',
+            '  android: REMOVE_ADS_PRODUCT_ID,',
+            '  ios: REMOVE_ADS_PRODUCT_ID,',
+            '} as const;',
+          ].join('\n'),
+        ),
+    },
+    {
       id: 'visible-wiring',
       expected: /Remove Ads wiring must be visible/i,
       includeWiring: false,
@@ -1722,6 +1762,15 @@ test('release preflight accepts valid Remove Ads device QA JSON artifacts', () =
     const deviceQaGate = report.gates.find((gate) => gate.id === 'remove-ads-device-qa');
     assert.equal(scopeGate.status, 'READY');
     assert.equal(deviceQaGate.status, 'READY');
+    assert.match(
+      scopeGate.evidence,
+      /Store ids checked: Android removeads; iOS com\.billyyiu\.almostswedish\.removeads/i,
+    );
+    assert.match(
+      scopeGate.evidence,
+      /Canonical entitlement id: com\.billyyiu\.almostswedish\.removeads/i,
+    );
+    assert.doesNotMatch(scopeGate.evidence, /Android com\.billyyiu\.almostswedish\.removeads/i);
     assert.doesNotMatch(scopeGate.evidence, /device-QA gate is red/i);
     assert.match(deviceQaGate.evidence, /Device QA report validation passed/i);
     assert.doesNotMatch(scopeGate.evidence, /missing passed check/i);
