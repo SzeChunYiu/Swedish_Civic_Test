@@ -1,4 +1,5 @@
 const assert = require('node:assert/strict');
+const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
@@ -456,6 +457,29 @@ test('daily flashcard deck ignores noncanonical progress timestamps for stale an
     deck.map((question) => question.id),
     ['q007', 'q005', 'q006'],
   );
+});
+
+test('daily flashcard deck strict-date guard runs through focused content validation', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-flashcard-deck-date-runtime'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused flashcard deck date validation should print a JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.deepEqual(Object.keys(summary).sort(), [
+    'flashcardDeckStrictDateRuntimeCasesValidated',
+    'flashcardDeckStrictDateRuntimeParityValidated',
+  ]);
+  assert.equal(summary.flashcardDeckStrictDateRuntimeCasesValidated, 8);
+  assert.equal(summary.flashcardDeckStrictDateRuntimeParityValidated, true);
 });
 
 test('progress answer dates use the shared local calendar key', () => {

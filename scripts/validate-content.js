@@ -10893,6 +10893,16 @@ if (process.argv.includes('--focus-flashcard-accessibility')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-flashcard-deck-date-runtime')) {
+  validateFlashcardDeckStrictDateRuntimeGuard();
+  exitWithValidationFailures();
+  printValidationSummary({
+    flashcardDeckStrictDateRuntimeCasesValidated,
+    flashcardDeckStrictDateRuntimeParityValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-question-report-link-parity')) {
   validateQuestionReportLinkParity();
   exitWithValidationFailures();
