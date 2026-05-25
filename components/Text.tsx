@@ -2,7 +2,8 @@ import { useMemo, type ComponentProps, type PropsWithChildren } from 'react';
 import { StyleSheet, Text as NativeText } from 'react-native';
 import type { AccessibilityRole, StyleProp, TextStyle } from 'react-native';
 
-import { typography, type ThemeColors } from '../lib/theme';
+import { fontScaleFor, useAccessibilityStore } from '../lib/storage/accessibilityStore';
+import { scaleTextStyle, typography, type ThemeColors } from '../lib/theme';
 import { useThemeColors } from '../lib/theme/ThemeProvider';
 
 export type TextVariant = 'h1' | 'h2' | 'body' | 'caption' | 'label';
@@ -38,7 +39,13 @@ export function Text({
   ...textProps
 }: TextProps) {
   const themeColors = useThemeColors();
-  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
+  const easyReadFont = useAccessibilityStore((state) => state.easyReadFont);
+  const fontSizeStep = useAccessibilityStore((state) => state.fontSizeStep);
+  const fontScale = fontScaleFor(fontSizeStep);
+  const styles = useMemo(
+    () => createStyles(themeColors, fontScale, easyReadFont),
+    [easyReadFont, fontScale, themeColors],
+  );
 
   return (
     <NativeText
@@ -51,25 +58,25 @@ export function Text({
   );
 }
 
-function createStyles(themeColors: ThemeColors) {
+function createStyles(themeColors: ThemeColors, fontScale: number, easyReadFont: boolean) {
   return StyleSheet.create({
     base: {
       color: themeColors.text,
     },
     h1: {
-      ...typography.displaySecondary,
+      ...scaleTextStyle(typography.displaySecondary, fontScale, easyReadFont),
     },
     h2: {
-      ...typography.sectionHeading,
+      ...scaleTextStyle(typography.sectionHeading, fontScale, easyReadFont),
     },
     body: {
-      ...typography.body,
+      ...scaleTextStyle(typography.body, fontScale, easyReadFont),
     },
     caption: {
-      ...typography.captionLight,
+      ...scaleTextStyle(typography.captionLight, fontScale, easyReadFont),
     },
     label: {
-      ...typography.navButton,
+      ...scaleTextStyle(typography.navButton, fontScale, easyReadFont),
     },
     primary: {
       color: themeColors.text,

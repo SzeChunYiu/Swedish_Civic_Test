@@ -1,6 +1,31 @@
 import type { TextStyle } from 'react-native';
 
 const fontFamily = 'NotionInter, Inter, -apple-system, system-ui, Segoe UI, Helvetica, Arial';
+export const easyReadFontFamily =
+  'Atkinson Hyperlegible, AtkinsonHyperlegible, system-ui, -apple-system, Segoe UI, Helvetica, Arial';
+
+export function fontFamilyForAccessibility(easyReadFont: boolean): string {
+  return easyReadFont ? easyReadFontFamily : fontFamily;
+}
+
+function scaleNumericTextValue(value: TextStyle['fontSize'], fontScale: number) {
+  if (typeof value !== 'number') return value;
+  const safeScale = Number.isFinite(fontScale) && fontScale > 0 ? fontScale : 1;
+  return Math.round(value * safeScale * 100) / 100;
+}
+
+export function scaleTextStyle(
+  style: TextStyle,
+  fontScale: number,
+  easyReadFont = false,
+): TextStyle {
+  return {
+    ...style,
+    fontFamily: fontFamilyForAccessibility(easyReadFont),
+    fontSize: scaleNumericTextValue(style.fontSize, fontScale),
+    lineHeight: scaleNumericTextValue(style.lineHeight, fontScale),
+  };
+}
 
 // Values authoritative in DESIGN.md §3 (restrained Claude scale):
 // hero 30-38 / section 24-26 / card 19-21 / body 16 / caption 13-14,

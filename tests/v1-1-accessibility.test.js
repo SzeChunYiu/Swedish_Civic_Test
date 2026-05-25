@@ -9,6 +9,7 @@ const test = require('node:test');
 const {
   createMemoryMMKV,
   createThrowingSetMMKV,
+  loadTsModule,
   loadTsWithStorage,
 } = require('./helpers/storageStoreHarness.cjs');
 
@@ -536,8 +537,8 @@ test('native ebook study article narration chunks long text and skips source car
     buildEbookArticleNarrationText,
     buildEbookSectionNarrationText,
     chunkArticleNarrationText,
-  } = require(path.join(repoRoot, 'lib/audio/ebookNarration.ts'));
-  const { EBOOK_ARTICLES } = require(path.join(repoRoot, 'lib/content/ebookContent.ts'));
+  } = loadTsModule(repoRoot, 'lib/audio/ebookNarration.ts');
+  const { EBOOK_ARTICLES } = loadTsModule(repoRoot, 'lib/content/ebookContent.ts');
   const introArticle = EBOOK_ARTICLES.find((article) => article.staticChapterId === 'intro');
 
   const chunks = chunkArticleNarrationText('En kort mening. '.repeat(30), 120);
@@ -555,6 +556,42 @@ test('native ebook study article narration chunks long text and skips source car
     articleText,
     /Redaktionell|Källor hämtade|UHR:s offentliga utbildningsmaterial/,
   );
+});
+
+test('native ebook study article text consumes free easy-read and font-size preferences', () => {
+  const routeSource = loadSource('app/ebook.tsx');
+  const textSource = loadSource('components/Text.tsx');
+  const typographySource = loadSource('lib/theme/typography.ts');
+
+  assert.match(typographySource, /easyReadFontFamily[\s\S]*Atkinson Hyperlegible/);
+  assert.match(typographySource, /fontFamilyForAccessibility\(easyReadFont: boolean\)/);
+  assert.match(typographySource, /export function scaleTextStyle\(/);
+
+  assert.match(textSource, /useAccessibilityStore\(\(state\) => state\.easyReadFont\)/);
+  assert.match(textSource, /useAccessibilityStore\(\(state\) => state\.fontSizeStep\)/);
+  assert.match(textSource, /const fontScale = fontScaleFor\(fontSizeStep\);/);
+  assert.match(
+    textSource,
+    /scaleTextStyle\(typography\.displaySecondary, fontScale, easyReadFont\)/,
+  );
+  assert.match(
+    textSource,
+    /accessibilityRole=\{accessibilityRole \?\? getDefaultRole\(variant\)\}/,
+  );
+
+  assert.match(routeSource, /fontScaleFor,/);
+  assert.match(routeSource, /scaleTextStyle,/);
+  assert.match(routeSource, /useAccessibilityStore\(\(state\) => state\.easyReadFont\)/);
+  assert.match(routeSource, /useAccessibilityStore\(\(state\) => state\.fontSizeStep\)/);
+  assert.match(routeSource, /const fontScale = fontScaleFor\(fontSizeStep\);/);
+  assert.match(routeSource, /createStyles\(themeColors, \{ easyReadFont, fontScale \}\)/);
+  assert.match(routeSource, /articleTitle:\s*\{[\s\S]*accessibleTextStyle\(typography\.subHeading/);
+  assert.match(routeSource, /lede:\s*\{[\s\S]*accessibleTextStyle\(typography\.bodyLarge/);
+  assert.match(routeSource, /sectionBody:\s*\{[\s\S]*accessibleTextStyle\(typography\.body/);
+  assert.match(routeSource, /provenanceText:\s*\{[\s\S]*accessibleTextStyle\(typography\.caption/);
+  assert.match(routeSource, /sourceUrl:\s*\{[\s\S]*accessibleTextStyle\(typography\.caption/);
+  assert.doesNotMatch(routeSource, /numberOfLines=\{2\}/);
+  assert.doesNotMatch(routeSource, /hasProEntitlement|isPremiumUser|ProTierEntitlements/);
 });
 
 test('settings route scopes persistence warning copy to accessibility preferences', () => {
