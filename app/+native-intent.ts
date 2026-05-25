@@ -32,6 +32,7 @@ const staticRoutes = new Set([
 
 const chapterRoutePattern = /^\/chapter\/ch\d{2}$/;
 const quizRoutePattern = /^\/quiz\/[A-Za-z0-9_-]+$/;
+const referralRoutePattern = /^\/r\/[A-Z0-9]{8}$/;
 
 function routeFromUrl(url: URL) {
   const hostPath = url.hostname && url.hostname !== 'app' ? `/${url.hostname}` : '';
@@ -53,7 +54,8 @@ function isKnownStudyRoute(route: string) {
   return (
     staticRoutes.has(pathname) ||
     chapterRoutePattern.test(pathname) ||
-    quizRoutePattern.test(pathname)
+    quizRoutePattern.test(pathname) ||
+    referralRoutePattern.test(pathname)
   );
 }
 

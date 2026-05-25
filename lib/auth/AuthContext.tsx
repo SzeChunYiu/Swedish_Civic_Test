@@ -5,6 +5,8 @@ import * as WebBrowser from 'expo-web-browser';
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Platform } from 'react-native';
 
+import { consumePendingReferralGrant } from '../referral/pendingReferralFlow';
+import type { ReferralSupabaseClient } from '../referral/redeemReferral';
 import { isSupabaseConfigured, supabase } from '../supabase';
 
 WebBrowser.maybeCompleteAuthSession();
@@ -137,6 +139,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       listener.subscription.unsubscribe();
     };
   }, []);
+
+  useEffect(() => {
+    if (!isSupabaseConfigured || !session?.user?.id) return;
+
+    void consumePendingReferralGrant({
+      client: supabase as unknown as ReferralSupabaseClient,
+    }).catch(() => undefined);
+  }, [session?.user?.id]);
 
   const value = useMemo<AuthContextValue>(
     () => ({

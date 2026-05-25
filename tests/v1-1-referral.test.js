@@ -36,6 +36,32 @@ function makeRpcClient(data) {
   };
 }
 
+function makeMemoryAsyncStorage(initialValues = {}, options = {}) {
+  const values = new Map(Object.entries(initialValues));
+  const events = [];
+  return {
+    events,
+    storage: {
+      async deleteItemAsync(key) {
+        events.push(['delete', key]);
+        if (options.throwOnDelete) throw new Error('delete failed');
+        values.delete(key);
+      },
+      async getItemAsync(key) {
+        events.push(['get', key]);
+        if (options.throwOnGet) throw new Error('get failed');
+        return values.has(key) ? values.get(key) : null;
+      },
+      async setItemAsync(key, value) {
+        events.push(['set', key, String(value)]);
+        if (options.throwOnSet) throw new Error('set failed');
+        values.set(key, String(value));
+      },
+    },
+    values,
+  };
+}
+
 test('referral code helpers normalize and generate bounded 8-character codes', () => {
   const {
     REFERRAL_CODE_ALPHABET,
@@ -214,4 +240,184 @@ test('referral client wrapper source does not write profile grant state directly
   assert.doesNotMatch(source, /\.upsert\(/);
   assert.doesNotMatch(source, /\.update\(/);
   assert.doesNotMatch(source, /pro_grant_expires_at:\s*expires/);
+});
+
+test('pending referral store normalizes links and consumes codes exactly once', async () => {
+  const {
+    PENDING_REFERRAL_CODE_STORAGE_KEY,
+    consumePendingReferralCode,
+    peekPendingReferralCode,
+    referralDeepLinkForCode,
+    referralRouteForCode,
+    storePendingReferralCode,
+  } = loadTs('lib/referral/pendingReferralStore.ts');
+  const { events, storage, values } = makeMemoryAsyncStorage();
+
+  assert.equal(await storePendingReferralCode(' abcd-12ef ', { storage }), 'ABCD12EF');
+  assert.equal(values.get(PENDING_REFERRAL_CODE_STORAGE_KEY), 'ABCD12EF');
+  assert.equal(await peekPendingReferralCode({ storage }), 'ABCD12EF');
+  assert.equal(referralRouteForCode(' abcd-12ef '), '/r/ABCD12EF');
+  assert.equal(referralDeepLinkForCode(' abcd-12ef '), 'almost-swedish://r/ABCD12EF');
+
+  assert.equal(await consumePendingReferralCode({ storage }), 'ABCD12EF');
+  assert.equal(await consumePendingReferralCode({ storage }), null);
+  assert.equal(values.has(PENDING_REFERRAL_CODE_STORAGE_KEY), false);
+
+  assert.equal(await storePendingReferralCode('__proto__', { storage }), null);
+  assert.equal(await storePendingReferralCode('ABC', { storage }), null);
+  assert.equal(values.has(PENDING_REFERRAL_CODE_STORAGE_KEY), false);
+  assert.ok(events.some((event) => event[0] === 'delete'));
+});
+
+test('referral grant store accepts only canonical server expiry timestamps', async () => {
+  const { REFERRAL_PRO_GRANT_EXPIRES_AT_STORAGE_KEY } = loadTs(
+    'lib/monetization/effectiveEntitlements.ts',
+  );
+  const { getReferralGrantSnapshot, persistReferralGrantSnapshot } = loadTs(
+    'lib/monetization/referralGrantStore.ts',
+  );
+  const { storage, values } = makeMemoryAsyncStorage();
+
+  assert.deepEqual(await persistReferralGrantSnapshot('2026-05-29T12:00:00.000Z', { storage }), {
+    expiresAtIso: '2026-05-29T12:00:00.000Z',
+  });
+  assert.equal(values.get(REFERRAL_PRO_GRANT_EXPIRES_AT_STORAGE_KEY), '2026-05-29T12:00:00.000Z');
+  assert.deepEqual(await getReferralGrantSnapshot({ storage }), {
+    expiresAtIso: '2026-05-29T12:00:00.000Z',
+  });
+
+  assert.equal(await persistReferralGrantSnapshot('2026-05-29T12:00:00+00:00', { storage }), null);
+  assert.equal(values.has(REFERRAL_PRO_GRANT_EXPIRES_AT_STORAGE_KEY), false);
+});
+
+test('pending referral grant flow redeems once and writes only the server canonical grant', async () => {
+  const { REFERRAL_PRO_GRANT_EXPIRES_AT_STORAGE_KEY } = loadTs(
+    'lib/monetization/effectiveEntitlements.ts',
+  );
+  const { PENDING_REFERRAL_CODE_STORAGE_KEY } = loadTs('lib/referral/pendingReferralStore.ts');
+  const { consumePendingReferralGrant } = loadTs('lib/referral/pendingReferralFlow.ts');
+  const pending = makeMemoryAsyncStorage({
+    [PENDING_REFERRAL_CODE_STORAGE_KEY]: 'ABCD12EF',
+  });
+  const grant = makeMemoryAsyncStorage();
+  const redeemCalls = [];
+  const redeem = async (_client, code) => {
+    redeemCalls.push(code);
+    return {
+      code,
+      proGrantExpiresAtIso: '2026-05-29T12:00:00.000Z',
+      status: 'redeemed',
+      storageKey: REFERRAL_PRO_GRANT_EXPIRES_AT_STORAGE_KEY,
+      successfulReferrals: 1,
+    };
+  };
+
+  assert.deepEqual(
+    await consumePendingReferralGrant({
+      client: {},
+      grantStorage: grant.storage,
+      pendingStorage: pending.storage,
+      redeem,
+    }),
+    {
+      code: 'ABCD12EF',
+      proGrantExpiresAtIso: '2026-05-29T12:00:00.000Z',
+      redemption: {
+        code: 'ABCD12EF',
+        proGrantExpiresAtIso: '2026-05-29T12:00:00.000Z',
+        status: 'redeemed',
+        storageKey: REFERRAL_PRO_GRANT_EXPIRES_AT_STORAGE_KEY,
+        successfulReferrals: 1,
+      },
+      status: 'redeemed',
+    },
+  );
+  assert.deepEqual(redeemCalls, ['ABCD12EF']);
+  assert.equal(pending.values.has(PENDING_REFERRAL_CODE_STORAGE_KEY), false);
+  assert.equal(
+    grant.values.get(REFERRAL_PRO_GRANT_EXPIRES_AT_STORAGE_KEY),
+    '2026-05-29T12:00:00.000Z',
+  );
+
+  assert.equal(
+    (
+      await consumePendingReferralGrant({
+        client: {},
+        grantStorage: grant.storage,
+        pendingStorage: pending.storage,
+        redeem,
+      })
+    ).status,
+    'no_pending_code',
+  );
+  assert.deepEqual(redeemCalls, ['ABCD12EF']);
+});
+
+test('pending referral grant flow fails closed on storage and redemption failures', async () => {
+  const { REFERRAL_PRO_GRANT_EXPIRES_AT_STORAGE_KEY } = loadTs(
+    'lib/monetization/effectiveEntitlements.ts',
+  );
+  const { PENDING_REFERRAL_CODE_STORAGE_KEY } = loadTs('lib/referral/pendingReferralStore.ts');
+  const { consumePendingReferralGrant } = loadTs('lib/referral/pendingReferralFlow.ts');
+
+  const deleteFailure = makeMemoryAsyncStorage(
+    { [PENDING_REFERRAL_CODE_STORAGE_KEY]: 'ABCD12EF' },
+    { throwOnDelete: true },
+  );
+  let redeemCalled = false;
+  assert.equal(
+    (
+      await consumePendingReferralGrant({
+        client: {},
+        pendingStorage: deleteFailure.storage,
+        redeem: async () => {
+          redeemCalled = true;
+          throw new Error('must not redeem before pending code is cleared');
+        },
+      })
+    ).status,
+    'storage_unavailable',
+  );
+  assert.equal(redeemCalled, false);
+
+  const pending = makeMemoryAsyncStorage({ [PENDING_REFERRAL_CODE_STORAGE_KEY]: 'ABCD12EF' });
+  const grant = makeMemoryAsyncStorage({
+    [REFERRAL_PRO_GRANT_EXPIRES_AT_STORAGE_KEY]: '2026-05-29T12:00:00.000Z',
+  });
+  const result = await consumePendingReferralGrant({
+    client: {},
+    grantStorage: grant.storage,
+    pendingStorage: pending.storage,
+    redeem: async (_client, code) => ({
+      code,
+      proGrantExpiresAtIso: null,
+      status: 'cap_reached',
+      storageKey: REFERRAL_PRO_GRANT_EXPIRES_AT_STORAGE_KEY,
+      successfulReferrals: 4,
+    }),
+  });
+
+  assert.equal(result.status, 'cap_reached');
+  assert.equal(grant.values.has(REFERRAL_PRO_GRANT_EXPIRES_AT_STORAGE_KEY), false);
+});
+
+test('referral deep-link client flow is wired into routes, auth, and entitlement resolution', () => {
+  const appConfig = JSON.parse(read('app.json'));
+  const nativeIntentSource = read('app/+native-intent.ts');
+  const layoutSource = read('app/_layout.tsx');
+  const referralRouteSource = read('app/r/[code].tsx');
+  const authSource = read('lib/auth/AuthContext.tsx');
+  const proHookSource = read('lib/monetization/useProLifetimeEntitlements.ts');
+
+  assert.equal(appConfig.expo.scheme, 'almost-swedish');
+  assert.match(
+    nativeIntentSource,
+    /const referralRoutePattern = \/\^\\\/r\\\/\[A-Z0-9\]\{8\}\$\/;/,
+  );
+  assert.match(layoutSource, /<Stack\.Screen name="r\/\[code\]"/);
+  assert.match(referralRouteSource, /useLocalSearchParams/);
+  assert.match(referralRouteSource, /storePendingReferralCode\(normalizedCode\)/);
+  assert.match(authSource, /consumePendingReferralGrant\(\{[\s\S]*client: supabase/);
+  assert.match(proHookSource, /getReferralGrantSnapshot\(\)/);
+  assert.match(proHookSource, /resolveEffectiveEntitlement\(\{[\s\S]*referralGrant/);
 });

@@ -9,6 +9,8 @@ import {
 } from './purchases';
 import { createInstrumentedE2EPurchaseRuntimeOptions } from './e2ePurchaseRuntime';
 import { getProLifetimeEntitlement, type ProLifetimeRuntimeOptions } from './proLifetimePurchase';
+import { resolveEffectiveEntitlement } from './effectiveEntitlements';
+import { getReferralGrantSnapshot } from './referralGrantStore';
 
 const FREE_PRO_ENTITLEMENTS: ProTierEntitlements = {
   adsDisabled: false,
@@ -72,9 +74,15 @@ export function useProLifetimeEntitlements({
     setEntitlementsReady(false);
 
     void getProLifetimeEntitlement(proRuntime)
-      .then((storedEntitlements) => {
+      .then(async (storedEntitlements) => {
+        const referralGrant = await getReferralGrantSnapshot().catch(() => null);
         if (!isMounted) return;
-        setEntitlements(storedEntitlements);
+        setEntitlements(
+          resolveEffectiveEntitlement({
+            proLifetime: storedEntitlements,
+            referralGrant,
+          }).entitlements,
+        );
         setEntitlementsReady(true);
       })
       .catch(() => {
