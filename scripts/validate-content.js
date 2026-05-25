@@ -282,6 +282,18 @@ const STATIC_EBOOK_PRACTICAL_TEST_SOURCE_URLS = [
   'https://www.uhr.se/medborgarskapsprovet/anmalan/',
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
 ];
+const STATIC_EBOOK_PRACTICAL_TEST_SOURCE_KEYS = [
+  'uhrOfficialTestAbout',
+  'uhrOfficialTestFaq',
+  'uhrOfficialTestSignup',
+  'uhrOfficialTestStudyMaterial',
+];
+const STATIC_EBOOK_PRACTICAL_TEST_SOURCE_URL_BY_KEY = Object.fromEntries(
+  STATIC_EBOOK_PRACTICAL_TEST_SOURCE_KEYS.map((key, index) => [
+    key,
+    STATIC_EBOOK_PRACTICAL_TEST_SOURCE_URLS[index],
+  ]),
+);
 const STATIC_EBOOK_PRACTICAL_TEST_REQUIRED_COPY = [
   'OFFICIAL_TEST_SOURCE_NOTES',
   'OFFICIAL_TEST_SIGNUP_SOURCE_KEYS',
@@ -6639,6 +6651,70 @@ function staticEbookDataSourceKeys(block) {
   return match ? match[1].split(/\s+/).filter(Boolean) : [];
 }
 
+function staticEbookExternalSourceHrefs(block) {
+  return Array.from(
+    block.matchAll(/<a\b(?=[^>]*\bhref="(https?:\/\/[^"]+)")[^>]*>/g),
+    (match) => match[1],
+  );
+}
+
+function staticEbookOfficialTestCurrentSourceBlock(html) {
+  return staticEbookAnnotatedSourceClaimBlocks(html).find((block) => {
+    const keys = staticEbookDataSourceKeys(block);
+    return (
+      keys.length === STATIC_EBOOK_PRACTICAL_TEST_SOURCE_KEYS.length &&
+      keys.every((key, index) => key === STATIC_EBOOK_PRACTICAL_TEST_SOURCE_KEYS[index])
+    );
+  });
+}
+
+function validateStaticEbookOfficialTestSourceUrlPairing() {
+  const harness = createStaticEbookValidationHarness(readStaticEbookChapterIds());
+  const languages = ['en', 'sv', ...STATIC_EBOOK_EXTRA_LOCALES];
+  let pairsValidated = 0;
+  let valid = true;
+
+  languages.forEach((language) => {
+    const html = renderStaticEbookChapter(harness, language, '12');
+    const block = staticEbookOfficialTestCurrentSourceBlock(html);
+
+    if (!block) {
+      valid = false;
+      fail(`static ebook chapter 12 ${language} current source notes block is missing`);
+      return;
+    }
+
+    const hrefs = staticEbookExternalSourceHrefs(block);
+    if (hrefs.length !== STATIC_EBOOK_PRACTICAL_TEST_SOURCE_KEYS.length) {
+      valid = false;
+      fail(
+        `static ebook chapter 12 ${language} current source notes must render one link per official-test source key`,
+      );
+      return;
+    }
+
+    STATIC_EBOOK_PRACTICAL_TEST_SOURCE_KEYS.forEach((key, index) => {
+      const expectedUrl = STATIC_EBOOK_PRACTICAL_TEST_SOURCE_URL_BY_KEY[key];
+      if (hrefs[index] !== expectedUrl) {
+        valid = false;
+        fail(
+          `static ebook chapter 12 ${language} current source key ${key} must link to ${expectedUrl}`,
+        );
+        return;
+      }
+      pairsValidated += 1;
+    });
+  });
+
+  return {
+    languagesValidated: languages.length,
+    pairsExpected: languages.length * STATIC_EBOOK_PRACTICAL_TEST_SOURCE_KEYS.length,
+    pairsValidated,
+    parityValidated:
+      valid && pairsValidated === languages.length * STATIC_EBOOK_PRACTICAL_TEST_SOURCE_KEYS.length,
+  };
+}
+
 function staticEbookSourceCountsFromBlocks(blocks) {
   const counts = {};
   blocks.forEach((block) => {
@@ -10587,6 +10663,8 @@ let staticEbookOutcomeClaimParityValidated = false;
 let staticEbookPracticalTestClaimPatternsValidated = 0;
 let staticEbookPracticalTestRequiredCopyValidated = 0;
 let staticEbookPracticalTestSourceUrlsValidated = 0;
+let staticEbookPracticalTestSourceUrlPairsValidated = 0;
+let staticEbookPracticalTestSourceUrlPairingValidated = false;
 let staticEbookPracticalTestCurrentnessValidated = false;
 let staticEbookCh12HeadingLocalesValidated = 0;
 let staticEbookCh12HeadingParityValidated = false;
@@ -11089,6 +11167,9 @@ if (process.argv.includes('--focus-static-ebook-provenance')) {
     staticEbookPracticalTestRequiredCopyValidated ===
       STATIC_EBOOK_PRACTICAL_TEST_REQUIRED_COPY.length &&
     staticEbookPracticalTestSourceUrlsValidated === STATIC_EBOOK_PRACTICAL_TEST_SOURCE_URLS.length;
+  const officialTestSourceUrlPairing = validateStaticEbookOfficialTestSourceUrlPairing();
+  staticEbookPracticalTestSourceUrlPairsValidated = officialTestSourceUrlPairing.pairsValidated;
+  staticEbookPracticalTestSourceUrlPairingValidated = officialTestSourceUrlPairing.parityValidated;
   const factboxValidation = validateStaticEbookFactboxProvenance();
   staticEbookFactboxClaimPatternsValidated = factboxValidation.unsupportedFactboxClaimsValidated;
   staticEbookFactboxRawParagraphsValidated = factboxValidation.rawFactboxParagraphsValidated;
@@ -11134,6 +11215,7 @@ if (process.argv.includes('--focus-static-ebook-provenance')) {
   staticEbookProvenanceParityValidated =
     staticEbookOutcomeClaimParityValidated &&
     staticEbookPracticalTestCurrentnessValidated &&
+    staticEbookPracticalTestSourceUrlPairingValidated &&
     staticEbookFactboxProvenanceValidated &&
     staticEbookFootnoteHashParityValidated &&
     staticEbookProseSourceMetadataParityValidated &&
@@ -11148,6 +11230,8 @@ if (process.argv.includes('--focus-static-ebook-provenance')) {
     staticEbookPracticalTestClaimPatternsValidated,
     staticEbookPracticalTestRequiredCopyValidated,
     staticEbookPracticalTestSourceUrlsValidated,
+    staticEbookPracticalTestSourceUrlPairsValidated,
+    staticEbookPracticalTestSourceUrlPairingValidated,
     staticEbookPracticalTestCurrentnessValidated,
     staticEbookFactboxClaimPatternsValidated,
     staticEbookFactboxRawParagraphsValidated,
@@ -12359,6 +12443,9 @@ staticEbookOutcomeClaimParityValidated =
     staticEbookPracticalTestRequiredCopyValidated ===
       STATIC_EBOOK_PRACTICAL_TEST_REQUIRED_COPY.length &&
     staticEbookPracticalTestSourceUrlsValidated === STATIC_EBOOK_PRACTICAL_TEST_SOURCE_URLS.length;
+  const officialTestSourceUrlPairing = validateStaticEbookOfficialTestSourceUrlPairing();
+  staticEbookPracticalTestSourceUrlPairsValidated = officialTestSourceUrlPairing.pairsValidated;
+  staticEbookPracticalTestSourceUrlPairingValidated = officialTestSourceUrlPairing.parityValidated;
 }
 {
   const headingValidation = validateStaticEbookChapter12HeadingParity();
@@ -12418,6 +12505,7 @@ staticEbookSourceAuthorityCopyParityValidated =
 staticEbookProvenanceParityValidated =
   staticEbookOutcomeClaimParityValidated &&
   staticEbookPracticalTestCurrentnessValidated &&
+  staticEbookPracticalTestSourceUrlPairingValidated &&
   staticEbookFactboxProvenanceValidated &&
   staticEbookFootnoteHashParityValidated &&
   staticEbookProseSourceMetadataParityValidated &&
@@ -28648,6 +28736,8 @@ console.log(
       staticEbookPracticalTestClaimPatternsValidated,
       staticEbookPracticalTestRequiredCopyValidated,
       staticEbookPracticalTestSourceUrlsValidated,
+      staticEbookPracticalTestSourceUrlPairsValidated,
+      staticEbookPracticalTestSourceUrlPairingValidated,
       staticEbookPracticalTestCurrentnessValidated,
       staticEbookCh12HeadingLocalesValidated,
       staticEbookCh12HeadingParityValidated,
