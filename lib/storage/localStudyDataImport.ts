@@ -171,7 +171,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function normalizeKey(value: string): string {
-  return value.replace(/[\s_-]/g, '').toLowerCase();
+  return value.replace(/[^a-z0-9]/gi, '').toLowerCase();
 }
 
 function appendImportPathSegment(path: string, segment: string): string {

@@ -1093,6 +1093,42 @@ test('local study data import rejects nested purchase fields with useful detail'
   assertNoSnapshotWrites(storageById);
 });
 
+test('local study data import rejects punctuated purchase field aliases', () => {
+  const forbiddenKeys = [
+    'ads.disabled',
+    'ad.free',
+    'product.id',
+    'remove.ads',
+    'i.a.p',
+    'product/id',
+  ];
+
+  for (const forbiddenKey of forbiddenKeys) {
+    const storageById = createStorageById();
+    const { previewLocalStudyDataImport } = loadImportModule(storageById);
+    const result = previewLocalStudyDataImport(
+      JSON.stringify({
+        version: 1,
+        progress: {
+          completedQuestionIds: ['q001'],
+          history: [{ [forbiddenKey]: true }],
+        },
+      }),
+    );
+
+    assert.deepEqual(
+      result,
+      {
+        ok: false,
+        code: 'purchase_fields_rejected',
+        detail: `progress.history.0.${forbiddenKey}`,
+      },
+      `expected ${forbiddenKey} to be rejected as a purchase field`,
+    );
+    assertNoSnapshotWrites(storageById);
+  }
+});
+
 test('local study data import formats rejected field details with bounded head and tail', () => {
   const storageById = createStorageById();
   const { formatLocalStudyDataImportErrorDetail } = loadImportModule(storageById);
