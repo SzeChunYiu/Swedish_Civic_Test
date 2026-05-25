@@ -4,7 +4,11 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 
+const { runFocusedValidatorMutation } = require('./helpers/focusedValidatorMutation.cjs');
+
 const repoRoot = path.resolve(__dirname, '..');
+const settingsImportSummaryFocusFlag = '--focus-settings-import-summary-nonzero';
+const settingsImportSummaryModulePath = 'lib/storage/localStudyDataImportSummary.ts';
 
 function parseValidationSummary() {
   const output = execFileSync(
@@ -37,7 +41,7 @@ function parseSettingsScrollValidationSummary() {
 function parseSettingsImportSummaryNonzeroValidationSummary() {
   const output = execFileSync(
     process.execPath,
-    ['scripts/validate-content.js', '--focus-settings-import-summary-nonzero'],
+    ['scripts/validate-content.js', settingsImportSummaryFocusFlag],
     {
       cwd: repoRoot,
       encoding: 'utf8',
@@ -457,6 +461,33 @@ test('settings import summary copy keeps singular and plural labels for bookmark
   );
   assertIncludes(e2eSource, 'absentSummaryTexts', 'settings import E2E zero-row cases');
   assertIncludes(e2eSource, "name: 'plural'", 'settings import E2E payload cases');
+});
+
+test('settings import summary focus rejects zero-count rows from the shared helper', () => {
+  const result = runFocusedValidatorMutation({
+    focusFlag: settingsImportSummaryFocusFlag,
+    targetFile: settingsImportSummaryModulePath,
+    mutateSource: function mutateSource(source) {
+      const sourceText = String(source);
+      const mutatedSource = sourceText.replace(
+        'if (count > 0) lines.push(formatLine(count));',
+        'if (count >= 0) lines.push(formatLine(count));',
+      );
+
+      if (mutatedSource === sourceText) {
+        throw new Error('zero-count summary guard target was not found');
+      }
+
+      return mutatedSource;
+    },
+  });
+  const output = `${result.stdout}\n${result.stderr}`;
+
+  assert.notEqual(result.status, 0, output);
+  assert.match(
+    output,
+    /settings import summary sv fixture must hide zero row "0 markeringar i e-boken"/,
+  );
 });
 
 test('settings companion picker previews are decorative while labels stay on the option', () => {

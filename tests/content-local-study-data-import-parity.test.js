@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 
+const { runFocusedValidatorMutation } = require('./helpers/focusedValidatorMutation.cjs');
 const {
   createMemoryMMKV,
   createThrowingSetMMKV,
@@ -11,6 +12,8 @@ const {
 } = require('./helpers/storageStoreHarness.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
+const settingsImportSummaryFocusFlag = '--focus-settings-import-summary-nonzero';
+const settingsImportSummaryModulePath = 'lib/storage/localStudyDataImportSummary.ts';
 
 function createStorageById() {
   return {
@@ -830,6 +833,30 @@ test('local study data import summary nonzero focus validates localized preview 
   assert.equal(summary.settingsImportSummaryHiddenZeroRowsValidated, 4);
   assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
   assert.match(output, /settingsImportSummaryNonzeroValidated/);
+});
+
+test('local study data import summary focus rejects unconditional streak freeze rows', () => {
+  const result = runFocusedValidatorMutation({
+    focusFlag: settingsImportSummaryFocusFlag,
+    targetFile: settingsImportSummaryModulePath,
+    mutateSource: function mutateSource(source) {
+      const sourceText = String(source);
+      const mutatedSource = sourceText.replace(
+        'if (summary.streakFreezeStateIncluded) lines.push(copy.importSummaryStreakFreeze);',
+        'lines.push(copy.importSummaryStreakFreeze);',
+      );
+
+      if (mutatedSource === sourceText) {
+        throw new Error('streak-freeze summary guard target was not found');
+      }
+
+      return mutatedSource;
+    },
+  });
+  const output = `${result.stdout}\n${result.stderr}`;
+
+  assert.notEqual(result.status, 0, output);
+  assert.match(output, /settings import summary sv fixture must hide the streak row when absent/);
 });
 
 test('local study data export round-trips citizenship requirements without purchase fields', () => {
