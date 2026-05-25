@@ -289,8 +289,9 @@
     p.querySelector('.eb-pop__lbl-note').textContent = c.note;
     p.dataset.mode = 'create';
     p.hidden = false;
-    const popW = 220,
-      popH = 38;
+    const popRect = p.getBoundingClientRect();
+    const popW = popRect.width || 220;
+    const popH = popRect.height || 56;
     const top = r.top + window.scrollY - popH - 10;
     const left = Math.max(
       8,

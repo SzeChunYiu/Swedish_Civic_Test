@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Locator } from '@playwright/test';
 import {
   collectPageErrors,
   expectElementNoHorizontalOverflow,
@@ -11,6 +11,23 @@ import {
 test.use({ serviceWorkers: 'block' });
 
 let staticSite: StaticSite;
+
+async function expectMinimumTarget(locator: Locator, label: string) {
+  await expect(locator).toBeVisible();
+  const box = await locator.boundingBox();
+  expect(box, `${label} should have a bounding box`).not.toBeNull();
+  expect(box!.width, `${label} should be at least 44px wide`).toBeGreaterThanOrEqual(44);
+  expect(box!.height, `${label} should be at least 44px tall`).toBeGreaterThanOrEqual(44);
+}
+
+async function expectAllMinimumTargets(locator: Locator, label: string) {
+  const count = await locator.count();
+  expect(count, `${label} controls should exist`).toBeGreaterThan(0);
+
+  for (let index = 0; index < count; index += 1) {
+    await expectMinimumTarget(locator.nth(index), `${label} ${index + 1}`);
+  }
+}
 
 test.beforeAll(async () => {
   staticSite = await startStaticSiteServer();
@@ -33,6 +50,41 @@ test('static ebook reader keeps navigation, highlights, sources link, and mobile
   await expect(reader.locator('.ebook__notes')).toBeVisible();
   await expect(reader.locator('#eb-notes-list')).toBeVisible();
   await expect(reader.locator('.ebook__study-links a[href="#/sources"]')).toHaveText('Sources');
+
+  await page.evaluate(() => {
+    const paragraph = document.querySelector('#ebook-reader p');
+    const textNode = Array.from(paragraph?.childNodes ?? []).find(
+      (node) => node.nodeType === Node.TEXT_NODE && node.textContent?.trim(),
+    );
+    if (!paragraph || !textNode?.textContent) {
+      throw new Error('Missing selectable ebook paragraph text');
+    }
+    const range = document.createRange();
+    range.setStart(textNode, 0);
+    range.setEnd(textNode, Math.min(24, textNode.textContent.length));
+    const selection = window.getSelection();
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+    paragraph.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+  });
+  await expect(page.locator('.eb-pop:not([hidden])')).toBeVisible();
+  await expectAllMinimumTargets(
+    page.locator('.eb-pop:not([hidden]) .eb-pop__btn'),
+    'annotation popover',
+  );
+
+  await page.locator('.eb-pop__btn[data-act="note"]').click();
+  await expect(page.locator('.eb-note')).toBeVisible();
+  await expectMinimumTarget(page.locator('.eb-note__close'), 'note close');
+  await expectMinimumTarget(page.locator('.eb-note__del'), 'note delete');
+  await expectMinimumTarget(page.locator('.eb-note__save'), 'note save');
+  await page.locator('.eb-note__ta').fill('Practice note');
+  await page.locator('.eb-note__save').click();
+  await expectAllMinimumTargets(
+    page.locator('.eb-notes-item__actions button'),
+    'saved note action',
+  );
+
   await expectElementNoHorizontalOverflow(page, '#ebook-reader');
   await expectNoHorizontalOverflow(page, 'ebook chapter 1');
 

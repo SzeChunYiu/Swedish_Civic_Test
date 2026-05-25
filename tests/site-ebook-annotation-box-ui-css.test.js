@@ -5,6 +5,15 @@ const test = require('node:test');
 
 const stylesPath = path.join(__dirname, '..', 'site', 'styles.css');
 
+function assertTouchTargetRule(css, selector) {
+  const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  assert.match(
+    css,
+    new RegExp(`${escapedSelector}\\s*{[\\s\\S]*min-height: 44px;[\\s\\S]*min-width: 44px;`),
+    `${selector} should keep a 44px minimum target in both dimensions`,
+  );
+}
+
 test('static ebook annotation popovers and note rows use tactile box treatment', () => {
   const css = fs.readFileSync(stylesPath, 'utf8');
 
@@ -27,7 +36,7 @@ test('static ebook annotation popovers and note rows use tactile box treatment',
   );
   assert.match(
     css,
-    /\.eb-pop__btn\s*{[\s\S]*background: rgba\(0, 106, 167, 0\.07\);[\s\S]*border-radius: 999px;[\s\S]*min-height: 36px;/,
+    /\.eb-pop__btn\s*{[\s\S]*background: rgba\(0, 106, 167, 0\.07\);[\s\S]*border-radius: 999px;[\s\S]*min-height: 44px;/,
   );
   assert.match(
     css,
@@ -37,6 +46,11 @@ test('static ebook annotation popovers and note rows use tactile box treatment',
     css,
     /\.eb-note__ta\s*{[\s\S]*background: rgba\(255, 255, 255, 0\.62\);[\s\S]*border-radius: 16px;[\s\S]*min-height: 112px;/,
   );
+  assert.match(css, /\.eb-note__close\s*{[\s\S]*height: 44px;[\s\S]*width: 44px;/);
+  assertTouchTargetRule(css, '.eb-pop__btn');
+  assertTouchTargetRule(css, '.eb-note__del');
+  assertTouchTargetRule(css, '.eb-note__save');
+  assertTouchTargetRule(css, '.eb-notes-item__actions button');
   assert.match(
     css,
     /\.eb-notes-empty,[\s\S]*\.eb-notes-item\s*{[\s\S]*background: rgba\(255, 255, 255, 0\.46\);[\s\S]*border-radius: 16px;[\s\S]*padding: 14px 14px 14px 18px;/,
