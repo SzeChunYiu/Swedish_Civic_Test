@@ -620,6 +620,9 @@ const QUESTION_NEW_YEARS_EVE_DATE_ENGLISH_NATURALNESS_PATTERNS = [
   /\bOn New Year(?:’|')s Eve on 31 December\b/i,
 ];
 const QUESTION_LUCIA_DAY_DATE_ENGLISH_NATURALNESS_PATTERNS = [/\bOn Lucia Day on 13 December\b/i];
+const QUESTION_HOLIDAY_DATE_APPOSITIVE_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bOn (?:New Year(?:’|')s Eve|Lucia Day|Walpurgis Night|All Saints(?:’|') Day|Midsummer Eve|Christmas Eve|Christmas Day|Good Friday|Easter Sunday|Easter Saturday|May Day|Sweden(?:’|')s National Day) on (?:\d{1,2} (?:January|February|March|April|May|June|July|August|September|October|November|December)|a (?:Friday|Saturday|Sunday) [^,.?!;]{0,80}|the four Sundays [^,.?!;]{0,80})\b/i,
+];
 const QUESTION_MAY_DAY_ENGLISH_NATURALNESS_PATTERNS = [/\bFirst of May\b/i];
 const QUESTION_REFERENDUM_ADVISORY_SWEDISH_NATURALNESS_PATTERNS = [
   /\bmåste inte följa resultatet\b/i,
@@ -6114,6 +6117,7 @@ function translationNaturalnessGuardParityIsValidated() {
     questionNationalMinoritiesEnglishNaturalnessValidated === publishedQuestions &&
     questionNewYearsEveDateEnglishNaturalnessValidated === publishedQuestions &&
     questionLuciaDayDateEnglishNaturalnessValidated === publishedQuestions &&
+    questionHolidayDateAppositiveEnglishNaturalnessValidated === publishedQuestions &&
     questionRecordYearsEnglishNaturalnessValidated === publishedQuestions &&
     questionSaltsjobadenEnglishNaturalnessValidated === publishedQuestions &&
     questionSuffrage1921EnglishNaturalnessValidated === publishedQuestions &&
@@ -7963,6 +7967,12 @@ function findQuestionNewYearsEveDateEnglishNaturalnessIssue(question) {
 
 function findQuestionLuciaDayDateEnglishNaturalnessIssue(question) {
   return QUESTION_LUCIA_DAY_DATE_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(questionText(question, ['questionEn', 'explanationEn'])),
+  );
+}
+
+function findQuestionHolidayDateAppositiveEnglishNaturalnessIssue(question) {
+  return QUESTION_HOLIDAY_DATE_APPOSITIVE_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
     pattern.test(questionText(question, ['questionEn', 'explanationEn'])),
   );
 }
@@ -10466,6 +10476,7 @@ let questionLargestLakesEnglishNaturalnessValidated = 0;
 let questionNationalMinoritiesEnglishNaturalnessValidated = 0;
 let questionNewYearsEveDateEnglishNaturalnessValidated = 0;
 let questionLuciaDayDateEnglishNaturalnessValidated = 0;
+let questionHolidayDateAppositiveEnglishNaturalnessValidated = 0;
 let questionRecordYearsEnglishNaturalnessValidated = 0;
 let questionSaltsjobadenEnglishNaturalnessValidated = 0;
 let questionSuffrage1921EnglishNaturalnessValidated = 0;
@@ -11500,6 +11511,7 @@ function translateCompleteP0NaturalnessIsValidated(publishedQuestionCount) {
     questionNationalMinoritiesEnglishNaturalnessValidated === publishedQuestionCount &&
     questionNewYearsEveDateEnglishNaturalnessValidated === publishedQuestionCount &&
     questionLuciaDayDateEnglishNaturalnessValidated === publishedQuestionCount &&
+    questionHolidayDateAppositiveEnglishNaturalnessValidated === publishedQuestionCount &&
     questionRecordYearsEnglishNaturalnessValidated === publishedQuestionCount &&
     questionSaltsjobadenEnglishNaturalnessValidated === publishedQuestionCount &&
     questionSuffrage1921EnglishNaturalnessValidated === publishedQuestionCount &&
@@ -11608,6 +11620,12 @@ function validateTranslateCompleteP0Focus() {
       questionLuciaDayDateEnglishNaturalnessValidated += 1;
     }
 
+    if (findQuestionHolidayDateAppositiveEnglishNaturalnessIssue(question)) {
+      fail(`${label} uses redundant holiday-date English wording`);
+    } else {
+      questionHolidayDateAppositiveEnglishNaturalnessValidated += 1;
+    }
+
     if (findQuestionRecordYearsEnglishNaturalnessIssue(question)) {
       fail(`${label} uses stilted record-years English wording`);
     } else {
@@ -11697,6 +11715,7 @@ function validateTranslateCompleteP0Focus() {
     questionNationalMinoritiesEnglishNaturalnessValidated,
     questionNewYearsEveDateEnglishNaturalnessValidated,
     questionLuciaDayDateEnglishNaturalnessValidated,
+    questionHolidayDateAppositiveEnglishNaturalnessValidated,
     questionRecordYearsEnglishNaturalnessValidated,
     questionSaltsjobadenEnglishNaturalnessValidated,
     questionSuffrage1921EnglishNaturalnessValidated,
@@ -27238,6 +27257,8 @@ if (Array.isArray(questions)) {
         findQuestionNewYearsEveDateEnglishNaturalnessIssue(question);
       const luciaDayDateEnglishNaturalnessIssue =
         findQuestionLuciaDayDateEnglishNaturalnessIssue(question);
+      const holidayDateAppositiveEnglishNaturalnessIssue =
+        findQuestionHolidayDateAppositiveEnglishNaturalnessIssue(question);
       const recordYearsEnglishNaturalnessIssue =
         findQuestionRecordYearsEnglishNaturalnessIssue(question);
       const saltsjobadenEnglishNaturalnessIssue =
@@ -27339,6 +27360,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses redundant Lucia Day date English wording`);
       } else {
         questionLuciaDayDateEnglishNaturalnessValidated += 1;
+      }
+      if (holidayDateAppositiveEnglishNaturalnessIssue) {
+        fail(`${label} uses redundant holiday-date English wording`);
+      } else {
+        questionHolidayDateAppositiveEnglishNaturalnessValidated += 1;
       }
       if (recordYearsEnglishNaturalnessIssue) {
         fail(`${label} uses stilted record-years English wording`);
@@ -28020,6 +28046,7 @@ console.log(
       questionNationalMinoritiesEnglishNaturalnessValidated,
       questionNewYearsEveDateEnglishNaturalnessValidated,
       questionLuciaDayDateEnglishNaturalnessValidated,
+      questionHolidayDateAppositiveEnglishNaturalnessValidated,
       questionRecordYearsEnglishNaturalnessValidated,
       questionSaltsjobadenEnglishNaturalnessValidated,
       questionSuffrage1921EnglishNaturalnessValidated,

@@ -17,6 +17,8 @@ const Q080_SUFFRAGE_REVISED_PATTERN =
   /first Riksdag election held after those reforms was in 1921/i;
 const GENERATED_SINGLE_CHOICE_ANSWER_LOGIC_OPTION_PATTERN =
   /\b(?:Båda påståendena är korrekta|Both statements are correct|Inget av påståendena är korrekt|Neither statement is correct)\b/i;
+const HOLIDAY_DATE_APPOSITIVE_STALE_PATTERN =
+  /\bOn (?:New Year(?:’|')s Eve|Lucia Day|Walpurgis Night|All Saints(?:’|') Day|Midsummer Eve|Christmas Eve|Christmas Day|Good Friday|Easter Sunday|Easter Saturday|May Day|Sweden(?:’|')s National Day) on (?:\d{1,2} (?:January|February|March|April|May|June|July|August|September|October|November|December)|a (?:Friday|Saturday|Sunday) [^,.?!;]{0,80}|the four Sundays [^,.?!;]{0,80})\b/i;
 
 function parseExportedCsvLine(line) {
   return [...line.matchAll(/"((?:""|[^"])*)"(?:,|$)/g)].map((match) =>
@@ -144,6 +146,32 @@ test('question-bank CSV keeps q128 holiday date options appositive', () => {
   assert.doesNotMatch(
     relevantRows.map((row) => JSON.stringify(row)).join('\n'),
     /Lucia Day on 13 December/i,
+  );
+});
+
+test('question-bank CSV rejects generic English holiday-date appositive wording', () => {
+  const rowsById = loadQuestionBankRowsById();
+  const learnerFacingText = [...rowsById.values()]
+    .map((row) =>
+      [
+        row.questionEn,
+        row.explanationEn,
+        row.optionEn,
+        row.correctOptionEn,
+        row.uhrCitationEn,
+      ].join('\n'),
+    )
+    .join('\n');
+
+  assert.doesNotMatch(learnerFacingText, HOLIDAY_DATE_APPOSITIVE_STALE_PATTERN);
+  assert.match('On Walpurgis Night on 30 April', HOLIDAY_DATE_APPOSITIVE_STALE_PATTERN);
+  assert.match(
+    'On All Saints’ Day on a Saturday at the end of October',
+    HOLIDAY_DATE_APPOSITIVE_STALE_PATTERN,
+  );
+  assert.doesNotMatch(
+    'What is common to do on New Year’s Eve, 31 December?',
+    HOLIDAY_DATE_APPOSITIVE_STALE_PATTERN,
   );
 });
 

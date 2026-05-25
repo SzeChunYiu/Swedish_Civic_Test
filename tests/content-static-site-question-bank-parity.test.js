@@ -64,6 +64,8 @@ const KOMMUN_REGION_STATIC_LOCALE_PATTERNS = {
 };
 const NEW_YEARS_EVE_DATE_STALE_PATTERN = /\bNew Year(?:’|')s Eve on 31 December\b/i;
 const LUCIA_DAY_DATE_STALE_PATTERN = /\bLucia Day on 13 December\b/i;
+const HOLIDAY_DATE_APPOSITIVE_STALE_PATTERN =
+  /\bOn (?:New Year(?:’|')s Eve|Lucia Day|Walpurgis Night|All Saints(?:’|') Day|Midsummer Eve|Christmas Eve|Christmas Day|Good Friday|Easter Sunday|Easter Saturday|May Day|Sweden(?:’|')s National Day) on (?:\d{1,2} (?:January|February|March|April|May|June|July|August|September|October|November|December)|a (?:Friday|Saturday|Sunday) [^,.?!;]{0,80}|the four Sundays [^,.?!;]{0,80})\b/i;
 const BASE_LOCALES = new Set(['sv', 'en']);
 
 function withSvEn(localizedText, sv, en) {
@@ -513,6 +515,23 @@ test('static site question bank keeps q128 holiday date options appositive', () 
   assert.equal(questionsById.get('q128').answer, 0);
   assert.equal(questionsById.get(trueStatementId).answer, 0);
   assert.equal(questionsById.get(falseStatementId).answer, 1);
+});
+
+test('static site question bank rejects generic English holiday-date appositive wording', () => {
+  const context = { window: {} };
+  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
+  const learnerFacingText = context.window.SMT_QUESTIONS.map(staticQuestionVisibleText).join('\n');
+
+  assert.doesNotMatch(learnerFacingText, HOLIDAY_DATE_APPOSITIVE_STALE_PATTERN);
+  assert.match('On Lucia Day on 13 December', HOLIDAY_DATE_APPOSITIVE_STALE_PATTERN);
+  assert.match(
+    'On Midsummer Eve on a Friday between 19 and 25 June',
+    HOLIDAY_DATE_APPOSITIVE_STALE_PATTERN,
+  );
+  assert.doesNotMatch(
+    'What is common to do on New Year’s Eve, 31 December?',
+    HOLIDAY_DATE_APPOSITIVE_STALE_PATTERN,
+  );
 });
 
 test('static site question bank keeps q050 source-criticism i18n noun-based', () => {
