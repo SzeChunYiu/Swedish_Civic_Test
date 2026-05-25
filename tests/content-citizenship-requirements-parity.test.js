@@ -378,6 +378,7 @@ test('citizenship dark source-affordance e2e covers Swedish and English locale n
 
   assert.match(source, /const citizenshipSourceAffordanceCases = \[/);
   assert.match(source, /for \(const testCase of citizenshipSourceAffordanceCases\)/);
+  assert.match(source, /preserves dark checked tokens after reload/);
   assert.match(
     source,
     /checkboxName: \/Ej markerad:\/[\s\S]*disclaimerLabel: \/Studieinformation: Oberoende studieverktyg\/[\s\S]*language: 'sv'[\s\S]*practiceLinkName: 'Öppna övningsläget för samhällskunskap'[\s\S]*sourceLinkName: \/Migrationsverket: Ansök om svenskt medborgarskap\//,
@@ -391,6 +392,9 @@ test('citizenship dark source-affordance e2e covers Swedish and English locale n
   assert.match(source, /citizenship-requirement-identity-checkbox/);
   assert.match(source, /citizenship-requirement-identity-checkbox-box/);
   assert.match(source, /citizenship-requirement-identity-checkbox-check/);
+  assert.match(source, /await page\.reload\(\{ waitUntil: 'networkidle' \}\);/);
+  assert.match(source, /const reloadedCheckedChecklistItem = page/);
+  assert.match(source, /await expect\(reloadedCheckedChecklistItem\)\.toBeChecked\(\);/);
   assert.match(source, /darkColors\.successSoft/);
   assert.match(source, /darkColors\.success/);
   assert.match(source, /darkColors\.surfaceWarm/);

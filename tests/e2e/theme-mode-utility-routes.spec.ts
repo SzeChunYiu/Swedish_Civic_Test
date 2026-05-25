@@ -507,7 +507,7 @@ for (const testCase of searchSourceAffordanceCases) {
 }
 
 for (const testCase of citizenshipSourceAffordanceCases) {
-  test(`citizenship requirements route uses dark source-affordance tokens in ${testCase.language}`, async ({
+  test(`citizenship requirements route preserves dark checked tokens after reload in ${testCase.language}`, async ({
     page,
   }) => {
     await seedSettingsLanguage(page, testCase.language);
@@ -559,6 +559,45 @@ for (const testCase of citizenshipSourceAffordanceCases) {
       'backgroundColor',
       darkColors.surface,
       `Checked Citizenship check indicators should use the dark surface token in ${testCase.language}`,
+    );
+
+    await page.reload({ waitUntil: 'networkidle' });
+    await dismissBlockingModals(page);
+
+    const reloadedCheckedChecklistItem = page
+      .getByRole('checkbox', { name: testCase.checkedCheckboxName })
+      .first();
+    await expect(reloadedCheckedChecklistItem).toBeChecked();
+    await expect(firstChecklistRow).toHaveAttribute('aria-checked', 'true');
+    await expectComputedColor(
+      firstChecklistRow,
+      'backgroundColor',
+      darkColors.successSoft,
+      `Reloaded checked Citizenship rows should keep the dark success-soft token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      firstChecklistRow,
+      'borderColor',
+      darkColors.success,
+      `Reloaded checked Citizenship rows should keep the dark success border token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      firstChecklistBox,
+      'backgroundColor',
+      darkColors.success,
+      `Reloaded checked Citizenship checkbox boxes should keep the dark success fill token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      firstChecklistBox,
+      'borderColor',
+      darkColors.success,
+      `Reloaded checked Citizenship checkbox boxes should keep the dark success border token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      page.getByTestId('citizenship-requirement-identity-checkbox-check'),
+      'backgroundColor',
+      darkColors.surface,
+      `Reloaded checked Citizenship check indicators should keep the dark surface token in ${testCase.language}`,
     );
 
     const disclaimer = page.getByLabel(testCase.disclaimerLabel).first();
