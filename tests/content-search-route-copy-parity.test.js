@@ -167,8 +167,21 @@ function assertSearchRouteQuestionResults(source) {
     [/return searchQuestionsWithTotal\(\{/, 'searchQuestionsWithTotal call'],
     [/const questionResults = questionSearchResults\.results;/, 'capped visible question results'],
     [/const totalQuestionMatches = questionSearchResults\.totalCount;/, 'total question matches'],
+    [
+      /const hasMoreQuestionResults = questionResults\.length < totalQuestionMatches;/,
+      'question result show-more condition',
+    ],
+    [
+      /const questionVisibilityStatus =[\s\S]*copy\.questionVisibilityStatus\(questionResults\.length, totalQuestionMatches\)/,
+      'dedicated question visibility live status',
+    ],
     [/query: trimmedQuery,/, 'trimmed query passed to question search'],
     [/questions,/, 'question bank passed to question search'],
+    [/limit: visibleQuestionLimit,/, 'visible question result cap passed to search'],
+    [
+      /useEffect\(\(\) => \{\s*setVisibleQuestionLimit\(8\);\s*\}, \[trimmedQuery\]\);/,
+      'visible question result cap resets on new query',
+    ],
     [
       /copy\.filteredSummary\(filteredTerms\.length, glossaryTerms\.length, totalQuestionMatches\)/,
       'live summary includes total question count',
@@ -178,12 +191,22 @@ function assertSearchRouteQuestionResults(source) {
       'question section subtitle compares visible and total question counts',
     ],
     [
+      /testID="search-question-visibility-status"[\s\S]*?\{questionVisibilityStatus\}/,
+      'hidden polite question visibility status',
+    ],
+    [
       /`\$\{visibleCount\} av \$\{totalCount\} källbaserade övningsfrågor visas`/,
       'Swedish visible of total question subtitle copy',
     ],
     [
       /`\$\{visibleCount\} of \$\{totalCount\} source-backed practice questions shown`/,
       'English visible of total question subtitle copy',
+    ],
+    [/showMoreQuestions: 'Visa fler övningsfrågor'/, 'Swedish show more question copy'],
+    [/showMoreQuestions: 'Show more practice questions'/, 'English show more question copy'],
+    [
+      /onPress=\{\(\) =>\s*setVisibleQuestionLimit\(\(currentLimit\) =>\s*Math\.min\(currentLimit \+ 8, totalQuestionMatches\),\s*\)\s*\}/,
+      'show more increases visible question cap in steps of 8',
     ],
     [/const title = getQuestionSearchTitle\(result\.question, language\);/, 'localized title use'],
     [
@@ -792,8 +815,8 @@ test('Search route hydration rejects leaving clear search local-only', () => {
 test('Search route hydration rejects missing explicit submit URL state', () => {
   const mutatedSource = readSearchRouteSource()
     .replace(
-      /  const handleSubmitSearch = \(\) => \{[\s\S]*?  \};\n  const trimmedQuery = query\.trim\(\);\n/,
-      '  const trimmedQuery = query.trim();\n',
+      /  const handleSubmitSearch = \(\) => \{[\s\S]*?  \};\n  const filteredTerms = useMemo\(/,
+      '  const filteredTerms = useMemo(',
     )
     .replace('          onSubmitEditing={handleSubmitSearch}\n', '');
 

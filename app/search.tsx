@@ -52,12 +52,17 @@ export default function SearchScreen() {
   const themeColors = colorsForThemeMode(themeMode, systemColorScheme);
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const copy = searchRouteCopy[language];
+  const trimmedQuery = query.trim();
+  const [visibleQuestionLimit, setVisibleQuestionLimit] = useState(8);
   useEffect(() => {
     if (previousRouteQueryRef.current === routeQuery) return;
 
     previousRouteQueryRef.current = routeQuery;
     setQuery(routeQuery);
   }, [routeQuery]);
+  useEffect(() => {
+    setVisibleQuestionLimit(8);
+  }, [trimmedQuery]);
   const handleClearSearch = () => {
     setQuery('');
     previousRouteQueryRef.current = '';
@@ -78,7 +83,6 @@ export default function SearchScreen() {
     previousRouteQueryRef.current = submittedQuery;
     router.replace(`/search?q=${encodeURIComponent(submittedQuery)}`);
   };
-  const trimmedQuery = query.trim();
   const filteredTerms = useMemo(
     () =>
       searchGlossary(trimmedQuery, language, glossaryTerms.length).map((term) => ({
@@ -92,13 +96,18 @@ export default function SearchScreen() {
 
     return searchQuestionsWithTotal({
       chapters,
-      limit: 8,
+      limit: visibleQuestionLimit,
       query: trimmedQuery,
       questions,
     });
-  }, [trimmedQuery]);
+  }, [trimmedQuery, visibleQuestionLimit]);
   const questionResults = questionSearchResults.results;
   const totalQuestionMatches = questionSearchResults.totalCount;
+  const hasMoreQuestionResults = questionResults.length < totalQuestionMatches;
+  const questionVisibilityStatus =
+    trimmedQuery.length > 0 && hasMoreQuestionResults
+      ? copy.questionVisibilityStatus(questionResults.length, totalQuestionMatches)
+      : '';
   const resultSummary =
     trimmedQuery.length > 0
       ? copy.filteredSummary(filteredTerms.length, glossaryTerms.length, totalQuestionMatches)
@@ -239,6 +248,14 @@ export default function SearchScreen() {
             <Text style={styles.questionSectionSubtitle}>
               {copy.questionSectionSubtitle(questionResults.length, totalQuestionMatches)}
             </Text>
+            <Text
+              accessibilityLiveRegion="polite"
+              aria-live="polite"
+              style={styles.accessibilitySummaryText}
+              testID="search-question-visibility-status"
+            >
+              {questionVisibilityStatus}
+            </Text>
           </View>
 
           <View style={styles.questionList}>
@@ -320,6 +337,24 @@ export default function SearchScreen() {
                 <Text style={styles.explanation}>{copy.emptyQuestionBody}</Text>
               </Card>
             )}
+            {hasMoreQuestionResults ? (
+              <Button
+                accessibilityLabel={copy.showMoreQuestionsAccessibilityLabel(
+                  questionResults.length,
+                  totalQuestionMatches,
+                )}
+                accessibilityRole="button"
+                onPress={() =>
+                  setVisibleQuestionLimit((currentLimit) =>
+                    Math.min(currentLimit + 8, totalQuestionMatches),
+                  )
+                }
+                themeColors={themeColors}
+                variant="secondary"
+              >
+                {copy.showMoreQuestions}
+              </Button>
+            ) : null}
           </View>
         </View>
       ) : null}
@@ -372,6 +407,7 @@ type SearchRouteCopy = {
   }) => string;
   questionSectionSubtitle: (visibleCount: number, totalCount: number) => string;
   questionSectionTitle: string;
+  questionVisibilityStatus: (visibleCount: number, totalCount: number) => string;
   searchCardAccessibilityLabel: string;
   searchInputAccessibilityLabel: string;
   searchLabel: string;
@@ -379,6 +415,8 @@ type SearchRouteCopy = {
   sectionSubtitle: string;
   sectionTitle: string;
   sourceLabel: string;
+  showMoreQuestions: string;
+  showMoreQuestionsAccessibilityLabel: (visibleCount: number, totalCount: number) => string;
   submitSearch: string;
   submitSearchAccessibilityLabel: string;
   subtitle: string;
@@ -438,6 +476,8 @@ const searchRouteCopy: Record<AppLanguage, SearchRouteCopy> = {
             ? `${totalCount} källbaserade övningsfrågor matchar`
             : `${visibleCount} av ${totalCount} källbaserade övningsfrågor visas`,
     questionSectionTitle: 'Övningsfrågor',
+    questionVisibilityStatus: (visibleCount, totalCount) =>
+      `${visibleCount} av ${totalCount} källbaserade övningsfrågor visas`,
     searchCardAccessibilityLabel: 'Sök bland samhällsbegrepp, frågor och kapitelkopplingar',
     searchInputAccessibilityLabel: 'Sök samhällsbegrepp och övningsfrågor',
     searchLabel: 'Sök begrepp',
@@ -446,6 +486,9 @@ const searchRouteCopy: Record<AppLanguage, SearchRouteCopy> = {
       'Slå upp centrala ord och öppna kapitlet eller övningsfrågan där begreppet används.',
     sectionTitle: 'Begrepp och frågor',
     sourceLabel: 'Källa',
+    showMoreQuestions: 'Visa fler övningsfrågor',
+    showMoreQuestionsAccessibilityLabel: (visibleCount, totalCount) =>
+      `Visa fler övningsfrågor. ${visibleCount} av ${totalCount} visas nu.`,
     submitSearch: 'Sök',
     submitSearchAccessibilityLabel: 'Sök med den inskrivna texten',
     subtitle:
@@ -499,6 +542,8 @@ const searchRouteCopy: Record<AppLanguage, SearchRouteCopy> = {
             ? `${totalCount} source-backed practice questions match`
             : `${visibleCount} of ${totalCount} source-backed practice questions shown`,
     questionSectionTitle: 'Practice questions',
+    questionVisibilityStatus: (visibleCount, totalCount) =>
+      `${visibleCount} of ${totalCount} source-backed practice questions shown`,
     searchCardAccessibilityLabel: 'Search civic reference terms, questions, and chapter links',
     searchInputAccessibilityLabel: 'Search civic terms and practice questions',
     searchLabel: 'Search terms',
@@ -507,6 +552,9 @@ const searchRouteCopy: Record<AppLanguage, SearchRouteCopy> = {
       'Look up central words and open the chapter or practice question where the term appears.',
     sectionTitle: 'Civic terms and questions',
     sourceLabel: 'Source',
+    showMoreQuestions: 'Show more practice questions',
+    showMoreQuestionsAccessibilityLabel: (visibleCount, totalCount) =>
+      `Show more practice questions. ${visibleCount} of ${totalCount} shown now.`,
     submitSearch: 'Search',
     submitSearchAccessibilityLabel: 'Submit the typed search',
     subtitle: 'A quick search for key civic terms, source-backed questions, and explanations.',

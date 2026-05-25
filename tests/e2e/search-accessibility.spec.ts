@@ -13,9 +13,11 @@ const copy = {
     inputName: 'Sök samhällsbegrepp och övningsfrågor',
     punctuatedQuery: 'kommun,',
     questionShown: /8 av \d+ källbaserade övningsfrågor visas/,
+    questionShownAfterMore: /16 av \d+ källbaserade övningsfrågor visas/,
     provenanceBadge: /Källtyp: (UHR-källa|Tilläggsfråga|Redaktionell)/,
     questionLink: /Öppna övningsfrågan:/,
     query: 'riksdag',
+    showMoreQuestions: 'Visa fler övningsfrågor',
     sourceNote: /^Källanteckning:/,
     termName: 'Kommun',
     browseChapters: 'Gå till alla kapitel',
@@ -27,9 +29,11 @@ const copy = {
     inputName: 'Search civic terms and practice questions',
     punctuatedQuery: 'riksdag?',
     questionShown: /8 of \d+ source-backed practice questions shown/,
+    questionShownAfterMore: /16 of \d+ source-backed practice questions shown/,
     provenanceBadge: /Provenance: (UHR source|Supplementary|Editorial)/,
     questionLink: /Open practice question:/,
     query: 'municipality',
+    showMoreQuestions: 'Show more practice questions',
     sourceNote: /^Source note:/,
     termName: 'Riksdag',
     browseChapters: 'Go to all chapters',
@@ -120,13 +124,18 @@ for (const language of ['sv', 'en'] as const satisfies readonly Language[]) {
     await page.goto('/search', { waitUntil: 'networkidle' });
     await dismissBlockingModals(page);
 
-    const liveSummary = page.locator('[aria-live="polite"]');
+    const liveSummary = page.locator('[aria-live="polite"]').first();
     await expect(liveSummary).toHaveCount(1);
     await expect(liveSummary).toHaveText(t.initialSummary);
 
     await page.getByRole('textbox', { name: t.inputName }).fill(t.query);
     await expect(liveSummary).toHaveText(t.filteredSummary);
     await expect(page.getByText(t.questionShown)).toBeVisible();
+    const questionVisibilityStatus = page.getByTestId('search-question-visibility-status');
+    await expect(questionVisibilityStatus).toHaveText(t.questionShown);
+    await page.getByRole('button', { name: t.showMoreQuestions }).click();
+    await expect(page.getByText(t.questionShownAfterMore)).toBeVisible();
+    await expect(questionVisibilityStatus).toHaveText(t.questionShownAfterMore);
     await expect(
       page.getByRole('link', { name: /Öppna kapitlet|Open the chapter/ }).first(),
     ).toBeVisible();
@@ -135,10 +144,15 @@ for (const language of ['sv', 'en'] as const satisfies readonly Language[]) {
 
     await page.getByRole('button', { name: t.clear }).click();
     await expect(liveSummary).toHaveText(t.initialSummary);
+    await expect(questionVisibilityStatus).toHaveCount(0);
 
     await page.getByRole('textbox', { name: t.inputName }).fill(t.punctuatedQuery);
     await expect(liveSummary).toHaveText(t.filteredSummary);
     await expect(page.getByText(t.questionShown)).toBeVisible();
+    const punctuatedQuestionVisibilityStatus = page.getByTestId(
+      'search-question-visibility-status',
+    );
+    await expect(punctuatedQuestionVisibilityStatus).toHaveText(t.questionShown);
     await expect(page.getByText(t.termName, { exact: true }).first()).toBeVisible();
     await expect(
       page.getByRole('link', { name: /Öppna kapitlet|Open the chapter/ }).first(),
