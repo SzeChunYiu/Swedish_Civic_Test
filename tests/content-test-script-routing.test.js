@@ -3,7 +3,7 @@ const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const test = require('node:test');
+const nodeTest = require('node:test');
 
 const {
   FOCUSED_VALIDATION_REGISTRY,
@@ -18,6 +18,44 @@ const { runFocusedValidatorMutation } = require('./helpers/focusedValidatorMutat
 const repoRoot = path.resolve(__dirname, '..');
 const streakFreezeCounterRuntimeFocusFlag = '--focus-streak-freeze-counter-runtime-input';
 const streakFreezeModulePath = 'lib/learning/streakWithFreeze.ts';
+
+function trailingTestNamePattern() {
+  const localArgIndex = process.argv.indexOf('--test-name-pattern');
+  if (localArgIndex >= 0) return process.argv[localArgIndex + 1] ?? null;
+
+  try {
+    const parentArgs = fs
+      .readFileSync(`/proc/${process.ppid}/cmdline`, 'utf8')
+      .split('\0')
+      .filter(Boolean);
+    const parentArgIndex = parentArgs.indexOf('--test-name-pattern');
+
+    return parentArgIndex >= 0 ? (parentArgs[parentArgIndex + 1] ?? null) : null;
+  } catch {
+    return null;
+  }
+}
+
+const manualTestNamePatternSource = trailingTestNamePattern();
+const manualTestNamePattern = manualTestNamePatternSource
+  ? new RegExp(manualTestNamePatternSource)
+  : null;
+
+function test(name, optionsOrFn, maybeFn) {
+  if (!manualTestNamePattern || manualTestNamePattern.test(name)) {
+    return nodeTest(name, optionsOrFn, maybeFn);
+  }
+
+  if (typeof optionsOrFn === 'function') {
+    return nodeTest(name, { skip: 'filtered by trailing --test-name-pattern' }, optionsOrFn);
+  }
+
+  return nodeTest(
+    name,
+    { ...(optionsOrFn ?? {}), skip: 'filtered by trailing --test-name-pattern' },
+    maybeFn,
+  );
+}
 
 function readPackageJson() {
   return JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
@@ -189,6 +227,7 @@ const registryCompletenessFocusIds = [
   'settingsImportSummaryNonzero',
   'staticEbookFootnoteHashParity',
   'streakFreezeNormalizerParity',
+  'translateCompleteP0',
 ];
 
 test('focused validation registry covers every validate-content focus flag', () => {
@@ -234,16 +273,16 @@ test('Playwright browser availability preflight keeps e2e routing actionable', (
   );
 });
 
-test('newly registered focus modes expose advertised summary keys', () => {
-  for (const id of registryCompletenessFocusIds) {
+for (const id of registryCompletenessFocusIds) {
+  test(`focus registry ${id} exposes advertised summary keys`, () => {
     const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get(id);
 
     assert.ok(registryEntry, `${id} focus mode must be registered`);
     for (const flag of registryEntry.flags) {
       assertFocusedValidationSummary(flag, registryEntry.summaryKeys);
     }
-  }
-});
+  });
+}
 
 test('Home route focused mutation fixtures use the shared helper', () => {
   const homeRouteTestSource = fs.readFileSync(
