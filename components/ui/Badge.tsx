@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { StyleSheet, Text } from 'react-native';
 import type { StyleProp, TextStyle } from 'react-native';
-import type { PropsWithChildren } from 'react';
+import type { PropsWithChildren, ReactNode } from 'react';
 import { radius, space, typography } from '../../lib/theme';
 import type { ThemeColors } from '../../lib/theme';
 import { useResolvedThemeColors } from '../useResolvedThemeColors';
@@ -24,8 +24,7 @@ export function Badge({
   const resolvedThemeColors = useResolvedThemeColors(themeColors);
   const styles = useMemo(() => createStyles(resolvedThemeColors), [resolvedThemeColors]);
   const badgeAccessibilityLabel =
-    accessibilityLabel ??
-    (typeof children === 'string' || typeof children === 'number' ? String(children) : undefined);
+    accessibilityLabel ?? getPrimitiveChildrenAccessibilityLabel(children);
 
   return (
     <Text
@@ -36,6 +35,26 @@ export function Badge({
       {children}
     </Text>
   );
+}
+
+function getPrimitiveChildrenAccessibilityLabel(children: ReactNode): string | undefined {
+  const labelParts: string[] = [];
+
+  function collectLabelPart(child: ReactNode): void {
+    if (typeof child === 'string' || typeof child === 'number') {
+      labelParts.push(String(child));
+      return;
+    }
+
+    if (Array.isArray(child)) {
+      child.forEach(collectLabelPart);
+    }
+  }
+
+  collectLabelPart(children);
+
+  const label = labelParts.join('').replace(/\s+/g, ' ').trim();
+  return label.length > 0 ? label : undefined;
 }
 
 function createStyles(themeColors: ThemeColors) {

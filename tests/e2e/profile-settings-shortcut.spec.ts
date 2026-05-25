@@ -81,6 +81,19 @@ async function expectAnyVisibleExactText(page: Page, text: string): Promise<void
   expect(false, `${text} should have at least one visible rendered instance`).toBe(true);
 }
 
+async function expectAnyVisibleAriaLabel(page: Page, label: string): Promise<void> {
+  const matches = page.locator(`[aria-label="${label.replace(/"/g, '\\"')}"]`);
+  const count = await matches.count();
+
+  expect(count, `${label} should be exposed as an aria-label`).toBeGreaterThan(0);
+  for (let index = 0; index < count; index += 1) {
+    if (await matches.nth(index).isVisible()) return;
+  }
+  expect(false, `${label} aria-label should have at least one visible rendered instance`).toBe(
+    true,
+  );
+}
+
 async function openProfile(page: Page, language: AppLanguage): Promise<void> {
   await seedFreshSettingsLanguageAndAboutSeen(page, language);
   await page.goto('/profile', { waitUntil: 'networkidle' });
@@ -148,6 +161,7 @@ for (const language of ['sv', 'en'] as const) {
     await expect(page.getByRole('heading', { name: copy.profileHeading })).toBeVisible();
     await expect(page.getByRole('heading', { name: copy.studySetupHeading })).toBeVisible();
     await expectAnyVisibleExactText(page, copy.dailyGoalSetupBadge);
+    await expectAnyVisibleAriaLabel(page, copy.dailyGoalSetupBadge);
     await expectAnyVisibleExactText(page, copy.languageSetupBadge);
 
     expect(errors.get()).toEqual([]);
