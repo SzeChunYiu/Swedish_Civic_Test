@@ -119,20 +119,20 @@ test('semantic hairline token is reserved for border widths', () => {
 test('search and language controls keep 2px divider layout token separate from hairline borders', () => {
   const searchSource = fs.readFileSync(path.join(repoRoot, 'app/search.tsx'), 'utf8');
   const settingsSource = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
-  const languageToggleSource = fs.readFileSync(
-    path.join(repoRoot, 'components/ui/LanguageToggle.tsx'),
+  const languagePickerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/ui/LanguagePicker.tsx'),
     'utf8',
   );
 
   assert.match(searchSource, /height:\s*space\.divider/);
   assert.match(searchSource, /width:\s*space\.divider/);
-  assert.match(languageToggleSource, /padding:\s*space\.divider/);
   assert.match(settingsSource, /gap:\s*space\.divider/);
   assert.match(searchSource, /borderWidth:\s*space\.hairline/);
-  assert.match(languageToggleSource, /borderWidth:\s*space\.hairline/);
+  assert.match(languagePickerSource, /borderWidth:\s*space\.hairline/);
   assert.match(searchSource, /testID="search-input"/);
   assert.match(searchSource, /testID="search-accessibility-summary-spacer"/);
   assert.match(settingsSource, /testID=\{`daily-goal-option-\$\{goal\}`\}/);
+  assert.match(languagePickerSource, /accessibilityLabel=\{copy\.triggerLabel\(currentLabel\)\}/);
 });
 
 test('theme token schema rejects spacing token drift', () => {
