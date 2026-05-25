@@ -117,6 +117,10 @@ test('proLifetime: product id + price label + storage key exported', () => {
   assert.equal(m.PRO_LIFETIME_PRODUCT_ID, 'com.billyyiu.almostswedish.prolifetime');
   assert.equal(m.PRO_LIFETIME_PRICE_LABEL, '59 SEK');
   assert.match(m.PRO_LIFETIME_STORAGE_KEY, /proLifetime/);
+  assert.deepEqual(Object.values(m.PRO_LIFETIME_PURCHASE_UNAVAILABLE_REASONS).sort(), [
+    'native_receipt_validator_unavailable',
+    'web_store_unavailable',
+  ]);
 });
 
 test('proLifetime: v1.1 setup docs and identity stay in Pro lane', () => {
@@ -170,6 +174,41 @@ test('buyProLifetime: fresh buy persists entitlement and returns purchased statu
   assert.equal(storedRecord.source, 'purchase');
   const post = await getProLifetimeEntitlement({ storage });
   assert.equal(post.spacedRepetition, true);
+});
+
+test('buyProLifetime and restoreProLifetime: unavailable runtime fails closed without store calls', async () => {
+  const { buyProLifetime, restoreProLifetime } = loadTs('lib/monetization/proLifetimePurchase.ts');
+  let connected = false;
+  const provider = {
+    async connect() {
+      connected = true;
+      throw new Error('unavailable runtime must not connect');
+    },
+    async disconnect() {},
+    async requestRemoveAdsPurchase() {
+      throw new Error('unavailable runtime must not buy');
+    },
+    async restorePurchases() {
+      throw new Error('unavailable runtime must not restore');
+    },
+  };
+  const runtimeOptions = {
+    provider,
+    purchaseUnavailableReason: 'web_store_unavailable',
+    storage: makeMemoryStorage(),
+  };
+
+  const buyResult = await buyProLifetime(runtimeOptions);
+  const restoreResult = await restoreProLifetime({
+    ...runtimeOptions,
+    purchaseUnavailableReason: 'native_receipt_validator_unavailable',
+  });
+
+  assert.equal(connected, false);
+  assert.equal(buyResult.status, 'unavailable');
+  assert.equal(buyResult.entitlements.spacedRepetition, false);
+  assert.equal(restoreResult.status, 'unavailable');
+  assert.equal(restoreResult.entitlements.spacedRepetition, false);
 });
 
 test('restoreProLifetime: with no prior purchase returns not_found', async () => {
@@ -550,6 +589,48 @@ test('ProPaywall: buy and restore actions use the shared in-flight guard contrac
   );
 });
 
+test('ProPaywall: unavailable reason copy is exhaustive and disables store actions', () => {
+  const proLifetimeSource = read('lib/monetization/proLifetimePurchase.ts');
+  const proHookSource = read('lib/monetization/useProLifetimeEntitlements.ts');
+  const paywallSource = read('components/monetization/ProPaywall.tsx');
+
+  assert.match(
+    proLifetimeSource,
+    /export const PRO_LIFETIME_PURCHASE_UNAVAILABLE_REASONS = \{[\s\S]*nativeReceiptValidatorUnavailable: 'native_receipt_validator_unavailable'[\s\S]*webStoreUnavailable: 'web_store_unavailable'/,
+  );
+  assert.match(
+    proLifetimeSource,
+    /export type ProLifetimePurchaseUnavailableReason =[\s\S]*PRO_LIFETIME_PURCHASE_UNAVAILABLE_REASONS/,
+  );
+  assert.match(
+    proLifetimeSource,
+    /purchaseUnavailableReason\?: ProLifetimePurchaseUnavailableReason/,
+  );
+  assert.match(
+    proHookSource,
+    /purchaseUnavailableReason:\s*'web_store_unavailable'/,
+    'web Pro runtime must be explicitly unavailable outside E2E',
+  );
+  assert.match(
+    proHookSource,
+    /purchaseUnavailableReason:\s*receiptValidator\s*\?\s*undefined\s*:\s*'native_receipt_validator_unavailable'/,
+    'native Pro runtime must expose receipt-validator-unavailable when validator wiring is absent',
+  );
+  assert.match(paywallSource, /function getProLifetimeUnavailableCopy\(/);
+  assert.match(paywallSource, /case 'web_store_unavailable':/);
+  assert.match(paywallSource, /case 'native_receipt_validator_unavailable':/);
+  assert.match(paywallSource, /return assertNever\(reason\);/);
+  assert.match(paywallSource, /disabled: activeAction !== null \|\| purchaseUnavailable/);
+  assert.match(paywallSource, /disabled=\{activeAction !== null \|\| purchaseUnavailable\}/);
+  assert.match(paywallSource, /setStatus\('unavailable'\);/);
+  assert.match(paywallSource, /Buy in mobile app/);
+  assert.match(paywallSource, /Buy unavailable/);
+  assert.match(
+    paywallSource,
+    /Pro purchases are temporarily unavailable because receipt validation is not configured/,
+  );
+});
+
 test('ProPaywall: guard contract rejects late purchase lock activation', () => {
   const result = spawnSync(
     process.execPath,
@@ -599,6 +680,7 @@ test('focus-pro-lifetime validator reports relaunch receipt-backed counters', ()
     proLifetimeProviderReceiptRevalidationValidated: 1,
     proLifetimeFailClosedClearingValidated: 1,
     proLifetimeNativeHookProviderWiringValidated: 1,
+    proLifetimeUnavailableReasonExhaustiveValidated: 1,
     proLifetimeRelaunchParityValidated: true,
   });
 });

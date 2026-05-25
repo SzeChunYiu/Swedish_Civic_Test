@@ -15,6 +15,7 @@ import {
   buyProLifetime,
   restoreProLifetime,
   type ProLifetimePurchaseStatus,
+  type ProLifetimePurchaseUnavailableReason,
   type ProLifetimeRuntimeOptions,
 } from '../../lib/monetization/proLifetimePurchase';
 import { REMOVE_ADS_PRICE_LABEL } from '../../lib/monetization/purchases';
@@ -31,16 +32,26 @@ type ProAction = 'buy' | 'restore';
 
 type ProPaywallCopy = {
   body: string;
+  bodyNativeUnavailable: string;
+  bodyWebUnavailable: string;
+  buyNativeUnavailable: string;
+  buyWebUnavailable: string;
   columnHeader: string;
   excluded: string;
   included: string;
   includedAccessibilityLabel: string;
   priceAccessibilityLabel: (column: TierColumn) => string;
   primaryAccessibilityHint: string;
+  primaryNativeUnavailableAccessibilityHint: string;
+  primaryWebUnavailableAccessibilityHint: string;
   restoring: string;
   restoreAccessibilityHint: string;
   restoreAccessibilityLabel: string;
   restoreIdle: string;
+  restoreNativeUnavailable: string;
+  restoreWebUnavailable: string;
+  unavailableNativeStatus: string;
+  unavailableWebStatus: string;
   rowSummary: (row: TierRow, columns: readonly TierColumn[]) => string;
   secondaryPathHint: (label: string, alreadyAdFree: boolean) => string;
   statusAccessibilityLabel: (message: string) => string;
@@ -53,6 +64,12 @@ type ProPaywallCopy = {
 const proPaywallCopy: Record<AppLanguage, ProPaywallCopy> = {
   sv: {
     body: `Pro är ett separat engångsköp med annonsfri studie, avancerad repetition, studieplanering, anteckningsexport och fler markeringar. Ta bort annonser för ${REMOVE_ADS_PRICE_LABEL} finns kvar som en egen enklare annonsfri väg.`,
+    bodyNativeUnavailable:
+      'Pro är tillfälligt inte tillgängligt eftersom kvittovalidering inte är konfigurerad för den här versionen.',
+    bodyWebUnavailable:
+      'Pro är ett butiksköp i mobilappen. Webbversionen visar bara status och kan inte skapa eller återställa Pro-köp.',
+    buyNativeUnavailable: 'Köp inte tillgängligt',
+    buyWebUnavailable: 'Köp i mobilappen',
     columnHeader: 'Funktion',
     excluded: 'Ingår inte',
     included: 'Ingår',
@@ -60,10 +77,16 @@ const proPaywallCopy: Record<AppLanguage, ProPaywallCopy> = {
     priceAccessibilityLabel: (column) => `${column.labelSv}: ${column.priceSv}`,
     primaryAccessibilityHint:
       'Köper Pro Lifetime med annonsfri studie och avancerade studiefunktioner.',
+    primaryNativeUnavailableAccessibilityHint:
+      'Pro-köp är tillfälligt inte tillgängliga eftersom kvittovalidering inte är konfigurerad.',
+    primaryWebUnavailableAccessibilityHint:
+      'Pro är ett butiksköp i mobilappen och kan inte köpas från webbversionen.',
     restoring: 'Återställer...',
     restoreAccessibilityHint: 'Kontrollerar om Pro redan har köpts på samma butikskonto.',
     restoreAccessibilityLabel: 'Återställ Pro-köp',
     restoreIdle: 'Återställ Pro',
+    restoreNativeUnavailable: 'Återställ inte tillgängligt',
+    restoreWebUnavailable: 'Återställ i mobilappen',
     rowSummary: (row, columns) =>
       columns
         .map((column) => {
@@ -85,23 +108,39 @@ const proPaywallCopy: Record<AppLanguage, ProPaywallCopy> = {
         'Pro-köpet bekräftades men kunde inte sparas lokalt. Försök återställa köpet.',
       purchased: 'Pro är aktiverat på den här enheten.',
       restored: 'Pro är återställt på den här enheten.',
+      unavailable: 'Pro kan köpas eller återställas i mobilappen.',
     },
     title: 'Jämför Gratis, Annonsfri och Pro',
     titleEyebrow: 'Pro Lifetime',
+    unavailableNativeStatus:
+      'Pro-köp är tillfälligt inte tillgängliga eftersom kvittovalidering inte är konfigurerad.',
+    unavailableWebStatus: 'Pro kan köpas eller återställas i mobilappen.',
     upgrading: 'Köper...',
   },
   en: {
     body: `Pro is a separate one-time purchase with ad-free study, advanced review, study planning, notes export, and richer highlights. Remove Ads for ${REMOVE_ADS_PRICE_LABEL} stays available as its own simpler ad-free path.`,
+    bodyNativeUnavailable:
+      'Pro is temporarily unavailable because receipt validation is not configured for this build.',
+    bodyWebUnavailable:
+      'Pro is a mobile app store purchase. The web version shows status only and cannot create or restore Pro purchases.',
+    buyNativeUnavailable: 'Buy unavailable',
+    buyWebUnavailable: 'Buy in mobile app',
     columnHeader: 'Feature',
     excluded: 'Not included',
     included: 'Included',
     includedAccessibilityLabel: 'Included in this tier',
     priceAccessibilityLabel: (column) => `${column.labelEn}: ${column.priceEn}`,
     primaryAccessibilityHint: 'Buys Pro Lifetime with ad-free study and advanced study features.',
+    primaryNativeUnavailableAccessibilityHint:
+      'Pro purchases are temporarily unavailable because receipt validation is not configured.',
+    primaryWebUnavailableAccessibilityHint:
+      'Pro is a mobile app store purchase and cannot be bought from the web version.',
     restoring: 'Restoring...',
     restoreAccessibilityHint: 'Checks whether Pro was already bought with the same store account.',
     restoreAccessibilityLabel: 'Restore Pro purchase',
     restoreIdle: 'Restore Pro',
+    restoreNativeUnavailable: 'Restore unavailable',
+    restoreWebUnavailable: 'Restore in mobile app',
     rowSummary: (row, columns) =>
       columns
         .map((column) => {
@@ -123,12 +162,57 @@ const proPaywallCopy: Record<AppLanguage, ProPaywallCopy> = {
         'Pro was confirmed but could not be saved locally. Try restoring the purchase.',
       purchased: 'Pro is active on this device.',
       restored: 'Pro has been restored on this device.',
+      unavailable: 'Pro can be bought or restored in the mobile app.',
     },
     title: 'Compare Free, Ad-Free, and Pro',
     titleEyebrow: 'Pro Lifetime',
+    unavailableNativeStatus:
+      'Pro purchases are temporarily unavailable because receipt validation is not configured.',
+    unavailableWebStatus: 'Pro can be bought or restored in the mobile app.',
     upgrading: 'Buying...',
   },
 };
+
+type ProUnavailableCopy = {
+  body: string;
+  primaryAccessibilityHint: string;
+  primaryLabel: string;
+  restoreAccessibilityHint: string;
+  restoreLabel: string;
+  statusMessage: string;
+};
+
+function assertNever(value: never): never {
+  throw new Error(`Unhandled Pro Lifetime unavailable reason: ${value}`);
+}
+
+function getProLifetimeUnavailableCopy(
+  copy: ProPaywallCopy,
+  reason: ProLifetimePurchaseUnavailableReason,
+): ProUnavailableCopy {
+  switch (reason) {
+    case 'native_receipt_validator_unavailable':
+      return {
+        body: copy.bodyNativeUnavailable,
+        primaryAccessibilityHint: copy.primaryNativeUnavailableAccessibilityHint,
+        primaryLabel: copy.buyNativeUnavailable,
+        restoreAccessibilityHint: copy.primaryNativeUnavailableAccessibilityHint,
+        restoreLabel: copy.restoreNativeUnavailable,
+        statusMessage: copy.unavailableNativeStatus,
+      };
+    case 'web_store_unavailable':
+      return {
+        body: copy.bodyWebUnavailable,
+        primaryAccessibilityHint: copy.primaryWebUnavailableAccessibilityHint,
+        primaryLabel: copy.buyWebUnavailable,
+        restoreAccessibilityHint: copy.primaryWebUnavailableAccessibilityHint,
+        restoreLabel: copy.restoreWebUnavailable,
+        statusMessage: copy.unavailableWebStatus,
+      };
+    default:
+      return assertNever(reason);
+  }
+}
 
 function getCellText(cell: TierCell, language: AppLanguage): string {
   if (cell.kind === 'check') return proPaywallCopy[language].included;
@@ -164,10 +248,23 @@ export function ProPaywall({
   );
   const primaryLabel = language === 'sv' ? ctaLabels.primarySv : ctaLabels.primaryEn;
   const secondaryLabel = language === 'sv' ? ctaLabels.secondarySv : ctaLabels.secondaryEn;
-  const statusMessage = copy.statusMessages[status];
+  const unavailableCopy = purchaseRuntime.purchaseUnavailableReason
+    ? getProLifetimeUnavailableCopy(copy, purchaseRuntime.purchaseUnavailableReason)
+    : null;
+  const purchaseUnavailable = unavailableCopy !== null;
+  const visibleStatus: ProPaywallStatus =
+    status === 'idle' && purchaseUnavailable ? 'unavailable' : status;
+  const statusMessage =
+    visibleStatus === 'unavailable' && unavailableCopy
+      ? unavailableCopy.statusMessage
+      : copy.statusMessages[visibleStatus];
   const runProAction = useCallback(
     async (action: ProAction) => {
       if (purchaseActionInFlightRef.current) return;
+      if (purchaseUnavailable) {
+        setStatus('unavailable');
+        return;
+      }
 
       purchaseActionInFlightRef.current = true;
       setActiveAction(action);
@@ -187,7 +284,7 @@ export function ProPaywall({
         setActiveAction(null);
       }
     },
-    [onEntitlementsChange, purchaseRuntime],
+    [onEntitlementsChange, purchaseRuntime, purchaseUnavailable],
   );
 
   return (
@@ -197,7 +294,7 @@ export function ProPaywall({
         <Text accessibilityRole="header" style={styles.title}>
           {copy.title}
         </Text>
-        <Text style={styles.body}>{copy.body}</Text>
+        <Text style={styles.body}>{unavailableCopy?.body ?? copy.body}</Text>
       </View>
 
       <View style={styles.table}>
@@ -255,30 +352,41 @@ export function ProPaywall({
 
       <View style={styles.actions}>
         <Button
-          accessibilityHint={copy.primaryAccessibilityHint}
-          accessibilityLabel={primaryLabel}
+          accessibilityHint={
+            unavailableCopy?.primaryAccessibilityHint ?? copy.primaryAccessibilityHint
+          }
+          accessibilityLabel={unavailableCopy?.primaryLabel ?? primaryLabel}
           accessibilityRole="button"
-          accessibilityState={{ busy: activeAction === 'buy', disabled: activeAction !== null }}
-          disabled={activeAction !== null}
+          accessibilityState={{
+            busy: activeAction === 'buy',
+            disabled: activeAction !== null || purchaseUnavailable,
+          }}
+          disabled={activeAction !== null || purchaseUnavailable}
           onPress={() => void runProAction('buy')}
           style={styles.actionButton}
         >
-          {activeAction === 'buy' ? copy.upgrading : primaryLabel}
+          {activeAction === 'buy'
+            ? copy.upgrading
+            : (unavailableCopy?.primaryLabel ?? primaryLabel)}
         </Button>
         <Button
-          accessibilityHint={copy.restoreAccessibilityHint}
-          accessibilityLabel={copy.restoreAccessibilityLabel}
+          accessibilityHint={
+            unavailableCopy?.restoreAccessibilityHint ?? copy.restoreAccessibilityHint
+          }
+          accessibilityLabel={unavailableCopy?.restoreLabel ?? copy.restoreAccessibilityLabel}
           accessibilityRole="button"
           accessibilityState={{
             busy: activeAction === 'restore',
-            disabled: activeAction !== null,
+            disabled: activeAction !== null || purchaseUnavailable,
           }}
-          disabled={activeAction !== null}
+          disabled={activeAction !== null || purchaseUnavailable}
           onPress={() => void runProAction('restore')}
           style={styles.actionButton}
           variant="secondary"
         >
-          {activeAction === 'restore' ? copy.restoring : copy.restoreIdle}
+          {activeAction === 'restore'
+            ? copy.restoring
+            : (unavailableCopy?.restoreLabel ?? copy.restoreIdle)}
         </Button>
       </View>
 
