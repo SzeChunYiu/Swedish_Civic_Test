@@ -9,6 +9,7 @@ const defaultSiteDir = path.join(repoRoot, 'site');
 const defaultManifestPath = path.join(defaultSiteDir, 'asset-manifest.json');
 const manifestFileName = 'asset-manifest.json';
 const maxStylesheetImportDepth = 16;
+const runtimeCacheOnlyAssets = new Set(['ebook-tools.js', 'ebook.js']);
 
 function normalizeRelativePath(filePath) {
   return filePath.split(path.sep).join('/');
@@ -248,6 +249,20 @@ function hashFile(absolutePath) {
   return crypto.createHash('sha256').update(fs.readFileSync(absolutePath)).digest('hex');
 }
 
+function cachePolicyForAsset(relativePath) {
+  if (runtimeCacheOnlyAssets.has(relativePath)) {
+    return {
+      installPrecache: false,
+      runtimeCache: true,
+    };
+  }
+
+  return {
+    installPrecache: true,
+    runtimeCache: true,
+  };
+}
+
 function buildAssetManifest(options = {}) {
   const siteDir = path.resolve(options.siteDir || defaultSiteDir);
   const assets = {};
@@ -256,6 +271,7 @@ function buildAssetManifest(options = {}) {
     const absolutePath = path.join(siteDir, relativePath);
     assets[relativePath] = {
       bytes: fs.statSync(absolutePath).size,
+      cachePolicy: cachePolicyForAsset(relativePath),
       sha256: hashFile(absolutePath),
     };
   }
@@ -309,6 +325,13 @@ function findManifestMismatches(expected, actual) {
     if (expectedAsset.sha256 !== actualAsset.sha256) {
       mismatches.push(
         `${assetPath}: sha256 expected ${expectedAsset.sha256}, found ${actualAsset.sha256}`,
+      );
+    }
+    if (JSON.stringify(expectedAsset.cachePolicy) !== JSON.stringify(actualAsset.cachePolicy)) {
+      mismatches.push(
+        `${assetPath}: cachePolicy expected ${JSON.stringify(
+          expectedAsset.cachePolicy,
+        )}, found ${JSON.stringify(actualAsset.cachePolicy)}`,
       );
     }
   }
@@ -411,5 +434,6 @@ module.exports = {
   listIndexAssetReferences,
   listSiteAssetFiles,
   maxStylesheetImportDepth,
+  runtimeCacheOnlyAssets,
   writeAssetManifest,
 };

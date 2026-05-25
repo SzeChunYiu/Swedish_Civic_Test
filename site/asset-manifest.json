@@ -5,158 +5,314 @@
   "assets": {
     "ads.txt": {
       "bytes": 59,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "fa08d5f935a0f425e591e8ddc00b027fc9737d6f8e11f765677aa3bfb1ee1959"
     },
     "app.js": {
       "bytes": 131448,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "43c04a14dfcb88e5e62cd1101067a715fa9c9627554713bf1563262c080dca0f"
     },
     "assets/banner.png": {
       "bytes": 254757,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "b0e4da2788b1e7e1011576a78e0b40ab815f458b3daa40b692c66e21b155bf85"
     },
     "assets/buddies/algis.png": {
       "bytes": 142771,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "7a4189309825124cfb43b3a5aa0709f16df654fba8951963c060322be1eaba13"
     },
     "assets/buddies/dala.png": {
       "bytes": 143331,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "f094a6359330f8bc1f5a287b62e20cb19b9a5398561363fc06990e96ce9aa8b6"
     },
     "assets/buddies/kaffe.png": {
       "bytes": 94756,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "5202ccc5ade74c4a92a878a586e0b749afbc990d4105fef080c6370560846703"
     },
     "assets/buddies/kanel.png": {
       "bytes": 123596,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "a907bc5ca5a095d64b9b6475caf2d7eb6faeb4e736a9b0837d036c817aeff799"
     },
     "assets/buddies/lucia.png": {
       "bytes": 123169,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "3f6b7a4edefa6136d7745bc3fc2cb4d018e07d842cc4def746c3b7f9737fe4aa"
     },
     "assets/buddies/sillis.png": {
       "bytes": 78038,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "dbb82f662602c24ad344a2b0028c746719ac92d0ed29011cf0c65d8ed6fcd1c0"
     },
     "assets/buddies/snogubbe.png": {
       "bytes": 125490,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "0ff7b23f11e1402a123bbf31737f1d44ee78d2c12267fd658de8a0554ab8177a"
     },
     "assets/buddies/stang.png": {
       "bytes": 123855,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "de593581886b36062849520bc4f6d40b980bd0e4315e6aa62f11834afe774c59"
     },
     "assets/buddies/tomte.png": {
       "bytes": 101316,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "2a2b0c4ab0c95190786d7cf5973c94ec2002339b7fb0dcba61ef0ef9bccc8850"
     },
     "assets/buddies/vasa.png": {
       "bytes": 144619,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "027c15a39187163041cd102919fec0465bdd0ab9a6dd163b5ecab8f7fda4f725"
     },
     "assets/logo-mark.png": {
       "bytes": 61498,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "4d30d10aabeecd005c802fd912be5b3ebb8d292687a59b41859aebe3deea04e7"
     },
     "assets/logo-wordmark-text.png": {
       "bytes": 1206666,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "4b400b4d5cdaa92b6bf3751b07537b968f54146f57d902277820fe3b47c80b3b"
     },
     "assets/logo-wordmark.png": {
       "bytes": 254162,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "668e12cef108a8614ab7952977d268bfc50cf75889d15b29bb59f6c731b88fca"
     },
     "buddies.js": {
-      "bytes": 37640,
-      "sha256": "4b8df718811d7ab605a23317f9cba88f5d75d9ad50a59c0e1f9891cd9f634d8d"
+      "bytes": 37887,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
+      "sha256": "b4b5f267bc0ac28176e35f771916aeb5bda7bc860421c889faae00a7c418e2e2"
     },
     "ebook-tools.js": {
       "bytes": 19195,
+      "cachePolicy": {
+        "installPrecache": false,
+        "runtimeCache": true
+      },
       "sha256": "df3be43f7732ede467a16efca66941dc99f2ac5aea39ce6d54058645783718ed"
     },
     "ebook.js": {
       "bytes": 543974,
+      "cachePolicy": {
+        "installPrecache": false,
+        "runtimeCache": true
+      },
       "sha256": "5e3bb519d2a367250163a08805740a25d9d7d6f12d85f5298c08f27000b9723b"
     },
     "extras.js": {
-      "bytes": 31370,
-      "sha256": "ca0cbef4208bfa9cd72a5b15854ba5f64ca4ff9e232c280977f595a3e6b18dda"
+      "bytes": 41666,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
+      "sha256": "06cf670046633b662cf1fdb8471513089e62f1d4d6e84517b7486ab5958a73e6"
     },
     "fx.js": {
       "bytes": 7155,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "e324775e23c93f063800014a441ba24165f878c4a82c8cb6f654a50fed01f830"
     },
     "i18n-extras.js": {
       "bytes": 351914,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "703b6050d0e4b8dab627bbd03d15ed4d3be967ce95ef5d79f6000054cc304dfe"
     },
     "icon.png": {
       "bytes": 362794,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "401ff142bcdf5c40570f8eb7673fc979d7f2ba8d646d26d34b27feb4f4115054"
     },
     "icons/pwa-icon-192.png": {
       "bytes": 40258,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "cbc024c155dbbfc8ad98a5e9e465534deaafc937fd2f7e375928703233c68f65"
     },
     "icons/pwa-icon-512.png": {
       "bytes": 227321,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "56c549a35d6dfa3a7f9bc9f1425fd94775ad0f9c5b72c0ac500e6bb80775cf57"
     },
     "icons/pwa-maskable-512.png": {
       "bytes": 139113,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "c70dfeacdb677177592f67a5a943e04c56d84506332615bd1c4c4427740b343c"
     },
     "index.html": {
       "bytes": 75327,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "6c9e66269df4d4cb72c2382a41aed64fb63e9baf9eeff44cae07ad8e1ff830f8"
     },
     "manifest.webmanifest": {
       "bytes": 752,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "449d620d867ac89d7f54c571927c4753f025ef182dafb9afda331ce68a55b05f"
     },
     "practice.js": {
       "bytes": 72153,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "10bc35a0606064fa96054a1f265d64810991ea7e32b1f95600b76ae972dec8a9"
     },
     "purchase.js": {
       "bytes": 8998,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "a762f03b1e112dadfc74fee76aaa3007e8927f5c61294648a1703d0ad0d26934"
     },
     "questions.js": {
       "bytes": 3766738,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "22d7ec1c030f9c836ce1f26bc442cf52a9aef18c9848438818091f1ed3c3909a"
     },
     "settings.js": {
       "bytes": 12895,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "75989cedd774ecfc28948f01ce4153face2ca38c9fe44d9621098c2b796f7ead"
     },
     "signin.js": {
       "bytes": 26620,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "1cb8a95ff95bd4e8cdd9abfa0f902a9cb14e1e59d886131c7e9ae9639dc628f6"
     },
     "site.js": {
       "bytes": 5221,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "4e2dca9706273065513ca97fb0d493f6ea67d852034a03166d67f1ee03c9975b"
     },
     "styles.css": {
-      "bytes": 279578,
-      "sha256": "31ebeb4f8664ae8a99be991aec72ae817faf92076bec2b57e5f5cca64a27b9d4"
+      "bytes": 279632,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
+      "sha256": "28e11ed376ab2022368e472d6de1d4a7cf1b371e3fd9e85050487d72b43ccf8a"
     },
     "sw.js": {
-      "bytes": 4844,
-      "sha256": "28365f50df2820cc68f4254ccecef4f8ddb89edf3fd3d034da6bffbae1b65a99"
+      "bytes": 4886,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
+      "sha256": "f59909d951e949785818dc58357adf114a42446ba57e17ed409a556f2faf29aa"
     },
     "tweaks-panel.jsx": {
       "bytes": 25802,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "22c052960f83ac314fa6170384f19bbdeefda516fdddc6a917a5a72797171d8d"
     },
     "tweaks.jsx": {
       "bytes": 6921,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "67435e90bc00665d368d0d6c39e217485a8014e5d394ecb463a5fef166d36bcc"
     },
     "v11.js": {
       "bytes": 42654,
+      "cachePolicy": {
+        "installPrecache": true,
+        "runtimeCache": true
+      },
       "sha256": "8ba8a055a8cbf1cf83c3020faeab93f7ebc5107b81ce0848559b5b4673c667b5"
     }
   }
