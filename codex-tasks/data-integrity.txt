@@ -1,140 +1,21 @@
 
 
-site/questions.js`, `npm run typecheck -- --pretty false`, `npm run lint`,
-`npm run test:ownership`, and `git diff --check`.
 
-Do not reopen q270/q271 reason-target wording or generated true/false
-explanation-meta cleanup without fresh current-main regression evidence. No
-fresh DATA-INTEGRITY source route is visible after #809, #819, and the current
-route audit #825 / `5861846`; route new DATA-INTEGRITY work only from new
-reviewer/VERIFY evidence. Keep SITE-P0-5 external and do not run Vercel CLI
-from this repo.
 
-MANAGER-build acceptance/current-route update - 2026-05-19T00:32+02:00
 
-`REVIEWER-GENERATED-SINGLE-CHOICE-FILLER-OPTIONS-1` remaining ordinary
-single-choice cleanup is accepted on current `origin/main` via DATA-INTEGRITY
-PR #805 / `3fcc83e`. Manager verification in
-`/tmp/sct-manager-805-KyOTrh/wt` passed `npm run validate:content`,
-`npm run test:derived-content`, focused
-`tests/content-published-question-types.test.js`
-`tests/content-static-site-question-bank-parity.test.js`
-`tests/content-test-gate-parity.test.js` plus `scripts/content-production.test.js`
-36/36, canonical export parity, static-site export parity, `node --check
-site/questions.js`, `npm run typecheck -- --pretty false`, `npm run lint`,
-`npm run test:ownership`, targeted Prettier, `git diff --check 4ce39b8..HEAD`,
-and a direct CSV/static scan showing 720 static questions with zero generated
-ordinary single-choice `Vilket svar är korrekt?` / `Which answer is correct?`
-meta-stem rows, zero generic filler rows, zero true/false-shell rows, zero stale
-True/False explanation-label rows, and zero CSV meta-stem hits.
 
-Do not reopen the ordinary generated single-choice meta-stem, generic fallback
-option, true/false-shell, or stale True/False single-choice explanation surfaces
-without fresh current-main regression evidence.
 
-Next DATA-INTEGRITY source route: repair the remaining q270/q271 generated
-true/false standalone wording defects from current VERIFY evidence (`One reason
-is...` without naming the reason target). Acceptance requires generator and
-validator mirror updates, regenerated canonical CSV and static output,
-export/static parity, `validate:content`, `test:derived-content`, focused
-content gates, typecheck, lint, ownership, Prettier/diff checks, PR/merge
-evidence, direct q270/q271 CSV/static scans, and regression proof that
-`generatedSingleChoiceMetaStemsValidated`,
-`generatedSingleChoiceExplanationLabelsValidated`, and
-`generatedSingleChoiceFillerOptionsValidated` still cover all 576 generated
-questions. Keep SITE-P0-5 external; do not run Vercel CLI from this repo.
 
-MANAGER-build acceptance/current-route update - 2026-05-19T00:18+02:00
 
-`REVIEWER-GENERATED-TF-STANDALONE-Q651-Q700-CURRENT-1` follow-up is accepted
-on current `origin/main` via DATA-INTEGRITY PR #798 / `e90f82a`. Manager
-verification in
-`/home/billy/.codex-supervisor/tmp/civic-laptop-build/pane-0/sct-manager-q651-accept-mKtRj8`
-passed `npm run validate:content`, `npm run test:derived-content`, focused
-`tests/content-published-question-types.test.js`
-`tests/content-static-site-question-bank-parity.test.js`
-`tests/content-test-gate-parity.test.js` 35/35, canonical export parity,
-static-site export parity, `node --check site/questions.js`, `npm run
-typecheck -- --pretty false` after linking the shared dependency tree, `npm
-run lint`, `npm run test:ownership`, targeted Prettier, `git diff --check
-e90f82a^..e90f82a`, serialized `npm run test:content --
---test-concurrency=1` 321/321, and a direct CSV/static scan over
-q663/q670/q671/q698 with zero stale q663/q670/q671/q698 offenders.
 
-Do not reopen q663/q670/q671 or q698 without fresh current-main regression
-evidence.
 
-Next DATA-INTEGRITY source route: keep
-`REVIEWER-GENERATED-SINGLE-CHOICE-FILLER-OPTIONS-1` open only for the remaining
-generated ordinary single-choice meta-stem/explanation surface. Current
-evidence after the accepted filler-option and judgement-shell subclosure still
-shows 133 ordinary generated single-choice rows beginning with
-`Vilket svar är korrekt?` / `Which answer is correct?` in both
-`content/question-bank.csv` and `site/questions.js`, plus judgement-style
-explanations such as q149/q152 still saying `The statement is true` and
-`True`/`False` inside single-choice review copy. Current VERIFY also added
-q270/q271 generated true/false standalone defects (`One reason is...` without
-naming the reason target); bundle them if the same generator pass can close
-them cleanly, otherwise route q270/q271 as the next smaller true/false follow-up
-before the broad single-choice cleanup. Acceptance requires generator and
-validator mirror updates, regenerated canonical CSV and static output, zero
-ordinary generated single-choice meta-prefix rows, continued zero ordinary
-fallback-option rows and zero true/false judgement-shell rows, aligned
-single-choice explanations, q270/q271 reason-target wording if bundled,
-export/static parity, `validate:content`, `test:derived-content`, focused
-content gates, typecheck, lint, ownership, Prettier/diff checks, PR/merge
-evidence, and direct current-main scans for q270/q271 plus early single-choice
-rows such as q148/q149/q152/q156 and late rows q672/q676/q680/q684/q688/q692/
-q696/q700/q704/q708/q712/q720. Keep SITE-P0-5 external; do not run Vercel CLI
-from this repo.
 
-MANAGER-build acceptance/current-route update - 2026-05-18T23:02+02:00
 
-`VERIFY-GENERATED-TF-Q501-Q550-CURRENT-1` is accepted on current
-`origin/main` via DATA-INTEGRITY PR #716 / `b441aed` plus handoff commit
-`557fe95`. Manager verification in
-`/tmp/sct-manager-q501-accept-1779137048` passed `npm run validate:content`,
-`npm run test:derived-content`, focused
-`tests/content-published-question-types.test.js`
-`tests/content-static-site-question-bank-parity.test.js`
-`tests/content-test-gate-parity.test.js` 29/29, canonical export parity,
-static-site export parity, `node --check site/questions.js`, `npm run
-typecheck -- --pretty false`, `npm run lint`, `npm run test:ownership`,
-targeted Prettier, `git diff --check b441aed^..b441aed`, serialized
-`npm run test:content -- --test-concurrency=1` 314/314, and direct
-CSV/static scans over q526/q527/q530/q531/q535/q542/q543 with zero residual
-offenders.
 
-Do not reopen q526/q527 missing religion referents, q530/q531 doubled-comma
-or common-to noun-fragment wording, q535 `brukar ... arrangerar`, or
-q542/q543 `spreadinging` / `welcominging` without fresh current-main
-regression evidence.
 
-Next DATA-INTEGRITY source route: `REVIEWER-GENERATED-TF-STANDALONE-Q551-Q600-CURRENT-1`
-for q563/q574/q598/q599 from current reviewer evidence. Start from clean
-current main and own generator and validator mirror coverage, regenerated
-canonical CSV and static output, export/static parity, `validate:content`,
-`test:derived-content`, focused content gates, typecheck, lint, ownership,
-Prettier/diff checks, PR/merge evidence, and direct current-main scans proving
-q563 uses "on a Saturday", q574 capitalizes Buddhist/Hindu naturally, q598
-has subject/verb agreement, and q599 is a standalone learner-facing
-true/false stem. q601-q650 stays behind q551-q600 unless VALIDATOR explicitly
-reorders; q651-q700 q698 stays behind q551-q600 and q601-q650.
 
-MANAGER-build current-route refresh - 2026-05-18T22:37+02:00
 
-Current `origin/main` `435b39f` still reproduces the q501-q550 generated
-true/false wording defects after the accepted q451-q500 repair and release
-privacy-gates work. Direct current-output scans still show:
-- `q526`/`q527`: Islam/Judaism is "the second largest in Sweden" without
-  "religion" / `religionen`.
-- `q530`/`q531`: doubled English comma after "31 December"; q531 also has the
-  incomplete `vanligt att stora brasor...` / `common to large bonfires...`
-  construction.
-- `q535`: Swedish `brukar ... arrangerar` finite-verb error.
-- `q542`/`q543`: English `spreadinging` / `welcominging` typos.
 
-Nearest green gates on the current route: `node scripts/export-question-bank.js
 --check`, `node scripts/export-site-question-bank.js --check`, `npm run
 validate:content`, and `npm run test:derived-content` all pass when run in a
 dependency-complete environment, so the current validators do not yet cover
